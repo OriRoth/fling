@@ -1,2 +1,9 @@
 target
 *.class
+*.aux
+*.log
+*.nav
+*.out
+*.pdf
+*.snm
+*.toc
