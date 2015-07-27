@@ -7,3 +7,5 @@ target
 *.pdf
 *.snm
 *.toc
+*.fls
+*.fdb_latexmk
