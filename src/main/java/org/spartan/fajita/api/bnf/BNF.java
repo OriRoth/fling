@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
+import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -37,7 +38,7 @@ public class BNF {
 		for (NonTerminal nt : subtypes)
 			addSymbol(nt);
 
-		addRule(new DerivationRule(lhs, subtypes));
+		addRule(new InheritenceRule(lhs, subtypes));
 		return this;
 	}
 
