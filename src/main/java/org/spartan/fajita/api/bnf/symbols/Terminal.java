@@ -17,7 +17,4 @@ public class Terminal extends Symbol {
 		return identifier.equals(((NonTerminal) obj).identifier);
 	}
 
-	public static Terminal term(final String terminal) {
-		return new Terminal(terminal);
-	}
 }

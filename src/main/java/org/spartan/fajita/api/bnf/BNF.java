@@ -70,4 +70,12 @@ public class BNF {
 			sb.append(rule.toString() + "\n");
 		return sb.toString();
 	}
+
+	public static Terminal term(final String terminal) {
+		return new Terminal(terminal);
+	}
+
+	public static NonTerminal nt(final String ntName) {
+		return new NonTerminal(ntName);
+	}
 }

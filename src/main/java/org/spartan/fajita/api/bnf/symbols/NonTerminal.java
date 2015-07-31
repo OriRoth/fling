@@ -17,7 +17,4 @@ public class NonTerminal extends Symbol {
 		return identifier.equals(((NonTerminal) obj).identifier);
 	}
 
-	public static NonTerminal nt(final String ntName) {
-		return new NonTerminal(ntName);
-	}
 }
