@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples;
 import java.util.ArrayList;
 
-public class REexample2 {
+public class RegularExpressionBuilder2 {
 
 
 	/**

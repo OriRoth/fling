@@ -1,5 +1,5 @@
 package org.spartan.fajita.api.examples;
-public class REexample {
+public class RegularExpressionBuilder {
 
 	// in this implementation the semantics is written in these classes
 	// i will try to solve that in the next implementation
