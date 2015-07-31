@@ -17,4 +17,5 @@ public class Terminal extends Symbol {
 		return identifier.equals(((NonTerminal) obj).identifier);
 	}
 
+	public final static Terminal EPSILON = new Terminal("");
 }

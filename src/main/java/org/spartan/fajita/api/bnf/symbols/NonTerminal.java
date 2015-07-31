@@ -17,4 +17,5 @@ public class NonTerminal extends Symbol {
 		return identifier.equals(((NonTerminal) obj).identifier);
 	}
 
+	public final static NonTerminal EPSILON = new NonTerminal("EPS");
 }
