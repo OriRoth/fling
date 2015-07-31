@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.symbols.NonTerminal.nt;
-import static org.spartan.fajita.api.bnf.symbols.Terminal.term;
+import static org.spartan.fajita.api.bnf.BNF.nt;
+import static org.spartan.fajita.api.bnf.BNF.term;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
