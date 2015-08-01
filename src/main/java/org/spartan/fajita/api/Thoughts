@@ -1,0 +1,26 @@
+
+ - Maybe we want a class for all(?) NT in grammer  e.g. in:
+ 	RE().range('a').to('b').kleene();
+ 	RE() 's class is the starter NT
+ 	range()'s return type is RANGE
+ 	to()'s return type is TO 
+ 	etc
+ 	
+ - In that case it seems that each NT's methods should be the FIRST set defined
+ 	in top-down parsers. e.g. :
+ 	RE will have many methods (range,chars ,lparen..)
+ 	range will have a single method - to()
+ 	to will again  
+ 
+ - In order to produce an AST for the defined grammers we need to implements 
+ 	the LR/LL algorithm (must we always? in RegularExpressionBuilder2 we 
+ 	didn't have to)
+ 	
+ - can we staticly prevent users from entering ALL bad phrases not in the grammer? e.g.
+ 	if we have a language { a(bb)* } can we make abb compile but ab not compile?
+ 	 * if we define only languages that for every phrase p all of its prefixes are in the language
+ 	 	then naturally there would be no problem.
+ 	 * otherwise we have two options :
+ 	 	~ check it dynamically while the AST is being built
+ 	 	~ enforce it via syntax, for example a function : foo(b,b) , but that might
+ 	 		increase the complexity of the system greatly. 
