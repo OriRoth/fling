@@ -3,6 +3,7 @@ package org.spartan.fajita.api.bnf;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.rules.InheritenceRule;
@@ -28,34 +29,16 @@ public class BNF {
 	Set<NonTerminal> nonTerminals;
 	Set<Terminal> terminals;
 
+	private final Terminal EPSILON_TERM = term("epsilon");
+	private final NonTerminal EPSILON_NT = nt("EPSILON");
+
 	public BNF() {
 		rules = new HashSet<>();
 		nonTerminals = new HashSet<>();
 		terminals = new HashSet<>();
-	}
 
-	public final class NT {
-
-		public final String lhs;
-
-		private NT(final String lhs) {
-			this.lhs = lhs;
-		}
-
-		public BNF isOneOf(final String... nonterminals) {
-			NonTerminal[] array = (NonTerminal[]) Arrays.stream(nonterminals)
-					.map(nonterminal -> nt(nonterminal))
-					.toArray();
-			return inheritenceRule(nt(lhs), array);
-		}
-		
-		public BNF derivesTo(final String ... symbols){
-			Symbol[] array = (Symbol[]) Arrays.stream(symbols)
-					.map(symb -> (symb.charAt(0)>='a' && symb.charAt(0)<='z') ? term(symb) : nt(symb))
-					.toArray();
-			return rule(nt(lhs), array);
-			
-		}
+		nonTerminals.add(EPSILON_NT);
+		terminals.add(EPSILON_TERM);
 	}
 
 	public NT nonterminal(final String ntName) {
@@ -71,15 +54,41 @@ public class BNF {
 		return this;
 	}
 
-	private BNF rule(final NonTerminal nt, final Symbol... symbols) {
+	private BNF productionRule(final NonTerminal nt, final Symbol... symbols) {
 		addSymbol(nt);
-		for (Symbol symbol : symbols)
+		for (Symbol symbol : symbols) {
 			addSymbol(symbol);
+			if (symbol.getClass() == NonTerminal.class && isOptional(symbol))
+				handleOptional((NonTerminal)symbol);
+		}
 
 		addRule(new DerivationRule(nt, symbols));
 		return this;
 	}
 
+	private void handleOptional(final NonTerminal nt) {
+		if (rules.stream().anyMatch(rule -> rule.lhs.equals(nt)))
+			// if this optional is already handled, return
+			return;
+		NonTerminal original = (NonTerminal) stripOptional(nt);
+		inheritenceRule(nt,EPSILON_NT,original);
+	}
+
+	private boolean isOptional(final Symbol symbol) {
+		String name = symbol.identifier;
+		return name.charAt(0) == '[' && 
+				name.charAt(name.length() - 1) == ']';
+	}
+
+	private Symbol stripOptional(final Symbol s){
+		String symbolName = s.identifier.substring(1,s.identifier.length()-1);
+		if(s.getClass() == NonTerminal.class)
+			return nt(symbolName);
+		else if (s.getClass() == Terminal.class)
+			return term(symbolName);
+		throw new IllegalStateException("Symbol is not a Terminal nor a nonTerminal");
+	}
+	
 	private void addRule(final Rule r) {
 		boolean firstRule = rules.add(r);
 		if (!firstRule)
@@ -106,6 +115,49 @@ public class BNF {
 	}
 
 	private static NonTerminal nt(final String ntName) {
+		validateNT(ntName);
 		return new NonTerminal(ntName);
+	}
+
+	private static void validateNT(final String nt) {
+		// TODO check only capital letters + '_' , and no other chars :
+		// ([A-Z_]+) + must start with capital
+
+	}
+
+	public static String optional(final String nt) {
+		return "[" + nt + "]";
+	}
+
+	public final class NT {
+
+		public final String lhs;
+
+		private NT(final String lhs) {
+			this.lhs = lhs;
+		}
+
+		public BNF isOneOf(final String... nonterminals) {
+			NonTerminal[] array = Arrays.stream(nonterminals)
+					.map(nonterminal -> nt(nonterminal))
+					.collect(Collectors.toList())
+					.toArray(new NonTerminal[]{});
+			return inheritenceRule(nt(lhs), array);
+		}
+
+		public BNF derivesTo(final String... symbols) {
+			Symbol[] array = Arrays.stream(symbols)
+					.map(symb -> parseSymbol(symb))
+					.collect(Collectors.toList())
+					.toArray(new Symbol[]{});
+			return productionRule(nt(lhs), array);
+
+		}
+
+		private Symbol parseSymbol(final String symbol) {
+			return Character.isLowerCase(symbol.charAt(0)) || (symbol.charAt(0) == '[' && Character.isLowerCase(symbol.charAt(1))) 
+					? term(symbol) 
+					: nt(symbol);
+		}
 	}
 }

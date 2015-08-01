@@ -1,10 +1,11 @@
 package org.spartan.fajita.api.examples;
 
+import static org.spartan.fajita.api.bnf.BNF.optional;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.spartan.fajita.api.bnf.BNF;
-
 /**
  * See note 5 on {@link org.spartan.fajita.api.Thoughts} about bottom-up parsing
  * 
@@ -103,11 +104,9 @@ public class ConcurrencyBuilderExample {
 	public static void main(final String[] args) {
 		BNF concurrencyBnf = new BNF();
 		concurrencyBnf.nonterminal("S").isOneOf("RUN_JOBS")
-				.nonterminal("RUN_JOBS").derivesTo("run_jobs","on","TIMEOUT_OPT","CONC_OPT")
-				.nonterminal("TIMEOUT_OPT").isOneOf("EPSILON", "TIMEOUT")
+				.nonterminal("RUN_JOBS").derivesTo("run_jobs","on",optional("TIMEOUT"),optional("CONC"))
 				.nonterminal("TIMEOUT").derivesTo("timeout")
-				.nonterminal("CONC_OPT").isOneOf("EPSILON", "CONC")
-				.nonterminal("CONC").derivesTo("concurrentlyWith","CONC_OPT");
+				.nonterminal("CONC").derivesTo("concurrentlyWith",optional("CONC"));
 		System.out.println(concurrencyBnf.toString());
 
 		Runnable job = () -> nop();

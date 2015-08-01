@@ -36,3 +36,6 @@
  	with a private constructor has some advantages. we can handle one AST on the 
  	parent class (i.e. regular expression,concurrency,hamcrest) we can always return the 
  	instance of the parent class (with Classname.this). It gives us "context" of the current AST.
+ 	
+ 7) creating subclasses by the relation we defined ("inheritence rules") will not work because 
+ 	multiple NT's might be derived to the same NT.
