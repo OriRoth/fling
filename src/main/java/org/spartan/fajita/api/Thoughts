@@ -31,3 +31,8 @@
  		* Shift : meaning we found another "sibling" in the unknown rule
 		* Reduce : meaning we finished the rule and we can add the parent NT to the tree
 			with the corresponding children
+			
+ 6) It seems that putting the Nonterminal classes as nested classes (and not static)
+ 	with a private constructor has some advantages. we can handle one AST on the 
+ 	parent class (i.e. regular expression,concurrency,hamcrest) we can always return the 
+ 	instance of the parent class (with Classname.this). It gives us "context" of the current AST.

@@ -1,13 +1,9 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.BNF.nt;
-import static org.spartan.fajita.api.bnf.BNF.term;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 
 /**
  * See note 5 on {@link org.spartan.fajita.api.Thoughts} about bottom-up parsing
@@ -106,12 +102,12 @@ public class ConcurrencyBuilderExample {
 
 	public static void main(final String[] args) {
 		BNF concurrencyBnf = new BNF();
-		concurrencyBnf.inheritenceRule(nt("S"), nt("RUN_JOBS"))
-				.rule(nt("RUN_JOBS"), term("run_jobs"), term("on"), nt("TIMEOUT_OPT"), nt("CONC_OPT"))
-				.inheritenceRule(nt("TIMEOUT_OPT"), NonTerminal.EPSILON, nt("TIMEOUT"))
-				.rule(nt("TIMEOUT"), term("timeout"))
-				.inheritenceRule(nt("CONC_OPT"), NonTerminal.EPSILON, nt("CONC"))
-				.rule(nt("CONC"), term("concurrentlyWith"), nt("CONC_OPT"));
+		concurrencyBnf.nonterminal("S").isOneOf("RUN_JOBS")
+				.nonterminal("RUN_JOBS").derivesTo("run_jobs","on","TIMEOUT_OPT","CONC_OPT")
+				.nonterminal("TIMEOUT_OPT").isOneOf("EPSILON", "TIMEOUT")
+				.nonterminal("TIMEOUT").derivesTo("timeout")
+				.nonterminal("CONC_OPT").isOneOf("EPSILON", "CONC")
+				.nonterminal("CONC").derivesTo("concurrentlyWith","CONC_OPT");
 		System.out.println(concurrencyBnf.toString());
 
 		Runnable job = () -> nop();

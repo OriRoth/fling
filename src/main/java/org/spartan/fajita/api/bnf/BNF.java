@@ -1,5 +1,6 @@
 package org.spartan.fajita.api.bnf;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +34,35 @@ public class BNF {
 		terminals = new HashSet<>();
 	}
 
-	public BNF inheritenceRule(final NonTerminal lhs, final NonTerminal... subtypes) {
+	public final class NT {
+
+		public final String lhs;
+
+		private NT(final String lhs) {
+			this.lhs = lhs;
+		}
+
+		public BNF isOneOf(final String... nonterminals) {
+			NonTerminal[] array = (NonTerminal[]) Arrays.stream(nonterminals)
+					.map(nonterminal -> nt(nonterminal))
+					.toArray();
+			return inheritenceRule(nt(lhs), array);
+		}
+		
+		public BNF derivesTo(final String ... symbols){
+			Symbol[] array = (Symbol[]) Arrays.stream(symbols)
+					.map(symb -> (symb.charAt(0)>='a' && symb.charAt(0)<='z') ? term(symb) : nt(symb))
+					.toArray();
+			return rule(nt(lhs), array);
+			
+		}
+	}
+
+	public NT nonterminal(final String ntName) {
+		return new NT(ntName);
+	}
+
+	private BNF inheritenceRule(final NonTerminal lhs, final NonTerminal... subtypes) {
 		addSymbol(lhs);
 		for (NonTerminal nt : subtypes)
 			addSymbol(nt);
@@ -42,7 +71,7 @@ public class BNF {
 		return this;
 	}
 
-	public BNF rule(final NonTerminal nt, final Symbol... symbols) {
+	private BNF rule(final NonTerminal nt, final Symbol... symbols) {
 		addSymbol(nt);
 		for (Symbol symbol : symbols)
 			addSymbol(symbol);
@@ -72,11 +101,11 @@ public class BNF {
 		return sb.toString();
 	}
 
-	public static Terminal term(final String terminal) {
+	private static Terminal term(final String terminal) {
 		return new Terminal(terminal);
 	}
 
-	public static NonTerminal nt(final String ntName) {
+	private static NonTerminal nt(final String ntName) {
 		return new NonTerminal(ntName);
 	}
 }

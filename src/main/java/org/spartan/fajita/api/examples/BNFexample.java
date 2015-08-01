@@ -1,10 +1,6 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.BNF.nt;
-import static org.spartan.fajita.api.bnf.BNF.term;
-
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 
 public class BNFexample {
 
@@ -13,11 +9,11 @@ public class BNFexample {
 	}
 
 	public static void main(final String[] args) {
-		NonTerminal s = nt("S");
-		BNF bnf = new BNF().rule(s, nt("A"), nt("B"))
-				.rule(s, nt("A"), s, nt("B"))
-				.rule(nt("A"), term("("))
-				.rule(nt("B"), term(")"));
+		BNF bnf = new BNF()
+				.nonterminal("S").derivesTo("A","B")
+				.nonterminal("S").derivesTo("A","S","B")
+				.nonterminal("A").derivesTo("(")
+				.nonterminal("B").derivesTo(")");
 		BnfAnalyzer(bnf);
 	}
 }
