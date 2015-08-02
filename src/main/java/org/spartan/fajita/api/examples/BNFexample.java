@@ -10,10 +10,10 @@ public class BNFexample {
 
 	public static void main(final String[] args) {
 		BNF bnf = new BNF()
-				.nonterminal("S").derivesTo("A","B")
-				.nonterminal("S").derivesTo("A","S","B")
-				.nonterminal("A").derivesTo("(")
-				.nonterminal("B").derivesTo(")");
+				.derive("S").to("A","B")
+				.derive("S").to("A","S","B")
+				.derive("A").to("(")
+				.derive("B").to(")");
 		BnfAnalyzer(bnf);
 	}
 }

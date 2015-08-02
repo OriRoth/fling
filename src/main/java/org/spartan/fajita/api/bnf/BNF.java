@@ -14,7 +14,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 /**
  * There are a few possibilities regarding checking the validity of the BNF
- * (each NT has exactly one rule):
+ * (each Deriver has exactly one rule):
  * <li>Throwing exception when using unknown nt - that would require building
  * the BNF rules 'Bottom up'</li>
  * <li>Waiting until parsing to check validy and throw exception - for example
@@ -41,8 +41,8 @@ public class BNF {
 		terminals.add(EPSILON_TERM);
 	}
 
-	public NT nonterminal(final String ntName) {
-		return new NT(ntName);
+	public Deriver derive(final String ntName) {
+		return new Deriver(ntName);
 	}
 
 	private BNF inheritenceRule(final NonTerminal lhs, final NonTerminal... subtypes) {
@@ -129,15 +129,15 @@ public class BNF {
 		return "[" + nt + "]";
 	}
 
-	public final class NT {
+	public final class Deriver {
 
 		public final String lhs;
 
-		private NT(final String lhs) {
+		private Deriver(final String lhs) {
 			this.lhs = lhs;
 		}
 
-		public BNF isOneOf(final String... nonterminals) {
+		public BNF toOneOf(final String... nonterminals) {
 			NonTerminal[] array = Arrays.stream(nonterminals)
 					.map(nonterminal -> nt(nonterminal))
 					.collect(Collectors.toList())
@@ -145,7 +145,7 @@ public class BNF {
 			return inheritenceRule(nt(lhs), array);
 		}
 
-		public BNF derivesTo(final String... symbols) {
+		public BNF to(final String... symbols) {
 			Symbol[] array = Arrays.stream(symbols)
 					.map(symb -> parseSymbol(symb))
 					.collect(Collectors.toList())

@@ -103,10 +103,10 @@ public class ConcurrencyBuilderExample {
 
 	public static void main(final String[] args) {
 		BNF concurrencyBnf = new BNF();
-		concurrencyBnf.nonterminal("S").isOneOf("RUN_JOBS")
-				.nonterminal("RUN_JOBS").derivesTo("run_jobs","on",optional("TIMEOUT"),optional("CONC"))
-				.nonterminal("TIMEOUT").derivesTo("timeout")
-				.nonterminal("CONC").derivesTo("concurrentlyWith",optional("CONC"));
+		concurrencyBnf.derive("S").toOneOf("RUN_JOBS")
+				.derive("RUN_JOBS").to("run_jobs","on",optional("TIMEOUT"),optional("CONC"))
+				.derive("TIMEOUT").to("timeout")
+				.derive("CONC").to("concurrentlyWith",optional("CONC"));
 		System.out.println(concurrencyBnf.toString());
 
 		Runnable job = () -> nop();
