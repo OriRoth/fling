@@ -37,5 +37,16 @@
  	parent class (i.e. regular expression,concurrency,hamcrest) we can always return the 
  	instance of the parent class (with Classname.this). It gives us "context" of the current AST.
  	
- 7) creating subclasses by the relation we defined ("inheritence rules") will not work because 
+ 7) Creating subclasses by the relation we defined ("inheritence rules") will not work because 
  	multiple NT's might be derived to the same NT.
+ 	
+ 8) We need to think about the expressiveness of the grammer.
+ 	- On "flat" apis like ConcurrentBuilder we can use bottom-up parsing and terminals (Atomic on the AST)
+ 		on the grammers are method invocations while all NT (Compound on the AST) 
+ 		are simply abstaction
+ 	- On "tree-like" apis like hamcrest the terminals represent method with "normal"
+ 		parameters (without additional nested invocations of methods from the api) or just parameters
+ 		and the NT represents methods that have nested API calls or abstraction used in grammer.
+ 		
+ 	We must think of how to merge these to one coherent idea.
+ 	 

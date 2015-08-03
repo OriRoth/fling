@@ -1,7 +1,9 @@
 package org.spartan.fajita.api.bnf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -129,6 +131,17 @@ public class BNF {
 		return "[" + nt + "]";
 	}
 
+	private static Symbol parseSymbol(final String symbol) {
+		return Character.isLowerCase(symbol.charAt(0)) || (symbol.charAt(0) == '[' && Character.isLowerCase(symbol.charAt(1))) 
+				? term(symbol) 
+						: nt(symbol);
+	}
+
+	public static Func func(final String functionName){
+		return new Func(functionName);
+	}
+	
+
 	public final class Deriver {
 
 		public final String lhs;
@@ -145,6 +158,13 @@ public class BNF {
 			return inheritenceRule(nt(lhs), array);
 		}
 
+		public BNF toOneOf(final String[]... arrays) {
+			List<String> nonterminals = new ArrayList<>();
+			for (String[] array : arrays)
+				nonterminals.addAll(Arrays.asList(array));
+			return toOneOf(nonterminals.toArray(new String[nonterminals.size()]));
+		}
+		
 		public BNF to(final String... symbols) {
 			Symbol[] array = Arrays.stream(symbols)
 					.map(symb -> parseSymbol(symb))
@@ -154,10 +174,30 @@ public class BNF {
 
 		}
 
-		private Symbol parseSymbol(final String symbol) {
-			return Character.isLowerCase(symbol.charAt(0)) || (symbol.charAt(0) == '[' && Character.isLowerCase(symbol.charAt(1))) 
-					? term(symbol) 
-					: nt(symbol);
+		public BNF to(final String[] ... arrays){
+			List<String> symbols = new ArrayList<>();
+			for (String[] array : arrays)
+				symbols.addAll(Arrays.asList(array));
+			return to(symbols.toArray(new String[symbols.size()]));
+		}
+	}
+
+	public static final class Func{
+
+		private final String functionName;
+
+		public Func(final String functionName) {
+			this.functionName = functionName;
+		}
+
+		public String[] withParams(final String ... parameters){
+			ArrayList<String> l = new ArrayList<>(Arrays.asList(parameters));
+			l.add(0,functionName);
+			return l.toArray(new String[l.size()]);
+		}
+		
+		public String[] noParams(){
+			return new String[]{functionName};
 		}
 	}
 }
