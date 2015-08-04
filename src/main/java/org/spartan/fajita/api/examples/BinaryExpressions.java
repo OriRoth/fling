@@ -14,12 +14,12 @@ public class BinaryExpressions {
 	// 2)and and empty abstract class for compound
 	public static abstract class CompoundExpression extends Compound implements Expression {
 
-		CompoundExpression(final Expr parent, final String name) {
-			this(parent, name,new Object[]{});
+		CompoundExpression(final Expr parent) {
+			this(parent,new Object[]{});
 		}
 
-		CompoundExpression(final Expr parent, final String name, final Object... params) {
-			super(parent, name, params);
+		CompoundExpression(final Expr parent, final Object... params) {
+			super(parent, params);
 			parent.deriveTo(this);
 		}
 		
@@ -33,15 +33,11 @@ public class BinaryExpressions {
 	public static class Expr extends InheritedNonterminal implements Expression {
 
 		public Expr(final Compound parent) {
-			super(parent, "EXPRESSION");
-		}
-
-		public Expr(final Compound parent, final String name) {
-			super(parent, name);
+			super(parent);
 		}
 
 		public Expr() {
-			super(null, "Expr");
+			super(null);
 		}
 
 		// adding methods for all terminals in FIRST(S) for "flat" compilation
@@ -64,18 +60,23 @@ public class BinaryExpressions {
 			new And(this, e1, e2);
 			return this;
 		}
+
+		@Override
+		public String getName() {
+			return "EXPRESSION";
+		}
 	}
 
 	public static class Or extends CompoundExpression{
 
 		// for top-down
 		public Or(final Expr parent) {
-			super(parent, "OR");
+			super(parent);
 		}
 
 		// for bottom-up
 		public Or(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
-			super(parent, "OR");
+			super(parent);
 			((Expr) children.get(0)).deriveTo(e1);
 			((Expr) children.get(2)).deriveTo(e2);
 		}
@@ -84,9 +85,14 @@ public class BinaryExpressions {
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
 			$.add(new Expr(this));
-			$.add(new Atomic(this, "or"));
+			$.add(new OrTerm(this));
 			$.add(new Expr(this));
 			return $;
+		}
+		
+		@Override
+		public String getName() {
+			return "OR";
 		}
 	}
 
@@ -94,13 +100,13 @@ public class BinaryExpressions {
 
 		// for top down
 		public And(final Expr parent) {
-			super(parent, "AND");
+			super(parent);
 			parent.deriveTo(this);
 		}
 
 		// for bottom up
 		public And(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
-			super(parent, "AND");
+			super(parent);
 			((Expr) children.get(0)).deriveTo(e1);
 			((Expr) children.get(2)).deriveTo(e2);
 		}
@@ -109,9 +115,14 @@ public class BinaryExpressions {
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
 			$.add(new Expr(this));
-			$.add(new Atomic(this, "and"));
+			$.add(new AndTerm(this));
 			$.add(new Expr(this));
 			return $;
+		}
+
+		@Override
+		public String getName() {
+			return "AND";
 		}
 	}
 
@@ -121,20 +132,20 @@ public class BinaryExpressions {
 	public static class Not extends CompoundExpression {
 		//for top down
 		public Not(final Expr parent) {
-			super(parent, "NOT");
+			super(parent);
 			parent.deriveTo(this);
 		}
 
 		// for bottom up
 		public Not(final Expr parent,final CompoundExpression e) {
-			super(parent, "NOT");
+			super(parent);
 			((Expr) children.get(1)).deriveTo(e);
 		}
 
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
-			$.add(new Atomic(this, "not", params));
+			$.add(new NotTerm(this));
 			$.add(new Expr(this));
 			return $;
 		}
@@ -142,12 +153,17 @@ public class BinaryExpressions {
 		public Literal bool(final boolean b) {
 			return new Literal((Expr) children.get(1), b);
 		}
+		
+		@Override
+		public String getName() {
+			return "NOT";
+		}
 	}
 
 	public static class Literal extends CompoundExpression {
 
 		public Literal(final Expr parent, final boolean b) {
-			super(parent, "LITERAL");
+			super(parent);
 			children.get(0).params = new Object[] { b };
 			parent.deriveTo(this);
 		}
@@ -155,7 +171,8 @@ public class BinaryExpressions {
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
-			$.add(new Atomic(this, "boolean"));
+			BoolTerm term = new BoolTerm(this);
+			$.add(term);
 			return $;
 		}
 
@@ -178,8 +195,52 @@ public class BinaryExpressions {
 			((Expr) or.children.get(0)).deriveTo(this);
 			return (Expr) or.children.get(2);
 		}
+
+		@Override
+		public String getName() {
+			return "LITERAL";
+		}
+	}
+	
+	public static class OrTerm extends Atomic{
+		public OrTerm(final Compound parent) {
+			super(parent);
+		}
+		@Override
+		public String getName() {
+			return "or";
+		}		
 	}
 
+	public static class AndTerm extends Atomic{
+		public AndTerm(final Compound parent) {
+			super(parent);
+		}
+		@Override
+		public String getName() {
+			return "and";
+		}		
+	}
+	
+	public static class NotTerm extends Atomic{
+		public NotTerm(final Compound parent) {
+			super(parent);
+		}
+		@Override
+		public String getName() {
+			return "not";
+		}		
+	}
+	
+	public static class BoolTerm extends Atomic{
+		public BoolTerm(final Compound parent) {
+			super(parent);
+		}
+		@Override
+		public String getName() {
+			return "boolean";
+		}		
+	}
 	public static Literal bool(final boolean b) {
 		return new Literal(new Expr(), b);
 	}

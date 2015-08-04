@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public abstract class InheritedNonterminal extends Compound {
 
-	public InheritedNonterminal(final Compound parent, final String name) {
-		super(parent, name);
+	public InheritedNonterminal(final Compound parent) {
+		super(parent);
 	}
 
 	@Override
 	public ArrayList<Compound> getChildren() {
-		// at this point we don't how this NT will be derived
+		// at this point we don't know how this NT will be derived
 		return new ArrayList<>();
 	}
 	

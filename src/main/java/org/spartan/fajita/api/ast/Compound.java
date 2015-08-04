@@ -10,22 +10,20 @@ public abstract class Compound {
 	public final String name;
 	private Compound parent;
 
-	public Compound(final Compound parent, final String name) {
-		setParent(parent);
-		this.name = name;
-		children = getChildren();
-		params = new Object[]{};
+	public Compound(final Compound parent) {
+		this(parent,new Object[]{});
 	}
 
-	public Compound(final Compound parent, final String name,final Object... params) {
+	public Compound(final Compound parent,final Object... params) {
 		setParent(parent);
-		this.name = name;
-		this.params = params;
+		name = getName();
 		children = getChildren();
+		this.params = params;
 	}
 	
 	public abstract ArrayList<Compound> getChildren();
-
+	public abstract String getName();
+	
 	@Override
 	public String toString() {
 		return name.toString() +" : " + this.getClass().getSimpleName();
