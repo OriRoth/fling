@@ -68,7 +68,7 @@ public class ASTViewer {
 	
 	private DefaultMutableTreeNode compoundToNode(final Compound root){
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(root.toString());
-		for (Compound child : root.children)
+		for (Compound child : root)
 			top.add(compoundToNode(child));
 		return top;
 	}

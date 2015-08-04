@@ -1,12 +1,13 @@
 package org.spartan.fajita.api.ast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public abstract class Compound {
+public abstract class Compound implements Iterable<Compound>{
 
-	public Object[] params;
+	protected Object[] params;
 	
-	public final ArrayList<Compound> children;
+	protected final ArrayList<Compound> children;
 	public final String name;
 	private Compound parent;
 
@@ -21,8 +22,12 @@ public abstract class Compound {
 		this.params = params;
 	}
 	
-	public abstract ArrayList<Compound> getChildren();
+	protected abstract ArrayList<Compound> getChildren();
 	public abstract String getName();
+	
+	public Compound getChild(final int index){
+		return children.get(index);
+	}
 	
 	@Override
 	public String toString() {
@@ -42,4 +47,26 @@ public abstract class Compound {
 	protected void setParent(final Compound parent) {
 		this.parent = parent;
 	}
+	
+@Override
+	public Iterator<Compound> iterator() {
+		return new Iterator<Compound>() {
+			private final int size;
+			private int current;
+
+			{
+				size = children.size();
+				current = 0;
+			}
+			@Override
+			public boolean hasNext() {
+				return current<size;
+			}
+
+			@Override
+			public Compound next() {
+				return getChild(current++);
+			}
+		};
+	}	
 }

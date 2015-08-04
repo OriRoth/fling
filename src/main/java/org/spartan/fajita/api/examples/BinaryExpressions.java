@@ -77,8 +77,8 @@ public class BinaryExpressions {
 		// for bottom-up
 		public Or(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
 			super(parent);
-			((Expr) children.get(0)).deriveTo(e1);
-			((Expr) children.get(2)).deriveTo(e2);
+			((Expr) getChild(0)).deriveTo(e1);
+			((Expr) getChild(2)).deriveTo(e2);
 		}
 
 		@Override
@@ -107,8 +107,8 @@ public class BinaryExpressions {
 		// for bottom up
 		public And(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
 			super(parent);
-			((Expr) children.get(0)).deriveTo(e1);
-			((Expr) children.get(2)).deriveTo(e2);
+			((Expr) getChild(0)).deriveTo(e1);
+			((Expr) getChild(2)).deriveTo(e2);
 		}
 
 		@Override
@@ -139,7 +139,7 @@ public class BinaryExpressions {
 		// for bottom up
 		public Not(final Expr parent,final CompoundExpression e) {
 			super(parent);
-			((Expr) children.get(1)).deriveTo(e);
+			((Expr) getChild(1)).deriveTo(e);
 		}
 
 		@Override
@@ -151,7 +151,7 @@ public class BinaryExpressions {
 		}
 
 		public Literal bool(final boolean b) {
-			return new Literal((Expr) children.get(1), b);
+			return new Literal((Expr) getChild(1), b);
 		}
 		
 		@Override
@@ -164,15 +164,14 @@ public class BinaryExpressions {
 
 		public Literal(final Expr parent, final boolean b) {
 			super(parent);
-			children.get(0).params = new Object[] { b };
+			((BoolTerm)getChild(0)).setBool(b);
 			parent.deriveTo(this);
 		}
 
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
-			BoolTerm term = new BoolTerm(this);
-			$.add(term);
+			$.add(new BoolTerm(this));
 			return $;
 		}
 
@@ -183,8 +182,8 @@ public class BinaryExpressions {
 				setParent(new Expr());
 			// Expr->AND and not Expr->LITERAL. fix the parent Expr
 			And and = new And(getParent());
-			((Expr) and.children.get(0)).deriveTo(this);
-			return (Expr) and.children.get(2);
+			((Expr) and.getChild(0)).deriveTo(this);
+			return (Expr) and.getChild(2);
 		}
 
 		public Expr or() {
@@ -192,8 +191,8 @@ public class BinaryExpressions {
 				setParent(new Expr());
 			// Expr->OR and not Expr->LITERAL. fix the parent Expr
 			Or or = new Or(getParent());
-			((Expr) or.children.get(0)).deriveTo(this);
-			return (Expr) or.children.get(2);
+			((Expr) or.getChild(0)).deriveTo(this);
+			return (Expr) or.getChild(2);
 		}
 
 		@Override
@@ -239,7 +238,11 @@ public class BinaryExpressions {
 		@Override
 		public String getName() {
 			return "boolean";
-		}		
+		}
+		
+		public void setBool(final boolean b){
+			params = new Object[]{b};
+		}
 	}
 	public static Literal bool(final boolean b) {
 		return new Literal(new Expr(), b);
