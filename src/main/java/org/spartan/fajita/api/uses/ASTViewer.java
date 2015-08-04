@@ -1,8 +1,10 @@
 package org.spartan.fajita.api.uses;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -11,15 +13,17 @@ import org.spartan.fajita.api.ast.Compound;
 public class ASTViewer {
 
 	private JFrame frame;
+	private JTabbedPane tabbedPane;
 
 	public static void showASTs(final Compound ... compounds){
-		for (int i = 0; i < compounds.length; i++)
-			new ASTViewer(compounds[i].getRoot(),"Example "+i);
+		ASTViewer astViewer = new ASTViewer();
+		for (int i = 0; i < compounds.length; i++) 
+			astViewer.addView(compounds[i].getRoot(),"Example "+i);
 	}
 	/**
 	 * Launch the application.
 	 */
-	private void run(final Compound c) {
+	private void run() {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -37,22 +41,27 @@ public class ASTViewer {
 	 * @param c 
 	 * @param title 
 	 */
-	public ASTViewer(final Compound c, final String title) {
-		initialize(c, title);
-		run(c);
+	public ASTViewer() {
+		initialize();
+		run();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 * @param title 
 	 */
-	private void initialize(final Compound c, final String title) {
+	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setTitle(title);
-		frame.add(compoundToTree(c));
+		frame.setBounds(100, 100, 450, 500);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setSize(frame.getWidth(), frame.getHeight());
+		frame.getContentPane().add(tabbedPane, BorderLayout.NORTH);
 	}
 
+	private void addView(final Compound c, final String title){
+		tabbedPane.add(title,compoundToTree(c));
+	}
 	private JTree compoundToTree(final Compound root){		
 		return new JTree(compoundToNode(root));
 	}
