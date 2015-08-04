@@ -8,17 +8,17 @@ public abstract class Compound {
 	
 	public final ArrayList<Compound> children;
 	public final String name;
-	public Compound parent;
+	private Compound parent;
 
 	public Compound(final Compound parent, final String name) {
-		this.parent = parent;
+		setParent(parent);
 		this.name = name;
 		children = getChildren();
 		params = new Object[]{};
 	}
 
-	Compound(final Compound parent, final String name,final Object... params) {
-		this.parent = parent;
+	public Compound(final Compound parent, final String name,final Object... params) {
+		setParent(parent);
 		this.name = name;
 		this.params = params;
 		children = getChildren();
@@ -33,7 +33,15 @@ public abstract class Compound {
 	
 	public Compound getRoot() {
 		Compound current = this;
-		for(;current.parent!=null;current = current.parent);
+		for(;current.getParent()!=null;current = current.getParent());
 		return current;
+	}
+
+	public Compound getParent() {
+		return parent;
+	}
+
+	protected void setParent(final Compound parent) {
+		this.parent = parent;
 	}
 }

@@ -15,7 +15,9 @@ public abstract class InheritedNonterminal extends Compound {
 	}
 	
 	public void deriveTo(final Compound c){
+		children.clear();
 		children.add(c);
-		c.parent = this;
+		c.setParent(this);
 	}
+	
 }
