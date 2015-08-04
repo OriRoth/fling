@@ -4,6 +4,7 @@ package org.spartan.fajita.api.uses;
 
 import static org.spartan.fajita.api.examples.BinaryExpressions.and;
 import static org.spartan.fajita.api.examples.BinaryExpressions.bool;
+import static org.spartan.fajita.api.examples.BinaryExpressions.not;
 import static org.spartan.fajita.api.examples.BinaryExpressions.or;
 import static org.spartan.fajita.api.uses.ASTViewer.showASTs;
 
@@ -11,25 +12,23 @@ import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.examples.BinaryExpressions.Expression;
 import org.spartan.fajita.api.examples.BinaryExpressions.Literal;
 
 public class BinaryExpressions {
 	public static void expressionBuilder(){
 				
 		// top down
-		Literal e0 = new Expression().bool(true);
-		Literal e1 = new Expression().bool(true).or().bool(false);
+		Literal e0 = bool(true);
+		Literal e1 = bool(true).or().bool(false);
 		
-		Literal e2 = new Expression().bool(true).or().bool(false).and().bool(false);
-		Literal e3 = new Expression().not().bool(true);
-		
+		Literal e2 = bool(true).or().bool(false).and().bool(false);
+				
 		// bottom up
-		Compound e4 = new Expression().or(bool(true),bool(false));
-		Compound e5 = new Expression().and(bool(false), bool(true));
-		
-		Compound e6 = new Expression().or(or(bool(true),bool(false)), and(bool(true),bool(false)));
-		
+		Compound e3 = not(bool(true));
+		Compound e4 = or(bool(true),bool(false));
+		Compound e5 = and(bool(false), bool(true));
+		Compound e6 = or(or(bool(true),bool(false)), and(bool(true),bool(false)));
+
 		showASTs(e0,e1,e2,e3,e4,e5,e6);
 	}
 	

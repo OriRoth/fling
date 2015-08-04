@@ -8,19 +8,40 @@ import org.spartan.fajita.api.ast.InheritedNonterminal;
 
 public class BinaryExpressions {
 
-	// this is also Start NT
-	public static class Expression extends InheritedNonterminal {
+	// 1)for each NT that has an inheritence rule we need an empty interface
+	public interface Expression {
+	}
+	// 2)and and empty abstract class for compound
+	public static abstract class CompoundExpression extends Compound implements Expression {
 
-		public Expression(final Compound parent) {
+		CompoundExpression(final Expr parent, final String name) {
+			this(parent, name,new Object[]{});
+		}
+
+		CompoundExpression(final Expr parent, final String name, final Object... params) {
+			super(parent, name, params);
+			parent.deriveTo(this);
+		}
+		
+		@Override
+		public Expr getParent() {
+			return (Expr) super.getParent();
+		}
+	}
+
+	// 3) and a node for that NT . it will always be the parent of the derived nodes
+	public static class Expr extends InheritedNonterminal implements Expression {
+
+		public Expr(final Compound parent) {
 			super(parent, "EXPRESSION");
 		}
 
-		public Expression(final Compound parent, final String name) {
+		public Expr(final Compound parent, final String name) {
 			super(parent, name);
 		}
 
-		public Expression() {
-			super(null, "Expression");
+		public Expr() {
+			super(null, "Expr");
 		}
 
 		// adding methods for all terminals in FIRST(S) for "flat" compilation
@@ -34,107 +55,101 @@ public class BinaryExpressions {
 		}
 
 		// this is part of the bottom up syntax
-		public Compound or(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-			Or or = new Or(e1, e2);
-			deriveTo(or);
+		public Compound or(final CompoundExpression e1, final CompoundExpression e2) {
+			new Or(this, e1, e2);
 			return this;
 		}
 
-		public Compound and(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-			And and = new And(e1, e2);
-			deriveTo(and);
+		public Compound and(final CompoundExpression e1, final CompoundExpression e2) {
+			new And(this, e1, e2);
 			return this;
 		}
 	}
 
-	public static class Or extends InheritedNonterminal {
+	public static class Or extends CompoundExpression{
 
 		// for top-down
-		public Or(final Expression parent) {
+		public Or(final Expr parent) {
 			super(parent, "OR");
-			parent.deriveTo(this);
 		}
 
 		// for bottom-up
-		public Or(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-			super(null, "OR");
-			((Expression) children.get(0)).deriveTo(e1);
-			((Expression) children.get(2)).deriveTo(e2);
+		public Or(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
+			super(parent, "OR");
+			((Expr) children.get(0)).deriveTo(e1);
+			((Expr) children.get(2)).deriveTo(e2);
 		}
 
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
-			$.add(new Expression(this));
+			$.add(new Expr(this));
 			$.add(new Atomic(this, "or"));
-			$.add(new Expression(this));
+			$.add(new Expr(this));
 			return $;
 		}
 	}
 
-	public static class And extends InheritedNonterminal {
+	public static class And extends CompoundExpression {
 
 		// for top down
-		public And(final Expression parent) {
+		public And(final Expr parent) {
 			super(parent, "AND");
 			parent.deriveTo(this);
 		}
 
 		// for bottom up
-		public And(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-			super(null, "AND");
-			((Expression) children.get(0)).deriveTo(e1);
-			((Expression) children.get(2)).deriveTo(e2);
+		public And(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
+			super(parent, "AND");
+			((Expr) children.get(0)).deriveTo(e1);
+			((Expr) children.get(2)).deriveTo(e2);
 		}
 
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
-			$.add(new Expression(this));
+			$.add(new Expr(this));
 			$.add(new Atomic(this, "and"));
-			$.add(new Expression(this));
+			$.add(new Expr(this));
 			return $;
 		}
 	}
 
-	// whoever inherits from Expression need to get the parent Expression in
+	// whoever inherits from Expr need to get the parent Expr in
 	// constructor and call deriveTo(this)
 
-	public static class Not extends InheritedNonterminal {
-		public Not(final Expression parent) {
+	public static class Not extends CompoundExpression {
+		//for top down
+		public Not(final Expr parent) {
 			super(parent, "NOT");
 			parent.deriveTo(this);
+		}
+
+		// for bottom up
+		public Not(final Expr parent,final CompoundExpression e) {
+			super(parent, "NOT");
+			((Expr) children.get(1)).deriveTo(e);
 		}
 
 		@Override
 		public ArrayList<Compound> getChildren() {
 			ArrayList<Compound> $ = new ArrayList<>();
 			$.add(new Atomic(this, "not", params));
-			$.add(new Expression(this));
+			$.add(new Expr(this));
 			return $;
 		}
 
 		public Literal bool(final boolean b) {
-			return new Literal((Expression) children.get(1), b);
+			return new Literal((Expr) children.get(1), b);
 		}
 	}
 
-	public static class Literal extends InheritedNonterminal {
+	public static class Literal extends CompoundExpression {
 
-		private boolean value;
-
-		// for top-down
-		public Literal(final Expression parent, final boolean b) {
+		public Literal(final Expr parent, final boolean b) {
 			super(parent, "LITERAL");
-			value = b;
-			children.get(0).params = new Object[]{b};
+			children.get(0).params = new Object[] { b };
 			parent.deriveTo(this);
-		}
-
-		// for bottom-up
-		public Literal(final boolean b) {
-			super(null, "LITERAL");
-			children.get(0).params = new Object[]{b};
 		}
 
 		@Override
@@ -146,38 +161,38 @@ public class BinaryExpressions {
 
 		// adding methods for all terminals in FIRST(S) for "flat" compilation
 
-		public Expression and() {
-			// now we know Expression -> AND
-			// and not Expression -> LITERAL
-			// fix the parent expression
-			parent.children.clear();
-			And and = new And((Expression) parent);
-			new Literal((Expression) and.children.get(0), value);
-			// now the tree is fixed
-			return (Expression) and.children.get(2);
+		public Expr and() {
+			if (getParent() == null)
+				setParent(new Expr());
+			// Expr->AND and not Expr->LITERAL. fix the parent Expr
+			And and = new And(getParent());
+			((Expr) and.children.get(0)).deriveTo(this);
+			return (Expr) and.children.get(2);
 		}
 
-		public Expression or() {
-			// now we know Expression -> OR
-			// and not Expression -> LITERAL
-			// fix the parent expression
-			parent.children.clear();
-			Or or = new Or((Expression) parent);
-			new Literal((Expression) or.children.get(0), value);
-			// now the tree is fixed
-			return (Expression) or.children.get(2);
+		public Expr or() {
+			if (getParent() == null)
+				setParent(new Expr());
+			// Expr->OR and not Expr->LITERAL. fix the parent Expr
+			Or or = new Or(getParent());
+			((Expr) or.children.get(0)).deriveTo(this);
+			return (Expr) or.children.get(2);
 		}
 	}
 
 	public static Literal bool(final boolean b) {
-		return new Literal(b);
+		return new Literal(new Expr(), b);
 	}
 
-	public static Or or(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-		return new Or(e1, e2);
+	public static Or or(final CompoundExpression e1, final CompoundExpression e2) {
+		return new Or(new Expr(), e1, e2);
 	}
 
-	public static And and(final InheritedNonterminal e1, final InheritedNonterminal e2) {
-		return new And(e1, e2);
+	public static And and(final CompoundExpression e1, final CompoundExpression e2) {
+		return new And(new Expr(), e1, e2);
+	}
+
+	public static Not not(final CompoundExpression e) {
+		return new Not(new Expr(),e);
 	}
 }
