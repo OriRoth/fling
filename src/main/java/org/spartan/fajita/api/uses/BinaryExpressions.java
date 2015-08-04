@@ -59,7 +59,8 @@ public class BinaryExpressions {
 				.derive(LITERAL).to(bool)
 				.derive(OR).to(EXPRESSION, or, EXPRESSION)
 				.derive(AND).to(EXPRESSION, and, EXPRESSION)
-				.derive(NOT).to(not, EXPRESSION);
+				.derive(NOT).to(not, EXPRESSION)
+				.finish();
 		
 		System.out.println(b);
 	}

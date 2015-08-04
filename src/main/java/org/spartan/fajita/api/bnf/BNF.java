@@ -98,6 +98,11 @@ public class BNF {
 		return sb.toString();
 	}
 
+	public void finish(){
+		for (NonTerminal nonTerminal : nonTerminals)
+			if (!rules.stream().anyMatch(rule->rule.lhs.equals(nonTerminal)))
+				throw new IllegalStateException("nonTerminal "+nonTerminal+" has no rule");
+	}
 //	public static Func func(final String functionName){
 //		return new Func(functionName);
 //	}
