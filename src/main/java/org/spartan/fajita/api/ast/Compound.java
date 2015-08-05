@@ -3,40 +3,43 @@ package org.spartan.fajita.api.ast;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public abstract class Compound implements Iterable<Compound>{
+public abstract class Compound implements Iterable<Compound> {
 
+	// TODO: remove params. define it directly in implementor of Atomic
 	protected Object[] params;
-	
+
 	protected final ArrayList<Compound> children;
 	public final String name;
 	private Compound parent;
 
 	public Compound(final Compound parent) {
-		this(parent,new Object[]{});
+		this(parent, new Object[] {});
 	}
 
-	public Compound(final Compound parent,final Object... params) {
+	public Compound(final Compound parent, final Object... params) {
 		setParent(parent);
 		name = getName();
 		children = getChildren();
 		this.params = params;
 	}
-	
+
 	protected abstract ArrayList<Compound> getChildren();
+
 	public abstract String getName();
-	
-	public Compound getChild(final int index){
+
+	public Compound getChild(final int index) {
 		return children.get(index);
 	}
-	
+
 	@Override
 	public String toString() {
-		return name.toString() +" : " + this.getClass().getSimpleName();
+		return name.toString() + " : " + this.getClass().getSimpleName();
 	}
-	
+
 	public Compound getRoot() {
 		Compound current = this;
-		for(;current.getParent()!=null;current = current.getParent());
+		for (; current.getParent() != null; current = current.getParent())
+			;
 		return current;
 	}
 
@@ -47,8 +50,8 @@ public abstract class Compound implements Iterable<Compound>{
 	protected void setParent(final Compound parent) {
 		this.parent = parent;
 	}
-	
-@Override
+
+	@Override
 	public Iterator<Compound> iterator() {
 		return new Iterator<Compound>() {
 			private final int size;
@@ -58,9 +61,10 @@ public abstract class Compound implements Iterable<Compound>{
 				size = children.size();
 				current = 0;
 			}
+
 			@Override
 			public boolean hasNext() {
-				return current<size;
+				return current < size;
 			}
 
 			@Override
@@ -68,5 +72,5 @@ public abstract class Compound implements Iterable<Compound>{
 				return getChild(current++);
 			}
 		};
-	}	
+	}
 }
