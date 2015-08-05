@@ -1,8 +1,7 @@
 package org.spartan.fajita.api.bnf;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
@@ -24,123 +23,98 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
  * @author Tomer
  *
  */
-public class BNF {
-	Set<Rule> rules;
-	Set<NonTerminal> nonTerminals;
-	Set<Terminal> terminals;
+public class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
+    final Set<Rule<Term,NT>> rules;
+    final Set<NT> nonTerminals;
+    final Set<Term> terminals;
+    private final Class<Term> termClass;
+    private final Class<NT> ntClass;
 
-	private final Terminal EPSILON_TERM;
-	public final NonTerminal EPSILON;
+    public BNF(final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+	this.termClass = terminalEnum;
+	this.ntClass = nonterminalEnum;
+	rules = new LinkedHashSet<>();
+	terminals = EnumSet.allOf(terminalEnum);
+	nonTerminals = EnumSet.allOf(nonterminalEnum);
+    }
 
-	public BNF() {
-		rules = new LinkedHashSet<>();
-		nonTerminals = new LinkedHashSet<>();
-		terminals = new LinkedHashSet<>();
-		
-		EPSILON = addNT("EPSILON");
-		EPSILON_TERM = addTerm("");
+    public Deriver derive(final NT nt) {
+	return new Deriver(nt);
+    }
 
-		nonTerminals.add(EPSILON);
-		terminals.add(EPSILON_TERM);
-		
-		derive(EPSILON).to(EPSILON_TERM);
+    private boolean symbolExists(final Symbol symb) {
+	return nonTerminals.contains(symb) || terminals.contains(symb);
+    }
+
+    private BNF<Term,NT> addNewRule(final Rule<Term,NT> r, final Symbol[] symbols) {
+	if (!symbolExists(r.lhs))
+	    throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
+	boolean firstRule = rules.add(r);
+	if (!firstRule)
+	    throw new IllegalStateException("Nonterminal '" + r.lhs.name() + "' already has a rule.");
+	return this;
+    }
+
+    private BNF<Term,NT> addRule(final DerivationRule<Term,NT> r) {
+	return addNewRule(r, r.expression);
+    }
+
+    private BNF<Term,NT> addRule(final InheritenceRule<Term,NT> r) {
+	return addNewRule(r, r.subtypes);
+    }
+
+    @Override
+    public String toString() {
+	StringBuilder sb = new StringBuilder("Rules:\n");
+	for (Rule<Term,NT> rule : rules)
+	    sb.append(rule.toString() + "\n");
+	return sb.toString();
+    }
+
+    public void finish() {
+	for (NonTerminal nonTerminal : nonTerminals)
+	    if (!rules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal)))
+		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    }
+
+    public final class Deriver {
+
+	public final NT lhs;
+
+	private Deriver(final NT lhs) {
+	    this.lhs = lhs;
 	}
 
-	public Deriver derive(final NonTerminal nt) {
-		return new Deriver(nt);
+	@SuppressWarnings("unchecked")
+	public BNF<Term,NT> toOneOf(final NT... nonterminals) {
+	    return addRule(new InheritenceRule<Term,NT>(termClass,ntClass,lhs, nonterminals));
 	}
 
-	private boolean symbolExists(final Symbol symb){
-		return nonTerminals.contains(symb) || terminals.contains(symb);	
+	public BNF<Term,NT> to(final Symbol... symbols) {
+	    return addRule(new DerivationRule<Term,NT>(termClass,ntClass,lhs, symbols));
 	}
-	
-	private BNF addNewRule(final Rule r,final Symbol[] symbols) {
-		Optional<Symbol> missingSymbol= Arrays.asList(symbols)
-				.stream()
-				.filter(symb -> !symbolExists(symb))
-				.findAny();
-		if (missingSymbol.isPresent())
-			throw new IllegalArgumentException(missingSymbol.get().identifier+" is undefined.");
-		if (!symbolExists(r.lhs))
-			throw new IllegalArgumentException(r.lhs.identifier+" is undefined.");
-		boolean firstRule = rules.add(r);
-		if (!firstRule)
-			throw new IllegalStateException("Nonterminal '" + r.lhs.identifier + "' already has a rule.");
-		return this;
-	}
-	
-	private BNF addRule(final DerivationRule r){
-		return addNewRule(r,r.expression);
-	}
-	
-	private BNF addRule(final InheritenceRule r){
-		return addNewRule(r,r.subtypes);
-	}
-	
-	
-	public NonTerminal addNT(final String name){
-		NonTerminal nt = new NonTerminal(name);
-		nonTerminals.add(nt);
-		return nt;
-	}
-	
-	public Terminal addTerm(final String name){
-		Terminal term = new Terminal(name);
-		terminals.add(term);
-		return term;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder("Rules:\n");
-		for (Rule rule : rules)
-			sb.append(rule.toString() + "\n");
-		return sb.toString();
-	}
+    }
 
-	public void finish(){
-		for (NonTerminal nonTerminal : nonTerminals)
-			if (!rules.stream().anyMatch(rule->rule.lhs.equals(nonTerminal)))
-				throw new IllegalStateException("nonTerminal "+nonTerminal+" has no rule");
-	}
-//	public static Func func(final String functionName){
-//		return new Func(functionName);
-//	}
-	
+    // public static Func func(final String functionName){
+    // return new Func(functionName);
+    // }
 
-	public final class Deriver {
-
-		public final NonTerminal lhs;
-
-		private Deriver(final NonTerminal lhs) {
-			this.lhs = lhs;
-		}
-
-		public BNF toOneOf(final NonTerminal... nonterminals) {
-			return addRule(new InheritenceRule(lhs, nonterminals));
-		}
-
-		public BNF to(final Symbol... symbols) {
-			return addRule(new DerivationRule(lhs, symbols));
-		}
-	}
-
-//	public static final class Func{
-//
-//		private final String functionName;
-//
-//		public Func(final String functionName) {
-//			this.functionName = functionName;
-//		}
-//
-//		public String[] withParams(final String ... parameters){
-//			ArrayList<String> l = new ArrayList<>(Arrays.asList(parameters));
-//			l.add(0,functionName);
-//			return l.toArray(new String[l.size()]);
-//		}
-//		
-//		public String[] noParams(){
-//			return new String[]{functionName};
-//		}
-//	}
+    // public static final class Func{
+    //
+    // private final String functionName;
+    //
+    // public Func(final String functionName) {
+    // this.functionName = functionName;
+    // }
+    //
+    // public String[] withParams(final String ... parameters){
+    // ArrayList<String> l = new ArrayList<>(Arrays.asList(parameters));
+    // l.add(0,functionName);
+    // return l.toArray(new String[l.size()]);
+    // }
+    //
+    // public String[] noParams(){
+    // return new String[]{functionName};
+    // }
+    // }
 }

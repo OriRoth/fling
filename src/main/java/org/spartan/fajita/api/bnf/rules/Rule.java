@@ -1,11 +1,16 @@
 package org.spartan.fajita.api.bnf.rules;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public abstract class Rule {
-	public final NonTerminal lhs;
+public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
+	public final NT lhs;
+	protected final Class<NT> ntClass;
+	protected final Class<Term> termClass;
 
-	public Rule(final NonTerminal lhs) {
+	public Rule(final Class<Term> termClass,final Class<NT> ntClass,final NT lhs) {
+		this.termClass = termClass;
+		this.ntClass = ntClass;
 		this.lhs = lhs;
 	}
 
@@ -21,7 +26,7 @@ public abstract class Rule {
 		if (obj.getClass() != getClass())
 			return false;
 
-		return lhs.equals(((Rule) obj).lhs);
+		return lhs.equals(((Rule<?,?>) obj).lhs);
 	}
 
 	/**
