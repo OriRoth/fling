@@ -22,14 +22,15 @@ public class BinaryExpressions {
 		Literal e1 = bool(true).or().bool(false);
 		
 		Literal e2 = bool(true).or().bool(false).and().bool(false);
+		Literal e3 = not().not().bool(true);
 				
 		// bottom up
-		Compound e3 = not(bool(true));
-		Compound e4 = or(bool(true),bool(false));
-		Compound e5 = and(bool(false), bool(true));
-		Compound e6 = or(or(bool(true),bool(false)), and(bool(true),bool(false)));
+		Compound e4 = not(bool(true));
+		Compound e5 = or(bool(true),bool(false));
+		Compound e6 = and(bool(false), bool(true));
+		Compound e7 = or(or(bool(true),bool(false)), and(bool(true),bool(false)));
 
-		showASTs(e0,e1,e2,e3,e4,e5,e6);
+		showASTs(e0,e1,e2,e3,e4,e5,e6,e7);
 	}
 	
 	public static void buildBNF() {

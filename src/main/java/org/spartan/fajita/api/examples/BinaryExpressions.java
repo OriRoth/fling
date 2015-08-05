@@ -50,17 +50,6 @@ public class BinaryExpressions {
 			return new Literal(this, b);
 		}
 
-		// this is part of the bottom up syntax
-		public Compound or(final CompoundExpression e1, final CompoundExpression e2) {
-			new Or(this, e1, e2);
-			return this;
-		}
-
-		public Compound and(final CompoundExpression e1, final CompoundExpression e2) {
-			new And(this, e1, e2);
-			return this;
-		}
-
 		@Override
 		public String getName() {
 			return "EXPRESSION";
@@ -101,7 +90,6 @@ public class BinaryExpressions {
 		// for top down
 		public And(final Expr parent) {
 			super(parent);
-			parent.deriveTo(this);
 		}
 
 		// for bottom up
@@ -152,6 +140,10 @@ public class BinaryExpressions {
 
 		public Literal bool(final boolean b) {
 			return new Literal((Expr) getChild(1), b);
+		}
+		
+		public Not not(){
+			return new Not((Expr)getChild(1));
 		}
 		
 		@Override
@@ -258,5 +250,9 @@ public class BinaryExpressions {
 
 	public static Not not(final CompoundExpression e) {
 		return new Not(new Expr(),e);
+	}
+	
+	public static Not not() {
+		return new Not(new Expr());
 	}
 }
