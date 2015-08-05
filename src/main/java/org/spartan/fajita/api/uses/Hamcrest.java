@@ -15,6 +15,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class Hamcrest {
+	@SuppressWarnings("unchecked")
 	public static void expressionBuilder(){
 				
 		// top down
@@ -28,9 +29,9 @@ public class Hamcrest {
 		
 		// bottom up
 		Compound e5 = assertThat(e1, not(equal_to("S")));
-		Compound e6 = assertThat(e1, not(not(equal_to("S"))));
-		
-		showASTs(e0,e1,e2,e3,e4,e5,e6);
+		Compound e6 = assertThat("A", not(not(equal_to("S"))));
+		Compound e7 = assertThat("ASDAD", not().any_of(not().anything(),equal_to("AS")));
+		showASTs(e0,e1,e2,e3,e4,e5,e6,e7);
 	}
 	
 	public static void buildBNF() {

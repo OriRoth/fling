@@ -1,14 +1,13 @@
 package org.spartan.fajita.api.examples;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import org.spartan.fajita.api.ast.Atomic;
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.ast.InheritedNonterminal;
+import org.spartan.fajita.api.examples.HamcrestBuilder.EqualTo.AnyOf;
 import org.spartan.fajita.api.examples.HamcrestBuilder.EqualTo.Not;
 
-//TODO : add anyof rules
 public class HamcrestBuilder {
 
 	// inherited nonTerminals definitions
@@ -29,21 +28,6 @@ public class HamcrestBuilder {
 		@Override
 		public Matcher<T> getParent() {
 			return (Matcher<T>) super.getParent();
-		}
-		
-		/**
-		 * @return the highest root THAT is a CompoundMatcher 
-		 * 
-		 */
-		@Override
-		public Compound getRoot() {
-			Stack<Compound> s = new Stack<>();
-			Compound current = this;
-			for (; current.getParent() != null; current = current.getParent())
-				s.push(current);
-			while(!CompoundMatcher.class.isAssignableFrom(s.peek().getClass()))
-				s.pop();
-			return s.peek();
 		}
 	}
 
@@ -70,17 +54,17 @@ public class HamcrestBuilder {
 	/* %%%%%%%%%%%%%%%%%%%%%% */
 
 	// nonTerminals definitions
-	public static class S<T> extends InheritedNonterminal{
+	public static class S<T> extends InheritedNonterminal {
 		public S(final T value, final CompoundMatcher<T> m) {
 			super(null);
-			deriveTo(new AssertThat<T>(this,value, m.getRoot()));
+			deriveTo(new AssertThat<T>(this, value, m.getRoot()));
 		}
 
 		@Override
 		public String getName() {
 			return "S";
 		}
-		
+
 	}
 
 	public static class AssertThat<T> extends Compound {
@@ -89,7 +73,7 @@ public class HamcrestBuilder {
 		final Matcher<T> child2;
 
 		@SuppressWarnings("unchecked")
-		public AssertThat(final Compound parent,final T value, final Compound c) {
+		public AssertThat(final Compound parent, final T value, final Compound c) {
 			super(parent);
 			child0 = (AssertThatTerm) getChild(0);
 			child1 = (ValueTerm<T>) getChild(1);
@@ -205,6 +189,38 @@ public class HamcrestBuilder {
 			return "EQUAL_TO";
 		}
 
+		public static class AnyOf<T> extends CompoundMatcher<T> {
+			final AnyOfTerm<T> child0;
+
+			// for top-down
+			@SuppressWarnings("unchecked")
+			public AnyOf(final Matcher<T> parent, final CompoundMatcher<T>[] matchers) {
+				super(parent);
+				child0 = (AnyOfTerm<T>) getChild(0);
+				for (CompoundMatcher<T> matcher : matchers) {
+					children.add(new Matcher<T>(this));
+					((Matcher<T>) children.get(children.size() - 1)).deriveTo(matcher.getRoot());
+				}
+			}
+
+			// for bottom-up
+			public AnyOf(final CompoundMatcher<T>[] value) {
+				this(new Matcher<T>(), value);
+			}
+
+			@Override
+			protected ArrayList<Compound> getChildren() {
+				ArrayList<Compound> $ = new ArrayList<>();
+				$.add(new AnyOfTerm<T>(this));
+				return $;
+			}
+
+			@Override
+			public String getName() {
+				return "ANY_OF";
+			}
+		}
+
 		public static class Not<T> extends CompoundMatcher<T> {
 			final NotTerm child0;
 			final Matcher<T> child1;
@@ -247,7 +263,7 @@ public class HamcrestBuilder {
 			}
 
 			public EqualTo<T> equals_to(final T value) {
-				return new EqualTo<T>(child1,value);
+				return new EqualTo<T>(child1, value);
 			}
 
 			public Anything<T> anything() {
@@ -255,7 +271,12 @@ public class HamcrestBuilder {
 			}
 
 			public InstaceOf<T> instance_of(final Class<? extends T> type) {
-				return new InstaceOf<>(child1,type);
+				return new InstaceOf<>(child1, type);
+			}
+
+			@SuppressWarnings("unchecked")
+			public AnyOf<T> any_of(final CompoundMatcher<T>... compoundMatchers) {
+				return new AnyOf<>(child1, compoundMatchers);
 			}
 
 		}
@@ -321,16 +342,16 @@ public class HamcrestBuilder {
 		}
 	}
 
-	// public static class AnyOfTerm extends Atomic {
-	// public AnyOfTerm(final Compound parent) {
-	// super(parent);
-	// }
-	//
-	// @Override
-	// public String getName() {
-	// return "any_of";
-	// }
-	// }
+	public static class AnyOfTerm<T> extends Atomic {
+		public AnyOfTerm(final Compound parent) {
+			super(parent);
+		}
+
+		@Override
+		public String getName() {
+			return "any_of";
+		}
+	}
 
 	public static class TypeTerm<T> extends Atomic {
 		public TypeTerm(final Compound parent) {
@@ -377,14 +398,16 @@ public class HamcrestBuilder {
 
 	/* %%%%%%%%%%%%%%%%%%%%%% */
 
-	// static functions definitions
-
-	public static <T> Compound assertThat(final T value, final CompoundMatcher<T> matcher) {
-		return new S<T>(value, matcher);
-	}
+	// bottom-up methods , return CompoundMatcher so no additional methods will
+	// we invoked
 
 	public static <T> CompoundMatcher<T> not(final CompoundMatcher<T> matcher) {
 		return new Not<T>(matcher);
+	}
+
+	// top-down methods
+	public static <T> Compound assertThat(final T value, final CompoundMatcher<T> matcher) {
+		return new S<T>(value, matcher);
 	}
 
 	public static <T> Not<T> not() {
@@ -401,5 +424,10 @@ public class HamcrestBuilder {
 
 	public static <T> InstaceOf<T> instance_of(final Class<? extends T> type) {
 		return new InstaceOf<T>(type);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> AnyOf<T> any_of(final CompoundMatcher<T>... matchers) {
+		return new AnyOf<>(matchers);
 	}
 }
