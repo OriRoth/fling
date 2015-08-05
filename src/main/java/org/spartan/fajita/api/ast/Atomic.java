@@ -1,12 +1,11 @@
 package org.spartan.fajita.api.ast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class Atomic extends Compound {
 
-	public Atomic(final Compound parent, final Object... parameters) {
-		super(parent,parameters);
+	public Atomic(final Compound parent) {
+		super(parent);
 	}
 
 	@Override
@@ -16,6 +15,6 @@ public abstract class Atomic extends Compound {
 	
 	@Override
 	public String toString() {
-		return super.toString() +" = "+ Arrays.toString(params);
+		return super.toString();
 	}
 }

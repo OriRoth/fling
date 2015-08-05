@@ -15,12 +15,9 @@ public class HamcrestBuilder {
 	}
 
 	public static abstract class CompoundMatcher<T> extends Compound implements IMatcher {
-		CompoundMatcher(final Matcher<T> parent) {
-			this(parent, new Object[] {});
-		}
 
-		CompoundMatcher(final Matcher<T> parent, final Object... params) {
-			super(parent, params);
+		CompoundMatcher(final Matcher<T> parent) {
+			super(parent);
 			parent.deriveTo(this);
 		}
 
@@ -354,6 +351,8 @@ public class HamcrestBuilder {
 	}
 
 	public static class TypeTerm<T> extends Atomic {
+		private Class<? extends T> type;
+
 		public TypeTerm(final Compound parent) {
 			super(parent);
 		}
@@ -364,16 +363,22 @@ public class HamcrestBuilder {
 		}
 
 		public void setType(final Class<? extends T> type) {
-			params = new Object[] { type };
+			this.type = type;
 		}
 
-		@SuppressWarnings("unchecked")
 		public Class<? extends T> getType() {
-			return (Class<? extends T>) params[0];
+			return type;
+		}
+		
+		@Override
+		public String toString() {
+			return super.toString() + " = "+type.getSimpleName();
 		}
 	}
 
 	public static class ValueTerm<T> extends Atomic {
+		private T t;
+
 		public ValueTerm(final Compound parent) {
 			super(parent);
 		}
@@ -384,12 +389,16 @@ public class HamcrestBuilder {
 		}
 
 		public void setValue(final T t) {
-			params = new Object[] { t };
+			this.t = t;
 		}
 
-		@SuppressWarnings("unchecked")
 		public T getValue() {
-			return (T) params[0];
+			return t;
+		}
+		
+		@Override
+		public String toString() {
+			return super.toString() + " = " + t;
 		}
 
 	}

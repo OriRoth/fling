@@ -15,11 +15,7 @@ public class BinaryExpressions {
 	public static abstract class CompoundExpression extends Compound implements Expression {
 
 		CompoundExpression(final Expr parent) {
-			this(parent,new Object[]{});
-		}
-
-		CompoundExpression(final Expr parent, final Object... params) {
-			super(parent, params);
+			super(parent);
 			parent.deriveTo(this);
 		}
 		
@@ -156,7 +152,7 @@ public class BinaryExpressions {
 
 		public Literal(final Expr parent, final boolean b) {
 			super(parent);
-			((BoolTerm)getChild(0)).setBool(b);
+			((BoolTerm)getChild(0)).setValue(b);
 			parent.deriveTo(this);
 		}
 
@@ -224,6 +220,7 @@ public class BinaryExpressions {
 	}
 	
 	public static class BoolTerm extends Atomic{
+		private boolean value;
 		public BoolTerm(final Compound parent) {
 			super(parent);
 		}
@@ -232,8 +229,15 @@ public class BinaryExpressions {
 			return "boolean";
 		}
 		
-		public void setBool(final boolean b){
-			params = new Object[]{b};
+		public boolean getValue() {
+			return value;
+		}
+		public void setValue(final boolean value) {
+			this.value = value;
+		}
+		@Override
+		public String toString() {
+			return super.toString() +" = "+value;
 		}
 	}
 	public static Literal bool(final boolean b) {

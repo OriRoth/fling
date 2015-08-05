@@ -5,22 +5,14 @@ import java.util.Iterator;
 
 public abstract class Compound implements Iterable<Compound> {
 
-	// TODO: remove params. define it directly in implementor of Atomic
-	protected Object[] params;
-
 	protected final ArrayList<Compound> children;
 	public final String name;
 	private Compound parent;
 
 	public Compound(final Compound parent) {
-		this(parent, new Object[] {});
-	}
-
-	public Compound(final Compound parent, final Object... params) {
 		setParent(parent);
 		name = getName();
 		children = getChildren();
-		this.params = params;
 	}
 
 	protected abstract ArrayList<Compound> getChildren();
