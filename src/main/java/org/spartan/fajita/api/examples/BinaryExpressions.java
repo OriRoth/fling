@@ -9,10 +9,10 @@ import org.spartan.fajita.api.ast.InheritedNonterminal;
 public class BinaryExpressions {
 
 	// 1)for each NT that has an inheritence rule we need an empty interface
-	public interface Expression {
+	 interface Expression {
 	}
 	// 2)and and empty abstract class for compound
-	public static abstract class CompoundExpression extends Compound implements Expression {
+	static abstract class CompoundExpression extends Compound implements Expression {
 
 		CompoundExpression(final Expr parent) {
 			super(parent);
@@ -28,11 +28,11 @@ public class BinaryExpressions {
 	// 3) and a node for that NT . it will always be the parent of the derived nodes
 	public static class Expr extends InheritedNonterminal implements Expression {
 
-		public Expr(final Compound parent) {
+		Expr(final Compound parent) {
 			super(parent);
 		}
 
-		public Expr() {
+		Expr() {
 			super(null);
 		}
 
@@ -55,12 +55,12 @@ public class BinaryExpressions {
 	public static class Or extends CompoundExpression{
 
 		// for top-down
-		public Or(final Expr parent) {
+		Or(final Expr parent) {
 			super(parent);
 		}
 
 		// for bottom-up
-		public Or(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
+		Or(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
 			super(parent);
 			((Expr) getChild(0)).deriveTo(e1);
 			((Expr) getChild(2)).deriveTo(e2);
@@ -84,12 +84,12 @@ public class BinaryExpressions {
 	public static class And extends CompoundExpression {
 
 		// for top down
-		public And(final Expr parent) {
+		And(final Expr parent) {
 			super(parent);
 		}
 
 		// for bottom up
-		public And(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
+		And(final Expr parent, final CompoundExpression e1, final CompoundExpression e2) {
 			super(parent);
 			((Expr) getChild(0)).deriveTo(e1);
 			((Expr) getChild(2)).deriveTo(e2);
@@ -115,13 +115,13 @@ public class BinaryExpressions {
 
 	public static class Not extends CompoundExpression {
 		//for top down
-		public Not(final Expr parent) {
+		Not(final Expr parent) {
 			super(parent);
 			parent.deriveTo(this);
 		}
 
 		// for bottom up
-		public Not(final Expr parent,final CompoundExpression e) {
+		Not(final Expr parent,final CompoundExpression e) {
 			super(parent);
 			((Expr) getChild(1)).deriveTo(e);
 		}
@@ -150,7 +150,7 @@ public class BinaryExpressions {
 
 	public static class Literal extends CompoundExpression {
 
-		public Literal(final Expr parent, final boolean b) {
+		Literal(final Expr parent, final boolean b) {
 			super(parent);
 			((BoolTerm)getChild(0)).setValue(b);
 			parent.deriveTo(this);
@@ -190,7 +190,7 @@ public class BinaryExpressions {
 	}
 	
 	public static class OrTerm extends Atomic{
-		public OrTerm(final Compound parent) {
+		OrTerm(final Compound parent) {
 			super(parent);
 		}
 		@Override
@@ -200,7 +200,7 @@ public class BinaryExpressions {
 	}
 
 	public static class AndTerm extends Atomic{
-		public AndTerm(final Compound parent) {
+		AndTerm(final Compound parent) {
 			super(parent);
 		}
 		@Override
@@ -210,7 +210,7 @@ public class BinaryExpressions {
 	}
 	
 	public static class NotTerm extends Atomic{
-		public NotTerm(final Compound parent) {
+		NotTerm(final Compound parent) {
 			super(parent);
 		}
 		@Override
@@ -221,7 +221,7 @@ public class BinaryExpressions {
 	
 	public static class BoolTerm extends Atomic{
 		private boolean value;
-		public BoolTerm(final Compound parent) {
+		BoolTerm(final Compound parent) {
 			super(parent);
 		}
 		@Override
