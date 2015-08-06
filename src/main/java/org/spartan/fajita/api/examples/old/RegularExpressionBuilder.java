@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples;
+package org.spartan.fajita.api.examples.old;
 public class RegularExpressionBuilder {
 
 	// in this implementation the semantics is written in these classes

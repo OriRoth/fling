@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples;
+package org.spartan.fajita.api.examples.old;
 import java.util.ArrayList;
 
 public class RegularExpressionBuilder2 {
@@ -10,7 +10,7 @@ public class RegularExpressionBuilder2 {
 	 * @author Tomer
 	 *
 	 */
-	public static class Compound {
+	private static class Compound {
 		public static enum NodeType {
 			OR, AND, KLEENE, KLEENE_P, EXCEPT, STUB, LEAF;
 		}
@@ -33,13 +33,15 @@ public class RegularExpressionBuilder2 {
 		}
 	}
 
-	public static class Atomic extends Compound {
+	private static class Atomic extends Compound {
 
 		public static enum LeafType {
 			WORD, Chars
 		}
 
+		@SuppressWarnings("unused")
 		public final Object content;
+		@SuppressWarnings("unused")
 		public final LeafType leafType;
 
 		public Atomic(final LeafType leafType, final Object content) {
