@@ -1,5 +1,6 @@
 package org.spartan.fajita.api.bnf;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.generators.ApiGenerator;
 
 /**
  * There are a few possibilities regarding checking the validity of the BNF
@@ -24,13 +26,15 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
  *
  */
 public class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
-    final Set<Rule<Term,NT>> rules;
-    final Set<NT> nonTerminals;
-    final Set<Term> terminals;
+    private final Set<Rule<Term,NT>> rules;
+    private final Set<NT> nonTerminals;
+    private final Set<Term> terminals;
     private final Class<Term> termClass;
     private final Class<NT> ntClass;
+    private String apiName;
 
     public BNF(final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+	apiName = "defaultAPI";
 	this.termClass = terminalEnum;
 	this.ntClass = nonterminalEnum;
 	rules = new LinkedHashSet<>();
@@ -38,18 +42,23 @@ public class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTe
 	nonTerminals = EnumSet.allOf(nonterminalEnum);
     }
 
+    public BNF<Term,NT> setApiName(final String apiName){
+	this.apiName = apiName;
+	return this;
+    }
+    
     public Deriver derive(final NT nt) {
 	return new Deriver(nt);
     }
 
     private boolean symbolExists(final Symbol symb) {
-	return nonTerminals.contains(symb) || terminals.contains(symb);
+	return getNonTerminals().contains(symb) || getTerminals().contains(symb);
     }
 
     private BNF<Term,NT> addNewRule(final Rule<Term,NT> r, final Symbol[] symbols) {
 	if (!symbolExists(r.lhs))
 	    throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
-	boolean firstRule = rules.add(r);
+	boolean firstRule = getRules().add(r);
 	if (!firstRule)
 	    throw new IllegalStateException("Nonterminal '" + r.lhs.name() + "' already has a rule.");
 	return this;
@@ -66,15 +75,35 @@ public class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTe
     @Override
     public String toString() {
 	StringBuilder sb = new StringBuilder("Rules:\n");
-	for (Rule<Term,NT> rule : rules)
+	for (Rule<Term,NT> rule : getRules())
 	    sb.append(rule.toString() + "\n");
 	return sb.toString();
     }
 
     public void finish() {
-	for (NonTerminal nonTerminal : nonTerminals)
-	    if (!rules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal)))
+	for (NonTerminal nonTerminal : getNonTerminals())
+	    if (!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal)))
 		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    }
+
+    public String generateCode(){
+	return new ApiGenerator<Term,NT>(this).generate();
+    }
+    
+    public String getApiName() {
+	return apiName;
+    }
+
+    public Collection<Rule<Term,NT>> getRules() {
+	return rules;
+    }
+
+    public Collection<NT> getNonTerminals() {
+	return nonTerminals;
+    }
+
+    public Collection<Term> getTerminals() {
+	return terminals;
     }
 
     public final class Deriver {
