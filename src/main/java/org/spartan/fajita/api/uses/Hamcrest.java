@@ -16,6 +16,7 @@ import static org.spartan.fajita.api.uses.Hamcrest.Term.not;
 
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -53,22 +54,20 @@ public class Hamcrest {
     }
 
     public static void buildBNF() {
-	BNF<Hamcrest.Term, Hamcrest.NT> b = new BNF<>(Term.class, NT.class);
-
-	b //
-		.derive(ASSERT).to(assertThat, value, MATCHER) //
-		.derive(MATCHER).toOneOf(INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF) //
-		.derive(INSTANCE_OF).to(instance_of, type) //
+	BNF<Term,NT> bnf = new BNFBuilder<>(Term.class, NT.class)
+		.derive(ASSERT).to(assertThat).and(value).and( MATCHER) //
+		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
+		.derive(INSTANCE_OF).to(instance_of).and(type) //
 		.derive(ANYTHING).to(anything) //
-		.derive(EQUAL_TO).to(equals_to, value) //
-		.derive(NOT).to(not, MATCHER) //
-		.derive(ANY_OF).to(any_of, MATCHERS) //
-		.derive(MATCHERS).to(MATCHER, MATCHERS_OPT) //
-		.derive(MATCHERS_OPT).toOneOf(MATCHERS, EPSILON) //
+		.derive(EQUAL_TO).to(equals_to).and(value) //
+		.derive(NOT).to(not).and(MATCHER) //
+		.derive(ANY_OF).to(any_of).and(MATCHERS) //
+		.derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
+		.derive(MATCHERS_OPT).to(MATCHERS).or(EPSILON) //
 		.derive(EPSILON).to(epsilon) //
 		.finish();
 
-	System.out.println(b.generateCode());
+	System.out.println(bnf);
     }
 
     public static void main(final String[] args) {
