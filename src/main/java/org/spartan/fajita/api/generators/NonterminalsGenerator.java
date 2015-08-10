@@ -32,7 +32,7 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
 	modifyExisting(ntClass, ntClassname(nonTerminal));
     }
 
-    public JavaClassSource createNew() {
+    JavaClassSource createNew() {
 	JavaClassSource ntClass = generateNTClass(rule.lhs);
 	modifyExisting(ntClass,"Compound");
 	return ntClass;
