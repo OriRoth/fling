@@ -37,7 +37,7 @@ public class BNFAnalyzer<Term extends Enum<Term> & Terminal, NT extends Enum<NT>
     private void analyzeDerivationRule(final DerivationRule<Term, NT> rule) {
 	AnalyzedNT analyzed = getNT(rule.lhs);
 	analyzed.setAbstract(false);
-	analyzed.setChildren(rule.expression);
+	analyzed.setChildren(rule.expression.toArray(new Symbol[]{}));
 	for (Symbol symb : rule.expression) {
 	    AnalyzedSymbol<? extends Symbol> analyzedSymb = getSymbol(symb);
 	    analyzedSymb.setDerivedFrom(rule.lhs);
@@ -47,7 +47,7 @@ public class BNFAnalyzer<Term extends Enum<Term> & Terminal, NT extends Enum<NT>
     private void analyzeInheritenceRule(final InheritenceRule<Term, NT> rule) {
 	AnalyzedNT analyzed = getNT(rule.lhs);
 	analyzed.setAbstract(true);
-	analyzed.setChildren(rule.subtypes);
+	analyzed.setChildren(rule.subtypes.toArray(new Symbol[]{}));
 	for (NT subtype : rule.subtypes)
 	    getNT(subtype).setAbstractParent(rule.lhs);
     }

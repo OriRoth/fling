@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.spartan.fajita.api.ast.Atomic;
 import org.spartan.fajita.api.ast.Compound;
-import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 /**

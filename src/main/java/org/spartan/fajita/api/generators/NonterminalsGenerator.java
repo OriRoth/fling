@@ -19,7 +19,7 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
     @SuppressWarnings("unchecked")
     public NonterminalsGenerator(final DerivationRule<Term, NT> rule) {
 	this.rule = rule;
-	children = new FieldSource[rule.expression.length];
+	children = new FieldSource[rule.expression.size()];
     }
 
     private void modifyExisting(final JavaClassSource ntClass,final String parent) {
@@ -52,8 +52,8 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
     }
 
     private void addFields(final JavaClassSource ntClass) {
-	for (int i = 0; i < rule.expression.length; i++) {
-	    Symbol symbol = rule.expression[i];
+	for (int i = 0; i < rule.expression.size(); i++) {
+	    Symbol symbol = rule.expression.get(i);
 	    String type;
 	    if (NonTerminal.class.isAssignableFrom(symbol.getClass()))
 		type = ntClassname((NonTerminal) symbol);

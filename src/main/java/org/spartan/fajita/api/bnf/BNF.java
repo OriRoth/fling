@@ -29,8 +29,8 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 
     public Collection<Rule<Term, NT>> getAllRules() {
 	ArrayList<Rule<Term, NT>> $ = new ArrayList<>();
-	$.addAll(derivationRules);
-	$.addAll(inheritenceRules);
+	$.addAll(getDerivationRules());
+	$.addAll(getInheritenceRules());
 	return $;
     }
 
@@ -58,11 +58,19 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
     @Override
     public String toString() {
 	SortedSet<Rule<Term,NT>> rules = new TreeSet<>();
-	rules.addAll(this.derivationRules);
-	rules.addAll(this.inheritenceRules);
+	rules.addAll(this.getDerivationRules());
+	rules.addAll(this.getInheritenceRules());
 	StringBuilder sb = new StringBuilder("Rules for "+getApiName()+":\n");
 	for (Rule<Term, NT> rule : rules)
 	    sb.append(rule.toString() + "\n");
 	return sb.toString();
+    }
+
+    public Collection<DerivationRule<Term, NT>> getDerivationRules() {
+	return derivationRules;
+    }
+
+    public Collection<InheritenceRule<Term, NT>> getInheritenceRules() {
+	return inheritenceRules;
     }
 }

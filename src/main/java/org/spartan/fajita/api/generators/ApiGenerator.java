@@ -21,7 +21,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class ApiGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
 
-    private final BNF<Term, NT> bnf;
+    private final BNF<Term,NT> bnf;
     private final JavaClassSource containerClass;
 
     private final List<JavaClassSource> nonterminalClasses;
