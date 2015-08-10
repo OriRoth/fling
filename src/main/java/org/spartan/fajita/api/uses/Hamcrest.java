@@ -6,26 +6,13 @@ import static org.spartan.fajita.api.examples.HamcrestBuilder.equal_to;
 import static org.spartan.fajita.api.examples.HamcrestBuilder.instance_of;
 import static org.spartan.fajita.api.examples.HamcrestBuilder.not;
 import static org.spartan.fajita.api.uses.ASTViewer.showASTs;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.ANYTHING;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.ANY_OF;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.ASSERT;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.EPSILON;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.EQUAL_TO;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.INSTANCE_OF;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.MATCHER;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.MATCHERS;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.MATCHERS_OPT;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.NOT;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.S;
+import static org.spartan.fajita.api.uses.Hamcrest.NT.*;
+import static org.spartan.fajita.api.uses.Hamcrest.Term.*;
 import static org.spartan.fajita.api.uses.Hamcrest.Term.any_of;
 import static org.spartan.fajita.api.uses.Hamcrest.Term.anything;
 import static org.spartan.fajita.api.uses.Hamcrest.Term.assertThat;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.epsilon;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.equals_to;
 import static org.spartan.fajita.api.uses.Hamcrest.Term.instance_of;
 import static org.spartan.fajita.api.uses.Hamcrest.Term.not;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.type;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.value;
 
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
@@ -62,14 +49,13 @@ public class Hamcrest {
     }
 
     public static enum NT implements NonTerminal {
-	S, ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT, EPSILON;
+	ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT, EPSILON;
     }
 
     public static void buildBNF() {
 	BNF<Hamcrest.Term, Hamcrest.NT> b = new BNF<>(Term.class, NT.class);
 
 	b //
-		.derive(S).toOneOf(ASSERT) //
 		.derive(ASSERT).to(assertThat, value, MATCHER) //
 		.derive(MATCHER).toOneOf(INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF) //
 		.derive(INSTANCE_OF).to(instance_of, type) //
@@ -82,7 +68,7 @@ public class Hamcrest {
 		.derive(EPSILON).to(epsilon) //
 		.finish();
 
-	System.out.println(b);
+	System.out.println(b.generateCode());
     }
 
     public static void main(final String[] args) {

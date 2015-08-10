@@ -16,7 +16,7 @@ public class SqlFragment {
 	select, column, from, all, distinct, table, where, equals, geq, leq, literal, epsilon;
 	@Override
 	public Class<?> type() {
-	    return null;
+	    return Void.class;
 	}
     }
 
@@ -25,9 +25,10 @@ public class SqlFragment {
     }
 
     public static void buildBNF() {
-	BNF<Term, NT> b = new BNF<>(Term.class, NT.class);
-
+	BNF<Term, NT> b = new BNF<>(Term.class, NT.class) //
+		.setApiName("SqlFragment");
 	// define the rules
+
 	b //
 		.derive(SELECT_STATEMENT).to(select, QUANTIFIER, COLOUMNS, from, TABLES, WHERE_OPT) //
 		.derive(QUANTIFIER).toOneOf(ALL, DISTINCT) //
@@ -45,9 +46,10 @@ public class SqlFragment {
 		.derive(GEQ).to(geq) //
 		.derive(LEQ).to(leq) //
 		.derive(LITERAL).to(literal) //
-		.derive(EPSILON).to(epsilon).finish();
+		.derive(EPSILON).to(epsilon) //
+		.finish();
 
-	System.out.println(b);
+	System.out.println(b.generateCode());
     }
 
     public static void main(final String[] args) {

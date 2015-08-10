@@ -16,7 +16,6 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.rules.InheritenceRule;
-import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -46,15 +45,11 @@ public class ApiGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<NT
     }
 
     private void generateInheritedNonTerminals() {
-	for (Rule<Term, NT> rule : bnf.getRules()) {
-	    if (!InheritenceRule.class.isAssignableFrom(rule.getClass()))
-		continue;
-
-	    InheritenceRule<Term, NT> rule2 = (InheritenceRule<Term, NT>) rule;
-	    for ( NonTerminal subtype : rule2.subtypes)
-		inheritedNTToParent.put(subtype.name(), rule2.lhs);
+	for (InheritenceRule<Term, NT> rule : bnf.getInheritenceRules()) {
+	    for ( NonTerminal subtype : rule.subtypes)
+		inheritedNTToParent.put(subtype.name(), rule.lhs);
 	    
-	    InheritedNTGenerator<Term, NT> generator = new InheritedNTGenerator<>(rule2);
+	    InheritedNTGenerator<Term, NT> generator = new InheritedNTGenerator<>(rule);
 	    Collection<JavaSource<?>> typesToAdd = new ArrayList<>(generator.generate());
 	    typesToAdd.removeAll(Arrays.asList(generator.getSubNTClasses()));
 	    typesToAdd.forEach(clss -> containerClass.addNestedType(clss));
@@ -64,11 +59,9 @@ public class ApiGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<NT
     }
 
     private void generateAllNonTerminals() {
-	for (Rule<Term, NT> rule : bnf.getRules()) {
-	    if (InheritenceRule.class.isAssignableFrom(rule.getClass()))
-		continue;
+	for (DerivationRule<Term, NT> rule : bnf.getDerivationRules()) {
 
-	    NonterminalsGenerator<Term, NT> generator = new NonterminalsGenerator<>((DerivationRule<Term, NT>) rule);
+	    NonterminalsGenerator<Term, NT> generator = new NonterminalsGenerator<>(rule);
 	    Optional<JavaClassSource> optionalNTClass = nonterminalClasses.stream()
 		    .filter(clss -> clss.getName().equals(ntClassname(rule.lhs))).findAny();
 	    JavaClassSource ntClass = optionalNTClass.orElse(null);
