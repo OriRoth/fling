@@ -23,12 +23,12 @@ public class DerivationRule<Term extends Enum<Term> & Terminal, NT extends Enum<
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder("<" + lhs.name() + "> ::= ");
+	StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
 	for (Symbol symb : expression)
 	    if (ntClass.isAssignableFrom(symb.getClass()))
-		sb.append("<"+symb.toString()+"> ");
+		sb.append(symb.toString2()+" ");
 	    else
-		sb.append(symb.toString() + " ");
+		sb.append(symb.toString2() + " ");
 	return sb.toString();
     }
 }

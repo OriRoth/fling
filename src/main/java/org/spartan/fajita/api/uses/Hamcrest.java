@@ -56,14 +56,14 @@ public class Hamcrest {
     public static void buildBNF() {
 	BNF<Term,NT> bnf = new BNFBuilder<>(Term.class, NT.class)
 		.derive(ASSERT).to(assertThat).and(value).and( MATCHER) //
-		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
+		.derive(MATCHER).toOneOf(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
 		.derive(INSTANCE_OF).to(instance_of).and(type) //
 		.derive(ANYTHING).to(anything) //
 		.derive(EQUAL_TO).to(equals_to).and(value) //
 		.derive(NOT).to(not).and(MATCHER) //
 		.derive(ANY_OF).to(any_of).and(MATCHERS) //
 		.derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
-		.derive(MATCHERS_OPT).to(MATCHERS).or(EPSILON) //
+		.derive(MATCHERS_OPT).toOneOf(MATCHERS).or(EPSILON) //
 		.derive(EPSILON).to(epsilon) //
 		.finish();
 

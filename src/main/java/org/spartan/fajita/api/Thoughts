@@ -49,4 +49,6 @@
  		and the NT represents methods that have nested API calls or abstraction used in grammer.
  		
  	We must think of how to merge these to one coherent idea.
- 	 
+ 
+ 9) At some point we'll have to maintain a stack in the data-structure in order to properly parse the
+ 	input. the stack is inevitable, e.g. balanced parentheses

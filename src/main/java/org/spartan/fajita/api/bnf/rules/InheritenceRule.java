@@ -16,9 +16,9 @@ public class InheritenceRule<Term extends Enum<Term> & Terminal, NT extends Enum
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<" + lhs.name()+ "> ::= ");
+		StringBuilder sb = new StringBuilder(lhs.toString2()+ " ::= ");
 		for (NonTerminal nt : subtypes)
-			sb.append("<"+nt.toString() + "> | ");
+			sb.append(nt.toString2() + " | ");
 		sb.deleteCharAt(sb.length() - 2);
 		return sb.toString();
 	}

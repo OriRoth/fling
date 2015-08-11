@@ -28,19 +28,19 @@ public class SqlFragment {
     public static void buildBNF() {
 
 	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
-		.setApiName("SqlFragment").derive(SELECT_STATEMENT)
-		.to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE_OPT) //
-		.derive(QUANTIFIER).to(ALL).or(DISTINCT) //
+		.setApiName("SqlFragment") //
+		.derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE_OPT) //
+		.derive(QUANTIFIER).toOneOf(ALL).or(DISTINCT) //
 		.derive(ALL).to(all)//
 		.derive(DISTINCT).to(distinct)//
 		.derive(COLOUMNS).to(column).and(COLOUMNS_OPT)//
-		.derive(COLOUMNS_OPT).to(COLOUMNS).or(EPSILON)//
+		.derive(COLOUMNS_OPT).toOneOf(COLOUMNS).or(EPSILON)//
 		.derive(TABLES).to(table).and(TABLES_OPT) //
-		.derive(TABLES_OPT).to(TABLES).or(EPSILON) //
-		.derive(WHERE_OPT).to(WHERE).or(EPSILON) //
+		.derive(TABLES_OPT).toOneOf(TABLES).or(EPSILON) //
+		.derive(WHERE_OPT).toOneOf(WHERE).or(EPSILON) //
 		.derive(WHERE).to(where).and(EXPRESSION) //
 		.derive(EXPRESSION).to(column).and(OP).and(LITERAL) //
-		.derive(OP).to(EQUALS).or(GEQ).or(LEQ) //
+		.derive(OP).toOneOf(EQUALS).or(GEQ).or(LEQ) //
 		.derive(EQUALS).to(equals) //
 		.derive(GEQ).to(geq) //
 		.derive(LEQ).to(leq) //

@@ -136,43 +136,46 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 	    this.lhs = lhs;
 	}
 
-	public UnknownDeriver to(final Symbol symb) {
-	    return new UnknownDeriver(lhs, symb);
+	public AbstractDeriver toOneOf(final NT nt) {
+	    return new AbstractDeriver(lhs, nt);
 	}
 
+	public NormalDeriver to(final Symbol term) {
+	    return new NormalDeriver(lhs, term);
+	}
     }
 
-    /**
-     * We know the first symbol in the right side , but we don't know yet
-     * whether it's a derivation rule or an inheritence rule.
-     * 
-     * if right hand side has only one symbol it will defaultively be a
-     * derivation rule.
-     * 
-     * @author Tomer
-     *
-     */
-    public final class UnknownDeriver extends Deriver {
-
-	public UnknownDeriver(final NT lhs, final Symbol symb) {
-	    super(lhs, symb);
-	}
-
-	public NormalDeriver and(final Symbol symb) {
-	    return new NormalDeriver(lhs, symbols.get(0), symb);
-	}
-
-	@SuppressWarnings("unchecked")
-	public AbstractDeriver or(final NT nt) {
-	    return new AbstractDeriver(lhs, (NT) symbols.get(0), nt);
-	}
-
-	@Override
-	protected void addRuleToBNF() {
-	    addDerivationRule(termClass, ntClass, lhs, symbols);
-	}
-
-    }
+//    /**
+//     * We know the first symbol in the right side , but we don't know yet
+//     * whether it's a derivation rule or an inheritence rule.
+//     * 
+//     * if right hand side has only one symbol it will defaultively be a
+//     * derivation rule.
+//     * 
+//     * @author Tomer
+//     *
+//     */
+//    public final class UnknownDeriver extends Deriver {
+//
+//	public UnknownDeriver(final NT lhs, final Symbol symb) {
+//	    super(lhs, symb);
+//	}
+//
+//	public NormalDeriver and(final Symbol symb) {
+//	    return new NormalDeriver(lhs, symbols.get(0), symb);
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//	public AbstractDeriver or(final NT nt) {
+//	    return new AbstractDeriver(lhs, (NT) symbols.get(0), nt);
+//	}
+//
+//	@Override
+//	protected void addRuleToBNF() {
+//	    addDerivationRule(termClass, ntClass, lhs, symbols);
+//	}
+//
+//    }
 
     /**
      * Currently deriving a normal rule
@@ -182,8 +185,8 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
      */
     public final class NormalDeriver extends Deriver {
 
-	public NormalDeriver(final NT lhs, final Term term) {
-	    super(lhs, term);
+	public NormalDeriver(final NT lhs, final Symbol child) {
+	    super(lhs, child);
 	}
 
 	public NormalDeriver(final NT lhs, final Symbol firstChild, final Symbol secondChild) {
@@ -209,8 +212,8 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
      */
     public final class AbstractDeriver extends Deriver {
 
-	public AbstractDeriver(final NT lhs, final NT firstChild, final NT secondChild) {
-	    super(lhs, firstChild, secondChild);
+	public AbstractDeriver(final NT lhs, final NT firstChild) {
+	    super(lhs, firstChild);
 	}
 
 	public AbstractDeriver or(final NT nt) {
