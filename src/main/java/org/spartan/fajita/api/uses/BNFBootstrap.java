@@ -41,13 +41,13 @@ public class BNFBootstrap {
     public static enum NT implements NonTerminal {
 	S, NAME_OPT, NAME, RULE, RULE_TYPE, ABSTRACT_RULE, //
 	NEXT_ABSTRACT, OR, NORMAL_RULE, NEXT_NORMAL, //
-	AND, NEXT_RULE, FINISH, EPSILON;
+	AND, NEXT,NEXT_RULE, FINISH, EPSILON;
     }
 
     public static void buildBNF() {
 	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
 		.setApiName("BNF Bootstrap") //
-		.derive(S).to(NAME_OPT).and(RULE).and(NEXT_RULE) //
+		.derive(S).to(NAME_OPT).and(RULE).and(NEXT) //
 		.derive(NAME_OPT).toOneOf(NAME).or(EPSILON) //
 		.derive(NAME).to(setApiName) //
 		.derive(RULE).to(derive).and(RULE_TYPE) //
@@ -58,9 +58,10 @@ public class BNFBootstrap {
 		.derive(NORMAL_RULE).to(to).and(NEXT_NORMAL) //
 		.derive(NEXT_NORMAL).toOneOf(AND).or(EPSILON) //
 		.derive(AND).to(and).and(NEXT_NORMAL) //
-		.derive(NEXT_RULE).toOneOf(RULE).or(FINISH) //
-		.derive(EPSILON).to(epsilon) //
+		.derive(NEXT).toOneOf(NEXT_RULE).or(FINISH) //
+		.derive(NEXT_RULE).to(RULE).and(NEXT) //
 		.derive(FINISH).to(finish) //
+		.derive(EPSILON).to(epsilon) //
 		.finish();
 
 	System.out.println(b);
