@@ -31,4 +31,9 @@ public class DerivationRule<Term extends Enum<Term> & Terminal, NT extends Enum<
 		sb.append(symb.toString2() + " ");
 	return sb.toString();
     }
+
+    @Override
+    public List<Symbol> getChildren() {
+	return new ArrayList<>(expression);
+    }
 }

@@ -1,6 +1,9 @@
 package org.spartan.fajita.api.bnf.rules;
 
+import java.util.List;
+
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal>
@@ -54,4 +57,6 @@ public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<N
     public int compareTo(final Rule<Term, NT> other) {
 	return Integer.compare(index, other.index);
     }
+    
+    public abstract List<Symbol> getChildren();
 }
