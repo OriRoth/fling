@@ -146,7 +146,7 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return $;
     }
 
-    public Set<Terminal> getFirstSet(final Symbol... expression) {
+    public Set<Terminal> firstSetOf(final Symbol... expression) {
 	HashSet<Terminal> $ = new HashSet<>();
 	for (Symbol symbol : expression) {
 	    $.addAll(symbolFirstSets.get(symbol));

@@ -52,52 +52,52 @@ public class FirstSetTest {
 
     @Test
     public void testEpsilon() {
-	assertEquals(expectedSet(Terminal.epsilon), bnf.getFirstSet(NT.EPSILON));
+	assertEquals(expectedSet(Terminal.epsilon), bnf.firstSetOf(NT.EPSILON));
     }
 
     @Test
     public void testTerminal() {
-	assertEquals(expectedSet(Term.a), bnf.getFirstSet(Term.a));
+	assertEquals(expectedSet(Term.a), bnf.firstSetOf(Term.a));
     }
 
     @Test
     public void testNT() {
-	assertEquals(expectedSet(Term.a), bnf.getFirstSet(NT.A));
+	assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A));
     }
 
     @Test
     public void testInheritedNT() {
-	assertEquals(expectedSet(Term.a, Term.b), bnf.getFirstSet(NT.AB));
+	assertEquals(expectedSet(Term.a, Term.b), bnf.firstSetOf(NT.AB));
     }
 
     @Test
     public void testNotNullableExpression() {
-	assertFalse(bnf.getFirstSet(NT.EPSILON, NT.A).contains(Term.epsilon));
+	assertFalse(bnf.firstSetOf(NT.EPSILON, NT.A).contains(Term.epsilon));
     }
 
     @Test
     public void testNullableExpression() {
-	assertTrue(bnf.getFirstSet(NT.C, NT.EPSILON, Term.epsilon).contains(Term.epsilon));
+	assertTrue(bnf.firstSetOf(NT.C, NT.EPSILON, Term.epsilon).contains(Term.epsilon));
     }
 
     @Test
     public void testExpressionWithNoNullables() {
-	assertEquals(expectedSet(Term.a), bnf.getFirstSet(NT.A, NT.B));
+	assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A, NT.B));
     }
 
     @Test
     public void testExpressionWithNullables() {
-	assertEquals(expectedSet(Term.d,Term.a,Term.b), bnf.getFirstSet(NT.C, NT.D));
+	assertEquals(expectedSet(Term.d,Term.a,Term.b), bnf.firstSetOf(NT.C, NT.D));
     }
 
     @Test
     public void testRecursiveBNF() {
-	recursive_bnf.getFirstSet(NT_RECURSIVE.REC_1);
+	recursive_bnf.firstSetOf(NT_RECURSIVE.REC_1);
 	// no infinite recursion!
     }
 
     @Test
     public void testRedundantNT() {
-	assertTrue(recursive_bnf.getFirstSet(NT_RECURSIVE.REC_2).isEmpty());
+	assertTrue(recursive_bnf.firstSetOf(NT_RECURSIVE.REC_2).isEmpty());
     }
 }
