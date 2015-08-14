@@ -13,10 +13,11 @@ public class DerivationRule<Term extends Enum<Term> & Terminal, NT extends Enum<
     public final List<Symbol> expression;
 
     public DerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
-	    final List<Symbol> expression,final int index) {
-	super(termClass, ntClass, lhs,index);
+	    final List<Symbol> expression, final int index) {
+	super(termClass, ntClass, lhs, index);
 	for (Symbol s : expression)
-	    if ((!ntClass.isAssignableFrom(s.getClass())) && (!termClass.isAssignableFrom(s.getClass())))
+	    if ((!ntClass.isAssignableFrom(s.getClass())) && (!termClass.isAssignableFrom(s.getClass()))
+		    && (!s.equals(NonTerminal.EPSILON)) && (!s.equals(Terminal.epsilon)))
 		throw new IllegalArgumentException("symbol " + s + " in expression is illegal");
 	this.expression = new ArrayList<>(expression);
     }
@@ -26,7 +27,7 @@ public class DerivationRule<Term extends Enum<Term> & Terminal, NT extends Enum<
 	StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
 	for (Symbol symb : expression)
 	    if (ntClass.isAssignableFrom(symb.getClass()))
-		sb.append(symb.toString2()+" ");
+		sb.append(symb.toString2() + " ");
 	    else
 		sb.append(symb.toString2() + " ");
 	return sb.toString();

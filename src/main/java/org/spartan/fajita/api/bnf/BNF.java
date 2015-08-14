@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,6 +24,8 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
     private final String apiName;
     private final Collection<DerivationRule<Term, NT>> derivationRules;
     private final Collection<InheritenceRule<Term, NT>> inheritenceRules;
+    private final Set<NonTerminal> nullableSymbols;
+    private final Map<Symbol, Set<Terminal>> symbolFirstSets;
 
     BNF(final BNFBuilder<Term, NT> builder) {
 	ntClass = builder.ntClass;
@@ -30,6 +34,7 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	derivationRules = builder.derivationRules;
 	inheritenceRules = builder.inheritenceRules;
 	nullableSymbols = calculateNullableSymbols();
+	symbolFirstSets = calculateSymbolFirstSet();
     }
 
     public Collection<Rule<Term, NT>> getAllRules() {
@@ -39,12 +44,16 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return $;
     }
 
-    public Collection<NT> getNonTerminals() {
-	return EnumSet.allOf(ntClass);
+    public Collection<NonTerminal> getNonTerminals() {
+	Set<NonTerminal> nts = new HashSet<>(EnumSet.allOf(getNtClass()));
+	nts.add(NonTerminal.EPSILON);
+	return nts;
     }
 
-    public Collection<Term> getTerminals() {
-	return EnumSet.allOf(termClass);
+    public Collection<Terminal> getTerminals() {
+	Set<Terminal> terms = new HashSet<>(EnumSet.allOf(getTermClass()));
+	terms.add(Terminal.epsilon);
+	return terms;
     }
 
     public Class<Term> getTermClass() {
@@ -78,8 +87,6 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return inheritenceRules;
     }
 
-    private final Set<NonTerminal> nullableSymbols;
-
     private Set<NonTerminal> calculateNullableSymbols() {
 	HashSet<NonTerminal> nullables = new HashSet<>();
 	nullables.add(NonTerminal.EPSILON);
@@ -104,11 +111,53 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return nullables;
     }
 
-    public boolean isNullable(final Symbol ... expression) {
-	return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
+    public boolean isNullable(final Symbol... expression) {
+	return Arrays.asList(expression).stream()
+		.allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
     }
 
-    // public Collection<Term> getFirstSet(final List<Symbol> expression) {
-    //
-    // }
+    private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
+
+	Map<Symbol, Set<Terminal>> $ = new HashMap<>();
+
+	for (NonTerminal nt : getNonTerminals())
+	    if (isNullable(nt))
+		$.put(nt, new HashSet<>(Arrays.asList(Terminal.epsilon)));
+	    else
+		$.put(nt, new HashSet<>());
+
+	for (Terminal term : getTerminals())
+	    $.put(term, new HashSet<>(Arrays.asList(term)));
+
+	boolean moreChanges;
+	do {
+	    moreChanges = false;
+	    for(InheritenceRule<Term, NT> iRule : getInheritenceRules())
+		for (NonTerminal subtype : iRule.subtypes)
+		    moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
+	    
+	    for(DerivationRule<Term, NT> dRule : getDerivationRules())
+		for(Symbol symbol : dRule.expression){
+		    moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
+		    if (!isNullable(symbol))
+			break;
+		}
+	} while (moreChanges);
+	return $;
+    }
+
+    public Set<Terminal> getFirstSet(final Symbol... expression) {
+	HashSet<Terminal> $ = new HashSet<>();
+	for (Symbol symbol : expression) {
+	    $.addAll(symbolFirstSets.get(symbol));
+	    if (!isNullable(symbol))
+		break;
+	}
+
+	if (Arrays.asList(expression).stream().anyMatch(symbol -> !isNullable(symbol)))
+	    $.remove(Terminal.epsilon);
+
+	return $;
+    }
+
 }

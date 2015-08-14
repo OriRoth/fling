@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public interface Terminal extends Symbol {
-    public default Class<?> type(){
+    public default Class<?> type() {
 	return Void.class;
     }
 
@@ -12,6 +12,16 @@ public interface Terminal extends Symbol {
 	else
 	    return name() + "(" + type().getSimpleName() + ")";
     }
-    
-    public static final Terminal epsilon = () -> "epsilon";
+
+    public static final Terminal epsilon = new Terminal() {
+	@Override
+	public String name() {
+	    return "epsilon";
+	}
+
+	@Override
+	public String toString() {
+	    return name();
+	}
+    };
 }
