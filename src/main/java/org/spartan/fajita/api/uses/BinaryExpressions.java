@@ -42,7 +42,7 @@ public class BinaryExpressions {
 
 	@Override
 	public Class<?> type() {
-	    return null;
+	    return Void.class;
 	}
     }
 
@@ -54,7 +54,7 @@ public class BinaryExpressions {
 	// define the rules
 	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
 		.derive(S).to(EXPRESSION) //
-		.derive(EXPRESSION).toOneOf(OR).or(AND).or(LITERAL).or(NOT) //
+		.derive(EXPRESSION).to(OR).or(AND).or(LITERAL).or(NOT) //
 		.derive(LITERAL).to(bool)//
 		.derive(OR).to(EXPRESSION).and(or).and(EXPRESSION)//
 		.derive(AND).to(EXPRESSION).and(and).and(EXPRESSION)//

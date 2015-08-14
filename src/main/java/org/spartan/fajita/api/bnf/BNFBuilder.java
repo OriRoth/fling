@@ -47,7 +47,7 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 	return this;
     }
 
-    public InitialDeriver derive(final NT nt) {
+    public InitialDeriver derive(final NonTerminal nt) {
 	return new InitialDeriver(nt);
     }
 
@@ -72,7 +72,7 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 	return this;
     }
 
-    public void addDerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NT lhs,
+    private void addDerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
 	    final List<Symbol> symbols) {
 	DerivationRule<Term, NT> r = new DerivationRule<Term, NT>(termClass, ntClass, lhs, symbols,
 		inheritenceRules.size() + derivationRules.size());
@@ -81,8 +81,8 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 
     }
 
-    public void addInheritenceRule(final Class<Term> termClass, final Class<NT> ntClass, final NT lhs,
-	    final List<NT> nts) {
+    private void addInheritenceRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
+	    final List<NonTerminal> nts) {
 	InheritenceRule<Term, NT> r = new InheritenceRule<Term, NT>(termClass, ntClass, lhs, nts,
 		inheritenceRules.size() + derivationRules.size());
 	checkNewRule(r);
@@ -96,24 +96,28 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
     }
 
+    public BNF<Term, NT> finish() {
+	validate();
+	return new BNF<Term, NT>(BNFBuilder.this);
+    }
+
     private abstract class Deriver {
-	protected final NT lhs;
+	protected final NonTerminal lhs;
 	protected final ArrayList<Symbol> symbols;
 
-	public Deriver(final NT lhs, final Symbol... symbols) {
+	public Deriver(final NonTerminal lhs, final Symbol... symbols) {
 	    this.lhs = lhs;
 	    this.symbols = new ArrayList<>(Arrays.asList(symbols));
 	}
 
-	public InitialDeriver derive(final NT lhs) {
+	public InitialDeriver derive(final NonTerminal lhs) {
 	    addRuleToBNF();
 	    return BNFBuilder.this.derive(lhs);
 	}
 
 	public BNF<Term, NT> finish() {
 	    addRuleToBNF();
-	    validate();
-	    return new BNF<Term, NT>(BNFBuilder.this);
+	    return BNFBuilder.this.finish();
 	}
 
 	/**
@@ -130,52 +134,51 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
      */
     public class InitialDeriver {
 
-	private final NT lhs;
+	private final NonTerminal lhs;
 
-	private InitialDeriver(final NT lhs) {
+	private InitialDeriver(final NonTerminal lhs) {
 	    this.lhs = lhs;
 	}
 
-	public AbstractDeriver toOneOf(final NT nt) {
-	    return new AbstractDeriver(lhs, nt);
+	public UnknownDeriver to(final NonTerminal nt) {
+	    return new UnknownDeriver(lhs, nt);
 	}
 
-	public NormalDeriver to(final Symbol term) {
+	public NormalDeriver to(final Terminal term) {
 	    return new NormalDeriver(lhs, term);
 	}
     }
 
-//    /**
-//     * We know the first symbol in the right side , but we don't know yet
-//     * whether it's a derivation rule or an inheritence rule.
-//     * 
-//     * if right hand side has only one symbol it will defaultively be a
-//     * derivation rule.
-//     * 
-//     * @author Tomer
-//     *
-//     */
-//    public final class UnknownDeriver extends Deriver {
-//
-//	public UnknownDeriver(final NT lhs, final Symbol symb) {
-//	    super(lhs, symb);
-//	}
-//
-//	public NormalDeriver and(final Symbol symb) {
-//	    return new NormalDeriver(lhs, symbols.get(0), symb);
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public AbstractDeriver or(final NT nt) {
-//	    return new AbstractDeriver(lhs, (NT) symbols.get(0), nt);
-//	}
-//
-//	@Override
-//	protected void addRuleToBNF() {
-//	    addDerivationRule(termClass, ntClass, lhs, symbols);
-//	}
-//
-//    }
+    /**
+     * We know the first symbol in the right side , but we don't know yet
+     * whether it's a derivation rule or an inheritence rule.
+     * 
+     * if right hand side has only one symbol it will defaultively be a
+     * derivation rule.
+     * 
+     * @author Tomer
+     *
+     */
+    public final class UnknownDeriver extends Deriver {
+
+	public UnknownDeriver(final NonTerminal lhs, final Symbol symb) {
+	    super(lhs, symb);
+	}
+
+	public NormalDeriver and(final Symbol symb) {
+	    return new NormalDeriver(lhs, symbols.get(0), symb);
+	}
+
+	public AbstractDeriver or(final NonTerminal nt) {
+	    return new AbstractDeriver(lhs, (NonTerminal) symbols.get(0), nt);
+	}
+
+	@Override
+	protected void addRuleToBNF() {
+	    addDerivationRule(termClass, ntClass, lhs, symbols);
+	}
+
+    }
 
     /**
      * Currently deriving a normal rule
@@ -185,11 +188,11 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
      */
     public final class NormalDeriver extends Deriver {
 
-	public NormalDeriver(final NT lhs, final Symbol child) {
+	public NormalDeriver(final NonTerminal lhs, final Symbol child) {
 	    super(lhs, child);
 	}
 
-	public NormalDeriver(final NT lhs, final Symbol firstChild, final Symbol secondChild) {
+	public NormalDeriver(final NonTerminal lhs, final Symbol firstChild, final Symbol secondChild) {
 	    super(lhs, firstChild, secondChild);
 	}
 
@@ -212,21 +215,24 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
      */
     public final class AbstractDeriver extends Deriver {
 
-	public AbstractDeriver(final NT lhs, final NT firstChild) {
+	public AbstractDeriver(final NonTerminal lhs, final NonTerminal firstChild) {
 	    super(lhs, firstChild);
 	}
 
-	public AbstractDeriver or(final NT nt) {
+	public AbstractDeriver(final NonTerminal lhs, final NonTerminal firstChild, final NonTerminal secondChild) {
+	    super(lhs, firstChild, secondChild);
+	}
+
+	public AbstractDeriver or(final NonTerminal nt) {
 	    symbols.add(nt);
 	    return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void addRuleToBNF() {
-	    List<NT> nts = new ArrayList<NT>();
+	    List<NonTerminal> nts = new ArrayList<NonTerminal>();
 	    for (Symbol s : symbols)
-		nts.add((NT) s);
+		nts.add((NonTerminal) s);
 	    addInheritenceRule(termClass, ntClass, lhs, nts);
 	}
 

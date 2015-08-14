@@ -8,11 +8,11 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class InheritenceRule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> extends Rule<Term,NT> {
-	public final List<NT> subtypes;
+	public final List<NonTerminal> subtypes;
 
-	public InheritenceRule(final Class<Term> termClass,final Class<NT> ntClass,final NT lhs, final List<NT> subtypes, final int index) {
+	public InheritenceRule(final Class<Term> termClass,final Class<NT> ntClass,final NonTerminal lhs, final List<NonTerminal> nts, final int index) {
 		super(termClass,ntClass,lhs,index);
-		this.subtypes = new ArrayList<>(subtypes);
+		this.subtypes = new ArrayList<>(nts);
 	}
 
 	@Override

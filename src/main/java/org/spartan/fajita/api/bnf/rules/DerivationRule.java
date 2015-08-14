@@ -12,7 +12,7 @@ public class DerivationRule<Term extends Enum<Term> & Terminal, NT extends Enum<
 
     public final List<Symbol> expression;
 
-    public DerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NT lhs,
+    public DerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
 	    final List<Symbol> expression,final int index) {
 	super(termClass, ntClass, lhs,index);
 	for (Symbol s : expression)

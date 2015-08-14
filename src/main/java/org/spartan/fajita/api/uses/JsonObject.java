@@ -69,11 +69,11 @@ public class JsonObject {
 		.setApiName("Json Object Builder") //
 		.derive(START).to(OBJECT) //
 		.derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
-		.derive(NEXT).toOneOf(NEXT_ADD).or(LAST_ADD)//
+		.derive(NEXT).to(NEXT_ADD).or(LAST_ADD)//
 		.derive(NEXT_ADD).to(ADD).and(NEXT) //
 		.derive(LAST_ADD).to(ADD) //
 		.derive(ADD).to(name).and(TO_TYPE)//
-		.derive(TO_TYPE).toOneOf(TO_INT).or(TO_BOOL).or(TO_DOUBLE).or(TO_STRING).or(TO_NULL).or(TO_ARRAY)
+		.derive(TO_TYPE).to(TO_INT).or(TO_BOOL).or(TO_DOUBLE).or(TO_STRING).or(TO_NULL).or(TO_ARRAY)
 		.or(TO_OBJECT)//
 		.derive(TO_INT).to(toInt)//
 		.derive(TO_BOOL).to(toBool) //
@@ -83,10 +83,10 @@ public class JsonObject {
 		.derive(TO_OBJECT).to(toObject).and(OBJECT) //
 		.derive(TO_ARRAY).to(toArray).and(ARRAY) //
 		.derive(ARRAY).to(startArray).and(ELEMENTS).and(endArray) //
-		.derive(ELEMENTS).toOneOf(LAST_ELEMENT).or(NEXT_ELEMENT) //
+		.derive(ELEMENTS).to(LAST_ELEMENT).or(NEXT_ELEMENT) //
 		.derive(LAST_ELEMENT).to(ELEMENT) //
 		.derive(NEXT_ELEMENT).to(ELEMENT).and(ELEMENTS) //
-		.derive(ELEMENT).toOneOf(INT_ELEMENT).or(BOOL_ELEMENT).or(STRING_ELEMENT).or(DOUBLE_ELEMENT)
+		.derive(ELEMENT).to(INT_ELEMENT).or(BOOL_ELEMENT).or(STRING_ELEMENT).or(DOUBLE_ELEMENT)
 		.or(ARRAY_ELEMENT).or(OBJECT_ELEMENT) //
 		.derive(INT_ELEMENT).to(addInt) //
 		.derive(BOOL_ELEMENT).to(addBool) //

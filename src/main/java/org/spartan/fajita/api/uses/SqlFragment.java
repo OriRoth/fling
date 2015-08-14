@@ -1,5 +1,6 @@
 package org.spartan.fajita.api.uses;
 
+
 import static org.spartan.fajita.api.uses.SqlFragment.NT.*;
 import static org.spartan.fajita.api.uses.SqlFragment.Term.*;
 
@@ -8,13 +9,14 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
+
 public class SqlFragment {
 
     private static void expressionBuilder() {
     }
 
     public enum Term implements Terminal {
-	select, column, from, all, distinct, table, where, equals, geq, leq, literal, epsilon;
+	select, column, from, all, distinct, table, where, equals, geq, leq, literal;
 	@Override
 	public Class<?> type() {
 	    return Void.class;
@@ -22,7 +24,7 @@ public class SqlFragment {
     }
 
     public static enum NT implements NonTerminal {
-	SELECT_STATEMENT, QUANTIFIER, ALL, DISTINCT, COLOUMNS, COLOUMNS_OPT, TABLES, TABLES_OPT, WHERE_OPT, WHERE, EXPRESSION, OP, EQUALS, GEQ, LEQ, LITERAL, EPSILON;
+	SELECT_STATEMENT, QUANTIFIER, ALL, DISTINCT, COLOUMNS, COLOUMNS_OPT, TABLES, TABLES_OPT, WHERE_OPT, WHERE, EXPRESSION, OP, EQUALS, GEQ, LEQ, LITERAL;
     }
 
     public static void buildBNF() {
@@ -30,22 +32,21 @@ public class SqlFragment {
 	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
 		.setApiName("SqlFragment") //
 		.derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE_OPT) //
-		.derive(QUANTIFIER).toOneOf(ALL).or(DISTINCT) //
+		.derive(QUANTIFIER).to(ALL).or(DISTINCT) //
 		.derive(ALL).to(all)//
 		.derive(DISTINCT).to(distinct)//
 		.derive(COLOUMNS).to(column).and(COLOUMNS_OPT)//
-		.derive(COLOUMNS_OPT).toOneOf(COLOUMNS).or(EPSILON)//
+		.derive(COLOUMNS_OPT).to(COLOUMNS).or(NonTerminal.EPSILON)//
 		.derive(TABLES).to(table).and(TABLES_OPT) //
-		.derive(TABLES_OPT).toOneOf(TABLES).or(EPSILON) //
-		.derive(WHERE_OPT).toOneOf(WHERE).or(EPSILON) //
+		.derive(TABLES_OPT).to(TABLES).or(NonTerminal.EPSILON) //
+		.derive(WHERE_OPT).to(WHERE).or(NonTerminal.EPSILON) //
 		.derive(WHERE).to(where).and(EXPRESSION) //
 		.derive(EXPRESSION).to(column).and(OP).and(LITERAL) //
-		.derive(OP).toOneOf(EQUALS).or(GEQ).or(LEQ) //
+		.derive(OP).to(EQUALS).or(GEQ).or(LEQ) //
 		.derive(EQUALS).to(equals) //
 		.derive(GEQ).to(geq) //
 		.derive(LEQ).to(leq) //
 		.derive(LITERAL).to(literal) //
-		.derive(EPSILON).to(epsilon) //
 		.finish();
 
 	System.out.println(b);
@@ -54,6 +55,7 @@ public class SqlFragment {
     public static void main(final String[] args) {
 	buildBNF();
 	expressionBuilder();
+	
     }
 
 }

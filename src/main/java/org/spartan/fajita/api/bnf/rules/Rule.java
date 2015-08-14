@@ -8,12 +8,12 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal>
 	implements Comparable<Rule<Term, NT>> {
-    public final NT lhs;
+    public final NonTerminal lhs;
     protected final Class<NT> ntClass;
     protected final Class<Term> termClass;
     private final int index;
 
-    public Rule(final Class<Term> termClass, final Class<NT> ntClass, final NT lhs, final int index) {
+    public Rule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs, final int index) {
 	this.termClass = termClass;
 	this.ntClass = ntClass;
 	this.lhs = lhs;

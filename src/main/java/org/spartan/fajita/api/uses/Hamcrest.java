@@ -41,30 +41,29 @@ public class Hamcrest {
     }
 
     public enum Term implements Terminal {
-	assertThat, instance_of, anything, not, equals_to, any_of, value, type, epsilon;
+	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
 
 	@Override
 	public Class<?> type() {
-	    return null;
+	    return Void.class;
 	}
     }
 
     public static enum NT implements NonTerminal {
-	ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT, EPSILON;
+	ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT;
     }
 
     public static void buildBNF() {
 	BNF<Term,NT> bnf = new BNFBuilder<>(Term.class, NT.class)
 		.derive(ASSERT).to(assertThat).and(value).and( MATCHER) //
-		.derive(MATCHER).toOneOf(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
+		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
 		.derive(INSTANCE_OF).to(instance_of).and(type) //
 		.derive(ANYTHING).to(anything) //
 		.derive(EQUAL_TO).to(equals_to).and(value) //
 		.derive(NOT).to(not).and(MATCHER) //
 		.derive(ANY_OF).to(any_of).and(MATCHERS) //
 		.derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
-		.derive(MATCHERS_OPT).toOneOf(MATCHERS).or(EPSILON) //
-		.derive(EPSILON).to(epsilon) //
+		.derive(MATCHERS_OPT).to(MATCHERS).or(NonTerminal.EPSILON) //
 		.finish();
 
 	System.out.println(bnf);
