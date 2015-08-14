@@ -15,7 +15,7 @@ public class BNFBootstrap {
 	// showASTs();
     }
 
-    public static enum Term implements Terminal {
+    static enum Term implements Terminal {
 	setApiName(String.class), derive(NonTerminal.class), to(Symbol.class), //
 	and(Symbol.class), toOneOf(NonTerminal.class), or(NonTerminal.class), //
 	finish;
@@ -37,7 +37,7 @@ public class BNFBootstrap {
 
     }
 
-    public static enum NT implements NonTerminal {
+    static enum NT implements NonTerminal {
 	S, NAME_OPT, NAME, RULE, RULE_TYPE, ABSTRACT_RULE, //
 	NEXT_ABSTRACT, OR, NORMAL_RULE, NEXT_NORMAL, //
 	AND, NEXT, NEXT_RULE, FINISH;

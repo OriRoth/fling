@@ -37,7 +37,7 @@ public class BinaryExpressions {
 	showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
     }
 
-    public enum Term implements Terminal {
+    enum Term implements Terminal {
 	bool, and, or, not;
 
 	@Override
@@ -46,7 +46,7 @@ public class BinaryExpressions {
 	}
     }
 
-    public static enum NT implements NonTerminal {
+    static enum NT implements NonTerminal {
 	S, LITERAL, EXPRESSION, AND, OR, NOT;
     }
 

@@ -15,7 +15,7 @@ public class SqlFragment {
     private static void expressionBuilder() {
     }
 
-    public enum Term implements Terminal {
+    enum Term implements Terminal {
 	select, column, from, all, distinct, table, where, equals, geq, leq, literal;
 	@Override
 	public Class<?> type() {
@@ -23,7 +23,7 @@ public class SqlFragment {
 	}
     }
 
-    public static enum NT implements NonTerminal {
+    static enum NT implements NonTerminal {
 	SELECT_STATEMENT, QUANTIFIER, ALL, DISTINCT, COLOUMNS, COLOUMNS_OPT, TABLES, TABLES_OPT, WHERE_OPT, WHERE, EXPRESSION, OP, EQUALS, GEQ, LEQ, LITERAL;
     }
 

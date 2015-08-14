@@ -14,7 +14,7 @@ public class JsonObject {
 	// showASTs();
     }
 
-    public static enum Term implements Terminal {
+    static enum Term implements Terminal {
 	startObject, endObject, name(String.class), //
 	toInt(int.class), toBool(boolean.class), toDouble(double.class), //
 	toString(String.class), toNull, toObject, toArray, //
@@ -39,7 +39,7 @@ public class JsonObject {
 
     }
 
-    public static enum NT implements NonTerminal {
+    static enum NT implements NonTerminal {
 	START, OBJECT, NEXT, NEXT_ADD, LAST_ADD, ADD, //
 	TO_TYPE, TO_INT, TO_BOOL, TO_DOUBLE, //
 	TO_STRING, TO_NULL, TO_OBJECT, TO_ARRAY, //

@@ -40,7 +40,7 @@ public class Hamcrest {
 	showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
     }
 
-    public enum Term implements Terminal {
+    enum Term implements Terminal {
 	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
 
 	@Override
@@ -49,7 +49,7 @@ public class Hamcrest {
 	}
     }
 
-    public static enum NT implements NonTerminal {
+    static enum NT implements NonTerminal {
 	ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT;
     }
 
