@@ -24,4 +24,16 @@ public interface Terminal extends Symbol {
 	    return name();
 	}
     };
+
+    public static final Terminal $ = new Terminal() {
+	@Override
+	public String name() {
+	    return "$";
+	}
+
+	@Override
+	public String toString() {
+	    return name();
+	}
+    };
 }

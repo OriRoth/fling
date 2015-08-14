@@ -49,8 +49,7 @@ public class JsonObject {
     }
 
     /**
-     * We would like to have overloaded functions, e.g.
-     * "to()" </br>
+     * We would like to have overloaded functions, e.g. "to()" </br>
      * we would like to do :
      * <li><code>name("foo").to("bar")</code></li>
      * <li><code>name("foo").to(5)</code></li>

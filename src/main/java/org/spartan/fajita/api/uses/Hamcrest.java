@@ -54,8 +54,7 @@ public class Hamcrest {
     }
 
     public static void buildBNF() {
-	BNF<Term,NT> bnf = new BNFBuilder<>(Term.class, NT.class)
-		.derive(ASSERT).to(assertThat).and(value).and( MATCHER) //
+	BNF<Term, NT> bnf = new BNFBuilder<>(Term.class, NT.class).derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
 		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
 		.derive(INSTANCE_OF).to(instance_of).and(type) //
 		.derive(ANYTHING).to(anything) //

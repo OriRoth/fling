@@ -132,12 +132,12 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	boolean moreChanges;
 	do {
 	    moreChanges = false;
-	    for(InheritenceRule<Term, NT> iRule : getInheritenceRules())
+	    for (InheritenceRule<Term, NT> iRule : getInheritenceRules())
 		for (NonTerminal subtype : iRule.subtypes)
 		    moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
-	    
-	    for(DerivationRule<Term, NT> dRule : getDerivationRules())
-		for(Symbol symbol : dRule.expression){
+
+	    for (DerivationRule<Term, NT> dRule : getDerivationRules())
+		for (Symbol symbol : dRule.expression) {
 		    moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
 		    if (!isNullable(symbol))
 			break;
@@ -160,4 +160,7 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return $;
     }
 
+    // public Set<Terminal> followSetOf(final Symbol... expression){
+    //
+    // }
 }

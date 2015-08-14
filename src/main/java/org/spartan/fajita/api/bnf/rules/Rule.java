@@ -57,6 +57,6 @@ public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<N
     public int compareTo(final Rule<Term, NT> other) {
 	return Integer.compare(index, other.index);
     }
-    
+
     public abstract List<Symbol> getChildren();
 }

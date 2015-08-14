@@ -51,26 +51,25 @@ public class NullablesTest {
     public void testNTNotNullable() {
 	assertFalse(bnf.isNullable(NT.A));
     }
-    
+
     @Test
     public void testSecondDegreeInheritence() {
 	assertTrue(bnf.isNullable(NT.Nullable2));
     }
-    
+
     @Test
     public void testNullableExpression() {
-	assertTrue(bnf.isNullable(NT.Nullable,NT.Nullable2));
+	assertTrue(bnf.isNullable(NT.Nullable, NT.Nullable2));
     }
 
     @Test
     public void testNotNullableExpressionWithTerminal() {
-	assertFalse(bnf.isNullable(NT.Nullable,NT.Nullable2,Term.t1));
+	assertFalse(bnf.isNullable(NT.Nullable, NT.Nullable2, Term.t1));
     }
 
     @Test
     public void testNotNullableExpressionWithNonNullableNT() {
-	assertFalse(bnf.isNullable(NT.Nullable,NT.Nullable2,NT.A));
+	assertFalse(bnf.isNullable(NT.Nullable, NT.Nullable2, NT.A));
     }
-    
-    
+
 }

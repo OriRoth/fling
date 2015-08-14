@@ -1,6 +1,5 @@
 package org.spartan.fajita.api.uses;
 
-
 import static org.spartan.fajita.api.uses.SqlFragment.NT.*;
 import static org.spartan.fajita.api.uses.SqlFragment.Term.*;
 
@@ -8,7 +7,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-
 
 public class SqlFragment {
 
@@ -55,7 +53,7 @@ public class SqlFragment {
     public static void main(final String[] args) {
 	buildBNF();
 	expressionBuilder();
-	
+
     }
 
 }

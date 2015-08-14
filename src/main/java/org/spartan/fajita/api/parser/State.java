@@ -9,11 +9,11 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 public class State<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
     public final List<Item<Term, NT>> items;
 
-    State(final List<Item<Term,NT>> items) {
+    State(final List<Item<Term, NT>> items) {
 	this.items = items;
     }
-    
-    public State<Term,NT> nextState(final Symbol lookahead){
-	return StateCalculator.calculate(this,lookahead);
+
+    public State<Term, NT> nextState(final Symbol lookahead) {
+	return StateCalculator.calculate(this, lookahead);
     }
 }

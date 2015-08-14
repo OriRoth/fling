@@ -19,7 +19,7 @@ public class FirstSetTest {
     };
 
     private enum NT implements NonTerminal {
-	A, B, AB, C,D;
+	A, B, AB, C, D;
     };
 
     private enum NT_RECURSIVE implements NonTerminal {
@@ -87,7 +87,7 @@ public class FirstSetTest {
 
     @Test
     public void testExpressionWithNullables() {
-	assertEquals(expectedSet(Term.d,Term.a,Term.b), bnf.firstSetOf(NT.C, NT.D));
+	assertEquals(expectedSet(Term.d, Term.a, Term.b), bnf.firstSetOf(NT.C, NT.D));
     }
 
     @Test
