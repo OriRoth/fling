@@ -25,6 +25,8 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 
     BNF(final BNFBuilder<Term, NT> builder) {
 	ntClass = builder.ntClass;
+	if(getNonTerminals().stream().anyMatch(nt -> nt.name().equals(NonTerminal.EPSILON.name())))
+		throw new IllegalStateException("A NT with the name "+NonTerminal.EPSILON.name()+" was found. this is not allowed.");
 	termClass = builder.termClass;
 	apiName = builder.apiName;
 	derivationRules = builder.derivationRules;
