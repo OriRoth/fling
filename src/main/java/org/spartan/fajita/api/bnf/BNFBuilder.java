@@ -94,6 +94,11 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 	    if ((!derivationRules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))) //
 		    && (!inheritenceRules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
 		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+	if(getNonTerminals().stream().anyMatch(nt -> nt.name().equals(NonTerminal.EPSILON.name())))
+		throw new IllegalStateException("A NT with the name "+NonTerminal.EPSILON.name()+" was found. this is not allowed.");
+	if(getTerminals().stream().anyMatch(term -> term.name().equals(Terminal.epsilon.name())))
+		throw new IllegalStateException("A terminal with the name "+Terminal.epsilon.name()+" was found. this is not allowed.");
+
     }
 
     public BNF<Term, NT> finish() {

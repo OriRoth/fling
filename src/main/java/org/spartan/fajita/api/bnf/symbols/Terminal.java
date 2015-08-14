@@ -12,4 +12,6 @@ public interface Terminal extends Symbol {
 	else
 	    return name() + "(" + type().getSimpleName() + ")";
     }
+    
+    public static final Terminal epsilon = () -> "epsilon";
 }
