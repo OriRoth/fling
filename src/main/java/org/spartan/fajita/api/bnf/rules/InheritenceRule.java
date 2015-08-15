@@ -5,16 +5,13 @@ import java.util.List;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public class InheritenceRule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal>
-	extends Rule<Term, NT> {
+public class InheritenceRule extends Rule {
     public final List<NonTerminal> subtypes;
 
-    public InheritenceRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
-	    final List<NonTerminal> nts, final int index) {
-	super(termClass, ntClass, lhs, index);
-	this.subtypes = new ArrayList<>(nts);
+    public InheritenceRule(final NonTerminal lhs, final List<NonTerminal> nts, final int index) {
+	super(lhs, index);
+	subtypes = new ArrayList<>(nts);
     }
 
     @Override

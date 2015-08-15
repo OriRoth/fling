@@ -3,7 +3,6 @@ package org.spartan.fajita.api.bnf;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,73 +17,25 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
-    private final Class<NT> ntClass;
-    private final Class<Term> termClass;
+public final class BNF {
     private final String apiName;
-    private final Collection<DerivationRule<Term, NT>> derivationRules;
-    private final Collection<InheritenceRule<Term, NT>> inheritenceRules;
+    private final Set<Terminal> terminals;
+    private final Set<NonTerminal> nonterminals;
+    private final Collection<DerivationRule> derivationRules;
+    private final Collection<InheritenceRule> inheritenceRules;
     private final Set<NonTerminal> nullableSymbols;
-    private final Map<Symbol, Set<Terminal>> symbolFirstSets;
+    private final Map<Symbol, Set<Terminal>> baseFirstSets;
+    private final Map<NonTerminal, Set<Terminal>> followSets;
 
-    BNF(final BNFBuilder<Term, NT> builder) {
-	ntClass = builder.ntClass;
-	termClass = builder.termClass;
-	apiName = builder.apiName;
-	derivationRules = builder.derivationRules;
-	inheritenceRules = builder.inheritenceRules;
+    BNF(final BNFBuilder builder) {
+	apiName = builder.getApiName();
+	terminals = builder.getTerminals();
+	nonterminals = builder.getNonTerminals();
+	derivationRules = builder.getDerivationRules();
+	inheritenceRules = builder.getInheritenceRules();
 	nullableSymbols = calculateNullableSymbols();
-	symbolFirstSets = calculateSymbolFirstSet();
-    }
-
-    public Collection<Rule<Term, NT>> getAllRules() {
-	ArrayList<Rule<Term, NT>> $ = new ArrayList<>();
-	$.addAll(getDerivationRules());
-	$.addAll(getInheritenceRules());
-	return $;
-    }
-
-    public Collection<NonTerminal> getNonTerminals() {
-	Set<NonTerminal> nts = new HashSet<>(EnumSet.allOf(getNtClass()));
-	nts.add(NonTerminal.EPSILON);
-	return nts;
-    }
-
-    public Collection<Terminal> getTerminals() {
-	Set<Terminal> terms = new HashSet<>(EnumSet.allOf(getTermClass()));
-	terms.add(Terminal.epsilon);
-	return terms;
-    }
-
-    public Class<Term> getTermClass() {
-	return termClass;
-    }
-
-    public Class<NT> getNtClass() {
-	return ntClass;
-    }
-
-    public String getApiName() {
-	return apiName;
-    }
-
-    @Override
-    public String toString() {
-	SortedSet<Rule<Term, NT>> rules = new TreeSet<>();
-	rules.addAll(this.getDerivationRules());
-	rules.addAll(this.getInheritenceRules());
-	StringBuilder sb = new StringBuilder("Rules for " + getApiName() + ":\n");
-	for (Rule<Term, NT> rule : rules)
-	    sb.append(rule.toString() + "\n");
-	return sb.toString();
-    }
-
-    public Collection<DerivationRule<Term, NT>> getDerivationRules() {
-	return derivationRules;
-    }
-
-    public Collection<InheritenceRule<Term, NT>> getInheritenceRules() {
-	return inheritenceRules;
+	baseFirstSets = calculateSymbolFirstSet();
+	followSets = calculateFollowSets();
     }
 
     private Set<NonTerminal> calculateNullableSymbols() {
@@ -93,14 +44,14 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	boolean moreChanges;
 	do {
 	    moreChanges = false;
-	    for (Rule<Term, NT> rule : getInheritenceRules())
+	    for (Rule rule : getInheritenceRules())
 		if ((!nullables.contains(rule.lhs))
 			&& rule.getChildren().stream().anyMatch(child -> nullables.contains(child))) {
 		    nullables.add(rule.lhs);
 		    moreChanges = true;
 		}
 
-	    for (Rule<Term, NT> rule : getInheritenceRules())
+	    for (Rule rule : getInheritenceRules())
 		if ((!nullables.contains(rule.lhs))
 			&& rule.getChildren().stream().allMatch(child -> nullables.contains(child))) {
 		    nullables.add(rule.lhs);
@@ -109,11 +60,6 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 
 	} while (moreChanges);
 	return nullables;
-    }
-
-    public boolean isNullable(final Symbol... expression) {
-	return Arrays.asList(expression).stream()
-		.allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
     }
 
     private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
@@ -132,11 +78,11 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	boolean moreChanges;
 	do {
 	    moreChanges = false;
-	    for (InheritenceRule<Term, NT> iRule : getInheritenceRules())
+	    for (InheritenceRule iRule : getInheritenceRules())
 		for (NonTerminal subtype : iRule.subtypes)
 		    moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
 
-	    for (DerivationRule<Term, NT> dRule : getDerivationRules())
+	    for (DerivationRule dRule : getDerivationRules())
 		for (Symbol symbol : dRule.expression) {
 		    moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
 		    if (!isNullable(symbol))
@@ -146,10 +92,102 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return $;
     }
 
+    private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
+	Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
+	Set<NonTerminal> startNTs = getStartNTs();
+
+	// initialization
+	for (NonTerminal nt : getNonTerminals())
+	    if (startNTs.contains(nt))
+		$.put(nt, new HashSet<>(Arrays.asList(Terminal.$)));
+	    else
+		$.put(nt, new HashSet<>());
+
+	// iterative step
+	boolean moreChanges;
+	do {
+	    moreChanges = false;
+	    for (InheritenceRule iRule : getInheritenceRules())
+		for (NonTerminal subtype : iRule.subtypes)
+		    moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
+
+	    for (DerivationRule dRule : getDerivationRules())
+		for (int i = 0; i < dRule.expression.size(); i++) {
+		    if (dRule.expression.get(i).isTerminal())
+			continue;
+		    Symbol subExpression[];
+		    if (i != dRule.expression.size() - 1)
+			subExpression = Arrays.copyOfRange(dRule.expression.toArray(), i + 1, dRule.expression.size(),
+				Symbol[].class);
+		    else
+			subExpression = new Symbol[] {};
+
+		    moreChanges |= $.get(dRule.expression.get(i)).addAll(firstSetOf(subExpression));
+
+		    if (isNullable(subExpression))
+			moreChanges |= $.get(dRule.expression.get(i)).addAll($.get(dRule.lhs));
+		}
+	} while (moreChanges);
+
+	$.values().forEach(followSet -> followSet.remove(Terminal.epsilon));
+
+	return $;
+    }
+
+    public Collection<Rule> getAllRules() {
+	ArrayList<Rule> $ = new ArrayList<>();
+	$.addAll(getDerivationRules());
+	$.addAll(getInheritenceRules());
+	return $;
+    }
+
+    public Set<NonTerminal> getNonTerminals() {
+	return nonterminals;
+    }
+
+    public Set<Terminal> getTerminals() {
+	return terminals;
+    }
+
+    public Set<NonTerminal> getStartNTs() {
+	return getNonTerminals();
+    }
+
+    public String getApiName() {
+	return apiName;
+    }
+
+    @Override
+    public String toString() {
+	SortedSet<Rule> rules = new TreeSet<>();
+	rules.addAll(getDerivationRules());
+	rules.addAll(getInheritenceRules());
+	StringBuilder sb = new StringBuilder() //
+		.append("Terminals set: " + terminals + "\n") //
+		.append("Nonterminals set: " + nonterminals + "\n") //
+		.append("Rules for " + getApiName() + ":\n");
+	for (Rule rule : rules)
+	    sb.append(rule.toString() + "\n");
+	return sb.toString();
+    }
+
+    public Collection<DerivationRule> getDerivationRules() {
+	return derivationRules;
+    }
+
+    public Collection<InheritenceRule> getInheritenceRules() {
+	return inheritenceRules;
+    }
+
+    public boolean isNullable(final Symbol... expression) {
+	return Arrays.asList(expression).stream()
+		.allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
+    }
+
     public Set<Terminal> firstSetOf(final Symbol... expression) {
 	HashSet<Terminal> $ = new HashSet<>();
 	for (Symbol symbol : expression) {
-	    $.addAll(symbolFirstSets.get(symbol));
+	    $.addAll(baseFirstSets.get(symbol));
 	    if (!isNullable(symbol))
 		break;
 	}
@@ -160,7 +198,7 @@ public final class BNF<Term extends Enum<Term> & Terminal, NT extends Enum<NT> &
 	return $;
     }
 
-    // public Set<Terminal> followSetOf(final Symbol... expression){
-    //
-    // }
+    public Set<Terminal> followSetOf(final NonTerminal nt) {
+	return followSets.get(nt);
+    }
 }

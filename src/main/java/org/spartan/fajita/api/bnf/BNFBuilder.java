@@ -2,9 +2,8 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,72 +26,91 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
  * @author Tomer
  *
  */
-public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
-    final Set<InheritenceRule<Term, NT>> inheritenceRules;
-    final Set<DerivationRule<Term, NT>> derivationRules;
-    final Class<Term> termClass;
-    final Class<NT> ntClass;
-    String apiName;
+public class BNFBuilder {
 
-    public BNFBuilder(final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
-	apiName = "defaultAPI";
-	this.termClass = terminalEnum;
-	this.ntClass = nonterminalEnum;
-	inheritenceRules = new LinkedHashSet<>();
-	derivationRules = new LinkedHashSet<>();
+    private final Set<InheritenceRule> inheritenceRules;
+    private final Set<DerivationRule> derivationRules;
+    private final Set<Terminal> terminals;
+    private final Set<NonTerminal> nonterminals;
+    private final Set<NonTerminal> startSymbols;
+    private final Set<Terminal> overloads;
+
+    private String apiName;
+
+    public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(
+	    final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+	setApiName("defaultAPI");
+	terminals = new HashSet<>(EnumSet.allOf(terminalEnum));
+	nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
+	inheritenceRules = new HashSet<>();
+	derivationRules = new HashSet<>();
+	startSymbols = new HashSet<>();
+	overloads = new HashSet<>();
     }
 
-    public BNFBuilder<Term, NT> setApiName(final String apiName) {
-	this.apiName = apiName;
-	return this;
-    }
-
-    public InitialDeriver derive(final NonTerminal nt) {
-	return new InitialDeriver(nt);
+    public InitialConfigurator startConfig() {
+	return new InitialConfigurator();
     }
 
     private boolean symbolExists(final Symbol symb) {
 	return getNonTerminals().contains(symb) || getTerminals().contains(symb);
     }
 
-    private Collection<NT> getNonTerminals() {
-	return EnumSet.allOf(ntClass);
+    Set<NonTerminal> getNonTerminals() {
+	return nonterminals;
     }
 
-    private Collection<Term> getTerminals() {
-	return EnumSet.allOf(termClass);
+    Set<Terminal> getTerminals() {
+	return terminals;
     }
 
-    private BNFBuilder<Term, NT> checkNewRule(final Rule<Term, NT> r) {
+    private BNFBuilder checkNewRule(final Rule r) {
 	if (!symbolExists(r.lhs))
 	    throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
-	boolean firstRule = (!inheritenceRules.contains(r)) && (!derivationRules.contains(r));
+	boolean firstRule = (!getInheritenceRules().contains(r)) && (!getDerivationRules().contains(r));
 	if (!firstRule)
 	    throw new IllegalStateException("Nonterminal '" + r.lhs.name() + "' already has a rule.");
 	return this;
     }
 
-    private void addDerivationRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
-	    final List<Symbol> symbols) {
-	DerivationRule<Term, NT> r = new DerivationRule<Term, NT>(termClass, ntClass, lhs, symbols,
-		inheritenceRules.size() + derivationRules.size());
+    private void addDerivationRule(final NonTerminal lhs, final List<Symbol> symbols) {
+	DerivationRule r = new DerivationRule(lhs, symbols, getInheritenceRules().size() + getDerivationRules().size());
 	checkNewRule(r);
-	derivationRules.add(r);
+	getDerivationRules().add(r);
 
     }
 
-    private void addInheritenceRule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs,
-	    final List<NonTerminal> nts) {
-	InheritenceRule<Term, NT> r = new InheritenceRule<Term, NT>(termClass, ntClass, lhs, nts,
-		inheritenceRules.size() + derivationRules.size());
+    private void addInheritenceRule(final NonTerminal lhs, final List<NonTerminal> nts) {
+	InheritenceRule r = new InheritenceRule(lhs, nts, getInheritenceRules().size() + getDerivationRules().size());
 	checkNewRule(r);
-	inheritenceRules.add(r);
+	getInheritenceRules().add(r);
+    }
+
+    private void addOverload(final String name, final Class<?>[] type) {
+	// TODO: check that there are no duplicate (+even with erasure)
+	overloads.add(new Terminal() {
+
+	    @Override
+	    public String name() {
+		return name;
+	    }
+
+	    @Override
+	    public String toString() {
+		return toString2();
+	    }
+
+	    @Override
+	    public Class<?>[] type() {
+		return type;
+	    }
+	});
     }
 
     private void validate() {
 	for (NonTerminal nonTerminal : getNonTerminals())
-	    if ((!derivationRules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))) //
-		    && (!inheritenceRules.stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
+	    if ((!getDerivationRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))) //
+		    && (!getInheritenceRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
 		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
 	if (getNonTerminals().stream().anyMatch(nt -> nt.name().equals(NonTerminal.EPSILON.name())))
 	    throw new IllegalStateException(
@@ -103,9 +121,36 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 
     }
 
-    public BNF<Term, NT> finish() {
+    private BNF finish() {
 	validate();
-	return new BNF<Term, NT>(BNFBuilder.this);
+	nonterminals.add(NonTerminal.EPSILON);
+	terminals.add(Terminal.epsilon);
+	terminals.addAll(overloads);
+	return new BNF(BNFBuilder.this);
+    }
+
+    String getApiName() {
+	return apiName;
+    }
+
+    private void setApiName(final String apiName) {
+	this.apiName = apiName;
+    }
+
+    Set<DerivationRule> getDerivationRules() {
+	return derivationRules;
+    }
+
+    Set<InheritenceRule> getInheritenceRules() {
+	return inheritenceRules;
+    }
+
+    Set<NonTerminal> getStartSymbols() {
+	return startSymbols;
+    }
+
+    private void setStartSymbols(final NonTerminal[] startSymbols) {
+	this.startSymbols.addAll(Arrays.asList(startSymbols));
     }
 
     private abstract class Deriver {
@@ -119,10 +164,10 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 
 	public InitialDeriver derive(final NonTerminal lhs) {
 	    addRuleToBNF();
-	    return BNFBuilder.this.derive(lhs);
+	    return new InitialDeriver(lhs);
 	}
 
-	public BNF<Term, NT> finish() {
+	public BNF finish() {
 	    addRuleToBNF();
 	    return BNFBuilder.this.finish();
 	}
@@ -182,7 +227,7 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 
 	@Override
 	protected void addRuleToBNF() {
-	    addDerivationRule(termClass, ntClass, lhs, symbols);
+	    addDerivationRule(lhs, symbols);
 	}
 
     }
@@ -210,7 +255,7 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 
 	@Override
 	protected void addRuleToBNF() {
-	    addDerivationRule(termClass, ntClass, lhs, symbols);
+	    addDerivationRule(lhs, symbols);
 	}
     }
 
@@ -240,9 +285,58 @@ public class BNFBuilder<Term extends Enum<Term> & Terminal, NT extends Enum<NT> 
 	    List<NonTerminal> nts = new ArrayList<NonTerminal>();
 	    for (Symbol s : symbols)
 		nts.add((NonTerminal) s);
-	    addInheritenceRule(termClass, ntClass, lhs, nts);
+	    addInheritenceRule(lhs, nts);
 	}
 
+    }
+
+    public class InitialConfigurator {
+	public AfterName setApiNameTo(final String apiName) {
+	    setApiName(apiName);
+	    return new AfterName();
+	}
+    }
+
+    public class AfterName {
+
+	public NewOverload setStartSymbols(final NonTerminal nt, final NonTerminal... nts) {
+	    NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
+	    newNts[nts.length] = nt;
+	    BNFBuilder.this.setStartSymbols(newNts);
+	    return new NewOverload();
+	}
+
+    }
+
+    public class NewOverload {
+	public OverloadWith overload(final Terminal t) {
+	    return new OverloadWith(t.name());
+	}
+
+	public EndConfig endConfig() {
+	    return new EndConfig();
+	}
+    }
+
+    public class OverloadWith {
+
+	private final String terminalName;
+
+	public OverloadWith(final String terminalName) {
+	    this.terminalName = terminalName;
+	}
+
+	public NewOverload with(final Class<?>... type) {
+	    addOverload(terminalName, type);
+	    return new NewOverload();
+	}
+
+    }
+
+    public class EndConfig {
+	public InitialDeriver derive(final NonTerminal nt) {
+	    return new InitialDeriver(nt);
+	}
     }
 
     // public static Func func(final String functionName){

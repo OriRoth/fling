@@ -4,18 +4,12 @@ import java.util.List;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal>
-	implements Comparable<Rule<Term, NT>> {
+public abstract class Rule implements Comparable<Rule> {
     public final NonTerminal lhs;
-    protected final Class<NT> ntClass;
-    protected final Class<Term> termClass;
     private final int index;
 
-    public Rule(final Class<Term> termClass, final Class<NT> ntClass, final NonTerminal lhs, final int index) {
-	this.termClass = termClass;
-	this.ntClass = ntClass;
+    public Rule(final NonTerminal lhs, final int index) {
 	this.lhs = lhs;
 	this.index = index;
     }
@@ -32,7 +26,7 @@ public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<N
 	if (obj.getClass() != getClass())
 	    return false;
 
-	return lhs.equals(((Rule<?, ?>) obj).lhs);
+	return lhs.equals(((Rule) obj).lhs);
     }
 
     /**
@@ -54,7 +48,7 @@ public abstract class Rule<Term extends Enum<Term> & Terminal, NT extends Enum<N
     }
 
     @Override
-    public int compareTo(final Rule<Term, NT> other) {
+    public int compareTo(final Rule other) {
 	return Integer.compare(index, other.index);
     }
 

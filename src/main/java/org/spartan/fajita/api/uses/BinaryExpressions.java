@@ -39,11 +39,6 @@ public class BinaryExpressions {
 
     enum Term implements Terminal {
 	bool, and, or, not;
-
-	@Override
-	public Class<?> type() {
-	    return Void.class;
-	}
     }
 
     static enum NT implements NonTerminal {
@@ -52,7 +47,14 @@ public class BinaryExpressions {
 
     public static void buildBNF() {
 	// define the rules
-	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
+	BNF b = new BNFBuilder(Term.class, NT.class) //
+		//
+		.startConfig() //
+		.setApiNameTo("Boolean expression builder") //
+		.setStartSymbols(S) //
+		.overload(bool).with(boolean.class) //
+		.endConfig() //
+		//
 		.derive(S).to(EXPRESSION) //
 		.derive(EXPRESSION).to(OR).or(AND).or(LITERAL).or(NOT) //
 		.derive(LITERAL).to(bool)//

@@ -19,12 +19,16 @@ public class NullablesTest {
 	Nullable, Nullable2, NotNullable, A;
     };
 
-    private BNF<Term, NT> bnf;
+    private BNF bnf;
 
     @Before
     public void initialize() {
 
-	bnf = new BNFBuilder<>(Term.class, NT.class) //
+	bnf = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("TEST") //
+		.setStartSymbols(NT.A) //
+		.endConfig() //
 		.derive(NT.Nullable).to(EPSILON).or(NT.A) //
 		.derive(NT.Nullable2).to(NT.Nullable).or(NT.A) //
 		.derive(NT.NotNullable).to(Term.t1) //

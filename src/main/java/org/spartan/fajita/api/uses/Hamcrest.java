@@ -42,11 +42,6 @@ public class Hamcrest {
 
     enum Term implements Terminal {
 	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
-
-	@Override
-	public Class<?> type() {
-	    return Void.class;
-	}
     }
 
     static enum NT implements NonTerminal {
@@ -54,7 +49,12 @@ public class Hamcrest {
     }
 
     public static void buildBNF() {
-	BNF<Term, NT> bnf = new BNFBuilder<>(Term.class, NT.class).derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
+	BNF bnf = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("Hamcrest") //
+		.setStartSymbols(ASSERT) //
+		.endConfig() //
+		.derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
 		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
 		.derive(INSTANCE_OF).to(instance_of).and(type) //
 		.derive(ANYTHING).to(anything) //

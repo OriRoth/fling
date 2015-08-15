@@ -16,11 +16,11 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
  *
  */
 public class Item<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
-    private final Rule<Term, NT> rule;
+    private final Rule rule;
     private final List<Compound> astFractions;
     private int dotIndex;
 
-    public Item(final Rule<Term, NT> rule) {
+    public Item(final Rule rule) {
 	this.rule = rule;
 	dotIndex = 0;
 	astFractions = new ArrayList<>();

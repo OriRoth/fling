@@ -15,10 +15,6 @@ public class SqlFragment {
 
     enum Term implements Terminal {
 	select, column, from, all, distinct, table, where, equals, geq, leq, literal;
-	@Override
-	public Class<?> type() {
-	    return Void.class;
-	}
     }
 
     static enum NT implements NonTerminal {
@@ -27,8 +23,12 @@ public class SqlFragment {
 
     public static void buildBNF() {
 
-	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
-		.setApiName("SqlFragment") //
+	BNF b = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("SqlFragment") //
+		.setStartSymbols(SELECT_STATEMENT) //
+		.endConfig() //
+		//
 		.derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE_OPT) //
 		.derive(QUANTIFIER).to(ALL).or(DISTINCT) //
 		.derive(ALL).to(all)//

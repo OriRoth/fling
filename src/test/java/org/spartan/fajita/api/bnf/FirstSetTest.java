@@ -26,13 +26,17 @@ public class FirstSetTest {
 	REC_1, REC_2;
     };
 
-    private BNF<Term, NT> bnf;
-    private BNF<Term, NT_RECURSIVE> recursive_bnf;
+    private BNF bnf;
+    private BNF recursive_bnf;
 
     @Before
     public void initialize() {
 
-	bnf = new BNFBuilder<>(Term.class, NT.class) //
+	bnf = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("TEST") //
+		.setStartSymbols(NT.A) //
+		.endConfig() //
 		.derive(NT.A).to(Term.a) //
 		.derive(NT.B).to(Term.b) //
 		.derive(NT.AB).to(NT.A).or(NT.B) //
@@ -40,7 +44,11 @@ public class FirstSetTest {
 		.derive(NT.D).to(Term.d) //
 		.finish();
 
-	recursive_bnf = new BNFBuilder<>(Term.class, NT_RECURSIVE.class) //
+	recursive_bnf = new BNFBuilder(Term.class, NT_RECURSIVE.class) //
+		.startConfig() //
+		.setApiNameTo("TEST") //
+		.setStartSymbols(NT_RECURSIVE.REC_1) //
+		.endConfig() //
 		.derive(NT_RECURSIVE.REC_1).to(NT_RECURSIVE.REC_2) //
 		.derive(NT_RECURSIVE.REC_2).to(NT_RECURSIVE.REC_1) //
 		.finish();

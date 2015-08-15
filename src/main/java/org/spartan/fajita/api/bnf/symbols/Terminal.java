@@ -1,16 +1,19 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public interface Terminal extends Symbol {
-    public default Class<?> type() {
-	return Void.class;
+    public default Class<?>[] type() {
+	return new Class<?>[] { Void.class };
     }
 
     @Override
     public default String toString2() {
-	if (type() == Void.class)
+	if (type()[0] == Void.class)
 	    return name() + "()";
-	else
-	    return name() + "(" + type().getSimpleName() + ")";
+	String methodSig = name() + "(";
+	for (Class<?> clss : type())
+	    methodSig += clss.getSimpleName() + ",";
+	methodSig = methodSig.substring(0, methodSig.length() - 1);
+	return methodSig + ")";
     }
 
     public static final Terminal epsilon = new Terminal() {

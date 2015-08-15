@@ -16,22 +16,22 @@ public class BNFBootstrap {
     }
 
     static enum Term implements Terminal {
-	setApiName(String.class), derive(NonTerminal.class), to(Symbol.class), //
+	setApiName(String.class), derive(NonTerminal.class), to(NonTerminal.class), //
 	and(Symbol.class), toOneOf(NonTerminal.class), or(NonTerminal.class), //
 	finish;
 
-	private final Class<?> type;
+	private final Class<?>[] type;
 
-	private Term(final Class<?> type) {
+	private Term(final Class<?>... type) {
 	    this.type = type;
 	}
 
 	private Term() {
-	    type = Void.class;
+	    type = new Class<?>[] { Void.class };
 	}
 
 	@Override
-	public Class<?> type() {
+	public Class<?>[] type() {
 	    return type;
 	}
 
@@ -43,16 +43,21 @@ public class BNFBootstrap {
 	AND, NEXT, NEXT_RULE, FINISH;
     }
 
-    // TODO: added finish as legal without any rules, fix bootstrap.
+    // TODO: fix bootstrap.
     public static void buildBNF() {
-	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
-		.setApiName("BNF Bootstrap") //
+	BNF b = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("BNF Bootstrap") //
+		.setStartSymbols(S) //
+		.overload(to).with(Terminal.class) //
+		.endConfig() //
+		//
 		.derive(S).to(NAME_OPT).and(RULE).and(NEXT) //
 		.derive(NAME_OPT).to(NAME).or(NonTerminal.EPSILON) //
 		.derive(NAME).to(setApiName) //
 		.derive(RULE).to(derive).and(RULE_TYPE) //
 		.derive(RULE_TYPE).to(ABSTRACT_RULE).or(NORMAL_RULE) //
-		.derive(ABSTRACT_RULE).to(toOneOf).and(NEXT_ABSTRACT) //
+		.derive(ABSTRACT_RULE).to(to).and(NEXT_ABSTRACT) //
 		.derive(NEXT_ABSTRACT).to(OR).or(NonTerminal.EPSILON) //
 		.derive(OR).to(or).and(NEXT_ABSTRACT) //
 		.derive(NORMAL_RULE).to(to).and(NEXT_NORMAL) //

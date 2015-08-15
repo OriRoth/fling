@@ -16,24 +16,22 @@ public class JsonObject {
 
     static enum Term implements Terminal {
 	startObject, endObject, name(String.class), //
-	toInt(int.class), toBool(boolean.class), toDouble(double.class), //
-	toString(String.class), toNull, toObject, toArray, //
+	to(int.class), toNull, toObject, toArray, //
 	startArray, endArray, //
-	addInt(int.class), addBool(boolean.class), addDouble(double.class), //
-	addString(String.class), addObject, addArray;
+	add(int.class), addObject, addArray;
 
-	private final Class<?> type;
+	private final Class<?>[] type;
 
-	private Term(final Class<?> type) {
+	private Term(final Class<?>... type) {
 	    this.type = type;
 	}
 
 	private Term() {
-	    type = Void.class;
+	    type = new Class<?>[] { Void.class };
 	}
 
 	@Override
-	public Class<?> type() {
+	public Class<?>[] type() {
 	    return type;
 	}
 
@@ -41,11 +39,9 @@ public class JsonObject {
 
     static enum NT implements NonTerminal {
 	START, OBJECT, NEXT, NEXT_ADD, LAST_ADD, ADD, //
-	TO_TYPE, TO_INT, TO_BOOL, TO_DOUBLE, //
-	TO_STRING, TO_NULL, TO_OBJECT, TO_ARRAY, //
+	TO_TYPE, TO, TO_NULL, TO_OBJECT, TO_ARRAY, //
 	ARRAY, ELEMENTS, LAST_ELEMENT, NEXT_ELEMENT, //
-	ELEMENT, INT_ELEMENT, BOOL_ELEMENT, DOUBLE_ELEMENT, //
-	STRING_ELEMENT, OBJECT_ELEMENT, ARRAY_ELEMENT;
+	ELEMENT_TYPE, ELEMENT, OBJECT_ELEMENT, ARRAY_ELEMENT;
     }
 
     /**
@@ -64,33 +60,34 @@ public class JsonObject {
      * of the smallest ordinal but with the declared class
      */
     public static void buildBNF() {
-	BNF<Term, NT> b = new BNFBuilder<>(Term.class, NT.class) //
-		.setApiName("Json Object Builder") //
+	BNF b = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("Json Object Builder") //
+		.setStartSymbols(START) //
+		.overload(to).with(boolean.class)//
+		.overload(to).with(double.class) //
+		.overload(to).with(String.class) //
+		.overload(add).with(boolean.class)//
+		.overload(add).with(double.class) //
+		.overload(add).with(String.class) //
+		.endConfig() //
 		.derive(START).to(OBJECT) //
 		.derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
 		.derive(NEXT).to(NEXT_ADD).or(LAST_ADD)//
 		.derive(NEXT_ADD).to(ADD).and(NEXT) //
 		.derive(LAST_ADD).to(ADD) //
 		.derive(ADD).to(name).and(TO_TYPE)//
-		.derive(TO_TYPE).to(TO_INT).or(TO_BOOL).or(TO_DOUBLE).or(TO_STRING).or(TO_NULL).or(TO_ARRAY)
-		.or(TO_OBJECT)//
-		.derive(TO_INT).to(toInt)//
-		.derive(TO_BOOL).to(toBool) //
-		.derive(TO_DOUBLE).to(toDouble) //
-		.derive(TO_STRING).to(toString) //
+		.derive(TO_TYPE).to(TO).or(TO_NULL).or(TO_ARRAY).or(TO_OBJECT)//
+		.derive(TO).to(to)//
 		.derive(TO_NULL).to(toNull) //
 		.derive(TO_OBJECT).to(toObject).and(OBJECT) //
 		.derive(TO_ARRAY).to(toArray).and(ARRAY) //
 		.derive(ARRAY).to(startArray).and(ELEMENTS).and(endArray) //
 		.derive(ELEMENTS).to(LAST_ELEMENT).or(NEXT_ELEMENT) //
-		.derive(LAST_ELEMENT).to(ELEMENT) //
-		.derive(NEXT_ELEMENT).to(ELEMENT).and(ELEMENTS) //
-		.derive(ELEMENT).to(INT_ELEMENT).or(BOOL_ELEMENT).or(STRING_ELEMENT).or(DOUBLE_ELEMENT)
-		.or(ARRAY_ELEMENT).or(OBJECT_ELEMENT) //
-		.derive(INT_ELEMENT).to(addInt) //
-		.derive(BOOL_ELEMENT).to(addBool) //
-		.derive(STRING_ELEMENT).to(addString) //
-		.derive(DOUBLE_ELEMENT).to(addDouble) //
+		.derive(LAST_ELEMENT).to(ELEMENT_TYPE) //
+		.derive(NEXT_ELEMENT).to(ELEMENT_TYPE).and(ELEMENTS) //
+		.derive(ELEMENT_TYPE).to(ELEMENT).or(ARRAY_ELEMENT).or(OBJECT_ELEMENT) //
+		.derive(ELEMENT).to(add) //
 		.derive(OBJECT_ELEMENT).to(addObject).and(OBJECT) //
 		.derive(ARRAY_ELEMENT).to(addArray).and(ARRAY) //
 		.finish();

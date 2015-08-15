@@ -52,3 +52,8 @@
  
  9) At some point we'll have to maintain a stack in the data-structure in order to properly parse the
  	input. the stack is inevitable, e.g. balanced parentheses
+ 	
+ 10) terminal overloading : it seemed for a second that after overloading a terminal , 
+ 	there should be a posibility to enter the overloaded Terminal object to the BNFBuilder methods,
+ 	but thinking about it leads to the understanding that the origional terminal is sufficient, that's because 
+ 	if there was a need for distinction, it would not be overload! 
