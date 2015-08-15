@@ -42,6 +42,11 @@ public class Hamcrest {
 
     enum Term implements Terminal {
 	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
+
+	@Override
+	public Class<?>[] type() {
+	    return new Class<?>[] { Void.class };
+	}
     }
 
     static enum NT implements NonTerminal {

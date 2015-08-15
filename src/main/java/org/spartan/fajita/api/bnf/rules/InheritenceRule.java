@@ -16,9 +16,9 @@ public class InheritenceRule extends Rule {
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
+	StringBuilder sb = new StringBuilder(lhs.methodSignatureString() + " ::= ");
 	for (NonTerminal nt : subtypes)
-	    sb.append(nt.toString2() + " | ");
+	    sb.append(nt.methodSignatureString() + " | ");
 	sb.deleteCharAt(sb.length() - 2);
 	return sb.toString();
     }

@@ -13,6 +13,11 @@ public class NullablesTest {
 
     private enum Term implements Terminal {
 	t1;
+
+	@Override
+	public Class<?>[] type() {
+	    return VoidType;
+	}
     };
 
     private enum NT implements NonTerminal {

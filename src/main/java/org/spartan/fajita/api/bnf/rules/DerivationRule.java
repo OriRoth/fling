@@ -17,9 +17,9 @@ public class DerivationRule extends Rule {
 
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
+	StringBuilder sb = new StringBuilder(lhs.methodSignatureString() + " ::= ");
 	for (Symbol symb : expression)
-	    sb.append(symb.toString2() + " ");
+	    sb.append(symb.methodSignatureString() + " ");
 	return sb.toString();
     }
 

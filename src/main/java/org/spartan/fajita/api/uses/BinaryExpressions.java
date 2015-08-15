@@ -38,7 +38,27 @@ public class BinaryExpressions {
     }
 
     enum Term implements Terminal {
-	bool, and, or, not;
+	bool(boolean.class), and, or, not;
+
+	private final Class<?>[] type;
+
+	Term(final Class<?>... type) {
+	    this.type = type;
+	}
+
+	Term() {
+	    type = new Class<?>[] { Void.class };
+	}
+
+	@Override
+	public Class<?>[] type() {
+	    return type;
+	}
+
+	@Override
+	public String toString() {
+	    return methodSignatureString();
+	}
     }
 
     static enum NT implements NonTerminal {
@@ -52,7 +72,7 @@ public class BinaryExpressions {
 		.startConfig() //
 		.setApiNameTo("Boolean expression builder") //
 		.setStartSymbols(S) //
-		.overload(bool).with(boolean.class) //
+		.overload(bool).with(Void.class) //
 		.endConfig() //
 		//
 		.derive(S).to(EXPRESSION) //

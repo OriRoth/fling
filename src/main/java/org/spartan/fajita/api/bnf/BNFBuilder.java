@@ -39,7 +39,6 @@ public class BNFBuilder {
 
     public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(
 	    final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
-	setApiName("defaultAPI");
 	terminals = new HashSet<>(EnumSet.allOf(terminalEnum));
 	nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
 	inheritenceRules = new HashSet<>();
@@ -97,7 +96,7 @@ public class BNFBuilder {
 
 	    @Override
 	    public String toString() {
-		return toString2();
+		return methodSignatureString();
 	    }
 
 	    @Override

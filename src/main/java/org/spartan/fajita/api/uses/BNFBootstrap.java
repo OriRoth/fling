@@ -35,6 +35,10 @@ public class BNFBootstrap {
 	    return type;
 	}
 
+	@Override
+	public String toString() {
+	    return methodSignatureString();
+	}
     }
 
     static enum NT implements NonTerminal {

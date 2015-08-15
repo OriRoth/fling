@@ -16,6 +16,11 @@ public class FirstSetTest {
 
     private enum Term implements Terminal {
 	a, b, c, d;
+
+	@Override
+	public Class<?>[] type() {
+	    return VoidType;
+	}
     };
 
     private enum NT implements NonTerminal {

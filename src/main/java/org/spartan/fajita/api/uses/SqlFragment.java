@@ -15,6 +15,16 @@ public class SqlFragment {
 
     enum Term implements Terminal {
 	select, column, from, all, distinct, table, where, equals, geq, leq, literal;
+
+	@Override
+	public Class<?>[] type() {
+	    return new Class<?>[] { Void.class };
+	}
+
+	@Override
+	public String toString() {
+	    return methodSignatureString();
+	}
     }
 
     static enum NT implements NonTerminal {
