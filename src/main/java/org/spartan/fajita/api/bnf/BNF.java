@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.rules.InheritenceRule;
@@ -16,6 +17,7 @@ import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public final class BNF {
     private final String apiName;
@@ -23,6 +25,7 @@ public final class BNF {
     private final Set<NonTerminal> nonterminals;
     private final Collection<DerivationRule> derivationRules;
     private final Collection<InheritenceRule> inheritenceRules;
+    private final Set<NonTerminal> startSymbols;
     private final Set<NonTerminal> nullableSymbols;
     private final Map<Symbol, Set<Terminal>> baseFirstSets;
     private final Map<NonTerminal, Set<Terminal>> followSets;
@@ -33,6 +36,7 @@ public final class BNF {
 	nonterminals = builder.getNonTerminals();
 	derivationRules = builder.getDerivationRules();
 	inheritenceRules = builder.getInheritenceRules();
+	startSymbols = builder.getStartSymbols();
 	nullableSymbols = calculateNullableSymbols();
 	baseFirstSets = calculateSymbolFirstSet();
 	followSets = calculateFollowSets();
@@ -94,7 +98,7 @@ public final class BNF {
 
     private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
 	Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
-	Set<NonTerminal> startNTs = getStartNTs();
+	Set<NonTerminal> startNTs = getStartSymbols();
 
 	// initialization
 	for (NonTerminal nt : getNonTerminals())
@@ -149,8 +153,8 @@ public final class BNF {
 	return terminals;
     }
 
-    public Set<NonTerminal> getStartNTs() {
-	return getNonTerminals();
+    public Set<NonTerminal> getStartSymbols() {
+	return startSymbols;
     }
 
     public String getApiName() {
@@ -200,5 +204,14 @@ public final class BNF {
 
     public Set<Terminal> followSetOf(final NonTerminal nt) {
 	return followSets.get(nt);
+    }
+
+    public Set<Type> getOverloadsOf(final Terminal t) {
+	Set<Type> collect = getTerminals() //
+		.stream() //
+		.filter(terminal -> terminal.name().equals(t.name())) //
+		.map(terminal -> terminal.type()) //
+		.collect(Collectors.toSet());
+	return collect;
     }
 }

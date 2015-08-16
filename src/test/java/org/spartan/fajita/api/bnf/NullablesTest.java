@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class NullablesTest {
 
@@ -15,8 +16,8 @@ public class NullablesTest {
 	t1;
 
 	@Override
-	public Class<?>[] type() {
-	    return VoidType;
+	public Type type() {
+	    return Type.VOID;
 	}
     };
 

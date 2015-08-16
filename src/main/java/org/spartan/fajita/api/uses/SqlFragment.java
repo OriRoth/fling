@@ -7,6 +7,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class SqlFragment {
 
@@ -17,8 +18,8 @@ public class SqlFragment {
 	select, column, from, all, distinct, table, where, equals, geq, leq, literal;
 
 	@Override
-	public Class<?>[] type() {
-	    return new Class<?>[] { Void.class };
+	public Type type() {
+	    return new Type();
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class Hamcrest {
     @SuppressWarnings("unchecked")
@@ -44,8 +45,8 @@ public class Hamcrest {
 	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
 
 	@Override
-	public Class<?>[] type() {
-	    return new Class<?>[] { Void.class };
+	public Type type() {
+	    return new Type();
 	}
     }
 

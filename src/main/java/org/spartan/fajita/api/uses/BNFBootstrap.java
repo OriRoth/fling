@@ -8,6 +8,7 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class BNFBootstrap {
     public static void expressionBuilder() {
@@ -20,18 +21,18 @@ public class BNFBootstrap {
 	and(Symbol.class), toOneOf(NonTerminal.class), or(NonTerminal.class), //
 	finish;
 
-	private final Class<?>[] type;
+	private final Type type;
 
-	private Term(final Class<?>... type) {
-	    this.type = type;
+	private Term(final Class<?> cls1, final Class<?>... type) {
+	    this.type = new Type(cls1, type);
 	}
 
 	private Term() {
-	    type = new Class<?>[] { Void.class };
+	    type = new Type();
 	}
 
 	@Override
-	public Class<?>[] type() {
+	public Type type() {
 	    return type;
 	}
 

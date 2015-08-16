@@ -1,16 +1,14 @@
 package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.*;
+import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 import static org.spartan.fajita.api.bnf.symbols.NonTerminal.EPSILON;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class FirstSetTest {
 
@@ -18,8 +16,8 @@ public class FirstSetTest {
 	a, b, c, d;
 
 	@Override
-	public Class<?>[] type() {
-	    return VoidType;
+	public Type type() {
+	    return Type.VOID;
 	}
     };
 
@@ -57,10 +55,6 @@ public class FirstSetTest {
 		.derive(NT_RECURSIVE.REC_1).to(NT_RECURSIVE.REC_2) //
 		.derive(NT_RECURSIVE.REC_2).to(NT_RECURSIVE.REC_1) //
 		.finish();
-    }
-
-    private static Set<Terminal> expectedSet(final Terminal... terminals) {
-	return new HashSet<Terminal>(Arrays.asList(terminals));
     }
 
     @Test

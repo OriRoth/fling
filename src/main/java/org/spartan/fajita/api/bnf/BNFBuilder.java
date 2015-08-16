@@ -13,16 +13,9 @@ import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Type;
 
 /**
- * There are a few possibilities regarding checking the validity of the
- * BNFBuilder (each InitialDeriver has exactly one rule):
- * <li>Throwing exception when using unknown nt - that would require building
- * the BNFBuilder rules 'Bottom up'</li>
- * <li>Waiting until parsing to check validy and throw exception - for example
- * when invoking inspectors</li>
- * <li>Adding a 'check' method that validates the BNFBuilder</li>
- * 
  * @author Tomer
  *
  */
@@ -85,7 +78,7 @@ public class BNFBuilder {
 	getInheritenceRules().add(r);
     }
 
-    private void addOverload(final String name, final Class<?>[] type) {
+    private void addOverload(final String name, final Type type) {
 	// TODO: check that there are no duplicate (+even with erasure)
 	overloads.add(new Terminal() {
 
@@ -100,24 +93,41 @@ public class BNFBuilder {
 	    }
 
 	    @Override
-	    public Class<?>[] type() {
+	    public Type type() {
 		return type;
 	    }
 	});
     }
 
     private void validate() {
+	validateNonterminals();
+	validateNoEpsilons();
+	validateOverloads();
+    }
+
+    private void validateOverloads() {
+	overloads.forEach(t -> {
+	    if (overloads.stream().anyMatch(t2 -> t2.name().equals(t.name()) && t2.type().equals(t.type()) && t != t2)
+		    || terminals.stream().anyMatch(t2 -> t2.name().equals(t.name()) && t2.type().equals(t.type())))
+		throw new IllegalStateException("overload: " + t.methodSignatureString() + " already exists.");
+	});
+    }
+
+    private void validateNonterminals() {
 	for (NonTerminal nonTerminal : getNonTerminals())
 	    if ((!getDerivationRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))) //
 		    && (!getInheritenceRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
 		throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    }
+
+    private void validateNoEpsilons() {
+	// TODO: is that necessary? will we have a possible hiding problem?
 	if (getNonTerminals().stream().anyMatch(nt -> nt.name().equals(NonTerminal.EPSILON.name())))
 	    throw new IllegalStateException(
 		    "A NT with the name " + NonTerminal.EPSILON.name() + " was found. this is not allowed.");
 	if (getTerminals().stream().anyMatch(term -> term.name().equals(Terminal.epsilon.name())))
 	    throw new IllegalStateException(
 		    "A terminal with the name " + Terminal.epsilon.name() + " was found. this is not allowed.");
-
     }
 
     private BNF finish() {
@@ -325,8 +335,8 @@ public class BNFBuilder {
 	    this.terminalName = terminalName;
 	}
 
-	public NewOverload with(final Class<?>... type) {
-	    addOverload(terminalName, type);
+	public NewOverload with(final Class<?> clss1, final Class<?>... classes) {
+	    addOverload(terminalName, new Type(clss1, classes));
 	    return new NewOverload();
 	}
 
@@ -338,26 +348,4 @@ public class BNFBuilder {
 	}
     }
 
-    // public static Func func(final String functionName){
-    // return new Func(functionName);
-    // }
-
-    // public static final class Func{
-    //
-    // private final String functionName;
-    //
-    // public Func(final String functionName) {
-    // this.functionName = functionName;
-    // }
-    //
-    // public String[] withParams(final String ... parameters){
-    // ArrayList<String> l = new ArrayList<>(Arrays.asList(parameters));
-    // l.add(0,functionName);
-    // return l.toArray(new String[l.size()]);
-    // }
-    //
-    // public String[] noParams(){
-    // return new String[]{functionName};
-    // }
-    // }
 }

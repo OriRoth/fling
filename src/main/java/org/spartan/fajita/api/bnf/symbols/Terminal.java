@@ -1,14 +1,17 @@
 package org.spartan.fajita.api.bnf.symbols;
 
+import java.util.List;
+
 public interface Terminal extends Symbol {
-    public Class<?>[] type();
+    public Type type();
 
     @Override
     public default String methodSignatureString() {
-	if (type()[0] == Void.class)
+	List<Class<?>> classes = type().classes;
+	if (classes.size() == 1 && classes.iterator().next() == Void.class)
 	    return name() + "()";
 	String methodSig = name() + "(";
-	for (Class<?> clss : type())
+	for (Class<?> clss : classes)
 	    methodSig += clss.getSimpleName() + ",";
 	methodSig = methodSig.substring(0, methodSig.length() - 1);
 	return methodSig + ")";
@@ -26,8 +29,8 @@ public interface Terminal extends Symbol {
 	}
 
 	@Override
-	public Class<?>[] type() {
-	    return null;
+	public Type type() {
+	    return Type.notype;
 	}
     };
 
@@ -43,10 +46,8 @@ public interface Terminal extends Symbol {
 	}
 
 	@Override
-	public Class<?>[] type() {
-	    return null;
+	public Type type() {
+	    return Type.notype;
 	}
     };
-
-    public static final Class<?>[] VoidType = new Class<?>[] { Void.class };
 }
