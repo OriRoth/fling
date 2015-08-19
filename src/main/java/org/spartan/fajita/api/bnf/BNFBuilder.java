@@ -79,7 +79,6 @@ public class BNFBuilder {
     }
 
     private void addOverload(final String name, final Type type) {
-	// TODO: check that there are no duplicate (+even with erasure)
 	overloads.add(new Terminal() {
 
 	    @Override
