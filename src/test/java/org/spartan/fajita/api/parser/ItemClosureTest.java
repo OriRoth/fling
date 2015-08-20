@@ -1,21 +1,21 @@
-package org.spartan.fajita.api.bnf;
+package org.spartan.fajita.api.parser;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.spartan.fajita.api.bnf.TestUtils.expectedItemSet;
 import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.Item;
-import org.spartan.fajita.api.parser.State;
 
-public class StateClosureTest {
+public class ItemClosureTest {
     private enum Term implements Terminal {
 	a, b, c, d;
 
@@ -32,13 +32,6 @@ public class StateClosureTest {
     private enum NT2 implements NonTerminal {
 	S, A, B, C;
     };
-
-    public static Set<Item> expectedItemSet(final DerivationRule... rules) {
-	HashSet<Item> $ = new HashSet<>();
-	for (DerivationRule derivationRule : rules)
-	    $.add(new Item(derivationRule, 0));
-	return $;
-    }
 
     @Test
     public void testInitialItemKept() {
@@ -185,18 +178,4 @@ public class StateClosureTest {
 	assertEquals(expectedSet, bnf.getInitialState().items);
     }
 
-    @Test
-    public void testNextState() {
-	BNF bnf = new BNFBuilder(Term.class, NT.class) //
-		.startConfig() //
-		.setApiNameTo("TEST") //
-		.setStartSymbols(NT.S) //
-		.endConfig() //
-		.derive(NT.S).to(NT.A).and(Term.b) //
-		.derive(NT.A).to(Term.a).and(Term.c) //
-		.finish();
-
-	State initialState = bnf.getInitialState();
-	AssertEquals(initialState.goTo(Term.c),
-    }
 }
