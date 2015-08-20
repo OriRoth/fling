@@ -1,6 +1,7 @@
 package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.parser.Item;
+import org.spartan.fajita.api.parser.State;
 
 public class StateClosureTest {
     private enum Term implements Terminal {
@@ -181,6 +183,20 @@ public class StateClosureTest {
 	// test
 	Set<Item> expectedSet = expectedItemSet(AtoA_Rule, AtoC_Rule, S_Rule, B_Rule, C_Rule);
 	assertEquals(expectedSet, bnf.getInitialState().items);
+    }
 
+    @Test
+    public void testNextState() {
+	BNF bnf = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("TEST") //
+		.setStartSymbols(NT.S) //
+		.endConfig() //
+		.derive(NT.S).to(NT.A).and(Term.b) //
+		.derive(NT.A).to(Term.a).and(Term.c) //
+		.finish();
+
+	State initialState = bnf.getInitialState();
+	AssertEquals(initialState.goTo(Term.c),
     }
 }
