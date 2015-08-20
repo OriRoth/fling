@@ -52,6 +52,27 @@ public class FollowSetTest {
     }
 
     @Test
+    public void testMultipleStartsFollowedBy$() {
+
+	BNF bnf = new BNFBuilder(Term.class, NT.class) //
+		.startConfig() //
+		.setApiNameTo("TEST") //
+		.setStartSymbols(NT.S, NT.A) //
+		.endConfig() //
+		.derive(NT.S).to(NT.B).or(NT.AB) //
+		.derive(NT.A).to(NT.C).or(NT.AB) //
+		.derive(NT.NULLABLE).to(NT.EPSILON) //
+		.derive(NT.B).to(Term.b)//
+		.derive(NT.AB).to(NT.A).and(NT.B) //
+		.derive(NT.C).to(Term.c).and(NT.NULLABLE).and(NT.NULLABLE) //
+		.derive(NT.UNREACHABLE).to(Term.d) //
+		.finish();
+
+	assertThat(expectedSet(Term.$), equalTo(bnf.followSetOf(NT.S)));
+	assertTrue(bnf.followSetOf(NT.A).contains(Term.$));
+    }
+
+    @Test
     public void testBasicFollow() {
 	assertTrue(bnf.followSetOf(NT.A).contains(Term.b));
     }
@@ -70,4 +91,5 @@ public class FollowSetTest {
     public void testUnreachableNT() {
 	assertEquals(expectedSet(), bnf.followSetOf(NT.UNREACHABLE));
     }
+
 }

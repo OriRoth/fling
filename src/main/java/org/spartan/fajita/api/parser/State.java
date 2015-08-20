@@ -1,19 +1,28 @@
 package org.spartan.fajita.api.parser;
 
-import java.util.List;
+import java.util.Set;
 
-import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public class State<Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> {
-    public final List<Item<Term, NT>> items;
+public class State {
+    public final Set<Item> items;
+    public final BNF bnf;
 
-    State(final List<Item<Term, NT>> items) {
+    State(final Set<Item> items, final BNF bnf) {
 	this.items = items;
+	this.bnf = bnf;
     }
 
-    public State<Term, NT> nextState(final Symbol lookahead) {
-	return StateCalculator.calculate(this, lookahead);
+    public State goTo(final Symbol lookahead) {
+	return StateCalculator.goTo(this, lookahead);
+    }
+
+    @Override
+    public String toString() {
+	String $ = "State: \n";
+	for (Item item : items)
+	    $ += item.toString();
+	return $;
     }
 }
