@@ -18,11 +18,23 @@ public class State {
 	return StateCalculator.goTo(this, lookahead);
     }
 
+    public boolean isLegalLookahead(final Symbol lookahead) {
+	return items.stream().anyMatch(item -> item.isLegalLookahead(lookahead));
+    }
+
     @Override
     public String toString() {
 	String $ = "State: \n";
 	for (Item item : items)
 	    $ += item.toString();
 	return $;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+	if (obj.getClass() != State.class)
+	    return false;
+	State s = (State) obj;
+	return bnf.equals(s.bnf) && s.items.equals(items);
     }
 }

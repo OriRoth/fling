@@ -44,8 +44,8 @@ public class StateCalculator {
     public static State goTo(final State state, final Symbol lookahead) {
 	Set<Item> initialItems = state.items.stream().//
 		filter(item -> item.isLegalLookahead(lookahead)) //
+		.map(item -> item.advance()) //
 		.collect(Collectors.toSet());
-	initialItems.forEach(item -> item.advance());
 	return calculateClosure(initialItems, state.bnf);
     }
 
