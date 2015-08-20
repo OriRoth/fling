@@ -14,19 +14,12 @@ public abstract class Rule implements Comparable<Rule> {
 	this.index = index;
     }
 
-    /**
-     * Because we should only one derivation rule for each nonterminal, equals
-     * only checks lhs equality.
-     * 
-     * @param obj
-     * @return
-     */
     @Override
     public boolean equals(final Object obj) {
 	if (obj.getClass() != getClass())
 	    return false;
 
-	return lhs.equals(((Rule) obj).lhs);
+	return lhs.equals(((Rule) obj).lhs) && getChildren().equals(((Rule) obj).getChildren());
     }
 
     /**
