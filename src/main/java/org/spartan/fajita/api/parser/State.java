@@ -9,7 +9,7 @@ public class State {
     public final Set<Item> items;
     public final BNF bnf;
 
-    State(final Set<Item> items, final BNF bnf) {
+    protected State(final Set<Item> items, final BNF bnf) {
 	this.items = items;
 	this.bnf = bnf;
     }
