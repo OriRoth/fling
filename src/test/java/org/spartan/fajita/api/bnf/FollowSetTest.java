@@ -11,85 +11,66 @@ import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-
+@SuppressWarnings("static-method") //
 public class FollowSetTest {
-    private enum Term implements Terminal {
-	a, b, c, d;
-
-	@Override
-	public Type type() {
-	    return Type.VOID;
-	}
-    };
-
-    private enum NT implements NonTerminal {
-	S, A, B, AB, C, NULLABLE, UNREACHABLE;
-    };
-
-    private BNF bnf;
-
-    @Before
-    public void initialize() {
-
-	bnf = new BNFBuilder(Term.class, NT.class) //
-		.startConfig() //
-		.setApiNameTo("TEST") //
-		.setStartSymbols(NT.S) //
-		.endConfig() //
-		.derive(NT.S).to(NT.A).or(NT.B).or(NT.AB).or(NT.C) //
-		.derive(NT.NULLABLE).to(NT.EPSILON) //
-		.derive(NT.A).to(Term.a) //
-		.derive(NT.B).to(Term.b)//
-		.derive(NT.AB).to(NT.A).and(NT.B) //
-		.derive(NT.C).to(Term.c).and(NT.NULLABLE).and(NT.NULLABLE) //
-		.derive(NT.UNREACHABLE).to(Term.d) //
-		.finish();
+  private enum Term implements Terminal {
+    a, b, c, d;
+    @Override public Type type() {
+      return Type.VOID;
     }
+  }
 
-    @Test
-    public void testStartFollowedBy$() {
-	assertThat(expectedSet(Term.$), equalTo(bnf.followSetOf(NT.S)));
-    }
+  private enum NT implements NonTerminal {
+    S, A, B, AB, C, NULLABLE, UNREACHABLE;
+  }
 
-    @Test
-    public void testMultipleStartsFollowedBy$() {
+  private BNF bnf;
 
-	BNF bnf = new BNFBuilder(Term.class, NT.class) //
-		.startConfig() //
-		.setApiNameTo("TEST") //
-		.setStartSymbols(NT.S, NT.A) //
-		.endConfig() //
-		.derive(NT.S).to(NT.B).or(NT.AB) //
-		.derive(NT.A).to(NT.C).or(NT.AB) //
-		.derive(NT.NULLABLE).to(NT.EPSILON) //
-		.derive(NT.B).to(Term.b)//
-		.derive(NT.AB).to(NT.A).and(NT.B) //
-		.derive(NT.C).to(Term.c).and(NT.NULLABLE).and(NT.NULLABLE) //
-		.derive(NT.UNREACHABLE).to(Term.d) //
-		.finish();
-
-	assertThat(expectedSet(Term.$), equalTo(bnf.followSetOf(NT.S)));
-	assertTrue(bnf.followSetOf(NT.A).contains(Term.$));
-    }
-
-    @Test
-    public void testBasicFollow() {
-	assertTrue(bnf.followSetOf(NT.A).contains(Term.b));
-    }
-
-    @Test
-    public void testNTFolloweByNullableContainsLhsFollow() {
-	assertTrue(bnf.followSetOf(NT.C).contains(Term.$));
-    }
-
-    @Test
-    public void testEndOfExpressionContainsLhsFollow() {
-	assertTrue(bnf.followSetOf(NT.A).contains(Term.$));
-    }
-
-    @Test
-    public void testUnreachableNT() {
-	assertEquals(expectedSet(), bnf.followSetOf(NT.UNREACHABLE));
-    }
-
+  @Before public void initialize() {
+    bnf = new BNFBuilder(Term.class, NT.class) //
+        .startConfig() //
+        .setApiNameTo("TEST") //
+        .setStartSymbols(NT.S) //
+        .endConfig() //
+        .derive(NT.S).to(NT.A).or(NT.B).or(NT.AB).or(NT.C) //
+        .derive(NT.NULLABLE).to(NonTerminal.EPSILON) //
+        .derive(NT.A).to(Term.a) //
+        .derive(NT.B).to(Term.b)//
+        .derive(NT.AB).to(NT.A).and(NT.B) //
+        .derive(NT.C).to(Term.c).and(NT.NULLABLE).and(NT.NULLABLE) //
+        .derive(NT.UNREACHABLE).to(Term.d) //
+        .finish();
+  }
+  @Test public void testStartFollowedBy$() {
+    assertThat(expectedSet(Terminal.$), equalTo(bnf.followSetOf(NT.S)));
+  }
+ @Test public void testMultipleStartsFollowedBy$() {
+    BNF b= new BNFBuilder(Term.class, NT.class) //
+        .startConfig() //
+        .setApiNameTo("TEST") //
+        .setStartSymbols(NT.S, NT.A) //
+        .endConfig() //
+        .derive(NT.S).to(NT.B).or(NT.AB) //
+        .derive(NT.A).to(NT.C).or(NT.AB) //
+        .derive(NT.NULLABLE).to(NonTerminal.EPSILON) //
+        .derive(NT.B).to(Term.b)//
+        .derive(NT.AB).to(NT.A).and(NT.B) //
+        .derive(NT.C).to(Term.c).and(NT.NULLABLE).and(NT.NULLABLE) //
+        .derive(NT.UNREACHABLE).to(Term.d) //
+        .finish();
+    assertThat(expectedSet(Terminal.$), equalTo(b.followSetOf(NT.S)));
+    assertTrue(b.followSetOf(NT.A).contains(Terminal.$));
+  }
+  @Test public void testBasicFollow() {
+    assertTrue(bnf.followSetOf(NT.A).contains(Term.b));
+  }
+  @Test public void testNTFolloweByNullableContainsLhsFollow() {
+    assertTrue(bnf.followSetOf(NT.C).contains(Terminal.$));
+  }
+  @Test public void testEndOfExpressionContainsLhsFollow() {
+    assertTrue(bnf.followSetOf(NT.A).contains(Terminal.$));
+  }
+  @Test public void testUnreachableNT() {
+    assertEquals(expectedSet(), bnf.followSetOf(NT.UNREACHABLE));
+  }
 }

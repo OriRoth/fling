@@ -20,75 +20,63 @@ import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.examples.BinaryExpressions.Literal;
 
 public class BinaryExpressions {
-    public static void expressionBuilder() {
+  public static void expressionBuilder() {
+    // top down
+    Compound e0 = bool(true);
+    Literal e1 = bool(true).or().bool(false);
+    Literal e2 = bool(true).or().bool(false).and().bool(false);
+    Literal e3 = not().not().bool(true);
+    // bottom up
+    Compound e4 = not(bool(true));
+    Compound e5 = or(bool(true), bool(false));
+    Compound e6 = and(bool(false), bool(true));
+    Compound e7 = or(or(bool(true), bool(false)), and(bool(true), bool(false)));
+    showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
+  }
 
-	// top down
-	Compound e0 = bool(true);
-	Literal e1 = bool(true).or().bool(false);
+  enum Term implements Terminal {
+    bool(boolean.class), and, or, not;
+    private final Type type;
 
-	Literal e2 = bool(true).or().bool(false).and().bool(false);
-	Literal e3 = not().not().bool(true);
-
-	// bottom up
-	Compound e4 = not(bool(true));
-	Compound e5 = or(bool(true), bool(false));
-	Compound e6 = and(bool(false), bool(true));
-	Compound e7 = or(or(bool(true), bool(false)), and(bool(true), bool(false)));
-
-	showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
+    Term(final Class<?> c1, final Class<?>... classes) {
+      type = new Type(c1, classes);
     }
-
-    enum Term implements Terminal {
-	bool(boolean.class), and, or, not;
-
-	private final Type type;
-
-	Term(final Class<?> c1, final Class<?>... classes) {
-	    type = new Type(c1, classes);
-	}
-
-	Term() {
-	    type = new Type();
-	}
-
-	@Override
-	public Type type() {
-	    return type;
-	}
-
-	@Override
-	public String toString() {
-	    return methodSignatureString();
-	}
+    Term() {
+      type = new Type();
     }
-
-    static enum NT implements NonTerminal {
-	S, LITERAL, EXPRESSION, AND, OR, NOT;
+    @Override public Type type() {
+      return type;
     }
-
-    public static void buildBNF() {
-	// define the rules
-	BNF b = new BNFBuilder(Term.class, NT.class) //
-		//
-		.startConfig() //
-		.setApiNameTo("Boolean expression builder") //
-		.setStartSymbols(S) //
-		.overload(bool).with(Void.class) //
-		.endConfig() //
-		//
-		.derive(S).to(EXPRESSION) //
-		.derive(EXPRESSION).to(OR).or(AND).or(LITERAL).or(NOT) //
-		.derive(LITERAL).to(bool)//
-		.derive(OR).to(EXPRESSION).and(or).and(EXPRESSION)//
-		.derive(AND).to(EXPRESSION).and(and).and(EXPRESSION)//
-		.derive(NOT).to(not).and(EXPRESSION)//
-		.finish();
-
-	System.out.println(b);
+    @Override public String toString() {
+      return methodSignatureString();
     }
+  }
 
-    public static void main(final String[] args) {
-	buildBNF();
-	expressionBuilder();
-    }
+  static enum NT implements NonTerminal {
+    S, LITERAL, EXPRESSION, AND, OR, NOT;
+  }
+
+  public static void buildBNF() {
+    // define the rules
+    BNF b = new BNFBuilder(Term.class, NT.class) //
+        //
+        .startConfig() //
+        .setApiNameTo("Boolean expression builder") //
+        .setStartSymbols(S) //
+        .overload(bool).with(Void.class) //
+        .endConfig() //
+        //
+        .derive(S).to(EXPRESSION) //
+        .derive(EXPRESSION).to(OR).or(AND).or(LITERAL).or(NOT) //
+        .derive(LITERAL).to(bool)//
+        .derive(OR).to(EXPRESSION).and(or).and(EXPRESSION)//
+        .derive(AND).to(EXPRESSION).and(and).and(EXPRESSION)//
+        .derive(NOT).to(not).and(EXPRESSION)//
+        .finish();
+    System.out.println(b);
+  }
+  public static void main(final String[] args) {
+    buildBNF();
+    expressionBuilder();
+  }
 }

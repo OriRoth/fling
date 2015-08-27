@@ -22,60 +22,52 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class Hamcrest {
-    @SuppressWarnings("unchecked")
-    public static void expressionBuilder() {
+  @SuppressWarnings("unchecked") public static void expressionBuilder() {
+    // top down
+    Compound e0 = assertThat("A", anything());
+    /* for some reason i don't get type safety as expected */
+    Compound e1 = assertThat("A", instance_of(String.class));
+    Compound e2 = assertThat(123, equal_to("S"));
+    Compound e3 = assertThat("A", not().anything());
+    Compound e4 = assertThat("A", not().not().not().equals_to("V"));
+    // bottom up
+    Compound e5 = assertThat(e1, not(equal_to("S")));
+    Compound e6 = assertThat("A", not(not(equal_to("S"))));
+    Compound e7 = assertThat("ASDAD", not().any_of(not().anything(), equal_to("AS")));
+    showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
+  }
 
-	// top down
-	Compound e0 = assertThat("A", anything());
-
-	/* for some reason i don't get type safety as expected */
-	Compound e1 = assertThat("A", instance_of(String.class));
-	Compound e2 = assertThat(123, equal_to("S"));
-	Compound e3 = assertThat("A", not().anything());
-	Compound e4 = assertThat("A", not().not().not().equals_to("V"));
-
-	// bottom up
-	Compound e5 = assertThat(e1, not(equal_to("S")));
-	Compound e6 = assertThat("A", not(not(equal_to("S"))));
-	Compound e7 = assertThat("ASDAD", not().any_of(not().anything(), equal_to("AS")));
-	showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
+  enum Term implements Terminal {
+    assertThat, instance_of, anything, not, equals_to, any_of, value, type;
+    @Override public Type type() {
+      return new Type();
     }
+  }
 
-    enum Term implements Terminal {
-	assertThat, instance_of, anything, not, equals_to, any_of, value, type;
+  static enum NT implements NonTerminal {
+    ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT;
+  }
 
-	@Override
-	public Type type() {
-	    return new Type();
-	}
-    }
-
-    static enum NT implements NonTerminal {
-	ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT;
-    }
-
-    public static void buildBNF() {
-	BNF bnf = new BNFBuilder(Term.class, NT.class) //
-		.startConfig() //
-		.setApiNameTo("Hamcrest") //
-		.setStartSymbols(ASSERT) //
-		.endConfig() //
-		.derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
-		.derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
-		.derive(INSTANCE_OF).to(instance_of).and(type) //
-		.derive(ANYTHING).to(anything) //
-		.derive(EQUAL_TO).to(equals_to).and(value) //
-		.derive(NOT).to(not).and(MATCHER) //
-		.derive(ANY_OF).to(any_of).and(MATCHERS) //
-		.derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
-		.derive(MATCHERS_OPT).to(MATCHERS).or(NonTerminal.EPSILON) //
-		.finish();
-
-	System.out.println(bnf);
-    }
-
-    public static void main(final String[] args) {
-	buildBNF();
-	expressionBuilder();
-    }
+  public static void buildBNF() {
+    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+        .startConfig() //
+        .setApiNameTo("Hamcrest") //
+        .setStartSymbols(ASSERT) //
+        .endConfig() //
+        .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
+        .derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
+        .derive(INSTANCE_OF).to(instance_of).and(type) //
+        .derive(ANYTHING).to(anything) //
+        .derive(EQUAL_TO).to(equals_to).and(value) //
+        .derive(NOT).to(not).and(MATCHER) //
+        .derive(ANY_OF).to(any_of).and(MATCHERS) //
+        .derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
+        .derive(MATCHERS_OPT).to(MATCHERS).or(NonTerminal.EPSILON) //
+        .finish();
+    System.out.println(bnf);
+  }
+  public static void main(final String[] args) {
+    buildBNF();
+    expressionBuilder();
+  }
 }
