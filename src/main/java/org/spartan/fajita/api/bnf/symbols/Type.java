@@ -29,9 +29,7 @@ public class Type {
     return sb.toString();
   }
   @Override public boolean equals(final Object obj) {
-    if (obj.getClass() != Type.class)
-      return false;
-    return classes.equals(((Type) obj).classes);
+    return obj.getClass() == Type.class && classes.equals(((Type) obj).classes);
   }
   @Override public int hashCode() {
     return 7 + classes.stream().reduce(0, (n, clss) -> n + clss.hashCode(), (clss1, clss2) -> clss1.hashCode() + clss2.hashCode());

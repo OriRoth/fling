@@ -98,7 +98,7 @@ public class RegularExpressionBuilder2 {
 
 	private static Atomic range(final char from, final char to) {
 		char chars[] = new char[to-from+1];
-		for (int i=0;i<to-from+1;i++)
+		for (int i=0;i<to-from+1;++i)
 			chars[i] = (char)(i+from);
 		return new Atomic(Atomic.LeafType.Chars, chars);
 	}

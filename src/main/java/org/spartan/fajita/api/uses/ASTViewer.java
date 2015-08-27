@@ -17,7 +17,7 @@ public class ASTViewer {
 
   public static void showASTs(final Compound... compounds) {
     ASTViewer astViewer = new ASTViewer();
-    for (int i = 0; i < compounds.length; i++)
+    for (int i = 0; i < compounds.length; ++i)
       astViewer.addView(compounds[i].getRoot(), "Example " + i);
   }
   /**

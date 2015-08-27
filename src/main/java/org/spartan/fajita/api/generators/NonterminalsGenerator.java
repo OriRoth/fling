@@ -40,7 +40,7 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
 
     private void addConstructor(final JavaClassSource ntClass, final String superclass) {
 	String body = "super(parent);";
-	for (int i = 0; i < children.length; i++)
+	for (int i = 0; i < children.length; ++i)
 	    body += children[i].getName() + " = (" + children[i].getType().getName() + ") getChild(" + i + ");";
 
 	MethodSource<JavaClassSource> constructorWithParams = ntClass.addMethod()//
@@ -52,13 +52,10 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
     }
 
     private void addFields(final JavaClassSource ntClass) {
-	for (int i = 0; i < rule.expression.size(); i++) {
+	for (int i = 0; i < rule.expression.size(); ++i) {
 	    Symbol symbol = rule.expression.get(i);
-	    String type;
-	    if (NonTerminal.class.isAssignableFrom(symbol.getClass()))
-		type = ntClassname((NonTerminal) symbol);
-	    else
-		type = termClassname((Terminal) symbol);
+	    String type = NonTerminal.class.isAssignableFrom(symbol.getClass()) ? ntClassname((NonTerminal) symbol)
+          : termClassname((Terminal) symbol);
 	    children[i] = ntClass.addField() //
 		    .setName("child" + i) //
 		    .setType(type) //
@@ -69,10 +66,8 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
     private void addGetChildren(final JavaClassSource ntClass) {
 	String body = "ArrayList<Compound> $ = new ArrayList<>();";
 	for (Symbol symbol : rule.expression)
-	    if (NonTerminal.class.isAssignableFrom(symbol.getClass()))
-		body += "$.add(new " + ntClassname((NonTerminal) symbol) + "(this));";
-	    else
-		body += "$.add(new " + termClassname((Terminal) symbol) + "(this));";
+    body += "$.add(new " + (NonTerminal.class.isAssignableFrom(symbol.getClass()) ? ntClassname((NonTerminal) symbol)
+        : termClassname((Terminal) symbol)) + "(this));";
 	body += "return $;";
 	ntClass.addMethod() //
 		.setName("getChildren") //
@@ -94,10 +89,7 @@ class NonterminalsGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<
 		.setPublic().setStatic(true) //
 		.setPackage("fajita"); //
 	
-	if (isInheritedNT)
-	    $.setSuperType(inheritedNTCompoundClassname(lhs)); 
-	else
-	    $.setSuperType(Compound.class);
+	$.setSuperType(!isInheritedNT ? Compound.class : inheritedNTCompoundClassname(lhs));
 
 	// getName()
 	$.addMethod()//

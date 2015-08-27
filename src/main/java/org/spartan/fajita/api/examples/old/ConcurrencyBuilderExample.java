@@ -39,9 +39,7 @@ public class ConcurrencyBuilderExample {
 		}
 
 		public ConcurrentlyWith concurrentlyWith(final Runnable job) {
-			ConcurrentlyWith son = new ConcurrentlyWith(this, job);
-			
-			return son;
+			return new ConcurrentlyWith(this, job);
 		}
 
 		@Override

@@ -66,10 +66,7 @@ public final class BNF {
   private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
     Map<Symbol, Set<Terminal>> $ = new HashMap<>();
     for (NonTerminal nt : getNonTerminals())
-      if (isNullable(nt))
-        $.put(nt, new HashSet<>(Arrays.asList(Terminal.epsilon)));
-      else
-        $.put(nt, new HashSet<>());
+      $.put(nt, !isNullable(nt) ? new HashSet<>() : new HashSet<>(Arrays.asList(Terminal.epsilon)));
     for (Terminal term : getTerminals())
       $.put(term, new HashSet<>(Arrays.asList(term)));
     boolean moreChanges;
@@ -92,10 +89,7 @@ public final class BNF {
     Set<NonTerminal> startNTs = getStartSymbols();
     // initialization
     for (NonTerminal nt : getNonTerminals())
-      if (startNTs.contains(nt))
-        $.put(nt, new HashSet<>(Arrays.asList(Terminal.$)));
-      else
-        $.put(nt, new HashSet<>());
+      $.put(nt, !startNTs.contains(nt) ? new HashSet<>() : new HashSet<>(Arrays.asList(Terminal.$)));
     // iterative step
     boolean moreChanges;
     do {
@@ -104,14 +98,11 @@ public final class BNF {
         for (NonTerminal subtype : iRule.subtypes)
           moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
       for (DerivationRule dRule : getDerivationRules())
-        for (int i = 0; i < dRule.expression.size(); i++) {
+        for (int i = 0; i < dRule.expression.size(); ++i) {
           if (dRule.expression.get(i).isTerminal())
             continue;
-          Symbol subExpression[];
-          if (i != dRule.expression.size() - 1)
-            subExpression = Arrays.copyOfRange(dRule.expression.toArray(), i + 1, dRule.expression.size(), Symbol[].class);
-          else
-            subExpression = new Symbol[] {};
+          Symbol subExpression[] = i == dRule.expression.size() - 1 ? new Symbol[] {}
+              : Arrays.copyOfRange(dRule.expression.toArray(), i + 1, dRule.expression.size(), Symbol[].class);
           moreChanges |= $.get(dRule.expression.get(i)).addAll(firstSetOf(subExpression));
           if (isNullable(subExpression))
             moreChanges |= $.get(dRule.expression.get(i)).addAll($.get(dRule.lhs));
@@ -174,12 +165,8 @@ public final class BNF {
     return followSets.get(nt);
   }
   public Set<Type> getOverloadsOf(final Terminal t) {
-    Set<Type> collect = getTerminals() //
-        .stream() //
-        .filter(terminal -> terminal.name().equals(t.name())) //
-        .map(terminal -> terminal.type()) //
+    return getTerminals().stream().filter(terminal -> terminal.name().equals(t.name())).map(terminal -> terminal.type())
         .collect(Collectors.toSet());
-    return collect;
   }
   public State getInitialState() {
     Set<Item> initialItems = new HashSet<>();

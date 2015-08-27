@@ -43,7 +43,7 @@ public class Item {
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(rule.lhs.methodSignatureString() + " ::= ");
     List<Symbol> expression = rule.expression;
-    for (int i = 0; i < expression.size(); i++) {
+    for (int i = 0; i < expression.size(); ++i) {
       if (i == dotIndex)
         sb.append(" . ");
       Symbol symb = expression.get(i);
