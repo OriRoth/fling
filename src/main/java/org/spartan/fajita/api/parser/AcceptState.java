@@ -6,8 +6,8 @@ import org.spartan.fajita.api.bnf.BNF;
 
 public final class AcceptState extends State {
 
-    protected AcceptState(final BNF bnf) {
-	super(new HashSet<>(), bnf);
+    protected AcceptState(final BNF bnf, final int index) {
+	super(new HashSet<>(), bnf, index);
     }
 
     @Override

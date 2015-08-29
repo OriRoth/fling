@@ -51,7 +51,7 @@ public class StatesSetTest {
 
     @Test
     public void testHasAcceptState() {
-	assertTrue(statesSet.contains(new AcceptState(bnf)));
+	assertTrue(statesSet.contains(new AcceptState(bnf, 0)));
     }
 
 }

@@ -109,7 +109,7 @@ public class LRParser {
     private State generateNextState(final State state, final Symbol lookahead) {
 	if (lookahead == Terminal.$)
 	    if (state.items.stream().anyMatch(i -> i.readyToReduce() && bnf.getStartSymbols().contains(i.rule.lhs)))
-		return new AcceptState(bnf);
+		return new AcceptState(bnf, states.size());
 	Set<Item> initialItems = state.items.stream().//
 		filter(item -> item.isLegalLookahead(lookahead)) //
 		.map(item -> item.advance()) //
