@@ -46,7 +46,7 @@ public class ItemClosureTest {
 
 	DerivationRule initialRule = bnf.getDerivationRules().iterator().next();
 
-	assertEquals(expectedSet(new Item(initialRule, 0)), bnf.getInitialState().items);
+	assertEquals(expectedSet(new Item(initialRule, 0)), new LRParser(bnf).getInitialState().items);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ItemClosureTest {
 	DerivationRule A_Rule = bnf.getDerivationRules().stream().filter(r -> r.lhs.equals(NT.A)).findAny().get();
 
 	Set<Item> expectedSet = expectedSet(new Item(S_Rule, 0), new Item(A_Rule, 0));
-	assertEquals(expectedSet, bnf.getInitialState().items);
+	assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ItemClosureTest {
 
 	// test
 	Set<Item> expectedSet = expectedItemSet(StoA_Rule, StoB_Rule, StoC_Rule, A_Rule, B_Rule, C_Rule);
-	assertEquals(expectedSet, bnf.getInitialState().items);
+	assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ItemClosureTest {
 
 	// test
 	Set<Item> expectedSet = expectedItemSet(AtoB_Rule, AtoC_Rule, S_Rule, B_Rule, C_Rule);
-	assertEquals(expectedSet, bnf.getInitialState().items);
+	assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class ItemClosureTest {
 	// S -> . A
 	// A -> . A
 	// A -> . S
-	assertEquals(3, bnf.getInitialState().items.size());
+	assertEquals(3, new LRParser(bnf).getInitialState().items.size());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class ItemClosureTest {
 
 	// test
 	Set<Item> expectedSet = expectedItemSet(AtoA_Rule, AtoC_Rule, S_Rule, B_Rule, C_Rule);
-	assertEquals(expectedSet, bnf.getInitialState().items);
+	assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
     }
 
 }

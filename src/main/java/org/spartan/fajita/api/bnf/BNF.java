@@ -18,9 +18,6 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.Item;
-import org.spartan.fajita.api.parser.State;
-import org.spartan.fajita.api.parser.StateCalculator;
 
 public final class BNF {
     private final String apiName;
@@ -218,24 +215,4 @@ public final class BNF {
 	return collect;
     }
 
-    public State getInitialState() {
-	Set<Item> initialItems = new HashSet<>();
-
-	// intial variable derived with normal rule
-	Set<Item> derivedItems = getDerivationRules().stream() //
-		.filter(dRule -> getStartSymbols().contains(dRule.lhs))//
-		.map(dRule -> new Item(dRule, 0)) //
-		.collect(Collectors.toSet());
-
-	// initial variable derived with inheritence rule
-	Set<Item> inheritenceItems = getInheritenceRules().stream() //
-		.flatMap(iRule -> iRule.getAsDerivationRules().stream())
-		.filter(dRule -> getStartSymbols().contains(dRule.lhs))//
-		.map(dRule -> new Item(dRule, 0)) //
-		.collect(Collectors.toSet());
-
-	initialItems.addAll(derivedItems);
-	initialItems.addAll(inheritenceItems);
-	return StateCalculator.calculateClosure(initialItems, this);
-    }
 }

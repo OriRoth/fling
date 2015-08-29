@@ -54,10 +54,12 @@ public class Item {
 	List<Symbol> expression = rule.expression;
 	for (int i = 0; i < expression.size(); i++) {
 	    if (i == dotIndex)
-		sb.append(" . ");
+		sb.append(". ");
 	    Symbol symb = expression.get(i);
 	    sb.append(symb.methodSignatureString() + " ");
 	}
+	if (expression.size() == dotIndex)
+	    sb.append(". ");
 	return sb.toString();
     }
 }

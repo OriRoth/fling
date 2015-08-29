@@ -133,6 +133,7 @@ public class BNFBuilder {
 	validate();
 	nonterminals.add(NonTerminal.EPSILON);
 	terminals.add(Terminal.epsilon);
+	terminals.add(Terminal.$);
 	terminals.addAll(overloads);
 	return new BNF(BNFBuilder.this);
     }
