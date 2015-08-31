@@ -8,7 +8,7 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 
 public class DerivationRule extends Rule {
 
-    public final List<Symbol> expression;
+    private final List<Symbol> expression;
 
     public DerivationRule(final NonTerminal lhs, final List<Symbol> expression, final int index) {
 	super(lhs, index);

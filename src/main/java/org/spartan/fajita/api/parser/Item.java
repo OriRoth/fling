@@ -51,7 +51,7 @@ public class Item {
     @Override
     public String toString() {
 	StringBuilder sb = new StringBuilder(rule.lhs.methodSignatureString() + " ::= ");
-	List<Symbol> expression = rule.expression;
+	List<Symbol> expression = rule.getChildren();
 	for (int i = 0; i < expression.size(); i++) {
 	    if (i == dotIndex)
 		sb.append(". ");
