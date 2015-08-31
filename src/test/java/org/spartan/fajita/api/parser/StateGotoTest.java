@@ -11,6 +11,8 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
 
 public class StateGotoTest {
     private enum Term implements Terminal {
@@ -27,7 +29,7 @@ public class StateGotoTest {
     };
 
     @Test
-    public void testEmptyNextState() {
+    public void testEmptyNextState() throws ReduceReduceConflictException, ShiftReduceConflictException {
 	BNF bnf = new BNFBuilder(Term.class, NT.class) //
 		.startConfig() //
 		.setApiNameTo("TEST") //
@@ -41,12 +43,12 @@ public class StateGotoTest {
 	State initialState = parser.getInitialState();
 	assertFalse(initialState.isLegalLookahead(Term.c));
 
-	State nextState = parser.goTo(initialState, Term.c);
+	State nextState = parser.gotoTable(initialState, Term.c);
 	assertEquals(nextState, null);
     }
 
     @Test
-    public void testNextStateTerminalLookahead() {
+    public void testNextStateTerminalLookahead() throws ReduceReduceConflictException, ShiftReduceConflictException {
 	BNF bnf = new BNFBuilder(Term.class, NT.class) //
 		.startConfig() //
 		.setApiNameTo("TEST") //
@@ -60,7 +62,7 @@ public class StateGotoTest {
 	State initialState = parser.getInitialState();
 	assertTrue(initialState.isLegalLookahead(Term.a));
 
-	State nextState = parser.goTo(initialState, Term.a);
+	State nextState = parser.gotoTable(initialState, Term.a);
 	Item A_Rule = nextState.items.stream().filter(r -> r.rule.lhs.equals(NT.A)).findAny().get();
 
 	assertEquals(1, A_Rule.dotIndex);
@@ -68,7 +70,7 @@ public class StateGotoTest {
     }
 
     @Test
-    public void testNextStateNonTerminalLookahead() {
+    public void testNextStateNonTerminalLookahead() throws ReduceReduceConflictException, ShiftReduceConflictException {
 	BNF bnf = new BNFBuilder(Term.class, NT.class) //
 		.startConfig() //
 		.setApiNameTo("TEST") //
@@ -82,7 +84,7 @@ public class StateGotoTest {
 	State initialState = parser.getInitialState();
 	assertTrue(initialState.isLegalLookahead(NT.A));
 
-	State nextState = parser.goTo(initialState, NT.A);
+	State nextState = parser.gotoTable(initialState, NT.A);
 	Item S_Rule = nextState.items.stream().filter(r -> r.rule.lhs.equals(NT.S)).findAny().get();
 
 	assertEquals(1, S_Rule.dotIndex);
@@ -90,7 +92,7 @@ public class StateGotoTest {
     }
 
     @Test
-    public void testUsesClosureInNextState() {
+    public void testUsesClosureInNextState() throws ReduceReduceConflictException, ShiftReduceConflictException {
 	BNF bnf = new BNFBuilder(Term.class, NT.class) //
 		.startConfig() //
 		.setApiNameTo("TEST") //
@@ -103,8 +105,9 @@ public class StateGotoTest {
 	LRParser parser = new LRParser(bnf);
 	State initialState = parser.getInitialState();
 
-	State nextState = parser.goTo(initialState, Term.a);
+	State nextState = parser.gotoTable(initialState, Term.a);
 
 	assertEquals(2, nextState.items.size());
     }
+
 }

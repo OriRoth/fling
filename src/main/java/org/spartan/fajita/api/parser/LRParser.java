@@ -13,16 +13,57 @@ import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.parser.ParsingTable.Accept;
+import org.spartan.fajita.api.parser.ParsingTable.Action;
+import org.spartan.fajita.api.parser.ParsingTable.Reduce;
+import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ParsingTable.Shift;
+import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
 
 public class LRParser {
 
     private final BNF bnf;
     public final List<State> states;
 
-    public LRParser(final BNF bnf) {
+    private final ParsingTable parsingTable;
+
+    public LRParser(final BNF bnf) throws ReduceReduceConflictException, ShiftReduceConflictException {
 	this.bnf = bnf;
 	states = new ArrayList<>();
 	generateStatesSet();
+	parsingTable = new ParsingTable(bnf.getTerminals(), states);
+	fillParsingTable();
+
+    }
+
+    private void fillParsingTable() throws ReduceReduceConflictException, ShiftReduceConflictException {
+	for (State state : states)
+	    for (Item item : state.items)
+		if (item.readyToReduce())
+		    if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()))
+			addAcceptAction(state, item);
+		    else
+			addReduceAction(state, item);
+		else if (item.rule.getChildren().get(item.dotIndex).isTerminal())
+		    addShiftAction(state, item);
+    }
+
+    private void addAcceptAction(final State state, final Item item)
+	    throws ReduceReduceConflictException, ShiftReduceConflictException {
+	parsingTable.set(state, Terminal.$, new Accept());
+    }
+
+    private void addShiftAction(final State state, final Item item)
+	    throws ReduceReduceConflictException, ShiftReduceConflictException {
+	Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
+	Integer nextState = state.goTo(nextTerminal);
+	parsingTable.set(state, nextTerminal, new Shift(nextState));
+    }
+
+    private void addReduceAction(final State state, final Item item)
+	    throws ReduceReduceConflictException, ShiftReduceConflictException {
+	for (Terminal t : bnf.followSetOf(item.rule.lhs))
+	    parsingTable.set(state, t, new Reduce());
     }
 
     public State getInitialState() {
@@ -30,23 +71,13 @@ public class LRParser {
     }
 
     private State generateInitialState() {
-	Set<Item> initialItems = new HashSet<>();
-
-	// intial variable derived with normal rule
-	Set<Item> derivedItems = bnf.getDerivationRules().stream() //
-		.filter(dRule -> bnf.getStartSymbols().contains(dRule.lhs))//
-		.map(dRule -> new Item(dRule, 0)) //
-		.collect(Collectors.toSet());
-
 	// initial variable derived with inheritence rule
-	Set<Item> inheritenceItems = bnf.getInheritenceRules().stream() //
-		.flatMap(iRule -> iRule.getAsDerivationRules().stream())
-		.filter(dRule -> bnf.getStartSymbols().contains(dRule.lhs))//
+	Set<Item> initialItems = bnf.getInheritenceRules().stream() //
+		.filter(iRule -> bnf.getAugmentedStartSymbol().equals(iRule.lhs))//
+		.flatMap(iRule -> iRule.getAsDerivationRules().stream())//
 		.map(dRule -> new Item(dRule, 0)) //
 		.collect(Collectors.toSet());
 
-	initialItems.addAll(derivedItems);
-	initialItems.addAll(inheritenceItems);
 	Set<Item> closure = calculateClosure(initialItems);
 	return new State(closure, bnf);
     }
@@ -108,7 +139,8 @@ public class LRParser {
 
     private State generateNextState(final State state, final Symbol lookahead) {
 	if (lookahead == Terminal.$)
-	    if (state.items.stream().anyMatch(i -> i.readyToReduce() && bnf.getStartSymbols().contains(i.rule.lhs)))
+	    if (state.items.stream()
+		    .anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs)))
 		return new AcceptState(bnf, states.size());
 	Set<Item> initialItems = state.items.stream().//
 		filter(item -> item.isLegalLookahead(lookahead)) //
@@ -119,11 +151,15 @@ public class LRParser {
 	return new State(closure, bnf, states.size());
     }
 
-    public State goTo(final State state, final Symbol lookahead) {
-	Integer index = state.transitions.get(lookahead);
-	if (index == null)
+    public State gotoTable(final State state, final Symbol lookahead) {
+	Integer nextState = state.goTo(lookahead);
+	if (nextState == null)
 	    return null;
-	return states.get(index);
+	return states.get(nextState);
+    }
+
+    public Action actionTable(final State state, final Terminal lookahead) {
+	return parsingTable.get(state.stateIndex, lookahead);
     }
 
     private Set<Symbol> legalSymbols() {

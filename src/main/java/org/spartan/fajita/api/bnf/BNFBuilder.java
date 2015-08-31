@@ -27,6 +27,17 @@ public class BNFBuilder {
     private final Set<NonTerminal> nonterminals;
     private final Set<NonTerminal> startSymbols;
     private final Set<Terminal> overloads;
+    private static final NonTerminal augmentedStartSymbol = new NonTerminal() {
+	@Override
+	public String name() {
+	    return "S'";
+	}
+
+	@Override
+	public String toString() {
+	    return name();
+	};
+    };
 
     private String apiName;
 
@@ -132,9 +143,11 @@ public class BNFBuilder {
     private BNF finish() {
 	validate();
 	nonterminals.add(NonTerminal.EPSILON);
+	nonterminals.add(augmentedStartSymbol);
 	terminals.add(Terminal.epsilon);
 	terminals.add(Terminal.$);
 	terminals.addAll(overloads);
+	addInheritenceRule(augmentedStartSymbol, new ArrayList<NonTerminal>(startSymbols));
 	return new BNF(BNFBuilder.this);
     }
 
@@ -154,8 +167,8 @@ public class BNFBuilder {
 	return inheritenceRules;
     }
 
-    Set<NonTerminal> getStartSymbols() {
-	return startSymbols;
+    NonTerminal getAugmentedStartSymbol() {
+	return augmentedStartSymbol;
     }
 
     private void setStartSymbols(final NonTerminal[] startSymbols) {

@@ -12,6 +12,8 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
 
 public class StatesSetTest {
     private List<State> statesSet;
@@ -31,7 +33,7 @@ public class StatesSetTest {
     };
 
     @Before
-    public void initializeStates() {
+    public void initializeStates() throws ReduceReduceConflictException, ShiftReduceConflictException {
 	bnf = new BNFBuilder(Term.class, NT.class) //
 		.startConfig()//
 		.setApiNameTo("TEST")//
@@ -46,7 +48,7 @@ public class StatesSetTest {
 
     @Test
     public void testNumberOfStates() {
-	assertEquals(5, statesSet.size());
+	assertEquals(6, statesSet.size());
     }
 
     @Test

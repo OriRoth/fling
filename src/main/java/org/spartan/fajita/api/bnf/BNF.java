@@ -25,7 +25,7 @@ public final class BNF {
     private final Set<NonTerminal> nonterminals;
     private final Collection<DerivationRule> derivationRules;
     private final Collection<InheritenceRule> inheritenceRules;
-    private final Set<NonTerminal> startSymbols;
+    private final NonTerminal augmentedStartSymbol;
     private final Set<NonTerminal> nullableSymbols;
     private final Map<Symbol, Set<Terminal>> baseFirstSets;
     private final Map<NonTerminal, Set<Terminal>> followSets;
@@ -36,7 +36,7 @@ public final class BNF {
 	nonterminals = builder.getNonTerminals();
 	derivationRules = builder.getDerivationRules();
 	inheritenceRules = builder.getInheritenceRules();
-	startSymbols = builder.getStartSymbols();
+	augmentedStartSymbol = builder.getAugmentedStartSymbol();
 	nullableSymbols = calculateNullableSymbols();
 	baseFirstSets = calculateSymbolFirstSet();
 	followSets = calculateFollowSets();
@@ -87,7 +87,7 @@ public final class BNF {
 		    moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
 
 	    for (DerivationRule dRule : getDerivationRules())
-		for (Symbol symbol : dRule.expression) {
+		for (Symbol symbol : dRule.getChildren()) {
 		    moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
 		    if (!isNullable(symbol))
 			break;
@@ -98,14 +98,10 @@ public final class BNF {
 
     private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
 	Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
-	Set<NonTerminal> startNTs = getStartSymbols();
-
 	// initialization
 	for (NonTerminal nt : getNonTerminals())
-	    if (startNTs.contains(nt))
-		$.put(nt, new HashSet<>(Arrays.asList(Terminal.$)));
-	    else
-		$.put(nt, new HashSet<>());
+	    $.put(nt, new HashSet<>());
+	$.get(augmentedStartSymbol).add(Terminal.$);
 
 	// iterative step
 	boolean moreChanges;
@@ -116,20 +112,20 @@ public final class BNF {
 		    moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
 
 	    for (DerivationRule dRule : getDerivationRules())
-		for (int i = 0; i < dRule.expression.size(); i++) {
-		    if (dRule.expression.get(i).isTerminal())
+		for (int i = 0; i < dRule.getChildren().size(); i++) {
+		    if (dRule.getChildren().get(i).isTerminal())
 			continue;
 		    Symbol subExpression[];
-		    if (i != dRule.expression.size() - 1)
-			subExpression = Arrays.copyOfRange(dRule.expression.toArray(), i + 1, dRule.expression.size(),
-				Symbol[].class);
+		    if (i != dRule.getChildren().size() - 1)
+			subExpression = Arrays.copyOfRange(dRule.getChildren().toArray(), i + 1,
+				dRule.getChildren().size(), Symbol[].class);
 		    else
 			subExpression = new Symbol[] {};
 
-		    moreChanges |= $.get(dRule.expression.get(i)).addAll(firstSetOf(subExpression));
+		    moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
 
 		    if (isNullable(subExpression))
-			moreChanges |= $.get(dRule.expression.get(i)).addAll($.get(dRule.lhs));
+			moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
 		}
 	} while (moreChanges);
 
@@ -153,8 +149,8 @@ public final class BNF {
 	return terminals;
     }
 
-    public Set<NonTerminal> getStartSymbols() {
-	return startSymbols;
+    public NonTerminal getAugmentedStartSymbol() {
+	return augmentedStartSymbol;
     }
 
     public String getApiName() {
