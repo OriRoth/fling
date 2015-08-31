@@ -12,8 +12,8 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
-import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 
 public class StatesSetTest {
   private List<State> statesSet;

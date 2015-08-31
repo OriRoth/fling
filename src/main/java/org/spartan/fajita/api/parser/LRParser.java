@@ -13,23 +13,23 @@ import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.parser.ParsingTable.Accept;
-import org.spartan.fajita.api.parser.ParsingTable.Action;
-import org.spartan.fajita.api.parser.ParsingTable.Reduce;
-import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
-import org.spartan.fajita.api.parser.ParsingTable.Shift;
-import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.Accept;
+import org.spartan.fajita.api.parser.ActionTable.Action;
+import org.spartan.fajita.api.parser.ActionTable.Reduce;
+import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.Shift;
+import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 
 public class LRParser {
   private final BNF bnf;
   public final List<State> states;
-  private final ParsingTable parsingTable;
+  private final ActionTable actionTable;
 
   public LRParser(final BNF bnf) throws ReduceReduceConflictException, ShiftReduceConflictException {
     this.bnf = bnf;
     states = new ArrayList<>();
     generateStatesSet();
-    parsingTable = new ParsingTable(states);
+    actionTable = new ActionTable(states);
     fillParsingTable();
   }
   private void fillParsingTable() throws ReduceReduceConflictException, ShiftReduceConflictException {
@@ -44,18 +44,18 @@ public class LRParser {
           addShiftAction(state, item);
   }
   private void addAcceptAction(final State state) throws ReduceReduceConflictException, ShiftReduceConflictException {
-    parsingTable.set(state, Terminal.$, new Accept());
+    actionTable.set(state, Terminal.$, new Accept());
   }
   private void addShiftAction(final State state, final Item item)
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
     Integer nextState = state.goTo(nextTerminal);
-    parsingTable.set(state, nextTerminal, new Shift(nextState.intValue()));
+    actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
   }
   private void addReduceAction(final State state, final Item item)
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     for (Terminal t : bnf.followSetOf(item.rule.lhs))
-      parsingTable.set(state, t, new Reduce());
+      actionTable.set(state, t, new Reduce());
   }
   public State getInitialState() {
     return states.get(0);
@@ -136,7 +136,7 @@ public class LRParser {
     return states.get(nextState.intValue());
   }
   public Action actionTable(final State state, final Terminal lookahead) {
-    return parsingTable.get(state.stateIndex, lookahead);
+    return actionTable.get(state.stateIndex, lookahead);
   }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();

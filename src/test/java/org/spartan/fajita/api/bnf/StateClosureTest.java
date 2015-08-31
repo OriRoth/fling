@@ -14,8 +14,8 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.parser.Item;
 import org.spartan.fajita.api.parser.LRParser;
-import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
-import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 
 @SuppressWarnings("static-method") //
 public class StateClosureTest {
