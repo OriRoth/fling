@@ -20,195 +20,159 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 
 public final class BNF {
-    private final String apiName;
-    private final Set<Terminal> terminals;
-    private final Set<NonTerminal> nonterminals;
-    private final Collection<DerivationRule> derivationRules;
-    private final Collection<InheritenceRule> inheritenceRules;
-    private final NonTerminal augmentedStartSymbol;
-    private final Set<NonTerminal> nullableSymbols;
-    private final Map<Symbol, Set<Terminal>> baseFirstSets;
-    private final Map<NonTerminal, Set<Terminal>> followSets;
+  private final String apiName;
+  private final Set<Terminal> terminals;
+  private final Set<NonTerminal> nonterminals;
+  private final Collection<DerivationRule> derivationRules;
+  private final Collection<InheritenceRule> inheritenceRules;
+  private final NonTerminal augmentedStartSymbol;
+  private final Set<NonTerminal> nullableSymbols;
+  private final Map<Symbol, Set<Terminal>> baseFirstSets;
+  private final Map<NonTerminal, Set<Terminal>> followSets;
 
-    BNF(final BNFBuilder builder) {
-	apiName = builder.getApiName();
-	terminals = builder.getTerminals();
-	nonterminals = builder.getNonTerminals();
-	derivationRules = builder.getDerivationRules();
-	inheritenceRules = builder.getInheritenceRules();
-	augmentedStartSymbol = builder.getAugmentedStartSymbol();
-	nullableSymbols = calculateNullableSymbols();
-	baseFirstSets = calculateSymbolFirstSet();
-	followSets = calculateFollowSets();
+  BNF(final BNFBuilder builder) {
+    apiName = builder.getApiName();
+    terminals = builder.getTerminals();
+    nonterminals = builder.getNonTerminals();
+    derivationRules = builder.getDerivationRules();
+    inheritenceRules = builder.getInheritenceRules();
+    augmentedStartSymbol = BNFBuilder.getAugmentedStartSymbol();
+    nullableSymbols = calculateNullableSymbols();
+    baseFirstSets = calculateSymbolFirstSet();
+    followSets = calculateFollowSets();
+  }
+  private Set<NonTerminal> calculateNullableSymbols() {
+    HashSet<NonTerminal> nullables = new HashSet<>();
+    nullables.add(NonTerminal.EPSILON);
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (Rule rule : getInheritenceRules())
+        if ((!nullables.contains(rule.lhs)) && rule.getChildren().stream().anyMatch(child -> nullables.contains(child))) {
+          nullables.add(rule.lhs);
+          moreChanges = true;
+        }
+      for (Rule rule : getInheritenceRules())
+        if ((!nullables.contains(rule.lhs)) && rule.getChildren().stream().allMatch(child -> nullables.contains(child))) {
+          nullables.add(rule.lhs);
+          moreChanges = true;
+        }
+    } while (moreChanges);
+    return nullables;
+  }
+  private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
+    Map<Symbol, Set<Terminal>> $ = new HashMap<>();
+    for (NonTerminal nt : getNonTerminals())
+      if (isNullable(nt))
+        $.put(nt, new HashSet<>(Arrays.asList(Terminal.epsilon)));
+      else
+        $.put(nt, new HashSet<>());
+    for (Terminal term : getTerminals())
+      $.put(term, new HashSet<>(Arrays.asList(term)));
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (InheritenceRule iRule : getInheritenceRules())
+        for (NonTerminal subtype : iRule.subtypes)
+          moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
+      for (DerivationRule dRule : getDerivationRules())
+        for (Symbol symbol : dRule.getChildren()) {
+          moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
+          if (!isNullable(symbol))
+            break;
+        }
+    } while (moreChanges);
+    return $;
+  }
+  private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
+    Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
+    // initialization
+    for (NonTerminal nt : getNonTerminals())
+      $.put(nt, new HashSet<>());
+    $.get(augmentedStartSymbol).add(Terminal.$);
+    // iterative step
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (InheritenceRule iRule : getInheritenceRules())
+        for (NonTerminal subtype : iRule.subtypes)
+          moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
+      for (DerivationRule dRule : getDerivationRules())
+        for (int i = 0; i < dRule.getChildren().size(); i++) {
+          if (dRule.getChildren().get(i).isTerminal())
+            continue;
+          Symbol subExpression[];
+          if (i != dRule.getChildren().size() - 1)
+            subExpression = Arrays.copyOfRange(dRule.getChildren().toArray(), i + 1, dRule.getChildren().size(), Symbol[].class);
+          else
+            subExpression = new Symbol[] {};
+          moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
+          if (isNullable(subExpression))
+            moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
+        }
+    } while (moreChanges);
+    $.values().forEach(followSet -> followSet.remove(Terminal.epsilon));
+    return $;
+  }
+  public Collection<Rule> getAllRules() {
+    ArrayList<Rule> $ = new ArrayList<>();
+    $.addAll(getDerivationRules());
+    $.addAll(getInheritenceRules());
+    return $;
+  }
+  public Set<NonTerminal> getNonTerminals() {
+    return nonterminals;
+  }
+  public Set<Terminal> getTerminals() {
+    return terminals;
+  }
+  public NonTerminal getAugmentedStartSymbol() {
+    return augmentedStartSymbol;
+  }
+  public String getApiName() {
+    return apiName;
+  }
+  @Override public String toString() {
+    SortedSet<Rule> rules = new TreeSet<>();
+    rules.addAll(getDerivationRules());
+    rules.addAll(getInheritenceRules());
+    StringBuilder sb = new StringBuilder() //
+        .append("Terminals set: " + terminals + "\n") //
+        .append("Nonterminals set: " + nonterminals + "\n") //
+        .append("Rules for " + getApiName() + ":\n");
+    for (Rule rule : rules)
+      sb.append(rule.toString() + "\n");
+    return sb.toString();
+  }
+  public Collection<DerivationRule> getDerivationRules() {
+    return derivationRules;
+  }
+  public Collection<InheritenceRule> getInheritenceRules() {
+    return inheritenceRules;
+  }
+  public boolean isNullable(final Symbol... expression) {
+    return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
+  }
+  public Set<Terminal> firstSetOf(final Symbol... expression) {
+    HashSet<Terminal> $ = new HashSet<>();
+    for (Symbol symbol : expression) {
+      $.addAll(baseFirstSets.get(symbol));
+      if (!isNullable(symbol))
+        break;
     }
-
-    private Set<NonTerminal> calculateNullableSymbols() {
-	HashSet<NonTerminal> nullables = new HashSet<>();
-	nullables.add(NonTerminal.EPSILON);
-	boolean moreChanges;
-	do {
-	    moreChanges = false;
-	    for (Rule rule : getInheritenceRules())
-		if ((!nullables.contains(rule.lhs))
-			&& rule.getChildren().stream().anyMatch(child -> nullables.contains(child))) {
-		    nullables.add(rule.lhs);
-		    moreChanges = true;
-		}
-
-	    for (Rule rule : getInheritenceRules())
-		if ((!nullables.contains(rule.lhs))
-			&& rule.getChildren().stream().allMatch(child -> nullables.contains(child))) {
-		    nullables.add(rule.lhs);
-		    moreChanges = true;
-		}
-
-	} while (moreChanges);
-	return nullables;
-    }
-
-    private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
-
-	Map<Symbol, Set<Terminal>> $ = new HashMap<>();
-
-	for (NonTerminal nt : getNonTerminals())
-	    if (isNullable(nt))
-		$.put(nt, new HashSet<>(Arrays.asList(Terminal.epsilon)));
-	    else
-		$.put(nt, new HashSet<>());
-
-	for (Terminal term : getTerminals())
-	    $.put(term, new HashSet<>(Arrays.asList(term)));
-
-	boolean moreChanges;
-	do {
-	    moreChanges = false;
-	    for (InheritenceRule iRule : getInheritenceRules())
-		for (NonTerminal subtype : iRule.subtypes)
-		    moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
-
-	    for (DerivationRule dRule : getDerivationRules())
-		for (Symbol symbol : dRule.getChildren()) {
-		    moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
-		    if (!isNullable(symbol))
-			break;
-		}
-	} while (moreChanges);
-	return $;
-    }
-
-    private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
-	Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
-	// initialization
-	for (NonTerminal nt : getNonTerminals())
-	    $.put(nt, new HashSet<>());
-	$.get(augmentedStartSymbol).add(Terminal.$);
-
-	// iterative step
-	boolean moreChanges;
-	do {
-	    moreChanges = false;
-	    for (InheritenceRule iRule : getInheritenceRules())
-		for (NonTerminal subtype : iRule.subtypes)
-		    moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
-
-	    for (DerivationRule dRule : getDerivationRules())
-		for (int i = 0; i < dRule.getChildren().size(); i++) {
-		    if (dRule.getChildren().get(i).isTerminal())
-			continue;
-		    Symbol subExpression[];
-		    if (i != dRule.getChildren().size() - 1)
-			subExpression = Arrays.copyOfRange(dRule.getChildren().toArray(), i + 1,
-				dRule.getChildren().size(), Symbol[].class);
-		    else
-			subExpression = new Symbol[] {};
-
-		    moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
-
-		    if (isNullable(subExpression))
-			moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
-		}
-	} while (moreChanges);
-
-	$.values().forEach(followSet -> followSet.remove(Terminal.epsilon));
-
-	return $;
-    }
-
-    public Collection<Rule> getAllRules() {
-	ArrayList<Rule> $ = new ArrayList<>();
-	$.addAll(getDerivationRules());
-	$.addAll(getInheritenceRules());
-	return $;
-    }
-
-    public Set<NonTerminal> getNonTerminals() {
-	return nonterminals;
-    }
-
-    public Set<Terminal> getTerminals() {
-	return terminals;
-    }
-
-    public NonTerminal getAugmentedStartSymbol() {
-	return augmentedStartSymbol;
-    }
-
-    public String getApiName() {
-	return apiName;
-    }
-
-    @Override
-    public String toString() {
-	SortedSet<Rule> rules = new TreeSet<>();
-	rules.addAll(getDerivationRules());
-	rules.addAll(getInheritenceRules());
-	StringBuilder sb = new StringBuilder() //
-		.append("Terminals set: " + terminals + "\n") //
-		.append("Nonterminals set: " + nonterminals + "\n") //
-		.append("Rules for " + getApiName() + ":\n");
-	for (Rule rule : rules)
-	    sb.append(rule.toString() + "\n");
-	return sb.toString();
-    }
-
-    public Collection<DerivationRule> getDerivationRules() {
-	return derivationRules;
-    }
-
-    public Collection<InheritenceRule> getInheritenceRules() {
-	return inheritenceRules;
-    }
-
-    public boolean isNullable(final Symbol... expression) {
-	return Arrays.asList(expression).stream()
-		.allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
-    }
-
-    public Set<Terminal> firstSetOf(final Symbol... expression) {
-	HashSet<Terminal> $ = new HashSet<>();
-	for (Symbol symbol : expression) {
-	    $.addAll(baseFirstSets.get(symbol));
-	    if (!isNullable(symbol))
-		break;
-	}
-
-	if (Arrays.asList(expression).stream().anyMatch(symbol -> !isNullable(symbol)))
-	    $.remove(Terminal.epsilon);
-
-	return $;
-    }
-
-    public Set<Terminal> followSetOf(final NonTerminal nt) {
-	return followSets.get(nt);
-    }
-
-    public Set<Type> getOverloadsOf(final Terminal t) {
-	Set<Type> collect = getTerminals() //
-		.stream() //
-		.filter(terminal -> terminal.name().equals(t.name())) //
-		.map(terminal -> terminal.type()) //
-		.collect(Collectors.toSet());
-	return collect;
-    }
-
+    if (Arrays.asList(expression).stream().anyMatch(symbol -> !isNullable(symbol)))
+      $.remove(Terminal.epsilon);
+    return $;
+  }
+  public Set<Terminal> followSetOf(final NonTerminal nt) {
+    return followSets.get(nt);
+  }
+  public Set<Type> getOverloadsOf(final Terminal t) {
+    Set<Type> collect = getTerminals() //
+        .stream() //
+        .filter(terminal -> terminal.name().equals(t.name())) //
+        .map(terminal -> terminal.type()) //
+        .collect(Collectors.toSet());
+    return collect;
+  }
 }

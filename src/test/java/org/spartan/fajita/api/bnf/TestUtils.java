@@ -8,15 +8,13 @@ import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.parser.Item;
 
 public class TestUtils {
-    @SafeVarargs
-    public static <T> Set<T> expectedSet(final T... expected) {
-	return new HashSet<T>(Arrays.asList(expected));
-    }
-
-    public static Set<Item> expectedItemSet(final DerivationRule... rules) {
-	HashSet<Item> $ = new HashSet<>();
-	for (DerivationRule derivationRule : rules)
-	    $.add(new Item(derivationRule, 0));
-	return $;
-    }
+  @SafeVarargs public static <T> Set<T> expectedSet(final T... expected) {
+    return new HashSet<>(Arrays.asList(expected));
+  }
+  public static Set<Item> expectedItemSet(final DerivationRule... rules) {
+    HashSet<Item> $ = new HashSet<>();
+    for (DerivationRule derivationRule : rules)
+      $.add(new Item(derivationRule, 0));
+    return $;
+  }
 }

@@ -34,7 +34,7 @@ class InheritedNTGenerator<Term extends Enum<Term> & Terminal, NT extends Enum<N
 	baseCompoundClass = generateCompoundSubclass();
 
 	subNTClasses = new JavaClassSource[rule.subtypes.size()];
-	for (int i = 0; i < rule.subtypes.size(); i++){
+	for (int i = 0; i < rule.subtypes.size(); ++i){
 	    subNTClasses[i] = NonterminalsGenerator.generateNTClass(rule.lhs,rule.subtypes.get(i),true);
 	    addEmptyConsrtuctor(subNTClasses[i]);
 	}

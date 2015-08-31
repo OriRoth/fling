@@ -24,7 +24,7 @@ public class RegularExpressionBuilder {
 			return new Matcher() {
 				@Override
 				boolean match(final String s) {
-					for (int i = 0; i < s.length() - 1; i++)
+					for (int i = 0; i < s.length() - 1; ++i)
 						if (match(s.substring(0, i)) && m.match(s.substring(i + 1)))
 							return true;
 					return (Matcher.this.match("") && m.match(s)) || (Matcher.this.match(s) && m.match(""));

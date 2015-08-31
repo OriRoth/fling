@@ -1,24 +1,24 @@
-package org.spartan.fajita.api.parser;
+package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.assertEquals;
-import static org.spartan.fajita.api.bnf.TestUtils.expectedItemSet;
-import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.Item;
+import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.ParsingTable.ReduceReduceConflictException;
 import org.spartan.fajita.api.parser.ParsingTable.ShiftReduceConflictException;
 
-public class ItemClosureTest {
+@SuppressWarnings("static-method") //
+public class StateClosureTest {
   private enum Term implements Terminal {
     a, b, c, d;
     @Override public Type type() {
@@ -34,6 +34,12 @@ public class ItemClosureTest {
     S, A, B, C;
   }
 
+  public static Set<Item> expectedItemSet(final DerivationRule... rules) {
+    HashSet<Item> $ = new HashSet<>();
+    for (DerivationRule derivationRule : rules)
+      $.add(new Item(derivationRule, 0));
+    return $;
+  }
   @Test public void testInitialItemKept() throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
@@ -44,8 +50,7 @@ public class ItemClosureTest {
         .derive(NT.A).to(NT.A).or(NT.A) //
         .finish();
     DerivationRule initialRule = bnf.getDerivationRules().iterator().next();
-    Set<Item> expectedSet = expectedSet(new Item(initialRule, 0), new Item(getAugmentedRule(bnf), 0));
-    assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
+    assertTrue(new LRParser(bnf).getInitialState().items.contains(new Item(initialRule, 0)));
   }
   @Test public void testClosureOnDerivationRule() throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
@@ -56,10 +61,15 @@ public class ItemClosureTest {
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
+    DerivationRule augmented_Rule = getAugmentedRule(bnf);
     DerivationRule S_Rule = bnf.getDerivationRules().stream().filter(r -> r.lhs.equals(NT.S)).findAny().get();
     DerivationRule A_Rule = bnf.getDerivationRules().stream().filter(r -> r.lhs.equals(NT.A)).findAny().get();
-    Set<Item> expectedSet = expectedItemSet(S_Rule, A_Rule, getAugmentedRule(bnf));
+    Set<Item> expectedSet = expectedItemSet(S_Rule, A_Rule, augmented_Rule);
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
+  }
+  private DerivationRule getAugmentedRule(final BNF bnf) {
+    return bnf.getInheritenceRules().stream().flatMap(iR -> iR.getAsDerivationRules().stream())
+        .filter(i -> i.lhs.equals(bnf.getAugmentedStartSymbol())).collect(Collectors.toSet()).iterator().next();
   }
   @Test public void testClosureOnInheritenceRule() throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT2.class) //
@@ -88,10 +98,6 @@ public class ItemClosureTest {
     Set<Item> expectedSet = expectedItemSet(StoA_Rule, StoB_Rule, StoC_Rule, A_Rule, B_Rule, C_Rule, getAugmentedRule(bnf));
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
   }
-  @SuppressWarnings("static-method") private DerivationRule getAugmentedRule(final BNF bnf) {
-    return bnf.getInheritenceRules().stream().filter(r -> r.lhs.equals(bnf.getAugmentedStartSymbol())).findAny().get()
-        .getAsDerivationRules().iterator().next();
-  }
   @Test public void testIterativeClosure() throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT2.class) //
         .startConfig() //
@@ -117,8 +123,7 @@ public class ItemClosureTest {
     Set<Item> expectedSet = expectedItemSet(AtoB_Rule, AtoC_Rule, S_Rule, B_Rule, C_Rule, getAugmentedRule(bnf));
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
   }
-  @SuppressWarnings("static-method") @Test public void testClosureWithMultipleStartVariables()
-      throws ReduceReduceConflictException, ShiftReduceConflictException {
+  @Test public void testClosureWithMultipleStartVariables() throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT2.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
@@ -132,17 +137,13 @@ public class ItemClosureTest {
     // fetching the rules
     Set<DerivationRule> dRules = new HashSet<>(bnf.getDerivationRules());
     bnf.getInheritenceRules().forEach(iRule -> dRules.addAll(iRule.getAsDerivationRules()));
-    DerivationRule AtoC_Rule = dRules.stream().filter(r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C)).findAny()
+    DerivationRule A_Rule = dRules.stream().filter(r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C)).findAny()
         .get();
     DerivationRule S_Rule = dRules.stream().filter(r -> r.lhs.equals(NT2.S)).findAny().get();
     DerivationRule B_Rule = dRules.stream().filter(r -> r.lhs.equals(NT2.B)).findAny().get();
     DerivationRule C_Rule = dRules.stream().filter(r -> r.lhs.equals(NT2.C)).findAny().get();
-    Iterator<DerivationRule> augmentedRulesIterator = bnf.getInheritenceRules().stream()
-        .filter(r -> r.lhs.equals(bnf.getAugmentedStartSymbol())).findAny().get().getAsDerivationRules().iterator();
-    DerivationRule augmentedRule1 = augmentedRulesIterator.next();
-    DerivationRule augmentedRule2 = augmentedRulesIterator.next();
     // test
-    Set<Item> expectedSet = expectedItemSet(AtoC_Rule, S_Rule, B_Rule, C_Rule, augmentedRule1, augmentedRule2);
-    assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
+    Set<Item> expectedSet = expectedItemSet(A_Rule, S_Rule, B_Rule, C_Rule);
+    assertTrue(new LRParser(bnf).getInitialState().items.containsAll(expectedSet));
   }
 }
