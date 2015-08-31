@@ -1,5 +1,7 @@
 package org.spartan.fajita.api.parser.stack;
 
+import org.spartan.fajita.api.parser.State;
+
 @SuppressWarnings("rawtypes") public class Stack<Head, Tail extends IStack> implements IStack<Head, Tail> {
   public final Head h;
   public final Tail t;
@@ -8,26 +10,10 @@ package org.spartan.fajita.api.parser.stack;
     this.h = h;
     this.t = t;
   }
-  public Stack<Integer, Stack<Head, Tail>> push(final Integer i) {
-    return new Stack<>(i, this);
+  protected Stack<State, Stack<Head, Tail>> push(final State s) {
+    return new Stack<>(s, this);
   }
-  public Tail pop() {
+  protected Tail pop() {
     return t;
-  }
-  @SuppressWarnings("boxing") public static void main(final String[] args) {
-    EmptyStack emptyStack = new EmptyStack();
-    // push
-    Stack<Integer, EmptyStack> lp1 = emptyStack.push(1);
-    Stack<Integer, Stack<Integer, EmptyStack>> lp2 = lp1.push(2);
-    Stack<Integer, Stack<Integer, Stack<Integer, EmptyStack>>> lp3 = lp2.push(3);
-    System.out.println(emptyStack.peek() == null);
-    System.out.println(lp1.peek() == 1);
-    System.out.println(lp2.peek() == 2);
-    System.out.println(lp3.peek() == 3);
-    // pop
-    // lp3.pop().pop().pop().pop();
-  }
-  @Override public Head peek() {
-    return h;
   }
 }

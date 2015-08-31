@@ -1,11 +1,10 @@
 package org.spartan.fajita.api.parser.stack;
 
+import org.spartan.fajita.api.parser.State;
+
 public class EmptyStack implements IStack<Void, EmptyStack> {
   // this class should be subclassed by all the endpoints.
-  public Stack<Integer, EmptyStack> push(final Integer i) {
-    return new Stack<>(i, this);
-  }
-  @Override public Void peek() {
-    return null;
+  public <T extends State> Stack<T, EmptyStack> push(final T t) {
+    return new Stack<>(t, this);
   }
 }
