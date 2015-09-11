@@ -3,6 +3,7 @@ package org.spartan.fajita.api.parser;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -32,8 +33,18 @@ public class State {
     return transitions.containsKey(lookahead) || items.stream().anyMatch(item -> item.isLegalLookahead(lookahead));
   }
   @Override public String toString() {
+    return compactToString();
+  }
+  public String extentedToString() {
     String $ = "{";
     for (Item item : items)
+      $ += item.toString() + ",";
+    return $ + "}";
+  }
+  public String compactToString() {
+    String $ = "{";
+    for (Item item : items.stream().filter(item -> (item.dotIndex != 0 || bnf.getAugmentedStartSymbol() == item.rule.lhs))
+        .collect(Collectors.toList()))
       $ += item.toString() + ",";
     return $ + "}";
   }

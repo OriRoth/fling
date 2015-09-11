@@ -148,4 +148,7 @@ public class LRParser {
     symbols.removeAll(notAllowed);
     return symbols;
   }
+  @Override public String toString() {
+    return actionTable.toString();
+  }
 }

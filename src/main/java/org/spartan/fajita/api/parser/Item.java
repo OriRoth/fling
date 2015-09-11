@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 /**
  * A LR0 Item
@@ -25,7 +26,8 @@ public class Item {
     return new Item(rule, dotIndex + 1);
   }
   public boolean readyToReduce() {
-    return dotIndex == rule.getChildren().size();
+    return dotIndex == rule.getChildren().size()
+        || (rule.getChildren().size() == 1 && rule.getChildren().get(0) == Terminal.epsilon);
   }
   public boolean isLegalLookahead(final Symbol symb) {
     return (rule.getChildren().size() > dotIndex) //
