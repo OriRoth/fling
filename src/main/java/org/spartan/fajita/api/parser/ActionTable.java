@@ -69,7 +69,7 @@ public class ActionTable {
     }
   }
 
-  public class ReduceReduceConflictException extends Exception {
+  public class ReduceReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
     private final State state;
     private final Symbol lookahead;
@@ -83,7 +83,7 @@ public class ActionTable {
     }
   }
 
-  public class ShiftReduceConflictException extends Exception {
+  public class ShiftReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
     private final State state;
     private final Symbol lookahead;
@@ -104,13 +104,11 @@ public class ActionTable {
     for (int i = 0; i < states.size(); i++)
       table[i] = new HashMap<>();
   }
-  void set(final State state, final Terminal lookahead, final Action act)
-      throws ReduceReduceConflictException, ShiftReduceConflictException {
+  void set(final State state, final Terminal lookahead, final Action act) {
     checkForConflicts(state, lookahead, act);
     table[state.stateIndex].put(lookahead, act);
   }
-  private void checkForConflicts(final State state, final Symbol lookahead, final Action act)
-      throws ReduceReduceConflictException, ShiftReduceConflictException {
+  private void checkForConflicts(final State state, final Symbol lookahead, final Action act) {
     Action previous = table[state.stateIndex].get(lookahead);
     if (previous == null || previous.equals(act))
       return;

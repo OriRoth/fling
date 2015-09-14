@@ -16,23 +16,21 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.parser.ActionTable.Accept;
 import org.spartan.fajita.api.parser.ActionTable.Action;
 import org.spartan.fajita.api.parser.ActionTable.Reduce;
-import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
 import org.spartan.fajita.api.parser.ActionTable.Shift;
-import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 
 public class LRParser {
   private final BNF bnf;
   public final List<State> states;
   private final ActionTable actionTable;
 
-  public LRParser(final BNF bnf) throws ReduceReduceConflictException, ShiftReduceConflictException {
+  public LRParser(final BNF bnf) {
     this.bnf = bnf;
     states = new ArrayList<>();
     generateStatesSet();
     actionTable = new ActionTable(states);
     fillParsingTable();
   }
-  private void fillParsingTable() throws ReduceReduceConflictException, ShiftReduceConflictException {
+  private void fillParsingTable() {
     for (State state : states)
       for (Item item : state.items)
         if (item.readyToReduce())
@@ -43,17 +41,15 @@ public class LRParser {
         else if (item.rule.getChildren().get(item.dotIndex).isTerminal())
           addShiftAction(state, item);
   }
-  private void addAcceptAction(final State state) throws ReduceReduceConflictException, ShiftReduceConflictException {
+  private void addAcceptAction(final State state) {
     actionTable.set(state, Terminal.$, new Accept());
   }
-  private void addShiftAction(final State state, final Item item)
-      throws ReduceReduceConflictException, ShiftReduceConflictException {
+  private void addShiftAction(final State state, final Item item) {
     Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
     Integer nextState = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
   }
-  private void addReduceAction(final State state, final Item item)
-      throws ReduceReduceConflictException, ShiftReduceConflictException {
+  private void addReduceAction(final State state, final Item item) {
     for (Terminal t : bnf.followSetOf(item.rule.lhs))
       actionTable.set(state, t, new Reduce());
   }

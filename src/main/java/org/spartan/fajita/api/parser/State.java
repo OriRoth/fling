@@ -32,14 +32,18 @@ public class State {
       return items.stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs));
     return transitions.containsKey(lookahead) || items.stream().anyMatch(item -> item.isLegalLookahead(lookahead));
   }
+  public Set<Symbol> allLegalLookaheads() {
+    return transitions.keySet();
+  }
   @Override public String toString() {
-    return compactToString();
+    return "q" + stateIndex + ":" + compactToString() + " " + transitions.toString();
   }
   public String extentedToString() {
     String $ = "{";
     for (Item item : items)
       $ += item.toString() + ",";
-    return $ + "}";
+    $ += "} ";
+    return $;
   }
   public String compactToString() {
     String $ = "{";
