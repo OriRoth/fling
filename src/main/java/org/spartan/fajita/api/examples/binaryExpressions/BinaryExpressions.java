@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples;
+package org.spartan.fajita.api.examples.binaryExpressions;
 
 import java.util.ArrayList;
 

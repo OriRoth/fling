@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.uses;
+package org.spartan.fajita.api.examples.json;
 
-import static org.spartan.fajita.api.uses.JsonObject.NT.*;
-import static org.spartan.fajita.api.uses.JsonObject.Term.*;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.*;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.*;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;

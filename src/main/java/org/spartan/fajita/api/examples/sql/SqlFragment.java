@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.uses;
+package org.spartan.fajita.api.examples.sql;
 
-import static org.spartan.fajita.api.uses.SqlFragment.NT.*;
-import static org.spartan.fajita.api.uses.SqlFragment.Term.*;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.*;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.*;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;

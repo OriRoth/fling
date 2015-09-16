@@ -1,12 +1,12 @@
-package org.spartan.fajita.api.examples;
+package org.spartan.fajita.api.examples.hamcrest;
 
 import java.util.ArrayList;
 
 import org.spartan.fajita.api.ast.Atomic;
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.ast.InheritedNonterminal;
-import org.spartan.fajita.api.examples.HamcrestBuilder.EqualTo.AnyOf;
-import org.spartan.fajita.api.examples.HamcrestBuilder.EqualTo.Not;
+import org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.EqualTo.AnyOf;
+import org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.EqualTo.Not;
 
 public class HamcrestBuilder {
   // inherited nonTerminals definitions

@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.uses;
+package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.uses.BNFBootstrap.NT.*;
-import static org.spartan.fajita.api.uses.BNFBootstrap.Term.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.*;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;

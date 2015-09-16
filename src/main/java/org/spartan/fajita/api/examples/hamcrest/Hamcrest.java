@@ -1,18 +1,9 @@
-package org.spartan.fajita.api.uses;
+package org.spartan.fajita.api.examples.hamcrest;
 
-import static org.spartan.fajita.api.examples.HamcrestBuilder.anything;
-import static org.spartan.fajita.api.examples.HamcrestBuilder.assertThat;
-import static org.spartan.fajita.api.examples.HamcrestBuilder.equal_to;
-import static org.spartan.fajita.api.examples.HamcrestBuilder.instance_of;
-import static org.spartan.fajita.api.examples.HamcrestBuilder.not;
-import static org.spartan.fajita.api.uses.ASTViewer.showASTs;
-import static org.spartan.fajita.api.uses.Hamcrest.NT.*;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.*;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.any_of;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.anything;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.assertThat;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.instance_of;
-import static org.spartan.fajita.api.uses.Hamcrest.Term.not;
+import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.*;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.*;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.*;
 
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;

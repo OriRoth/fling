@@ -1,15 +1,15 @@
-package org.spartan.fajita.api.uses;
+package org.spartan.fajita.api.examples.binaryExpressions;
 
-import static org.spartan.fajita.api.examples.BinaryExpressions.and;
-import static org.spartan.fajita.api.examples.BinaryExpressions.bool;
-import static org.spartan.fajita.api.examples.BinaryExpressions.not;
-import static org.spartan.fajita.api.examples.BinaryExpressions.or;
-import static org.spartan.fajita.api.uses.ASTViewer.showASTs;
-import static org.spartan.fajita.api.uses.BinaryExpressions.NT.*;
-import static org.spartan.fajita.api.uses.BinaryExpressions.Term.and;
-import static org.spartan.fajita.api.uses.BinaryExpressions.Term.bool;
-import static org.spartan.fajita.api.uses.BinaryExpressions.Term.not;
-import static org.spartan.fajita.api.uses.BinaryExpressions.Term.or;
+import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.and;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.bool;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.not;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.or;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.*;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.and;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.bool;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.not;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.or;
 
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
@@ -17,9 +17,9 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.examples.BinaryExpressions.Literal;
+import org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.Literal;
 
-public class BinaryExpressions {
+public class BinaryExpressionsUse {
   public static void expressionBuilder() {
     // top down
     Compound e0 = bool(true);
