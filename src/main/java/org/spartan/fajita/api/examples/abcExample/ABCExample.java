@@ -20,7 +20,7 @@ import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class ABCExample {
-  public static void expressionBuilder() {
+  @SuppressWarnings("unused") public static void expressionBuilder() {
     Q0 q0 = new Q0();
     Q3<Q0, Q2<Q0, Q1<Q0>>, Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>>> q3 = q0.a();
     Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>> q4 = q3.b();

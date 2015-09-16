@@ -18,6 +18,13 @@ import org.spartan.fajita.api.parser.ActionTable.Action;
 import org.spartan.fajita.api.parser.ActionTable.Reduce;
 import org.spartan.fajita.api.parser.ActionTable.Shift;
 
+/**
+ * Algorithms in this class are taken from
+ * "COMPILERS - PRINCIPLES, TECHNIQUES & TOOLS" \ AHO, LAM, SETHI, ULLMAN
+ * 
+ * @author Tomer
+ *
+ */
 public class LRParser {
   private final BNF bnf;
   public final List<State> states;
