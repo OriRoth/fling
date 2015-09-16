@@ -4,9 +4,9 @@ import org.spartan.fajita.api.examples.abcExample.bnf.Symbols.NT_A;
 import org.spartan.fajita.api.examples.abcExample.bnf.Symbols.NT_START;
 import org.spartan.fajita.api.examples.abcExample.bnf.Symbols.Term_a;
 import org.spartan.fajita.api.parser.stack.EmptyStack;
-import org.spartan.fajita.api.parser.stack.RuntimeStateStack;
+import org.spartan.fajita.api.parser.stack.StateStack;
 
-public class Q0 extends RuntimeStateStack<EmptyStack>
+public class Q0 extends StateStack<EmptyStack>
     implements NT_A<Q2<Q0, Q1<Q0>>>, NT_START<Q1<Q0>>, Term_a<Q3<Q0, Q2<Q0, Q1<Q0>>, Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>>>> {
   public Q0() {
     super(new EmptyStack());
