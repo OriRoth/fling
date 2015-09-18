@@ -44,7 +44,7 @@ public class LRParser {
           if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()))
             addAcceptAction(state);
           else
-            addReduceAction(state, item);
+            addReduceAction(state);
         else if (item.rule.getChildren().get(item.dotIndex).isTerminal())
           addShiftAction(state, item);
   }
@@ -56,8 +56,8 @@ public class LRParser {
     Integer nextState = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
   }
-  private void addReduceAction(final State state, final Item item) {
-    for (Terminal t : bnf.followSetOf(item.rule.lhs))
+  private void addReduceAction(final State state) {
+    for (Terminal t : bnf.getTerminals())
       actionTable.set(state, t, new Reduce());
   }
   public State getInitialState() {
