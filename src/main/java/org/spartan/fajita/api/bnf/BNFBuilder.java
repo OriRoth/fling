@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
-import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -20,7 +19,6 @@ import org.spartan.fajita.api.bnf.symbols.Type;
  *
  */
 public class BNFBuilder {
-  private final Set<InheritenceRule> inheritenceRules;
   private final Set<DerivationRule> derivationRules;
   private final Set<Terminal> terminals;
   private final Set<NonTerminal> nonterminals;
@@ -40,7 +38,6 @@ public class BNFBuilder {
       final Class<NT> nonterminalEnum) {
     terminals = new HashSet<>(EnumSet.allOf(terminalEnum));
     nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
-    inheritenceRules = new HashSet<>();
     derivationRules = new HashSet<>();
     startSymbols = new HashSet<>();
     overloads = new HashSet<>();
@@ -60,20 +57,14 @@ public class BNFBuilder {
   private BNFBuilder checkNewRule(final Rule r) {
     if (!symbolExists(r.lhs))
       throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
-    boolean firstRule = (!getInheritenceRules().contains(r)) && (!getDerivationRules().contains(r));
-    if (!firstRule)
-      throw new IllegalStateException("Nonterminal '" + r.lhs.name() + "' already has a rule.");
+    if (derivationRules.contains(r))
+      throw new IllegalArgumentException("rule " + r + " already exists");
     return this;
   }
-  private void addDerivationRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    DerivationRule r = new DerivationRule(lhs, symbols, getInheritenceRules().size() + getDerivationRules().size());
+  private void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
+    DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
     checkNewRule(r);
-    getDerivationRules().add(r);
-  }
-  private void addInheritenceRule(final NonTerminal lhs, final List<NonTerminal> nts) {
-    InheritenceRule r = new InheritenceRule(lhs, nts, getInheritenceRules().size() + getDerivationRules().size());
-    checkNewRule(r);
-    getInheritenceRules().add(r);
+    getRules().add(r);
   }
   private void addOverload(final String name, final Type type) {
     overloads.add(new Terminal() {
@@ -90,7 +81,6 @@ public class BNFBuilder {
   }
   private void validate() {
     validateNonterminals();
-    validateNoEpsilons();
     validateOverloads();
   }
   private void validateOverloads() {
@@ -102,16 +92,8 @@ public class BNFBuilder {
   }
   private void validateNonterminals() {
     for (NonTerminal nonTerminal : getNonTerminals())
-      if ((!getDerivationRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))) //
-          && (!getInheritenceRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
+      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
         throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
-  }
-  private void validateNoEpsilons() {
-    // TODO: is that necessary? will we have a possible hiding problem?
-    if (getNonTerminals().stream().anyMatch(nt -> nt.name().equals(NonTerminal.EPSILON.name())))
-      throw new IllegalStateException("A NT with the name " + NonTerminal.EPSILON.name() + " was found. this is not allowed.");
-    if (getTerminals().stream().anyMatch(term -> term.name().equals(Terminal.epsilon.name())))
-      throw new IllegalStateException("A terminal with the name " + Terminal.epsilon.name() + " was found. this is not allowed.");
   }
   private BNF finish() {
     validate();
@@ -120,7 +102,8 @@ public class BNFBuilder {
     terminals.add(Terminal.epsilon);
     terminals.add(Terminal.$);
     terminals.addAll(overloads);
-    addInheritenceRule(augmentedStartSymbol, new ArrayList<>(startSymbols));
+    for (NonTerminal startSymbol : startSymbols)
+      addRule(augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
   String getApiName() {
@@ -129,11 +112,8 @@ public class BNFBuilder {
   private void setApiName(final String apiName) {
     this.apiName = apiName;
   }
-  Set<DerivationRule> getDerivationRules() {
+  Set<DerivationRule> getRules() {
     return derivationRules;
-  }
-  Set<InheritenceRule> getInheritenceRules() {
-    return inheritenceRules;
   }
   static NonTerminal getAugmentedStartSymbol() {
     return augmentedStartSymbol;
@@ -150,7 +130,7 @@ public class BNFBuilder {
       this.lhs = lhs;
       this.symbols = new ArrayList<>(Arrays.asList(symbols));
     }
-    @SuppressWarnings("synthetic-access") public InitialDeriver derive(final NonTerminal newRuleLHS) {
+    public InitialDeriver derive(final NonTerminal newRuleLHS) {
       addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
@@ -173,39 +153,11 @@ public class BNFBuilder {
   public class InitialDeriver {
     private final NonTerminal lhs;
 
-    private InitialDeriver(final NonTerminal lhs) {
+    InitialDeriver(final NonTerminal lhs) {
       this.lhs = lhs;
     }
-    public UnknownDeriver to(final NonTerminal nt) {
-      return new UnknownDeriver(lhs, nt);
-    }
-    public NormalDeriver to(final Terminal term) {
+    public NormalDeriver to(final Symbol term) {
       return new NormalDeriver(lhs, term);
-    }
-  }
-
-  /**
-   * We know the first symbol in the right side , but we don't know yet whether
-   * it's a derivation rule or an inheritence rule.
-   * 
-   * if right hand side has only one symbol it will defaultively be a derivation
-   * rule.
-   * 
-   * @author Tomer
-   *
-   */
-  public final class UnknownDeriver extends Deriver {
-    public UnknownDeriver(final NonTerminal lhs, final Symbol symb) {
-      super(lhs, symb);
-    }
-    public NormalDeriver and(final Symbol symb) {
-      return new NormalDeriver(lhs, symbols.get(0), symb);
-    }
-    public AbstractDeriver or(final NonTerminal nt) {
-      return new AbstractDeriver(lhs, (NonTerminal) symbols.get(0), nt);
-    }
-    @SuppressWarnings("synthetic-access") @Override protected void addRuleToBNF() {
-      addDerivationRule(lhs, symbols);
     }
   }
 
@@ -216,43 +168,21 @@ public class BNFBuilder {
    *
    */
   public final class NormalDeriver extends Deriver {
-    public NormalDeriver(final NonTerminal lhs, final Symbol child) {
+    NormalDeriver(final NonTerminal lhs, final Symbol child) {
       super(lhs, child);
     }
-    public NormalDeriver(final NonTerminal lhs, final Symbol firstChild, final Symbol secondChild) {
+    NormalDeriver(final NonTerminal lhs, final Symbol firstChild, final Symbol secondChild) {
       super(lhs, firstChild, secondChild);
+    }
+    public InitialDeriver or() {
+      return derive(lhs);
     }
     public NormalDeriver and(final Symbol symb) {
       symbols.add(symb);
       return this;
     }
     @SuppressWarnings("synthetic-access") @Override protected void addRuleToBNF() {
-      addDerivationRule(lhs, symbols);
-    }
-  }
-
-  /**
-   * currently deriving an inheritence rule.
-   * 
-   * @author Tomer
-   *
-   */
-  public final class AbstractDeriver extends Deriver {
-    public AbstractDeriver(final NonTerminal lhs, final NonTerminal firstChild) {
-      super(lhs, firstChild);
-    }
-    public AbstractDeriver(final NonTerminal lhs, final NonTerminal firstChild, final NonTerminal secondChild) {
-      super(lhs, firstChild, secondChild);
-    }
-    public AbstractDeriver or(final NonTerminal nt) {
-      symbols.add(nt);
-      return this;
-    }
-    @SuppressWarnings("synthetic-access") @Override protected void addRuleToBNF() {
-      List<NonTerminal> nts = new ArrayList<>();
-      for (Symbol s : symbols)
-        nts.add((NonTerminal) s);
-      addInheritenceRule(lhs, nts);
+      addRule(lhs, symbols);
     }
   }
 
@@ -284,7 +214,7 @@ public class BNFBuilder {
   public class OverloadWith {
     private final String terminalName;
 
-    public OverloadWith(final String terminalName) {
+    OverloadWith(final String terminalName) {
       this.terminalName = terminalName;
     }
     @SuppressWarnings("synthetic-access") public NewOverload with(final Class<?> clss1, final Class<?>... classes) {
@@ -294,7 +224,7 @@ public class BNFBuilder {
   }
 
   public class EndConfig {
-    @SuppressWarnings("synthetic-access") public InitialDeriver derive(final NonTerminal nt) {
+    public InitialDeriver derive(final NonTerminal nt) {
       return new InitialDeriver(nt);
     }
   }

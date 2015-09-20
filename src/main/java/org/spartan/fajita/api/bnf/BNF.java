@@ -1,18 +1,14 @@
 package org.spartan.fajita.api.bnf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
-import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -24,7 +20,6 @@ public final class BNF {
   private final Set<Terminal> terminals;
   private final Set<NonTerminal> nonterminals;
   private final Collection<DerivationRule> derivationRules;
-  private final Collection<InheritenceRule> inheritenceRules;
   private final NonTerminal augmentedStartSymbol;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
@@ -34,8 +29,7 @@ public final class BNF {
     apiName = builder.getApiName();
     terminals = builder.getTerminals();
     nonterminals = builder.getNonTerminals();
-    derivationRules = builder.getDerivationRules();
-    inheritenceRules = builder.getInheritenceRules();
+    derivationRules = builder.getRules();
     augmentedStartSymbol = BNFBuilder.getAugmentedStartSymbol();
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
@@ -47,12 +41,7 @@ public final class BNF {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (Rule rule : getInheritenceRules())
-        if ((!nullables.contains(rule.lhs)) && rule.getChildren().stream().anyMatch(child -> nullables.contains(child))) {
-          nullables.add(rule.lhs);
-          moreChanges = true;
-        }
-      for (Rule rule : getInheritenceRules())
+      for (Rule rule : getRules())
         if ((!nullables.contains(rule.lhs)) && rule.getChildren().stream().allMatch(child -> nullables.contains(child))) {
           nullables.add(rule.lhs);
           moreChanges = true;
@@ -72,10 +61,7 @@ public final class BNF {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (InheritenceRule iRule : getInheritenceRules())
-        for (NonTerminal subtype : iRule.subtypes)
-          moreChanges |= $.get(iRule.lhs).addAll($.get(subtype));
-      for (DerivationRule dRule : getDerivationRules())
+      for (DerivationRule dRule : getRules())
         for (Symbol symbol : dRule.getChildren()) {
           moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
           if (!isNullable(symbol))
@@ -94,10 +80,7 @@ public final class BNF {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (InheritenceRule iRule : getInheritenceRules())
-        for (NonTerminal subtype : iRule.subtypes)
-          moreChanges |= $.get(subtype).addAll($.get(iRule.lhs));
-      for (DerivationRule dRule : getDerivationRules())
+      for (DerivationRule dRule : getRules())
         for (int i = 0; i < dRule.getChildren().size(); i++) {
           if (dRule.getChildren().get(i).isTerminal())
             continue;
@@ -114,12 +97,6 @@ public final class BNF {
     $.values().forEach(followSet -> followSet.remove(Terminal.epsilon));
     return $;
   }
-  public Collection<Rule> getAllRules() {
-    ArrayList<Rule> $ = new ArrayList<>();
-    $.addAll(getDerivationRules());
-    $.addAll(getInheritenceRules());
-    return $;
-  }
   public Set<NonTerminal> getNonTerminals() {
     return nonterminals;
   }
@@ -133,22 +110,16 @@ public final class BNF {
     return apiName;
   }
   @Override public String toString() {
-    SortedSet<Rule> rules = new TreeSet<>();
-    rules.addAll(getDerivationRules());
-    rules.addAll(getInheritenceRules());
     StringBuilder sb = new StringBuilder() //
         .append("Terminals set: " + terminals + "\n") //
         .append("Nonterminals set: " + nonterminals + "\n") //
         .append("Rules for " + getApiName() + ":\n");
-    for (Rule rule : rules)
+    for (Rule rule : getRules())
       sb.append(rule.toString() + "\n");
     return sb.toString();
   }
-  public Collection<DerivationRule> getDerivationRules() {
+  public Collection<DerivationRule> getRules() {
     return derivationRules;
-  }
-  public Collection<InheritenceRule> getInheritenceRules() {
-    return inheritenceRules;
   }
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);

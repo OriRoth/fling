@@ -12,7 +12,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 
-@SuppressWarnings("static-method")//
+@SuppressWarnings("static-method") //
 public class OverloadTest {
   private enum Term implements Terminal {
     t1;
@@ -37,7 +37,7 @@ public class OverloadTest {
         .setStartSymbols(NT.S) //
         .overload(Term.t1).with(String.class).endConfig() //
         .derive(NT.Nullable).to(EPSILON) //
-        .derive(NT.S).to(NT.Nullable).or(NT.A) //
+        .derive(NT.S).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.A).to(Term.t1) //
         .finish();
     assertEquals(expectedSet(Type.VOID, new Type(String.class)), bnf.getOverloadsOf(Term.t1));
@@ -49,7 +49,7 @@ public class OverloadTest {
         .setStartSymbols(NT.S) //
         .overload(Term.t1).with(Term.class, String.class, int.class).endConfig() //
         .derive(NT.Nullable).to(EPSILON) //
-        .derive(NT.S).to(NT.Nullable).or(NT.A) //
+        .derive(NT.S).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.A).to(Term.t1) //
         .finish();
     assertTrue(bnf.getOverloadsOf(Term.t1).contains(new Type(Term.class, String.class, int.class)));
@@ -64,7 +64,7 @@ public class OverloadTest {
         .overload(Term.t1).with(Integer.class, Object.class) //
         .endConfig() //
         .derive(NT.Nullable).to(EPSILON) //
-        .derive(NT.S).to(NT.Nullable).or(NT.A) //
+        .derive(NT.S).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.A).to(Term.t1) //
         .finish();
     Set<Type> expected = expectedSet(Type.VOID, new Type(String.class, int.class, Type.class), new Type(String.class, int.class),
@@ -79,7 +79,7 @@ public class OverloadTest {
         .overload(Term.t1).with(Void.class)//
         .endConfig() //
         .derive(NT.Nullable).to(EPSILON) //
-        .derive(NT.S).to(NT.Nullable).or(NT.A) //
+        .derive(NT.S).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.A).to(Term.t1) //
         .finish();
     fail("Should have thrown exception");
@@ -95,7 +95,7 @@ public class OverloadTest {
         .overload(Term.t1).with(clss2) //
         .endConfig() //
         .derive(NT.Nullable).to(EPSILON) //
-        .derive(NT.S).to(NT.Nullable).or(NT.A) //
+        .derive(NT.S).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.A).to(Term.t1) //
         .finish();
     fail("Should have thrown exception");

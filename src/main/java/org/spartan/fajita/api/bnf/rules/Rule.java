@@ -16,14 +16,8 @@ public abstract class Rule implements Comparable<Rule> {
   @Override public boolean equals(final Object obj) {
     return obj.getClass() == getClass() && lhs.equals(((Rule) obj).lhs) && getChildren().equals(((Rule) obj).getChildren());
   }
-  /**
-   * Because we should only one derivation rule for each nonterminal we return
-   * lhs's hashcode.
-   * 
-   * @return lhs's hashcode.
-   */
   @Override public int hashCode() {
-    return lhs.hashCode();
+    return lhs.hashCode() + 7 * getChildren().hashCode();
   }
   @Override public abstract String toString();
   public int getIndex() {

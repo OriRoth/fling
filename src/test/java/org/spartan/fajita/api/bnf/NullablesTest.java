@@ -30,8 +30,8 @@ public class NullablesTest {
         .setApiNameTo("TEST") //
         .setStartSymbols(NT.A) //
         .endConfig() //
-        .derive(NT.Nullable).to(EPSILON).or(NT.A) //
-        .derive(NT.Nullable2).to(NT.Nullable).or(NT.A) //
+        .derive(NT.Nullable).to(EPSILON).or().to(NT.A) //
+        .derive(NT.Nullable2).to(NT.Nullable).or().to(NT.A) //
         .derive(NT.NotNullable).to(Term.t1) //
         .derive(NT.A).to(Term.t1) //
         .finish();

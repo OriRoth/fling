@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
-import org.spartan.fajita.api.bnf.rules.InheritenceRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
@@ -64,10 +63,8 @@ public class LRParser {
     return states.get(0);
   }
   private State generateInitialState() {
-    // initial variable derived with inheritence rule
-    Set<Item> initialItems = bnf.getInheritenceRules().stream() //
-        .filter(iRule -> bnf.getAugmentedStartSymbol().equals(iRule.lhs))//
-        .flatMap(iRule -> iRule.getAsDerivationRules().stream())//
+    Set<Item> initialItems = bnf.getRules().stream() //
+        .filter(dRule -> bnf.getAugmentedStartSymbol().equals(dRule.lhs))//
         .map(dRule -> new Item(dRule, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
@@ -83,19 +80,12 @@ public class LRParser {
               && NonTerminal.class.isAssignableFrom(item.rule.getChildren().get(item.dotIndex).getClass())) //
           .map(item -> (NonTerminal) item.rule.getChildren().get(item.dotIndex)) //
           .collect(Collectors.toSet());
-      for (NonTerminal nt : dotBeforeNT) {
-        for (DerivationRule dRule : bnf.getDerivationRules()) {
+      for (NonTerminal nt : dotBeforeNT)
+        for (DerivationRule dRule : bnf.getRules()) {
           if (!dRule.lhs.equals(nt))
             continue;
           moreChanges |= items.add(new Item(dRule, 0));
         }
-        for (InheritenceRule iRule : bnf.getInheritenceRules()) {
-          if (!iRule.lhs.equals(nt))
-            continue;
-          for (DerivationRule dRule : iRule.getAsDerivationRules())
-            moreChanges |= items.add(new Item(dRule, 0));
-        }
-      }
     } while (moreChanges);
     return items;
   }

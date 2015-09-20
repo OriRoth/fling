@@ -2,7 +2,6 @@ package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.*;
 import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
-import static org.spartan.fajita.api.bnf.symbols.NonTerminal.EPSILON;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +36,8 @@ public class FirstSetTest {
         .endConfig() //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b) //
-        .derive(NT.AB).to(NT.A).or(NT.B) //
-        .derive(NT.C).to(NT.AB).or(EPSILON) //
+        .derive(NT.AB).to(Term.a).or().to(Term.b) //
+        .derive(NT.C).to(NT.AB) //
         .derive(NT.D).to(Term.d) //
         .finish();
     recursive_bnf = new BNFBuilder(Term.class, NT_RECURSIVE.class) //
@@ -65,15 +64,18 @@ public class FirstSetTest {
   @Test public void testNotNullableExpression() {
     assertFalse(bnf.firstSetOf(NonTerminal.EPSILON, NT.A).contains(Terminal.epsilon));
   }
-  @Test public void testNullableExpression() {
-    assertTrue(bnf.firstSetOf(NT.C, NonTerminal.EPSILON, Terminal.epsilon).contains(Terminal.epsilon));
-  }
   @Test public void testExpressionWithNoNullables() {
     assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A, NT.B));
   }
-  @Test public void testExpressionWithNullables() {
-    assertEquals(expectedSet(Term.d, Term.a, Term.b), bnf.firstSetOf(NT.C, NT.D));
-  }
+  /** As for this moment, there are no nullables */
+  // @Test public void testExpressionWithNullables() {
+  // assertEquals(expectedSet(Term.d, Term.a, Term.b), bnf.firstSetOf(NT.C,
+  // NT.D));
+  // }
+  // @Test public void testNullableExpression() {
+  // assertTrue(bnf.firstSetOf(NT.C, NonTerminal.EPSILON,
+  // Terminal.epsilon).contains(Terminal.epsilon));
+  // }
   @Test public void testRecursiveBNF() {
     recursive_bnf.firstSetOf(NT_RECURSIVE.REC_1);
     // no infinite recursion!
