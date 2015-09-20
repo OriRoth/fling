@@ -47,7 +47,7 @@ public class StateClosureTest {
         .setStartSymbols(NT.S) //
         .endConfig() //
         .derive(NT.S).to(Term.a).and(Term.b) //
-        .derive(NT.A).to(NT.A).or().to(NT.A) //
+        .derive(NT.A).to(NT.A) //
         .finish();
     DerivationRule initialRule = bnf.getRules().iterator().next();
     assertTrue(new LRParser(bnf).getInitialState().items.contains(new Item(initialRule, 0)));
