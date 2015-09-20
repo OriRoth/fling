@@ -36,9 +36,9 @@ public class BNFBootstrap {
   }
 
   static enum NT implements NonTerminal {
-    S, NAME_OPT, NAME, RULE, RULE_TYPE, ABSTRACT_RULE, //
+    S, RULE, RULE_TYPE, ABSTRACT_RULE, //
     NEXT_ABSTRACT, OR, NORMAL_RULE, NEXT_NORMAL, //
-    AND, NEXT, NEXT_RULE, FINISH;
+    AND, NEXT, NEXT_RULE;
   }
 
   // TODO: fix bootstrap.
@@ -50,20 +50,21 @@ public class BNFBootstrap {
         .overload(to).with(Terminal.class) //
         .endConfig() //
         //
-        .derive(S).to(NAME_OPT).and(RULE).and(NEXT) //
-        .derive(NAME_OPT).to(NAME).or(NonTerminal.EPSILON) //
-        .derive(NAME).to(setApiName) //
+        .derive(S).to(setApiName).and(RULE).and(NEXT) //
         .derive(RULE).to(derive).and(RULE_TYPE) //
-        .derive(RULE_TYPE).to(ABSTRACT_RULE).or(NORMAL_RULE) //
-        .derive(ABSTRACT_RULE).to(to).and(NEXT_ABSTRACT) //
-        .derive(NEXT_ABSTRACT).to(OR).or(NonTerminal.EPSILON) //
+        .derive(RULE_TYPE).to(ABSTRACT_RULE).or().to(NORMAL_RULE) //
+        .derive(ABSTRACT_RULE).to(to) //
+        /*             */.or().to(to).and(NEXT_ABSTRACT) //
+        .derive(NEXT_ABSTRACT).to(OR) //
+        /*             */.or().to(OR).and(NEXT_ABSTRACT) //
         .derive(OR).to(or).and(NEXT_ABSTRACT) //
-        .derive(NORMAL_RULE).to(to).and(NEXT_NORMAL) //
-        .derive(NEXT_NORMAL).to(AND).or(NonTerminal.EPSILON) //
+        .derive(NORMAL_RULE).to(to) //
+        /*           */.or().to(to).and(NEXT_NORMAL) //
+        .derive(NEXT_NORMAL).to(AND) //
+        /*            */.or().to(AND).and(NEXT_NORMAL) //
         .derive(AND).to(and).and(NEXT_NORMAL) //
-        .derive(NEXT).to(NEXT_RULE).or(FINISH) //
+        .derive(NEXT).to(NEXT_RULE).or().to(finish) //
         .derive(NEXT_RULE).to(RULE).and(NEXT) //
-        .derive(FINISH).to(finish) //
         .finish();
     System.out.println(b);
   }

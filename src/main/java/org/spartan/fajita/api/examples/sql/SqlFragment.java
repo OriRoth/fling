@@ -21,7 +21,7 @@ public class SqlFragment {
   }
 
   static enum NT implements NonTerminal {
-    SELECT_STATEMENT, QUANTIFIER, ALL, DISTINCT, COLOUMNS, COLOUMNS_OPT, TABLES, TABLES_OPT, WHERE_OPT, WHERE, EXPRESSION, OP, EQUALS, GEQ, LEQ, LITERAL;
+    SELECT_STATEMENT, QUANTIFIER, COLOUMNS, TABLES, WHERE, EXPRESSION, OP;
   }
 
   public static void buildBNF() {
@@ -31,22 +31,14 @@ public class SqlFragment {
         .setStartSymbols(SELECT_STATEMENT) //
         .endConfig() //
         //
-        .derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE_OPT) //
-        .derive(QUANTIFIER).to(ALL).or(DISTINCT) //
-        .derive(ALL).to(all)//
-        .derive(DISTINCT).to(distinct)//
-        .derive(COLOUMNS).to(column).and(COLOUMNS_OPT)//
-        .derive(COLOUMNS_OPT).to(COLOUMNS).or(NonTerminal.EPSILON)//
-        .derive(TABLES).to(table).and(TABLES_OPT) //
-        .derive(TABLES_OPT).to(TABLES).or(NonTerminal.EPSILON) //
-        .derive(WHERE_OPT).to(WHERE).or(NonTerminal.EPSILON) //
+        .derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE) //
+        /*                */.or().to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES) //
+        .derive(QUANTIFIER).to(all).or().to(distinct) //
+        .derive(COLOUMNS).to(column).or().to(column).and(COLOUMNS)//
+        .derive(TABLES).to(table).or().to(table).and(TABLES) //
         .derive(WHERE).to(where).and(EXPRESSION) //
-        .derive(EXPRESSION).to(column).and(OP).and(LITERAL) //
-        .derive(OP).to(EQUALS).or(GEQ).or(LEQ) //
-        .derive(EQUALS).to(equals) //
-        .derive(GEQ).to(geq) //
-        .derive(LEQ).to(leq) //
-        .derive(LITERAL).to(literal) //
+        .derive(EXPRESSION).to(column).and(OP).and(literal) //
+        .derive(OP).to(equals).or().to(geq).or().to(leq) //
         .finish();
     System.out.println(b);
   }

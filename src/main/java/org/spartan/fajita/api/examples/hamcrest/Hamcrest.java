@@ -3,7 +3,16 @@ package org.spartan.fajita.api.examples.hamcrest;
 import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.*;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.*;
-import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.*;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.any_of;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.anything;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.assertThat;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.instance_of;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.not;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.anything;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.assertThat;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.equal_to;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.instance_of;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.not;
 
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
@@ -36,7 +45,7 @@ public class Hamcrest {
   }
 
   static enum NT implements NonTerminal {
-    ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS, MATCHERS_OPT;
+    ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS;
   }
 
   public static void buildBNF() {
@@ -46,14 +55,13 @@ public class Hamcrest {
         .setStartSymbols(ASSERT) //
         .endConfig() //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
-        .derive(MATCHER).to(INSTANCE_OF).or(ANYTHING).or(EQUAL_TO).or(NOT).or(ANY_OF) //
+        .derive(MATCHER).to(INSTANCE_OF).or().to(ANYTHING).or().to(EQUAL_TO).or().to(NOT).or().to(ANY_OF) //
         .derive(INSTANCE_OF).to(instance_of).and(type) //
         .derive(ANYTHING).to(anything) //
         .derive(EQUAL_TO).to(equals_to).and(value) //
         .derive(NOT).to(not).and(MATCHER) //
         .derive(ANY_OF).to(any_of).and(MATCHERS) //
-        .derive(MATCHERS).to(MATCHER).and(MATCHERS_OPT) //
-        .derive(MATCHERS_OPT).to(MATCHERS).or(NonTerminal.EPSILON) //
+        .derive(MATCHERS).to(MATCHER).or().to(MATCHER).and(MATCHERS) //
         .finish();
     System.out.println(bnf);
   }

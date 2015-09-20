@@ -67,7 +67,7 @@ public class BinaryExpressionsUse {
         .endConfig() //
         //
         .derive(S).to(EXPRESSION) //
-        .derive(EXPRESSION).to(OR).or(AND).or(LITERAL).or(NOT) //
+        .derive(EXPRESSION).to(OR).or().to(AND).or().to(LITERAL).or().to(NOT) //
         .derive(LITERAL).to(bool)//
         .derive(OR).to(EXPRESSION).and(or).and(EXPRESSION)//
         .derive(AND).to(EXPRESSION).and(and).and(EXPRESSION)//
