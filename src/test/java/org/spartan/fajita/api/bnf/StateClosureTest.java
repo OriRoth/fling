@@ -2,6 +2,7 @@ package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.spartan.fajita.api.bnf.TestUtils.findRule;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class StateClosureTest {
         .derive(NT.S).to(Term.a).and(Term.b) //
         .derive(NT.A).to(NT.A) //
         .finish();
-    DerivationRule initialRule = bnf.getRules().iterator().next();
+    DerivationRule initialRule = findRule(bnf, r -> r.lhs == bnf.getAugmentedStartSymbol());
     assertTrue(new LRParser(bnf).getInitialState().items.contains(new Item(initialRule, 0)));
   }
   @Test public void testClosureOnDerivationRule() throws ReduceReduceConflictException, ShiftReduceConflictException {
@@ -62,8 +63,8 @@ public class StateClosureTest {
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
     DerivationRule augmented_Rule = getAugmentedRule(bnf);
-    DerivationRule S_Rule = bnf.getRules().stream().filter(r -> r.lhs.equals(NT.S)).findAny().get();
-    DerivationRule A_Rule = bnf.getRules().stream().filter(r -> r.lhs.equals(NT.A)).findAny().get();
+    DerivationRule S_Rule = findRule(bnf, r -> r.lhs.equals(NT.S));
+    DerivationRule A_Rule = findRule(bnf, r -> r.lhs.equals(NT.A));
     Set<Item> expectedSet = expectedItemSet(S_Rule, A_Rule, augmented_Rule);
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
   }
@@ -83,16 +84,12 @@ public class StateClosureTest {
         .derive(NT2.C).to(Term.c) //
         .finish();
     // fetching the rules
-    Set<DerivationRule> rules = new HashSet<>(bnf.getRules());
-    DerivationRule StoA_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.A)).findAny()
-        .get();
-    DerivationRule StoB_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.B)).findAny()
-        .get();
-    DerivationRule StoC_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.C)).findAny()
-        .get();
-    DerivationRule A_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.A)).findAny().get();
-    DerivationRule B_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.B)).findAny().get();
-    DerivationRule C_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.C)).findAny().get();
+    DerivationRule StoA_Rule = findRule(bnf, r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.A));
+    DerivationRule StoB_Rule = findRule(bnf, r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.B));
+    DerivationRule StoC_Rule = findRule(bnf, r -> r.lhs.equals(NT2.S) && r.getChildren().get(0).equals(NT2.C));
+    DerivationRule A_Rule = findRule(bnf, r -> r.lhs.equals(NT2.A));
+    DerivationRule B_Rule = findRule(bnf, r -> r.lhs.equals(NT2.B));
+    DerivationRule C_Rule = findRule(bnf, r -> r.lhs.equals(NT2.C));
     // test
     Set<Item> expectedSet = expectedItemSet(StoA_Rule, StoB_Rule, StoC_Rule, A_Rule, B_Rule, C_Rule, getAugmentedRule(bnf));
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
@@ -109,14 +106,11 @@ public class StateClosureTest {
         .derive(NT2.C).to(Term.c) //
         .finish();
     // fetching the rules
-    Set<DerivationRule> rules = new HashSet<>(bnf.getRules());
-    DerivationRule AtoB_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.B)).findAny()
-        .get();
-    DerivationRule AtoC_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C)).findAny()
-        .get();
-    DerivationRule S_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.S)).findAny().get();
-    DerivationRule B_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.B)).findAny().get();
-    DerivationRule C_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.C)).findAny().get();
+    DerivationRule AtoB_Rule = findRule(bnf, r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.B));
+    DerivationRule AtoC_Rule = findRule(bnf, r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C));
+    DerivationRule S_Rule = findRule(bnf, r -> r.lhs.equals(NT2.S));
+    DerivationRule B_Rule = findRule(bnf, r -> r.lhs.equals(NT2.B));
+    DerivationRule C_Rule = findRule(bnf, r -> r.lhs.equals(NT2.C));
     // test
     Set<Item> expectedSet = expectedItemSet(AtoB_Rule, AtoC_Rule, S_Rule, B_Rule, C_Rule, getAugmentedRule(bnf));
     assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
@@ -133,11 +127,10 @@ public class StateClosureTest {
         .derive(NT2.C).to(Term.c)//
         .finish();
     // fetching the rules
-    Set<DerivationRule> rules = new HashSet<>(bnf.getRules());
-    DerivationRule A_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C)).findAny().get();
-    DerivationRule S_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.S)).findAny().get();
-    DerivationRule B_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.B)).findAny().get();
-    DerivationRule C_Rule = rules.stream().filter(r -> r.lhs.equals(NT2.C)).findAny().get();
+    DerivationRule A_Rule = findRule(bnf, r -> r.lhs.equals(NT2.A) && r.getChildren().get(0).equals(NT2.C));
+    DerivationRule S_Rule = findRule(bnf, r -> r.lhs.equals(NT2.S));
+    DerivationRule B_Rule = findRule(bnf, r -> r.lhs.equals(NT2.B));
+    DerivationRule C_Rule = findRule(bnf, r -> r.lhs.equals(NT2.C));
     // test
     Set<Item> expectedSet = expectedItemSet(A_Rule, S_Rule, B_Rule, C_Rule);
     assertTrue(new LRParser(bnf).getInitialState().items.containsAll(expectedSet));

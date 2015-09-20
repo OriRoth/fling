@@ -71,7 +71,7 @@ public final class BNF {
           else
             subExpression = new Symbol[] {};
           moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
-          if (isNullable(subExpression))
+          if (isNullable(subExpression) || subExpression.length == 0)
             moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
         }
     } while (moreChanges);
