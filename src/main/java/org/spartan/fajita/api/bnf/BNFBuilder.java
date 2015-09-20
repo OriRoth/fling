@@ -97,9 +97,7 @@ public class BNFBuilder {
   }
   private BNF finish() {
     validate();
-    nonterminals.add(NonTerminal.EPSILON);
     nonterminals.add(augmentedStartSymbol);
-    terminals.add(Terminal.epsilon);
     terminals.add(Terminal.$);
     terminals.addAll(overloads);
     for (NonTerminal startSymbol : startSymbols)

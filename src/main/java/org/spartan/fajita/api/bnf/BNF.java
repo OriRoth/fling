@@ -21,7 +21,6 @@ public final class BNF {
   private final Set<NonTerminal> nonterminals;
   private final Collection<DerivationRule> derivationRules;
   private final NonTerminal augmentedStartSymbol;
-  private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
   private final Map<NonTerminal, Set<Terminal>> followSets;
 
@@ -31,31 +30,13 @@ public final class BNF {
     nonterminals = builder.getNonTerminals();
     derivationRules = builder.getRules();
     augmentedStartSymbol = BNFBuilder.getAugmentedStartSymbol();
-    nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
     followSets = calculateFollowSets();
-  }
-  private Set<NonTerminal> calculateNullableSymbols() {
-    HashSet<NonTerminal> nullables = new HashSet<>();
-    nullables.add(NonTerminal.EPSILON);
-    boolean moreChanges;
-    do {
-      moreChanges = false;
-      for (Rule rule : getRules())
-        if ((!nullables.contains(rule.lhs)) && rule.getChildren().stream().allMatch(child -> nullables.contains(child))) {
-          nullables.add(rule.lhs);
-          moreChanges = true;
-        }
-    } while (moreChanges);
-    return nullables;
   }
   private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
     Map<Symbol, Set<Terminal>> $ = new HashMap<>();
     for (NonTerminal nt : getNonTerminals())
-      if (isNullable(nt))
-        $.put(nt, new HashSet<>(Arrays.asList(Terminal.epsilon)));
-      else
-        $.put(nt, new HashSet<>());
+      $.put(nt, new HashSet<>());
     for (Terminal term : getTerminals())
       $.put(term, new HashSet<>(Arrays.asList(term)));
     boolean moreChanges;
@@ -94,7 +75,6 @@ public final class BNF {
             moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
         }
     } while (moreChanges);
-    $.values().forEach(followSet -> followSet.remove(Terminal.epsilon));
     return $;
   }
   public Set<NonTerminal> getNonTerminals() {
@@ -121,8 +101,8 @@ public final class BNF {
   public Collection<DerivationRule> getRules() {
     return derivationRules;
   }
-  public boolean isNullable(final Symbol... expression) {
-    return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == Terminal.epsilon);
+  @SuppressWarnings({ "static-method", "unused" }) public boolean isNullable(final Symbol... expression) {
+    return false;
   }
   public Set<Terminal> firstSetOf(final Symbol... expression) {
     HashSet<Terminal> $ = new HashSet<>();
@@ -131,8 +111,6 @@ public final class BNF {
       if (!isNullable(symbol))
         break;
     }
-    if (Arrays.asList(expression).stream().anyMatch(symbol -> !isNullable(symbol)))
-      $.remove(Terminal.epsilon);
     return $;
   }
   public Set<Terminal> followSetOf(final NonTerminal nt) {

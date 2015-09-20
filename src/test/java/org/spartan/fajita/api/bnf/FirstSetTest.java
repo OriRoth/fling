@@ -1,6 +1,7 @@
 package org.spartan.fajita.api.bnf;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 
 import org.junit.Before;
@@ -49,9 +50,6 @@ public class FirstSetTest {
         .derive(NT_RECURSIVE.REC_2).to(NT_RECURSIVE.REC_1) //
         .finish();
   }
-  @Test public void testEpsilon() {
-    assertEquals(expectedSet(Terminal.epsilon), bnf.firstSetOf(NonTerminal.EPSILON));
-  }
   @Test public void testTerminal() {
     assertEquals(expectedSet(Term.a), bnf.firstSetOf(Term.a));
   }
@@ -61,13 +59,18 @@ public class FirstSetTest {
   @Test public void testInheritedNT() {
     assertEquals(expectedSet(Term.a, Term.b), bnf.firstSetOf(NT.AB));
   }
-  @Test public void testNotNullableExpression() {
-    assertFalse(bnf.firstSetOf(NonTerminal.EPSILON, NT.A).contains(Terminal.epsilon));
-  }
   @Test public void testExpressionWithNoNullables() {
     assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A, NT.B));
   }
   /** As for this moment, there are no nullables */
+  // @Test public void testEpsilon() {
+  // assertEquals(expectedSet(Terminal.epsilon),
+  // bnf.firstSetOf(NonTerminal.EPSILON));
+  // }
+  // @Test public void testNotNullableExpression() {
+  // assertFalse(bnf.firstSetOf(NonTerminal.EPSILON,
+  // NT.A).contains(Terminal.epsilon));
+  // }
   // @Test public void testExpressionWithNullables() {
   // assertEquals(expectedSet(Term.d, Term.a, Term.b), bnf.firstSetOf(NT.C,
   // NT.D));

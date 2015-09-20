@@ -15,17 +15,6 @@ public interface Terminal extends Symbol {
     return methodSig + ")";
   }
 
-  public static final Terminal epsilon = new Terminal() {
-    @Override public String name() {
-      return "epsilon";
-    }
-    @Override public String toString() {
-      return name();
-    }
-    @Override public Type type() {
-      return Type.notype;
-    }
-  };
   public static final Terminal $ = new Terminal() {
     @Override public String name() {
       return "$";

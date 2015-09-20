@@ -133,8 +133,6 @@ public class LRParser {
   }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();
-    notAllowed.add(NonTerminal.EPSILON);
-    notAllowed.add(Terminal.epsilon);
     Set<Symbol> symbols = new HashSet<>();
     symbols.addAll(bnf.getNonTerminals());
     symbols.addAll(bnf.getTerminals());
