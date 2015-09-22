@@ -9,27 +9,16 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.examples.abcExample.states.Q0;
-import org.spartan.fajita.api.examples.abcExample.states.Q1;
-import org.spartan.fajita.api.examples.abcExample.states.Q2;
-import org.spartan.fajita.api.examples.abcExample.states.Q3;
-import org.spartan.fajita.api.examples.abcExample.states.Q4;
-import org.spartan.fajita.api.examples.abcExample.states.Q5;
 import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
 import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class ABCExample {
   @SuppressWarnings("unused") public static void expressionBuilder() {
-    Q0 q0 = new Q0();
-    Q3<Q0, Q2<Q0, Q1<Q0>>, Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>>> q3 = q0.a();
-    Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>> q4 = q3.b();
-    Q5<Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>>, Q0, Q1<Q0>> q5 = q4.c();
-    String result = q5.$();
-    new Q0().a().b().c().$();
+    //
   }
 
-  static enum Term implements Terminal {
+  public static enum Term implements Terminal {
     a, b, c;
     final Type t;
 
@@ -44,7 +33,7 @@ public class ABCExample {
     }
   }
 
-  static enum NT implements NonTerminal {
+  public static enum NT implements NonTerminal {
     START, A;
   }
 
