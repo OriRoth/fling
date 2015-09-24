@@ -1,22 +1,14 @@
 package org.spartan.fajita.api.examples.balancedParenthesis.states;
 
-import org.spartan.fajita.api.examples.balancedParenthesis.bnf.Symbols.NT_BALANCED;
-import org.spartan.fajita.api.examples.balancedParenthesis.bnf.Symbols.Term_build;
-import org.spartan.fajita.api.examples.balancedParenthesis.bnf.Symbols.Term_rp;
-import org.spartan.fajita.api.parser.stack.StateStack;
-
-public class Q3<BOTTOM extends StateStack<?> & NT_BALANCED<AFTER_BALANCED>, AFTER_BALANCED extends StateStack<?>>
-    extends StateStack<BOTTOM>implements Term_rp<AFTER_BALANCED>, Term_build<AFTER_BALANCED> {
-  public Q3(final BOTTOM t) {
+public class Q3<Tail extends BaseState<? extends BaseState<?, ?, ?, ?, ?>, ?, ?, ?, ?>, RP extends BaseState<?, ?, ?, ?, ?>>
+    extends BaseState<Tail, BaseState.Error, RP, Integer, BaseState.Error> {
+  public Q3(final Tail t) {
     super(t);
   }
-  public AFTER_BALANCED reduce() {
-    return t.BALANCED();
+  @Override public RP rp() {
+    return ((RP) t.t.BALANCED().rp());
   }
-  @Override public AFTER_BALANCED build() {
-    return reduce();
-  }
-  @Override public AFTER_BALANCED rp() {
-    return reduce();
+  @Override public Integer $() {
+    return (Integer) t.t.BALANCED().$();
   }
 }
