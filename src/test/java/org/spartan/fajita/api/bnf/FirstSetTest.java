@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.LRParser;
 
 public class FirstSetTest {
   private enum Term implements Terminal {
@@ -19,15 +20,11 @@ public class FirstSetTest {
   }
 
   private enum NT implements NonTerminal {
-    A, B, AB, C, D;
-  }
-
-  private enum NT_RECURSIVE implements NonTerminal {
-    REC_1, REC_2;
+    A, B, AB, C, D, REDUNDANT;
   }
 
   private BNF bnf;
-  private BNF recursive_bnf;
+  private LRParser parser;
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
@@ -40,27 +37,21 @@ public class FirstSetTest {
         .derive(NT.AB).to(Term.a).or().to(Term.b) //
         .derive(NT.C).to(NT.AB) //
         .derive(NT.D).to(Term.d) //
+        .derive(NT.REDUNDANT).to(NT.REDUNDANT) //
         .finish();
-    recursive_bnf = new BNFBuilder(Term.class, NT_RECURSIVE.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
-        .setStartSymbols(NT_RECURSIVE.REC_1) //
-        .endConfig() //
-        .derive(NT_RECURSIVE.REC_1).to(NT_RECURSIVE.REC_2) //
-        .derive(NT_RECURSIVE.REC_2).to(NT_RECURSIVE.REC_1) //
-        .finish();
+    parser = new LRParser(bnf);
   }
   @Test public void testTerminal() {
-    assertEquals(expectedSet(Term.a), bnf.firstSetOf(Term.a));
+    assertEquals(expectedSet(Term.a), parser.firstSetOf(Term.a));
   }
   @Test public void testNT() {
-    assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A));
+    assertEquals(expectedSet(Term.a), parser.firstSetOf(NT.A));
   }
   @Test public void testInheritedNT() {
-    assertEquals(expectedSet(Term.a, Term.b), bnf.firstSetOf(NT.AB));
+    assertEquals(expectedSet(Term.a, Term.b), parser.firstSetOf(NT.AB));
   }
   @Test public void testExpressionWithNoNullables() {
-    assertEquals(expectedSet(Term.a), bnf.firstSetOf(NT.A, NT.B));
+    assertEquals(expectedSet(Term.a), parser.firstSetOf(NT.A, NT.B));
   }
   /** As for this moment, there are no nullables */
   // @Test public void testEpsilon() {
@@ -79,11 +70,7 @@ public class FirstSetTest {
   // assertTrue(bnf.firstSetOf(NT.C, NonTerminal.EPSILON,
   // Terminal.epsilon).contains(Terminal.epsilon));
   // }
-  @Test public void testRecursiveBNF() {
-    recursive_bnf.firstSetOf(NT_RECURSIVE.REC_1);
-    // no infinite recursion!
-  }
   @Test public void testRedundantNT() {
-    assertTrue(recursive_bnf.firstSetOf(NT_RECURSIVE.REC_2).isEmpty());
+    assertTrue(parser.firstSetOf(NT.REDUNDANT).isEmpty());
   }
 }

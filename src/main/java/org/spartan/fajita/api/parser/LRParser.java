@@ -1,8 +1,11 @@
 package org.spartan.fajita.api.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -28,13 +31,76 @@ public class LRParser {
   private final BNF bnf;
   public final List<State> states;
   private final ActionTable actionTable;
+  private final Map<Symbol, Set<Terminal>> baseFirstSets;
+  private final Map<NonTerminal, Set<Terminal>> followSets;
 
   public LRParser(final BNF bnf) {
     this.bnf = bnf;
+    baseFirstSets = calculateSymbolFirstSet();
+    followSets = calculateFollowSets();
     states = new ArrayList<>();
     generateStatesSet();
     actionTable = new ActionTable(states);
     fillParsingTable();
+  }
+  private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
+    Map<Symbol, Set<Terminal>> $ = new HashMap<>();
+    for (NonTerminal nt : bnf.getNonTerminals())
+      $.put(nt, new HashSet<>());
+    for (Terminal term : bnf.getTerminals())
+      $.put(term, new HashSet<>(Arrays.asList(term)));
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (DerivationRule dRule : bnf.getRules())
+        for (Symbol symbol : dRule.getChildren()) {
+          moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
+          if (!isNullable(symbol))
+            break;
+        }
+    } while (moreChanges);
+    return $;
+  }
+  private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
+    Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
+    // initialization
+    for (NonTerminal nt : bnf.getNonTerminals())
+      $.put(nt, new HashSet<>());
+    $.get(bnf.getAugmentedStartSymbol()).add(Terminal.$);
+    // iterative step
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (DerivationRule dRule : bnf.getRules())
+        for (int i = 0; i < dRule.getChildren().size(); i++) {
+          if (dRule.getChildren().get(i).isTerminal())
+            continue;
+          Symbol subExpression[];
+          if (i != dRule.getChildren().size() - 1)
+            subExpression = Arrays.copyOfRange(dRule.getChildren().toArray(), i + 1, dRule.getChildren().size(), Symbol[].class);
+          else
+            subExpression = new Symbol[] {};
+          moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
+          if (isNullable(subExpression))
+            moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
+        }
+    } while (moreChanges);
+    return $;
+  }
+  @SuppressWarnings({ "static-method" }) public boolean isNullable(final Symbol... expression) {
+    return expression.length == 0;
+  }
+  public Set<Terminal> firstSetOf(final Symbol... expression) {
+    HashSet<Terminal> $ = new HashSet<>();
+    for (Symbol symbol : expression) {
+      $.addAll(baseFirstSets.get(symbol));
+      if (!isNullable(symbol))
+        break;
+    }
+    return $;
+  }
+  public Set<Terminal> followSetOf(final NonTerminal nt) {
+    return followSets.get(nt);
   }
   private void fillParsingTable() {
     for (State state : states)
@@ -43,7 +109,7 @@ public class LRParser {
           if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()))
             addAcceptAction(state);
           else
-            addReduceAction(state);
+            addReduceAction(state, item);
         else if (item.rule.getChildren().get(item.dotIndex).isTerminal())
           addShiftAction(state, item);
   }
@@ -55,8 +121,8 @@ public class LRParser {
     Integer nextState = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
   }
-  private void addReduceAction(final State state) {
-    for (Terminal t : bnf.getTerminals())
+  private void addReduceAction(final State state, final Item item) {
+    for (Terminal t : followSetOf(item.rule.lhs))
       actionTable.set(state, t, new Reduce());
   }
   public State getInitialState() {

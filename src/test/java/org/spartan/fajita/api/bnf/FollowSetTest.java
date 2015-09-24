@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.LRParser;
 
-@SuppressWarnings("static-method") //
 public class FollowSetTest {
   private enum Term implements Terminal {
     a, b, c, d;
@@ -26,6 +26,7 @@ public class FollowSetTest {
   }
 
   private BNF bnf;
+  private LRParser parser;
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
@@ -40,9 +41,10 @@ public class FollowSetTest {
         .derive(NT.C).to(Term.c) //
         .derive(NT.UNREACHABLE).to(Term.d) //
         .finish();
+    parser = new LRParser(bnf);
   }
   @Test public void testStartFollowedBy$() {
-    assertThat(expectedSet(Terminal.$), equalTo(bnf.followSetOf(NT.S)));
+    assertThat(expectedSet(Terminal.$), equalTo(parser.followSetOf(NT.S)));
   }
   @Test public void testMultipleStartsFollowedBy$() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
@@ -57,19 +59,20 @@ public class FollowSetTest {
         .derive(NT.C).to(Term.c)//
         .derive(NT.UNREACHABLE).to(Term.d) //
         .finish();
-    assertThat(expectedSet(Terminal.$), equalTo(b.followSetOf(NT.S)));
-    assertTrue(b.followSetOf(NT.A).contains(Terminal.$));
+    parser = new LRParser(b);
+    assertThat(expectedSet(Terminal.$), equalTo(parser.followSetOf(NT.S)));
+    assertTrue(parser.followSetOf(NT.A).contains(Terminal.$));
   }
   @Test public void testBasicFollow() {
-    assertTrue(bnf.followSetOf(NT.A).contains(Term.b));
+    assertTrue(parser.followSetOf(NT.A).contains(Term.b));
   }
   @Test public void testNTFolloweByNullableContainsLhsFollow() {
-    assertTrue(bnf.followSetOf(NT.C).contains(Terminal.$));
+    assertTrue(parser.followSetOf(NT.C).contains(Terminal.$));
   }
   @Test public void testEndOfExpressionContainsLhsFollow() {
-    assertTrue(bnf.followSetOf(NT.A).contains(Terminal.$));
+    assertTrue(parser.followSetOf(NT.A).contains(Terminal.$));
   }
   @Test public void testUnreachableNT() {
-    assertEquals(expectedSet(), bnf.followSetOf(NT.UNREACHABLE));
+    assertEquals(expectedSet(), parser.followSetOf(NT.UNREACHABLE));
   }
 }
