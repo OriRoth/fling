@@ -28,7 +28,7 @@ import org.spartan.fajita.api.parser.ActionTable.Shift;
  *
  */
 public class LRParser {
-  private final BNF bnf;
+  final BNF bnf;
   public final List<State> states;
   private final ActionTable actionTable;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
@@ -75,16 +75,20 @@ public class LRParser {
         for (int i = 0; i < dRule.getChildren().size(); i++) {
           if (dRule.getChildren().get(i).isTerminal())
             continue;
-          Symbol subExpression[];
-          if (i != dRule.getChildren().size() - 1)
-            subExpression = Arrays.copyOfRange(dRule.getChildren().toArray(), i + 1, dRule.getChildren().size(), Symbol[].class);
-          else
-            subExpression = new Symbol[] {};
+          Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
           moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
           if (isNullable(subExpression))
             moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
         }
     } while (moreChanges);
+    return $;
+  }
+  public static Symbol[] subExpressionBuilder(final List<Symbol> expression, final int index, final Symbol... symbols) {
+    Symbol[] $ = new Symbol[expression.size() - index + symbols.length];
+    for (int i = 0; i < expression.size() - index; i++)
+      $[i] = expression.get(i + index);
+    for (int i = 0; i < symbols.length; i++)
+      $[index + i] = symbols[i];
     return $;
   }
   @SuppressWarnings({ "static-method" }) public boolean isNullable(final Symbol... expression) {
@@ -131,7 +135,7 @@ public class LRParser {
   private State generateInitialState() {
     Set<Item> initialItems = bnf.getRules().stream() //
         .filter(dRule -> bnf.getAugmentedStartSymbol().equals(dRule.lhs))//
-        .map(dRule -> new Item(dRule, 0)) //
+        .map(dRule -> new Item(dRule, Terminal.$, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
     return new State(closure, bnf);
@@ -141,17 +145,15 @@ public class LRParser {
     boolean moreChanges;
     do {
       moreChanges = false;
-      Set<NonTerminal> dotBeforeNT = items.stream()
-          .filter(item -> (!item.readyToReduce())
-              && NonTerminal.class.isAssignableFrom(item.rule.getChildren().get(item.dotIndex).getClass())) //
-          .map(item -> (NonTerminal) item.rule.getChildren().get(item.dotIndex)) //
+      Set<Item> dotBeforeNT = items.stream()
+          .filter(item -> (!item.readyToReduce()) && item.rule.getChildren().get(item.dotIndex).isNonTerminal()) //
           .collect(Collectors.toSet());
-      for (NonTerminal nt : dotBeforeNT)
-        for (DerivationRule dRule : bnf.getRules()) {
-          if (!dRule.lhs.equals(nt))
-            continue;
-          moreChanges |= items.add(new Item(dRule, 0));
-        }
+      for (Item item : dotBeforeNT) {
+        NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
+        for (DerivationRule dRule : bnf.getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList()))
+          for (Terminal t : firstSetOf(LRParser.subExpressionBuilder(item.rule.getChildren(), item.dotIndex + 1, item.lookahead)))
+            moreChanges |= items.add(new Item(dRule, t, 0));
+      }
     } while (moreChanges);
     return items;
   }
