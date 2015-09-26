@@ -27,9 +27,6 @@ public class Item {
       throw new IllegalStateException("cannot advance a ready to reduce item");
     return new Item(rule, lookahead, dotIndex + 1);
   }
-  private boolean legalReduce(final Terminal lh) {
-    return lh == lookahead;
-  }
   public boolean readyToReduce() {
     return dotIndex == rule.getChildren().size();
   }

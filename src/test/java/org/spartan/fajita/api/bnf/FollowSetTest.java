@@ -53,11 +53,11 @@ public class FollowSetTest {
         .setStartSymbols(NT.S, NT.A) //
         .endConfig() //
         .derive(NT.S).to(NT.B).or().to(NT.AB) //
-        .derive(NT.A).to(NT.C).or().to(NT.AB) //
+        .derive(NT.A).to(NT.C) //
         .derive(NT.B).to(Term.b)//
         .derive(NT.AB).to(NT.A).and(NT.B) //
         .derive(NT.C).to(Term.c)//
-        .derive(NT.UNREACHABLE).to(Term.d) //
+        .derive(NT.UNREACHABLE).to(NT.UNREACHABLE) //
         .finish();
     parser = new LRParser(b);
     assertThat(expectedSet(Terminal.$), equalTo(parser.followSetOf(NT.S)));

@@ -1,9 +1,5 @@
 package org.spartan.fajita.api.examples.balancedParenthesis;
 
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.NT.BALANCED;
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.lp;
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.rp;
-
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -54,14 +50,33 @@ public class BalancedParenthesis {
     BALANCED;
   }
 
+  static enum Term2 implements Terminal {
+    c, d;
+    @Override public Type type() {
+      return Type.VOID;
+    }
+  }
+
+  static enum NT2 implements NonTerminal {
+    S, C
+  }
+
   public static void buildBNF() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    // BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    // .startConfig() //
+    // .setApiNameTo("Balanced Parenthesis") //
+    // .setStartSymbols(BALANCED) //
+    // .endConfig() //
+    // .derive(BALANCED).to(lp).and(BALANCED).and(rp) //
+    // /* */.or().to(lp).and(rp) //
+    // .finish();
+    BNF bnf = new BNFBuilder(Term2.class, NT2.class) //
         .startConfig() //
-        .setApiNameTo("Balanced Parenthesis") //
-        .setStartSymbols(BALANCED) //
+        .setApiNameTo("TEST") //
+        .setStartSymbols(NT2.S) //
         .endConfig() //
-        .derive(BALANCED).to(lp).and(BALANCED).and(rp) //
-        /*        */.or().to(lp).and(rp) //
+        .derive(NT2.S).to(NT2.C).and(NT2.C) //
+        .derive(NT2.C).to(Term2.c).and(NT2.C).or().to(Term2.d) //
         .finish();
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);

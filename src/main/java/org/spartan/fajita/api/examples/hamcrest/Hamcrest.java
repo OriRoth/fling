@@ -1,9 +1,9 @@
 package org.spartan.fajita.api.examples.hamcrest;
 
 import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.*;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.ASSERT;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.MATCHER;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.*;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.any_of;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.anything;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.assertThat;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.instance_of;
@@ -20,6 +20,7 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.parser.LRParser;
 
 public class Hamcrest {
   @SuppressWarnings("unchecked") public static void expressionBuilder() {
@@ -45,7 +46,8 @@ public class Hamcrest {
   }
 
   static enum NT implements NonTerminal {
-    ASSERT, MATCHER, INSTANCE_OF, ANYTHING, EQUAL_TO, NOT, ANY_OF, MATCHERS;
+    ASSERT, MATCHER
+    // , MATCHERS;
   }
 
   public static void buildBNF() {
@@ -55,15 +57,17 @@ public class Hamcrest {
         .setStartSymbols(ASSERT) //
         .endConfig() //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
-        .derive(MATCHER).to(INSTANCE_OF).or().to(ANYTHING).or().to(EQUAL_TO).or().to(NOT).or().to(ANY_OF) //
-        .derive(INSTANCE_OF).to(instance_of).and(type) //
-        .derive(ANYTHING).to(anything) //
-        .derive(EQUAL_TO).to(equals_to).and(value) //
-        .derive(NOT).to(not).and(MATCHER) //
-        .derive(ANY_OF).to(any_of).and(MATCHERS) //
-        .derive(MATCHERS).to(MATCHER).or().to(MATCHER).and(MATCHERS) //
+        .derive(MATCHER).to(instance_of).and(type) //
+        /*       */.or().to(anything) //
+        /*       */.or().to(equals_to).and(value) //
+        /*       */.or().to(not).and(MATCHER) //
+        // /* */.or().to(any_of).and(MATCHERS) //
+        // .derive(MATCHERS).to(MATCHER)//
+        // /* */.or().to(MATCHER).and(MATCHERS) //
         .finish();
     System.out.println(bnf);
+    LRParser parser = new LRParser(bnf);
+    System.out.println(parser);
   }
   public static void main(final String[] args) {
     buildBNF();

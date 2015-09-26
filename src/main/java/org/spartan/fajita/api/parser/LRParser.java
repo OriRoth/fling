@@ -88,7 +88,7 @@ public class LRParser {
     for (int i = 0; i < expression.size() - index; i++)
       $[i] = expression.get(i + index);
     for (int i = 0; i < symbols.length; i++)
-      $[index + i] = symbols[i];
+      $[expression.size() - index + i] = symbols[i];
     return $;
   }
   @SuppressWarnings({ "static-method" }) public boolean isNullable(final Symbol... expression) {
@@ -110,7 +110,7 @@ public class LRParser {
     for (State state : states)
       for (Item item : state.items)
         if (item.readyToReduce())
-          if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()))
+          if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()) && item.lookahead.equals(Terminal.$))
             addAcceptAction(state);
           else
             addReduceAction(state, item);
@@ -126,8 +126,7 @@ public class LRParser {
     actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
   }
   private void addReduceAction(final State state, final Item item) {
-    for (Terminal t : followSetOf(item.rule.lhs))
-      actionTable.set(state, t, new Reduce());
+    actionTable.set(state, item.lookahead, new Reduce());
   }
   public State getInitialState() {
     return states.get(0);
