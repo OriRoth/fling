@@ -11,16 +11,16 @@ import org.spartan.fajita.api.parser.stack.IStack;
     this.t = t;
   }
   protected BALANCED BALANCED() {
-    throw new ParseError("unexpected symbol on state " + this.getClass().getSimpleName());
+    throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
   }
   protected lp lp() {
-    throw new ParseError("unexpected symbol on state " + this.getClass().getSimpleName());
+    throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
   }
   protected rp rp() {
-    throw new ParseError("unexpected symbol on state " + this.getClass().getSimpleName());
+    throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
   }
   protected $ $() {
-    throw new ParseError("unexpected symbol on state " + this.getClass().getSimpleName());
+    throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
   }
 
   public static class ParseError extends RuntimeException {

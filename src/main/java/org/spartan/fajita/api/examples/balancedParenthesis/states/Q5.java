@@ -1,8 +1,8 @@
 package org.spartan.fajita.api.examples.balancedParenthesis.states;
 
-public class Q5<BOTTOM extends BaseState<? extends BaseState<? extends BaseState<?, ?, ?, ?, ?>, ?, ?, ?, ?>, ?, ?, ?, ?>, REDUCE extends BaseState<?, ?, ?, ?, ?>>
-    extends BaseState<BOTTOM, BaseState.Error, REDUCE, Integer, BaseState.Error> {
-  public Q5(final BOTTOM t) {
+public class Q5<Stack extends BaseState<? extends BaseState<? extends BaseState<?, ?, ?, ?, ?>, ?, ?, ?, ?>, ?, ?, ?, ?>, REDUCE extends BaseState<?, ?, ?, ?, ?>>
+    extends BaseState<Stack, BaseState.Error, REDUCE, Integer, BaseState.Error> {
+  public Q5(final Stack t) {
     super(t);
   }
   @Override public Integer $() {
