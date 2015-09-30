@@ -13,6 +13,7 @@ import org.spartan.fajita.api.examples.balancedParenthesis.states.Q0;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q1;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q2;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q4;
+import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class BalancedParenthesis {
@@ -54,7 +55,7 @@ public class BalancedParenthesis {
     BALANCED;
   }
 
-  public static void buildBNF() {
+  public static LRParser buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("Balanced Parenthesis") //
@@ -67,8 +68,14 @@ public class BalancedParenthesis {
     LRParser parser = new LRParser(bnf);
     System.out.println(parser.states);
     System.out.println(parser);
+    return parser;
   }
   public static void main(final String[] args) {
-    buildBNF();
+    LRParser parser = buildBNF();
+    apiGeneration(parser);
+  }
+  private static void apiGeneration(final LRParser parser) {
+    // ApiGenerator apiGenerator = new ApiGenerator(parser);
+    System.out.println(new BaseStateSpec(parser).generate());
   }
 }

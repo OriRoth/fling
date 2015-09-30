@@ -28,7 +28,7 @@ import org.spartan.fajita.api.parser.ActionTable.Shift;
  *
  */
 public class LRParser {
-  final BNF bnf;
+  public final BNF bnf;
   public final List<State> states;
   private final ActionTable actionTable;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
