@@ -23,12 +23,10 @@ import org.spartan.fajita.api.parser.stack.IStack;
     throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
   }
 
-  public static class ParseError extends RuntimeException {
+  @java.lang.SuppressWarnings({ "serial" }) public static class ParseError extends RuntimeException {
     public ParseError(final String message) {
       super(message);
     }
-
-    private static final long serialVersionUID = 5785838846631116912L;
   }
 
   public static class Error extends BaseState<EmptyStack, Error, Error, Error, Error> {
