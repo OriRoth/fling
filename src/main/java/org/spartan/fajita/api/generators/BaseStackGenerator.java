@@ -1,17 +1,17 @@
 package org.spartan.fajita.api.generators;
 
-import static org.spartan.fajita.api.generators.GeneratorsUtils.BASE_STACK_CLASSNAME;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.suppressWarningAnnot;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.type;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STACK;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
 public class BaseStackGenerator {
   public static TypeSpec generate() {
-    return TypeSpec.interfaceBuilder(BASE_STACK_CLASSNAME)
-        .addTypeVariable(TypeVariableName.get("Tail", ClassName.get("", BASE_STACK_CLASSNAME)))
-        .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "{\"rawtypes\",\"unused\"}").build())
+    return TypeSpec.interfaceBuilder(BASE_STACK.typename) //
+        .addTypeVariable(TypeVariableName.get("Tail", type(BASE_STACK))) //
+        .addAnnotation(suppressWarningAnnot("rawtypes", "unused"))//
         .build();
   }
 }

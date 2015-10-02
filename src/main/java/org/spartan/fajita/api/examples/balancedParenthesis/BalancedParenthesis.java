@@ -14,6 +14,7 @@ import org.spartan.fajita.api.examples.balancedParenthesis.states.Q1;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q2;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q4;
 import org.spartan.fajita.api.generators.BaseStateSpec;
+import org.spartan.fajita.api.generators.TypeArgumentManager;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class BalancedParenthesis {
@@ -70,12 +71,8 @@ public class BalancedParenthesis {
     System.out.println(parser);
     return parser;
   }
-  public static void main(final String[] args) {
-    LRParser parser = buildBNF();
-    apiGeneration(parser);
-  }
-  private static void apiGeneration(final LRParser parser) {
+  public static void apiGeneration(final LRParser parser) {
     // ApiGenerator apiGenerator = new ApiGenerator(parser);
-    System.out.println(new BaseStateSpec(parser).generate());
+    System.out.println(new BaseStateSpec(new TypeArgumentManager(parser)).generate());
   }
 }
