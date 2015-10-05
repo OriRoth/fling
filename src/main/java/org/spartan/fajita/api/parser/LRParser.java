@@ -169,7 +169,7 @@ public class LRParser {
           continue;
         State newState = generateNextState(state, lookahead);
         int stateIndex = states.indexOf(newState);
-        if (stateIndex == -1) {
+        if (stateIndex == -1 && newState.getClass() != AcceptState.class) {
           states.add(newState);
           statesToCheck.add(newState);
           state.addGotoTransition(lookahead, newState.stateIndex);

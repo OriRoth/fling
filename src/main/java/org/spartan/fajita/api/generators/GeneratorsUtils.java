@@ -1,14 +1,14 @@
 package org.spartan.fajita.api.generators;
 
+import java.util.Arrays;
+
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.AnnotationSpec.Builder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.WildcardTypeName;
 
-class GeneratorsUtils {
+public class GeneratorsUtils {
   public enum Classname {
     BASE_STATE("BaseState"), BASE_STACK("IStack"), EMPTY_STACK("EmptyStack"), ERROR_STATE("ErrorState"), PARSE_ERROR("ParseError");
     public final String typename;
@@ -26,8 +26,21 @@ class GeneratorsUtils {
   public static ClassName type(final Classname name) {
     return ClassName.get("", name.typename);
   }
-  public static TypeName parameterizeWithWildcard(final String name) {
-    return ParameterizedTypeName.get(type(name), WildcardTypeName.subtypeOf(Object.class));
+  // public static ParameterizedTypeName parameterizeWithNWildcard(final String
+  // name, final int n) {
+  // WildcardTypeName[] wildcards = new WildcardTypeName[n];
+  // Arrays.fill(wildcards, WildcardTypeName.subtypeOf(Object.class));
+  // return ParameterizedTypeName.get(type(name), wildcards);
+  // }
+  public static WildcardTypeName[] wildcardArray(final int n) {
+    WildcardTypeName[] wildcards = new WildcardTypeName[n];
+    Arrays.fill(wildcards, WildcardTypeName.subtypeOf(Object.class));
+    return wildcards;
+  }
+  public static <T> T[] merge(final T[] array1, final T[] array2) {
+    T[] $ = Arrays.copyOf(array1, array1.length + array2.length);
+    System.arraycopy(array2, 0, $, array1.length, array2.length);
+    return $;
   }
   public static AnnotationSpec suppressWarningAnnot(final String... types) {
     Builder $ = AnnotationSpec.builder(SuppressWarnings.class);

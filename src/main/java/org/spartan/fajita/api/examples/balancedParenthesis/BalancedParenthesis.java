@@ -14,7 +14,7 @@ import org.spartan.fajita.api.examples.balancedParenthesis.states.Q1;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q2;
 import org.spartan.fajita.api.examples.balancedParenthesis.states.Q4;
 import org.spartan.fajita.api.generators.BaseStateSpec;
-import org.spartan.fajita.api.generators.TypeArgumentManager;
+import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class BalancedParenthesis {

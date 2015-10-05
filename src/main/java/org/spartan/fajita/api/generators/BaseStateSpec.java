@@ -8,6 +8,7 @@ import java.util.Arrays;
 import javax.lang.model.element.Modifier;
 
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;

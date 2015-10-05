@@ -1,7 +1,5 @@
 package org.spartan.fajita.api.examples.balancedParenthesis.states;
 
-import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.stack.EmptyStack;
 import org.spartan.fajita.api.parser.stack.IStack;
 
@@ -35,10 +33,5 @@ import org.spartan.fajita.api.parser.stack.IStack;
     public Error() {
       super(new EmptyStack());
     }
-  }
-
-  public static void main(final String[] args) {
-    LRParser parser = BalancedParenthesis.buildBNF();
-    BalancedParenthesis.apiGeneration(parser);
   }
 }
