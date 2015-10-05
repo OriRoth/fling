@@ -26,6 +26,7 @@ public class StateTypeData {
   private final String name;
   private final LRParser parser;
   private final List<Symbol> baseStateSymbols;
+  private final int baseStateArgumentNumber;
   // type arguments for the state
   private final Map<SimpleEntry<Integer, NonTerminal>, TypeVariableName> typeArguments;
   private static final SimpleEntry<Integer, NonTerminal> stackTypeArgument = new SimpleEntry<>(new Integer(-1), null);
@@ -37,6 +38,7 @@ public class StateTypeData {
     this.s = s;
     name = "Q" + s.stateIndex;
     this.baseStateSymbols = baseStateSymbols;
+    baseStateArgumentNumber = baseStateSymbols.size() + 1;
     typeArguments = calculateStateTypeArguments();
     baseStateTypes = new HashMap<>();
     if (typeArguments.containsKey(stackTypeArgument))
@@ -69,7 +71,7 @@ public class StateTypeData {
       $.put(stackTypeArgument, calculateStackTypeParameter());
     for (SimpleEntry<Integer, NonTerminal> i : sortedTypeArguments())
       $.put(i, TypeVariableName.get(i.getValue().name() + i.getKey(),
-          ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseStateSymbols.size()))));
+          ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseStateArgumentNumber))));
     return $;
   }
   @SuppressWarnings("boxing") private List<SimpleEntry<Integer, NonTerminal>> sortedTypeArguments() {
@@ -86,9 +88,9 @@ public class StateTypeData {
   }
   private ParameterizedTypeName recursiveStackParameterCalculator(final int max_depth) {
     if (max_depth == 1)
-      return ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseStateSymbols.size()));
+      return ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseStateArgumentNumber));
     TypeName[] stackArgument = Arrays.copyOf(
-        new TypeName[] { WildcardTypeName.subtypeOf(recursiveStackParameterCalculator(max_depth - 1)) }, baseStateSymbols.size());
+        new TypeName[] { WildcardTypeName.subtypeOf(recursiveStackParameterCalculator(max_depth - 1)) }, baseStateArgumentNumber);
     Arrays.setAll(stackArgument, i -> i == 0 ? stackArgument[0] : WildcardTypeName.subtypeOf(Object.class));
     return ParameterizedTypeName.get(type(BASE_STATE), stackArgument);
   }

@@ -79,7 +79,7 @@ public class BaseStateSpec {
         .superclass(RuntimeException.class) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
         .addMethod(
-            MethodSpec.constructorBuilder().addParameter(String.class, "msg", Modifier.FINAL).addCode("super(msg);\n").build()) //
+            MethodSpec.constructorBuilder().addParameter(String.class, "msg", Modifier.FINAL).addStatement("super(msg)").build()) //
         .addAnnotation(suppressWarningAnnot("serial")).build();
     builder.addType(parseError);
     return this;
@@ -89,7 +89,7 @@ public class BaseStateSpec {
       MethodSpec method = MethodSpec.methodBuilder(s.name()) //
           .addModifiers(Modifier.PROTECTED) //
           .returns(tam.getType(s)) //
-          .addCode("throw new ParseError(\"unexpected symbol on state \" + getClass().getSimpleName());\n") //
+          .addStatement("throw new ParseError(\"unexpected symbol on state \" + getClass().getSimpleName())") //
           .build();
       builder.addMethod(method);
     }
@@ -103,7 +103,7 @@ public class BaseStateSpec {
     ParameterSpec stack = ParameterSpec.builder(tam.getType(0), "stack", Modifier.FINAL).build();
     MethodSpec constuctor = MethodSpec.constructorBuilder() //
         .addParameter(stack) //
-        .addCode("this.$N = $N", stackField, stack) //
+        .addStatement("this.$N = $N", stackField, stack) //
         .build();
     builder.addMethod(constuctor);
     return this;
