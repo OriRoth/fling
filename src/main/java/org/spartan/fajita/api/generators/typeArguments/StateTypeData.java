@@ -1,8 +1,7 @@
 package org.spartan.fajita.api.generators.typeArguments;
 
 import static org.spartan.fajita.api.generators.GeneratorsUtils.*;
-import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STATE;
-import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.EMPTY_STACK;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.*;
 
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
@@ -66,9 +65,8 @@ public class StateTypeData {
   }
   private Map<SimpleEntry<Integer, NonTerminal>, TypeVariableName> calculateStateTypeArguments() {
     Map<SimpleEntry<Integer, NonTerminal>, TypeVariableName> $ = new HashMap<>();
-    if (s.items.stream().anyMatch(i -> i.rule.lhs.equals(s.bnf.getAugmentedStartSymbol())))
-      return $;
-    $.put(stackTypeArgument, calculateStackTypeParameter());
+    if (s.stateIndex != 0)
+      $.put(stackTypeArgument, calculateStackTypeParameter());
     for (SimpleEntry<Integer, NonTerminal> i : sortedTypeArguments())
       $.put(i, TypeVariableName.get(i.getValue().name() + i.getKey(),
           ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseStateSymbols.size()))));
@@ -78,7 +76,8 @@ public class StateTypeData {
     return s.items.stream().map(i -> new AbstractMap.SimpleEntry<>(i.dotIndex, i.rule.lhs)).distinct().sorted((x, y) -> {
       return (x.getKey() != y.getKey()) ? Integer.compare(x.getKey(), y.getKey())
           : x.getValue().name().compareTo(y.getValue().name());
-    }).filter(entry -> entry.getKey().intValue() > 0).collect(Collectors.toList());
+    }).filter(entry -> entry.getKey().intValue() > 0 && entry.getValue() != s.bnf.getAugmentedStartSymbol())
+        .collect(Collectors.toList());
   }
   @SuppressWarnings("boxing") private TypeVariableName calculateStackTypeParameter() {
     int max_depth = s.items.stream().map(item -> item.dotIndex).max((x, y) -> Integer.compare(x, y)).get();
