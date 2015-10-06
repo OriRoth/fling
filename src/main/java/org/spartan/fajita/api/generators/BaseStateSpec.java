@@ -27,7 +27,7 @@ public class BaseStateSpec {
     this.tam = tam;
     stackField = initializeStackField();
     builder = TypeSpec.classBuilder(BASE_STATE.typename);
-    builder.addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC);
+    builder.addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC, Modifier.STATIC);
   }
   private FieldSpec initializeStackField() {
     return FieldSpec.//
