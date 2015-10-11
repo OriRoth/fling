@@ -36,21 +36,21 @@ public class State {
     return transitions.keySet();
   }
   @Override public String toString() {
-    return "q" + stateIndex + ":" + compactToString() + " " + transitions.toString();
+    return compactToString();
   }
   public String extentedToString() {
-    String $ = "{";
+    String $ = "q" + stateIndex + ":{";
     for (Item item : items)
       $ += item.toString() + ",";
-    $ += "} ";
+    $ += "}  " + transitions.toString();
     return $;
   }
   public String compactToString() {
-    String $ = "{";
+    String $ = "q" + stateIndex + ":{";
     for (Item item : items.stream().filter(item -> (item.dotIndex != 0 || bnf.getAugmentedStartSymbol() == item.rule.lhs))
         .collect(Collectors.toList()))
       $ += item.toString() + ",";
-    return $ + "}";
+    return $ + "}  " + transitions.toString();
   }
   @Override public boolean equals(final Object obj) {
     if (obj.getClass() != State.class)
