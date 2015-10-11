@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.examples.dependencyCycle;
+package org.spartan.fajita.api.examples.dependencyCycle.use;
 
-import static org.spartan.fajita.api.examples.dependencyCycle.DependencyCycle.NT.*;
-import static org.spartan.fajita.api.examples.dependencyCycle.DependencyCycle.Term.*;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.NT.*;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.Term.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,40 +13,49 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q0;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q1;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q2;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3;
+import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3Q3;
 import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.LRParser;
 
 import com.squareup.javapoet.TypeSpec;
 
-public class DependencyCycle {
+public class DC2 {
   public static void expressionBuilder() {
-    //
+    Q0 q0 = new DC2States.Q0();
+    Q2<Q0, Q3Q3<Q1<Q0, ?>>> a1 = q0.a();
+    Q3Q3<Q1<Q0, ?>> a2 = a1.a();
+    Q3<Q1<Q0, ?>, Q3Q3<Q1<Q0, ?>>> a3 = a2.a();
+    Q3Q3<Q1<Q0, ?>> a4 = a3.a();
+    int size = a4.$();
   }
 
   static enum Term implements Terminal {
-    b, c, d, e;
+    a;
     @Override public Type type() {
       return Type.VOID;
     }
   }
 
   static enum NT implements NonTerminal {
-    A, B;
+    A;
   }
 
   public static LRParser buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
-        .setApiNameTo("Balanced Parenthesis") //
+        .setApiNameTo("list of a's") //
         .setStartSymbols(A) //
         .endConfig() //
-        .derive(A).to(B).and(d) //
-        .derive(B).to(A).and(e) //
+        .derive(A).to(A).and(a).or().to(a) //
         .finish();
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
-    System.out.println(parser.states);
     System.out.println(parser);
     return parser;
   }
