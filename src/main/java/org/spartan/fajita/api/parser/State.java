@@ -36,7 +36,9 @@ public class State {
     return transitions.keySet();
   }
   @Override public String toString() {
-    return "q" + stateIndex + ":" + compactToString() + " " + transitions.toString();
+    // return "q" + stateIndex + ":" + compactToString() + " " +
+    // transitions.toString();
+    return "Q" + stateIndex;
   }
   public String extentedToString() {
     String $ = "{";
@@ -58,8 +60,14 @@ public class State {
     State s = (State) obj;
     return bnf.equals(s.bnf) && s.items.equals(items);
   }
+  /**
+   * @param lookahead
+   *          - the transition symbol
+   * @return the index of the next state or -1 if the transition does not exist.
+   * 
+   */
   public Integer goTo(final Symbol lookahead) {
-    return transitions.get(lookahead);
+    return transitions.getOrDefault(lookahead, new Integer(-1));
   }
   @Override public int hashCode() {
     return items.hashCode() + bnf.hashCode();

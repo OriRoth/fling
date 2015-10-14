@@ -29,7 +29,7 @@ import org.spartan.fajita.api.parser.ActionTable.Shift;
  */
 public class LRParser {
   public final BNF bnf;
-  public final List<State> states;
+  private final List<State> states;
   private final ActionTable actionTable;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
   private final Map<NonTerminal, Set<Terminal>> followSets;
@@ -40,7 +40,7 @@ public class LRParser {
     followSets = calculateFollowSets();
     states = new ArrayList<>();
     generateStatesSet();
-    actionTable = new ActionTable(states);
+    actionTable = new ActionTable(getStates());
     fillParsingTable();
   }
   private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
@@ -107,7 +107,7 @@ public class LRParser {
     return followSets.get(nt);
   }
   private void fillParsingTable() {
-    for (State state : states)
+    for (State state : getStates())
       for (Item item : state.items)
         if (item.readyToReduce())
           if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()) && item.lookahead.equals(Terminal.$))
@@ -129,7 +129,7 @@ public class LRParser {
     actionTable.set(state, item.lookahead, new Reduce());
   }
   public State getInitialState() {
-    return states.get(0);
+    return getStates().get(0);
   }
   private State generateInitialState() {
     Set<Item> initialItems = bnf.getRules().stream() //
@@ -159,7 +159,7 @@ public class LRParser {
   private void generateStatesSet() {
     State initialState = generateInitialState();
     Set<Symbol> symbols = legalSymbols();
-    states.add(initialState);
+    getStates().add(initialState);
     Stack<State> statesToCheck = new Stack<>();
     statesToCheck.push(initialState);
     while (!statesToCheck.isEmpty()) {
@@ -168,9 +168,9 @@ public class LRParser {
         if (!state.isLegalLookahead(lookahead))
           continue;
         State newState = generateNextState(state, lookahead);
-        int stateIndex = states.indexOf(newState);
+        int stateIndex = getStates().indexOf(newState);
         if (stateIndex == -1 && newState.getClass() != AcceptState.class) {
-          states.add(newState);
+          getStates().add(newState);
           statesToCheck.add(newState);
           state.addGotoTransition(lookahead, newState.stateIndex);
         } else
@@ -181,19 +181,19 @@ public class LRParser {
   private State generateNextState(final State state, final Symbol lookahead) {
     if (lookahead == Terminal.$)
       if (state.items.stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs)))
-        return new AcceptState(bnf, states.size());
+        return new AcceptState(bnf, getStates().size());
     Set<Item> initialItems = state.items.stream().//
         filter(item -> item.isLegalLookahead(lookahead)) //
         .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
-    return new State(closure, bnf, states.size());
+    return new State(closure, bnf, getStates().size());
   }
   public State gotoTable(final State state, final Symbol lookahead) {
     Integer nextState = state.goTo(lookahead);
     if (nextState == null)
       return null;
-    return states.get(nextState.intValue());
+    return getStates().get(nextState.intValue());
   }
   public Action actionTable(final State state, final Terminal lookahead) {
     return actionTable.get(state.stateIndex, lookahead);
@@ -208,5 +208,14 @@ public class LRParser {
   }
   @Override public String toString() {
     return actionTable.toString();
+  }
+  public List<State> getStates() {
+    return states;
+  }
+  public State getState(final int index) {
+    return states.get(index);
+  }
+  public State getState(final State prevState, final Symbol lookahead) {
+    return states.get(prevState.goTo(lookahead).intValue());
   }
 }
