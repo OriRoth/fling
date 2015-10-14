@@ -67,7 +67,7 @@ public class BalancedParenthesis {
         .finish();
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
-    System.out.println(parser.states);
+    System.out.println(parser.getStates());
     System.out.println(parser);
     return parser;
   }

@@ -207,7 +207,11 @@ public class LRParser {
     return symbols;
   }
   @Override public String toString() {
-    return actionTable.toString();
+    String $ = "States:" + System.lineSeparator();
+    for (State state : states)
+      $ += state.extentedToString() + System.lineSeparator();
+    $ += actionTable.toString();
+    return $;
   }
   public List<State> getStates() {
     return states;

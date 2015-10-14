@@ -1,8 +1,7 @@
 package org.spartan.fajita.api.generators.typeArguments;
 
 import static org.spartan.fajita.api.generators.GeneratorsUtils.*;
-import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STACK;
-import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STATE;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,8 @@ public class TypeArgumentManager {
   public final List<Symbol> symbols;
   private final LRParser parser;
   private final BNF bnf;
-  private final Map<State, StateTypeData> statesTypeData;
+  // TODO: change to private
+  public final Map<State, StateTypeData> statesTypeData;
 
   public TypeArgumentManager(final LRParser parser) {
     this.parser = parser;
@@ -34,7 +34,7 @@ public class TypeArgumentManager {
     symbols = initializeSymbolIndexes();
     baseTypeArgumentsList = initializeBaseTypeArgumentList();
     statesTypeData = new HashMap<>();
-    parser.states.forEach(s -> statesTypeData.put(s, new StateTypeData(parser, s, symbols)));
+    parser.getStates().forEach(s -> statesTypeData.put(s, new StateTypeData(parser, s, symbols)));
   }
   private ArrayList<TypeVariableName> initializeBaseTypeArgumentList() {
     ArrayList<TypeVariableName> $ = new ArrayList<>();
@@ -69,10 +69,12 @@ public class TypeArgumentManager {
     LRParser parser = BalancedParenthesis.buildBNF();
     TypeArgumentManager tam = new TypeArgumentManager(parser);
     final List<TypeSpec> $ = new ArrayList<>();
-    parser.states
+    parser.getStates()
         .forEach(s -> $.add(TypeSpec.classBuilder("Q" + s.stateIndex).addTypeVariables(tam.stateTypeArguments(s)).build()));
     for (TypeSpec typeSpec : $)
       if (!typeSpec.name.equals("Q0"))
         System.out.println(typeSpec);
+    // parser.states.forEach(s ->
+    // System.out.println(tam.statesTypeData.get(s).dependencies));
   }
 }

@@ -26,12 +26,6 @@ public class GeneratorsUtils {
   public static ClassName type(final Classname name) {
     return ClassName.get("", name.typename);
   }
-  // public static ParameterizedTypeName parameterizeWithNWildcard(final String
-  // name, final int n) {
-  // WildcardTypeName[] wildcards = new WildcardTypeName[n];
-  // Arrays.fill(wildcards, WildcardTypeName.subtypeOf(Object.class));
-  // return ParameterizedTypeName.get(type(name), wildcards);
-  // }
   public static WildcardTypeName[] wildcardArray(final int n) {
     WildcardTypeName[] wildcards = new WildcardTypeName[n];
     Arrays.fill(wildcards, WildcardTypeName.subtypeOf(Object.class));
