@@ -14,6 +14,7 @@ public class State {
   public final BNF bnf;
   private final Map<Symbol, Integer> transitions;
   public final int stateIndex;
+  public final String name;
 
   State(final Set<Item> items, final BNF bnf) {
     this(items, bnf, 0);
@@ -23,6 +24,7 @@ public class State {
     this.stateIndex = stateIndex;
     this.bnf = bnf;
     transitions = new HashMap<>();
+    name = "Q" + stateIndex;
   }
   void addGotoTransition(final Symbol symbol, final int stateIdx) {
     transitions.put(symbol, new Integer(stateIdx));
@@ -36,9 +38,9 @@ public class State {
     return transitions.keySet();
   }
   @Override public String toString() {
-    // return "q" + stateIndex + ":" + compactToString() + " " +
+    // return name + ":" + compactToString() + " " +
     // transitions.toString();
-    return "Q" + stateIndex;
+    return name;
   }
   public String extentedToString() {
     String $ = "{";
