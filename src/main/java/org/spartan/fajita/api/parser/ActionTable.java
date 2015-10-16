@@ -11,7 +11,18 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class ActionTable {
   public static class Action {
-    //
+    public boolean isShift() {
+      return getClass() == Shift.class;
+    }
+    public boolean isReduce() {
+      return getClass() == Reduce.class;
+    }
+    public boolean isError() {
+      return getClass() == Error.class;
+    }
+    public boolean isAccept() {
+      return getClass() == Accept.class;
+    }
   }
 
   public static class Error extends Action {
@@ -33,18 +44,18 @@ public class ActionTable {
   }
 
   public static class Shift extends Action {
-    public final int stateIndex;
+    public final State state;
 
-    public Shift(final int stateIndex) {
-      this.stateIndex = stateIndex;
+    public Shift(final State state) {
+      this.state = state;
     }
     @Override public String toString() {
-      return "s" + stateIndex;
+      return "s" + state;
     }
     @Override public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + stateIndex;
+      result = prime * result + state.getItems().hashCode();
       return result;
     }
     @Override public boolean equals(final Object obj) {
@@ -55,7 +66,7 @@ public class ActionTable {
       if (getClass() != obj.getClass())
         return false;
       Shift other = (Shift) obj;
-      if (stateIndex != other.stateIndex)
+      if (state != other.state)
         return false;
       return true;
     }
@@ -106,10 +117,10 @@ public class ActionTable {
   }
   void set(final State state, final Terminal lookahead, final Action act) {
     checkForConflicts(state, lookahead, act);
-    table[state.stateIndex].put(lookahead, act);
+    table[state.index].put(lookahead, act);
   }
   private void checkForConflicts(final State state, final Symbol lookahead, final Action act) {
-    Action previous = table[state.stateIndex].get(lookahead);
+    Action previous = table[state.index].get(lookahead);
     if (previous == null || previous.equals(act))
       return;
     if (previous.getClass() == Reduce.class && act.getClass() == Reduce.class)

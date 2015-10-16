@@ -108,7 +108,7 @@ public class LRParser {
   }
   private void fillParsingTable() {
     for (State state : getStates())
-      for (Item item : state.items)
+      for (Item item : state.getItems())
         if (item.readyToReduce())
           if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()) && item.lookahead.equals(Terminal.$))
             addAcceptAction(state);
@@ -122,8 +122,7 @@ public class LRParser {
   }
   private void addShiftAction(final State state, final Item item) {
     Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
-    Integer nextState = state.goTo(nextTerminal);
-    actionTable.set(state, nextTerminal, new Shift(nextState.intValue()));
+    actionTable.set(state, nextTerminal, new Shift(state.goTo(nextTerminal)));
   }
   private void addReduceAction(final State state, final Item item) {
     actionTable.set(state, item.lookahead, new Reduce());
@@ -137,7 +136,7 @@ public class LRParser {
         .map(dRule -> new Item(dRule, Terminal.$, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
-    return new State(closure, bnf);
+    return new State(closure, bnf, 0);
   }
   private Set<Item> calculateClosure(final Set<Item> initialItems) {
     Set<Item> items = new HashSet<>(initialItems);
@@ -159,7 +158,7 @@ public class LRParser {
   private void generateStatesSet() {
     State initialState = generateInitialState();
     Set<Symbol> symbols = legalSymbols();
-    getStates().add(initialState);
+    states.add(initialState);
     Stack<State> statesToCheck = new Stack<>();
     statesToCheck.push(initialState);
     while (!statesToCheck.isEmpty()) {
@@ -168,35 +167,31 @@ public class LRParser {
         if (!state.isLegalLookahead(lookahead))
           continue;
         State newState = generateNextState(state, lookahead);
-        int stateIndex = getStates().indexOf(newState);
-        if (stateIndex == -1 && newState.getClass() != AcceptState.class) {
-          getStates().add(newState);
-          statesToCheck.add(newState);
-          state.addGotoTransition(lookahead, newState.stateIndex);
+        int stateIndex = states.indexOf(newState);
+        if (stateIndex == -1) {
+          if (newState.getClass() != AcceptState.class) {
+            states.add(newState);
+            statesToCheck.add(newState);
+          }
+          state.addGotoTransition(lookahead, newState);
         } else
-          state.addGotoTransition(lookahead, stateIndex);
+          state.addGotoTransition(lookahead, getStates().get(stateIndex));
       }
     }
   }
   private State generateNextState(final State state, final Symbol lookahead) {
     if (lookahead == Terminal.$)
-      if (state.items.stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs)))
+      if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs)))
         return new AcceptState(bnf, getStates().size());
-    Set<Item> initialItems = state.items.stream().//
+    Set<Item> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalLookahead(lookahead)) //
         .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
     return new State(closure, bnf, getStates().size());
   }
-  public State gotoTable(final State state, final Symbol lookahead) {
-    Integer nextState = state.goTo(lookahead);
-    if (nextState == null)
-      return null;
-    return getStates().get(nextState.intValue());
-  }
   public Action actionTable(final State state, final Terminal lookahead) {
-    return actionTable.get(state.stateIndex, lookahead);
+    return actionTable.get(state.index, lookahead);
   }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();
@@ -216,10 +211,7 @@ public class LRParser {
   public List<State> getStates() {
     return states;
   }
-  public State getState(final int index) {
-    return states.get(index);
-  }
-  public State getState(final State prevState, final Symbol lookahead) {
-    return states.get(prevState.goTo(lookahead).intValue());
-  }
+  // public State getState(final int index) {
+  // return states.get(index);
+  // }
 }

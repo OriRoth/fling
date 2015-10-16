@@ -20,8 +20,8 @@ public class Main {
     TypeArgumentManager tam = new TypeArgumentManager(parser);
     System.out.println(new BaseStateSpec(tam).generate());
     final List<TypeSpec> types = new ArrayList<>();
-    parser.getStates().forEach(s -> types.add(TypeSpec.classBuilder("Q" + s.stateIndex).addModifiers(Modifier.STATIC)
-        .addTypeVariables(tam.stateTypeArguments(s)).build()));
+    parser.getStates().forEach(s -> types
+        .add(TypeSpec.classBuilder(s.name).addModifiers(Modifier.STATIC).addTypeVariables(tam.stateTypeArguments(s)).build()));
     for (TypeSpec typeSpec : types)
       System.out.println(typeSpec);
   }

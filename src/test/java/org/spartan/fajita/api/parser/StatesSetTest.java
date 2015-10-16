@@ -1,7 +1,6 @@
 package org.spartan.fajita.api.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -42,9 +41,6 @@ public class StatesSetTest {
     statesSet = new LRParser(bnf).getStates();
   }
   @Test public void testNumberOfStates() {
-    assertEquals(6, statesSet.size());
-  }
-  @Test public void testHasAcceptState() {
-    assertTrue(statesSet.contains(new AcceptState(bnf, 0)));
+    assertEquals(5, statesSet.size());
   }
 }

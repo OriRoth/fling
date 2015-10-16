@@ -39,7 +39,7 @@ public class StateGotoTest {
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getInitialState();
     assertFalse(initialState.isLegalLookahead(Term.c));
-    State nextState = parser.gotoTable(initialState, Term.c);
+    State nextState = initialState.goTo(Term.c);
     assertEquals(nextState, null);
   }
   @SuppressWarnings("static-method") @Test public void testNextStateTerminalLookahead()
@@ -55,10 +55,10 @@ public class StateGotoTest {
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getInitialState();
     assertTrue(initialState.isLegalLookahead(Term.a));
-    State nextState = parser.gotoTable(initialState, Term.a);
-    Item A_Rule = nextState.items.stream().filter(r -> r.rule.lhs.equals(NT.A)).findAny().get();
+    State nextState = initialState.goTo(Term.a);
+    Item A_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.A)).findAny().get();
     assertEquals(1, A_Rule.dotIndex);
-    assertEquals(nextState.items, new HashSet<>(Arrays.asList(A_Rule)));
+    assertEquals(nextState.getItems(), new HashSet<>(Arrays.asList(A_Rule)));
   }
   @SuppressWarnings("static-method") @Test public void testNextStateNonTerminalLookahead()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
@@ -73,10 +73,10 @@ public class StateGotoTest {
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getInitialState();
     assertTrue(initialState.isLegalLookahead(NT.A));
-    State nextState = parser.gotoTable(initialState, NT.A);
-    Item S_Rule = nextState.items.stream().filter(r -> r.rule.lhs.equals(NT.S)).findAny().get();
+    State nextState = initialState.goTo(NT.A);
+    Item S_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.S)).findAny().get();
     assertEquals(1, S_Rule.dotIndex);
-    assertEquals(nextState.items, new HashSet<>(Arrays.asList(S_Rule)));
+    assertEquals(nextState.getItems(), new HashSet<>(Arrays.asList(S_Rule)));
   }
   @SuppressWarnings("static-method") @Test public void testUsesClosureInNextState()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
@@ -90,7 +90,7 @@ public class StateGotoTest {
         .finish();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getInitialState();
-    State nextState = parser.gotoTable(initialState, Term.a);
-    assertEquals(2, nextState.items.size());
+    State nextState = initialState.goTo(Term.a);
+    assertEquals(2, nextState.getItems().size());
   }
 }
