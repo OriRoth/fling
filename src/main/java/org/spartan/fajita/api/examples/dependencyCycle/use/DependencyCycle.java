@@ -3,11 +3,6 @@ package org.spartan.fajita.api.examples.dependencyCycle.use;
 import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.NT.*;
 import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.Term.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.lang.model.element.Modifier;
-
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -24,8 +19,6 @@ import org.spartan.fajita.api.examples.dependencyCycle.States.Q5Q4Q5;
 import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.LRParser;
-
-import com.squareup.javapoet.TypeSpec;
 
 public class DependencyCycle {
   @SuppressWarnings({ "hiding", "unused" }) public static void expressionBuilder() {
@@ -65,15 +58,5 @@ public class DependencyCycle {
   public static void apiGeneration(final LRParser parser) {
     // ApiGenerator apiGenerator = new ApiGenerator(parser);
     System.out.println(new BaseStateSpec(new TypeArgumentManager(parser)).generate());
-  }
-  public static void main(final String[] args) {
-    LRParser parser = buildBNF();
-    TypeArgumentManager tam = new TypeArgumentManager(parser);
-    System.out.println(new BaseStateSpec(tam).generate());
-    final List<TypeSpec> types = new ArrayList<>();
-    parser.getStates().forEach(s -> types.add(TypeSpec.classBuilder("Q" + s.stateIndex).addModifiers(Modifier.STATIC)
-        .addTypeVariables(tam.stateTypeArguments(s)).build()));
-    for (TypeSpec typeSpec : types)
-      System.out.println(typeSpec);
   }
 }

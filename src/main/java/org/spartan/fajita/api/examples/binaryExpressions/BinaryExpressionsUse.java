@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples.binaryExpressions;
 
-import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
+import static org.spartan.fajita.api.examples.ASTViewer.*;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.and;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.bool;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.not;
@@ -74,9 +74,5 @@ public class BinaryExpressionsUse {
         .derive(NOT).to(not).and(EXPRESSION)//
         .finish();
     System.out.println(b);
-  }
-  public static void main(final String[] args) {
-    buildBNF();
-    expressionBuilder();
   }
 }

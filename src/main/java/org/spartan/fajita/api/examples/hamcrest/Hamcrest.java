@@ -1,16 +1,15 @@
 package org.spartan.fajita.api.examples.hamcrest;
 
-import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.ASSERT;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.MATCHER;
+import static org.spartan.fajita.api.examples.ASTViewer.*;
+import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.*;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.*;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.anything;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.assertThat;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.instance_of;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.not;
+import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.*;
 import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.anything;
 import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.assertThat;
-import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.equal_to;
 import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.instance_of;
 import static org.spartan.fajita.api.examples.hamcrest.HamcrestBuilder.not;
 
@@ -68,9 +67,5 @@ public class Hamcrest {
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
     System.out.println(parser);
-  }
-  public static void main(final String[] args) {
-    buildBNF();
-    expressionBuilder();
   }
 }

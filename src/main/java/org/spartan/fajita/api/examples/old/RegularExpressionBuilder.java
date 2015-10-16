@@ -6,7 +6,7 @@ public class RegularExpressionBuilder {
 	// we have no real Data structure here, just a bunch of hierarchical lambda
 	// functions
 
-	public static void main(final String args[]) {
+	public static void expressionBuilder() {
 		matchRE("Za", or(range('A', 'Z'), range('a', 'z')));
 		matchRE("AAA", kleeneP(range('a', 'z')));
 		matchRE("ASDSD", or(chars('a', 'b', '[', ']', '3'), range('A', 'V')));

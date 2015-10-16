@@ -111,7 +111,7 @@ public class ConcurrencyBuilderExample {
 		
 	}
 
-	public static void main(final String[] args) {
+	public static void buildBNF() {
 		BNF b = new BNF();
 		
 		// defining NonTerminals

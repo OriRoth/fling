@@ -68,8 +68,4 @@ public class BNFBootstrap {
         .finish();
     System.out.println(b);
   }
-  public static void main(final String[] args) {
-    buildBNF();
-    expressionBuilder();
-  }
 }

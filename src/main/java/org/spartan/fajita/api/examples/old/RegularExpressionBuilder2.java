@@ -51,7 +51,7 @@ public class RegularExpressionBuilder2 {
 		}
 	}
 
-	public static void main(final String args[]) {
+	public static void expressionBuilder() {
 		matchRE("Za", or(range('A', 'Z'), range('a', 'z')));
 
 		matchRE("Bs", and(range('a', 'z'), range('b', 'c')));
