@@ -67,35 +67,39 @@ public class TypeArgumentManager {
   public List<TypeVariableName> stateTypeArguments(final State s) {
     return statesTypeData.get(s).getTypeArguments();
   }
-  private void calculateBaseStateTypes(final State state) {
+  private void calculateBaseTypes(final State state) {
     StateTypeData typeDatum = statesTypeData.get(state);
+    Map<State, TypeName> relativeInstantiations = new HashMap<>();
     TopologicalOrderIterator<State, DefaultEdge> iter = new TopologicalOrderIterator<>(typeDatum.dependencies);
     while (iter.hasNext()) {
       State next = iter.next();
       Optional<Symbol> transition = state.allLegalLookaheads().stream().filter(s -> state.goTo(s) == next).findAny();
       if (transition.isPresent())
-        calculateBaseStateType(state, transition.get());
+        calculateBaseType(state, transition.get());
       else {
         // this state has distance 2 from `state` and has no base type argument
       }
     }
   }
-  private void calculateBaseStateType(final State s, final Symbol symb) {
+  private void calculateBaseType(final State s, final Symbol symb) {
     StateTypeData stateData = statesTypeData.get(s);
     StateTypeData nextStateData = statesTypeData.get(s.goTo(symb));
-    boolean shiftAction = symb.isNonTerminal() || parser.actionTable(s, ((Terminal) symb)).isShift();
-    TypeName[] $;
-    if (shiftAction)
-      $ = calculateShiftType(stateData, nextStateData);
-    else
-      $ = calculateReduceType(stateData, nextStateData);
-    stateData.setBaseType(symbols.indexOf(symb) + 1, ParameterizedTypeName.get(type(nextStateData.state.name), $));
+    TypeName $ = null;
+    if (symb.isNonTerminal() || parser.actionTable(s, ((Terminal) symb)).isShift()) {
+      TypeName parameters[] = calculateShiftAction(stateData, nextStateData);
+      $ = ParameterizedTypeName.get(type(nextStateData.state.name), parameters);
+    } else if (parser.actionTable(s, (Terminal) symb).isReduce()) {
+      TypeName parameters[] = calculateReduceAction(stateData, nextStateData);
+      $ = ParameterizedTypeName.get(type(nextStateData.state.name), parameters);
+    } else if (parser.actionTable(s, (Terminal) symb).isError())
+      $ = type(ERROR_STATE);
+    stateData.setBaseType(symbols.indexOf(symb) + 1, $);
   }
-  private TypeName[] calculateReduceType(final StateTypeData stateData, final StateTypeData nextStateData) {
+  private TypeName[] calculateReduceAction(final StateTypeData stateData, final StateTypeData nextStateData) {
     // TODO Auto-generated method stub
     return null;
   }
-  private TypeName[] calculateShiftType(final StateTypeData stateData, final StateTypeData nextStateData) {
+  private TypeName[] calculateShiftAction(final StateTypeData stateData, final StateTypeData nextStateData) {
     TypeName[] $ = new TypeName[nextStateData.getTypeArgumentNumber()];
     // stack parameter
     $[0] = ParameterizedTypeName.get(type(stateData.state.name),
@@ -118,7 +122,7 @@ public class TypeArgumentManager {
     }
     return $;
   }
-  private TypeName[] calculateDoubleShiftType(final Symbol symb1, final Symbol symb2, final StateTypeData shift1,
+  private TypeName[] calculateDoubleShiftAction(final Symbol symb1, final Symbol symb2, final StateTypeData shift1,
       final StateTypeData shift2) {
     // move all of the calculation methods to the scope of the TAM, all of the
     // type data are required.
