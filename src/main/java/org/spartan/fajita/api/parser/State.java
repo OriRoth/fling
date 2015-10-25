@@ -1,11 +1,14 @@
 package org.spartan.fajita.api.parser;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -13,7 +16,7 @@ public class State {
   private final Set<Item> items;
   private final BNF bnf;
   private final Map<Symbol, State> transitions;
-  final int index;
+  public final int index;
   public final String name;
 
   State(final Set<Item> items, final BNF bnf, final int stateIndex) {
@@ -35,15 +38,25 @@ public class State {
     return transitions.keySet();
   }
   @Override public String toString() {
-    // return name + ":" + compactToString() + " " +
-    // transitions.toString();
-    return name;
+    return name + ":" + System.lineSeparator() + extentedToString();
+    // return name;
   }
-  public String extentedToString() {
-    String $ = "{";
-    for (Item item : getItems())
-      $ += item.toString() + ",";
-    $ += "} ";
+  @SuppressWarnings("boxing") public String extentedToString() {
+    String $ = "";
+    Set<SimpleEntry<DerivationRule, Integer>> noLookaheads = getItems().stream()
+        .map(item -> new SimpleEntry<>(item.rule, item.dotIndex)).distinct().collect(Collectors.toSet());
+    for (SimpleEntry<DerivationRule, Integer> item : noLookaheads) {
+      List<Item> matching = getItems().stream()
+          .filter(i -> i.rule.equals(item.getKey()) && i.dotIndex == item.getValue().intValue()).collect(Collectors.toList());
+      for (int i = 0; i < matching.size(); i++) {
+        Item match = matching.get(i);
+        if (i == 0)
+          $ += "[" + match.toString();
+        else
+          $ += "/" + match.lookahead.methodSignatureString();
+      }
+      $ += "]" + System.lineSeparator();
+    }
     return $;
   }
   public String compactToString() {

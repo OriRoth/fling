@@ -50,7 +50,7 @@ public class ActionTable {
       this.state = state;
     }
     @Override public String toString() {
-      return "s" + state;
+      return "s" + state.index;
     }
     @Override public int hashCode() {
       final int prime = 31;

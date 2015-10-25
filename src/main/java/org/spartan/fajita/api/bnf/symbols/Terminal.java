@@ -25,5 +25,8 @@ public interface Terminal extends Symbol {
     @Override public Type type() {
       return Type.notype;
     }
+    @Override public String methodSignatureString() {
+      return name();
+    };
   };
 }

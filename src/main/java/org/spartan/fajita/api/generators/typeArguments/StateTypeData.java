@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -77,8 +76,9 @@ public class StateTypeData {
       }
     }
     // TODO: handle cycles case.
-    if ($.vertexSet().size() > 0 && new CycleDetector<>($).detectCycles())
-      throw new IllegalArgumentException("Cycles are not handled yet, found on " + state.name + ":" + $);
+    // if ($.vertexSet().size() > 0 && new CycleDetector<>($).detectCycles())
+    // throw new IllegalArgumentException("Cycles are not handled yet, found on
+    // " + state.name + ":" + $);
     return $;
   }
   private Map<InheritedState, TypeVariableName> calculateStateTypeArguments() {

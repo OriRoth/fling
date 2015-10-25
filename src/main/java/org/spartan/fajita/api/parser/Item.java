@@ -44,7 +44,7 @@ public class Item {
     return dotIndex == i.dotIndex && rule.equals(i.rule) && lookahead.equals(i.lookahead);
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder("[ " + rule.lhs.methodSignatureString() + " ::= ");
+    StringBuilder sb = new StringBuilder(rule.lhs.methodSignatureString() + " ::= ");
     List<Symbol> expression = rule.getChildren();
     for (int i = 0; i < expression.size(); i++) {
       if (i == dotIndex)
@@ -54,7 +54,7 @@ public class Item {
     }
     if (expression.size() == dotIndex)
       sb.append(". ");
-    sb.append(", " + lookahead.methodSignatureString() + "]");
+    sb.append(", " + lookahead.methodSignatureString());
     return sb.toString();
   }
 }
