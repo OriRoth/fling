@@ -11,9 +11,13 @@ public class Q0 extends StateStack<EmptyStack>
   public Q0() {
     super(new EmptyStack());
   }
+  
+  // terminal zone
   @Override public Q3<Q0, Q2<Q0, Q1<Q0>>, Q4<Q2<Q0, Q1<Q0>>, Q0, Q1<Q0>>> a() {
     return new Q3<>(this);
   }
+  
+  //nonterminal zone
   @Override public Q1<Q0> START() {
     return new Q1<>(this);
   }

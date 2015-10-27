@@ -36,7 +36,7 @@ public class State {
     return transitions.keySet();
   }
   @Override public String toString() {
-    return "q" + stateIndex + ":" + compactToString() + " " + transitions.toString();
+    return "q" + stateIndex + ":" +  extentedToString()+ " " + transitions.toString();
   }
   public String extentedToString() {
     String $ = "{";

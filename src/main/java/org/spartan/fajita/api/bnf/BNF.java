@@ -117,11 +117,7 @@ public final class BNF {
     return followSets.get(nt);
   }
   public Set<Type> getOverloadsOf(final Terminal t) {
-    Set<Type> collect = getTerminals() //
-        .stream() //
-        .filter(terminal -> terminal.name().equals(t.name())) //
-        .map(terminal -> terminal.type()) //
+    return getTerminals().stream().filter(terminal -> terminal.name().equals(t.name())).map(terminal -> terminal.type())
         .collect(Collectors.toSet());
-    return collect;
   }
 }

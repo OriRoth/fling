@@ -1,31 +1,38 @@
 MAIN=00
-LOCALTEXMF= ../../../yogitex/
-LATEX=xelatex
+LOCALTEXMF= ../../../yogitex//
+LATEX=xelatex -file-line-error
 
 export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 # Target to be used for compiles when references did not change
-final:	
-	$(LATEX) -synctex=1 -file-line-error ./$(MAIN).tex
+latex: $(wildcard *.sty *.tex) 	
+	$(LATEX) -synctex=1 ./$(MAIN).tex
+
+$(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
+	$(LATEX) -synctex=1 ./$(MAIN).tex
+
+
+warnings:	
+	$(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
 
 full:	graphs bibtex final
 
-view: 
+view: $(MAIN).pdf 
 	okular $(MAIN).pdf &> /dev/null &
 
 graphs: 
 
-bibtex:	graphs
+$(MAIN).blg bibtex:	
 	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
 	bibtex $(MAIN)
 	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
 
-all:	graphs bibtex latex
+all:	graphs bibtex $(MAIN).pdf
 
-.PHONY: clean 
+.PHONY: clean graphs bibtex latex
 
 JUNKFILES=$(wildcard [dD]elme* DELME* *~ *.aux *.listing *.fls *.bbl *.blg *.bcf *.fdb_latexmk *.synctex.gz *.run.xml *blx.bib *.log *.dvi *.out *.o $(MAIN).pdf)  
 
-clean: 
-	mv -f $(JUNKFILES) /tmp
+clean: $(JUNKFILES) 
+	- [ -z '$^' ] || mv -f $^ /tmp
