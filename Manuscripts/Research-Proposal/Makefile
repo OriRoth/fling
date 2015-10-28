@@ -14,7 +14,10 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 
 
 warnings:	
-	$(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
+	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
+	- lacheck *.tex
+	- for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
+
 
 full:	graphs bibtex final
 
