@@ -1,29 +1,48 @@
-For the last few years I have assisted my father in his CNC workshop, finalizing
-and burnishing the metallic components he would produce. Since my father's machines
-would hardly ever produce a flawless component on their own, additional time had 
-to be put into cutting away the excess and flaws put into the products.	
-When dealing with exceptionally large materials such as long rods of steel, the probability
-of deforming the product increases linearly, so that working on a short stub would
-usually be far less dangerous than its long counterpart. When dealing with large 
-scale software, I expected to encounter a similar behavior; having each piece of code
-contributing a small and equal share to the chances of weaving an error into the software.
-It has been discovered by previous papers, such as \emph{Eli's thesis} that this assumption
-is not entirely correct.
-Imagine a metallic rod held at one side. The longer the rod, the higher the leverage at it's 
-far side, which makes it subject more strongly to centrifugal force or the effects of gravity.
-In such a case, by knowing the properties of the metal, we can calculate the exact length 
-which will cause the rod to snap. But imagine now, that the longer the rod, the stronger it gets;
-even without any changes to it's matter. As if a greater mass of it's substence made the entire
-object more durable.
-We found out that code behaves in a similar way; meaning, the longer a method is, the less 
-likely it is for any part of it to be flawed. This understanding brings about some important
-questions. Such as, at what size would this metaphorical rod achieve it's peak durability?
-Can a mathematical formula be used to predict it's characteristics at a given length?
-And how would different elements and alloys (or in a more concrete sense, different programming
-languages) follow this rule?
-The phenomena described above is called "the density paradox", and it will be the main reaserch subject of this piece.
+The term \emph{method chaining} is illustrated in neat examples, such  
+    as in the third to fifth line of the following \Java function: 
+\begin{lCode}{JAVA}{Method chaining}
+String time(int hours, int minutes, int seconds) { 
+  StringBuilder sb  = new StringBuilder();
+  return sb.append(hours).append(':')
+          .append(minutes).append(':')
+          .append(seconds).toString();
+}
+\end{lCode}
+Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilder} in the above, 
+   is the receiver of a chain of methods. 
+This is achieved by making each variant of the method \cc{append} return the receiver, denoted by the 
+  implicit argument \kk{this}.
+With this convention, the chore of writing the tedious code 
+\begin{lcode}{Java}
+  sb.append(hours);
+  sb.append(':');
+  sb.append(minutes);
+  sb.append(':');
+  sb.append(seconds);
+  return sb.toString():
+\end{lcode}
+is a bit ameliorated. 
+  
+Now, definition found in the web of the term \emph{fluent API\footnote{API =
+    \textbf Application \textbf Program \textbf Interface
+}} are a bit illusive. 
+Invariably, such definitions liken fluent API to method chaining; 
+  they also tend to emphasize that fluent API is ``more'' than method
+  chaining, and ask the reader to extrapolate from one term to the other.
 
-In this Paper we will try to estimate the delicate connection between different metrics and 
-the amount of errors in a given code. We will try to portray both the typical amount and the typical density
-of errors as well defined functions of these metrics, and to understand what measures could be taken to
-minimize these risk factors in a software project.
+Indeed, fluent API looks much like method chaining; indeed method chaining is a kind 
+  of fluent API. 
+However, the main distinction between the two terms is on the identity of the receiver.
+In method chaining, all methods are invoked on the same object, whereas in fluent API
+  the receiver of each method in the chain may be arbitrary. 
+Perhaps surprisingly, this difference makes fluent API significantly more expressive.
+Consider, for example, the following code fragment (drawn from JMock~\cite{Freeman:Pryce:06}) 
+\begin{lCode}{Java}{Fluent API}
+allowing (any(Object.class))
+  .method("get.*")
+  .withNoArguments();
+\end{lCode}
+
+
+
+
