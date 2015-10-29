@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.parser.ActionTable.Accept;
@@ -31,17 +32,30 @@ public class LRParser {
   public final BNF bnf;
   private final List<State> states;
   private final ActionTable actionTable;
+  private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
   private final Map<NonTerminal, Set<Terminal>> followSets;
 
   public LRParser(final BNF bnf) {
     this.bnf = bnf;
+    nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
     followSets = calculateFollowSets();
     states = new ArrayList<>();
     generateStatesSet();
     actionTable = new ActionTable(getStates());
     fillParsingTable();
+  }
+  private Set<NonTerminal> calculateNullableSymbols() {
+    Set<NonTerminal> nullables = new HashSet<>();
+    boolean moreChanges;
+    do {
+      moreChanges = false;
+      for (DerivationRule rule : bnf.getRules())
+        if (rule.getChildren().stream().allMatch(child -> nullables.contains(child) || child.equals(SpecialSymbols.epsilon)))
+          moreChanges = nullables.add(rule.lhs);
+    } while (moreChanges);
+    return nullables;
   }
   private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
     Map<Symbol, Set<Terminal>> $ = new HashMap<>();
@@ -54,7 +68,7 @@ public class LRParser {
       moreChanges = false;
       for (DerivationRule dRule : bnf.getRules())
         for (Symbol symbol : dRule.getChildren()) {
-          moreChanges |= $.get(dRule.lhs).addAll($.get(symbol));
+          moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new HashSet<>()));
           if (!isNullable(symbol))
             break;
         }
@@ -66,7 +80,7 @@ public class LRParser {
     // initialization
     for (NonTerminal nt : bnf.getNonTerminals())
       $.put(nt, new HashSet<>());
-    $.get(bnf.getAugmentedStartSymbol()).add(Terminal.$);
+    $.get(SpecialSymbols.augmentedStartSymbol).add(SpecialSymbols.$);
     // iterative step
     boolean moreChanges;
     do {
@@ -76,9 +90,10 @@ public class LRParser {
           if (dRule.getChildren().get(i).isTerminal())
             continue;
           Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
-          moreChanges |= $.get(dRule.getChildren().get(i)).addAll(firstSetOf(subExpression));
+          Set<Terminal> ntFollowSet = $.get(dRule.getChildren().get(i));
+          moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
           if (isNullable(subExpression))
-            moreChanges |= $.get(dRule.getChildren().get(i)).addAll($.get(dRule.lhs));
+            moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
         }
     } while (moreChanges);
     return $;
@@ -91,8 +106,9 @@ public class LRParser {
       $[expression.size() - index + i] = symbols[i];
     return $;
   }
-  @SuppressWarnings({ "static-method" }) public boolean isNullable(final Symbol... expression) {
-    return expression.length == 0;
+  public boolean isNullable(final Symbol... expression) {
+    return Arrays.asList(expression).stream()
+        .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
   }
   public Set<Terminal> firstSetOf(final Symbol... expression) {
     HashSet<Terminal> $ = new HashSet<>();
@@ -110,7 +126,7 @@ public class LRParser {
     for (State state : getStates())
       for (Item item : state.getItems())
         if (item.readyToReduce())
-          if (item.rule.lhs.equals(bnf.getAugmentedStartSymbol()) && item.lookahead.equals(Terminal.$))
+          if (item.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && item.lookahead.equals(SpecialSymbols.$))
             addAcceptAction(state);
           else
             addReduceAction(state, item);
@@ -118,7 +134,7 @@ public class LRParser {
           addShiftAction(state, item);
   }
   private void addAcceptAction(final State state) {
-    actionTable.set(state, Terminal.$, new Accept());
+    actionTable.set(state, SpecialSymbols.$, new Accept());
   }
   private void addShiftAction(final State state, final Item item) {
     Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
@@ -132,8 +148,8 @@ public class LRParser {
   }
   private State generateInitialState() {
     Set<Item> initialItems = bnf.getRules().stream() //
-        .filter(dRule -> bnf.getAugmentedStartSymbol().equals(dRule.lhs))//
-        .map(dRule -> new Item(dRule, Terminal.$, 0)) //
+        .filter(r -> r.lhs.equals(SpecialSymbols.augmentedStartSymbol))//
+        .map(r -> new Item(r, SpecialSymbols.$, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
     return new State(closure, bnf, 0);
@@ -180,8 +196,8 @@ public class LRParser {
     }
   }
   private State generateNextState(final State state, final Symbol lookahead) {
-    if (lookahead == Terminal.$)
-      if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs)))
+    if (lookahead == SpecialSymbols.$)
+      if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
         return new AcceptState(bnf, getStates().size());
     Set<Item> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalLookahead(lookahead)) //

@@ -9,6 +9,7 @@ import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.parser.LRParser;
@@ -44,7 +45,7 @@ public class FollowSetTest {
     parser = new LRParser(bnf);
   }
   @Test public void testStartFollowedBy$() {
-    assertThat(expectedSet(Terminal.$), equalTo(parser.followSetOf(NT.S)));
+    assertThat(expectedSet(SpecialSymbols.$), equalTo(parser.followSetOf(NT.S)));
   }
   @Test public void testMultipleStartsFollowedBy$() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
@@ -60,17 +61,17 @@ public class FollowSetTest {
         .derive(NT.UNREACHABLE).to(NT.UNREACHABLE) //
         .finish();
     parser = new LRParser(b);
-    assertThat(expectedSet(Terminal.$), equalTo(parser.followSetOf(NT.S)));
-    assertTrue(parser.followSetOf(NT.A).contains(Terminal.$));
+    assertThat(expectedSet(SpecialSymbols.$), equalTo(parser.followSetOf(NT.S)));
+    assertTrue(parser.followSetOf(NT.A).contains(SpecialSymbols.$));
   }
   @Test public void testBasicFollow() {
     assertTrue(parser.followSetOf(NT.A).contains(Term.b));
   }
   @Test public void testNTFolloweByNullableContainsLhsFollow() {
-    assertTrue(parser.followSetOf(NT.C).contains(Terminal.$));
+    assertTrue(parser.followSetOf(NT.C).contains(SpecialSymbols.$));
   }
   @Test public void testEndOfExpressionContainsLhsFollow() {
-    assertTrue(parser.followSetOf(NT.A).contains(Terminal.$));
+    assertTrue(parser.followSetOf(NT.A).contains(SpecialSymbols.$));
   }
   @Test public void testUnreachableNT() {
     assertEquals(expectedSet(), parser.followSetOf(NT.UNREACHABLE));

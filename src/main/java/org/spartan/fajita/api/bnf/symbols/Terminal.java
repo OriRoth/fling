@@ -14,19 +14,4 @@ public interface Terminal extends Symbol {
     methodSig = methodSig.substring(0, methodSig.length() - 1);
     return methodSig + ")";
   }
-
-  public static final Terminal $ = new Terminal() {
-    @Override public String name() {
-      return "$";
-    }
-    @Override public String toString() {
-      return name();
-    }
-    @Override public Type type() {
-      return Type.notype;
-    }
-    @Override public String methodSignatureString() {
-      return name();
-    };
-  };
 }

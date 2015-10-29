@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.parser.Item;
 import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.State;
@@ -49,12 +49,12 @@ public class StateTypeData {
   private DirectedGraph<State, DefaultEdge> generateDependenciesGraph() {
     DefaultDirectedGraph<State, DefaultEdge> $ = new DefaultDirectedGraph<>(DefaultEdge.class);
     for (Symbol lookahead : state.allLegalLookaheads()) {
-      if (lookahead == Terminal.$)
+      if (lookahead == SpecialSymbols.$)
         continue;
       State neighbor = state.goTo(lookahead);
       $.addVertex(neighbor);
       for (Symbol lookahead2 : neighbor.allLegalLookaheads()) {
-        if (lookahead2 == Terminal.$)
+        if (lookahead2 == SpecialSymbols.$)
           continue;
         State second_neighbor = neighbor.goTo(lookahead2);
         $.addVertex(second_neighbor);
@@ -62,7 +62,7 @@ public class StateTypeData {
       }
     }
     for (Item i : state.getItems()) {
-      if (i.dotIndex > 0 || i.lookahead == Terminal.$ || i.rule.lhs.equals(parser.bnf.getAugmentedStartSymbol()))
+      if (i.dotIndex > 0 || i.lookahead == SpecialSymbols.$ || i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol))
         continue;
       // By rule (1)
       State src = state.goTo(i.rule.lhs).goTo(i.lookahead);
@@ -92,7 +92,7 @@ public class StateTypeData {
   }
   List<InheritedState> sortedTypeArguments() {
     return state.getItems().stream().map(i -> new InheritedState(i.dotIndex, i.rule.lhs, i.lookahead)).distinct().sorted()
-        .filter(entry -> entry.depth > 0 && entry.lhs != parser.bnf.getAugmentedStartSymbol() && entry.lookahead != Terminal.$)
+        .filter(entry -> entry.depth > 0 && entry.lhs != SpecialSymbols.augmentedStartSymbol && entry.lookahead != SpecialSymbols.$)
         .collect(Collectors.toList());
   }
   @SuppressWarnings("boxing") private TypeVariableName calculateStackTypeParameter() {

@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class State {
   private final Set<Item> items;
@@ -30,8 +30,8 @@ public class State {
     transitions.put(symbol, newState);
   }
   public boolean isLegalLookahead(final Symbol lookahead) {
-    if (lookahead == Terminal.$)
-      return getItems().stream().anyMatch(i -> i.readyToReduce() && bnf.getAugmentedStartSymbol().equals(i.rule.lhs));
+    if (lookahead == SpecialSymbols.$)
+      return getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol));
     return transitions.containsKey(lookahead) || getItems().stream().anyMatch(item -> item.isLegalLookahead(lookahead));
   }
   public Set<Symbol> allLegalLookaheads() {
@@ -61,8 +61,8 @@ public class State {
   }
   public String compactToString() {
     String $ = "{";
-    for (Item item : getItems().stream().filter(item -> (item.dotIndex != 0 || bnf.getAugmentedStartSymbol() == item.rule.lhs))
-        .collect(Collectors.toList()))
+    for (Item item : getItems().stream()
+        .filter(item -> (item.dotIndex != 0 || SpecialSymbols.augmentedStartSymbol == item.rule.lhs)).collect(Collectors.toList()))
       $ += item.toString() + ",";
     return $ + "}";
   }

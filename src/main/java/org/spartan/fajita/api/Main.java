@@ -18,7 +18,7 @@ import org.jgrapht.EdgeFactory;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.examples.dependencyCycle.use.DC2;
+import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.generators.GeneratorsUtils;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
@@ -33,7 +33,7 @@ public class Main {
   private static JGraphModelAdapter<State, LabeledEdge> model;
 
   public static void main(final String[] args) {
-    typeSpec(DC2.buildBNF());
+    typeSpec(BalancedParenthesis.buildBNF());
   }
   private static void typeSpec(final LRParser parser) {
     lrAutomatonVisualisation(parser);
@@ -93,7 +93,7 @@ public class Main {
     }
   }
 
-  static class LabeledEdgeFactory implements EdgeFactory<State, LabeledEdge> {
+  protected static class LabeledEdgeFactory implements EdgeFactory<State, LabeledEdge> {
     @Override public LabeledEdge createEdge(final State sourceVertex, final State targetVertex) {
       return new LabeledEdge(sourceVertex, targetVertex);
     }

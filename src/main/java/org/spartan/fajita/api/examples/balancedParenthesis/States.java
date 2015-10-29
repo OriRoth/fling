@@ -3,10 +3,9 @@ package org.spartan.fajita.api.examples.balancedParenthesis;
 import org.spartan.fajita.api.parser.stack.EmptyStack;
 import org.spartan.fajita.api.parser.stack.IStack;
 
-class States {
-  @java.lang.SuppressWarnings({
-      "rawtypes" }) public abstract static class BaseState<Stack extends IStack<?>, lp extends BaseState, build extends BaseState, rp extends BaseState, BALANCED extends BaseState>
-          implements IStack<Stack> {
+@java.lang.SuppressWarnings({ "rawtypes", "unused" }) class States {
+  public abstract static class BaseState<Stack extends IStack<?>, lp extends BaseState, build extends BaseState, rp extends BaseState, BALANCED extends BaseState>
+      implements IStack<Stack> {
     protected final Stack stack;
 
     BaseState(final Stack stack) {

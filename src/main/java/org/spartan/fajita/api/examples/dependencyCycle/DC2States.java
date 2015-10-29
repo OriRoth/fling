@@ -3,7 +3,7 @@ package org.spartan.fajita.api.examples.dependencyCycle;
 import org.spartan.fajita.api.parser.stack.EmptyStack;
 import org.spartan.fajita.api.parser.stack.IStack;
 
-public class DC2States {
+@SuppressWarnings({ "rawtypes", "unused" }) public class DC2States {
   @java.lang.SuppressWarnings({
       "rawtypes" }) public abstract static class BaseState<Stack extends IStack<?>, a extends BaseState, A extends BaseState>
           implements IStack<Stack> {
@@ -18,7 +18,7 @@ public class DC2States {
     protected A A() {
       throw new ParseError("unexpected symbol on state " + getClass().getSimpleName());
     }
-    protected int $() {
+    @SuppressWarnings("static-method") protected int $() {
       return 0;
     }
   }
@@ -91,9 +91,11 @@ public class DC2States {
   // }
   // }
   static class Q1<Stack extends BaseState<?, ?, ?>, A_1_a extends BaseState<?, ?, ?>> extends BaseState {
+    //
   }
 
   static class Q1ʹ<Stack extends BaseState<?, ?, ?>, A_1_a extends BaseState<?, ?, ?>> extends BaseState {
+    //
   }
   //
   // public static class Q2<Stack extends BaseState<?, ?, ?>, A1 extends
@@ -110,9 +112,11 @@ public class DC2States {
   // }
 
   static class Q2<Stack extends BaseState<?, ?, ?>, A_1_a extends BaseState<?, ?, ?>> extends BaseState {
+    //
   }
 
   static class Q2ʹ<Stack extends BaseState<?, ?, ?>, A_1_a extends BaseState<?, ?, ?>> extends BaseState {
+    //
   }
   //
   // public static class Q3<Stack extends BaseState<? extends BaseState<?, ?,
@@ -130,9 +134,11 @@ public class DC2States {
   // }
 
   static class Q3<Stack extends BaseState<? extends BaseState<?, ?, ?>, ?, ?>, A_2_a extends BaseState<?, ?, ?>> extends BaseState {
+    //
   }
 
   static class Q3ʹ<Stack extends BaseState<? extends BaseState<?, ?, ?>, ?, ?>, A_2_a extends BaseState<?, ?, ?>>
       extends BaseState {
+    //
   }
 }

@@ -1,8 +1,7 @@
 package org.spartan.fajita.api.bnf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
+import static org.junit.Assert.*;
+import static org.spartan.fajita.api.bnf.TestUtils.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,23 +52,6 @@ public class FirstSetTest {
   @Test public void testExpressionWithNoNullables() {
     assertEquals(expectedSet(Term.a), parser.firstSetOf(NT.A, NT.B));
   }
-  /** As for this moment, there are no nullables */
-  // @Test public void testEpsilon() {
-  // assertEquals(expectedSet(Terminal.epsilon),
-  // bnf.firstSetOf(NonTerminal.EPSILON));
-  // }
-  // @Test public void testNotNullableExpression() {
-  // assertFalse(bnf.firstSetOf(NonTerminal.EPSILON,
-  // NT.A).contains(Terminal.epsilon));
-  // }
-  // @Test public void testExpressionWithNullables() {
-  // assertEquals(expectedSet(Term.d, Term.a, Term.b), bnf.firstSetOf(NT.C,
-  // NT.D));
-  // }
-  // @Test public void testNullableExpression() {
-  // assertTrue(bnf.firstSetOf(NT.C, NonTerminal.EPSILON,
-  // Terminal.epsilon).contains(Terminal.epsilon));
-  // }
   @Test public void testRedundantNT() {
     assertTrue(parser.firstSetOf(NT.REDUNDANT).isEmpty());
   }

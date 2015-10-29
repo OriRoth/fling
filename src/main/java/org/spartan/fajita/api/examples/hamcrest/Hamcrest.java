@@ -21,7 +21,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.parser.LRParser;
 
-public class Hamcrest {
+@SuppressWarnings("unused") public class Hamcrest {
   @SuppressWarnings("unchecked") public static void expressionBuilder() {
     // top down
     Compound e0 = assertThat("A", anything());

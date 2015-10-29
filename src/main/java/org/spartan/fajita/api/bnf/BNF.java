@@ -15,14 +15,12 @@ public final class BNF {
   private final Set<Terminal> terminals;
   private final Set<NonTerminal> nonterminals;
   private final Collection<DerivationRule> derivationRules;
-  private final NonTerminal augmentedStartSymbol;
 
   BNF(final BNFBuilder builder) {
     apiName = builder.getApiName();
     terminals = builder.getTerminals();
     nonterminals = builder.getNonTerminals();
     derivationRules = builder.getRules();
-    augmentedStartSymbol = BNFBuilder.getAugmentedStartSymbol();
   }
   public Set<NonTerminal> getNonTerminals() {
     return nonterminals;
@@ -30,16 +28,13 @@ public final class BNF {
   public Set<Terminal> getTerminals() {
     return terminals;
   }
-  public NonTerminal getAugmentedStartSymbol() {
-    return augmentedStartSymbol;
-  }
   public String getApiName() {
     return apiName;
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder() //
-        .append("Terminals set: " + terminals + "\n") //
-        .append("Nonterminals set: " + nonterminals + "\n") //
+        .append("Terminals set: " + getTerminals() + "\n") //
+        .append("Nonterminals set: " + getNonTerminals() + "\n") //
         .append("Rules for " + getApiName() + ":\n");
     for (Rule rule : getRules())
       sb.append(rule.toString() + "\n");

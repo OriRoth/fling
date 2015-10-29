@@ -44,7 +44,8 @@
 // .derive(NT.S).to(Term.a).and(Term.b) //
 // .derive(NT.A).to(NT.A) //
 // .finish();
-// DerivationRule initialRule = findRule(bnf, lookahead -> lookahead.lhs == NT.S);
+// DerivationRule initialRule = findRule(bnf, lookahead -> lookahead.lhs ==
+// NT.S);
 // Set<Item> expectedSet = expectedItemSet(initialRule, getAugmentedRule(bnf));
 // assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
 // }
@@ -58,8 +59,10 @@
 // .derive(NT.S).to(NT.A).and(Term.b) //
 // .derive(NT.A).to(Term.a).and(Term.c) //
 // .finish();
-// DerivationRule S_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT.S));
-// DerivationRule A_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT.A));
+// DerivationRule S_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT.S));
+// DerivationRule A_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT.A));
 // Set<Item> expectedSet = expectedItemSet(S_Rule, A_Rule,
 // getAugmentedRule(bnf));
 // assertEquals(expectedSet, new LRParser(bnf).getInitialState().items);
@@ -77,15 +80,21 @@
 // .derive(NT2.C).to(Term.c) //
 // .finish();
 // // fetching the rules
-// DerivationRule StoA_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.S) &&
+// DerivationRule StoA_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.S) &&
 // lookahead.getChildren().get(0).equals(NT2.A));
-// DerivationRule StoB_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.S) &&
+// DerivationRule StoB_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.S) &&
 // lookahead.getChildren().get(0).equals(NT2.B));
-// DerivationRule StoC_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.S) &&
+// DerivationRule StoC_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.S) &&
 // lookahead.getChildren().get(0).equals(NT2.C));
-// DerivationRule A_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.A));
-// DerivationRule B_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.B));
-// DerivationRule C_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.C));
+// DerivationRule A_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.A));
+// DerivationRule B_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.B));
+// DerivationRule C_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.C));
 // // test
 // Set<Item> expectedSet = expectedItemSet(StoA_Rule, StoB_Rule, StoC_Rule,
 // A_Rule, B_Rule, C_Rule, getAugmentedRule(bnf));
@@ -93,7 +102,8 @@
 // }
 // @SuppressWarnings("static-method") private DerivationRule
 // getAugmentedRule(final BNF bnf) {
-// return findRule(bnf, lookahead -> lookahead.lhs.equals(bnf.getAugmentedStartSymbol()));
+// return findRule(bnf, lookahead ->
+// lookahead.lhs.equals(bnf.getAugmentedStartSymbol()));
 // }
 // @Test public void testIterativeClosure() throws
 // ReduceReduceConflictException, ShiftReduceConflictException {
@@ -108,13 +118,18 @@
 // .derive(NT2.C).to(Term.c) //
 // .finish();
 // // fetching the rules
-// DerivationRule AtoB_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.A) &&
+// DerivationRule AtoB_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.A) &&
 // lookahead.getChildren().get(0).equals(NT2.B));
-// DerivationRule AtoC_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.A) &&
+// DerivationRule AtoC_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.A) &&
 // lookahead.getChildren().get(0).equals(NT2.C));
-// DerivationRule S_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.S));
-// DerivationRule B_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.B));
-// DerivationRule C_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.C));
+// DerivationRule S_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.S));
+// DerivationRule B_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.B));
+// DerivationRule C_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.C));
 // // test
 // Set<Item> expectedSet = expectedItemSet(AtoB_Rule, AtoC_Rule, S_Rule, B_Rule,
 // C_Rule, getAugmentedRule(bnf));
@@ -134,11 +149,15 @@
 // .derive(NT2.C).to(Term.c)//
 // .finish();
 // // fetching the rules
-// DerivationRule AtoC_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.A) &&
+// DerivationRule AtoC_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.A) &&
 // lookahead.getChildren().get(0).equals(NT2.C));
-// DerivationRule S_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.S));
-// DerivationRule B_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.B));
-// DerivationRule C_Rule = findRule(bnf, lookahead -> lookahead.lhs.equals(NT2.C));
+// DerivationRule S_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.S));
+// DerivationRule B_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.B));
+// DerivationRule C_Rule = findRule(bnf, lookahead ->
+// lookahead.lhs.equals(NT2.C));
 // DerivationRule augmentedRule1 = findRule(bnf,
 // lookahead -> lookahead.lhs.equals(bnf.getAugmentedStartSymbol()) &&
 // lookahead.getChildren().get(0).equals(NT2.S));

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
@@ -24,14 +25,6 @@ public class BNFBuilder {
   private final Set<NonTerminal> nonterminals;
   private final Set<NonTerminal> startSymbols;
   private final Set<Terminal> overloads;
-  private static final NonTerminal augmentedStartSymbol = new NonTerminal() {
-    @Override public String name() {
-      return "S'";
-    }
-    @Override public String toString() {
-      return name();
-    }
-  };
   private String apiName;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(final Class<Term> terminalEnum,
@@ -97,11 +90,11 @@ public class BNFBuilder {
   }
   private BNF finish() {
     validate();
-    nonterminals.add(augmentedStartSymbol);
-    terminals.add(Terminal.$);
+    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
+    terminals.add(SpecialSymbols.$);
     terminals.addAll(overloads);
     for (NonTerminal startSymbol : startSymbols)
-      addRule(augmentedStartSymbol, Arrays.asList(startSymbol));
+      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
   String getApiName() {
@@ -112,9 +105,6 @@ public class BNFBuilder {
   }
   Set<DerivationRule> getRules() {
     return derivationRules;
-  }
-  static NonTerminal getAugmentedStartSymbol() {
-    return augmentedStartSymbol;
   }
   private void setStartSymbols(final NonTerminal[] startSymbols) {
     this.startSymbols.addAll(Arrays.asList(startSymbols));

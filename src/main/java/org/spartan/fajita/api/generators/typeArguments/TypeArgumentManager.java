@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.parser.LRParser;
@@ -51,8 +52,8 @@ public class TypeArgumentManager {
     List<Symbol> $ = new LinkedList<>();
     $.addAll(bnf.getTerminals());
     $.addAll(bnf.getNonTerminals());
-    $.remove(Terminal.$);
-    $.remove(bnf.getAugmentedStartSymbol());
+    $.remove(SpecialSymbols.$);
+    $.remove(SpecialSymbols.augmentedStartSymbol);
     return $;
   }
   public TypeVariableName getType(final int index) {
