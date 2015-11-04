@@ -51,8 +51,8 @@ allowing (any(Object.class))
 \end{lcode}
 then, there are three method calls, and the vocabulary has three items in it.
 \begin{itemize}
-  \item~$ℓ₁ = \cc{any(Object.class))}$
-  \item~$ℓ₂ = \cc{allowing()}$
+  \item~$ℓ₁ = \cc{any(Class<?>)}$
+  \item~$ℓ₂ = \cc{allowing($ℓ₁$)}$
   \item~$ℓ₃ = \cc{method(String)}$
   \item~$ℓ₄ = \cc{withNoArguments()}$
 \end{itemize}
