@@ -23,27 +23,26 @@ In the toilette seat example, there are six methods that can be invoked by the c
 a fluent API design specifies the order in which such calls can be made.
 The first novelty in this research is that this specification can be made
   using the Backus-Naur-Form for the specification of context grammar free grammar:
- \def\<#1>{\/⟨\/\textit{#1}\/⟩\/}
+  \def\<#1>{\/⟨\/\text{\textit{#1}}\/⟩\/{ }}
+  \def\|{{\ }{\ }{\ }{\ }\!}
 \begin{equation}\label{eq:element}
-  \begin{aligned}
-  \<Down> ::= & \<male> \<M_Down> \hfill⏎
-  |\ & \<female> \<F_Down> \hfill⏎
-  |\ & \<$\epsilon$> \hfill⏎
-  \<M_Down> ::= & \<defecate> \<Down> \hfill⏎
-  |\ & \<raise> \<urinate> \<Up> \hfill⏎
-  \<F_Down> ::= & \<defecate> \<Down> \hfill⏎
-  |\ & \<urinate> \<Down> \hfill⏎
-  \<Up> ::= & \<male> \<M_Up> \hfill⏎
-  |\ & \<female> \<F_Up> \hfill⏎
-  |\ & \<$\epsilon$> \hfill⏎
-  \<M_Up> ::= & \<urinate> \<Up> \hfill⏎
-  |\ & \<lower> \<defecate> \<Down> \hfill⏎
-  \<F_Up> ::= & \<lower> \<urinate> \<Down> \hfill⏎
-  |\ & \<lower> \<defecate> \<Down> \hfill
- \end{aligned}
- .
- \end{equation}
-
+\begin{aligned}
+\<Visitors>                         &::=             \<Down-Visitors>     \hfill⏎
+\<Down-Visitors>                    &::=             \<Down-Visitor>      \<Down-Visitors>       \hfill⏎
+{}                                  &\|              \<Raising-Visitor>   \<Up-Visitors>         \hfill⏎
+{}                                  &\|              ε                    \hfill⏎
+\<Up-Visitors>                      &::=             \<Up-Visitor>        \<Up-Visitors>         \hfill⏎
+{}                                  &\|              \<Lowering-Visitor>  \<Down-Visitors>       \hfill⏎
+{}                                  &\|              ε                    \hfill⏎
+  \<Up-Visitor>                       &::=             \cc{male()}{\xspace}          \cc{urinate()}\hfill⏎
+\<Down-Visitor>                     &::=             \cc{female()}        \<Action>\hfill        ⏎
+\<Raising-Visitor>                  &::=             \cc{male()}          \cc{lower()}           \cc{urinate()}\hfill⏎
+\<Lowering-Visitor>                 &::=             \cc{female()}        \cc{lower()}           \<Action>              \hfill  \\
+\<Activity>                         &::=             \cc{urinate}         \hfill\\
+&\|                                 \cc{defecate()}  \hfill⏎
+\end{aligned}
+.
+\end{equation}
 
 processing programming languages
 \begin{description}
