@@ -14,17 +14,19 @@ The basic idea is that the programmer issues a fluent API
   to an implementation of fluent API that conforms with this specification.
 In the toilette seat example, there are six methods that can be invoked by the client of
   class \cc{Seat}:
+  \begin{quote}
 \begin{tabular}{lll}
   \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
   \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
 \end{tabular}
+\end{quote}
 a fluent API design specifies the order in which such calls can be made.
 The first novelty in this research is that this specification can be made
   using the Bacus-Naur-Form for the specification of context grammar free grammar:
  \def\<#1>{\/⟨\/\textit{#1}\/⟩\/}
 \begin{equation}\label{eq:element}
   \begin{aligned}
-  \<Usage> ::= & <Downs> <Up> \hfill⏎
+  \<Usage> ::= & \<Down> \<Up> \hfill⏎
  |\ & \<rule> \hfill⏎
 |\ & \<declaration> \hfill
  \end{aligned}
@@ -51,8 +53,8 @@ allowing (any(Object.class))
 \end{lcode}
 then, there are three method calls, and the vocabulary has three items in it.
 \begin{itemize}
-  \item~$ℓ₁ = \cc{any(Object.class))}$
-  \item~$ℓ₂ = \cc{allowing()}$
+  \item~$ℓ₁ = \cc{any(Class<?>)}$
+  \item~$ℓ₂ = \cc{allowing($ℓ₁$)}$
   \item~$ℓ₃ = \cc{method(String)}$
   \item~$ℓ₄ = \cc{withNoArguments()}$
 \end{itemize}
