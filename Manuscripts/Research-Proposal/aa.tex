@@ -45,12 +45,12 @@ allowing (any(Object.class))
   ¢¢.withNoArguments();
 \end{lCode}
 Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the return type of function \cc{method} be denoted by~$τ₂$.
-Then, the fact that~$τ₁≠τ₂$ means the set of methods that can be placed after the dot
+Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
 in the partial call chain
 \begin{lcode}{Java}
  allowing(any(Object.class)).
 \end{lcode}
-is distinct from the the set of methods that can be placed after the dot in the partial call chain
+is distinct from the set of methods that can be placed after the dot in the partial call chain
 \begin{lcode}{Java}
 allowing(any(Object.class)).method("get.*").
 \end{lcode}
