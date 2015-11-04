@@ -9,3 +9,7 @@ target/
 *.toc
 *.fls
 *.fdb_latexmk
+*.bbl
+*.blg
+*.listing
+*.synctex.gz
