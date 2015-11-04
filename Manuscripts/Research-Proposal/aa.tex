@@ -55,11 +55,11 @@ is distinct from the the set of methods that can be placed after the dot in the 
   allowing(any(Object.class)).method("get.*").
 \end{lcode}
 This distinction make it possible to design expressive and rich fluent APIs, in which a sequence ``chained'' calls is not only readable, but also
-robust, in the sense that the sequence is type correct, only when it the sequence makes sense semnatically. 
+robust, in the sense that the sequence is type correct, only when it the sequence makes sense semantically. 
 
 \subsection{The Type Safe Toilette Seat}
 
-An object of type toilete seat is created in the \cc{down} state, but it can then be \cc{raise}d to the \cc{up} state, and 
+An object of type toilette seat is created in the \cc{down} state, but it can then be \cc{raise}d to the \cc{up} state, and 
 	then be \cc{lower}ed to the \cc{down} state. \footnote{
 This example is inspired by earlier work of Donald E. Knuth on the topic~\cite{Knuth:92}}
 Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes: \cc{urinate} and \cc{defecate}.
@@ -71,7 +71,7 @@ Now a good fluent API design is one by which the following sequences of calls is
 whereas the following sequence of method calls are illegal:
 \begin{lcode}
    new Seat().female().raise();
-   new Seat().male().raise().defeacte();
+   new Seat().male().raise().defecate();
    new Seat().male().male();
    new Seat().male().raise().urinate().male().raise();
  \end{lcode}
@@ -82,23 +82,18 @@ and the \kk{extends} and \kk{implements} relationship between these, is
 far from being trivial. 
 
 \subsection{Type State}
-The toilete seat problem may be amusing to some, but it is not contrived in any way.
+The toilette seat problem may be amusing to some, but it is not contrived in any way.
 In fact, there is huge body of research on the general topics of 
 	\emph{type-states}. (See e.g., review articles such as~\cite{Tom:Jerry:2001,Ben:Jerry:1934})
 Informally, an object that belongs to a certain type (\kk{class} in the 
 object oriented lingo), has type-states, if not all methods defined in this object's class are applicable to the object in all states it may be in.
 
 A classical example of type-states is a file object: which can be in one of two states:
-``open'' or ``closed''. Ivoking a \cc{read()} method on the object is only permitted when the file is an ``open'' state.
+``open'' or ``closed''. Invoking a \cc{read()} method on the object is only permitted when the file is an ``open'' state.
 In addition, method \cc{open()} (respectively \cc{close()}) can only be applied if the object is in the ``closed'' (respectively, ``open'') state.
 
-Objects with type states such as toilete seats and files are not rarities.
+Objects with type states such as toilette seats and files are not rarities.
 In fact, a recent study estimates that about 70\% of \Java classes feature type states.
 The challenge these pose is related to the problem of de
-
-
-
-
-
 
 
