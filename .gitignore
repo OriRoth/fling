@@ -13,3 +13,4 @@ target/
 *.blg
 *.listing
 *.synctex.gz
+*.swp
