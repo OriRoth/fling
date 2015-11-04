@@ -15,12 +15,12 @@ This is achieved by making each variant of the method \cc{append} return the rec
   implicit argument \kk{this}.
 With this convention, the chore of writing the tedious code
 \begin{lcode}{Java}
-  sb.append(hours);
-  sb.append(':');
-  sb.append(minutes);
-  sb.append(':');
-  sb.append(seconds);
-  return sb.toString():
+sb.append(hours);
+sb.append(':');
+sb.append(minutes);
+sb.append(':');
+sb.append(seconds);
+return sb.toString():
 \end{lcode}
 is ameliorated a bit.
 
@@ -48,11 +48,11 @@ Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the 
 Then, the fact that~$τ₁≠τ₂$ means the set of methods that can be placed after the dot
 in the partial call chain
 \begin{lcode}{Java}
-   allowing(any(Object.class)).
+ allowing(any(Object.class)).
 \end{lcode}
 is distinct from the the set of methods that can be placed after the dot in the partial call chain
 \begin{lcode}{Java}
-  allowing(any(Object.class)).method("get.*").
+allowing(any(Object.class)).method("get.*").
 \end{lcode}
 This distinction make it possible to design expressive and rich fluent APIs, in which a sequence ‟chained” calls is not only readable, but also
 robust, in the sense that the sequence is type correct, only when it the sequence makes sense semantically.
@@ -62,20 +62,23 @@ robust, in the sense that the sequence is type correct, only when it the sequenc
 An object of type toilette seat is created in the \cc{down} state, but it can
 then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
 \cc{down} state.†{%
-This example is inspired by earlier work of Donald E. Knuth on the topic~\cite{Knuth:92}}
+This example is inspired by earlier work of 
+  Richard Harter on the topic~\cite{Harter:05}.}
 Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes: \cc{urinate} and \cc{defecate}.
 Now a good fluent API design is one by which the following sequences of calls is type correct
 \begin{lcode}{Java}
-  new Seat().male().raise().urinate();
-  new Seat().female().urinate();
+new Seat().male().raise().urinate();
+new Seat().female().urinate();
  \end{lcode}
 whereas the following sequence of method calls are illegal:
 \begin{lcode}{Java}
-   new Seat().female().raise();
-   new Seat().male().raise().defecate();
-   new Seat().male().male();
-   new Seat().male().raise().urinate().male().raise();
- \end{lcode}
+new Seat().female().raise();
+new Seat().male().raise().defecate();
+new Seat().male().male();
+new Seat()
+     ¢¢.male().raise().urinate()
+     ¢¢.male().raise();
+\end{lcode}
 It should be clear that the type checking engine of the compiler can
 be employed to distinguish between legal and illegal sequences.
 It should also be clear that fabricating the \kk{class}es, \kk{interface}s
@@ -94,5 +97,21 @@ A classical example of type-states is a file object: which can be in one of two 
 In addition, method \cc{open()} (respectively \cc{close()}) can only be applied if the object is in the ‟closed” (respectively, ‟open”) state.
 
 Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study estimates that about 70％ of \Java classes feature type states.
-The challenge these pose is related to the problem of de
+In fact, a recent study~\cite{Search:For:Aldrich} estimates 
+  that about 70％ of \Java classes feature type states.
+Type-state pose two main challenges to software engineering 
+\begin{enumerate}
+  \item \emph{\textbf{Identification.}} 
+    In the typical case, type-state 
+        receive little to no mention at all in the documentation.
+    The identification problem is find the
+    type state implicit in existing code: Given an implementation of a class
+    (or more generally of a software framework), 
+    \emph{determine} which sequences of method calls are valid and which violate the 
+    type state hidden in the code.
+  \item \emph{\textbf{Maintenance and Enforcement.}}
+    Having identified the type-states, the challenge is in automatically flagging out 
+      use of the API that is non-conforming with the type-state, furthermore, with the 
+      evolution of an API, the challenge is in updating the type-state information, 
+      and the type checking of code of clients. 
+\end{enumerate}
