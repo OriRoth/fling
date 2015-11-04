@@ -2,7 +2,7 @@ The thesis propounded by this research is that API design, and especially fluent
   can and should be made in terms of language design.
 Software missionaries and preachers such as Fowler~\cite{Fowler:xxxx} have long claimed
   that API design is in fact the design of a \textbf Domain \textbf Specific \textbf Language
-  (henceforth \emph{DSL}, see, e.g.,~\cite{VanDeursen:Klint:20001,Hudak:1997,Fowler:2010} for review articles).
+  (henceforth \emph{DSL}, see, e.g.,~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} for review articles).
     (In the words of Fowler~\cite{Fowler:I:think})
 
 The objective of this research is
@@ -26,12 +26,24 @@ The first novelty in this research is that this specification can be made
  \def\<#1>{\/⟨\/\textit{#1}\/⟩\/}
 \begin{equation}\label{eq:element}
   \begin{aligned}
-  \<Usage> ::= & \<Down> \<Up> \hfill⏎
- |\ & \<rule> \hfill⏎
-|\ & \<declaration> \hfill
+  \<Down> ::= & \<male> \<M_Down> \hfill⏎
+  |\ & \<female> \<F_Down> \hfill⏎
+  |\ & \<$\epsilon$> \hfill⏎
+  \<M_Down> ::= & \<defecate> \<Down> \hfill⏎
+  |\ & \<raise> \<urinate> \<Up> \hfill⏎
+  \<F_Down> ::= & \<defecate> \<Down> \hfill⏎
+  |\ & \<urinate> \<Down> \hfill⏎
+  \<Up> ::= & \<male> \<M_Up> \hfill⏎
+  |\ & \<female> \<F_Up> \hfill⏎
+  |\ & \<$\epsilon$> \hfill⏎
+  \<M_Up> ::= & \<urinate> \<Up> \hfill⏎
+  |\ & \<lower> \<defecate> \<Down> \hfill⏎
+  \<F_Up> ::= & \<lower> \<urinate> \<Down> \hfill⏎
+  |\ & \<lower> \<defecate> \<Down> \hfill
  \end{aligned}
  .
  \end{equation}
+
 
 processing programming languages
 \begin{description}
