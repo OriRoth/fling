@@ -23,17 +23,10 @@ The BNF for writing BNFs is given in \cref{Figure:BNF:BNF}
       \<Start>            & ::=  \cc{with(Class<? \kk{extends} Symbol)} 
       \<Rules>            & ::= \<First-Rule> \<More-Rules> \hfill⏎
       \<More-Rules>       & ::= \<Additional-Rule> \<More-Rules> \hfill⏎
+      \<First-Rule>       & ::= \cc{to()} \<Rule-Body> \hfill⏎
+      \<Additional-Rule>  & ::= \cc{or()} \<Rule-Body> \hfill⏎
+      \<Rule-Body>  & ::= \cc{and()} \<Rule-Body> \hfill⏎
       {}                  & \| ε \hfill⏎
-      {}                  & \| \<Lowering-Visitor> \<Down-Visitors> \hfill⏎
-      {}                  & \| ε \hfill⏎
-      \<Up-Visitor>       & ::= \cc{male()} \cc{urinate()} \hfill⏎
-      \<Down-Visitor>     & ::= \cc{female()} \<Action> \hfill⏎
-                          & \| \cc{male()} \cc{defecate()} \hfill⏎
-      \<Raising-Visitor>  & ::= \cc{male()} \cc{raise()} \cc{urinate()} \hfill⏎
-      \<Lowering-Visitor> & ::= \cc{female()} \cc{lower()} \<Action> \hfill⏎
-                          & \| \cc{male()} \cc{lower()} \cc{defecate()} \hfill⏎
-      \<Activity>         & ::= \cc{urinate()} \hfill⏎
-                          & \| \cc{defecate()} \hfill⏎
     \end{aligned}
   \end{equation*}
   \caption{A BNF grammar for the toilette seat problem}
