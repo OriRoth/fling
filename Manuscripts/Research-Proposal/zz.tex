@@ -6,29 +6,33 @@ The BNF for writing BNFs is given in \cref{Figure:BNF:BNF}
 \begin{figure}[htbp]
   \scriptsize
   \begin{equation*}
-    \def\<#1>{\/⟨\/\text{\textit{#1}}\/⟩\/~}
-    \def\|{~|~}
+    \def\<#1>{⟨\text{\textcolor{black}{\mdseries\rmfamily\/\textit{#1}}\/}⟩}
     \let\oldCc=\cc
     \let\oldKk=\kk
+    \def\~{\text{~}}
+    \def\|{\~|\~\~\~\~}
     \def\cc#1{{\footnotesize\oldCc{#1}}~}
-    \def\cc#1{{\footnotesize\olKk{#1}}~}
-    \small
+    \def\kk#1{{\footnotesize\oldKk{#1}}}
+    \scriptsize
     \begin{aligned}
-      \<BNF>              & ::=  \<Notation> \<Body> \<Footer> \hfill⏎
-      \<Notation>         & ::=  \<Symbols> \<Terminals> \hfill⏎
-      {}                  & \|  \<Terminals> \<Symbols> \hfill⏎
-      \<Terminals>        & ::=  \cc{with(Symbols.class)}
-      \<Symbols>          & ::=  \cc{with(Terminals.class)}
-      \<Body>             & ::= \<Start> \<Rules> \hfill⏎
-      \<Start>            & ::=  \cc{with(Class<? \kk{extends} Symbol)} 
-      \<Rules>            & ::= \<First-Rule> \<More-Rules> \hfill⏎
-      \<More-Rules>       & ::= \<Additional-Rule> \<More-Rules> \hfill⏎
-      \<First-Rule>       & ::= \cc{to()} \<Rule-Body> \hfill⏎
-      \<Additional-Rule>  & ::= \cc{or()} \<Rule-Body> \hfill⏎
-      \<Rule-Body>  & ::= \cc{and()} \<Rule-Body> \hfill⏎
-      {}                  & \| ε \hfill⏎
+      \<BNF>              & ::=              \<Notation>\~           \<Body>\~                \<Footer>           \hfill⏎
+      \<Notation>         & ::=              \<Symbols>      \~      \<Terminals>           \hfill⏎
+      {}                  & \|            \<Terminals> \~         \<Symbols>             \hfill⏎
+      \<Terminals>        & ::=              \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Symbols>          & ::=              \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Body>             & ::=              \<Start>   \~           \<Rules>               \hfill⏎
+      \<Start>            & ::=              \cc{start($\<Variable>$)}  \hfill⏎
+      \<Rules>            & ::=              \<First-Rule> \~        \<Additional-Rules>    \hfill⏎
+      \<Additional-Rules> & ::=              \<Additional-Rules>\~   \<Additional-Rule>     \hfill⏎
+      {}                  & \|             ε                     \hfill⏎
+      \<First-Rule>       & ::=              \cc{to($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
+      {}                  & \|              \cc{toNone()}    \hfill⏎
+      \<Additional-Rule>  & ::=              \cc{or($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
+      {}                  & \|              \cc{orNone()}    \hfill⏎
+      \<Sequence>         & ::=              \<Sequence>          \~ \cc{and($\<Symbol>)$}  \hfill⏎
+      {}                  & \|\text{~~~}               ε                     \hfill⏎
     \end{aligned}
   \end{equation*}
-  \caption{A BNF grammar for the toilette seat problem}
+  \caption{A BNF grammar for BNF grammars}
   \label{Figure:BNF:BNF}
 \end{figure}

@@ -35,31 +35,33 @@ A fluent API design specifies the order in which such calls can be made.
 The \emph{first} novelty in this research is that the fluent API definition is 
   through a CFG, written as a BNF. 
 \cref{Figure:BNF} is such a specification for the toilette seat problem. 
-\SELF takes this as input, and in responses generates the corresponding 
-  \Java type hierarchy. 
+
 
 \begin{figure}[htbp]
   \scriptsize
   \begin{equation*}
-    \def\<#1>{\/⟨\/\text{\textit{#1}}\/⟩\/~}
-    \def\|{~~|~~~}
+    \def\<#1>{⟨\text{\textcolor{black}{\mdseries\rmfamily\/\textit{#1}}\/}⟩}
     \let\oldCc=\cc
-    \def\cc#1{{\footnotesize\oldCc{#1}}{\ }}
-    \small
+    \let\oldKk=\kk
+    \def\~{\text{~}}
+    \def\|{\~|\~\~\~\~}
+    \def\cc#1{{\footnotesize\oldCc{#1}}~}
+    \def\kk#1{{\footnotesize\oldKk{#1}}}
+    \scriptsize
     \begin{aligned}
       \<Visitors>         & ::=  \<Down-Visitors>     \hfill⏎
-      \<Down-Visitors>    & ::=  \<Down-Visitor>      \<Down-Visitors>  \hfill⏎
-      {}                  & \|   \<Raising-Visitor>   \<Up-Visitors>    \hfill⏎
+      \<Down-Visitors>    & ::=  \<Down-Visitor>    \~  \<Down-Visitors>  \hfill⏎
+      {}                  & \|   \<Raising-Visitor> \~  \<Up-Visitors>    \hfill⏎
       {}                  & \|   ε                    \hfill⏎
-      \<Up-Visitors>      & ::=  \<Up-Visitor>        \<Up-Visitors>    \hfill⏎
-      {}                  & \|   \<Lowering-Visitor>  \<Down-Visitors>  \hfill⏎
+      \<Up-Visitors>      & ::=  \<Up-Visitor>       \~ \<Up-Visitors>    \hfill⏎
+      {}                  & \|   \<Lowering-Visitor> \~ \<Down-Visitors>  \hfill⏎
       {}                  & \|   ε                    \hfill⏎
-      \<Up-Visitor>       & ::=  \cc{male()}          \cc{urinate()}    \hfill⏎
-      \<Down-Visitor>     & ::=  \cc{female()}        \<Action>         \hfill⏎
+      \<Up-Visitor>       & ::=  \cc{male()}         \~ \cc{urinate()}    \hfill⏎
+      \<Down-Visitor>     & ::=  \cc{female()}        \~\<Action>         \hfill⏎
                           & \|                  \cc{male()}          \cc{defecate()}  \hfill⏎
-      \<Raising-Visitor>  & ::=  \cc{male()}          \cc{raise()}      \cc{urinate()}  \hfill⏎
-      \<Lowering-Visitor> & ::=  \cc{female()}        \cc{lower()}      \<Action>       \hfill⏎
-                                & \|                  \cc{male()}          \cc{lower()}           \cc{defecate()}  \hfill⏎
+      \<Raising-Visitor>  & ::=  \cc{male()}          \~\cc{raise()}    \~  \cc{urinate()}  \hfill⏎
+      \<Lowering-Visitor> & ::=  \cc{female()}        \~\cc{lower()}     \~ \<Action>       \hfill⏎
+                          & \|                  \cc{male()}          \~\cc{lower()}           \cc{defecate()}  \hfill⏎
       \<Activity>         & ::=  \cc{urinate()}       \hfill⏎
                           & \|                  \cc{defecate()}  \hfill⏎
     \end{aligned}
@@ -67,6 +69,10 @@ The \emph{first} novelty in this research is that the fluent API definition is
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:BNF}
 \end{figure}
+
+\SELF takes this grammar specification as input, and in response 
+  generates the corresponding 
+  \Java type hierarchy. 
 
 A second novelty of \SELF is that the specification of a BNF such as the provided in
   \cref{Figure:BNF} can be made in using a \Java fluent API.
@@ -79,9 +85,9 @@ enum ToiletteTerminals implements Terminal {
   lower, raise;
 }
 \end{lcode}
-  and then the set of grammar symbols 
+  and then the set of grammar variables 
   \begin{lcode}{Java}
-enum ToiletteSymbols implements Symbol {
+enum ToiletteVariables implements Variable {
   Visitors, Down_Visitors, Up_Visitors, 
   Up_Visitor, Down_Visitor, 
   Lowering_Visitor, Raising_Visitor,
@@ -103,24 +109,25 @@ BNF toiletteBnf = new BNFBuilder()
     .to(Down_Visitors)
   .derive(Down_Visitors)
     .to(Down_Visitor).and(Down_Visitors)
-    .or().to(Raising_Visitor).and(Up_Visitors)
-    .or().toEpsilon()
+    .or(Raising_Visitor).and(Up_Visitors)
+    .orNone()
   .derive(Up_Visitors)
     .to(Up_Visitor).and(Up_Visitors)
-    .or().to(Lowering_Visitor).and(Down_Visitors)
-    .or().toEpsilon()
+    .or(Lowering_Visitor).and(Down_Visitors)
+    .orNone()
   .derive(Up_Visitor)
     .to(male).and(urinate)
   .derive(Down_Visitor)
     .to(female).and(Action)
-    .or().to(male).and(defecate)
+    .or(male).and(defecate)
   .derive(Raising_Visitor)
-      .to(male).and(raise).and(urinate)
+    .to(male).and(raise).and(urinate)
   .derive(Lowering_Visitor)
     .to(female).and(lower).and(Action)
-    .or().to(male).and(lower).and(defecate)
-  .derive(Activity).to(urinate)
-    .or().to(defecate)
+    .or(male).and(lower).and(defecate)
+  .derive(Activity)
+    .to(urinate)
+    .or(defecate)
   .finish();
   \end{lcode}
   \caption{A BNF grammar for the toilette seat problem}
@@ -136,6 +143,7 @@ Its engineering part is concerned is
   found in \cref{Figure:toilette:legal} is type-correct,
   whereas code found in \cref{Figure:toilette:illegal} is not.
 
-A important side effect of the implementation is that IDEs with builtin code completion 
+An important side effect of the implementation is that IDEs with builtin code
+completion 
  (found e.g., in Eclipse~\cite{Elcipse} and InteliJ~\cite{InteliJ}) 
  will assist the programmer in making a correct use of the API.
