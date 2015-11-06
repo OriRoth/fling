@@ -9,7 +9,9 @@ The BNF for writing BNFs is given in \cref{Figure:BNF:BNF}
     \def\<#1>{\/⟨\/\text{\textit{#1}}\/⟩\/~}
     \def\|{~|~}
     \let\oldCc=\cc
-    \def\cc#1{{\footnotesize\oldCc{#1}}{\ }}
+    \let\oldKk=\kk
+    \def\cc#1{{\footnotesize\oldCc{#1}}~}
+    \def\cc#1{{\footnotesize\olKk{#1}}~}
     \small
     \begin{aligned}
       \<BNF>              & ::=  \<Notation> \<Body> \<Footer> \hfill⏎
@@ -18,9 +20,7 @@ The BNF for writing BNFs is given in \cref{Figure:BNF:BNF}
       \<Terminals>        & ::=  \cc{with(Symbols.class)}
       \<Symbols>          & ::=  \cc{with(Terminals.class)}
       \<Body>             & ::= \<Start> \<Rules> \hfill⏎
-      \<Start>            & ::= \<Start> \<Rules> \hfill⏎
-      {}                  & \| \<Raising-Visitor> \<Up-Visitors> \hfill⏎
-      {}                  & \| ε \hfill⏎
+      \<Start>            & ::=  \cc{with(Class<? \kk{extends} Symbol)} 
       \<Rules>            & ::= \<First-Rule> \<More-Rules> \hfill⏎
       \<More-Rules>       & ::= \<Additional-Rule> \<More-Rules> \hfill⏎
       {}                  & \| ε \hfill⏎
