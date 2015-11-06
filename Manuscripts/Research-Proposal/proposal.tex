@@ -3,39 +3,37 @@ The thesis propounded by this research is that API design, and especially fluent
 Software missionaries and preachers such as Fowler~\cite{Fowler:2005} have long claimed
   that API design resembles the design of a \textbf Domain \textbf Specific \textbf Language
   (henceforth \emph{DSL}, see, e.g.,~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} for review articles).
-   In the words of Fowler ``The difference between API design and DSL design is then rather small''~\cite{Fowler:2005})
+   In the words of Fowler ‟The difference between API design and DSL design is then rather small”~\cite{Fowler:2005})
 
 The objective of this research is
   to take the unification of the notions of DSL and (fluent) API
   design one step further in automating the creation of fluent API out
   of a DSL specification.
 
-The basic idea is that the programmer specifies a fluent API, 
-  and, then, this specification is then automatically translated 
-  to an implementation of a fluent API that conforms 
+The basic idea is that the programmer specifies a fluent API,
+  and, then, this specification is then automatically translated
+  to an implementation of a fluent API that conforms
   with this specification.
-This translation generates the intricate type hierarchy 
-  and methods of types in it in such a way 
+This translation generates the intricate type hierarchy
+  and methods of types in it in such a way
   that only sequence of calls that conform
-  to the specification would 
+  to the specification would
   compile correctly (concretely, type-check).
- 
 
-  To illustrate, consider the toilette seat example. 
-In this example, 
-  there are a total of six methods that might be invoked. 
-\begin{quote}	
+  To illustrate, consider the toilette seat example.
+In this example,
+  there are a total of six methods that might be invoked.
+\begin{quote}
   \begin{tabular}{lll}
-    \cc{male()}   & \cc{raise()} & \cc{urinate()}⏎
+    \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
     \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
   \end{tabular}
 \end{quote}
 A fluent API design specifies the order in which such calls can be made.
 
-The \emph{first} novelty in this research is that the fluent API definition is 
-  through a CFG, written as a BNF. 
-\cref{Figure:BNF} is such a specification for the toilette seat problem. 
-
+The \emph{first} novelty in this research is that the fluent API definition is
+  through a CFG, written as a BNF.
+\cref{Figure:BNF} is such a specification for the toilette seat problem.
 
 \begin{figure}[htbp]
   \scriptsize
@@ -49,59 +47,68 @@ The \emph{first} novelty in this research is that the fluent API definition is
     \def\kk#1{{\footnotesize\oldKk{#1}}}
     \scriptsize
     \begin{aligned}
-      \<Visitors>         & ::=  \<Down-Visitors>     \hfill⏎
-      \<Down-Visitors>    & ::=  \<Down-Visitor>    \~  \<Down-Visitors>  \hfill⏎
-      {}                  & \|   \<Raising-Visitor> \~  \<Up-Visitors>    \hfill⏎
-      {}                  & \|   ε                    \hfill⏎
-      \<Up-Visitors>      & ::=  \<Up-Visitor>       \~ \<Up-Visitors>    \hfill⏎
-      {}                  & \|   \<Lowering-Visitor> \~ \<Down-Visitors>  \hfill⏎
-      {}                  & \|   ε                    \hfill⏎
-      \<Up-Visitor>       & ::=  \cc{male()}         \~ \cc{urinate()}    \hfill⏎
-      \<Down-Visitor>     & ::=  \cc{female()}        \~\<Action>         \hfill⏎
-                          & \|                  \cc{male()}          \cc{defecate()}  \hfill⏎
-      \<Raising-Visitor>  & ::=  \cc{male()}          \~\cc{raise()}    \~  \cc{urinate()}  \hfill⏎
-      \<Lowering-Visitor> & ::=  \cc{female()}        \~\cc{lower()}     \~ \<Action>       \hfill⏎
-                          & \|                  \cc{male()}          \~\cc{lower()}           \cc{defecate()}  \hfill⏎
-      \<Activity>         & ::=  \cc{urinate()}       \hfill⏎
-                          & \|                  \cc{defecate()}  \hfill⏎
+      \<Visitors> & ::= \<Down-Visitors> \hfill⏎
+      \<Down-Visitors> & ::= \<Down-Visitor> \~\<Down-Visitors> \hfill⏎
+      {} & \| \<Raising-Visitor> \~\<Up-Visitors> \hfill⏎
+      {} & \| ε \hfill⏎
+      \<Up-Visitors> & ::= \<Up-Visitor> \~\<Up-Visitors> \hfill⏎
+      {} & \| \<Lowering-Visitor> \~\<Down-Visitors> \hfill⏎
+      {} & \| ε \hfill⏎
+      \<Up-Visitor> & ::= \cc{male()} \~\cc{urinate()} \hfill⏎
+      \<Down-Visitor> & ::= \cc{female()} \~\<Action> \hfill⏎
+                          & \| \cc{male()} \cc{defecate()} \hfill⏎
+      \<Raising-Visitor> & ::= \cc{male()} \~\cc{raise()} \~\cc{urinate()} \hfill⏎
+      \<Lowering-Visitor> & ::= \cc{female()} \~\cc{lower()} \~\<Action> \hfill⏎
+                          & \| \cc{male()} \~\cc{lower()} \cc{defecate()} \hfill⏎
+      \<Activity> & ::= \cc{urinate()} \hfill⏎
+                          & \| \cc{defecate()} \hfill⏎
     \end{aligned}
   \end{equation*}
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:BNF}
 \end{figure}
 
-\SELF takes this grammar specification as input, and in response 
-  generates the corresponding 
-  \Java type hierarchy. 
+\SELF takes this grammar specification as input, and in response
+  generates the corresponding
+  \Java type hierarchy.
 
 A second novelty of \SELF is that the specification of a BNF such as the provided in
   \cref{Figure:BNF} can be made in using a \Java fluent API.
-To do so, it is first necessary to  
-   define the set of terminals
-  \begin{lcode}{Java}
+To do so, it is first necessary to
+  define the set of \emph{grammar terminals}
+  \begin{code}{Java}
 enum ToiletteTerminals implements Terminal {
-  male, female, 
-  urinate, defecate, 
+  male, female,
+  urinate, defecate,
   lower, raise;
 }
-\end{lcode}
-  and then the set of grammar variables 
-  \begin{lcode}{Java}
+\end{code}
+As common in fluent APIs we shall refer to these
+as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns; 
+  in our context howefver they are used to mean ‟male-visit” and ‟femail-visit”.}
+Verbs are translated by \SELF into methods.
+
+We also requrired to define the set of \emph{grammar variables}
+  \begin{code}{Java}
 enum ToiletteVariables implements Variable {
-  Visitors, Down_Visitors, Up_Visitors, 
-  Up_Visitor, Down_Visitor, 
+  Visitors, Down_Visitors, Up_Visitors,
+  Up_Visitor, Down_Visitor,
   Lowering_Visitor, Raising_Visitor,
   Actitivity
 };
-  \end{lcode}
-Once these two are made, the grammar can be defined,
+  \end{code}
+We shall use the term ‟nouns” as synonymous to variable.
+The terms ‟symbol” and ‟word” refer to an entity which is either
+  a verb or a nound.
+
+Once the verbs and the nouns are set, the grammar can be defined,
   using a fluent API generated by \SELF itself as shown
-  in \cref{Figure:fluent}. 
+  in \cref{Figure:fluent}.
 
 \begin{figure}[htbp]
   \scriptsize
-  \begin{lcode}{Java}
-BNF toiletteBnf = new BNFBuilder()
+  \begin{code}{Java}
+new BNF()
   .with(ToiletteTerminals.class)
   .with(ToiletteSymbols.class)
   .start(Visitors)
@@ -128,22 +135,19 @@ BNF toiletteBnf = new BNFBuilder()
   .derive(Activity)
     .to(urinate)
     .or(defecate)
-  .finish();
-  \end{lcode}
+  .go();
+  \end{code}
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:fluent}
 \end{figure}
-The theoretical part of this work dwells on the prooof of 
-  \cref{Conjecture:Gil:Levy}.
-Its engineering part is concerned is  
-  a software implementation that would make code 
-  such as in \cref{Figure:fluent} generate
-  the required \Java code that realizes the 
-  defined grammar, so that code such as 
-  found in \cref{Figure:toilette:legal} is type-correct,
-  whereas code found in \cref{Figure:toilette:illegal} is not.
 
-An important side effect of the implementation is that IDEs with builtin code
-completion 
- (found e.g., in Eclipse~\cite{Elcipse} and InteliJ~\cite{InteliJ}) 
- will assist the programmer in making a correct use of the API.
+The final call \cc{go} in \cref{Figure:fluent} instructs
+  \SELF to generate the code for the fluent API specified by the
+  subsequet part of the expresion.
+Rougly speaking, nouns are transalted to classes while verbs are translated to methods which
+  take no parameters.
+Two exceptions apply:
+\begin{enumerate}
+  \item \SELF can use classes such as \cc{String} and \cc{Integer}
+  \item Verbs may take noun parameters, as explained below.
+\end{enumerate}

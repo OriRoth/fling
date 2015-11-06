@@ -1,0 +1,133 @@
+As should be obvious from \cref{Figure:fluent}, \SELF will be implemented
+  in a bootstrapping fashion.
+The specification of a BNF, is made itself using a fluent API.
+
+Consider now \cref{Figure:BNF:BNF}
+  which uses the notation introduced in \cref{Figure:BNF}
+  to specify this same notation.
+This specification can only be approximate; 
+  the figure uses verbs as repalcement to identation, 
+  and special symbols such as $|$, $::-$ and $\epsilon$
+
+\begin{figure}[H]
+  \scriptsize
+  \begin{equation*}
+    \def\<#1>{⟨\text{\textcolor{black}{\mdseries\rmfamily\/\textit{#1}}\/}⟩}
+    \let\oldCc=\cc
+    \let\oldKk=\kk
+    \def\~{\text{~}}
+    \def\|{\~|\~\~\~\~}
+    \def\cc#1{{\footnotesize\oldCc{#1}}~}
+    \def\kk#1{{\footnotesize\oldKk{#1}}}
+    \scriptsize
+    \begin{aligned}
+      \<BNF>              & ::=              \<Header>\~           \<Body>\~                \<Footer>           \hfill⏎
+      \<Header>           & ::=              \<Symbols>      \~      \<Terminals>           \hfill⏎
+      {}                  & \|            \<Terminals> \~         \<Symbols>             \hfill⏎
+      \<Terminals>        & ::=              \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Symbols>          & ::=              \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Body>             & ::=              \<Start>   \~           \<Rules>               \hfill⏎
+      \<Start>            & ::=              \cc{start($\<Variable>$)}  \hfill⏎
+      \<Rules>            & ::=              \<First-Rule> \~        \<Additional-Rules>    \hfill⏎
+      \<Additional-Rules> & ::=              \<Additional-Rules>\~   \<Additional-Rule>     \hfill⏎
+      {}                  & \|             ε                     \hfill⏎
+      \<First-Rule>       & ::=              \cc{to($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
+      {}                  & \|              \cc{toNone()}    \hfill⏎
+      \<Additional-Rule>  & ::=              \cc{or($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
+      {}                  & \|              \cc{orNone()}    \hfill⏎
+      \<Sequence>         & ::=                 ε                     \hfill⏎
+      {\~}                & \| \cc{and($\<Symbol>)$}  \hfill⏎
+      \<Variable>         & ::=  \cc{Terminal} \hfill⏎
+      {\~}                & \|             \cc{Variable}\hfill⏎
+      \<Footer>           & ::=  \cc{go()}\hfill⏎
+    \end{aligned}
+  \end{equation*}
+  \caption{A BNF grammar for BNF grammars}
+  \label{Figure:BNF:BNF}
+\end{figure}
+
+From the figure we learn that a BNF has three components: header, body and footer.
+In the header part, the terminals and variables are defined.
+The body starts with a definition of the start symbol, followed by a list of derivation 
+  rules, while the footer is simply the verb \cc{go()} which instructs \SELF
+  to generate the code that realizes the fluent API specifified by the grammar.
+
+A derivation rule starts with a variable, and followed by disjunctive altenatives.
+The choice of verbs is not incidental; they were
+selected with fluency in mind:
+\begin{description}
+  \item[\cc{to}] to intrduce the first symbol in the first conjunction.
+  \item[\cc{or}] to intrduce the first symbol in each subsequent conjunction.
+  \item[\cc{and}] to intrduce all but the first symbol in each such conjuction.
+  \item[\cc{toNone}] to declare that the first conjuction is empty.
+  \item[\cc{toEmpty}] to declare any subseuqent conjuction is empty.
+\end{description}
+
+To translate \cref{Figure:BNF:BNF} into a fluent 
+  API chain, the verbs must be defined:
+\begin{code}{Java}
+enum BNFTerminals implements Terminal {
+  start, with, or, and
+  to, toNone, orNone;
+}
+\end{code}
+
+Secondly, the list of nouns must be defined.
+\begin{code}{Java}
+enum BNFVariables implements Variable {
+  BNF, Header, Body, Footer,
+  Start, Terminals, Symbols,
+  Start, Rules, Additional_Rules,
+  First_Rule, Additional_Rule,
+  Sequence, Symbol;
+}
+\end{code}
+
+\cref{Figure:BNF:fluent} employs \cc{enum} \cc{BNFTerminals} and 
+  \kk{enum} \cc{BNFVariables} to issue a long fluent API
+  call that generates the fluent API used in \SELF. 
+
+\begin{figure}[htbp]
+  \scriptsize
+  \begin{lcode}{Java}
+new BNF()
+  .with(BNFTerminals.class)
+  .with(BNFSymbols.class)
+  .start(BNF)
+  .derive(BNF)
+    .to(Header).and(Body).and(Footer)
+  .derive(Header)
+    .to(Symbols).and(Terminals)           
+    .or(Terminals).and(Symbols)
+  .derive(Terminals)
+    .to(with, Terminal.class)
+  .derive(Symbols)
+    .to(with, Variable.class)
+  .derive(Body)
+    .to(Start).and(Rules)
+  .derive(Start)
+    .to(start, Variable)
+  .derive(Rules)
+    .to(First_Rule).and(Additional_Rules)    
+  .derive(Additional_Rules)
+    .to(Additional_Rules).and(Additional_Rule)    
+    .orNone() 
+  .derive(First_Rule)
+    .to(to,Symbol).and(Sequence)
+    .or(toNone)
+  .derive(Additional_Rule)
+    .or(or, Symbol).and(Sequence)
+    .or(orNone)
+  .derive(Sequence)
+    .toNone()
+    .or(and, Symbol).and(Sequence)
+  .derive(Variable)
+    .to(Terminal}
+    .or(Variable)
+  .derive(Footer).
+     .to(go)
+.go();
+  \end{lcode}
+  \caption{A BNF grammar for the toilette seat problem}
+  \label{Figure:BNF:fluent}
+\end{figure}
