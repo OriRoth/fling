@@ -2,7 +2,8 @@
 
 \passOptions{algorithm}{plain}
 \passOptions{amsmath}{fleqn} 
-\passOptions{geometry} {margin=0.75in}
+\passOptions{cleveref}{nameinlink,capitalize} 
+\passOptions{geometry} {margin=0.5in}
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table} 
@@ -34,6 +35,7 @@
 
 \newtheorem{Theorem}{Theorem}
 \newtheorem{Definition}{Definition}
+\newtheorem{Conjecture}{Conjecture}
 \numberwithin{equation}{section}
 
 \def\sectionautorefname{Sect.}
@@ -42,10 +44,13 @@
 \def\figureautorefname{\figurename}
 \def\tablename{Table}
 
-\crefname{section}{Sect.}{Sects.}
-\Crefname{section}{Sect.}{Sects.}
-\crefname{figure}{Fig.}{Figs.}
+\crefname{conjecture}{Conjecture}{conjectures}
+\Crefname{conjecture}{Conjecture}{Conjectures}
+\crefname{figure}{Fig.}{figs.}
 \Crefname{figure}{Fig.}{Figs.}
+\crefname{section}{Sect.}{sects.}
+\Crefname{section}{Sect.}{Sects.}
+
 \newcommand \urlref [1] {\footnote{\url{#1}}}
 
 \newcommand \SELF {\textsc{Fajita}\xspace}

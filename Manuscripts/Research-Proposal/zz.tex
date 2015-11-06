@@ -1,1 +1,41 @@
-Here we shall write our concluding remarks.
+As should be obvious from \cref{Figure:fluent}, \SELF will be implemented
+  in a bootstrapping fashion.
+The specification of a BNF, is made using a fluent API.
+The BNF for writing BNFs is given in \cref{Figure:BNF:BNF}
+
+\begin{figure}[htbp]
+  \scriptsize
+  \begin{equation*}
+    \def\<#1>{\/⟨\/\text{\textit{#1}}\/⟩\/~}
+    \def\|{~|~}
+    \let\oldCc=\cc
+    \def\cc#1{{\footnotesize\oldCc{#1}}{\ }}
+    \small
+    \begin{aligned}
+      \<BNF>              & ::=  \<Notation> \<Body> \<Footer> \hfill⏎
+      \<Notation>         & ::=  \<Symbols> \<Terminals> \hfill⏎
+      {}                  & \|  \<Terminals> \<Symbols> \hfill⏎
+      \<Terminals>        & ::=  \cc{with(Symbols.class)}
+      \<Symbols>          & ::=  \cc{with(Terminals.class)}
+      \<Body>             & ::= \<Start> \<Rules> \hfill⏎
+      \<Start>            & ::= \<Start> \<Rules> \hfill⏎
+      {}                  & \| \<Raising-Visitor> \<Up-Visitors> \hfill⏎
+      {}                  & \| ε \hfill⏎
+      \<Rules>            & ::= \<First-Rule> \<More-Rules> \hfill⏎
+      \<More-Rules>       & ::= \<Additional-Rule> \<More-Rules> \hfill⏎
+      {}                  & \| ε \hfill⏎
+      {}                  & \| \<Lowering-Visitor> \<Down-Visitors> \hfill⏎
+      {}                  & \| ε \hfill⏎
+      \<Up-Visitor>       & ::= \cc{male()} \cc{urinate()} \hfill⏎
+      \<Down-Visitor>     & ::= \cc{female()} \<Action> \hfill⏎
+                          & \| \cc{male()} \cc{defecate()} \hfill⏎
+      \<Raising-Visitor>  & ::= \cc{male()} \cc{raise()} \cc{urinate()} \hfill⏎
+      \<Lowering-Visitor> & ::= \cc{female()} \cc{lower()} \<Action> \hfill⏎
+                          & \| \cc{male()} \cc{lower()} \cc{defecate()} \hfill⏎
+      \<Activity>         & ::= \cc{urinate()} \hfill⏎
+                          & \| \cc{defecate()} \hfill⏎
+    \end{aligned}
+  \end{equation*}
+  \caption{A BNF grammar for the toilette seat problem}
+  \label{Figure:BNF:BNF}
+\end{figure}

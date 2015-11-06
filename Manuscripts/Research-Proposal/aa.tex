@@ -1,118 +1,65 @@
-\subsection{Method Chaining}
-The term \emph{method chaining} is illustrated in neat examples, such
-as in the \nth{3} to \nth{6} line of the following \Java function:
-\begin{lCode}{JAVA}{Method chaining}
-String time(int hours, int minutes, int seconds) {¢¢
-  return new StringBuilder()
-    ¢¢.append(hours).append(':')
-    ¢¢.append(minutes).append(':')
-    ¢¢.append(seconds)
-    .toString();
-}
-\end{lCode}
-Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilder} in the above,
-   is the receiver of a chain of methods.
-This is achieved by making each variant of the method \cc{append} return the receiver, denoted by the
-  implicit argument \kk{this}.
-With this convention, the chore of writing the tedious code
-\begin{lcode}{Java}
-sb.append(hours);
-sb.append(':');
-sb.append(minutes);
-sb.append(':');
-sb.append(seconds);
-return sb.toString():
-\end{lcode}
-is ameliorated a bit.
+Modern programming languages acquire high-level constructs
+  at a staggering rate.
+The imminent adoption of closures in \Java and \CC,
+  the generators of \CSharp, and ‟concepts” in
+  \CC are just a few examples.
 
-\subsection{Fluent API}
-Now, definition found in the web of the term \emph{fluent API†{API =
-    \textbf Application \textbf Program \textbf Interface
-}} are a bit illusive.
-Invariably, such definitions liken fluent API to method chaining;
-  they also tend to emphasize that fluent API is ‟more” than method
-  chaining, and ask the reader to extrapolate from one term to the other.
+A theoretical motivation for this work
+  is the exploration of the computational
+  expressiveness of such features.
+For example, it is known (see e.g.,~\cite{Gutterman:MSc} that
+  \kk{template}s are Turing complete in the following precise sense:
 
-Indeed, fluent API looks much like method chaining; indeed method chaining is a kind
-  of fluent API{}.
-However, the main distinction between the two terms is the identity of the receiver.
-In method chaining, all methods are invoked on the same object, whereas in fluent API
-  the receiver of each method in the chain may be arbitrary.
-Perhaps surprisingly, this difference makes fluent API significantly more expressive.
-Consider, for example, the following code fragment (drawn from JMock~\cite{Freeman:Pryce:06})
-\begin{lCode}{Java}{Fluent API}
-allowing (any(Object.class))
-  ¢¢.method("get.*")
-  ¢¢.withNoArguments();
-\end{lCode}
-Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the return type of function \cc{method} be denoted by~$τ₂$.
-Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
-in the partial call chain
-\begin{lcode}{Java}
- allowing(any(Object.class)).
-\end{lcode}
-is distinct from the set of methods that can be placed after the dot in the partial call chain
-\begin{lcode}{Java}
-allowing(any(Object.class)).method("get.*").
-\end{lcode}
-This distinction make it possible to design expressive and rich fluent APIs, in which a sequence ‟chained” calls is not only readable, but also
-robust, in the sense that the sequence is type correct, only when it the sequence makes sense semantically.
+\begin{Theorem}
+  \label{Theorem:Gutterman}
+For every Turing machine~$m$†{We tacitly assume that a Turing machine
+  encodes in it its input}, there exists a \CC program,~$Cₘ$ such that
+\begin{quote}
+  compilation of~$Cₘ$ of terminates if and only if~$m$ halts.
+\end{quote}
+Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
+  effective~$≈$‟~\emph{there is time
+  bounded algorithm for carrying out the task}”.} generated from~$m$.
+\end{Theorem}
 
-\subsection{The Type Safe Toilette Seat}
+Intuitively, the proof relies on the fact that \kk{template}s
+  feature recursive invocation and conditionals (in the form of
+  ‟\emph{template initialization}”
 
-An object of type toilette seat is created in the \cc{down} state, but it can
-then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
-\cc{down} state.†{%
-This example is inspired by earlier work of 
-  Richard Harter on the topic~\cite{Harter:05}.}
-Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes: \cc{urinate} and \cc{defecate}.
-Now a good fluent API design is one by which the following sequences of calls is type correct
-\begin{lcode}{Java}
-new Seat().male().raise().urinate();
-new Seat().female().urinate();
- \end{lcode}
-whereas the following sequence of method calls are illegal:
-\begin{lcode}{Java}
-new Seat().female().raise();
-new Seat().male().raise().defecate();
-new Seat().male().male();
-new Seat()
-     ¢¢.male().raise().urinate()
-     ¢¢.male().raise();
-\end{lcode}
-It should be clear that the type checking engine of the compiler can
-be employed to distinguish between legal and illegal sequences.
-It should also be clear that fabricating the \kk{class}es, \kk{interface}s
-and the \kk{extends} and \kk{implements} relationship between these, is
-far from being trivial.
+In the same fashion, it is mundane to make the judgment that
+  \Java's generics are not Turing-complete: all recursive calls
+  in these are unconditional.
+In one sense, my research shall give a lower bound on the
+  expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky}.
+I hope to show that it is possible to encode context free grammars within the \Java type system,
+  in such a way that type-checking is equivalent to membership queries.
+This objective is more precisely expressed in the following conjecture.
 
-\subsection{Type State}
-The toilette seat problem may be amusing to some, but it is not contrived in any way.
-In fact, there is huge body of research on the general topics of
-  \emph{type-states}. (See e.g., review articles such as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005})
-Informally, an object that belongs to a certain type (\kk{class} in the
-object oriented lingo), has type-states, if not all methods defined in this object's class are applicable to the object in all states it may be in.
+\begin{Conjecture}
+\label{Conjecture:Gil:Levy}
+Let~$Σ$ be finite alphabet.
+  Let~$s$ be a \emph{stack automaton}, and let~$𝓛=𝓛(s)⊆Σ$ be
+  the \emph{formal language} such that~$s$ recognizes†{Consult, e.g.,~\cite{Automatim} for precise definitions of these terms}.
+Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$
+such that 
+\begin{quote}
+  if a string~$α∈Σ$ is
+  placed at~$ℓ$, then~$Jₛ$ type checks, if an only if,~$α∈𝓛$.
+\end{quote}
+Furthermore, program~$Jₛ$ can be effectively generated from~$s$.
+\end{Conjecture}
 
-A classical example of type-states is a file object: which can be in one of two states:
-‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only permitted when the file is an ‟open” state.
-In addition, method \cc{open()} (respectively \cc{close()}) can only be applied if the object is in the ‟closed” (respectively, ‟open”) state.
+The above discussion, formalism and conjecture may seem at first sight to be too abstract
+  to be of any practical value.
+Repositioning our perspective sheds another light on the topic.
+\cref{Theorem:Gutterman} is important not only because it tells us
+  that the question of termination of a \CC compiler is as difficult
+  the halting problem~\cite{Halting}, but also because it
+  is justifies the common belief that there in principle, there
+  is no limit to the power of template programming~\cite{Templates:find:6:refs}.
 
-Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study~\cite{Search:For:Aldrich} estimates 
-  that about 70％ of \Java classes feature type states.
-Type-state pose two main challenges to software engineering 
-\begin{enumerate}
-  \item \emph{\textbf{Identification.}} 
-    In the typical case, type-state 
-        receive little to no mention at all in the documentation.
-    The identification problem is find the
-    type state implicit in existing code: Given an implementation of a class
-    (or more generally of a software framework), 
-    \emph{determine} which sequences of method calls are valid and which violate the 
-    type state hidden in the code.
-  \item \emph{\textbf{Maintenance and Enforcement.}}
-    Having identified the type-states, the challenge is in automatically flagging out 
-      use of the API that is non-conforming with the type-state, furthermore, with the 
-      evolution of an API, the challenge is in updating the type-state information, 
-      and the type checking of code of clients. 
-\end{enumerate}
+Similarly, \cref{Conjecture:Gil:Levy} has important
+  implications to the emerging trend of employing fluent APIs
+  to make complex software systems more accessible.
+My thesis is that one can employ the conjecture for 
+  automatic generation of very rich such APIs.
