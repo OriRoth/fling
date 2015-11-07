@@ -65,7 +65,7 @@ API chain, the verbs and nouns must be defined.
 Verb definitions are made in the code excerpt in
 \cref{Figure:Verbs}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{JAVA}[style=code]
 enum BNFTerminals implements Terminal {
   toNone, orNone,// No parameters
@@ -80,7 +80,7 @@ enum BNFTerminals implements Terminal {
 
 Noun definitions are made in the code excerpt in \cref{Figure:Nouns}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{JAVA}[style=code]
 enum BNFVariables implements Variable {
   BNF, Header, Body, Footer,
@@ -99,7 +99,7 @@ The
   are now employed in \cref{Figure:BNF:fluent}.
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{JAVA}[style=numbered]
 new BNF()
   .with(BNFTerminals.class)
