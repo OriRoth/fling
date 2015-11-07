@@ -64,13 +64,14 @@
 \newenvironment{Grammar}
 {%
   \small
+  \renewcommand\baselinestretch{0.8}
   \def\~{\text{~}}
   \def\|{\~\~|\~\~\~}
   \def\<##1>{\textcolor{black}{\text{$\langle\text{\mdseries\rmfamily\/\textit{##1}}\rangle$}}}
   \let\oldCc=\cc
-  \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
+  \def\cc##1{{\text{{\small\oldCc{##1}}~}}}
   \let\oldKk=\kk
-  \def\kk##1{{\text{{\scriptsize\oldKk{##1}}}}}
+  \def\kk##1{{\text{{\small\oldKk{##1}}}}}
   \begin{equation*}
 }
 {

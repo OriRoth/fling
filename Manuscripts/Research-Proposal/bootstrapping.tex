@@ -2,6 +2,7 @@ As should be obvious from \cref{Figure:fluent}, \SELF will be implemented
   in a bootstrapping fashion.
 The specification of a BNF, is made itself using a fluent API.
 
+\subsection{Reflective BNF}
 \cref{Figure:BNF:BNF} is a \emph{reflectie BNF}:
 It uses the notation introduced in \cref{Figure:BNF}
   to specify this same notation.
@@ -56,30 +57,46 @@ The choice of verbs is not incidental; fluency was in mind:
   \item[\cc{orNone}] to declare any subsequent conjunction is empty.
 \end{description}
 
-To translate \cref{Figure:BNF:BNF} into a fluent
-  API chain, the verbs must be defined as such:
-  \begin{JAVA}
-enum BNFTerminals implements Terminal {
-  start, with, or, and
-  to, toNone, orNone;
-}
-\end{JAVA}
+\subsection{Reflective BNF of fluent API}
 
-Secondly, the list of nouns must be defined.
-\begin{JAVA}
+To translate \cref{Figure:BNF:BNF} into a fluent
+API chain, the verbs and nouns must be defined.
+
+Verb definitions are made in the code excerpt in
+\cref{Figure:Verbs}.
+
+\begin{figure}[htbp]
+  \begin{JAVA}[style=code]
+enum BNFTerminals implements Terminal {
+  toNone, orNone,// No parameters
+  start,         // One parameter 
+  with,          // One parameter, overloaded 
+  or,and,to,     // One parameter (or more), overloaded, variadic 
+  ;
+} \end{JAVA}
+  \caption{The nouns of \SELF}
+  \label{Figure:Verbs}
+\end{figure}
+
+Noun definitions are made in the code excerpt in \cref{Figure:Nouns}.
+
+\begin{figure}[htbp]
+  \begin{JAVA}[style=code]
 enum BNFVariables implements Variable {
   BNF, Header, Body, Footer,
   Start, Terminals, Symbols,
   Start, Rules, Additional_Rules,
   First_Rule, Additional_Rule,
   Sequence, Symbol;
-}
-\end{JAVA}
+}\end{JAVA}
+  \caption{The nouns of \SELF}
+  \label{Figure:Nouns}
+\end{figure}
 
 The
-\cc{enum}erations \cc{BNFTerminals} and
-  \kk{enum} \cc{BNFVariables}
-  are used in \cref{Figure:BNF:fluent}.
+\kk{enum}erations \cc{BNFTerminals} and
+  \cc{BNFVariables}
+  are now employed in \cref{Figure:BNF:fluent}.
 
 
 \begin{figure}[htbp]
@@ -87,16 +104,15 @@ The
 new BNF()
   .with(BNFTerminals.class)
   .with(BNFSymbols.class)
-¢¢
   .start(BNF)
   .derive(BNF)
     .to(Header).and(Body).and(Footer)
   .derive(Header)
-    .to(Symbols).and(Terminals)
-    .or(Terminals).and(Symbols)
+    .to(Variables).and(Terminals)
+    .or(Terminals).and(Variables)
   .derive(Terminals)
     .to(with, Terminal.class)
-  .derive(Symbols)
+  .derive(Variables)
     .to(with, Variable.class)
   .derive(Body)
     .to(Start).and(Rules)
@@ -111,7 +127,7 @@ new BNF()
     .to(to,Symbol).and(Sequence)
     .or(toNone)
   .derive(Additional_Rule)
-    .or(or, Symbol).and(Sequence)
+    .to(or, Symbol).and(Sequence)
     .or(orNone)
   .derive(Sequence)
     .toNone()
@@ -121,9 +137,7 @@ new BNF()
     .or(Variable)
   .derive(Footer).
      .to(go)
-¢¢
-.go();
-  \end{JAVA}
+.go();\end{JAVA}
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:BNF:fluent}
 \end{figure}
@@ -134,3 +148,32 @@ This fluent API sequence is a reflective BNF
   of the \SELF API;
   indeed, we may check that \cref{Figure:BNF:BNF} reiterates \cref{Figure:BNF:BNF}
   (with notational changes as appropriate). 
+
+\subsection{Parameterized Verbs}
+Generally speaking, tokens come in two flavors: 
+  \emph{Monomorphic tokens} are tokens such as punctuation marks and certain keywords  
+    such as ``\kk{if}'', ``\cc{static}'' and ``\cc{class}''. 
+Such tokens carry no information other than their mere presence.
+\emph{Polymorphic tokens} are tokens which carry content beyond presence (or absence). 
+The prime example of these are identifiers. 
+
+This distinction applies also to fluent APIs:
+Methods, or nouns, are the tokens, and a fluent APIs sequence consists of 
+  method calls that come in two kinds: those take do not take parameters, and those that do.
+
+\SELF supports verbs with, and without, noun parameters. 
+The following examples,`drawn from \cref{Figure:fluent} and \cref{Figure:BNF:fluent},
+  demonstrate, 
+\begin{JAVA}
+    .to(male)
+    .to(with, Terminal.class)
+    .to(with, Variable.class)
+    .to(start, Variable)\end{JAVA}
+(The above is made possible with minor \Java language trickery,
+  involving overloading and use of variadic signatures,
+  with respect to function name \cc{to}.
+Same trickery was applied to verbs \cc{or}, and \cc{and}.)
+
+
+
+  

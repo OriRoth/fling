@@ -15,7 +15,7 @@ Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilde
    is the receiver of a chain of methods.
 This is achieved by making each variant of the method \cc{append} return the receiver, denoted by the
   implicit argument \kk{this}.
-With this convention, the chore of writing the tedious code
+With this convention, the tedious code
 \begin{JAVA}
 sb.append(hours);
 sb.append(':');
@@ -23,7 +23,7 @@ sb.append(minutes);
 sb.append(':');
 sb.append(seconds);
 return sb.toString():\end{JAVA}
-is a bit smaller.
+becomes a bit shorter and less repetitive.
 
 \subsection{Fluent API}
 Now, definition found in the web of the term \emph{fluent API†{API =
@@ -73,8 +73,7 @@ Now a good fluent API design is one by which the sequences of method calls in
 \begin{figure}[htbp]
   \begin{JAVA}
 new Seat().male().raise().urinate();
-new Seat().female().urinate();
-  \end{JAVA}
+new Seat().female().urinate();\end{JAVA}
   \caption{Legal sequences of calls in the toilette seat example}
   \label{Figure:toilette:legal}
 \end{figure}
@@ -87,10 +86,7 @@ Conversely, sequences of method calls made in \cref{Figure:toilette:illegal}
 new Seat().female().raise();
 new Seat().male().raise().defecate();
 new Seat().male().male();
-new Seat()
-     ¢¢.male().raise().urinate()
-     ¢¢.male().raise();
-  \end{JAVA}
+new Seat().male().raise().urinate().female().urinate();\end{JAVA}
   \caption{Illegal sequences of calls in the toilette seat example}
   \label{Figure:toilette:illegal}
 \end{figure}
