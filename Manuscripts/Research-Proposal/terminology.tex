@@ -3,7 +3,8 @@ The term \emph{method chaining} is illustrated in neat examples, such
 as in the \nth{3} to \nth{6} line of the following \Java function:
 \begin{Code}{JAVA}{Method chaining}
 String time(int hours, int minutes, int seconds) {¢¢
-  return new StringBuilder()
+  StringBuilder sb = new StringBuilder();
+  return sb
     ¢¢.append(hours).append(':')
     ¢¢.append(minutes).append(':')
     ¢¢.append(seconds)
@@ -15,15 +16,15 @@ Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilde
 This is achieved by making each variant of the method \cc{append} return the receiver, denoted by the
   implicit argument \kk{this}.
 With this convention, the chore of writing the tedious code
-\begin{code}{Java}
+\begin{JAVA}
 sb.append(hours);
 sb.append(':');
 sb.append(minutes);
 sb.append(':');
 sb.append(seconds);
 return sb.toString():
-\end{code}
-is ameliorated a bit.
+\end{JAVA}
+is a bit smaller.
 
 \subsection{Fluent API}
 Now, definition found in the web of the term \emph{fluent API†{API =
@@ -71,10 +72,10 @@ Now a good fluent API design is one by which the sequences of method calls in
 \cref{Figure:toilette:legal} are type correct.
 
 \begin{figure}[htbp]
-  \begin{code}{Java}
+  \begin{JAVA}
 new Seat().male().raise().urinate();
 new Seat().female().urinate();
-  \end{code}
+  \end{JAVA}
   \caption{Legal sequences of calls in the toilette seat example}
   \label{Figure:toilette:legal}
 \end{figure}
@@ -83,14 +84,14 @@ Conversely, sequences of method calls made in \cref{Figure:toilette:illegal}
   should be illegal in the desired implementation of the fluent API.
 
 \begin{figure}[htbp]
-  \begin{code}{Java}
+  \begin{JAVA}
 new Seat().female().raise();
 new Seat().male().raise().defecate();
 new Seat().male().male();
 new Seat()
      ¢¢.male().raise().urinate()
      ¢¢.male().raise();
-  \end{code}
+  \end{JAVA}
   \caption{Illegal sequences of calls in the toilette seat example}
   \label{Figure:toilette:illegal}
 \end{figure}

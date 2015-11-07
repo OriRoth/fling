@@ -18,6 +18,7 @@
 \usepackage{code}
 \usepackage{float}
 \usepackage{fontspec}
+\usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{listings}
@@ -26,6 +27,11 @@
 
 \usepackage{yogi-lang}
 \usepackage{yogi-unicode}
+
+
+\floatstyle{ruled}
+\restylefloat{figure}
+\restylefloat{table}
 
 \adjustboxset{max width=\columnwidth}
 \adjustboxset{max height=0.8\textheight}
@@ -54,3 +60,19 @@
 \newcommand \urlref [1] {\footnote{\url{#1}}}
 
 \newcommand \SELF {\textsc{Fajita}\xspace}
+
+\newenvironment{Grammar}
+{%
+  \small
+  \def\~{\text{~}}
+  \def\|{\~\~|\~\~\~}
+  \def\<##1>{\textcolor{black}{\text{$\langle\text{\mdseries\rmfamily\/\textit{##1}}\rangle$}}}
+  \let\oldCc=\cc
+  \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
+  \let\oldKk=\kk
+  \def\kk##1{{\text{{\scriptsize\oldKk{##1}}}}}
+  \begin{equation*}
+}
+{
+  \end{equation*}
+}
