@@ -2,44 +2,47 @@ As should be obvious from \cref{Figure:fluent}, \SELF will be implemented
   in a bootstrapping fashion.
 The specification of a BNF, is made itself using a fluent API.
 
-Consider now \cref{Figure:BNF:BNF}
-  which uses the notation introduced in \cref{Figure:BNF}
+\cref{Figure:BNF:BNF} is a \emph{reflectie BNF}:
+It uses the notation introduced in \cref{Figure:BNF}
   to specify this same notation.
-This specification can only be approximate; 
-  the figure uses verbs as replacement to indentation, 
-  and special symbols such as $|$, $::-$ and $\epsilon$
+
 
 \begin{figure}[H]
   \begin{Grammar}
     \begin{aligned}
-      \<BNF>              & ::=              \<Header>\~           \<Body>\~                \<Footer>           \hfill⏎
-      \<Header>           & ::=              \<Symbols>      \~      \<Terminals>           \hfill⏎
-      {}                  & \|            \<Terminals> \~         \<Symbols>             \hfill⏎
-      \<Terminals>        & ::=              \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Symbols>          & ::=              \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Body>             & ::=              \<Start>   \~           \<Rules>               \hfill⏎
-      \<Start>            & ::=              \cc{start($\<Variable>$)}  \hfill⏎
-      \<Rules>            & ::=              \<First-Rule> \~        \<Additional-Rules>    \hfill⏎
-      \<Additional-Rules> & ::=              \<Additional-Rules>\~   \<Additional-Rule>     \hfill⏎
-      {}                  & \|             ε                     \hfill⏎
-      \<First-Rule>       & ::=              \cc{to($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
-      {}                  & \|              \cc{toNone()}    \hfill⏎
-      \<Additional-Rule>  & ::=              \cc{or($\<Symbol>$)}\~  \<Sequence>            \hfill⏎
-      {}                  & \|              \cc{orNone()}    \hfill⏎
-      \<Sequence>         & ::=                 ε                     \hfill⏎
-      {\~}                & \| \cc{and($\<Symbol>)$}  \hfill⏎
-      \<Variable>         & ::=  \cc{Terminal} \hfill⏎
-      {\~}                & \|             \cc{Variable}\hfill⏎
-      \<Footer>           & ::=  \cc{go()}\hfill⏎
+      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
+      \<Header> & ::= \<Symbols> \~\<Terminals> \hfill⏎
+      {} & \| \<Terminals> \~\<Symbols> \hfill⏎
+      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Symbols> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Start> & ::= \cc{start($\<Variable>$)} \hfill⏎
+      \<Rules> & ::= \<First-Rule> \~\<Additional-Rules> \hfill⏎
+      \<Additional-Rules> & ::= \<Additional-Rules>\~\<Additional-Rule> \hfill⏎
+      {} & \| ε \hfill⏎
+      \<First-Rule> & ::= \cc{to($\<Symbol>$)}\~\<Sequence> \hfill⏎
+      {} & \| \cc{toNone()} \hfill⏎
+      \<Additional-Rule> & ::= \cc{or($\<Symbol>$)}\~\<Sequence> \hfill⏎
+      {} & \| \cc{orNone()} \hfill⏎
+      \<Sequence> & ::= ε \hfill⏎
+      {\~} & \| \cc{and($\<Symbol>)$} \hfill⏎
+      \<Variable> & ::= \cc{Terminal} \hfill⏎
+      {\~} & \| \cc{Variable}\hfill⏎
+      \<Footer> & ::= \cc{go()}\hfill⏎
     \end{aligned}
   \end{Grammar}
   \caption{A BNF grammar for BNF grammars}
   \label{Figure:BNF:BNF}
 \end{figure}
 
-From the figure we learn that a BNF has three components: header, body and footer.
-In the header part, the terminals and variables are defined.
-The body starts with a definition of the start symbol, followed by a list of derivation 
+Note that this specification can only be approximate;
+  the figure uses verbs as replacement to indentation,
+  and special symbols such as~$|$,~$::-$ and~$ε$
+
+From \cref{Figure:BNF:BNF} we learn 
+  that a BNF has three components: header, body and footer.
+The sets of terminals and variables are defined in the header part, 
+The body starts with a definition of the start symbol, followed by a list of derivation
   rules, while the footer is simply the verb \cc{go()} which instructs \SELF
   to generate the code that realizes the fluent API specified by the grammar.
 
@@ -53,8 +56,8 @@ The choice of verbs is not incidental; fluency was in mind:
   \item[\cc{orNone}] to declare any subsequent conjunction is empty.
 \end{description}
 
-To translate \cref{Figure:BNF:BNF} into a fluent 
-  API chain, the verbs must be defined:
+To translate \cref{Figure:BNF:BNF} into a fluent
+  API chain, the verbs must be defined as such:
   \begin{JAVA}
 enum BNFTerminals implements Terminal {
   start, with, or, and
@@ -73,21 +76,23 @@ enum BNFVariables implements Variable {
 }
 \end{JAVA}
 
-\cref{Figure:BNF:fluent} employs \cc{enum} \cc{BNFTerminals} and 
-  \kk{enum} \cc{BNFVariables} to issue a long fluent API
-  call that generates the fluent API used in \SELF. 
+The
+\cc{enum}erations \cc{BNFTerminals} and
+  \kk{enum} \cc{BNFVariables}
+  are used in \cref{Figure:BNF:fluent}.
+
 
 \begin{figure}[htbp]
   \begin{JAVA}[style=numbered]
 new BNF()
-  .with(BNFTerminals.class)       
+  .with(BNFTerminals.class)
   .with(BNFSymbols.class)
+¢¢
   .start(BNF)
-
   .derive(BNF)
     .to(Header).and(Body).and(Footer)
   .derive(Header)
-    .to(Symbols).and(Terminals)           
+    .to(Symbols).and(Terminals)
     .or(Terminals).and(Symbols)
   .derive(Terminals)
     .to(with, Terminal.class)
@@ -98,10 +103,10 @@ new BNF()
   .derive(Start)
     .to(start, Variable)
   .derive(Rules)
-    .to(First_Rule).and(Additional_Rules)    
+    .to(First_Rule).and(Additional_Rules)
   .derive(Additional_Rules)
-    .to(Additional_Rules).and(Additional_Rule)    
-    .orNone() 
+    .to(Additional_Rules).and(Additional_Rule)
+    .orNone()
   .derive(First_Rule)
     .to(to,Symbol).and(Sequence)
     .or(toNone)
@@ -116,9 +121,16 @@ new BNF()
     .or(Variable)
   .derive(Footer).
      .to(go)
-
+¢¢
 .go();
   \end{JAVA}
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:BNF:fluent}
 \end{figure}
+
+The code excerpt in the figure is a rather long
+  sequence of method calls.
+This fluent API sequence is a reflective BNF 
+  of the \SELF API;
+  indeed, we may check that \cref{Figure:BNF:BNF} reiterates \cref{Figure:BNF:BNF}
+  (with notational changes as appropriate). 
