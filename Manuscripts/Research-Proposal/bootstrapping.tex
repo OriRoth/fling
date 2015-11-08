@@ -30,7 +30,7 @@ It uses the notation introduced in \cref{Figure:BNF}
       {} & \| \cc{orNone()} \hfill⏎
       \<Sequence> & ::= ε \hfill⏎
       {\~} & \| \cc{and($\<Symbol>)$} \hfill⏎
-      \<Variable> & ::= \cc{Terminal} \hfill⏎
+      \<Symbol> & ::= \cc{Terminal} \hfill⏎
       {\~} & \| \cc{Variable}\hfill⏎
       \<Footer> & ::= \cc{go()}\hfill⏎
     \end{aligned}
@@ -54,7 +54,8 @@ From \cref{Figure:BNF:BNF} we learn
   \end{enumerate}
 
 A derivation rule starts with a variable, and is then followed by disjunctive alternatives.
-The choice of verbs was not incidental; fluency was in mind:
+The choice of verbs that may occur in the body of the rule was not incidental; 
+  fluency was in mind:
 \begin{description}
   \item[\cc{to}] to introduce the first symbol in the first conjunction.
   \item[\cc{or}] to introduce the first symbol in each subsequent conjunction.
@@ -138,7 +139,7 @@ new BNF()
   .derive(Sequence)
     .toNone()
     .or(and, Symbol).and(Sequence)
-  .derive(Variable)
+  .derive(Symbol)
     .to(Terminal)
     .or(Variable)
   .derive(Footer).
@@ -156,16 +157,19 @@ This fluent API sequence is a reflective BNF
   (with notational changes as appropriate). 
 
 \subsection{Parameterized Verbs}
-Generally speaking, tokens come in two flavors: 
-  \emph{Monomorphic tokens} are tokens such as punctuation marks and certain keywords  
-    such as ``\kk{if}'', ``\cc{static}'' and ``\cc{class}''. 
-Such tokens carry no information other than their mere presence.
-\emph{Polymorphic tokens} are tokens which carry content beyond presence (or absence). 
-The prime example of these are identifiers. 
+Generally speaking, tokens come in two flavors:
+\begin{itemize}
+  \item \emph{Monomorphic tokens} are tokens such as punctuation marks and
+    certain keywords such as ``\kk{if}'', ``\cc{static}'' and ``\cc{class}''.
+    Such tokens carry no information other than their mere presence.
+  \item \emph{Polymorphic tokens} are tokens which carry content beyond
+    presence (or absence).  The prime example of these are identifiers.
+\end{itemize}
 
 This distinction applies also to fluent APIs:
 Methods, or nouns, are the tokens, and a fluent APIs sequence consists of 
-  method calls that come in two kinds: those take do not take parameters, and those that do.
+method calls that come in two kinds: those take do not take parameters (such as \cc{toNone()} in \cref{Figure:BNF:fluent}, 
+and those that do (such as the call \cc{derives($\cdot$)} in the figure).
 
 \SELF supports verbs with, and without, noun parameters. 
 The following examples,`drawn from \cref{Figure:fluent} and \cref{Figure:BNF:fluent},
