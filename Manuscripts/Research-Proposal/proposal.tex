@@ -3,7 +3,7 @@ The thesis propounded by this research is that API design, and especially fluent
 Software missionaries and preachers such as Fowler~\cite{Fowler:2005} have long claimed
   that API design resembles the design of a \textbf Domain \textbf Specific \textbf Language
   (henceforth \emph{DSL}, see, e.g.,~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} for review articles).
-   In the words of Fowler ‟The difference between API design and DSL design is then rather small”~\cite{Fowler:2005})
+   In the words of Fowler ‟The difference between API design and DSL design is then rather small”~\cite{Fowler:2005}
 
 Another objective of this research is
   to let the unification of the notions of DSL and (fluent) API
@@ -70,7 +70,7 @@ A second novelty of \SELF is that the specification of a BNF such as in
   \cref{Figure:BNF} can be also made with a \Java fluent API.
 To do so, it is first necessary to
   define the set of \emph{grammar terminals}
-  \begin{code}{JAVA}[style=code]
+  \begin{code}{JAVA}
 enum ToiletteTerminals implements Terminal {
   male, female,
   urinate, defecate,
@@ -79,7 +79,7 @@ enum ToiletteTerminals implements Terminal {
 \end{code}
 As common in fluent APIs we shall refer to these
 as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns. 
-  An excuse migh be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
+  An excuse might be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
 Verbs are translated by \SELF into methods.
 
 We are also required to define the set of \emph{grammar variables}
@@ -127,7 +127,8 @@ new BNF()
   ¢¢.derive(Activity)
     ¢¢.to(urinate)
     ¢¢.or(defecate)
-  ¢¢.go();\end{JAVA}
+  ¢¢.go();
+  \end{JAVA}
   \caption{A BNF grammar for the toilette seat problem}
   \label{Figure:fluent}
 \end{figure}
@@ -140,8 +141,8 @@ Roughly speaking, nouns are translated to classes while verbs are translated to 
 Two exceptions apply:
 \begin{enumerate}
   \item 
-    Library lasses such as \cc{String} and \cc{Integer}, just as user-defined
-    classes such as \cc{Invoice} may be used as nouns. 
+    Library classes such as \cc{String} and \cc{Integer}, just as user-defined
+    classes such as \cc{Invoice} may be used as nouns.  % as verbs
     \SELF generate class definitions only for classes whose name is declared 
     in an \kk{enum} which is passed to \cc{with} verb in the BNF declaration.
   \item Verbs may take noun parameters, as explained below.

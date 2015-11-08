@@ -15,38 +15,47 @@ It uses the notation introduced in \cref{Figure:BNF}
   \begin{Grammar}
     \begin{aligned}
       \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
-      \<Header> & ::= \<Symbols> \~\<Terminals> \hfill⏎
-      {} & \| \<Terminals> \~\<Symbols> \hfill⏎
+      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
+      {} & \| \<Terminals> \~\<Variables> \hfill⏎
+      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
       \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Symbols> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Body> & ::= \<Start> \~\<Conjunctions> \hfill⏎
       \<Start> & ::= \cc{start($\<Variable>$)} \hfill⏎
-      \<Rules> & ::= \<First-Rule> \~\<Additional-Rules> \hfill⏎
-      \<Additional-Rules> & ::= \<Additional-Rules>\~\<Additional-Rule> \hfill⏎
+      \<Conjunctions> & ::= \<Conjunction>\~\<Additional-Conjunctions>\hfill⏎
+      \<Additional-Conjunctions> & ::= \<Conjunction>\~ \<Additional-Conjunctions>\hfill⏎
       {} & \| ε \hfill⏎
-      \<First-Rule> & ::= \cc{to($\<Symbol>$)}\~\<Sequence> \hfill⏎
-      {} & \| \cc{toNone()} \hfill⏎
-      \<Additional-Rule> & ::= \cc{or($\<Symbol>$)}\~\<Sequence> \hfill⏎
-      {} & \| \cc{orNone()} \hfill⏎
-      \<Sequence> & ::= ε \hfill⏎
-      {\~} & \| \cc{and($\<Symbol>)$} \hfill⏎
+      \<Conjunction> & ::= \<LHS>\~\<First-RHS>\~\<Additional-RHSs>\hfill⏎
+      \<LHS> & ::= \cc{derive($\<Variable>$)}\hfill⏎
+      \<First-RHS> & ::=	 \cc{to($\<Symbol>$)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{toNone()}\hfill⏎
+      \<Additional-RHSs> & ::= \<Additional-RHS>\~\<Additional-RHSs>\hfill⏎
+      {} & \| ε\hfill⏎
+      \<Additional-RHS> & ::= \cc{or($\<Symbol>$)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{orNone()}      \hfill⏎
+      \<Symbol-Sequence> & ::= ε \hfill⏎
+      {} & \| \cc{and($\<Symbol>$)}\~\<Symbol-Sequence>      \hfill⏎
       \<Symbol> & ::= \cc{Terminal} \hfill⏎
       {\~} & \| \cc{Variable}\hfill⏎
+      \<Variable> & ::= \cc{Variable} \hfill⏎
       \<Footer> & ::= \cc{go()}\hfill⏎
     \end{aligned}
   \end{Grammar}
-  \caption{A BNF grammar for BNF grammars}
+  \caption{A BNF grammar for defining BNF grammars}
   \label{Figure:BNF:BNF}
 \end{figure}
-
+	% this is not a formal BNF because <Symbol> and <Variable> are not defined in the Symbols set.
+\begin{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Note that this specification can only be approximate;
   the figure uses verbs as replacement to indentation,
-  and special symbols such as~$|$,~$::-$ and~$ε$
+  and special symbols such as~$|$,~$::-$ and~$ε$.
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{comment}
 
 From \cref{Figure:BNF:BNF} we learn 
   that a BNF has three components: header, body and footer.
   \begin{enumerate}
-    \item The sets of terminals and variables are defined in the header part, 
+    \item The sets of terminals and variables are defined in the header part.
     \item The body starts with a definition of the start symbol, followed by a list of derivation
   rules. 
 \item The footer is simply the verb \cc{go()} which instructs \SELF
@@ -75,13 +84,13 @@ Verb definitions are made in the code excerpt in
 \begin{figure}[H]
   \begin{JAVA}[style=code]
 enum BNFTerminals implements Terminal {
-  toNone, orNone,// No parameters
-  start,         // One parameter 
-  with,          // One parameter, overloaded 
-  or,and,to,     // One parameter (or more), overloaded, variadic 
+  toNone, orNone,go, // No parameters
+  start,derive            // One parameter 
+  with,             // One parameter, overloaded 
+  or,and,to        // One parameter (or more), overloaded, variadic 
   ;
 } \end{JAVA}
-  \caption{The nouns of \SELF}
+  \caption{The verbs of \SELF}
   \label{Figure:Verbs}
 \end{figure}
 
@@ -91,10 +100,11 @@ Noun definitions are made in the code excerpt in \cref{Figure:Nouns}.
   \begin{JAVA}[style=code]
 enum BNFVariables implements Variable {
   BNF, Header, Body, Footer,
-  Start, Terminals, Symbols,
-  Start, Rules, Additional_Rules,
-  First_Rule, Additional_Rule,
-  Sequence, Symbol;
+  Terminals, Variables, Start,
+  Conjunctions, Additional_Conjunctions,
+  Conjunction, LHS, First_RHS,Additional_RHSs,
+  Additional_RHS, Symbol_Sequence,
+  Symbol, Variable;
 }\end{JAVA}
   \caption{The nouns of \SELF}
   \label{Figure:Nouns}
@@ -117,35 +127,42 @@ new BNF()
   .derive(Header)
     .to(Variables).and(Terminals)
     .or(Terminals).and(Variables)
-  .derive(Terminals)
-    .to(with, Terminal.class)
   .derive(Variables)
-    .to(with, Variable.class)
+    .to(with, BNFVariables.class)
+  .derive(Terminals)
+    .to(with, BNFTerminals.class)
   .derive(Body)
-    .to(Start).and(Rules)
+    .to(Start).and(Conjunctions)
   .derive(Start)
     .to(start, Variable)
-  .derive(Rules)
-    .to(First_Rule).and(Additional_Rules)
-  .derive(Additional_Rules)
-    .to(Additional_Rules).and(Additional_Rule)
+  .derive(Conjunctions)
+    .to(Conjunction).and(Additional_Conjunctions)
+  .derive(Additional_Conjunctions)
+    .to(Conjunction).and(Additional_Conjunctions)
     .orNone()
-  .derive(First_Rule)
-    .to(to,Symbol).and(Sequence)
+  .derive(Conjunction)
+    .to(LHS).and(First_RHS).and(Additional_RHSs)
+  .derive(LHS)
+    .to(derive,Variable)
+  .derive(First_RHS)
+    .to(to,Symbol).and(Symbol_Sequence)
     .or(toNone)
-  .derive(Additional_Rule)
-    .to(or, Symbol).and(Sequence)
+  .derive(Additional_RHSs)
+    .to(Additional_RHS).and(Additional_RHSs)
+    .orNone()
+  .derive(Additional_RHS)
+    .to(or, Symbol).and(Symbol_Sequence)
     .or(orNone)
-  .derive(Sequence)
+  .derive(Symbol_Sequence)
     .toNone()
-    .or(and, Symbol).and(Sequence)
+    .or(and, Symbol).and(Symbol_Sequence)
   .derive(Symbol)
     .to(Terminal)
     .or(Variable)
-  .derive(Footer).
-     .to(go)
+  .derive(Footer)
+    .to(go)
 .go();\end{JAVA}
-  \caption{A BNF grammar for the toilette seat problem}
+  \caption{A BNF grammar for \SELF API}
   \label{Figure:BNF:fluent}
 \end{figure}
 
@@ -156,7 +173,7 @@ This fluent API sequence is a reflective BNF
   indeed, we may check that \cref{Figure:BNF:BNF} reiterates \cref{Figure:BNF:BNF}
   (with notational changes as appropriate). 
 
-\subsection{Parameterized Verbs}
+\subsection{Parametrized Verbs}
 Generally speaking, tokens come in two flavors:
 \begin{itemize}
   \item \emph{Monomorphic tokens} are tokens such as punctuation marks and
@@ -167,7 +184,7 @@ Generally speaking, tokens come in two flavors:
 \end{itemize}
 
 This distinction applies also to fluent APIs:
-Methods, or nouns, are the tokens, and a fluent APIs sequence consists of 
+Methods, or verbs, are the tokens, and a fluent APIs sequence consists of 
 method calls that come in two kinds: those take do not take parameters (such as \cc{toNone()} in \cref{Figure:BNF:fluent}, 
 and those that do (such as the call \cc{derives($\cdot$)} in the figure).
 

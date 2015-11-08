@@ -7,7 +7,7 @@ The imminent adoption of closures in \Java and \CC,
 A theoretical motivation for this work
   is the exploration of the computational
   expressiveness of such features.
-For example, it is known (see e.g.,~\cite{Gil:Gutterman:2003} that
+For example, it is known (see e.g.,~\cite{Gil:Gutterman:2003}) that
   \kk{template}s are Turing complete in the following precise sense:
 
 \begin{Theorem}
@@ -41,9 +41,8 @@ This objective is more precisely expressed in the following conjecture.
 \begin{Conjecture}
 \label{Conjecture:Gil:Levy}
 Let~$Σ$ be finite alphabet.
-Let~$p$ be a \emph{push-down automaton}, and let~$𝓛ₛ⊆Σ$ be
-the \emph{formal language} such that~$p$
-recognizes†{Consult, e.g.,~\cite{Automatim} for precise definitions of these terms.}.
+Let~$M$ be a \emph{push-down automaton(PDA)}, and let~$𝓛ₛ⊆Σ^*$ be
+the \emph{formal language} such that~$M$ recognizes.
 Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$
 such that
 \begin{quote}
@@ -56,24 +55,25 @@ such that
     \]
   \end{quote}
 \end{quote}
-Furthermore, program~$Jₛ$ can be effectively generated from~$p$.
+Furthermore, program~$Jₛ$ can be effectively generated from~$M$.
 \end{Conjecture}
 
 The proof shall be made with an algorithm that converts a
- a pushdown automaton~$p$ into a program~$Jₛ$.
+ a PDA ~$M$ into a program~$Jₛ$.
 I am currently in the process of implementing a program that
   does precisely that.
 This program, along with its API, other lesser components and
   some connecting tissue, are to be known as \SELF.
 
-The above discussion, formalism and conjecture may seem at sight to abstract
+The above discussion, formalism and conjecture may seem at sight too abstract
   and of little practical value.
 Repositioning perspective may shed a different light:
 \cref{Theorem:Gutterman} is important not only because it tells us
   that the question of termination of a \CC compiler is as difficult
-  the halting problem~\cite{Halting}, but also because it
-  is justifies the common belief that there in principle, there
-  is no limit to the power of template programming~\cite{Templates:find:6:refs}.
+  the halting problem~\cite{Turing:1936}, but also because it
+  justifies the common belief that is no limit to the power of 
+  template programming ~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
+  ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:1998,Garcia:Jarvi:2003}.
 
 In the fashion, \cref{Conjecture:Gil:Levy} has important
   implications to the emerging trend of employing fluent APIs

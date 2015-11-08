@@ -107,7 +107,7 @@ to the object in all states it may be in.
 
 A classical example of type-states is a file object: which can be in one of two
 states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
-permitted when the file is an ‟open” state.  In addition, method \cc{open()}
+permitted when the file is in an ‟open” state.  In addition, method \cc{open()}
 (respectively \cc{close()}) can only be applied if the object is in the
 ‟closed” (respectively, ‟open”) state.
 
@@ -119,14 +119,16 @@ Type-state pose two main challenges to software engineering
   \item \emph{\textbf{Identification.}} 
     In the typical case, type-state 
         receive little to no mention at all in the documentation.
-    The identification problem is find the
-    type state implicit in existing code: Given an implementation of a class
+    The identification problem is to find the implicit 
+    type state in existing code: Given an implementation of a class
     (or more generally of a software framework), 
     \emph{determine} which sequences of method calls are valid and which violate the 
     type state hidden in the code.
   \item \emph{\textbf{Maintenance and Enforcement.}}
     Having identified the type-states, the challenge is in automatically flagging out 
-      use of the API that is non-conforming with the type-state, furthermore, with the 
+      use of the API % illegal calls
+      that is non-conforming % that don't conform
+      with the type-state, furthermore, with the 
       evolution of an API, the challenge is in updating the type-state information, 
       and the type checking of code of clients. 
 \end{enumerate}
