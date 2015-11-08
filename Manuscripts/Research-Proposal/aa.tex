@@ -12,19 +12,22 @@ For example, it is known (see e.g.,~\cite{Gil:Gutterman:2003} that
 
 \begin{Theorem}
   \label{Theorem:Gutterman}
-For every Turing machine~$m$†{We tacitly assume that a Turing machine
-  encodes in it its input}, there exists a \CC program,~$Cₘ$ such that
-\begin{quote}
-  compilation of~$Cₘ$ of terminates if and only if~$m$ halts.
-\end{quote}
-Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
-  effective~$≈$‟~\emph{there is time
+  For every Turing machine~$m$†{We tacitly assume that a Turing machine
+    encodes in it its input}, there exists a \CC program,~$Cₘ$ such that
+  \begin{quote}
+    compilation of~$Cₘ$ of terminates if and only if
+    \begin{quote}
+      Turing-machine~$m$ halts.
+    \end{quote}
+  \end{quote}
+  Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
+    effective~$≈$‟~\emph{there is time
   bounded algorithm for carrying out the task}”.} generated from~$m$.
 \end{Theorem}
 
 Intuitively, the proof relies on the fact that \kk{template}s
   feature recursive invocation and conditionals (in the form of
-  ‟\emph{template initialization}”
+  ‟\emph{template specialization}”.
 
 In the same fashion, it is mundane to make the judgment that
   \Java's generics are not Turing-complete: all recursive calls
@@ -38,28 +41,42 @@ This objective is more precisely expressed in the following conjecture.
 \begin{Conjecture}
 \label{Conjecture:Gil:Levy}
 Let~$Σ$ be finite alphabet.
-  Let~$s$ be a \emph{stack automaton}, and let~$𝓛=𝓛(s)⊆Σ$ be
-  the \emph{formal language} such that~$s$ recognizes†{Consult, e.g.,~\cite{Automatim} for precise definitions of these terms}.
+Let~$p$ be a \emph{push-down automaton}, and let~$𝓛ₛ⊆Σ$ be
+the \emph{formal language} such that~$p$
+recognizes†{Consult, e.g.,~\cite{Automatim} for precise definitions of these terms.}.
 Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$
-such that 
+such that
 \begin{quote}
   if a string~$α∈Σ$ is
-  placed at~$ℓ$, then~$Jₛ$ type checks, if an only if,~$α∈𝓛$.
+  placed at location~$ℓ$ in~$Jₛ$ then
+  \begin{quote}
+    program~$Jₛ$ type checks, if an only if
+    \[
+      α∈𝓛ₛ.
+    \]
+  \end{quote}
 \end{quote}
-Furthermore, program~$Jₛ$ can be effectively generated from~$s$.
+Furthermore, program~$Jₛ$ can be effectively generated from~$p$.
 \end{Conjecture}
 
-The above discussion, formalism and conjecture may seem at first sight to be too abstract
-  to be of any practical value.
-Repositioning our perspective sheds another light on the topic.
+The proof shall be made with an algorithm that converts a
+ a pushdown automaton~$p$ into a program~$Jₛ$.
+I am currently in the process of implementing a program that
+  does precisely that.
+This program, along with its API, other lesser components and
+  some connecting tissue, are to be known as \SELF.
+
+The above discussion, formalism and conjecture may seem at sight to abstract
+  and of little practical value.
+Repositioning perspective may shed a different light:
 \cref{Theorem:Gutterman} is important not only because it tells us
   that the question of termination of a \CC compiler is as difficult
   the halting problem~\cite{Halting}, but also because it
   is justifies the common belief that there in principle, there
   is no limit to the power of template programming~\cite{Templates:find:6:refs}.
 
-Similarly, \cref{Conjecture:Gil:Levy} has important
+In the fashion, \cref{Conjecture:Gil:Levy} has important
   implications to the emerging trend of employing fluent APIs
   to make complex software systems more accessible.
-My thesis is that one can employ the conjecture for 
+My thesis is that one can employ the conjecture for
   automatic generation of very rich such APIs.

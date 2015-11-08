@@ -1,4 +1,16 @@
-\title{\Huge \SELF---Fluent API for \textsc{Java} with Bottom-Up and Top-Down Parsing} 
+\title
+{%
+\begin{flushright}
+  \scriptsize\bfseries
+  Software design is language design. \\
+    (And vice versa.) \\
+  \footnotesize\mdseries\itshape
+   a programmers' proverb
+\end{flushright}
+  \Huge \SELF \\ 
+  \huge \itshape \textbf Fluent \textbf API for \textsc{\textbf Java} \\
+  \LARGE (\textbf Inspired by the \textbf Theory of \textbf Automata)
+} 
 \documentclass[10pt,twocolumn]{article}
 
 \usepackage{\jobname}
@@ -7,11 +19,15 @@
 	Department of Computer Science\\
 	Technion---Israel Institute of Technology\\
 	\texttt{\small \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}}}
-\date{\small Advisor: Prof.\ Yossi Gil}
+\date{
+  Research Proposal\\
+\small Advised by Prof.\ Yossi Gil
+}
 
 \begin{document}
+
 \maketitle
-  
+
 \begin{abstract}
 	\input{abstract} 
 \end{abstract}
@@ -19,14 +35,29 @@
 \section{Introduction}
 \input{aa}
 
+\paragraph{Outline.} 
+The remainder of this document is organized as follows.
+\Cref{Section:terminology}, intended mostly to the general, non software engineering, 
+  computer science audience is a brief reminder of pertinent terminology.
+This terminology is then used in \cref{Section:proposal} for 
+  an introductory exposition of \SELF.
+The main ideas behind the bootstrapping definition of \SELF 
+  are revealed in \Cref{Section:bootstrapping}. 
+\Cref{Section:zz} concludes. 
+
 \section{Terminology}
+\label{Section:terminology}
 \input{terminology}
 
-\section{This proposal}
+\section{This Proposal}
 \label{Section:proposal}
 \input{proposal}
 
-\section{Bootstrapping}
+\section{Bootstrapping Definition}
+\label{Section:boostrapping}
+\input{bootstrapping}
+
+\section{Conclusion}
 \label{Section:zz}
 \input{zz}
 
