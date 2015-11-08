@@ -17,25 +17,26 @@ It uses the notation introduced in \cref{Figure:BNF}
       {}                         & \| \<Terminals> \~\<Variables> \hfill⏎
       \<Variables>               & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
       \<Terminals>               & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body>                    & ::= \<Start> \~\<Conjunctions> \hfill⏎
-      \<Start>                   & ::= \cc{start($\<Variable>$)} \hfill⏎
-      \<Conjunctions>            & ::= \<Conjunction>\~\<Additional-Conjunctions>\hfill⏎
-      \<Additional-Conjunctions> & ::= \<Conjunction>\~\<Additional-Conjunctions>\hfill⏎
-      {}                         & \| ε \hfill⏎
-      \<Conjunction>             & ::= \<LHS>\~\<First-RHS>\~\<Additional-RHSs>\hfill⏎
-      \<LHS>                     & ::= \cc{derive($\<Variable>$)}\hfill⏎
-      \<First-RHS>               & ::= \cc{to($\<Symbol>$)}\~\<Symbol-Sequence>\hfill⏎
+      \<Body>                    & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
+      \<Rules>                   & ::= \<Rule> \~ \<Rules>\hfill⏎
+      {}                         & \| \<Rule> \hfill⏎
+      \<Rule>                    & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
+      \<Conjunctions>            & ::= \<First-Conjunction>\~\<Additional-Conjunctions>\hfill⏎
+      \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{toNone()}\hfill⏎
-      \<Additional-RHSs>         & ::= \<Additional-RHS>\~\<Additional-RHSs>\hfill⏎
+      \<Additional-Conjunctions> & ::= \<Additional-Conjunction>\~\<Additional-Conjunctions>\hfill⏎
       {}                         & \| ε\hfill⏎
-      \<Additional-RHS>          & ::= \cc{or($\<Symbol>$)}\~\<Symbol-Sequence>\hfill⏎
+      \<Additional-Conjunction>  & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{orNone()} \hfill⏎
       \<Symbol-Sequence>         & ::= ε \hfill⏎
-      {}                         & \| \cc{and($\<Symbol>$)}\~\<Symbol-Sequence> \hfill⏎
-      \<Symbol>                  & ::= \cc{Terminal} \hfill⏎
-      {}                         & \| \<Variable>\hfill⏎
+      {}                         & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
+      \<Symbol>                  & ::= \cc{Variable} \hfill⏎
+      {}                         & \| \<Verb>\hfill⏎
+      {}                         & \| \<Verb> \cc{,} \<Noun> \hfill⏎
+      \<Noun>                    & ::= \<Variable> \hfill⏎
+      {}                         & \| \<Existing-Class> \hfill⏎
       \<Variable>                & ::= \cc{Variable} \hfill⏎
-      {}                         & \| \cc{\<Identifier>.\kk{class}}\hfill⏎
       \<Footer>                  & ::= \cc{go()}\hfill⏎
     \end{aligned}
   \end{Grammar}
@@ -84,10 +85,10 @@ Verb definitions are made in the code excerpt in
 \begin{figure}[h]
   \begin{JAVA}[style=code]
 enum BNFTerminals implements Terminal {¢¢
-  toNone, orNone,go, // No parameters
-  start,derive // One parameter
-  with, // One parameter, overloaded
-  or,and,to // One parameter (or more), overloaded, variadic
+  toNone,orNone,go,// No parameters
+  start,derive     // One parameter
+  with,            // One parameter, overloaded
+  or,and,to,       // One parameter (or more), overloaded, variadic
   ;
 }\end{JAVA}
   \caption{The verbs of \Self}
