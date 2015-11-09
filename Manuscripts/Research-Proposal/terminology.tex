@@ -112,8 +112,8 @@ permitted when the file is in an ‟open” state.  In addition, method \cc{open
 ‟closed” (respectively, ‟open”) state.
 
 Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study~\cite{Search:For:Aldrich} estimates 
-  that about 70％ of \Java classes feature type states.
+In fact, a recent study~\cite{Beckman:2011} estimates 
+  that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
 Type-state pose two main challenges to software engineering 
 \begin{enumerate}
   \item \emph{\textbf{Identification.}} 
@@ -126,8 +126,7 @@ Type-state pose two main challenges to software engineering
     type state hidden in the code.
   \item \emph{\textbf{Maintenance and Enforcement.}}
     Having identified the type-states, the challenge is in automatically flagging out 
-      use of the API % illegal calls
-      that is non-conforming % that don't conform
+      illegal sequence of calls that does not conform
       with the type-state, furthermore, with the 
       evolution of an API, the challenge is in updating the type-state information, 
       and the type checking of code of clients. 
