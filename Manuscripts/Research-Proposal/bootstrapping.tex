@@ -19,15 +19,15 @@ It uses the notation introduced in \cref{Figure:BNF}
       \<Terminals>               & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
       \<Body>                    & ::= \<Start> \~\<Rules> \hfill⏎
       \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
-      \<Rules>                   & ::= \<Rule> \~ \<Rules>\hfill⏎
+      \<Rules>                   & ::= \<Rule> \~\<Rules>\hfill⏎
       {}                         & \| \<Rule> \hfill⏎
       \<Rule>                    & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions>            & ::= \<First-Conjunction>\~\<Additional-Conjunctions>\hfill⏎
+      \<Conjunctions>            & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
       \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{toNone()}\hfill⏎
-      \<Additional-Conjunctions> & ::= \<Additional-Conjunction>\~\<Additional-Conjunctions>\hfill⏎
+      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
       {}                         & \| ε\hfill⏎
-      \<Additional-Conjunction>  & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      \<Extra-Conjunction>  & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{orNone()} \hfill⏎
       \<Symbol-Sequence>         & ::= ε \hfill⏎
       {}                         & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
@@ -82,7 +82,7 @@ API chain, the verbs and nouns must be defined.
 Verb definitions are made in the code excerpt in
 \cref{Figure:Verbs}.
 
-\begin{figure}[h]
+\begin{figure}[htb]
   \begin{JAVA}[style=code]
 enum BNFTerminals implements Terminal {¢¢
   toNone,orNone,go,// No parameters
@@ -99,15 +99,14 @@ Each of the enumerands in the figure is destined to be a
 
 Noun definitions are made in the code excerpt in \cref{Figure:Nouns}.
 
-\begin{figure}[h]
+\begin{figure}[htb]
   \begin{JAVA}[style=code]
 enum BNFVariables implements Variable {¢¢
   BNF, Header, Body, Footer,
   Terminals, Variables, Start,
-  Conjunctions, Additional_Conjunctions,
-  Conjunction, LHS, First_RHS,Additional_RHSs,
-  Additional_RHS, Symbol_Sequence,
-  Symbol, Variable;
+  Rules,Rule,Conjunctions, Extra_Conjunctions,
+  First_Conjunction, Extra_Conjunction, Symbol_Sequence,
+  Symbol, Variable, Noun;
 }\end{JAVA}
   \caption{The nouns of \Self}
   \label{Figure:Nouns}
@@ -120,7 +119,7 @@ enumerations \cc{BNFTerminals} and
   \cc{BNFVariables}
   are now employed in \cref{Figure:BNF:fluent}.
 
-\begin{figure}[h]
+\begin{figure}[htb]
   \begin{JAVA}[style=numbered]
 new BNF()
   ¢¢.with(BNFTerminals.class)
@@ -132,36 +131,33 @@ new BNF()
     ¢¢.to(Variables).and(Terminals)
     ¢¢.or(Terminals).and(Variables)
   ¢¢.derive(Variables)
-    ¢¢.to(with, BNFVariables.class)
+    ¢¢.to(with, Variable.class)
   ¢¢.derive(Terminals)
-    ¢¢.to(with, BNFTerminals.class)
+    ¢¢.to(with, Terminal.class)
   ¢¢.derive(Body)
-    ¢¢.to(Start).and(Conjunctions)
+    ¢¢.to(Start).and(Rules)
   ¢¢.derive(Start)
     ¢¢.to(start, Variable)
+  ¢¢.derive(Rules)
+    ¢¢.to(Rule).and(Rules)
+    ¢¢.or(Rule)
   ¢¢.derive(Conjunctions)
-    ¢¢.to(Conjunction).and(Additional_Conjunctions)
-  ¢¢.derive(Additional_Conjunctions)
-    ¢¢.to(Conjunction).and(Additional_Conjunctions)
-    ¢¢.orNone()
-  ¢¢.derive(Conjunction)
-    ¢¢.to(LHS).and(First_RHS).and(Additional_RHSs)
-  ¢¢.derive(LHS)
-    ¢¢.to(derive,Variable)
-  ¢¢.derive(First_RHS)
+    ¢¢.to(First_Conjunction).and(Extra_Conjunctions)
+  ¢¢.derive(First_Conjunction)
     ¢¢.to(to,Symbol).and(Symbol_Sequence)
     ¢¢.or(toNone)
-  ¢¢.derive(Additional_RHSs)
-    ¢¢.to(Additional_RHS).and(Additional_RHSs)
+  ¢¢.derive(Extra_Conjunctions)
+    ¢¢.to(Extra_Conjunction).and(Extra_Conjunctions)
     ¢¢.orNone()
-  ¢¢.derive(Additional_RHS)
-    ¢¢.to(or, Symbol).and(Symbol_Sequence)
-    ¢¢.or(orNone)
+  ¢¢.derive(Extra_Conjunction)
+    ¢¢.to(or,Symbol).and(Symbol_Sequence)
+    ¢¢.orNone()
   ¢¢.derive(Symbol_Sequence)
     ¢¢.toNone()
     ¢¢.or(and, Symbol).and(Symbol_Sequence)
   ¢¢.derive(Symbol)
-    ¢¢.to(Terminal)
+    ¢¢.to(Verb)
+    ¢¢.or(Verb,Noun)
     ¢¢.or(Variable)
   ¢¢.derive(Footer)
     ¢¢.to(go)
@@ -175,7 +171,7 @@ The code excerpt in the figure is a rather long
   sequence of method calls.
 This fluent API sequence is a reflective BNF
   of the \Self API;
-  indeed, we may check that \cref{Figure:BNF:BNF} reiterates \cref{Figure:BNF:BNF}
+  indeed, we may check that \cref{Figure:BNF:fluent} reiterates \cref{Figure:BNF:BNF}
   (with notational changes as appropriate).
 
 \subsection{Parametrized Verbs}

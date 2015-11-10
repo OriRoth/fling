@@ -4,11 +4,11 @@ as in the \nth{3} to \nth{6} line of the following \Java function:
 \begin{Code}{JAVA}{Method chaining}
 String time(int hours, int minutes, int seconds) {¢¢
   StringBuilder sb = new StringBuilder();
-  return sb
-    ¢¢.append(hours).append(':')
-    ¢¢.append(minutes).append(':')
-    ¢¢.append(seconds)
-    .toString();
+    return sb
+      ¢¢.append(hours).append(':')
+      ¢¢.append(minutes).append(':')
+      ¢¢.append(seconds)
+      ¢¢.toString();
 }
 \end{Code}
 Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilder} in the above,
