@@ -18,7 +18,9 @@ import org.jgrapht.EdgeFactory;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
+import org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat;
 import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.generators.GeneratorsUtils;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
@@ -33,7 +35,7 @@ public class Main {
   private static JGraphModelAdapter<State, LabeledEdge> model;
 
   public static void main(final String[] args) {
-    typeSpec(BalancedParenthesis.buildBNF());
+    typeSpec(AutomatonCycles.buildBNF());
   }
   private static void typeSpec(final LRParser parser) {
     lrAutomatonVisualisation(parser);
@@ -44,7 +46,7 @@ public class Main {
     final List<TypeSpec> types = new ArrayList<>();
     parser.getStates().forEach(s -> {
       types.add(generateClass(tam, s, s.name));
-      types.add(generateClass(tam, s, s.name + "\u02B9"));
+//      types.add(generateClass(tam, s, s.name + "\u02B9"));
     });
     // for (TypeSpec typeSpec : types)
     // System.out.println(typeSpec);

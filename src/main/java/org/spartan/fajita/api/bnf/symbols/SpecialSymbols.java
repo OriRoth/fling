@@ -1,15 +1,12 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public class SpecialSymbols {
-  public static final Terminal epsilon = new Terminal() {
+  public static final Symbol epsilon = new Symbol() {
     @Override public String name() {
       return "\u03B5"; // epsilon symbol
     }
     @Override public String toString() {
       return name();
-    }
-    @Override public Type type() {
-      return Type.notype;
     }
     @Override public String methodSignatureString() {
       return name();

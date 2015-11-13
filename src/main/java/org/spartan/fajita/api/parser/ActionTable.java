@@ -73,7 +73,9 @@ public class ActionTable {
   }
 
   public static class Reduce extends Action {
-    public Reduce() {
+    public Item item;
+    public Reduce(Item item) {
+      this.item = item;
     }
     @Override public String toString() {
       return "red";

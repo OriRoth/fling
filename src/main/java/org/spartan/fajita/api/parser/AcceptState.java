@@ -7,7 +7,7 @@ import org.spartan.fajita.api.bnf.BNF;
 public final class AcceptState extends State {
 
     protected AcceptState(final BNF bnf, final int index) {
-	super(new HashSet<>(), bnf, index);
+	super(new HashSet<>(), bnf, -1);
     }
 
     @Override
@@ -19,4 +19,6 @@ public final class AcceptState extends State {
     public boolean equals(final Object obj) {
 	return getClass().equals(obj.getClass());
     }
+    
+    
 }

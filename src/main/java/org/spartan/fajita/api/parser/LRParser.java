@@ -87,7 +87,7 @@ public class LRParser {
       moreChanges = false;
       for (DerivationRule dRule : bnf.getRules())
         for (int i = 0; i < dRule.getChildren().size(); i++) {
-          if (dRule.getChildren().get(i).isTerminal())
+          if (!dRule.getChildren().get(i).isNonTerminal())
             continue;
           Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
           Set<Terminal> ntFollowSet = $.get(dRule.getChildren().get(i));
@@ -138,10 +138,11 @@ public class LRParser {
   }
   private void addShiftAction(final State state, final Item item) {
     Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
-    actionTable.set(state, nextTerminal, new Shift(state.goTo(nextTerminal)));
+    State shift = state.goTo(nextTerminal);
+    actionTable.set(state, nextTerminal, new Shift(shift));
   }
   private void addReduceAction(final State state, final Item item) {
-    actionTable.set(state, item.lookahead, new Reduce());
+    actionTable.set(state, item.lookahead, new Reduce(item));
   }
   public State getInitialState() {
     return getStates().get(0);
