@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +25,12 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.generators.typeArguments.StateTypeData.ContextedState;
-import org.spartan.fajita.api.parser.Item;
-import org.spartan.fajita.api.parser.LRParser;
-import org.spartan.fajita.api.parser.State;
 import org.spartan.fajita.api.parser.ActionTable.Action;
 import org.spartan.fajita.api.parser.ActionTable.Reduce;
 import org.spartan.fajita.api.parser.ActionTable.Shift;
+import org.spartan.fajita.api.parser.Item;
+import org.spartan.fajita.api.parser.LRParser;
+import org.spartan.fajita.api.parser.State;
 
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -94,7 +92,7 @@ public class TypeArgumentManager {
     TopologicalOrderIterator<ContextedState, DefaultEdge> iter = new TopologicalOrderIterator<>(typeDatum.dependencies);
     iter.forEachRemaining(s -> calculateBaseType(s, contexedInstantiations));
   }
-  private void calculateBaseType(ContextedState s, Map<State, TypeName> contexedInstantiations) {
+  private void calculateBaseType(final ContextedState s, final Map<State, TypeName> contexedInstantiations) {
     StateTypeData stateData = statesTypeData.get(s);
     StateTypeData nextStateData = statesTypeData.get(s.goTo(symb));
     TypeName $ = null;
@@ -127,7 +125,7 @@ public class TypeArgumentManager {
         $[index++] = stateData.getFormalParameter(corresponding);
       else {
         // generated types
-        assert (inheritedData.depth == 1);
+        assert(inheritedData.depth == 1);
         State afterReduce = stateData.state.goTo(inheritedData.lhs).goTo(inheritedData.lookahead);
         TypeName[] afterReduceParameters = calculateDoubleShiftType();
         $[index++] = ParameterizedTypeName.get(type(afterReduce.name), afterReduceParameters);
@@ -135,7 +133,6 @@ public class TypeArgumentManager {
     }
     return $;
   }
-  
   private DirectedGraph<ContextedState, DefaultEdge> generateDependenciesGraph() {
     final DefaultDirectedGraph<ContextedState, DefaultEdge> $ = new DefaultDirectedGraph<>(DefaultEdge.class);
     for (State q_B : parser.getStates())
@@ -146,7 +143,7 @@ public class TypeArgumentManager {
       throw new IllegalArgumentException("Cycles are not handled yet, found on " + q_B.name + ":" + $);
     return $;
   }
-  private void addStateDependencies(State q_B, final DefaultDirectedGraph<ContextedState, DefaultEdge> g) {
+  private void addStateDependencies(final State q_B, final DefaultDirectedGraph<ContextedState, DefaultEdge> g) {
     Set<Item> items = q_B.getItems().stream()
         .filter(i -> i.dotIndex == 0 && i.lookahead != SpecialSymbols.$ && i.rule.lhs != SpecialSymbols.augmentedStartSymbol)
         .collect(Collectors.toSet());
@@ -159,6 +156,7 @@ public class TypeArgumentManager {
       List<Symbol> rhs = i.rule.getChildren();
       /************************************
        * if (rhs.size() == 0) ;// epsilon rule , what to do?
+       * rhs.add(i.lookahead);
        ***********************************/
       Symbol X = rhs.get(0);
       ContextedState q_X$B = new ContextedState(q_B.goTo(X), q_B, X);
@@ -185,12 +183,13 @@ public class TypeArgumentManager {
        */
     });
   }
-  private static void addEdge(DirectedGraph<ContextedState, DefaultEdge> g, ContextedState src, ContextedState dst) {
+  private static void addEdge(final DirectedGraph<ContextedState, DefaultEdge> g, final ContextedState src,
+      final ContextedState dst) {
     g.addVertex(src);
     g.addVertex(dst);
     g.addEdge(src, dst);
   }
-  private Optional<ContextedState> find(State q_B, NonTerminal A, Terminal b) {
+  private Optional<ContextedState> find(final State q_B, final NonTerminal A, final Terminal b) {
     Action action = parser.actionTable(q_B.goTo(A), b);
     if (action.isShift())
       return Optional.of(new ContextedState(((Shift) action).state, q_B, A, b));
@@ -204,7 +203,7 @@ public class TypeArgumentManager {
       return find(q_B, C, b);
     return find(q_B.goTo(A), C, b);
   }
-  private Optional<ContextedState> find(State q_B, Terminal b) {
+  private Optional<ContextedState> find(final State q_B, final Terminal b) {
     Action action = parser.actionTable(q_B, b);
     if (action.isShift())
       return Optional.of(new ContextedState(((Shift) action).state, q_B, b));
@@ -216,22 +215,22 @@ public class TypeArgumentManager {
       return Optional.empty();
     return find(q_B, C, b);
   }
-  
+
   private static class ContextedState {
     public final State context;
     public final State state;
     public final Symbol[] transitions;
 
-    public ContextedState(State actual, State context, Symbol... transitions) {
-      this.state = actual;
+    public ContextedState(final State actual, final State context, final Symbol... transitions) {
+      state = actual;
       this.context = context;
       this.transitions = transitions;
     }
     @Override public String toString() {
-      StringBuilder sb = new StringBuilder("Q^{"+context.index+ "}_{");
+      StringBuilder sb = new StringBuilder("Q^{" + context.index + "}_{");
       for (Symbol symb : transitions)
         sb.append(symb.name());
-      sb.append("}\\left(" + state.index+"\\right)");
+      sb.append("}\\left(" + state.index + "\\right)");
       return sb.toString();
     }
     @Override public int hashCode() {
@@ -242,7 +241,7 @@ public class TypeArgumentManager {
       result = prime * result + Arrays.hashCode(transitions);
       return result;
     }
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
