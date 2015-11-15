@@ -1,1 +1,240 @@
-Please write the proof here.
+\begin{Definition}[Deterministinc Pushdown Automata]
+  A \emph{deterministic pushdown autoamton} (PDA)~$M$ is an 8-tuple
+  \[
+    M =⟨Q,Σ,Γ, q₀,⊥, A,δ,η⟩
+  \]
+  where~$Q$ is the a finite set of
+  \emph{the states of~$M$},~$Σ$ is a finite
+  \emph{set of input symbols},~$Γ$ is a finite
+  \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
+  is a \emph{special symobl designating the bottom of the stack}
+  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
+  the \emph{partial functions of state transition}
+  \[
+    \begin{array}{ccc}
+      δ: & Q⨉Σ⨉Γ & → & Q⨉Γ^*⏎
+      η: & Q⨉Γ & → & Q⨉Γ^*,⏎
+    \end{array}
+  \]
+\end{Definition}
+
+\begin{Definition}[Simplified Pushdown Automata]
+  A \emph{simplified pushdown autoamton} (SPDA)~$M$ of order~$k$ is a 7-tuple
+  \[
+    M =⟨Q,Σ,Γ,q₀,⊥, A,δ⟩
+  \]
+  where, as before,~$Q$ is the a finite set of
+  \emph{the states of~$M$},~$Σ$ is a finite
+  \emph{set of input symbols},~$Γ$ is a finite
+  \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
+  is a \emph{special symobl designating the bottom of the stack}
+  and~$A⊆Q$ is the \emph{set of accepting states}.
+  The signature of function~$δ$, the \emph{generalized partial transition function}
+  of an SPDA of order~$k$, is:
+  \[
+      δ: Q⨉Σ⨉Γ^k → Q⨉Γ^*⏎
+  \]
+\end{Definition}
+
+\begin{Theorem}
+  \label{Theorem:SPDA}
+  For every SPDA~$M$ there exists a set~$J_M$ of \Java type declarations, such that
+    I do not know what to so say here yet.
+\end{Theorem}
+
+The remainder of this section is dedicated to the proof of \cref{Theorem:SPDA}.
+In particular, we describe how~$J_M$ is constructed from the
+  specification of~$M$.
+
+First is the stack.
+\begin{JAVA}
+class S<T extends S> {
+}
+\end{JAVA}
+For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
+\begin{JAVA}
+class ¢$ξ$¢ <T extends S> extends S<T>{
+  // ¢…¢
+}
+\end{JAVA}
+In addition, we define a special class~$⊥$ that designates the bottom of the stack.
+\begin{JAVA}
+class ¢$⊥$¢ extends S<¢$⊥$¢> {
+  // ¢…¢
+}
+\end{JAVA}
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,~$ξ₁,ξ₂∈Q$
+is represented by the type
+\begin{JAVA}
+  ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
+\end{JAVA}
+
+\subsubsection{Building the automaton's dependency graph}
+
+\begin{description}
+  \item [Input:] LR(1) parser.
+  \item [Output:] A dependency graph defining the dependencies between
+  instantiations of state classes
+  \item [Notations:]
+\end{description}
+\begin{itemize}
+  \item~$Q^B$ a state that we are look at the instantiation from his context.
+  \item Let~$σ$ be a transition from~$Q^B$ then~$Q_σ^B$
+        is the instantiation of~$action(Q_B,σ)$ in context
+        of~$Q^B$
+  \item Let~$σ₂$be a transition from~$Q_{σ₁}$ then~$Q_{σ₁σ₂}$
+        is the instantiation of~$action(Q_{σ₁}^B,σ₂)$
+        in context of~$Q^B$
+  \item the symbols a,b,c,d will be terminals (not including \$)
+  \item the symbols A,B,C,D will be nonterminals(not including S').
+  \item the symbols X,Y,Z,W will be either terminals or nonterminals.
+        \item~$α,β,γ$ will be strings of grammar symbols
+\end{itemize}
+\begin{description}
+  \item [Method:]
+  \begin{enumerate}
+    \item~$V=∅$,$E=∅$
+    \item For each~$Q^B∈Parser$
+          \begin{enumerate}
+            \item~$∀[A\rightarrowε·,b]∈Q^B$
+            \begin{enumerate}
+              \item~$V=V\bigcup❴ Q_{Ab}^B,Q_{b}^B❵~$
+              \item~$E=E\bigcup❴ (Q_{Ab}^B,Q_{b}^B)❵~$
+            \end{enumerate}
+            \item~$∀[A→·Xα,b]∈Q^B$
+            \begin{enumerate}
+              \item~$Q_{Ab}^B=Find(Q^B,A,b)$
+              \item If~$Q_{Ab}^B≠null$ :
+                    \begin{enumerate}
+                      \item~$V=V\bigcup❴ Q_{Ab}^B,Q_{X}^B❵~$
+                      \item~$E=E\bigcup❴ (Q_{Ab}^B,Q_{X}^B)❵~$
+                    \end{enumerate}
+            \end{enumerate}
+            \item~$∀[A→·Cd,b]∈Q^B$
+            \begin{enumerate}
+              \item~$Q_{Ab}^B=Find(Q^B,A,b)$
+              \item If~$Q_{Ab}^B≠null$ :
+                    \begin{enumerate}
+                      \item~$Q_{Cd}^B=Find(Q^B,C,d)$
+                      \item~$V=V\bigcup❴ Q_{Ab}^B,Q_{Cd}^B❵~$
+                      \item~$E=E\bigcup❴ (Q_{Ab}^B,Q_{Cd}^B)❵~$
+                    \end{enumerate}
+            \end{enumerate}
+            \item~$∀Q_{Ab}^B∈V$
+            \begin{enumerate}
+              \item~$V=V\bigcup❴ Q_{A}^B,Q_{b}^{A}❵~$
+              \item~$E=E\bigcup❴ (Q_{A}^B,Q_{Ab}^B)❵~$
+              \item~$Q_{b}^{A}=Find(Q^{A},b)$
+              \item~$E=E\bigcup❴ (Q_{b}^{A},Q_{Ab}^B)❵~$
+            \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  /{*}{*}
+  Returns the state that will consume b, or null, if it cannot be determined.
+  {*}{*}/
+  \begin{description}
+    \item [Function]~$Find(Q^B,A,b)$ returns ContexedState
+  \end{description}
+  \begin{enumerate}
+    \item If~$action(Q_{A}^B,b)=sᵢ$
+          \begin{enumerate}
+            \item return~$Qᵢ$
+          \end{enumerate}
+    \item else //$Q_{A}^B$ reduces by rule~$C\rightarrowα·,b$
+          \begin{enumerate}
+            \item If~$|α|>1$
+                  \begin{enumerate}
+                    \item return null //‟Inherited TA”
+                  \end{enumerate}
+            \item else if~$|α|=1$ ($α=A$ )
+                  \begin{enumerate}
+                    \item return~$Find(Q^B,C,b)$
+                  \end{enumerate}
+            \item else //$α=ε$
+                  \begin{enumerate}
+                    \item return~$Find(Q^{A},C,b)$
+                  \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  \begin{description}
+    \item [Function]~$Find(Q^B,b)$ returns ContexedState
+  \end{description}
+  \begin{enumerate}
+    \item If~$action(Q^B,b)=sᵢ$
+          \begin{enumerate}
+            \item return~$Qᵢ$
+          \end{enumerate}
+    \item else //$Q^B$ reduces by rule~$C\rightarrowα·,b$
+          \begin{enumerate}
+            \item If~$|α|>0$
+                  \begin{enumerate}
+                    \item return null //‟Inherited TA”
+                  \end{enumerate}
+            \item else //$α=ε$
+                  \begin{enumerate}
+                    \item return~$Find(Q^B,C,b)$
+                  \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  \item [Complexity:]
+  \begin{itemize}
+    \item~$V=O()$
+    \item~$E=O()$
+  \end{itemize}
+\end{description}
+\subsubsection*{Instantiating states}
+\begin{description}
+  \item [Input:] A dependency graph~$G=(V,E)$ for state~$Q_B$.
+  \item [Output:] An instantiated class for s.
+  \item [Method:]
+  \begin{enumerate}
+    \item Handle dependency cycles.
+    \item Run a topoligical sort on~$G$ ( we now know~$G$ is a~$DAG$)
+    \item for each~$S$ in topological order:
+          \begin{enumerate}
+            \item If~$S=Q_{X}^B$
+                  \begin{enumerate}
+                    \item~$FillSingleTransition(Q_{X}^B)$
+                  \end{enumerate}
+            \item Else if~$S=Q_{XY}^B$
+                  \begin{enumerate}
+                    \item~$FillDoubleTransition(Q_{XY}^B)$
+                  \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  \begin{description}
+    \item [Function]~$FillSingleTransition(Q_{X}^B):$
+    \begin{enumerate}
+      \item For each triplet~$(A,i,a)∈Q_{X}^B$
+            \begin{enumerate}
+              \item If~$(A,i-1,a)∈Q^B$ then //inherited TA(Type Argument)
+                    \begin{enumerate}
+                      \item~$Q_{X}^B[(A,i,a)]:=Q^B[(A,i-1,a)]$
+                    \end{enumerate}
+              \item Else // synthesized TA
+                    \begin{enumerate}
+                      \item~$Q_{X}^B[(A,i,a)]:=Q_{Aa}^B$
+                    \end{enumerate}
+            \end{enumerate}
+    \end{enumerate}
+    /{*}{*}
+    merges~$Q^{X}_{Y},Q^B_{X}$ into an extended instantiation of~$Q_{XY}^B$
+    {*}{*}/
+    \item [Function]~$FillDoubleTransition(Q_{XY}^B)$:
+    \begin{enumerate}
+      \item For each triplet~$(A,i,a)∈Q_{XY}^B$
+            \begin{enumerate}
+              \item If~$((A,i-1,a)∈Q^B_{X})∧((A,i-2,a)\notin Q^B)$ //Inherited TA or Synthesized from~$Q^B$
+                    \begin{enumerate}
+                      \item~$Q_{XY}^B[(A,i,a)]:=Q_{X}^B[(A,i-1,a)]$
+                    \end{enumerate}
+              \item Else // Synthesized from~$Q_{X}^B$
+                    \begin{enumerate}
+                      \item~$Q_{XY}^B[(A,i,a)]:=Q^{X}_{Y}[(A,i-1,a)]$
+                    \end{enumerate}
+            \end{enumerate}
+    \end{enumerate}
+  \end{description}
+  \item [Complexity:]
+  Instantiation algorithm time complexity:~$O()$
+\end{description}
