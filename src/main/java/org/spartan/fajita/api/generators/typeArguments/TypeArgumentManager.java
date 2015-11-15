@@ -1,10 +1,14 @@
 package org.spartan.fajita.api.generators.typeArguments;
 
-import static org.spartan.fajita.api.generators.GeneratorsUtils.*;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.STACK_TYPE_PARAMETER;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.type;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.wildcardArray;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.*;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STATE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,9 +48,9 @@ public class TypeArgumentManager {
   public final List<Symbol> symbols;
   private final LRParser parser;
   private final BNF bnf;
-  // TODO: change to private
-  public final Map<State, StateTypeData> statesTypeData;
-  public final DirectedGraph<ContextedState, DefaultEdge> dependencies;
+  final Map<State, StateTypeData> statesTypeData;
+  private final DirectedGraph<ContextedState, DefaultEdge> dependencies;
+  private Map<ContextedState, TypeName> instantiations;
 
   public TypeArgumentManager(final LRParser parser) {
     this.parser = parser;
@@ -56,6 +60,7 @@ public class TypeArgumentManager {
     dependencies = generateDependenciesGraph();
     statesTypeData = new HashMap<>();
     parser.getStates().forEach(s -> statesTypeData.put(s, new StateTypeData(parser, s, symbols)));
+    calculateInstantiations();
   }
   private ArrayList<TypeVariableName> initializeBaseTypeArgumentList() {
     ArrayList<TypeVariableName> $ = new ArrayList<>();
@@ -78,7 +83,7 @@ public class TypeArgumentManager {
     return baseTAList.get(index);
   }
   public TypeVariableName getType(final Symbol s) {
-    return baseTAList.get(symbols.indexOf(s) + 1);
+    return getType(symbols.indexOf(s) + 1);
   }
   public int baseStateArgumentNumber() {
     return baseTAList.size();
@@ -86,100 +91,107 @@ public class TypeArgumentManager {
   public List<TypeVariableName> stateTypeArguments(final State s) {
     return statesTypeData.get(s).getFormalParameters();
   }
-  private void calculateBaseTypes(final State state) {
-    StateTypeData typeDatum = statesTypeData.get(state);
-    Map<State, TypeName> contexedInstantiations = new HashMap<>();
-    TopologicalOrderIterator<ContextedState, DefaultEdge> iter = new TopologicalOrderIterator<>(typeDatum.dependencies);
-    iter.forEachRemaining(s -> calculateBaseType(s, contexedInstantiations));
+  private void calculateInstantiations() {
+    instantiations = new HashMap<>();
+    TopologicalOrderIterator<ContextedState, DefaultEdge> iter = new TopologicalOrderIterator<>(dependencies);
+    iter.forEachRemaining(s -> {
+      if (s.transitions.length == 1)
+        InstantiateSingleTransition(s);
+      else if (s.transitions.length == 2)
+        InstantiateDoubleTransition(s);
+      else
+        throw new IllegalStateException("unexpected transition length :" + s.transitions.length);
+    });
   }
-  private void calculateBaseType(final ContextedState s, final Map<State, TypeName> contexedInstantiations) {
-    StateTypeData stateData = statesTypeData.get(s);
-    StateTypeData nextStateData = statesTypeData.get(s.goTo(symb));
-    TypeName $ = null;
-    if (symb.isNonTerminal() || parser.actionTable(s, ((Terminal) symb)).isShift()) {
-      TypeName parameters[] = calculateShiftAction(stateData, nextStateData);
-      $ = ParameterizedTypeName.get(type(nextStateData.state.name), parameters);
-    } else if (parser.actionTable(s, (Terminal) symb).isReduce()) {
-      TypeName parameters[] = calculateReduceAction(stateData, nextStateData);
-      $ = ParameterizedTypeName.get(type(nextStateData.state.name), parameters);
-    } else if (parser.actionTable(s, (Terminal) symb).isError())
-      $ = type(ERROR_STATE);
-    stateData.setBaseType(symbols.indexOf(symb) + 1, $);
-  }
-  private TypeName[] calculateReduceAction(final StateTypeData stateData, final StateTypeData nextStateData) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  private TypeName[] calculateShiftAction(final StateTypeData stateData, final StateTypeData nextStateData) {
-    TypeName[] $ = new TypeName[nextStateData.getFormalParametersNumber()];
-    // stack parameter
-    $[0] = ParameterizedTypeName.get(type(stateData.state.name),
-        merge(new TypeName[] { stateData.getFormalParameter(StateTypeData.stackTP) },
-            wildcardArray(stateData.getFormalParametersNumber() - 1)));
-    int index = 1;
-    List<InheritedState> localTypeArguments = stateData.sortedTypeArguments();
-    for (InheritedState inheritedData : nextStateData.sortedTypeArguments()) {
-      InheritedState corresponding = new InheritedState(inheritedData.depth - 1, inheritedData.lhs, inheritedData.lookahead);
-      if (localTypeArguments.contains(corresponding))
-        // inherited types
-        $[index++] = stateData.getFormalParameter(corresponding);
-      else {
-        // generated types
-        assert(inheritedData.depth == 1);
-        State afterReduce = stateData.state.goTo(inheritedData.lhs).goTo(inheritedData.lookahead);
-        TypeName[] afterReduceParameters = calculateDoubleShiftType();
-        $[index++] = ParameterizedTypeName.get(type(afterReduce.name), afterReduceParameters);
-      }
+  private void InstantiateSingleTransition(final ContextedState s) {
+    assert (s.transitions.length == 1);
+    StateTypeData q$B_Data = statesTypeData.get(s.context);
+    StateTypeData q_X$B_Data = statesTypeData.get(s.state);
+    Collection<InheritedParameter> baseInheritedParameters = q$B_Data.getInheritedParameters();
+    for (InheritedParameter inheritedParameter : q_X$B_Data.getInheritedParameters()) {
+      InheritedParameter baseParameter = new InheritedParameter(inheritedParameter.depth - 1, inheritedParameter.lhs,
+          inheritedParameter.lookahead);
+      TypeName instantiatedType;
+      if (baseInheritedParameters.contains(baseParameter))// Inherited TA
+        instantiatedType = q$B_Data.getFormalParameter(baseParameter);
+      else // Synthesized TA
+        instantiatedType = instantiations
+            .get(new ContextedState(s.context, new Symbol[] { inheritedParameter.lhs, inheritedParameter.lookahead }));
+      assert (instantiatedType != null);
+      s.instantiate(inheritedParameter, instantiatedType);
     }
-    return $;
+    instantiations.put(s, s.getInstantiation());
   }
+  private void InstantiateDoubleTransition(final ContextedState s) {
+    assert (s.transitions.length == 2);
+    StateTypeData q$B_Data = statesTypeData.get(s.context);
+    StateTypeData q_X$B_Data = statesTypeData.get(s.context.goTo(s.transitions[0]));
+    StateTypeData q_XY$B_Data = statesTypeData.get(s.state);
+    Collection<InheritedParameter> baseInheritedParameters = q_X$B_Data.getInheritedParameters();
+    Collection<InheritedParameter> contextInheritedParameters = q$B_Data.getInheritedParameters();
+    for (InheritedParameter inheritedParameter : q_XY$B_Data.getInheritedParameters()) {
+      InheritedParameter baseParameter = new InheritedParameter(inheritedParameter.depth - 1, inheritedParameter.lhs,
+          inheritedParameter.lookahead);
+      InheritedParameter contextParameter = new InheritedParameter(inheritedParameter.depth - 2, inheritedParameter.lhs,
+          inheritedParameter.lookahead);
+      TypeName instantiatedType;
+      if (baseInheritedParameters.contains(baseParameter) && !contextInheritedParameters.contains(contextParameter))// Inherited
+                                                                                                                    // TA
+        instantiatedType = q_X$B_Data.getFormalParameter(baseParameter);
+      else // Synthesized from Q^{B}_{X}
+        instantiatedType = instantiations.get(new ContextedState(q_X$B_Data.state, new Symbol[] { inheritedParameter.lookahead }));
+      assert (instantiatedType != null);
+      s.instantiate(inheritedParameter, instantiatedType);
+    }
+    instantiations.put(s, s.getInstantiation());
+  }
+
   private DirectedGraph<ContextedState, DefaultEdge> generateDependenciesGraph() {
     final DefaultDirectedGraph<ContextedState, DefaultEdge> $ = new DefaultDirectedGraph<>(DefaultEdge.class);
-    for (State q_B : parser.getStates())
-      addStateDependencies(q_B, $);
+    for (State q$B : parser.getStates())
+      addStateDependencies(q$B, $);
     System.out.println($);
     // TODO: handle cycles case.
     if ($.vertexSet().size() > 0 && new CycleDetector<>($).detectCycles())
-      throw new IllegalArgumentException("Cycles are not handled yet, found on " + q_B.name + ":" + $);
+      throw new IllegalArgumentException("Cycles are not handled yet, the graph:" + $);
     return $;
   }
-  private void addStateDependencies(final State q_B, final DefaultDirectedGraph<ContextedState, DefaultEdge> g) {
-    Set<Item> items = q_B.getItems().stream()
+  private void addStateDependencies(final State q$B, final DefaultDirectedGraph<ContextedState, DefaultEdge> g) {
+    Set<Item> items = q$B.getItems().stream()
         .filter(i -> i.dotIndex == 0 && i.lookahead != SpecialSymbols.$ && i.rule.lhs != SpecialSymbols.augmentedStartSymbol)
         .collect(Collectors.toSet());
     for (Item i : items) {
-      // By rule (1)
-      Optional<ContextedState> isNotInherited = find(q_B, i.rule.lhs, i.lookahead);
+      Optional<ContextedState> isNotInherited = find(q$B, i.rule.lhs, i.lookahead);
       if (!isNotInherited.isPresent()) // inherited TA
         continue;
       ContextedState q_Ab$B = isNotInherited.get();
       List<Symbol> rhs = i.rule.getChildren();
-      /************************************
-       * if (rhs.size() == 0) ;// epsilon rule , what to do?
-       * rhs.add(i.lookahead);
-       ***********************************/
+      // By rule (A-> ε. , b)
+      if (rhs.size() == 0)// epsilon rule
+        rhs.add(i.lookahead);
+      // By rule [A -> .Xα , b]
       Symbol X = rhs.get(0);
-      ContextedState q_X$B = new ContextedState(q_B.goTo(X), q_B, X);
+      ContextedState q_X$B = new ContextedState(q$B.goTo(X), q$B, X);
       addEdge(g, q_Ab$B, q_X$B);
-      // By rule (2)
+      // By rule [ A -> Cd , b]
       if (rhs.size() == 2 && rhs.get(0).isNonTerminal() && rhs.get(1).isTerminal()) {
         NonTerminal C = (NonTerminal) rhs.get(0);
         Terminal d = (Terminal) rhs.get(1);
-        ContextedState q_Cd$B = find(q_B, C, d).get();
+        ContextedState q_Cd$B = find(q$B, C, d).get();
         addEdge(g, q_Ab$B, q_Cd$B);
       }
     }
-    // By rules (3) and (4)
-    new HashSet<>(g.vertexSet()).stream().filter(v -> v.transitions.length == 2 && v.context.equals(q_B)).forEach(q_Ab$B -> {
+    // By rules on two transition contexts
+    new HashSet<>(g.vertexSet()).stream().filter(v -> v.transitions.length == 2 && v.context.equals(q$B)).forEach(q_Ab$B -> {
       NonTerminal A = (NonTerminal) q_Ab$B.transitions[0];
       Terminal b = (Terminal) q_Ab$B.transitions[1];
-      ContextedState q_A$B = new ContextedState(q_B.goTo(A), q_B, A);
+      ContextedState q_A$B = new ContextedState(q$B.goTo(A), q$B, A);
       addEdge(g, q_A$B, q_Ab$B);
-      Optional<ContextedState> q_b$A = find(q_B.goTo(A), b);
+      Optional<ContextedState> q_b$A = find(q$B.goTo(A), b);
       if (q_b$A.isPresent())
         addEdge(g, q_b$A.get(), q_Ab$B);
       /**
-       * else ;// the state is known in a higher place. maybe Q_b know about it.
+       * else ;// the state is known in a higher place. maybe Q$b know about it.
        */
     });
   }
@@ -189,10 +201,10 @@ public class TypeArgumentManager {
     g.addVertex(dst);
     g.addEdge(src, dst);
   }
-  private Optional<ContextedState> find(final State q_B, final NonTerminal A, final Terminal b) {
-    Action action = parser.actionTable(q_B.goTo(A), b);
+  private Optional<ContextedState> find(final State q$B, final NonTerminal A, final Terminal b) {
+    Action action = parser.actionTable(q$B.goTo(A), b);
     if (action.isShift())
-      return Optional.of(new ContextedState(((Shift) action).state, q_B, A, b));
+      return Optional.of(new ContextedState(((Shift) action).state, q$B, A, b));
     // reduce
     DerivationRule rule = ((Reduce) action).item.rule;
     List<Symbol> alpha = rule.getChildren();
@@ -200,31 +212,51 @@ public class TypeArgumentManager {
     if (alpha.size() > 1)
       return Optional.empty();
     if (alpha.size() == 1) // alpha = A
-      return find(q_B, C, b);
-    return find(q_B.goTo(A), C, b);
+      return find(q$B, C, b);
+    return find(q$B.goTo(A), C, b);
   }
-  private Optional<ContextedState> find(final State q_B, final Terminal b) {
-    Action action = parser.actionTable(q_B, b);
+  private Optional<ContextedState> find(final State q$B, final Terminal b) {
+    Action action = parser.actionTable(q$B, b);
     if (action.isShift())
-      return Optional.of(new ContextedState(((Shift) action).state, q_B, b));
+      return Optional.of(new ContextedState(((Shift) action).state, q$B, b));
     // reduce
     DerivationRule rule = ((Reduce) action).item.rule;
     List<Symbol> alpha = rule.getChildren();
     NonTerminal C = rule.lhs;
     if (alpha.size() > 0)
       return Optional.empty();
-    return find(q_B, C, b);
+    return find(q$B, C, b);
   }
-
-  private static class ContextedState {
+  
+  public ParameterizedTypeName getInstantiatedState(State s){
+    StateTypeData typeData = statesTypeData.get(s);
+    for (Symbol symb : symbols) {
+      if(!s.isLegalLookahead(symb))
+        typeData.setBaseType(symb, type(ERROR_STATE));
+      else
+        typeData.setBaseType(symb, instantiations.get(new ContextedState(s, symb)));
+    }
+    return typeData.getBaseType();
+  }
+  
+  
+  private class ContextedState {
     public final State context;
     public final State state;
     public final Symbol[] transitions;
+    private final Map<InheritedParameter, TypeName> instantiation;
 
     public ContextedState(final State actual, final State context, final Symbol... transitions) {
       state = actual;
       this.context = context;
       this.transitions = transitions;
+      instantiation = new HashMap<>();
+    }
+    public ContextedState(final State context, final Symbol... transitions) {
+      state = null;
+      this.context = context;
+      this.transitions = transitions;
+      instantiation = new HashMap<>();
     }
     @Override public String toString() {
       StringBuilder sb = new StringBuilder("Q^{" + context.index + "}_{");
@@ -237,7 +269,6 @@ public class TypeArgumentManager {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((context == null) ? 0 : context.hashCode());
-      result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + Arrays.hashCode(transitions);
       return result;
     }
@@ -254,14 +285,25 @@ public class TypeArgumentManager {
           return false;
       } else if (!context.equals(other.context))
         return false;
-      if (state == null) {
-        if (other.state != null)
-          return false;
-      } else if (!state.equals(other.state))
-        return false;
       if (!Arrays.equals(transitions, other.transitions))
         return false;
       return true;
+    }
+    public void instantiate(InheritedParameter param, TypeName type) {
+      instantiation.put(param, type);
+    }
+    public TypeName getInstantiation() {
+      StateTypeData data = statesTypeData.get(state);
+      TypeName[] typeArguments = new TypeName[data.getFormalParameters().size()];
+      assert (typeArguments.length == instantiation.size());
+      int index = 0;
+      for (InheritedParameter paramName : data.getInheritedParameters()) {
+        TypeName type = instantiation.get(paramName);
+        assert (type != null);
+        typeArguments[index] = type;
+        index++;
+      }
+      return ParameterizedTypeName.get(type(state.name), typeArguments);
     }
   }
 }

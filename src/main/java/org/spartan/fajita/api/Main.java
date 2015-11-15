@@ -19,10 +19,7 @@ import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
-import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat;
 import org.spartan.fajita.api.generators.BaseStateSpec;
-import org.spartan.fajita.api.generators.GeneratorsUtils;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
@@ -55,7 +52,7 @@ public class Main {
   }
   private static TypeSpec generateClass(final TypeArgumentManager tam, final State s, final String name) {
     return TypeSpec.classBuilder(name).addModifiers(Modifier.STATIC).addTypeVariables(tam.stateTypeArguments(s))
-        .superclass(GeneratorsUtils.type(GeneratorsUtils.Classname.BASE_STATE)).build();
+        .superclass(tam.getInstantiatedState(s)).build();
   }
   private static void lrAutomatonVisualisation(final LRParser parser) {
     DirectedGraph<State, LabeledEdge> graph = generateGraph(parser);

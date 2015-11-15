@@ -190,21 +190,28 @@ Returns the state that will consume b, or null, if it cannot be determined.
 \end{enumerate}
 \end{enumerate}
 \end{enumerate}
+/{*}{*}
+
+
+merges $Q^{X}_{Y},Q^{B}_{X}$ into an extended instantiation of $Q_{XY}^B$
+
+
+{*}{*}/
 \item [{Function}] $FillDoubleTransition\left(Q_{XY}^{B}\right)$:
 
 \begin{enumerate}
 \item For each triplet $\left(A,i,a\right)\in Q_{XY}^{B}$ 
 
 \begin{enumerate}
-\item If $\left(A,i-1,a\right)\in Q^{B}$ then //inherited TA(Type Argument)
+\item If $\left(\left(A,i-1,a\right)\in Q^{B}_{X}\right)\wedge\left(\left(A,i-2,a\right)\notin Q^{B}\right)$ //Inherited TA or Synthesized from $Q^B$
 
 \begin{enumerate}
 \item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q_{X}^{B}\left[\left(A,i-1,a\right)\right]$
 \end{enumerate}
-\item Else // synthesized from $Q_{X}^{B}$ 
+\item Else // Synthesized from $Q_{X}^{B}$ 
 
 \begin{enumerate}
-\item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q_{Y}^{X}$
+\item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q^{X}_{Y}\left[\left(A,i-1,a\right)\right]$
 \end{enumerate}
 \end{enumerate}
 \end{enumerate}

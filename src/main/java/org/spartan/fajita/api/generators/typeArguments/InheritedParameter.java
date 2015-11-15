@@ -3,22 +3,22 @@ package org.spartan.fajita.api.generators.typeArguments;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 
-public final class InheritedState implements Comparable<InheritedState> {
+public final class InheritedParameter implements Comparable<InheritedParameter> {
   public final int depth;
   public final NonTerminal lhs;
   public final Symbol lookahead;
 
-  public InheritedState(final int n, final NonTerminal lhs, final Symbol l) {
-    depth = n;
+  public InheritedParameter(final int depth, final NonTerminal lhs, final Symbol l) {
+    this.depth = depth;
     this.lhs = lhs;
     lookahead = l;
   }
   @Override public boolean equals(final Object obj) {
-    if (obj == null || obj.getClass() != InheritedState.class)
+    if (obj == null || obj.getClass() != InheritedParameter.class)
       return false;
     if (this == obj)
       return true;
-    return compareTo((InheritedState) obj) == 0;
+    return compareTo((InheritedParameter) obj) == 0;
   }
   @Override public int hashCode() {
     int $ = Integer.hashCode(depth);
@@ -28,7 +28,9 @@ public final class InheritedState implements Comparable<InheritedState> {
       $ += lookahead.hashCode();
     return $;
   }
-  @Override public int compareTo(final InheritedState o) {
+  @Override public int compareTo(final InheritedParameter o) {
+    if(o == null)
+      return -1;
     int depthComparison = depth - o.depth;
     if (depthComparison != 0)
       return depthComparison;

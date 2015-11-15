@@ -6,8 +6,10 @@ import static org.spartan.fajita.api.generators.GeneratorsUtils.wildcardArray;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STATE;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.EMPTY_STACK;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,35 +29,37 @@ public class StateTypeData {
   private final LRParser parser;
   private final int baseTASize;
   // type arguments for the state
-  private final Map<InheritedState, TypeVariableName> typeParameters;
-  public static final InheritedState stackTP = new InheritedState(-1, null, null);
+  private final LinkedHashMap<InheritedParameter, TypeVariableName> typeParameters;
+  static final InheritedParameter stackTP = new InheritedParameter(-1, null, null);
   // base state type parameters
-  private final Map<Symbol, TypeName> baseStateTAs;
+  private final Map<Symbol, TypeName> baseTAs;
 
   public StateTypeData(final LRParser parser, final State s, final List<Symbol> baseStateSymbols) {
     this.parser = parser;
     state = s;
     baseTASize = baseStateSymbols.size() + 1;
-    typeParameters = calculateFormalParameters();
-    baseStateTAs = new HashMap<>();
+    typeParameters = setFormalParametersTypes();
+    baseTAs = new HashMap<>();
     if (typeParameters.containsKey(stackTP))
-      baseStateTAs.put(SpecialSymbols.$, type(EMPTY_STACK));
+      baseTAs.put(SpecialSymbols.$, type(EMPTY_STACK));
     else
-      baseStateTAs.put(SpecialSymbols.$, getFormalParameter(stackTP));
+      baseTAs.put(SpecialSymbols.$, getFormalParameter(stackTP));
   }
-  private Map<InheritedState, TypeVariableName> calculateFormalParameters() {
-    Map<InheritedState, TypeVariableName> $ = new HashMap<>();
+  private LinkedHashMap<InheritedParameter, TypeVariableName> setFormalParametersTypes() {
+    LinkedHashMap<InheritedParameter, TypeVariableName> $ = new LinkedHashMap<>();
+    List<InheritedParameter> formalParametersList = state.getItems().stream()
+        .map(i1 -> new InheritedParameter(i1.dotIndex, i1.rule.lhs, i1.lookahead)).distinct().sorted()
+        .filter(entry -> entry.depth > 0 && entry.lhs != SpecialSymbols.augmentedStartSymbol && entry.lookahead != SpecialSymbols.$)
+        .collect(Collectors.toList());
     if (state != parser.getInitialState())
       $.put(stackTP, calculateStackTypeParameter());
     final TypeName baseStateType = ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseTASize));
-    for (InheritedState i : sortedTypeArguments())
+    for (InheritedParameter i : formalParametersList)
       $.put(i, TypeVariableName.get(i.toString(), baseStateType));
     return $;
   }
-  List<InheritedState> sortedTypeArguments() {
-    return state.getItems().stream().map(i -> new InheritedState(i.dotIndex, i.rule.lhs, i.lookahead)).distinct().sorted()
-        .filter(entry -> entry.depth > 0 && entry.lhs != SpecialSymbols.augmentedStartSymbol && entry.lookahead != SpecialSymbols.$)
-        .collect(Collectors.toList());
+  List<InheritedParameter> getInheritedParameters() {
+    return new ArrayList<>(typeParameters.keySet()); 
   }
   @SuppressWarnings("boxing") private TypeVariableName calculateStackTypeParameter() {
     int max_depth = state.getItems().stream().map(item -> item.dotIndex).max((x, y) -> Integer.compare(x, y)).get();
@@ -70,19 +74,16 @@ public class StateTypeData {
     Arrays.setAll(stackArgument, i -> i == 0 ? stackArgument[0] : WildcardTypeName.subtypeOf(Object.class));
     return ParameterizedTypeName.get(type(BASE_STATE), stackArgument);
   }
-  public void setBaseType(final Symbol symb, final TypeName type) {
-    baseStateTAs.put(symb, type);
+  void setBaseType(final Symbol symb, final TypeName type) {
+    baseTAs.put(symb, type);
   }
-  public TypeVariableName getFormalParameter(final InheritedState data) {
+  TypeVariableName getFormalParameter(final InheritedParameter data) {
     return typeParameters.get(data);
   }
-  public int getFormalParametersNumber() {
-    return typeParameters.size();
-  }
-  public List<TypeVariableName> getFormalParameters() {
+  List<TypeVariableName> getFormalParameters() {
     return typeParameters.values().stream().collect(Collectors.toList());
   }
-  public ParameterizedTypeName getBaseType() {
-    return ParameterizedTypeName.get(type(BASE_STATE), baseStateTAs.values().toArray(new TypeName[] {}));
+  ParameterizedTypeName getBaseType() {
+    return ParameterizedTypeName.get(type(BASE_STATE), baseTAs.values().toArray(new TypeName[] {}));
   }
 }
