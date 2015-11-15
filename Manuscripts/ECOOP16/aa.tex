@@ -38,8 +38,8 @@ I hope to show that it is possible to encode context free grammars within the \J
   in such a way that type-checking is equivalent to membership queries.
 This objective is more precisely expressed in the following conjecture.
 
-\begin{Conjecture}
-\label{Conjecture:Gil:Levy}
+\begin{Theorem}
+\label{Theorem:Gil:Levy}
 Let~$Σ$ be finite alphabet.
 Let~$M$ be a \emph{push-down automaton(PDA)}, and let~$𝓛ₛ⊆Σ^*$ be
 the \emph{formal language} such that~$M$ recognizes.
@@ -56,7 +56,7 @@ such that
   \end{quote}
 \end{quote}
 Furthermore, program~$Jₛ$ can be effectively generated from~$M$.
-\end{Conjecture}
+\end{Theorem}
 
 The proof shall be made with an algorithm that converts a 
   PDA~$M$ into a program~$Jₛ$.
@@ -75,7 +75,7 @@ Re-positioning perspective may shed a different light:
   template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
   ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:1998,Garcia:Jarvi:2003}.
 
-In the fashion, \cref{Conjecture:Gil:Levy} has important
+In the fashion, \cref{Theorem:Gil:Levy} has important
   implications to the emerging trend of employing fluent APIs
   to make complex software systems more accessible.
 My thesis is that one can employ the conjecture for
