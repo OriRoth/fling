@@ -19,6 +19,7 @@ import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
+import org.spartan.fajita.api.examples.lr1.LR1;
 import org.spartan.fajita.api.generators.BaseStateSpec;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.AcceptState;
@@ -32,7 +33,8 @@ public class Main {
   private static JGraphModelAdapter<State, LabeledEdge> model;
 
   public static void main(final String[] args) {
-    typeSpec(AutomatonCycles.buildBNF());
+//    typeSpec(AutomatonCycles.buildBNF());
+    LR1.buildBNF();
   }
   private static void typeSpec(final LRParser parser) {
     lrAutomatonVisualisation(parser);

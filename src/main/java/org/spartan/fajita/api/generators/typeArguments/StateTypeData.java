@@ -59,7 +59,9 @@ public class StateTypeData {
     return $;
   }
   List<InheritedParameter> getInheritedParameters() {
-    return new ArrayList<>(typeParameters.keySet()); 
+    ArrayList<InheritedParameter> arrayList = new ArrayList<>(typeParameters.keySet());
+    arrayList.remove(stackTP);
+    return arrayList; 
   }
   @SuppressWarnings("boxing") private TypeVariableName calculateStackTypeParameter() {
     int max_depth = state.getItems().stream().map(item -> item.dotIndex).max((x, y) -> Integer.compare(x, y)).get();
