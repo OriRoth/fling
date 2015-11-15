@@ -9,12 +9,6 @@
 \makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
-\floatstyle{ruled}
-\newfloat{algorithm}{tbp}{loa}
-\providecommand{\algorithmname}{Algorithm}
-\floatname{algorithm}{\protect\algorithmname}
-
-\makeatother
 
 \usepackage{babel}
 \begin{document}
@@ -48,6 +42,11 @@ in context of $Q^{B}$
 \item For each $Q^{B}\in Parser$
 
 \begin{enumerate}
+\item $\forall\left[A\rightarrow\epsilon\cdot,b\right]\in Q^{B}$
+\begin{enumerate}
+\item $V=V\bigcup\left\{ Q_{Ab}^{B},Q_{b}^{B}\right\} $
+\item $E=E\bigcup\left\{ \left(Q_{Ab}^{B},Q_{b}^{B}\right)\right\} $
+\end{enumerate}
 \item $\forall\left[A\rightarrow\cdot X\alpha,b\right]\in Q^{B}$ 
 
 \begin{enumerate}
