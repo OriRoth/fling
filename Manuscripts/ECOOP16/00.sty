@@ -21,6 +21,7 @@
 \usepackage{hyperref,cleveref}
 \usepackage{listings}
 \usepackage{nth}
+\usepackage{pifont}
 \usepackage{syntax}
 \usepackage{yogi-lang}
 \usepackage{yogi-unicode}
@@ -34,6 +35,9 @@
 \adjustboxset{center}
 \newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
+\newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
+\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
+
 
 \newtheorem{Theorem}{Theorem}
 \newtheorem{Definition}{Definition}

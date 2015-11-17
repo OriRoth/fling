@@ -498,7 +498,7 @@
   \@ifnextchar[\TPT@setuptnotes\TPTdoTablenotes} % ]
 \RequirePackage{listings}
 \lstset{basicstyle=\small\ttfamily,%
-        backgroundcolor=\color[rgb]{0.85,0.85,0.86},%
+%        backgroundcolor=\color[rgb]{0.85,0.85,0.86},%
         frame=single,framerule=0pt,xleftmargin=\fboxsep,xrightmargin=\fboxsep}
 \RequirePackage{lastpage}
 \IfFileExists{doi.sty}

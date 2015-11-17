@@ -126,7 +126,7 @@
   columns={fullflexible},
   keepspaces=true,
   tabsize=2,                 
-  aboveskip=\codedisplayspace,
+  %aboveskip=100ex,
   belowskip=\codedisplayspace,
   xleftmargin=\codedisplayspace,
   xrightmargin=\codedisplayspace,
@@ -137,6 +137,7 @@
 
 \lstdefinestyle{printout}{%
   style=basic,
+  frame=none,
   basicstyle=\color{White}\listingsfont\codesize\slshape,
   keywordstyle=\color{White}\listingsfont\codesize\slshape,
   commentstyle=\color{White}\listingsfont\codesize\slshape,
@@ -174,10 +175,11 @@
 % but with minimal spacing for the numbering.
 \lstdefinestyle{numbered}{%
   style=display,
-  numbers=left,
+  numbers=right,
   stepnumber=1,
-  numbersep=2pt,
-  xleftmargin=3ex,
+  numbersep=-10pt,
+  xleftmargin=1ex,
+  xrightmargin=1ex,
   numberblanklines=false,
   numberstyle=\tiny\bf\color{black},
 }

@@ -29,7 +29,7 @@
 \end{abstract}
 \section{Introduction}
 \input{aa}
-\paragraph{Outline.} 
+\textbf{Outline.} 
 The remainder of this document is organized as follows.
 \Cref{Section:terminology}, intended mostly to the general, non software engineering, 
   computer science audience is a brief reminder of pertinent terminology.
@@ -81,11 +81,11 @@ First is the identification of the \emph{vocabulary}, i.e.,
 the set of method calls including type arguments that may take part in the
 fluent API\@.
 In this fluent API example
-\begin{lcode}{Java}
+\begin{JAVA}
 allowing (any(Object.class))
   ¢¢.method("get.*")
   ¢¢.withNoArguments();
-\end{lcode}
+\end{JAVA}
 then, there are three method calls, and the vocabulary has three items in it.
 \begin{itemize}
   \item~$ℓ₁ = \cc{any(Class<?>)}$

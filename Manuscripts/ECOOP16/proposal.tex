@@ -70,27 +70,27 @@ A second novelty of \Self is that the specification of a BNF such as in
   \cref{Figure:BNF} can be also made with a \Java fluent API\@.
 To do so, it is first necessary to
   define the set of \emph{grammar terminals}
-  \begin{code}{JAVA}
+  \begin{JAVA}
 enum ToiletteTerminals implements Terminal {¢¢
   male, female,
   urinate, defecate,
   lower, raise;
 }
-\end{code}
+\end{JAVA}
 As common in fluent APIs we shall refer to these
 as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns. 
   An excuse might be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
 Verbs are translated by \Self into methods.
 
 We are also required to define the set of \emph{grammar variables}
-\begin{code}{Java}
+\begin{JAVA}
 enum ToiletteVariables implements Variable {¢¢
   Visitors, Down_Visitors, Up_Visitors,
   Up_Visitor, Down_Visitor,
   Lowering_Visitor, Raising_Visitor,
   Activity
 };
-\end{code}
+\end{JAVA}
   We shall use the term ‟\emph{noun}” as synonymous to ``variable''.
 
 \subsection{Words and Grammar}
@@ -134,7 +134,7 @@ new BNF()
 \end{figure}
 
 The call to function \cc{go()} (last line in \cref{Figure:fluent}) instructs
-  \Self to generate the code for the fluent API specified by the
+  \Self to generate the JAVA for the fluent API specified by the
   subsequent part of the expression.
 Roughly speaking, nouns are translated to classes while verbs are translated to methods which
   take no parameters.

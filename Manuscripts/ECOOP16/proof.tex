@@ -1,5 +1,6 @@
-\begin{Definition}[Deterministinc Pushdown Automata]
-  A \emph{deterministic pushdown autoamton} (PDA)~$M$ is an 8-tuple
+\begin{Definition}[Deterministinc Pushdown Automaton]
+  \label{Definition:DPDA}
+  A \emph{deterministic pushdown automaton} (DPDA)~$M$ is an 8-tuple
   \[
     M =⟨Q,Σ,Γ, q₀,⊥, A,δ,η⟩
   \]
@@ -12,28 +13,27 @@
   the \emph{partial functions of state transition}
   \[
     \begin{array}{crlc}
-      δ: & Q⨉Σ⨉Γ & → & Q⨉Γ^*⏎
-      η: & Q⨉Γ & → & Q⨉Γ^*,⏎
+      δ: & Q⨉Σ⨉Γ &↛& Q⨉Γ^*⏎
+      η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
     \end{array}
   \]
 \end{Definition}
+We shall be using the following notation for
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
 
-\begin{Definition}[Simplified Pushdown Automata]
-  A \emph{simplified pushdown autoamton} (SPDA)~$M$ of order~$k$ is a 7-tuple
+\begin{Definition}[Simplified Pushdown Automaton]
+  \label{Definition:SPDA}
+  A \emph{\textbf simplified \textbf pushdown \textbf automaton} (SPDA)~$M$ of order~$k$ is a 7-tuple
   \[
     M =⟨Q,Σ,Γ,q₀,⊥, A,δ⟩
   \]
-  where, as before,~$Q$ is the a finite set of
-  \emph{the states of~$M$},~$Σ$ is a finite
-  \emph{set of input symbols},~$Γ$ is a finite
-  \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
-  is a \emph{special symobl designating the bottom of the stack}
-  and~$A⊆Q$ is the \emph{set of accepting states}.
-  The signature of function~$δ$, the \emph{generalized partial transition function}
+  where~$Q$,~$Σ$,~$Γ$,~$q₀$,~$⊥∈Γ$ and~$A$ are precisely as in \cref{Definition:DPDA}.
+  However, the signature of function~$δ$, the \emph{generalized partial transition function}
   of an SPDA of order~$k$, is:
-  \[
-      δ: Q⨉Σ⨉Γ^k → Q⨉Γ^*⏎
-  \]
+  \begin{equation}
+    \label{Equation:generalized:transition}
+      δ: Q⨉Σ⨉Γᵏ↛Q⨉Γ^*
+    \end{equation}
 \end{Definition}
 
 \begin{Theorem}
@@ -46,31 +46,169 @@ The remainder of this section is dedicated to the proof of \cref{Theorem:SPDA}.
 In particular, we describe how~$J_M$ is constructed from the
   specification of~$M$.
 
+\subsection{Encoding the stack with \Java generics}
 First is the stack.
 \begin{JAVA}
 class S<T extends S> {
+  T t;
+  S(T t) { this.t = t; }
+  T pop() { return t; };
 }
 \end{JAVA}
 For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
 \begin{JAVA}
-class ¢$ξ$¢ <T extends S> extends S<T>{
+class ¢$ξ$¢ <T extends S> extends S<T> {
+  ¢$ξ$¢(T t) { super(t); }
   // ¢…¢
 }
 \end{JAVA}
 In addition, we define a special class~$⊥$ that designates the bottom of the stack.
 \begin{JAVA}
 class ¢$⊥$¢ extends S<¢$⊥$¢> {
-  // ¢…¢
+  ¢$⊥$¢() { super(null); }
+  ¢$⊥$¢pop() { throw new RunTimeException(); }
 }
 \end{JAVA}
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,~$ξ₁,ξ₂∈Q$
-is represented by the type
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
+where~$ξ₁,ξ₂∈Q$ are stack symbols,
+is represented by the following type
 \begin{JAVA}
   ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
 \end{JAVA}
-This is a general concept for implementing an unbounded stack with \Java's type system, 
+This is a general concept for implementing an unbounded stack with \Java's type system,
 that will be extended in the future.
 
+\subsection{Type encoding of unary (non-partial) functions}
+\begin{figure}
+  \begin{JAVA}[style=numbered]
+  static final class ¢$⊥$¢ extends T¢$⁺$¢ {} // Error Value ¢$⊥∈T⁺$¢
+  static abstract class T extends T¢$⁺$¢ { // Set ¢$T⊂T⁺$¢
+    abstract T g(); 
+  } 
+  static final class t1 extends T { // Value ¢$t₁∈T$¢
+    final t2 g() { return null; }
+  } 
+  static final class t2 extends T { // Value ¢$t₂∈T$¢
+    final t1 g() { return null; }
+  } 
+}
+\end{JAVA}
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
+  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
+\end{figure}
+\subsection{Type-method encoding of partial binary functions}
+Consider a partial function~$f: R⨉S↛T$,
+where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
+Then, it is possible to encode~$f$
+  within the framework of \Java generics and static type checking.
+Before showing how this is done in the general case, consider this example:
+\begin{equation}
+  \label{Equation:simple:binary}
+\begin{split}
+  R & = ❴ r₁, r₂❵⏎
+  S & = ❴ s₁, s₂❵⏎
+  T & = ❴ t₁, t₂❵⏎
+  f & = ❴ ⟨r₁, s₁, t₁⟩, ⟨r₁, s₂, t₂⟩, ⟨r₂, s₁, t₂⟩ ❵ ⊂R⨉S⨉T
+\end{split}
+\end{equation}
+The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
+  can be found in \cref{Figure:simple:binary}
+
+\begin{figure}
+  \begin{JAVA}[style=numbered]
+abstract class R { // Set ¢$R$¢
+  abstract T¢$⁺$¢ s1();
+  abstract T¢$⁺$¢ s2();
+  static final class r1 extends R { // Value ¢$r₁∈R$¢
+    t1 s1() { return null; }
+    t2 s2() { return null; }
+  }
+  static final class r2 extends R { // Value ¢$r₂∈R$¢
+    t2 s1() { return null; }
+    ¢$⊥$¢ s2() { return null; }
+  }
+}
+abstract class T¢$⁺$¢ { // Set ¢$T∪❴⊥❵~$¢
+  static final class ¢$⊥$¢ extends T¢$⁺$¢ {} // Error Value ¢$⊥∈T⁺$¢
+  static abstract class T extends T¢$⁺$¢ { // Set ¢$T⊂T⁺$¢
+    abstract T g(); 
+  } 
+  static final class t1 extends T { // Value ¢$t₁∈T$¢
+    final t2 g() { return null; }
+  } 
+  static final class t2 extends T { // Value ¢$t₂∈T$¢
+    final t1 g() { return null; }
+  } 
+}
+\end{JAVA}
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
+  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
+\end{figure}
+
+\begin{figure}
+  \begin{JAVA}
+abstract class f { // A non-instantiable ¢\cc{abstract}¢ class
+  private f() { throw new RuntimeException(); }
+  static r1() { return new r1(); }
+  static r2() { return new r2(); }
+}
+\end{JAVA}
+  \begin{JAVA}
+f.r1().s1().g(); // ¢✓¢ returned type 
+f.r1().s2().g(); // ¢✓¢
+f.r2().s1().g(); // ¢✓¢
+f.r2().s2().g(); // ¢✗¢ compile time error, function \cc{g()} is undefined for type $T^+$.
+\end{JAVA}
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
+  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
+\end{figure}
+\cmark\xmark
+
+Here is an example,
+To do so, generate an abstract class \cc{R} that represents~$R$, and,
+  for each~$r∈R$ a concrete class \cc{r} that extends \cc{R}.
+To do so, generate an abstract class \cc{T} that represents~$T$, and,
+  for each~$t∈T$ a concrete class \cc{t} that extends \cc{T}.
+
+Now, for each~$s∈S$, introduce an abstract method named \cc{s},
+  in class~$R$
+
+(the name obtained by
+  concatenating the name of~$f$ with the name of~$s$).
+
+It is rather straightforward to encode
+
+\subsection{Encoding states of pushdown automaton with \Java generics}
+The generalized transition function \cref{Equation:generalized:transition}
+  takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
+    and~$k$ stack symbols drawn from~$Γ$.
+To capture the full behavior of the automaton, the transition function
+  must also save, in some fashion the full state of the stack, and
+  encode in it the changes applied to the stack.
+
+Since the scheme described above can only be applied for binary functions,
+  we shall pack together the state~$q$, the stack, and the~$k$ top most
+  elements of it into a single type.
+  The remaining argument of function~$δ$, i.e., the next input symbol,~$σ∈Σ$,
+  is encoded as a method.
+
+The type part of the encoding is obtained by instantiating a generic type as follows:
+Let \cc{Q} be the abstract class that represents~$Q$, and let \cc{q} be the concrete class that
+  implements \cc{Q} for an automaton state~$q∈Q$.
+Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
+  to class~$Q$ and to every class \cc{q} that implements it.
+Yet another such parameter is added for representing the full information on the stack.
+\begin{JAVA}
+abstract class Q<S' extends S, T extends
+\end{JAVA}
+
+Let~$q∈Q$ be a state of the automaton. Then, we
+
+  As might be expected, this type is obtained
+  The
+  The
+
+To encode this function within
 
 \subsubsection{Building the automaton's dependency graph}
 
