@@ -33,8 +33,8 @@ public class Main {
   private static JGraphModelAdapter<State, LabeledEdge> model;
 
   public static void main(final String[] args) {
-//    typeSpec(AutomatonCycles.buildBNF());
-    LR1.buildBNF();
+    typeSpec(AutomatonCycles.buildBNF());
+//    LR1.buildBNF();
   }
   private static void typeSpec(final LRParser parser) {
     lrAutomatonVisualisation(parser);

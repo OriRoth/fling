@@ -87,4 +87,8 @@ public class State {
   public Set<Item> getItems() {
     return items;
   }
+  
+  public boolean isInitial(){
+    return index == 0;
+  }
 }

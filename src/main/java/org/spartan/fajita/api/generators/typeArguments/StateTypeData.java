@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.State;
 
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -26,7 +25,6 @@ import com.squareup.javapoet.WildcardTypeName;
 
 public class StateTypeData {
   final State state;
-  private final LRParser parser;
   private final int baseTASize;
   // type arguments for the state
   private final LinkedHashMap<InheritedParameter, TypeVariableName> typeParameters;
@@ -34,8 +32,7 @@ public class StateTypeData {
   // base state type parameters
   private final Map<Symbol, TypeName> baseTAs;
 
-  public StateTypeData(final LRParser parser, final State s, final List<Symbol> baseStateSymbols) {
-    this.parser = parser;
+  public StateTypeData(final State s, final List<Symbol> baseStateSymbols) {
     state = s;
     baseTASize = baseStateSymbols.size() + 1;
     typeParameters = setFormalParametersTypes();
@@ -51,7 +48,7 @@ public class StateTypeData {
         .map(i1 -> new InheritedParameter(i1.dotIndex, i1.rule.lhs, i1.lookahead)).distinct().sorted()
         .filter(entry -> entry.depth > 0 && entry.lhs != SpecialSymbols.augmentedStartSymbol && entry.lookahead != SpecialSymbols.$)
         .collect(Collectors.toList());
-    if (state != parser.getInitialState())
+    if (!state.isInitial())
       $.put(stackTP, calculateStackTypeParameter());
     final TypeName baseStateType = ParameterizedTypeName.get(type(BASE_STATE), wildcardArray(baseTASize));
     for (InheritedParameter i : formalParametersList)

@@ -49,10 +49,10 @@ public class LRParserTest {
     parser = new LRParser(bnf);
   }
   @Test public void testActionTableGoto() {
-    assertEquals(parser.actionTable(parser.getInitialState(), Term.id).getClass(), Shift.class);
+    assertEquals(parser.actionTable(parser.getStates().get(0), Term.id).getClass(), Shift.class);
   }
   @Test public void testActionTableReduce() {
-    Shift shift = (Shift) parser.actionTable(parser.getInitialState(), Term.id);
+    Shift shift = (Shift) parser.actionTable(parser.getStates().get(0), Term.id);
     State nextState = parser.getStates().get(shift.state.index);
     assertEquals(parser.actionTable(nextState, Term.plus).getClass(), Reduce.class);
   }

@@ -144,9 +144,6 @@ public class LRParser {
   private void addReduceAction(final State state, final Item item) {
     actionTable.set(state, item.lookahead, new Reduce(item));
   }
-  public State getInitialState() {
-    return getStates().get(0);
-  }
   private State generateInitialState() {
     Set<Item> initialItems = bnf.getRules().stream() //
         .filter(r -> r.lhs.equals(SpecialSymbols.augmentedStartSymbol))//
@@ -160,9 +157,10 @@ public class LRParser {
     boolean moreChanges;
     do {
       moreChanges = false;
-      Set<Item> dotBeforeNT = items.stream()
+      List<Item> dotBeforeNT = items.stream()
           .filter(item -> (!item.readyToReduce()) && item.rule.getChildren().get(item.dotIndex).isNonTerminal()) //
-          .collect(Collectors.toSet());
+          .sorted((i1,i2)->i1.toString().compareTo(i2.toString())).distinct()
+          .collect(Collectors.toList());
       for (Item item : dotBeforeNT) {
         NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
         for (DerivationRule dRule : bnf.getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList()))
@@ -174,7 +172,7 @@ public class LRParser {
   }
   private void generateStatesSet() {
     State initialState = generateInitialState();
-    Set<Symbol> symbols = legalSymbols();
+    List<Symbol> symbols = new ArrayList<>(legalSymbols());
     states.add(initialState);
     Stack<State> statesToCheck = new Stack<>();
     statesToCheck.push(initialState);

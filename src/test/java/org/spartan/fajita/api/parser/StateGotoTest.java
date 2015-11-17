@@ -37,7 +37,7 @@ public class StateGotoTest {
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
     LRParser parser = new LRParser(bnf);
-    State initialState = parser.getInitialState();
+    State initialState = parser.getStates().get(0);
     assertFalse(initialState.isLegalLookahead(Term.c));
     State nextState = initialState.goTo(Term.c);
     assertEquals(nextState, null);
@@ -53,7 +53,7 @@ public class StateGotoTest {
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
     LRParser parser = new LRParser(bnf);
-    State initialState = parser.getInitialState();
+    State initialState = parser.getStates().get(0);
     assertTrue(initialState.isLegalLookahead(Term.a));
     State nextState = initialState.goTo(Term.a);
     Item A_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.A)).findAny().get();
@@ -71,7 +71,7 @@ public class StateGotoTest {
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
     LRParser parser = new LRParser(bnf);
-    State initialState = parser.getInitialState();
+    State initialState = parser.getStates().get(0);
     assertTrue(initialState.isLegalLookahead(NT.A));
     State nextState = initialState.goTo(NT.A);
     Item S_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.S)).findAny().get();
@@ -89,7 +89,7 @@ public class StateGotoTest {
         .derive(NT.A).to(Term.b).and(Term.c) //
         .finish();
     LRParser parser = new LRParser(bnf);
-    State initialState = parser.getInitialState();
+    State initialState = parser.getStates().get(0);
     State nextState = initialState.goTo(Term.a);
     assertEquals(2, nextState.getItems().size());
   }
