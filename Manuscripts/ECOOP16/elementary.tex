@@ -1,0 +1,82 @@
+\subsection{Type encoding of unary (non-partial) functions}
+\begin{figure}
+  \begin{JAVA}[style=numbered]
+static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
+  abstract T g();
+}
+static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
+  final t2 g() {¢¢ return null; }
+}
+static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
+  final t1 g() {¢¢ return null; }
+}
+\end{JAVA}
+  \caption{Encoding of the unary function~$g: T→T$,
+  defined by~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
+  \label{Figure:unary:function}
+\end{figure}
+
+\subsection{Type-method encoding of partial binary functions}
+Consider a partial function~$f: R⨉S↛T$,
+where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
+Then, it is possible to encode~$f$
+  within the framework of \Java generics and static type checking.
+Before showing how this is done in the general case, consider this example:
+\begin{equation}
+  \label{Equation:simple:binary}
+\begin{split}
+  R & = ❴ r₁, r₂❵⏎
+  S & = ❴ s₁, s₂❵⏎
+  T & = ❴ t₁, t₂❵⏎
+  f & = ❴ ⟨r₁, s₁, t₁⟩, ⟨r₁, s₂, t₂⟩, ⟨r₂, s₁, t₂⟩ ❵ ⊂R⨉S⨉T
+\end{split}
+\end{equation}
+The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
+  can be found in \cref{Figure:simple:binary}
+
+\begin{figure}
+  \begin{JAVA}[style=numbered]
+abstract class R {¢¢ // Set ¢$R$¢
+  abstract T¢$⁺$¢ s1();
+  abstract T¢$⁺$¢ s2();
+  static final class r1 extends R {¢¢ // Value ¢$r₁∈R$¢
+    t1 s1() {¢¢ return null; }
+    t2 s2() {¢¢ return null; }
+  }
+  static final class r2 extends R {¢¢ // Value ¢$r₂∈R$¢
+    t2 s1() {¢¢ return null; }
+    ¢$⊥$¢ s2() {¢¢ return null; }
+  }
+}
+abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
+  static final class ¢$⊥$¢ extends T¢$⁺$¢ { /* empty */ } // Error Value ¢$⊥∈T⁺$¢
+  static abstract class T extends T¢$⁺$¢ {¢¢ ¢…¢ } // Set ¢$T⊂T⁺$¢
+}
+\end{JAVA}
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
+  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).
+  The body of classes \cc{T} as well the full definition of classes \cc{t1} and \cc{t2} is not included here, and is
+    as in \cref{Figure:unary}.}
+\end{figure}
+
+With the above definitions, we obtain:
+  \begin{JAVA}
+f.r1().s1().g(); // ¢✓¢ returned type
+f.r1().s2().g(); // ¢✓¢
+f.r2().s1().g(); // ¢✓¢
+f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
+\end{JAVA}
+
+Here is an example,
+To do so, generate an abstract class \cc{R} that represents~$R$, and,
+  for each~$r∈R$ a concrete class \cc{r} that extends \cc{R}.
+To do so, generate an abstract class \cc{T} that represents~$T$, and,
+  for each~$t∈T$ a concrete class \cc{t} that extends \cc{T}.
+
+Now, for each~$s∈S$, introduce an abstract method named \cc{s},
+  in class~$R$
+
+(the name obtained by
+  concatenating the name of~$f$ with the name of~$s$).
+
+It is rather straightforward to encode

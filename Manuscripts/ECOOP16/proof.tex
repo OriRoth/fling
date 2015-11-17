@@ -47,10 +47,15 @@ In particular, we describe how~$J_M$ is constructed from the
   specification of~$M$.
 
 \subsection{Encoding the stack with \Java generics}
-First is the stack.
+As usual,~$Γ$ the set of stack symbols is encoded as an abstract class,
+  while each stack symbol~$γ∈Γ$ is encoded as a final class that
+  extends class~$Γ$.
+
+The stack can then be encoded as in \cref{Figure:stack}
+\begin{figure}
 \begin{JAVA}
-class S<T extends S> {
-  T t;
+class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {
+   t;
   S(T t) { this.t = t; }
   T pop() { return t; };
 }
@@ -62,6 +67,7 @@ class ¢$ξ$¢ <T extends S> extends S<T> {
   // ¢…¢
 }
 \end{JAVA}
+\end{figure}
 In addition, we define a special class~$⊥$ that designates the bottom of the stack.
 \begin{JAVA}
 class ¢$⊥$¢ extends S<¢$⊥$¢> {
@@ -78,118 +84,17 @@ is represented by the following type
 This is a general concept for implementing an unbounded stack with \Java's type system,
 that will be extended in the future.
 
-\subsection{Type encoding of unary (non-partial) functions}
-\begin{figure}
-  \begin{JAVA}[style=numbered]
-  static final class ¢$⊥$¢ extends T¢$⁺$¢ {} // Error Value ¢$⊥∈T⁺$¢
-  static abstract class T extends T¢$⁺$¢ { // Set ¢$T⊂T⁺$¢
-    abstract T g(); 
-  } 
-  static final class t1 extends T { // Value ¢$t₁∈T$¢
-    final t2 g() { return null; }
-  } 
-  static final class t2 extends T { // Value ¢$t₂∈T$¢
-    final t1 g() { return null; }
-  } 
-}
-\end{JAVA}
-  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
-  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
-\end{figure}
-\subsection{Type-method encoding of partial binary functions}
-Consider a partial function~$f: R⨉S↛T$,
-where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
-Then, it is possible to encode~$f$
-  within the framework of \Java generics and static type checking.
-Before showing how this is done in the general case, consider this example:
-\begin{equation}
-  \label{Equation:simple:binary}
-\begin{split}
-  R & = ❴ r₁, r₂❵⏎
-  S & = ❴ s₁, s₂❵⏎
-  T & = ❴ t₁, t₂❵⏎
-  f & = ❴ ⟨r₁, s₁, t₁⟩, ⟨r₁, s₂, t₂⟩, ⟨r₂, s₁, t₂⟩ ❵ ⊂R⨉S⨉T
-\end{split}
-\end{equation}
-The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
-  can be found in \cref{Figure:simple:binary}
-
-\begin{figure}
-  \begin{JAVA}[style=numbered]
-abstract class R { // Set ¢$R$¢
-  abstract T¢$⁺$¢ s1();
-  abstract T¢$⁺$¢ s2();
-  static final class r1 extends R { // Value ¢$r₁∈R$¢
-    t1 s1() { return null; }
-    t2 s2() { return null; }
-  }
-  static final class r2 extends R { // Value ¢$r₂∈R$¢
-    t2 s1() { return null; }
-    ¢$⊥$¢ s2() { return null; }
-  }
-}
-abstract class T¢$⁺$¢ { // Set ¢$T∪❴⊥❵~$¢
-  static final class ¢$⊥$¢ extends T¢$⁺$¢ {} // Error Value ¢$⊥∈T⁺$¢
-  static abstract class T extends T¢$⁺$¢ { // Set ¢$T⊂T⁺$¢
-    abstract T g(); 
-  } 
-  static final class t1 extends T { // Value ¢$t₁∈T$¢
-    final t2 g() { return null; }
-  } 
-  static final class t2 extends T { // Value ¢$t₂∈T$¢
-    final t1 g() { return null; }
-  } 
-}
-\end{JAVA}
-  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
-  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
-\end{figure}
-
-\begin{figure}
-  \begin{JAVA}
-abstract class f { // A non-instantiable ¢\cc{abstract}¢ class
-  private f() { throw new RuntimeException(); }
-  static r1() { return new r1(); }
-  static r2() { return new r2(); }
-}
-\end{JAVA}
-  \begin{JAVA}
-f.r1().s1().g(); // ¢✓¢ returned type 
-f.r1().s2().g(); // ¢✓¢
-f.r2().s1().g(); // ¢✓¢
-f.r2().s2().g(); // ¢✗¢ compile time error, function \cc{g()} is undefined for type $T^+$.
-\end{JAVA}
-  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
-  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).}
-\end{figure}
-\cmark\xmark
-
-Here is an example,
-To do so, generate an abstract class \cc{R} that represents~$R$, and,
-  for each~$r∈R$ a concrete class \cc{r} that extends \cc{R}.
-To do so, generate an abstract class \cc{T} that represents~$T$, and,
-  for each~$t∈T$ a concrete class \cc{t} that extends \cc{T}.
-
-Now, for each~$s∈S$, introduce an abstract method named \cc{s},
-  in class~$R$
-
-(the name obtained by
-  concatenating the name of~$f$ with the name of~$s$).
-
-It is rather straightforward to encode
-
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function \cref{Equation:generalized:transition}
   takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
     and~$k$ stack symbols drawn from~$Γ$.
 To capture the full behavior of the automaton, the transition function
-  must also save, in some fashion the full state of the stack, and
-  encode in it the changes applied to the stack.
+  must be able to pass along, in one way or another, the full contents of the stack.
 
 Since the scheme described above can only be applied for binary functions,
   we shall pack together the state~$q$, the stack, and the~$k$ top most
   elements of it into a single type.
-  The remaining argument of function~$δ$, i.e., the next input symbol,~$σ∈Σ$,
+The next input symbol,~$σ∈Σ$, the remaining argument of function~$δ$,
   is encoded as a method.
 
 The type part of the encoding is obtained by instantiating a generic type as follows:
@@ -197,10 +102,14 @@ Let \cc{Q} be the abstract class that represents~$Q$, and let \cc{q} be the conc
   implements \cc{Q} for an automaton state~$q∈Q$.
 Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
   to class~$Q$ and to every class \cc{q} that implements it.
-Yet another such parameter is added for representing the full information on the stack.
+Yet another such parameter is added for representing stack contents.
+
+Consider the case~$k=2$.
+\begin{figure}
 \begin{JAVA}
-abstract class Q<S' extends S, T extends
+abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢
 \end{JAVA}
+\end{figure}
 
 Let~$q∈Q$ be a state of the automaton. Then, we
 
