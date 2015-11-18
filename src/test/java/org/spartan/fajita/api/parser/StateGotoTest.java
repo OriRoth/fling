@@ -38,7 +38,7 @@ public class StateGotoTest {
         .finish();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
-    assertFalse(initialState.isLegalLookahead(Term.c));
+    assertFalse(initialState.isLegalTransition(Term.c));
     State nextState = initialState.goTo(Term.c);
     assertEquals(nextState, null);
   }
@@ -54,7 +54,7 @@ public class StateGotoTest {
         .finish();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
-    assertTrue(initialState.isLegalLookahead(Term.a));
+    assertTrue(initialState.isLegalTransition(Term.a));
     State nextState = initialState.goTo(Term.a);
     Item A_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.A)).findAny().get();
     assertEquals(1, A_Rule.dotIndex);
@@ -72,7 +72,7 @@ public class StateGotoTest {
         .finish();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
-    assertTrue(initialState.isLegalLookahead(NT.A));
+    assertTrue(initialState.isLegalTransition(NT.A));
     State nextState = initialState.goTo(NT.A);
     Item S_Rule = nextState.getItems().stream().filter(r -> r.rule.lhs.equals(NT.S)).findAny().get();
     assertEquals(1, S_Rule.dotIndex);

@@ -11,6 +11,8 @@ import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.ERROR_
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -78,7 +80,16 @@ public class TypeArgumentManager {
     $.addAll(bnf.getNonTerminals());
     $.remove(SpecialSymbols.$);
     $.remove(SpecialSymbols.augmentedStartSymbol);
+    Collections.sort($, symbolComparator());
     return $;
+  }
+  public static Comparator<Symbol> symbolComparator() {
+    return new Comparator<Symbol>() {
+      @Override public int compare(Symbol symb1, Symbol symb2) {
+        return symb1.isTerminal() && symb2.isNonTerminal() ? -1
+            : symb1.isNonTerminal() && symb2.isTerminal() ? 1 : symb1.name().compareTo(symb2.name());
+      }
+    };
   }
   public TypeVariableName getType(final int index) {
     return baseTAList.get(index);
@@ -103,24 +114,26 @@ public class TypeArgumentManager {
       else
         throw new IllegalStateException("unexpected transition length :" + s.transitions.length);
     });
+    System.out.println(instantiations);
   }
   private void InstantiateSingleTransition(final ContextedState s) {
     assert (s.transitions.length == 1);
     if (!s.isInherited()) {
       StateTypeData q$B_Data = statesTypeData.get(s.context);
       StateTypeData q_X$B_Data = statesTypeData.get(s.state);
-      Collection<InheritedParameter> baseInheritedParameters = q$B_Data.getInheritedParameters();
-      for (InheritedParameter inheritedParameter : q_X$B_Data.getInheritedParameters()) {
-        InheritedParameter baseParameter = new InheritedParameter(inheritedParameter.depth - 1, inheritedParameter.lhs,
-            inheritedParameter.lookahead);
+      Collection<InheritedParameter> q$BParams = q$B_Data.getInheritedParameters();
+      for (InheritedParameter A_i_a : q_X$B_Data.getInheritedParameters()) {
+        NonTerminal A = A_i_a.lhs;
+        Terminal a = A_i_a.lookahead;
+        int i = A_i_a.depth;
+        InheritedParameter q$B_Param = new InheritedParameter(i - 1, A, a);
         TypeName instantiatedType;
-        if (baseInheritedParameters.contains(baseParameter))// Inherited TA
-          instantiatedType = q$B_Data.getFormalParameter(baseParameter);
-        else // Synthesized TA
-          instantiatedType = instantiations
-              .get(new ContextedState(s.context, new Symbol[] { inheritedParameter.lhs, inheritedParameter.lookahead }));
+        if (q$BParams.contains(q$B_Param))// Inherited TA
+          instantiatedType = q$B_Data.getFormalParameter(q$B_Param);
+        else // Synthesized from Q^{B}
+          instantiatedType = findInstance(s.context, A, a);
         assert (instantiatedType != null);
-        s.instantiate(inheritedParameter, instantiatedType);
+        s.instantiate(A_i_a, instantiatedType);
       }
     }
     instantiations.put(s, s.getInstantiation());
@@ -131,32 +144,47 @@ public class TypeArgumentManager {
       StateTypeData q$B_Data = statesTypeData.get(s.context);
       StateTypeData q_X$B_Data = statesTypeData.get(s.context.goTo(s.transitions[0]));
       StateTypeData q_XY$B_Data = statesTypeData.get(s.state);
-      Collection<InheritedParameter> baseInheritedParameters = q_X$B_Data.getInheritedParameters();
-      Collection<InheritedParameter> contextInheritedParameters = q$B_Data.getInheritedParameters();
-      for (InheritedParameter inheritedParameter : q_XY$B_Data.getInheritedParameters()) {
-        InheritedParameter baseParameter = new InheritedParameter(inheritedParameter.depth - 1, inheritedParameter.lhs,
-            inheritedParameter.lookahead);
-        InheritedParameter contextParameter = new InheritedParameter(inheritedParameter.depth - 2, inheritedParameter.lhs,
-            inheritedParameter.lookahead);
+      Collection<InheritedParameter> q_X$B_Params = q_X$B_Data.getInheritedParameters();
+      Collection<InheritedParameter> q$B_Params = q$B_Data.getInheritedParameters();
+      for (InheritedParameter A_i_a : q_XY$B_Data.getInheritedParameters()) {
+        NonTerminal A = A_i_a.lhs;
+        Terminal a = A_i_a.lookahead;
+        int i = A_i_a.depth;
+        InheritedParameter q_X$B_Param = new InheritedParameter(i - 1, A, a);
+        InheritedParameter q$B_Param = new InheritedParameter(i - 2, A, a);
         TypeName instantiatedType;
-        if (baseInheritedParameters.contains(baseParameter) && !contextInheritedParameters.contains(contextParameter))// Inherited
-                                                                                                                      // TA
-          instantiatedType = q_X$B_Data.getFormalParameter(baseParameter);
-        else // Synthesized from Q^{B}_{X}
-          instantiatedType = instantiations
-              .get(new ContextedState(q_X$B_Data.state, new Symbol[] { inheritedParameter.lookahead }));
-        if (instantiatedType == null){
-          System.out.println(instantiations);
-          System.out.println(q_X$B_Data.state.toString() + inheritedParameter.lookahead );
-          assert(instantiatedType != null);
+        if (q$B_Params.contains(q$B_Param))// Inherited TA
+          instantiatedType = q$B_Data.getFormalParameter(q$B_Param);
+        else if (q_X$B_Params.contains(q_X$B_Param)) // Synthesized from Q^{B}
+          instantiatedType = findInstance(q$B_Data.state, A, a);
+        else {
+          ContextedState q_Aa$X = find(q_X$B_Data.state, A, a);
+          if (q_Aa$X.isInherited()) // Synthesized from Q^{B}_{X} , abstract
+            instantiatedType = findInstance(q$B_Data.state, ((InheritedContexedState) q_Aa$X).lhs,
+                ((InheritedContexedState) q_Aa$X).lookahead);
+          else // Synthesized from Q^{B}_{X} , abstract
+            instantiatedType = findInstance(q_X$B_Data.state, A, a);
         }
-        s.instantiate(inheritedParameter, instantiatedType);
+        assert (instantiatedType != null);
+        s.instantiate(A_i_a, instantiatedType);
       }
     }
     instantiations.put(s, s.getInstantiation());
   }
+  TypeName findInstance(State context, Symbol... transitions) {
+    return instantiations.get(new ContextedState(context, transitions));
+  }
   private DirectedGraph<ContextedState, DefaultEdge> generateDependenciesGraph() {
     final DefaultDirectedGraph<ContextedState, DefaultEdge> $ = new DefaultDirectedGraph<>(DefaultEdge.class);
+    parser.getStates().forEach(state -> symbols.forEach(symb -> {
+      if (state.isLegalTransition(symb))
+        $.addVertex(new ContextedState(state.goTo(symb), state, symb));
+      else if (state.isLegalReduce(symb)) {
+        Item item = state.getItems().stream() //
+            .filter(i -> i.readyToReduce() && i.lookahead.equals(symb)).findAny().get();
+        $.addVertex(new InheritedContexedState(state, item.rule.lhs, item.dotIndex, (Terminal) symb, symb));
+      }
+    }));
     for (State q$B : parser.getStates())
       addStateDependencies(q$B, $);
     System.out.println($);
@@ -220,7 +248,7 @@ public class TypeArgumentManager {
     List<Symbol> alpha = rule.getChildren();
     NonTerminal C = rule.lhs;
     if (alpha.size() > 1)
-      return new ContextedState(type(new InheritedParameter(alpha.size() - 1, C, b).toString()), q$B, A, b);
+      return new InheritedContexedState(q$B, C, alpha.size() - 1, b, A, b);
     if (alpha.size() == 1) // alpha = A
       return find(q$B, C, b);
     return find(q$B.goTo(A), C, b);
@@ -234,16 +262,16 @@ public class TypeArgumentManager {
     List<Symbol> alpha = rule.getChildren();
     NonTerminal C = rule.lhs;
     if (alpha.size() > 0)
-      return new ContextedState(type(new InheritedParameter(alpha.size() - 1, C, b).toString()), q$B, b);
+      return new InheritedContexedState(q$B, C, alpha.size() - 1, b, b);
     return find(q$B, C, b);
   }
   public ParameterizedTypeName getInstantiatedState(State s) {
     StateTypeData typeData = statesTypeData.get(s);
     for (Symbol symb : symbols) {
-      if (!s.isLegalLookahead(symb))
+      if (!s.isLegalTransition(symb) && !s.isLegalReduce(symb))
         typeData.setBaseType(symb, type(ERROR_STATE));
       else
-        typeData.setBaseType(symb, instantiations.get(new ContextedState(s, symb)));
+        typeData.setBaseType(symb, findInstance(s, symb));
     }
     return typeData.getBaseType();
   }
@@ -253,8 +281,6 @@ public class TypeArgumentManager {
     public final State state;
     public final Symbol[] transitions;
     private final Map<InheritedParameter, TypeName> instantiation;
-    private boolean isInherited = false;
-    TypeName stateInstantiation;
 
     public ContextedState(final State actual, final State context, final Symbol... transitions) {
       state = actual;
@@ -263,13 +289,8 @@ public class TypeArgumentManager {
       instantiation = new HashMap<>();
       instantiateStack();
     }
-    public ContextedState(final TypeName actual, final State context, final Symbol... transitions) {
-      this(context, transitions);
-      isInherited = true;
-      stateInstantiation = actual;
-    }
     public boolean isInherited() {
-      return isInherited;
+      return false;
     }
     public ContextedState(final State context, final Symbol... transitions) {
       state = null;
@@ -292,11 +313,13 @@ public class TypeArgumentManager {
       return ParameterizedTypeName.get(type(s.name), params);
     }
     @Override public String toString() {
+      return getDescription(Integer.toString(state.index));
+    }
+    protected String getDescription(String stateDesc) {
       StringBuilder sb = new StringBuilder("Q^{" + context.index + "}_{");
-      String index = isInherited ? stateInstantiation.toString().replaceAll("_", "\\_") : Integer.toString(state.index);
       for (Symbol symb : transitions)
         sb.append(symb.name());
-      sb.append("}\\left(" + index + "\\right)");
+      sb.append("}\\left(" + stateDesc + "\\right)");
       return sb.toString();
     }
     @Override public int hashCode() {
@@ -310,8 +333,6 @@ public class TypeArgumentManager {
       if (this == obj)
         return true;
       if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
         return false;
       ContextedState other = (ContextedState) obj;
       if (context == null) {
@@ -327,8 +348,6 @@ public class TypeArgumentManager {
       instantiation.put(param, type);
     }
     public TypeName getInstantiation() {
-      if (isInherited)
-        return stateInstantiation;
       StateTypeData data = statesTypeData.get(state);
       TypeName[] typeArguments = new TypeName[data.getFormalParameters().size()];
       assert (typeArguments.length == instantiation.size());
@@ -338,6 +357,32 @@ public class TypeArgumentManager {
         typeArguments[index++] = instantiation.get(paramName);
       }
       return ParameterizedTypeName.get(type(state.name), typeArguments);
+    }
+  }
+
+  private class InheritedContexedState extends ContextedState {
+    NonTerminal lhs;
+    int depth;
+    Terminal lookahead;
+
+    public InheritedContexedState(final State context, final NonTerminal lhs, final int depth, final Terminal lookahead,
+        final Symbol... transitions) {
+      super(context, transitions);
+      this.lhs = lhs;
+      this.depth = depth;
+      this.lookahead = lookahead;
+    }
+    @Override public boolean isInherited() {
+      return true;
+    }
+    @Override public String toString() {
+      return getDescription(getInstantiation().toString());
+    }
+    @SuppressWarnings("unused") @Override public void instantiate(InheritedParameter param, TypeName type) {
+      throw new IllegalStateException("can't instantiate");
+    }
+    @Override public TypeName getInstantiation() {
+      return type(new InheritedParameter(depth, lhs, lookahead).toString());
     }
   }
 }

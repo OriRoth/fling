@@ -30,9 +30,13 @@ public class Item {
   public boolean readyToReduce() {
     return dotIndex == rule.getChildren().size();
   }
-  public boolean isLegalLookahead(final Symbol symb) {
-    return (rule.getChildren().size() > dotIndex) //
-        && symb == rule.getChildren().get(dotIndex);
+  public boolean isLegalTransition(final Symbol symb) {
+    return ((rule.getChildren().size() > dotIndex) //
+        && symb.equals(rule.getChildren().get(dotIndex)));
+  }
+  
+  public boolean isLegalReduce(final Terminal term) {
+    return readyToReduce() && lookahead.equals(term);
   }
   @Override public int hashCode() {
     return rule.hashCode() * Integer.hashCode(dotIndex);

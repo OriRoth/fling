@@ -1,14 +1,14 @@
 package org.spartan.fajita.api.generators.typeArguments;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public final class InheritedParameter implements Comparable<InheritedParameter> {
   public final int depth;
   public final NonTerminal lhs;
-  public final Symbol lookahead;
+  public final Terminal lookahead;
 
-  public InheritedParameter(final int depth, final NonTerminal lhs, final Symbol l) {
+  public InheritedParameter(final int depth, final NonTerminal lhs, final Terminal l) {
     this.depth = depth;
     this.lhs = lhs;
     lookahead = l;

@@ -179,7 +179,7 @@ public class LRParser {
     while (!statesToCheck.isEmpty()) {
       State state = statesToCheck.pop();
       for (Symbol lookahead : symbols) {
-        if (!state.isLegalLookahead(lookahead))
+        if (!state.isLegalTransition(lookahead))
           continue;
         State newState = generateNextState(state, lookahead);
         int stateIndex = states.indexOf(newState);
@@ -199,7 +199,7 @@ public class LRParser {
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
         return new AcceptState(bnf, getStates().size());
     Set<Item> initialItems = state.getItems().stream().//
-        filter(item -> item.isLegalLookahead(lookahead)) //
+        filter(item -> item.isLegalTransition(lookahead) ) //
         .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);

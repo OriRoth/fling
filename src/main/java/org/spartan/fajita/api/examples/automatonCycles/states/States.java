@@ -51,7 +51,8 @@ public class States {
     }
   }
 
-  public static class Q0 extends BaseState<EmptyStack, Q2<Q0, Q6<Q4<Q0, ?>, Q7<Q3<Q0>>>>, ErrorState, ErrorState, Q1<Q0>, ErrorState, Q3<Q0>, Q4<Q0, Q7<Q3<Q0>>>> {
+  public static class Q0 extends
+      BaseState<EmptyStack, Q2<Q0, Q6<Q4<Q0, ?>, Q7<Q3<Q0>>>>, ErrorState, ErrorState, Q1<Q0>, ErrorState, Q3<Q0>, Q4<Q0, Q7<Q3<Q0>>>> {
     public Q0() {
       super(new EmptyStack());
     }
@@ -69,7 +70,8 @@ public class States {
     }
   }
 
-  public static class Q1<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q1<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q1(Stack stack) {
       super(stack);
     }
@@ -78,12 +80,12 @@ public class States {
     }
   }
 
-  public static class Q2<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, A_1_b extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> 
-  extends  BaseState<Stack, Q2<Q2<Stack, ?>, A_1_b>, ErrorState, A_1_b, ErrorState, ErrorState, ErrorState, Q8<Q2<Stack, ?>, A_1_b>> {
+  public static class Q2<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, A_1_b extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends
+      BaseState<Stack, Q2<Q2<Stack, ?>, A_1_b>, ErrorState, A_1_b, ErrorState, ErrorState, ErrorState, Q8<Q2<Stack, ?>, A_1_b>> {
     Q2(Stack stack) {
       super(stack);
     }
-    @Override public Q2<Q2<Stack, ?>, A_1_b> a() {
+    @Override    public Q2<Q2<Stack, ?>, A_1_b> a() {
       return new Q2<>(this);
     }
     @Override protected Q8<Q2<Stack, ?>, A_1_b> A() {
@@ -94,7 +96,8 @@ public class States {
     }
   }
 
-  public static class Q3<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends BaseState<Stack, ErrorState, Q7<Q3<Stack>>, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q3<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, Q7<Q3<Stack>>, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q3(Stack stack) {
       super(stack);
     }
@@ -103,7 +106,8 @@ public class States {
     }
   }
 
-  public static class Q4<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, C_1_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends  BaseState<Stack, ErrorState, ErrorState, Q6<Q4<Stack, ?>, C_1_d>, ErrorState, Q5<Q4<Stack, ?>, C_1_d>, ErrorState, ErrorState> {
+  public static class Q4<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, C_1_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends
+      BaseState<Stack, ErrorState, ErrorState, Q6<Q4<Stack, ?>, C_1_d>, ErrorState, Q5<Q4<Stack, ?>, C_1_d>, ErrorState, ErrorState> {
     Q4(Stack stack) {
       super(stack);
     }
@@ -115,7 +119,8 @@ public class States {
     }
   }
 
-  public static class Q5<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>, C_2_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends BaseState<Stack, ErrorState, C_2_d, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q5<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>, C_2_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, C_2_d, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q5(Stack stack) {
       super(stack);
     }
@@ -124,7 +129,8 @@ public class States {
     }
   }
 
-  public static class Q6<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, B_1_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>> extends BaseState<Stack, ErrorState, B_1_d, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q6<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, B_1_d extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, B_1_d, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q6(Stack stack) {
       super(stack);
     }
@@ -133,7 +139,8 @@ public class States {
     }
   }
 
-  public static class Q7<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>>      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q7<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q7(Stack stack) {
       super(stack);
     }
@@ -142,7 +149,8 @@ public class States {
     }
   }
 
-  public static class Q8<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>, A_2_b extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>      extends BaseState<Stack, ErrorState, ErrorState, A_2_b, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q8<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?>, A_2_b extends BaseState<?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, ErrorState, A_2_b, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q8(Stack stack) {
       super(stack);
     }

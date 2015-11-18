@@ -1,4 +1,9 @@
 \subsection{Type encoding of unary (non-partial) functions}
+Let~$g: T \rightarrow T $ be a (non-partial) unary function,
+  where the set~$T$ is finite and containable.
+Then, it is possible to have a compile-time representation of $g$,
+  meaning, to have the mapping of g happen at compile-time.
+The following example is a demonstration:
 \begin{figure}
   \begin{JAVA}[style=numbered]
 static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
@@ -12,13 +17,13 @@ static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
 }
 \end{JAVA}
   \caption{Encoding of the unary function~$g: T→T$,
-  defined by~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
+  defined by~$T=\left\{ t_1,t_2 \right\}$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
   \label{Figure:unary:function}
 \end{figure}
 
 \subsection{Type-method encoding of partial binary functions}
 Consider a partial function~$f: R⨉S↛T$,
-where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
+  where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
 Then, it is possible to encode~$f$
   within the framework of \Java generics and static type checking.
 Before showing how this is done in the general case, consider this example:
@@ -56,7 +61,7 @@ abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
   \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
   defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).
   The body of classes \cc{T} as well the full definition of classes \cc{t1} and \cc{t2} is not included here, and is
-    as in \cref{Figure:unary}.}
+    as in \cref{Figure:unary:function}.}
 \end{figure}
 
 With the above definitions, we obtain:

@@ -11,6 +11,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class State {
   private final Set<Item> items;
@@ -29,12 +30,16 @@ public class State {
   void addGotoTransition(final Symbol symbol, final State newState) {
     transitions.put(symbol, newState);
   }
-  public boolean isLegalLookahead(final Symbol lookahead) {
+  public boolean isLegalTransition(final Symbol lookahead) {
     if (lookahead == SpecialSymbols.$)
       return getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol));
-    return transitions.containsKey(lookahead) || getItems().stream().anyMatch(item -> item.isLegalLookahead(lookahead));
+    return transitions.containsKey(lookahead) || getItems().stream().anyMatch(item -> item.isLegalTransition(lookahead));
   }
-  public Set<Symbol> allLegalLookaheads() {
+  public boolean isLegalReduce(final Symbol lookahead) {
+    return lookahead.isTerminal() && getItems().stream().anyMatch(item -> item.isLegalReduce((Terminal)lookahead));
+  }
+  
+  public Set<Symbol> allLegalTransitions() {
     return transitions.keySet();
   }
   @Override public String toString() {

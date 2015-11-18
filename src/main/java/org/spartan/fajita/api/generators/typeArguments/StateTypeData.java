@@ -8,14 +8,16 @@ import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.EMPTY_
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.parser.State;
 
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -30,17 +32,17 @@ public class StateTypeData {
   private final LinkedHashMap<InheritedParameter, TypeVariableName> typeParameters;
   static final InheritedParameter stackTP = new InheritedParameter(-1, null, null);
   // base state type parameters
-  private final Map<Symbol, TypeName> baseTAs;
+  private final LinkedHashMap<Symbol, TypeName> baseTAs;
 
   public StateTypeData(final State s, final List<Symbol> baseStateSymbols) {
     state = s;
     baseTASize = baseStateSymbols.size() + 1;
     typeParameters = setFormalParametersTypes();
-    baseTAs = new HashMap<>();
+    baseTAs = new LinkedHashMap<>();
     if (typeParameters.containsKey(stackTP))
-      baseTAs.put(SpecialSymbols.$, type(EMPTY_STACK));
-    else
       baseTAs.put(SpecialSymbols.$, getFormalParameter(stackTP));
+    else
+      baseTAs.put(SpecialSymbols.$, type(EMPTY_STACK));
   }
   private LinkedHashMap<InheritedParameter, TypeVariableName> setFormalParametersTypes() {
     LinkedHashMap<InheritedParameter, TypeVariableName> $ = new LinkedHashMap<>();
@@ -58,7 +60,7 @@ public class StateTypeData {
   List<InheritedParameter> getInheritedParameters() {
     ArrayList<InheritedParameter> arrayList = new ArrayList<>(typeParameters.keySet());
     arrayList.remove(stackTP);
-    return arrayList; 
+    return arrayList;
   }
   @SuppressWarnings("boxing") private TypeVariableName calculateStackTypeParameter() {
     int max_depth = state.getItems().stream().map(item -> item.dotIndex).max((x, y) -> Integer.compare(x, y)).get();
@@ -79,10 +81,20 @@ public class StateTypeData {
   TypeVariableName getFormalParameter(final InheritedParameter data) {
     return typeParameters.get(data);
   }
+  
+  TypeVariableName getFormalParameter(NonTerminal lhs,int depth,Terminal lookahead) {
+    return getFormalParameter(new InheritedParameter(depth, lhs, lookahead));
+  }
   List<TypeVariableName> getFormalParameters() {
     return typeParameters.values().stream().collect(Collectors.toList());
   }
   ParameterizedTypeName getBaseType() {
-    return ParameterizedTypeName.get(type(BASE_STATE), baseTAs.values().toArray(new TypeName[] {}));
+    List<Entry<Symbol, TypeName>> entries = new ArrayList<>(baseTAs.entrySet());
+    Collections.sort(entries, (ent1, ent2) -> TypeArgumentManager.symbolComparator().compare(ent1.getKey(), ent2.getKey()));
+    return ParameterizedTypeName.get(type(BASE_STATE),
+        entries.stream().map(ent -> ent.getValue()).collect(Collectors.toList()).toArray(new TypeName[] {}));
+  }
+  @Override public String toString() {
+    return state.name + "<" + getFormalParameters().toString() + "";
   }
 }

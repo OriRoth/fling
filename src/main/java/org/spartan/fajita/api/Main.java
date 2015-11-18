@@ -53,7 +53,7 @@ public class Main {
     System.out.println(states.build());
   }
   private static TypeSpec generateClass(final TypeArgumentManager tam, final State s, final String name) {
-    return TypeSpec.classBuilder(name).addModifiers(Modifier.STATIC).addTypeVariables(tam.stateTypeArguments(s))
+    return TypeSpec.classBuilder(name).addModifiers(Modifier.STATIC,Modifier.PUBLIC).addTypeVariables(tam.stateTypeArguments(s))
         .superclass(tam.getInstantiatedState(s)).build();
   }
   private static void lrAutomatonVisualisation(final LRParser parser) {
@@ -69,7 +69,7 @@ public class Main {
   private static DirectedGraph<State, LabeledEdge> generateGraph(final LRParser parser) {
     DefaultDirectedGraph<State, LabeledEdge> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory());
     parser.getStates().forEach(s -> $.addVertex(s));
-    parser.getStates().forEach(s -> s.allLegalLookaheads().forEach(symb -> {
+    parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
       State goTo = s.goTo(symb);
       if (goTo.getClass() == AcceptState.class)
         $.addVertex(goTo);
@@ -87,7 +87,7 @@ public class Main {
       this.dst = dst;
     }
     @Override public String toString() {
-      for (Symbol lh : src.allLegalLookaheads())
+      for (Symbol lh : src.allLegalTransitions())
         if (src.goTo(lh).equals(dst))
           return lh.name();
       return super.toString();
