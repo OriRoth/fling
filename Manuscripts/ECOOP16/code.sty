@@ -10,7 +10,7 @@
 \tcbuselibrary{skins}
 %\tcbset{listing utf8=latin1}% optional; ’latin1’ is the default.
 
-\newcommand\codesize{\footnotesize}
+\newcommand\codesize{\scriptsize}
 \def\codedisplayspace{0pt}
 
 \ProcessOptions
@@ -46,18 +46,24 @@
 \tcbuselibrary{fitting}
 
 \tcbset{codebox/.style={
-  after=\par,
-  before=\par\smallskip\centering,
-  boxrule=0pt,
-  boxsep=2pt,
+  after=\relax,
+  before=\relax,
+  left=0pt,
+  right=0pt,
+  top=0pt,
+  bottom=0pt,
+  boxsep=0pt,
+ % boxrule=0pt,
+ % boxsep=2pt,
   clip title=false,
   colbacklower=blue!90,
   colback=olive!10!white,
   colbacktitle=yellow!85!orange!77!white,
-  colframe=olive!70!black,
+  colframe=white,
+  sharp corners=all,
   collower=Blue,
   coltitle=blue!50!black,
-  drop shadow=black!60,
+  % drop shadow=black!60,
   enhanced,
   fontlower=\footnotesize\ttfamily\slshape\bfseries,
   hbox,
@@ -66,12 +72,6 @@
   listing remove caption=true,
   listing style=#1,
   notitle,
-  size=small,
-  watermark text=\csname name#1\endcsname,
-  watermark color=blue!20!red,
-  outer arc=6pt,
-  arc=6pt,
-  watermark opacity=0.10,
 }}
 
 \tcbset{output/.style={
@@ -85,17 +85,20 @@
   #1
 }
 
+\newtcblisting{Code}[2][]{%
+  codebox=#2,
+  listing options={style=numbered,style=#2},
+  minipage,
+  width=\linewidth,
+  #1
+}
+
 \newtcblisting{lcode}[2][]{%
   codebox=#2,
   before=\par\smallskip,
   #1
 }
 
-\newtcblisting{Code}[3][]{%
-  codebox=#2,
-  title={#3},
-  #1
-}
 
 \newtcblisting{lCode}[3][]{%
   codebox=#2,
@@ -126,13 +129,11 @@
   columns={fullflexible},
   keepspaces=true,
   tabsize=2,                 
-  %aboveskip=100ex,
-  belowskip=\codedisplayspace,
-  xleftmargin=\codedisplayspace,
-  xrightmargin=\codedisplayspace,
-  resetmargins=true,
+  belowskip=0pt,
+  aboveskip=3pt,
+  xleftmargin=200pt,
+  xrightmargin=0pt,
   breaklines=true,
-%  linewidth=0.96\columnwidth,
 }
 
 \lstdefinestyle{printout}{%
@@ -150,7 +151,6 @@
   keywordstyle=\color{RoyalBlue}\listingsfont\codesize\textup\bfseries,
   commentstyle=\color{ForestGreen}\commentsfont\codesize\slshape,
   stringstyle=\color{OliveGreen}\listingsfont\codesize\itshape,
-  xleftmargin=\codedisplayspace,
 }
 
 
@@ -175,11 +175,9 @@
 % but with minimal spacing for the numbering.
 \lstdefinestyle{numbered}{%
   style=display,
-  numbers=right,
+  numbers=left,
   stepnumber=1,
-  numbersep=-10pt,
-  xleftmargin=1ex,
-  xrightmargin=1ex,
+  numbersep=2pt,
   numberblanklines=false,
   numberstyle=\tiny\bf\color{black},
 }

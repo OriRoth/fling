@@ -5,17 +5,17 @@ Then, it is possible to have a compile-time representation of $g$,
   meaning, to have the mapping of g happen at compile-time.
 The following example is a demonstration:
 \begin{figure}
-  \begin{JAVA}[style=numbered]
+  \begin{Code}{Java}
 static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
   abstract T g();
+  static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
+    final t2 g() {¢¢ return null; }
+  }
+  static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
+    final t1 g() {¢¢ return null; }
+  }
 }
-static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
-  final t2 g() {¢¢ return null; }
-}
-static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
-  final t1 g() {¢¢ return null; }
-}
-\end{JAVA}
+\end{Code}
   \caption{Encoding of the unary function~$g: T→T$,
   defined by~$T=\left\{ t_1,t_2 \right\}$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
   \label{Figure:unary:function}
@@ -40,7 +40,7 @@ The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bi
   can be found in \cref{Figure:simple:binary}
 
 \begin{figure}
-  \begin{JAVA}[style=numbered]
+  \begin{Code}{Java}
 abstract class R {¢¢ // Set ¢$R$¢
   abstract T¢$⁺$¢ s1();
   abstract T¢$⁺$¢ s2();
@@ -52,12 +52,15 @@ abstract class R {¢¢ // Set ¢$R$¢
     t2 s1() {¢¢ return null; }
     ¢$⊥$¢ s2() {¢¢ return null; }
   }
+  static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
+    abstract T g();
+  }
+  abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
+    static final class ¢$⊥$¢ extends T¢$⁺$¢ {¢¢ /* empty */ } // Error Value ¢$⊥∈T⁺$¢
+    static abstract class T extends T¢$⁺$¢ {¢¢ ¢…¢ } // Set ¢$T⊂T⁺$¢
+  }
 }
-abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
-  static final class ¢$⊥$¢ extends T¢$⁺$¢ { /* empty */ } // Error Value ¢$⊥∈T⁺$¢
-  static abstract class T extends T¢$⁺$¢ {¢¢ ¢…¢ } // Set ¢$T⊂T⁺$¢
-}
-\end{JAVA}
+\end{Code}
   \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
   defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).
   The body of classes \cc{T} as well the full definition of classes \cc{t1} and \cc{t2} is not included here, and is
