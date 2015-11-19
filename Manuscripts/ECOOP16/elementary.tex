@@ -3,10 +3,11 @@ Let~$g: T \rightarrow T $ be a (non-partial) unary function,
   where the set~$T$ is finite and containable.
 Then, it is possible to have a compile-time representation of $g$,
   meaning, to have the mapping of g happen at compile-time.
-The following example is a demonstration:
+~\cref{Figure:unary:function} is a demonstration of a possible encoding
+of function $g$, and an use example.  
 \begin{figure}
   \begin{JAVA}[style=numbered]
-static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
+static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T$¢
   abstract T g();
 }
 static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
@@ -15,6 +16,9 @@ static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
 static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
   final t1 g() {¢¢ return null; }
 }
+
+  t2 x = new t1().g();
+  t1 y = new t2().g();
 \end{JAVA}
   \caption{Encoding of the unary function~$g: T→T$,
   defined by~$T=\left\{ t_1,t_2 \right\}$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
@@ -24,20 +28,19 @@ static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
 \subsection{Type-method encoding of partial binary functions}
 Consider a partial function~$f: R⨉S↛T$,
   where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
-Then, it is possible to encode~$f$
-  within the framework of \Java generics and static type checking.
-Before showing how this is done in the general case, consider this example:
+Then, it is possible to encode~$f$ within the framework of \Java's type system.
+Before showing how this is done in the general case, consider this example, 
+where~$T$ and $g$ are defined as in \cref{Figure:unary:function}:
 \begin{equation}
   \label{Equation:simple:binary}
 \begin{split}
   R & = ❴ r₁, r₂❵⏎
   S & = ❴ s₁, s₂❵⏎
-  T & = ❴ t₁, t₂❵⏎
   f & = ❴ ⟨r₁, s₁, t₁⟩, ⟨r₁, s₂, t₂⟩, ⟨r₂, s₁, t₂⟩ ❵ ⊂R⨉S⨉T
 \end{split}
 \end{equation}
 The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
-  can be found in \cref{Figure:simple:binary}
+  can be found in \cref{Figure:simple:binary}.
 
 \begin{figure}
   \begin{JAVA}[style=numbered]
@@ -57,29 +60,36 @@ abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
   static final class ¢$⊥$¢ extends T¢$⁺$¢ { /* empty */ } // Error Value ¢$⊥∈T⁺$¢
   static abstract class T extends T¢$⁺$¢ {¢¢ ¢…¢ } // Set ¢$T⊂T⁺$¢
 }
+abstract class f{ // representation of function ¢f¢
+  static r1 r1(){¢¢ return new r1(); }
+  static r2 r2(){¢¢ return new r2(); }
+}
 \end{JAVA}
   \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
   defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).
-  The body of classes \cc{T} as well the full definition of classes \cc{t1} and \cc{t2} is not included here, and is
-    as in \cref{Figure:unary:function}.}
+  The body of classes \cc{T} as well the full implementation of classes \cc{t1} and \cc{t2} is not included here, and is
+    in \cref{Figure:unary:function}.}
+  \label{Figure:simple:binary}
 \end{figure}
 
 With the above definitions, we obtain:
-  \begin{JAVA}
+\begin{JAVA}
 f.r1().s1().g(); // ¢✓¢ returned type
 f.r1().s2().g(); // ¢✓¢
 f.r2().s1().g(); // ¢✓¢
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
+We use the notion \emph{Type-Method} when we want to express that the arguments passed to a function 
+  (i.e., former $f$) are ``passed'' by invoking a method on the reciever (i.e., r1(),s1() in the former example).
 
-Here is an example,
-To do so, generate an abstract class \cc{R} that represents~$R$, and,
+Here is the general process for general sets $R$,$S$,$T$ and function $f$:
+First, generate an abstract class \cc{R} that represents set~$R$, and,
   for each~$r∈R$ a concrete class \cc{r} that extends \cc{R}.
-To do so, generate an abstract class \cc{T} that represents~$T$, and,
+Similarly, generate an abstract class \cc{T} that represents set~$T$, and,
   for each~$t∈T$ a concrete class \cc{t} that extends \cc{T}.
 
-Now, for each~$s∈S$, introduce an abstract method named \cc{s},
-  in class~$R$
+Now, for each~$(r,s)∈f$, introduce an abstract method named \cc{s},
+  in class~\cc{r}
 
 (the name obtained by
   concatenating the name of~$f$ with the name of~$s$).
