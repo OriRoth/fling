@@ -10,7 +10,6 @@ import sandbox.Γ.γ2;
 public class Automaton {
 }
 
-
 abstract class Qʹ {
   static final class ¤ extends Qʹ {
   }
@@ -23,7 +22,7 @@ abstract class Qʹ {
     }
 
     static final class q1_1_1<CurrentStack extends Stack> extends q1<CurrentStack, γ1, γ1> {
-      Q σ1() {
+      @Override q2 σ1() {
         return null;
       }
       ¤ σ2() {
@@ -31,27 +30,62 @@ abstract class Qʹ {
       }
     }
 
-    static class q1_1_2<CurrentStack extends Stack> extends q1<CurrentStack, γ1, γ2> {
+    static class q1_1_2<CurrentStack extends Stack> extends q1<CurrentStack, γ1, γ2> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
-    static class q1_2_1<CurrentStack extends Stack> extends q1<CurrentStack, γ2, γ1> {
+    static class q1_2_1<CurrentStack extends Stack> extends q1<CurrentStack, γ2, γ1> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
-    static class q1_2_2<CurrentStack extends Stack> extends q1<CurrentStack, γ2, γ2> {
+    static class q1_2_2<CurrentStack extends Stack> extends q1<CurrentStack, γ2, γ2> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
     static abstract class q2<CurrentStack extends Stack, Top1 extends Γ, Top2 extends Γ> extends Q<CurrentStack, Top1, Top2> {
     }
 
-    static class q2_1_1<CurrentStack extends Stack> extends q2<CurrentStack, γ1, γ1> {
+    static class q2_1_1<CurrentStack extends Stack> extends q2<CurrentStack, γ1, γ1> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
-    static class q2_1_2<CurrentStack extends Stack> extends q2<CurrentStack, γ1, γ2> {
+    static class q2_1_2<CurrentStack extends Stack> extends q2<CurrentStack, γ1, γ2> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
-    static class q2_2_1<CurrentStack extends Stack> extends q2<CurrentStack, γ2, γ1> {
+    static class q2_2_1<CurrentStack extends Stack> extends q2<CurrentStack, γ2, γ1> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
 
-    static class q2_2_2<CurrentStack extends Stack> extends q2<CurrentStack, γ2, γ2> {
+    static class q2_2_2<CurrentStack extends Stack> extends q2<CurrentStack, γ2, γ2> {      Q σ1() {
+      return null;
+    }
+    ¤ σ2() {
+      return null;
+    }
     }
   }

@@ -1,7 +1,7 @@
-package sandbox;
-import sandbox.Γʹ.Γ;
-import sandbox.Γʹ.Γ.γ1;
-import sandbox.Γʹ.Γ.γ2;
+
+import sandbox.sandbox.Γʹ.Γ;
+import sandbox.sandbox.Γʹ.Γ.γ1;
+import sandbox.sandbox.Γʹ.Γ.γ2;
 
 class Γʹ {
   static final class ¤ extends Γʹ {}
@@ -13,8 +13,8 @@ class Γʹ {
   }
 }
 
-abstract class Stack<Self extends Stack> {
-  abstract Stack pop();
+abstract class Stack2<Self extends Stack2> {
+  abstract Stack2 pop();
   abstract  Γʹ top();
   Push<γ1, Self> γ1() {
     return push((γ1) null);
@@ -24,7 +24,7 @@ abstract class Stack<Self extends Stack> {
   }
 
 
-  static final class ¤ extends Stack<¤> {
+  static final class ¤ extends Stack2<¤> {
     ¤ pop() {
       return null;
     }
@@ -37,7 +37,7 @@ abstract class Stack<Self extends Stack> {
     return null;
   }
 
-  static class Push<Head extends Γ, Tail extends Stack> extends Stack<Push<Head, Tail>> {
+  static class Push<Head extends Γ, Tail extends Stack2> extends Stack2<Push<Head, Tail>> {
     Head head;
     Tail tail;
 
@@ -54,10 +54,10 @@ abstract class Stack<Self extends Stack> {
   }
 
   public static void main(String[] args) {
-    Push<γ1, Push<γ2, Push<γ1, Push<γ2, Stack.¤>>>> t;
-    Push<γ1, ¤> push = new Stack.¤().γ1();
+    Push<γ1, Push<γ2, Push<γ1, Push<γ2, Stack2.¤>>>> t;
+    Push<γ1, ¤> push = new Stack2.¤().γ1();
     Push<γ2, Push<γ1, ¤>> push2 = push.γ2();
-    Push<γ1, Push<γ1, Push<γ2, Push<γ1, Push<γ1, ¤>>>>> a = ((Stack.¤) null).γ1().γ1().γ2().γ1().γ1();
+    Push<γ1, Push<γ1, Push<γ2, Push<γ1, Push<γ1, ¤>>>>> a = ((Stack2.¤) null).γ1().γ1().γ2().γ1().γ1();
     Push<γ1, Push<γ2, Push<γ1, Push<γ1, ¤>>>> b = a.pop();
     Push<γ2, Push<γ1, Push<γ1, ¤>>> c = b.pop();
     Push<γ1, Push<γ1, ¤>> d = c.pop();
