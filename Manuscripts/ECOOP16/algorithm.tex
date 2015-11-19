@@ -1,236 +1,178 @@
-%% LyX 2.1.3 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
-\documentclass[english]{article}
-\usepackage[T1]{fontenc}
-\usepackage{geometry}
-\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=1.5cm,rmargin=1.5cm}
-\usepackage{float}
-
-\makeatletter
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
-\floatstyle{ruled}
-\newfloat{algorithm}{tbp}{loa}
-\providecommand{\algorithmname}{Algorithm}
-\floatname{algorithm}{\protect\algorithmname}
-
-\makeatother
-
-\usepackage{babel}
-\begin{document}
-\begin{algorithm}
-\protect\caption{Instantiating state's type argument.}
-
-
-
 \subsubsection*{Building the automaton's dependency graph}
-\begin{description}
-\item [{Input:}] LR(1) parser.
-\item [{Output:}] A dependency graph defining the dependencies between
-instantiations of state classes
-\item [{Notations:}]~\end{description}
-\begin{itemize}
-\item $Q^{B}$ - a state that we are look at the instantion from his context.
-\item Let $\sigma$ be a transition from $Q^{B}$ then $Q_{\sigma}^{B}$
-is the instantiation of $action\left(Q_{B},\sigma\right)$ in context
-of $Q^{B}$
-\item Let $\sigma_{2}$be a transition from $Q_{\sigma_{1}}$ then $Q_{\sigma_{1}\sigma_{2}}$
-is the instantiation of $action\left(Q_{\sigma_{1}}^{B},\sigma_{2}\right)$
-in context of $Q^{B}$
-\item the symbols a,b,c,d will be terminals (not including \$)
-\item the symbols A,B,C,D will be nonterminals(not including S').
-\item the symbols X,Y,Z,W will be either terminals or nonterminals.
-\item $\alpha,\beta,\gamma$ will be strings of grammar symbols\end{itemize}
-\begin{description}
-\item [{Method:}]~
 
-\begin{enumerate}
-\item $V=\left\{ Q_{X}^{B}|Q^{B}\in Parser\wedge\exists transition\left(Q^{B},X\right)\right\} $,$E=\emptyset$
-\item For each $Q^{B}\in Parser$
+  We employ the following convention:
+  lower case letters from the beginning of the Latin alphabet,~$a$,~$b$, $c$, …,
+  denote \emph{terminals} (but never the special terminal~$\cc{\$}$),
+    upper case such letters~$A$,~$B$, $C$, …, denote \emph{variables}
+  (but never the automatically generated special variable $S'$), 
+  nonterminals(not including S').
+  An upper case sans-serif letter $\mathsf X$, $\mathsf Y$, denote
+    either symbols, i.e., either variables or terminals,
+    while lower case Greek~$α$, $β$, $γ$, \ldots denote \emph{strings} of grammar symbols
 
-\begin{enumerate}
-\item $\forall\left[A\rightarrow\cdot X\alpha,b\right]\in Q^{B}$ 
-
-\begin{enumerate}
-\item $Q_{Ab}^{B}=Find\left(Q^{B},A,b\right)$
-\item $V=V\bigcup\left\{ Q_{Ab}^{B}\right\} $
-\item $E=E\bigcup\left\{ \left(Q_{Ab}^{B},Q_{X}^{B}\right)\right\} $
-\end{enumerate}
-\item $\forall\left[A\rightarrow\cdot Cd,b\right]\in Q^{B}$ 
-
-\begin{enumerate}
-\item $Q_{Ab}^{B}=Find\left(Q^{B},A,b\right)$
-\item $Q_{Cd}^{B}=Find\left(Q^{B},C,d\right)$
-\item If $Q_{Cd}^{B}$ is not inherited ($\neq\left(A,i,b\right)$ )
-
-\begin{enumerate}
-\item $V=V\bigcup\left\{ Q_{Ab}^{B},Q_{Cd}^{B}\right\} $
-\item $E=E\bigcup\left\{ \left(Q_{Ab}^{B},Q_{Cd}^{B}\right)\right\} $
-\end{enumerate}
-\end{enumerate}
-\item $\forall Q_{Ab}^{B}\in V.Q_{Ab}^{B}\neq\left(A,i,b\right)$
-
-\begin{enumerate}
-\item $E=E\bigcup\left\{ \left(Q_{A}^{B},Q_{Ab}^{B}\right)\right\} $
-\item $Q_{b}^{A}=Find\left(Q^{A},b\right)$
-\item $E=E\bigcup\left\{ \left(Q_{b}^{A},Q_{Ab}^{B}\right)\right\} $
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-
-/{*}{*}
-
-
-Returns the state that will consume b, or null, if it cannot be determined.
-
-
-{*}{*}/
-\begin{description}
-\item [{Function}] $Find\left(Q^{B},A,b\right)$ returns ContexedState\end{description}
-\begin{enumerate}
-\item If $action\left(Q_{A}^{B},b\right)=s_{i}$
-
-\begin{enumerate}
-\item return $Q_{i}$
-\end{enumerate}
-\item else //$Q_{A}^{B}$ reduces by rule $C\rightarrow\alpha\cdot,b$
-
-\begin{enumerate}
-\item If $\left|\alpha\right|>1$
-
-\begin{enumerate}
-\item return $\left(C,\left|\alpha\right|-1,b\right)$ //``Inherited TA''
-\end{enumerate}
-\item else if $\left|\alpha\right|=1$ ($\alpha=A$ )
-
-\begin{enumerate}
-\item return $Find\left(Q^{B},C,b\right)$
-\end{enumerate}
-\item else //$\alpha=\epsilon$
-
-\begin{enumerate}
-\item return $Find\left(Q^{A},C,b\right)$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-\begin{description}
-\item [{Function}] $Find\left(Q^{B},b\right)$ returns ContexedState\end{description}
-\begin{enumerate}
-\item If $action\left(Q^{B},b\right)=s_{i}$
-
-\begin{enumerate}
-\item return $Q_{i}$
-\end{enumerate}
-\item else //$Q^{B}$ reduces by rule $C\rightarrow\alpha\cdot,b$
-
-\begin{enumerate}
-\item If $\left|\alpha\right|>0$
-
-\begin{enumerate}
-\item return $\left(C,\left|\alpha\right|-1,b\right)$ //``Inherited TA''
-\end{enumerate}
-\item else //$\alpha=\epsilon$
-
-\begin{enumerate}
-\item return $Find\left(Q^{B},C,b\right)$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-\item [{Complexity:}]~
-
-\begin{itemize}
-\item $V=O\left(\right)$
-\item $E=O\left(\right)$
-\end{itemize}
-\end{description}
-
-\subsubsection*{Instantiating type arguments for state s}
-\begin{description}
-\item [{Input:}] A dependency graph $G=\left(V,E\right)$ for state $Q_{B}$.
-\item [{Output:}] An instantiated class for s.
-\item [{Method:}]~
-
-\begin{enumerate}
-\item Handle dependency cycles.
-\item Run a topoligical sort on $G$ ( we now know $G$ is a $DAG$)
-\item for each $S$ in topological order:
-
-\begin{enumerate}
-\item If $S=Q_{X}^{B}$
-
-\begin{enumerate}
-\item $FillSingleTransition\left(Q_{X}^{B}\right)$
-\end{enumerate}
-\item Else if $S=Q_{XY}^{B}$
-
-\begin{enumerate}
-\item $FillDoubleTransition\left(Q_{XY}^{B}\right)$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-\begin{description}
-\item [{Function}] $FillSingleTransition\left(Q_{X}^{B}\right):$
-
-\begin{enumerate}
-\item If $Q_{X}^{B}=\left(A,i,b\right)$
-
-\begin{enumerate}
-\item return;
-\end{enumerate}
-\item For each triplet $\left(A,i,a\right)\in Q_{X}^{B}$ 
-
-\begin{enumerate}
-\item If $\left(A,i-1,a\right)\in Q^{B}$ then //inherited TA(Type Argument)
-
-\begin{enumerate}
-\item $Q_{X}^{B}\left[\left(A,i,a\right)\right]:=Q^{B}\left[\left(A,i-1,a\right)\right]$
-\end{enumerate}
-\item Else // synthesized from $Q^{B}$ 
-
-\begin{enumerate}
-\item $Q_{X}^{B}\left[\left(A,i,a\right)\right]:=Q_{Aa}^{B}$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-\item [{Function}] $FillDoubleTransition\left(Q_{XY}^{B}\right)$:
-
-\begin{enumerate}
-\item If $Q_{XY}^{B}=\left(A,i,b\right)$
-
-\begin{enumerate}
-\item return;
-\end{enumerate}
-\item For each triplet $\left(A,i,a\right)\in Q_{XY}^{B}$ 
-
-\begin{enumerate}
-\item If $\left(A,i-2,a\right)\in Q^{B}$ then //inherited TA(Type Argument)
-
-\begin{enumerate}
-\item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q^{B}\left[\left(A,i-2,a\right)\right]$
-\end{enumerate}
-\item Else If $\left(A,i-1,a\right)\in Q_{X}^{B}$// synthesized from $Q^{B}$ 
-
-\begin{enumerate}
-\item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q_{Aa}^{B}$
-\end{enumerate}
-\item Else If $Q_{Aa}^{X}=\left(C,j,d\right)$// Synthesized from $Q_{X}^{B}$
-real result on $Q^{B}$
-
-\begin{enumerate}
-\item $Q_{XY}^{B}:=Q_{Cd}^{B}$
-\end{enumerate}
-\item Else //Synthes ized from $Q_{X}^{B}$ , concrete
-
-\begin{enumerate}
-\item $Q_{XY}^{B}\left[\left(A,i,a\right)\right]:=Q_{Aa}^{X}$
-\end{enumerate}
-\end{enumerate}
-\end{enumerate}
-\end{description}
-\item [{Complexity:}]~
-
-
-Instantiation algorithm time complexity: $O\left(\right)$\end{description}
-\end{algorithm}
+    Let~$σ$ be a transition from~$Q$ then~$Q_{σ}$
+    is the instantiation of~$action(Q_{B},σ)$ in context
+    of~$Q$
+    Let~$σ₂$be a transition from~$Q_{σ₁}$ then~$Q_{σ₁σ₂}$
+    is the instantiation of~$action(Q_{σ₁},σ₂)$
+    in context of~$Q$
+\begin{figure}
+  \begin{algorithmic}[1]
+    %\protect\caption{Instantiating state's type argument.}
+    \REQUIRE{An LR(1) parser~$P$}.
+    \ENSURE{The dependency graph~$G =⟨V, E⟩$}
+    \STATE{$G=(E,V)←∅$} \COMMENT {Output graph is initially empty}
+    \FORALL[Create initial set of vertices of~$G$]{$⟨Qᵢ,Qⱼ,X⟩∈\textsf{edges}(P)$}
+    \STATE{$V←❴ Q_{X}|Q∈P∧∃transition(Q,X)❵$}
+    \ENDFOR
+    \FORALL[Create edges of~$G$]{state~$Q∈P$}
+    \FORALL{$∀[A→·Xα,b]∈Q$}
+    \STATE~$Q_{Ab}←\textsf{Find}(Q,A,b)$
+    \STATE~$V←V\cup \bigcup❴ Q_{Ab}❵~$
+    \STATE~$E←E\cup \bigcup❴ (Q_{Ab},Q_{X})❵~$
+    \ENDFOR
+    \FORALL{$[A→·Cd,b]∈Q$}
+    \STATE~$Q_{Ab}←\textsf{Find}(Q,A,b)$
+    \STATE~$Q_{Cd}←\textsf{Find}(Q,C,d)$
+    \IF{$Q_{Cd}$ is not inherited ($≠(A,i,b)$ )}
+    \STATE~$V←V\cup \bigcup❴ Q_{Ab},Q_{Cd}❵~$
+    \STATE~$E←E\cup \bigcup❴ (Q_{Ab},Q_{Cd})❵~$
+    \ENDIF
+    \ENDFOR
+    \FORALL {$Q_{Ab}∈V.Q_{Ab}≠(A,i,b)$}
+    \STATE~$E←E\cup \bigcup❴ (Q_{A},Q_{Ab})❵~$
+    \STATE~$Q_{b}^{A}←\textsf{Find}(Q^{A},b)$
+    \STATE~$E←E\cup \bigcup❴ (Q_{b}^{A},Q_{Ab})❵~$
+    \ENDFOR
+    \ENDFOR
+    \RETURN{$⟨V,E⟩$}
+  \end{algorithmic}
+\end{figure}
 
 \end{document}
+
+\COMMENT{Returns the state that will consume b, or null, if it cannot be determined.}
+
+\begin{description}
+\STATE [{Function}]~$\textsf{Find}(Q,A,b)$ returns ContexedState\end{description}
+  \begin{enumerate}
+    \STATE If~$action(Q_{A},b)=sᵢ$
+          \begin{enumerate}
+            \STATE return~$Qᵢ$
+          \end{enumerate}
+    \STATE else //$Q_{A}$ reduces by rule~$Carrowα·,b$
+          \begin{enumerate}
+            \STATE If~$|α|>1$
+                  \begin{enumerate}
+                    \STATE return~$(C,|α|-1,b)$ //‟Inherited TA”
+                  \end{enumerate}
+            \STATE else if~$|α|=1$ ($α=A$ )
+                  \begin{enumerate}
+                      \STATE return~$\textsf{Find}(Q,C,b)$
+                  \end{enumerate}
+            \STATE else //$α=ε$
+                  \begin{enumerate}
+                      \STATE return~$\textsf{Find}(Q^{A},C,b)$
+                  \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  \begin{description}
+      \STATE [{Function}]~$\textsf{Find}(Q,b)$ returns ContexedState
+  \end{description}
+  \begin{enumerate}
+    \STATE If~$action(Q,b)=sᵢ$
+          \begin{enumerate}
+            \STATE return~$Qᵢ$
+          \end{enumerate}
+    \STATE else //$Q$ reduces by rule~$Carrowα·,b$
+          \begin{enumerate}
+            \STATE If~$|α|>0$
+                  \begin{enumerate}
+                    \STATE return~$(C,|α|-1,b)$ //‟Inherited TA”
+                  \end{enumerate}
+            \STATE else //$α=ε$
+                  \begin{enumerate}
+                      \STATE return~$\textsf{Find}(Q,C,b)$
+                  \end{enumerate}
+          \end{enumerate}
+  \end{enumerate}
+  \STATE [{Complexity:}]~
+  \begin{itemize}
+    \STATE~$V=O()$
+    \STATE~$E=O()$
+  \end{itemize}
+\end{description}
+\end{algorithmic}
+
+\begin{algorithmic}
+  \COMMENT{Instantiating type arguments for state s}
+  \begin{description}
+    \STATE [{Input:}] A dependency graph~$G=(V,E)$ for state~$Q_{B}$.
+    \STATE [{Output:}] An instantiated class for s.
+    \STATE [{Method:}]~
+    \begin{enumerate}
+      \STATE Handle dependency cycles.
+      \STATE Run a topoligical sort on~$G$ ( we now know~$G$ is a~$DAG$)
+      \STATE for each~$S$ in topological order:
+            \begin{enumerate}
+              \STATE If~$S=Q_{X}$
+                    \begin{enumerate}
+                      \STATE~$FillSingleTransition(Q_{X})$
+                    \end{enumerate}
+              \STATE Else if~$S=Q_{XY}$
+                    \begin{enumerate}
+                      \STATE~$FillDoubleTransition(Q_{XY})$
+                    \end{enumerate}
+            \end{enumerate}
+    \end{enumerate}
+    \begin{description}
+      \STATE [{Function}]~$FillSingleTransition(Q_{X}):$
+      \begin{enumerate}
+        \STATE If~$Q_{X}=(A,i,b)$
+              \begin{enumerate}
+                \STATE return;
+              \end{enumerate}
+        \STATE For each triplet~$(A,i,a)∈Q_{X}$
+              \begin{enumerate}
+                \STATE If~$(A,i-1,a)∈Q$ then //inherited TA(Type Argument)
+                      \begin{enumerate}
+                        \STATE~$Q_{X}[(A,i,a)]:=Q[(A,i-1,a)]$
+                      \end{enumerate}
+                \STATE Else // synthesized from~$Q$
+                      \begin{enumerate}
+                        \STATE~$Q_{X}[(A,i,a)]:=Q_{Aa}$
+                      \end{enumerate}
+              \end{enumerate}
+      \end{enumerate}
+      \STATE [{Function}]~$FillDoubleTransition(Q_{XY})$:
+      \begin{enumerate}
+        \STATE If~$Q_{XY}=(A,i,b)$
+              \begin{enumerate}
+                \STATE return;
+              \end{enumerate}
+        \STATE For each triplet~$(A,i,a)∈Q_{XY}$
+              \begin{enumerate}
+                \STATE If~$(A,i-2,a)∈Q$ then //inherited TA(Type Argument)
+                      \begin{enumerate}
+                        \STATE~$Q_{XY}[(A,i,a)]:=Q[(A,i-2,a)]$
+                      \end{enumerate}
+                \STATE Else If~$(A,i-1,a)∈Q_{X}$// synthesized from~$Q$
+                      \begin{enumerate}
+                        \STATE~$Q_{XY}[(A,i,a)]:=Q_{Aa}$
+                      \end{enumerate}
+                \STATE Else If~$Q_{Aa}^{X}=(C,j,d)$// Synthesized from~$Q_{X}$
+                      real result on~$Q$
+                      \begin{enumerate}
+                        \STATE~$Q_{XY}:=Q_{Cd}$
+                      \end{enumerate}
+                \STATE Else //Synthes ized from~$Q_{X}$ , concrete
+                      \begin{enumerate}
+                        \STATE~$Q_{XY}[(A,i,a)]:=Q_{Aa}^{X}$
+                      \end{enumerate}
+              \end{enumerate}
+      \end{enumerate}
+    \end{description}
+    \STATE [{Complexity:}]~
+    Instantiation algorithm time complexity:~$O()$
+\end{description}
+    \end{algorithmic}
