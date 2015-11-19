@@ -1,5 +1,6 @@
 package sandbox;
 
+import sandbox.Stack.Bottom;
 import sandbox.Stack.Push;
 import sandbox.Γ.γ1;
 import sandbox.Γ.γ2;
@@ -47,7 +48,9 @@ abstract class Stack<Self extends Stack>{
 class Delme {
   public static void main(String[] args) {
     Push<γ1, Push<γ2, Push<γ1, Push<γ2, Stack.Bottom>>>> t;
-    new Bottom().push();
+    Push<γ1, Bottom> push = new Stack.Bottom().push((γ1)null);
+    Push<γ2, Push<γ1, Bottom>> push2 = push.push((γ2)null);
+    
   }
 }
 
