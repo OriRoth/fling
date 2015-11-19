@@ -119,8 +119,8 @@ enumerations \cc{BNFTerminals} and
   \cc{BNFVariables}
   are now employed in \cref{Figure:BNF:fluent}.
 
-\begin{figure}[htb]
-  \begin{JAVA}[style=numbered]
+\begin{figure}
+  \begin{Code}{Java}
 new BNF()
   ¢¢.with(BNFTerminals.class)
   ¢¢.with(BNFSymbols.class)
@@ -162,7 +162,7 @@ new BNF()
   ¢¢.derive(Footer)
     ¢¢.to(go)
 ¢¢.go();
-\end{JAVA}
+\end{Code}
   \caption{A BNF grammar for \Self API}
   \label{Figure:BNF:fluent}
 \end{figure}
