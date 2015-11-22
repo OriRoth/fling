@@ -1,4 +1,4 @@
-package sandbox.sandbox;
+package sandbox;
 class Γʹ {
   static final class ¤ extends Γʹ {}
   static abstract class Γ extends Γʹ {

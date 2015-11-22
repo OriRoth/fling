@@ -1,4 +1,5 @@
 *.aux
+*.backup
 *.bak
 *.bbl
 *.blg
@@ -15,3 +16,4 @@
 *.synctex.gz
 target/
 *.toc
+*.vtc
