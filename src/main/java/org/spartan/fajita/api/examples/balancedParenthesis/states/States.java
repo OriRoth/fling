@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples.balancedParenthesis;
+package org.spartan.fajita.api.examples.balancedParenthesis.states;
 
 import org.spartan.fajita.api.parser.stack.EmptyStack;
 import org.spartan.fajita.api.parser.stack.IStack;

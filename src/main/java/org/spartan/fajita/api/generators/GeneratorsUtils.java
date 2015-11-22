@@ -1,11 +1,32 @@
 package org.spartan.fajita.api.generators;
 
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STACK;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.BASE_STATE;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.EMPTY_STACK;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.ERROR_STATE;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.Classname.PARSE_ERROR;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import javax.lang.model.element.Modifier;
+
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.AnnotationSpec.Builder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 import com.squareup.javapoet.WildcardTypeName;
 
 public class GeneratorsUtils {
@@ -19,6 +40,7 @@ public class GeneratorsUtils {
   }
 
   public static final String STACK_TYPE_PARAMETER = "Stack";
+  public static final String STACK_FIELD = "stack";
 
   public static ClassName type(final String classname) {
     return ClassName.get("", classname);
@@ -43,5 +65,68 @@ public class GeneratorsUtils {
       typeCode.add("$S,", types[i]);
     typeCode.add("$S}", types[types.length - 1]);
     return $.addMember("value", typeCode.build()).build();
+  }
+  static TypeSpec generateIStack() {
+    return TypeSpec.interfaceBuilder(BASE_STACK.typename) //
+        .addModifiers(Modifier.STATIC).addTypeVariable(TypeVariableName.get("Tail", type(BASE_STACK))) //
+        .addAnnotation(suppressWarningAnnot("all"))//
+        .build();
+  }
+  static TypeSpec generateEmptyStack() {
+    // public class EmptyStack implements IStack<EmptyStack>
+    return TypeSpec.classBuilder(Classname.EMPTY_STACK.typename) //
+        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)//
+        .addAnnotation(suppressWarningAnnot("all"))//
+        .addSuperinterface(ParameterizedTypeName.get(type(BASE_STACK.typename), type(Classname.EMPTY_STACK.typename))).build();
+  }
+  static TypeSpec generateErrorState(TypeArgumentManager tam) {
+    TypeName[] typeArguments = new TypeName[tam.baseStateArgumentNumber()];
+    Arrays.fill(typeArguments, type(ERROR_STATE));
+    typeArguments[0] = type(EMPTY_STACK);
+    ParameterizedTypeName superclass = ParameterizedTypeName.get(type(BASE_STATE), typeArguments);
+    TypeSpec errorState = TypeSpec.classBuilder(ERROR_STATE.typename) //
+        .superclass(superclass)//
+        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)//
+        .addMethod(MethodSpec.constructorBuilder().addStatement("super(new $T())", type(EMPTY_STACK)).build()) //
+        .build();
+    return errorState;
+  }
+  static TypeSpec generateParseErrorException() {
+    TypeSpec parseError = TypeSpec.classBuilder(PARSE_ERROR.typename) //
+        .superclass(RuntimeException.class) //
+        .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
+        .addMethod(
+            MethodSpec.constructorBuilder().addParameter(String.class, "msg", Modifier.FINAL).addStatement("super(msg)").build()) //
+        .addAnnotation(suppressWarningAnnot("serial")).build();
+    return parseError;
+  }
+  static TypeSpec generateBaseState(TypeArgumentManager tam) {
+    FieldSpec stackField = FieldSpec.builder(tam.getType(0), "stack", Modifier.FINAL, Modifier.PRIVATE).build();
+    com.squareup.javapoet.TypeSpec.Builder builder = TypeSpec.classBuilder(BASE_STATE.typename);
+    builder.addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC, Modifier.STATIC);
+    builder.addMethod(MethodSpec.methodBuilder("pop").returns(type(STACK_TYPE_PARAMETER)).addModifiers(Modifier.PROTECTED)
+        .addStatement("return " + STACK_FIELD).build());
+    for (int i = 0; i < tam.baseStateArgumentNumber(); i++)
+      builder.addTypeVariable(tam.getType(i));
+    builder.addSuperinterface(ParameterizedTypeName.get(type(BASE_STACK), type(STACK_TYPE_PARAMETER)));
+    builder.addAnnotation(suppressWarningAnnot("rawtypes"));
+    builder.addField(stackField);
+    ParameterSpec stack = ParameterSpec.builder(tam.getType(0), "stack", Modifier.FINAL).build();
+    MethodSpec constuctor = MethodSpec.constructorBuilder() //
+        .addParameter(stack) //
+        .addStatement("this.$N = $N", stackField, stack) //
+        .build();
+    builder.addMethod(constuctor);
+    List<Symbol> symbols = new ArrayList<>(tam.symbols);
+    symbols.add(SpecialSymbols.$);
+    for (Symbol s : symbols) {
+      MethodSpec method = MethodSpec.methodBuilder(s.name()) //
+          .addModifiers(Modifier.PROTECTED) //
+          .returns(tam.getType(s)) //
+          .addStatement("throw new ParseError(\"unexpected symbol on state \" + getClass().getSimpleName())") //
+          .build();
+      builder.addMethod(method);
+    }
+    return builder.build();
   }
 }

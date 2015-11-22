@@ -1,8 +1,4 @@
-
-import sandbox.sandbox.Γʹ.Γ;
-import sandbox.sandbox.Γʹ.Γ.γ1;
-import sandbox.sandbox.Γʹ.Γ.γ2;
-
+package sandbox.sandbox;
 class Γʹ {
   static final class ¤ extends Γʹ {}
   static abstract class Γ extends Γʹ {

@@ -95,12 +95,12 @@ public class TypeArgumentManager {
     return baseTAList.get(index);
   }
   public TypeVariableName getType(final Symbol s) {
-    return getType(symbols.indexOf(s) + 1);
+    return s.equals(SpecialSymbols.$) ? TypeVariableName.get("Object") : getType(symbols.indexOf(s) + 1);
   }
   public int baseStateArgumentNumber() {
     return baseTAList.size();
   }
-  public List<TypeVariableName> stateTypeArguments(final State s) {
+  public List<TypeVariableName> getFormalParameters(final State s) {
     return statesTypeData.get(s).getFormalParameters();
   }
   private void calculateInstantiations() {
@@ -265,7 +265,7 @@ public class TypeArgumentManager {
       return new InheritedContexedState(q$B, C, alpha.size() - 1, b, b);
     return find(q$B, C, b);
   }
-  public ParameterizedTypeName getInstantiatedState(State s) {
+  public ParameterizedTypeName getInstantiatedBaseState(State s) {
     StateTypeData typeData = statesTypeData.get(s);
     for (Symbol symb : symbols) {
       if (!s.isLegalTransition(symb) && !s.isLegalReduce(symb))
