@@ -1,7 +1,10 @@
 package org.spartan.fajita.api.examples.dependencyCycle.use;
 
-import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.NT.*;
-import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.Term.*;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.NT.A;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.NT.B;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.Term.a;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.Term.d;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle.Term.e;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
@@ -16,8 +19,6 @@ import org.spartan.fajita.api.examples.dependencyCycle.States.Q3;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q4;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5Q4Q5;
-import org.spartan.fajita.api.generators.BaseStateSpec;
-import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 import org.spartan.fajita.api.parser.LRParser;
 
 public class DependencyCycle {
@@ -54,9 +55,5 @@ public class DependencyCycle {
     LRParser parser = new LRParser(bnf);
     System.out.println(parser);
     return parser;
-  }
-  public static void apiGeneration(final LRParser parser) {
-    // ApiGenerator apiGenerator = new ApiGenerator(parser);
-    System.out.println(new BaseStateSpec(new TypeArgumentManager(parser)).generate());
   }
 }

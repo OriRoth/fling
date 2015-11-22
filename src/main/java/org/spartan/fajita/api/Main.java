@@ -1,7 +1,6 @@
 package org.spartan.fajita.api;
 
-import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
-import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
+import org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat;
 import org.spartan.fajita.api.generators.ApiGenerator;
 
 import com.squareup.javapoet.TypeSpec;
@@ -12,7 +11,7 @@ public class Main {
   public static void main(final String[] args) {
 //    typeSpec(AutomatonCycles.buildBNF());
 //    LR1.buildBNF();
-    TypeSpec fluentAPI = ApiGenerator.generate(BalancedParenthesis.buildBNF());
+    TypeSpec fluentAPI = ApiGenerator.generate(ToiletteSeat.buildBNF());
     System.out.println(fluentAPI.toString());
   }
 //  private static void typeSpec(final LRParser parser) {

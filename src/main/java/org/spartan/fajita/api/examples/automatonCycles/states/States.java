@@ -91,7 +91,7 @@ public class States {
     @Override protected Q8<Q2<Stack, ?>, A_1_b> A() {
       return new Q8<>(this);
     }
-    @Override public A_1_b b() {
+    @SuppressWarnings("unchecked") @Override public A_1_b b() {
       return (A_1_b) stack.A().b();
     }
   }
@@ -124,7 +124,7 @@ public class States {
     Q5(Stack stack) {
       super(stack);
     }
-    @Override public C_2_d d() {
+    @SuppressWarnings("unchecked") @Override public C_2_d d() {
       return (C_2_d) stack.stack.d();
     }
   }
@@ -134,7 +134,7 @@ public class States {
     Q6(Stack stack) {
       super(stack);
     }
-    @Override public B_1_d d() {
+    @SuppressWarnings("unchecked") @Override public B_1_d d() {
       return (B_1_d) stack.d();
     }
   }
@@ -154,7 +154,7 @@ public class States {
     Q8(Stack stack) {
       super(stack);
     }
-    @Override public A_2_b b() {
+    @SuppressWarnings("unchecked") @Override public A_2_b b() {
       return (A_2_b) stack.stack.A().b();
     }
   }

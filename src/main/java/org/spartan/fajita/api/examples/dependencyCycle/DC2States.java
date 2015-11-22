@@ -3,7 +3,7 @@ package org.spartan.fajita.api.examples.dependencyCycle;
 import org.spartan.fajita.api.parser.stack.EmptyStack;
 import org.spartan.fajita.api.parser.stack.IStack;
 
-@SuppressWarnings({ "rawtypes", "unused" }) public class DC2States {
+ public class DC2States {
   @java.lang.SuppressWarnings({
       "rawtypes" }) public abstract static class BaseState<Stack extends IStack<?>, a extends BaseState, A extends BaseState>
           implements IStack<Stack> {
@@ -83,7 +83,7 @@ import org.spartan.fajita.api.parser.stack.IStack;
    Q2(final Stack stack) {
    super(stack);
    }
-   @Override public A1 a() {
+   @SuppressWarnings("unchecked") @Override public A1 a() {
    return (A1) stack.A().a();
    }
    @Override public int $() {
@@ -98,7 +98,7 @@ import org.spartan.fajita.api.parser.stack.IStack;
    Q3(final Stack stack) {
    super(stack);
    }
-   @Override public A2 a() {
+   @SuppressWarnings("unchecked") @Override public A2 a() {
    return (A2) stack.stack.A().a();
    }
    @Override public int $() {
