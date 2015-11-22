@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+
+\usetikzlibrary{calc}
+%\draw[help lines] (-7,-11) grid (7,1);
+\tikzstyle{concept}=[thick,font=,  text centered, rectangle,draw,inner sep=4pt,fill=olive!10,outer sep=2pt]
+\graph [tree layout,node distance=10,]
+{
+	"$\Gamma'$"[concept], 
+	"$\Gamma$"[concept], 
+	"$\gamma_1$"[concept], 
+	"$\gamma_2$"[concept], 
+	"\currency"[concept],
+	"$\Gamma$"->"$\Gamma'$",
+	"\currency"->"$\Gamma'$",
+	"$\gamma_1$"->"$\Gamma$",
+	"$\gamma_2$"->"$\Gamma$",
+};
+\end{tikzpicture}
