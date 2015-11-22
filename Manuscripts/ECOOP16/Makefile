@@ -1,6 +1,6 @@
 MAIN=00
 LOCALTEXMF= ../../../yogitex//
-LATEX=xelatex -file-line-error
+LATEX=lualatex -file-line-error
 
 export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
