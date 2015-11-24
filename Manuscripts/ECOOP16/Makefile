@@ -13,7 +13,7 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 stack.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' > $@
+	./escape.py < $< | awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' > $@
 
 
 warnings:	
