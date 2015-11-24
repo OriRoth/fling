@@ -13,9 +13,9 @@ while True:
         c.decode('ASCII')
         sys.stdout.write("%c" %c)
       except UnicodeError:
-        sys.stdout.write('%c' %escape)
+        sys.stdout.write(u'%c' %escape)
         sys.stdout.write('$')
         sys.stdout.write('%c' %c) 
         sys.stdout.write('$')
-        sys.stdout.write('%c' %escape)
+        sys.stdout.write(u'%c' %escape)
     sys.stdout.write("\n")
