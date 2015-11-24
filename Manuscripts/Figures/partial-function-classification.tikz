@@ -1,24 +1,12 @@
-\begin{tikzpicture}
-
-\usetikzlibrary{calc}
-%\draw[help lines] (-7,-11) grid (7,1);
-\tikzstyle{concept}=[thick,font=,  text centered, rectangle,draw,inner sep=4pt,fill=olive!10,outer sep=2pt]
-\graph [tree layout,node distance=10,]
-{
-	"$R$"[concept], 
-	"$r_1$"[concept], 
-	"$r_2$"[concept], 
-	"$T^+$"[concept], 
-	"$T$"[concept], 
-	"$t_1$"[concept], 
-	"$t_2$"[concept], 
-	"$\perp$"[concept],
-
-	"$r_1$"->"$R$",
-	"$r_2$"->"$R$",
-	"$T$"->"$T^+$",
-	"$\perp$"->"$T^+$",
-	"$t_1$"->"$T$",
-	"$t_2$"->"$T$",
-};
-\end{tikzpicture}
+\documentclass{article}
+\usepackage{mathptmx}
+\usepackage{tikz}
+\usepackage{color}
+\DeclareSymbolFont{symbolsb}{OMS}{cmsy}{m}{n}
+\SetSymbolFont{symbolsb}{bold}{OMS}{cmsy}{b}{n}
+\DeclareSymbolFontAlphabet{\mathcal}{symbolsb}
+\usepackage[active,pdftex,tightpage]{preview}
+\PreviewEnvironment[]{tikzpicture}
+\PreviewEnvironment[]{pgfpicture}
+\begin{document}
+\end{document} 

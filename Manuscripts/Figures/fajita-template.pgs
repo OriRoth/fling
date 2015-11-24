@@ -1,0 +1,44 @@
+% PGF style template to be used in the ktikz program
+\documentclass[a4paper,twoside,11pt]{book}
+
+\usepackage{adjustbox}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb} %load more math symbols
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{float}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{hyperref,cleveref}
+\usepackage{listings}
+\usepackage{nth}
+\usepackage{pifont}
+\usepackage{syntax}
+\usepackage[terse]{yogi_algorithm}
+\usepackage{tikz}
+\usepackage{wasysym}
+\usepackage{wrapfig}
+\usepackage{yogi-lang}
+\usepackage{yogi-unicode}
+
+\usetikzlibrary{graphdrawing}
+\usetikzlibrary{graphs} 
+\usetikzlibrary{shapes} 
+
+\usegdlibrary{circular}
+\usegdlibrary{trees}
+
+\DeclareFontFamily{OMS}{mdbch}{\skewchar\font=48}
+\DeclareFontShape{OMS}{mdbch}{m}{n}{<->s*[0.96] mdbchr7y}{}
+\DeclareFontShape{OMS}{mdbch}{m}{it}{<->ssub * mdbch/m/n}{}
+\DeclareFontShape{OMS}{mdbch}{b}{n}{<->s*[0.96] mdbchb7y}{}
+\DeclareFontShape{OMS}{mdbch}{bx}{n}{<->ssub * mdbch/b/n}{}
+%\usepackage{color}
+\usepackage[active,pdftex,tightpage]{preview}
+\PreviewEnvironment[]{tikzpicture}
+\PreviewEnvironment[]{pgfpicture}
+\begin{document}
+<>
+\end{document}

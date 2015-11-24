@@ -13,7 +13,7 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 stack.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | (export PYTHONIOENCODING=UTF-8; ./escape.py) > $@ 
+	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | sed 's/return null;/.../g' | sed 's/Push/P/g' | sed 's/Head/H/g' | sed 's/Tail/T/g' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 warnings:	
 	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
