@@ -89,9 +89,12 @@ f.r2().s1().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
 
-Here is the source.
-  \lstinputlisting[style=JAVA]{stack.listing}
-Source end.
+\begin{figure}[h]
+  \lstinputlisting[style=JAVA]{stack.listing} 
+  \caption{Stack encoding}
+  \label{Figure:stack:encoding}
+\end{figure}
+
 
 Note, that the implemented inheritance model previously used, is now extended to express the partiality
   of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
