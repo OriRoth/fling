@@ -1,5 +1,7 @@
+#!/usr/bin/python
 import sys
 out = u''
+normalStyle = [u'\xa4']
 while True:
   try: 
     raw = raw_input()  
@@ -11,6 +13,9 @@ while True:
       c.decode('ASCII')
       out = out + c.decode('UTF-8')
     except UnicodeError:
-      out = out + u'\xa2$'+c+u'$\xa2'
+      if c in normalStyle:
+        out = out + c
+      else:
+        out = out + u'\xa2$'+c+u'$\xa2'
   out = out +'\n'
-print out[:-1]
+print out
