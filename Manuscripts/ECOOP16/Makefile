@@ -6,11 +6,14 @@ export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 # Target to be used for compiles when references did not change
-latex: $(wildcard *.sty *.tex) 	
+latex: $(wildcard *.sty *.tex) stack.listing	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
+
+stack.listing: ../../src/main/java/automaton/Domain.java  
+	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' > $@
 
 
 warnings:	
@@ -35,7 +38,8 @@ all:	graphs bibtex $(MAIN).pdf
 
 .PHONY: clean graphs bibtex latex
 
-JUNKFILES=$(wildcard [dD]elme* DELME* *~ *.aux *.listing *.fls *.bbl *.blg *.bcf *.fdb_latexmk *.synctex.gz *.run.xml *blx.bib *.log *.dvi *.out *.o $(MAIN).pdf)  
+JUNKFILES=$(wildcard [dD]elme* DELME* *~ *.aux *.listing *.fls *.bbl *.blg *.bcf *.fdb_latexmk *.synctex.gz *.run.xml *blx.bib *.log *.dvi *.out *.o $(MAIN).pdf *.listing)
 
 clean: $(JUNKFILES) 
 	- [ -z '$^' ] || mv -f $^ /tmp
+

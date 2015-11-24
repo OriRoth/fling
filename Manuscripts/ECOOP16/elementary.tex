@@ -89,7 +89,9 @@ f.r2().s1().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
 
-\begin{lstinputlisting}[firstline=28,lastline=51]{../automaton/Automaton.java}
+Here is the source.
+  \lstinputlisting[style=JAVA]{stack.listing}
+Source end.
 
 Note, that the implemented inheritance model previously used, is now extended to express the partiality
   of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
@@ -98,7 +100,7 @@ Note, that the implemented inheritance model previously used, is now extended to
   \label{Figure:partial:inheritence:model}
   \caption{Inheritance Model for partial binary function~$f$}
   \begin{adjustbox}{max width=0.6\linewidth}
-    \input partial-function-classification.tikz
+    \input ../Figures/partial-function-classification.tikz
   \end{adjustbox}
 \end{figure}
 

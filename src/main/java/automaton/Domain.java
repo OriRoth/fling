@@ -1,20 +1,20 @@
 package automaton;
 import automaton.Domain.Stack;
-import ʹ.Domain.Stack.Bottom;
-import ʹ.Domain.Stack.Push;
-import ʹ.Domain.Γʹ;
-import ʹ.Domain.Γʹ.Γ;
-import ʹ.Domain.Γʹ.Γ.γ1;
-import ʹ.Domain.Γʹ.Γ.γ2;
-import ʹ.Pusher.DoublePush.DoublePush1;
-import ʹ.Pusher.DoublePush.DoublePush_γ1_γ2;
-import ʹ.Pusher.NoOp.NoOp2;
-import ʹ.Pusher.SinglePush.SinglePush1;
-import ʹ.Q.q0;
-import ʹ.Q.q1.q1_γ2;
-import ʹ.Q.q17.q17_;
-import ʹ.Q.q25.q25_γ1;
-import ʹ.Q.q25.q25_γ2;
+import automaton.Domain.Stack.Bottom;
+import automaton.Domain.Stack.Push;
+import automaton.Domain.Γʹ;
+import automaton.Domain.Γʹ.Γ;
+import automaton.Domain.Γʹ.Γ.γ1;
+import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.Pusher.DoublePush.DoublePush1;
+import automaton.Pusher.DoublePush.DoublePush_γ1_γ2;
+import automaton.Pusher.NoOp.NoOp2;
+import automaton.Pusher.SinglePush.SinglePush1;
+import automaton.Q.q0;
+import automaton.Q.q1.q1_γ2;
+import automaton.Q.q17.q17_;
+import automaton.Q.q25.q25_γ1;
+import automaton.Q.q25.q25_γ2;
 //@formatter:off
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
@@ -26,27 +26,19 @@ public class Domain {
     }
   } 
   static abstract class Stack<Tail extends Stack<?>> { 
-    abstract Tail pop();
-    abstract Γʹ top();
-    abstract Stack<?> γ1();
-    abstract Stack<?> γ2();
+    abstract Tail pop(); abstract Γʹ top();
+    abstract Stack<?> γ1(); abstract Stack<?> γ2();
     static final class Bottom extends Stack<¤> {
-      @Override ¤ pop() { return null; }
-      @Override Γʹ.¤ top() { return null; }
-      @Override Push<γ1, Bottom> γ1() { return null; }
-      @Override Push<γ2, Bottom> γ2() { return null; }
+      ¤ pop() { return null; } Γʹ.¤ top() { return null; }
+      Push<γ1, Bottom> γ1() { return null; } Push<γ2, Bottom> γ2() { return null; }
     }
     static private final class ¤ extends Stack<¤> {
-      @Override ¤ pop() { return null; }
-      @Override Γʹ.¤ top() { return null; }
-      @Override  ¤ γ1() { return null; }
-      @Override ¤ γ2() { return null; }
+      ¤ pop() { return null; } Γʹ.¤ top() { return null; }
+      ¤ γ1() { return null; } ¤ γ2() { return null; }
     }
     static class Push<Head extends Γ, Tail extends Stack<?>> extends Stack<Tail> {
-      @Override Head top() { return null; }
-      @Override Tail pop() { return null; }
-      @Override Push<γ1, Push<Head,Tail>> γ1() { return null; }
-      @Override Push<γ2, Push<Head,Tail>> γ2() { return null; }
+      Head top() { return null; } Tail pop() { return null; }
+      Push<γ1, Push<Head,Tail>> γ1() { return null; } Push<γ2, Push<Head,Tail>> γ2() { return null; }
     }
   }
 
