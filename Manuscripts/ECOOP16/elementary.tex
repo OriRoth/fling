@@ -3,10 +3,10 @@ Let~$g: T \rightarrow T $ be a (non-partial) unary function,
   where the set~$T$ is finite and containable.
 Then, it is possible to have a compile-time representation of $g$,
   meaning, to have the mapping of g happen at compile-time.  
-\Cref{Figure:unary:function} is a demonstration of a possible encoding
-of function $g$, and an use example.  
+\cref{Figure:unary:function} is a demonstration of a possible encoding
+of function $g$.
 
-\begin{figure}
+\begin{figure}[hbt]
   \begin{Code}{Java}
 static abstract class T {¢¢ // Set ¢$T$¢
   abstract T g();
@@ -22,11 +22,18 @@ static abstract class T {¢¢ // Set ¢$T$¢
   defined by~$T=\left\{ t_1,t_2 \right\}$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
   \label{Figure:unary:function}
 \end{figure}
+In this example, class \cc{T} represents the set $T$, and classes 
+  \cc{$t_1$},\cc{$t_2$} that extends \cc{T}, represents the values $t_1,t_2 \in T $.
+  The implemented inheritence model between sets and set objects will be further used in this article.
+
+Following, is a use example of function $g$ defined and implemented in \cref{Figure:unary:function}
 
 \begin{code}{Java}
   t2 x = new t1().g();
   t1 y = new t2().g();
 \end{code}
+  
+Note that we have the return value of $g$ (represented by an object of type $t_1$) at compile-time.
 
 \subsection{Type-method encoding of partial binary functions}
 Consider a partial function~$f: R⨉S↛T$,
@@ -45,13 +52,7 @@ where~$T$ and $g$ are defined as in \cref{Figure:unary:function}:
 The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
   can be found in \cref{Figure:simple:binary}.
 
-\begin{figure}
-  \begin{adjustbox}{max width=0.6\linewidth}
-    \input classification.tikz
-  \end{adjustbox}
-\end{figure}
-
-\begin{figure}
+\begin{figure}[hbt]
   \begin{Code}{Java}
 abstract class R {¢¢ // Set ¢$R$¢
   abstract T¢$⁺$¢ s1();
@@ -82,11 +83,23 @@ abstract class R {¢¢ // Set ¢$R$¢
 
 With the above definitions, we obtain:
 \begin{JAVA}
-f.r1().s1().g(); // ¢✓¢ returned type
-f.r1().s2().g(); // ¢✓¢
-f.r2().s1().g(); // ¢✓¢
+f.r1().s1().g(); // ¢✓¢ returned type is t2
+f.r1().s2().g(); // ¢✓¢ returned type is t1
+f.r2().s1().g(); // ¢✓¢ returned type is t1
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
+
+Note, that the implemented inheritence model previously used, is now extended to express the partiality
+  of functions such as $f$. A visualization of the inheritence model is presented in \cref{Figure:partial:inheritence:model}
+
+\begin{figure}[ht]
+  \label{Figure:partial:inheritence:model}
+  \caption{Inheritence Model for partial binary function $f$}
+  \begin{adjustbox}{max width=0.6\linewidth}
+    \input partialFunctionClassification.tikz
+  \end{adjustbox}
+\end{figure}
+
 We use the notion \emph{Type-Method} when we want to express that the arguments passed to a function 
   (i.e., former $f$) are ``passed'' by invoking a method on the reciever (i.e., r1(),s1() in the former example).
 
