@@ -13,8 +13,8 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 stack.listing: ../../src/main/java/automaton/Domain.java  
+	export PYTHONIOENCODING=UTF-8 # this has no effect
 	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ./escape.py > $@ 
-
 
 warnings:	
 	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
