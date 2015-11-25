@@ -19,16 +19,16 @@ import automaton.Q.q25.q25_γ2;
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
   static abstract class Γʹ { 
-    static private final class ¤ extends Γʹ{
-      //empty
+    static private final class ¤ extends Γʹ {
+      // Empty, cannot be instantiated by clients.
     }
     static abstract class Γ extends Γʹ { 
       abstract Γʹ g(); 
       static final class γ1 extends Γ {
-        @Override  γ2 g() { return null;} 
+        @Override  γ2 g() { return null; } 
       }
       static final class γ2 extends Γ {
-        @Override  Γʹ.¤ g() { return null;}
+        @Override  Γʹ.¤ g() { return null; }
       }
     }
   } 
@@ -57,11 +57,11 @@ public class Domain {
     }
   }
 
-  public static void gammaExample() {
-    γ2 _1 = new γ1().g(); // ✓
-    γ1 _2 = new γ2().g(); // ✗ type mismatch
-    ¤ _3 = new γ2().g();  // ✗ class ¤ is private
-    Γʹ _4 = new γ2().g(); // ✓
+  public static void demo_of_g() {
+    γ2 _1 = new γ1().g();  // ✓
+    γ1 _2 = new γ2().g();  // ✗ type mismatch
+    ¤  _3 = new γ2().g();  // ✗ class ¤ is private
+    Γʹ _4 = new γ2().g();  // ✓
   } 
   
     public static void main(String[] args) {
