@@ -55,7 +55,7 @@ public class Domain {
     }
   }
 
-  public static void demo_of_g() {
+  public static void demo_of_unary_function_g() {
     γ2 _1 = new γ1().g();  // ✓
     γ1 _2 = new γ2().g();  // ✗ type mismatch
     ¤  _3 = new γ2().g();  // ✗ class ¤ is private

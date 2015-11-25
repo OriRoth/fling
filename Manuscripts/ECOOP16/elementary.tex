@@ -1,7 +1,7 @@
 \subsection{Type encoding of unary (non-partial) functions}
 Let~$g:Γ→Γ$ be a function,
-  where the set~$Γ$ is finite, then we argue that~$g$ might
-  be represented using compile-time mechanisms of \Java.
+  where the set~$Γ$ is finite, then we argue that~$g$ can
+  be represented using the compile-time mechanism of \Java.
 \cref{Figure:unary:function} shows a manner of doing so which
   will turn beneficial later.
 
@@ -35,33 +35,31 @@ Let~$g:Γ→Γ$ be a function,
       }
     }%
 ⏎
-    (a) type hierarchy & (b) implementation & (c) usage
+    (a) type hierarchy & (b) implementation & (c) usage\hspace{40ex}
   \end{tabular}
 \end{figure}
 
-The type hierarchy depicted in \cref{Figure:usage}(a) shows five classes:
-Abstract class \cc{Γ} represent the set~$Γ$.
-Final classes \cc{\gamma 1}, \cc{\gamma 2} that extend~\cc{$Γ$}, 
-  are the actual members of the set~$Γ$.
-(Note the convention we use here and henceforth: if class~$X$ extends class~$Y$, then~$X$ is also defined
-  as a \kk{static} member class of~$Y$.
-Yet another recurring convention is that abstract classes denote sets, while
-  final classes that extend these, denote members of these sets.)
-
-Private final class \cc{¤} is used for denoting error values.
-Finally, class \cc{$Γ'$} denotes the set~$Γ∪❴\text{¤}❵$
+The type hierarchy depicted in \cref{Figure:unary:function}(a) shows five classes:
+Abstract class \cc{Γ} represents the set~$Γ$, final classes \cc{\gamma 1}, \cc{\gamma 2}
+  that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
+The last two are private final class \cc{¤} that denotes error value, 
+  and class \cc{$Γ'$} that denotes the set~$Γ∪❴\text{¤}❵$.
 Accordingly, both \cc{¤} and \cc{$Γ$} extend \cc{$Γ'$}.
 
-\cref{Figure:usage}(b) shows the full implementation of these classes.
+\cref{Figure:unary:function}(b) shows the full implementation of these classes.
+While \cref{Figure:unary:function}(c) shows an usage example of the latter.
 
-Yet another convention that we follow, is that all functions include a return \cc{null} command and nothing else.
-This is to stress that at runtime, the code does not carry out any useful or interesting computation.
-The class structure is solely for providing compile-time type checks.
-Indeed, the right-hand side of \cref{Figure:unary:function} is a little demonstration
-  of these checks.
-
-Following, is a use example of function~$g$ defined and implemented in \cref{Figure:unary:function}
-Note that we have the return value of~$g$ (represented by an object of type~$t₁$) at compile-time.
+Note the convention we use here and henceforth: 
+\begin{itemize}
+  \item If class \cc{~$X$} \kk{extends} \kk{class} \cc{~$Y$}, then\cc{~$X$} is also defined
+    as a \kk{static} member class of~$Y$.
+  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these, denote members of these sets.
+  \item All functions include a \kk{return} \kk{null} command and nothing else. 
+    This is to stress that at runtime, the code does not carry out any useful or interesting computation,
+      and the class structure is solely for providing compile-time type checks.
+    Indeed, \cref{Figure:unary:function}(c) is a little demonstration
+      of these checks.
+\end{itemize}
 
 \subsection{Type-method encoding of partial binary functions}
 Consider a partial function~$f: R⨉S↛T$,
