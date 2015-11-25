@@ -1,4 +1,4 @@
-\subsection{Type encoding of unary (non-partial) functions}
+\subsection{Type encoding of unary partial functions}
 Let~$g:Γ→Γ$ be a function,
   where the set~$Γ$ is finite, then we argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
@@ -53,7 +53,8 @@ Note the convention we use here and henceforth:
 \begin{itemize}
   \item If class \cc{~$X$} \kk{extends} \kk{class} \cc{~$Y$}, then\cc{~$X$} is also defined
     as a \kk{static} member class of~$Y$.
-  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these, denote members of these sets.
+  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these sets, 
+    denote the members of these sets.
   \item All functions include a \kk{return} \kk{null} command and nothing else. 
     This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
@@ -66,7 +67,7 @@ Consider a partial function~$f: R⨉S↛T$,
   where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
 Then, it is possible to encode~$f$ within the framework of \Java's type system.
 Before showing how this is done in the general case, consider this example,
-where~$T$ and~$g$ are defined as in \cref{Figure:unary:function}:
+where~$T$ ($=$the former $\Gamma$ set) and~$g$ are defined as in \cref{Figure:unary:function}:
 \begin{equation}
   \label{Equation:simple:binary}
 \begin{split}
