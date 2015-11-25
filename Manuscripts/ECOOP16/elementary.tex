@@ -7,7 +7,12 @@ Then, it is possible to have a compile-time representation of~$g$,
 of function~$g$.
 
 \begin{figure}[hbt]
-  \begin{Code}{Java}
+  \caption{Encoding of the unary function~$g: T→T$,
+  defined by~$T=\left❴ t₁,t₂ \right❵$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
+  \label{Figure:unary:function}
+  \begin{tabular}{ccc}
+    \begin{minipage}{0.5\linewidth}
+    \begin{Code}{Java}
 static abstract class T {¢¢ // Set ¢$T$¢
   abstract T g();
   static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
@@ -17,14 +22,21 @@ static abstract class T {¢¢ // Set ¢$T$¢
     final t1 g() {¢¢ return null; }
   }
 }
-\end{Code}
-  \caption{Encoding of the unary function~$g: T→T$,
-  defined by~$T=\left❴ t₁,t₂ \right❵$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
-  \label{Figure:unary:function}
+    \end{Code}
+    \end{minipage}
+    &
+      \parbox[c]{\hsize}{
+      \input ../Figures/unary-function-classification.tikz
+    }
+  \end{tabular}
 \end{figure}
-In this example, class \cc{T} represents the set~$T$, and classes
-  \cc{$t₁$},\cc{$t₂$} that extends \cc{T}, represents the values~$t₁,t₂∈T~$.
-  The implemented inheritance model between sets and set objects will be further used in this article.
+The code in the figure, comprises class \cc{T} that represents the set~$T$. 
+  Classes \cc{t1},\cc{t2} defined within and extending class \cc{T} represent the values~$t₁,t₂∈T$.
+In this article, we shall adhere to the convention, demonstratd here, in which a set is defined as
+  an abstract class, while the members of the set are final classes.
+All such members obey two rules:
+  They are defined within the lexical scope of the class that represents the set,
+  and, they extend this set.
 
 Following, is a use example of function~$g$ defined and implemented in \cref{Figure:unary:function}
 
@@ -90,18 +102,26 @@ f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefin
 \end{JAVA}
 
 \begin{figure}[h]
-  \begin{tabular}{c|l}
-    \lstinputlisting[style=JAVA]{stack.listing} 
-    \caption{Stack encoding}
-    \label{Figure:stack:encoding}
-  &
-    \begin{adjustbox}{}
-      \input ../Figures/stack-classification.tikz
-    \end{adjustbox}
-  \end{tabular}
+    \caption{Encoding a stack data structure with
+    \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding} 
+    \begin{tabular}{cc}
+         \parbox[c]{0.74\linewidth}{
+      \tcbinputlisting{%
+        codebox=Java,
+        listing options={style=numbered,style=Java},
+       % minipage,
+        %width=\hsize,
+        listing inputencoding=utf8,
+        listing file=stack.listing}
+      }
+        &
+         \parbox[c]{\hsize}{
+          \input ../Figures/stack-classification.tikz
+        }
+    \end{tabular}
 \end{figure}
-Note, that the implemented inheritance model previously used, is now extended to express the partiality
-  of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
+      Note, that the implemented inheritance model previously used, is now extended to express the partiality
+        of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
 
 \begin{figure}[ht]
   \label{Figure:partial:inheritence:model}

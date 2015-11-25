@@ -1,6 +1,7 @@
 % PGF style template to be used in the ktikz program
 \documentclass[a4paper,twoside,11pt]{book}
 
+\usepackage[dvipsnames]{xcolor}
 \usepackage{adjustbox}
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -22,6 +23,9 @@
 \usepackage{wrapfig}
 \usepackage{yogi-lang}
 \usepackage{yogi-unicode}
+
+\newcommand\cc[1]{\textcolor{Sepia}{\text{\textup{\textbf{\texttt{#1}}}}}}
+\newcommand\kk[1]{\textcolor{RoyalBlue}{\text{\textup{\textbf{\texttt{#1}}}}}}
 
 \usetikzlibrary{graphdrawing}
 \usetikzlibrary{graphs} 

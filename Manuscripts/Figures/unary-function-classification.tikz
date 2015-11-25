@@ -4,11 +4,10 @@
 %\draw[help lines] (-7,-11) grid (7,1);
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=4ex,minimum width=8ex,rectangle ,rounded corners]
 \graph [tree layout] {
-	"\cc{Stack}"[nudge=(up:2ex),concept], 
-	"\cc{Stack.B}"[nudge=(left:4ex),concept], 
-	"\cc{\currency}"[nudge=(down:6ex),concept], 
-	"\cc{Stack.P}"[nudge=(right:4ex),concept], 
-  {"\cc{Stack.P}",  "\cc{\currency}", "\cc{Stack.B}",} ->"\cc{Stack}",
+	"\cc{T}"[nudge=(up:2ex),concept], 
+	"\cc{T.t1}"[concept], 
+	"\cc{T.t2}"[concept], 
+  {"\cc{T.t1}",  "\cc{T.t2}",} ->"\cc{T}",
 };
 %\draw (current bounding box.south east) rectangle (current bounding box.north west);
 \end{tikzpicture}
