@@ -7,43 +7,55 @@ Then, it is possible to have a compile-time representation of~$g$,
 of function~$g$.
 
 \begin{figure}[hbt]
-  \caption{Encoding of the unary function~$g: T→T$,
-  defined by~$T=\left❴ t₁,t₂ \right❵$,~$f(t₁)=t₂$,~$f(t₂)=t₁$.}
+  \caption{Type encoding of the unary function~$g: T→T$,
+    defined by~$T=❴t₁,t₂❵$,~$g(t₁)=t₂$,~$g(t₂)=t₁$.}
   \label{Figure:unary:function}
-  \begin{tabular}{ccc}
-    \begin{minipage}{0.5\linewidth}
+\begin{minipage}{0.5\linewidth}
     \begin{Code}{Java}
-static abstract class T {¢¢ // Set ¢$T$¢
+abstract class T {¢¢ // Set ¢$T$¢
   abstract T g();
   static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
-    final t2 g() {¢¢ return null; }
+    @Override t2 g() {¢¢ return null; }
   }
   static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
-    final t1 g() {¢¢ return null; }
+    @Override t1 g() {¢¢ return null; }
   }
 }
     \end{Code}
-    \end{minipage}
-    &
-      \parbox[c]{\hsize}{
-      \input ../Figures/unary-function-classification.tikz
-    }
-  \end{tabular}
+\end{minipage}%
+\hfill
+\hfill
+\hfill
+\begin{minipage}{0.25\linewidth}
+    \input ../Figures/unary-function-classification.tikz
+\end{minipage}%
+\hfill
+\begin{minipage}{0.22\linewidth}
+\begin{code}{Java}
+t2 x = new t1().g(); // ¢✓¢ 
+t1 y = new t2().g(); // ¢✓¢ 
+t1 x = new t1().g(); // ¢✗¢ compile time error
+t2 y = new t2().g(); // ¢✗¢ compile time error
+\end{code}
+\end{minipage}
 \end{figure}
-The code in the figure, comprises class \cc{T} that represents the set~$T$. 
-  Classes \cc{t1},\cc{t2} defined within and extending class \cc{T} represent the values~$t₁,t₂∈T$.
-In this article, we shall adhere to the convention, demonstratd here, in which a set is defined as
-  an abstract class, while the members of the set are final classes.
+
+The code in the figure, comprises class \cc{T} that represents the set~$T$.
+Classes \cc{t1},\cc{t2} defined within and extending class \cc{T} represent the values~$t₁,t₂∈T$.
+We shall adhere to the convention demonstrated here, by which a set is defined as
+an abstract class, while the members of the set are final classes.
 All such members obey two rules:
-  They are defined within the lexical scope of the class that represents the set,
-  and, they extend this set.
+They are defined within the lexical scope of the class that represents the set,
+and, they extend this set.
+
+Yet another convention that we follow, is that all functions include a return \cc{null} command and nothing else.
+This is to stress that at runtime, the code does not carry out any useful or interesting computation. 
+The class structure is solely for providing compile-time type checks.
+Indeed, the right-hand side of \cref{Figure:unary:function} is a little demonstration
+  of these checks. 
 
 Following, is a use example of function~$g$ defined and implemented in \cref{Figure:unary:function}
 
-\begin{code}{Java}
-  t2 x = new t1().g();
-  t1 y = new t2().g();
-\end{code}
 
 Note that we have the return value of~$g$ (represented by an object of type~$t₁$) at compile-time.
 

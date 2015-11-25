@@ -18,4 +18,4 @@ while True:
       else:
         out = out + u'\xa2$'+c+u'$\xa2'
   out = out +'\n'
-print out
+print out[:-1]

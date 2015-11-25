@@ -3,7 +3,8 @@
 \usetikzlibrary{calc}
 %\draw[help lines] (-7,-11) grid (7,1);
 \tikzstyle{concept}=[very thick,blue!40,text=red,font=\huge,  text centered, rectangle,draw,inner sep=4pt,fill=green!23,outer sep=2pt,minimum height=6ex,minimum width=8ex,chamfered rectangle]
-\graph [tree layout,node distance=20,] {%
+\graph [tree layout,node distance=20] 
+{%
 	"$\Gamma'$"[concept], 
 	"$\Gamma$"[concept], 
 	"$\gamma_1$"[concept], 

@@ -21,8 +21,13 @@ public class Domain {
   static abstract class Γʹ { 
     static private final class ¤ extends Γʹ {/**/}
     static abstract class Γ extends Γʹ { 
-      static final class γ1 extends Γ {/**/}
-      static final class γ2 extends Γ {/**/}
+      abstract Γʹ g(); 
+      static final class γ1 extends Γ {
+        @Override  γ2 g() { return null;} 
+      }
+      static final class γ2 extends Γ {
+        @Override  Γʹ.¤ g() { return null;}
+      }
     }
   } 
   static abstract class Stack<Tail extends Stack<?>> { 
