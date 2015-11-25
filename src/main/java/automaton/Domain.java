@@ -23,9 +23,11 @@ public class Domain {
     static abstract class Γ extends Γʹ { 
       abstract Γʹ g(); 
       static final class γ1 extends Γ {
+        // Covariant return type in overriding:
         @Override  γ2 g() { return null; } 
       }
       static final class γ2 extends Γ {
+        // Covariant return type in overriding:
         @Override  Γʹ.¤ g() { return null; }
       }
     }
@@ -60,6 +62,7 @@ public class Domain {
     γ1 _2 = new γ2().g();  // ✗ type mismatch
     ¤  _3 = new γ2().g();  // ✗ class ¤ is private
     Γʹ _4 = new γ2().g();  // ✓
+    _4.g();  // ✗ method g() is undefined in type Γʹ
   } 
   
   public static void main2(String[] args) {
