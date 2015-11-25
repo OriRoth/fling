@@ -19,7 +19,7 @@ gamma.listing: ../../src/main/java/automaton/Domain.java
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 gamma-example.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*gammaExample.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*demo_of_g.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 
 warnings:	

@@ -1,63 +1,66 @@
 \subsection{Type encoding of unary (non-partial) functions}
-Let~$g: T→T~$ be a (non-partial) unary function,
-  where the set~$T$ is finite and containable.
-Then, it is possible to have a compile-time representation of~$g$,
-  meaning, to have the mapping of g happen at compile-time.
-\cref{Figure:unary:function} is a demonstration of a possible encoding
-of function~$g$.
+Let~$g:Γ→Γ$ be a function,
+  where the set~$Γ$ is finite, then we argue that~$g$ might
+  be represented using compile-time mechanisms of \Java.
+\cref{Figure:unary:function} shows a manner of doing so which
+  will turn beneficial later.
 
 \begin{figure}[hbt]
-  \caption{Type encoding of the partial function~$g: \Gamma↛\Gamma$,
-    defined by~$\Gamma=❴\gamma₁,\gamma₂❵$,~$g(\gamma₁)=\gamma₂$, while~$g(\gamma₂)=\gamma₁$ is undefined.}
-  \label{Figure:unary:function}
+  \caption{\label{Figure:unary:function}
+    Type encoding of the partial function~$g:Γ↛Γ$,
+    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$, while~$g(γ₂)=γ₁$ is undefined.
+  }
   \begin{tabular}{@{}c@{}c@{}c@{}}
     \parbox[c]{0.26\linewidth}{
-	\input ../Figures/unary-function-classification.tikz
+  \input ../Figures/unary-function-classification.tikz
     }%
     &
-    \parbox[c]{0.4\linewidth}{
+    \parbox[c]{0.42\linewidth}{
       \tcbinputlisting{%
-	      codebox=Java,
-	      listing options={style=Java},
-	    % minipage,
-	      %width=\hsize,
-	      listing inputencoding=utf8,
-	      listing file=gamma.listing
+        codebox=Java,
+        listing options={style=Java},
+        listing inputencoding=utf8,
+        listing file=gamma.listing
       }
     }%
     &
-    \parbox[c]{0.43\linewidth}{
+    \parbox[c]{0.84\linewidth}{
       \tcbinputlisting{%
-	      codebox=Java,
-	      listing options={style=Java},
-	    % minipage,
-	      %width=\hsize,
-	      listing inputencoding=utf8,
-	      listing file=gamma-example.listing
+        codebox=Java,
+        listing options={style=Java},
+      % minipage,
+        %width=\hsize,
+        listing inputencoding=utf8,
+        listing file = gamma-example.listing
       }
     }%
-    \\
+⏎
     (a) type hierarchy & (b) implementation & (c) usage
   \end{tabular}
 \end{figure}
 
-The code in the figure, comprises class \cc{T} that represents the set~$T$.
-Classes \cc{t1},\cc{t2} defined within and extending class \cc{T} represent the values~$t₁,t₂∈T$.
-We shall adhere to the convention demonstrated here, by which a set is defined as
-an abstract class, while the members of the set are final classes.
-All such members obey two rules:
-They are defined within the lexical scope of the class that represents the set,
-and, they extend this set.
+The type hierarchy depicted in \cref{Figure:usage}(a) shows five classes:
+Abstract class \cc{Γ} represent the set~$Γ$.
+Final classes \cc{\gamma 1}, \cc{\gamma 2} that extend~\cc{$Γ$}, 
+  are the actual members of the set~$Γ$.
+(Note the convention we use here and henceforth: if class~$X$ extends class~$Y$, then~$X$ is also defined
+  as a \kk{static} member class of~$Y$.
+Yet another recurring convention is that abstract classes denote sets, while
+  final classes that extend these, denote members of these sets.)
+
+Private final class \cc{¤} is used for denoting error values.
+Finally, class \cc{$Γ'$} denotes the set~$Γ∪❴\text{¤}❵$
+Accordingly, both \cc{¤} and \cc{$Γ$} extend \cc{$Γ'$}.
+
+\cref{Figure:usage}(b) shows the full implementation of these classes.
 
 Yet another convention that we follow, is that all functions include a return \cc{null} command and nothing else.
-This is to stress that at runtime, the code does not carry out any useful or interesting computation. 
+This is to stress that at runtime, the code does not carry out any useful or interesting computation.
 The class structure is solely for providing compile-time type checks.
 Indeed, the right-hand side of \cref{Figure:unary:function} is a little demonstration
-  of these checks. 
+  of these checks.
 
 Following, is a use example of function~$g$ defined and implemented in \cref{Figure:unary:function}
-
-
 Note that we have the return value of~$g$ (represented by an object of type~$t₁$) at compile-time.
 
 \subsection{Type-method encoding of partial binary functions}
@@ -116,7 +119,7 @@ f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefin
 
 \begin{figure}[h]
     \caption{Encoding a stack data structure with
-    \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding} 
+    \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding}
     \begin{tabular}{cc}
          \parbox[c]{0.74\linewidth}{
       \tcbinputlisting{%
