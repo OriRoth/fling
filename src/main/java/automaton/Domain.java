@@ -1,20 +1,18 @@
 package automaton;
-import automaton.Domain.Stack;
+import automaton.Domain.Per.DoubleP.DoubleP1;
+import automaton.Domain.Per.DoubleP.DoubleP_γ1_γ2;
+import automaton.Domain.Per.NoOp.NoOp2;
+import automaton.Domain.Per.SingleP.SingleP1;
+import automaton.Domain.Q.q0;
+import automaton.Domain.Q.q1.q1_γ2;
+import automaton.Domain.Q.q17.q17_;
+import automaton.Domain.Q.q25.q25_γ1;
+import automaton.Domain.Q.q25.q25_γ2;
 import automaton.Domain.Stack.B;
 import automaton.Domain.Stack.P;
-import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
-import automaton.Per.DoubleP.DoubleP1;
-import automaton.Per.DoubleP.DoubleP_γ1_γ2;
-import automaton.Per.NoOp.NoOp2;
-import automaton.Per.SingleP.SingleP1;
-import automaton.Q.q0;
-import automaton.Q.q1.q1_γ2;
-import automaton.Q.q17.q17_;
-import automaton.Q.q25.q25_γ1;
-import automaton.Q.q25.q25_γ2;
 //@formatter:off
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
@@ -64,21 +62,20 @@ public class Domain {
     Γʹ _4 = new γ2().g(); // ✓
   } 
   
-    public static void main(String[] args) {
-      P<γ1, P<γ2, P<γ1, P<γ2, B>>>> t;
+  public static void main2(String[] args) {
+    P<γ1, P<γ2, P<γ1, P<γ2, B>>>> t;
       
-      B x0 = new B();
-      P<γ1,B> x1 = x0.γ1();
-      P<γ2,P<γ1,B>> x2 = x1.γ2();
-      P<γ1,P<γ1,P<γ2,P<γ1,P<γ1,B>>>>> x3 = ((B) null).γ1().γ1().γ2().γ1().γ1();
-      P<γ1,P<γ2,P<γ1,P<γ1,B>>>> x4 = x3.pop();
-      P<γ2,P<γ1,P<γ1,B>>> x5 = x4.pop();
-      P<γ1,P<γ1,B>> x6 = x5.pop();
-      P<γ1,B> x7 = x6.pop();
-      B x8 = x7.pop();
-      ¤ x9 = x8.pop();
+    B x0 = new B();
+    P<γ1,B> x1 = x0.γ1();
+    P<γ2,P<γ1,B>> x2 = x1.γ2();
+    P<γ1,P<γ1,P<γ2,P<γ1,P<γ1,B>>>>> x3 = ((B) null).γ1().γ1().γ2().γ1().γ1();
+    P<γ1,P<γ2,P<γ1,P<γ1,B>>>> x4 = x3.pop();
+    P<γ2,P<γ1,P<γ1,B>>> x5 = x4.pop();
+    P<γ1,P<γ1,B>> x6 = x5.pop();
+    P<γ1,B> x7 = x6.pop();
+    B x8 = x7.pop();
+    ¤ x9 = x8.pop();
   } 
-  }
 
   static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
     static private final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
