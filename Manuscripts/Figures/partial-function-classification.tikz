@@ -1,12 +1,19 @@
-\documentclass{article}
-\usepackage{mathptmx}
-\usepackage{tikz}
-\usepackage{color}
-\DeclareSymbolFont{symbolsb}{OMS}{cmsy}{m}{n}
-\SetSymbolFont{symbolsb}{bold}{OMS}{cmsy}{b}{n}
-\DeclareSymbolFontAlphabet{\mathcal}{symbolsb}
-\usepackage[active,pdftex,tightpage]{preview}
-\PreviewEnvironment[]{tikzpicture}
-\PreviewEnvironment[]{pgfpicture}
-\begin{document}
-\end{document} 
+\begin{tikzpicture}
+
+\usetikzlibrary{calc}
+%\draw[help lines] (-7,-11) grid (7,1);
+\tikzstyle{concept}=[very thick,blue!40,text=red,font=\huge,  text centered, rectangle,draw,inner sep=4pt,fill=green!23,outer sep=2pt,minimum height=6ex,minimum width=8ex,chamfered rectangle]
+\graph [tree layout,node distance=20,] {
+	"$\Gamma'$"[concept], 
+	"$\Gamma$"[concept], 
+	"$\gamma_1$"[concept], 
+	"$\gamma_2$"[concept], 
+	"\currency"[concept],
+	"$\Gamma$"->"$\Gamma'$",
+	"\currency"->"$\Gamma'$",
+	"$\gamma_1$"->"$\Gamma$",
+	"$\gamma_2$"->"$\Gamma$",
+};
+\end{tikzpicture}
+
+

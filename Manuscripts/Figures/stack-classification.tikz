@@ -4,15 +4,13 @@
 %\draw[help lines] (-7,-11) grid (7,1);
 \tikzstyle{concept}=[very thick,blue!40,text=red!50,font=\large,  text centered, rectangle,draw,inner sep=4pt,fill=green!23,outer sep=2pt,minimum height=4ex,minimum width=8ex,chamfered rectangle]
 \graph [tree layout,] {
-	"$\Gamma'$"[concept], 
-	"$\Gamma$"[concept], 
-	"$\gamma_1$"[concept], 
-	"$\gamma_2$"[concept], 
-	"\currency"[concept],
-	"$\Gamma$"->"$\Gamma'$",
-	"\currency"->"$\Gamma'$",
-	"$\gamma_1$"->"$\Gamma$",
-	"$\gamma_2$"->"$\Gamma$",
+	"\cc{Stack}"[concept], 
+	"\cc{Bottom}"[concept], 
+	"\cc{\currency}"[concept], 
+	"\cc{P [Push]}"[concept], 
+	"\cc{\currency}"->"\cc{Stack}",
+	"\cc{P [Push]}"->"\cc{Stack}",
+	"\cc{Bottom}"->"\cc{Stack}",
 };
 \end{tikzpicture}
 
