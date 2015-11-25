@@ -2,12 +2,19 @@
 
 \usetikzlibrary{calc}
 %\draw[help lines] (-7,-11) grid (7,1);
-\tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=4ex,minimum width=8ex,rectangle ,rounded corners]
-\graph [tree layout] {
-	"\cc{T}"[nudge=(up:2ex),concept], 
-	"\cc{T.t1}"[concept], 
-	"\cc{T.t2}"[concept], 
-  {"\cc{T.t1}",  "\cc{T.t2}",} ->"\cc{T}",
+\tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=3ex,minimum width=7ex,rectangle ,rounded corners,level distance=10ex]
+\graph [tree layout] { 
+"\cc{$\Gamma'$}"[concept],
+"\cc{$\Gamma'.\Gamma$}"[concept],
+"\cc{$\Gamma'$.\currency}"[concept],
+"\cc{$\Gamma'.\Gamma.\gamma1$}"[concept],
+"\cc{$\Gamma'.\Gamma.\gamma2$}"[concept],
+{{"\cc{$\Gamma'.\Gamma.\gamma1$}",  
+"\cc{$\Gamma'.\Gamma.\gamma2$}",  
+} -> "\cc{$\Gamma'.\Gamma$}",
+"\cc{$\Gamma'$.\currency}"}-> 
+	"\cc{$\Gamma'$}", 
+ 
 };
 %\draw (current bounding box.south east) rectangle (current bounding box.north west);
 \end{tikzpicture}

@@ -6,7 +6,7 @@ export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 # Target to be used for compiles when references did not change
-latex: $(wildcard *.sty *.tex) stack.listing	
+latex: $(wildcard *.sty *.tex) stack.listing gamma.listing gamma-example.listing	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
@@ -17,6 +17,10 @@ stack.listing: ../../src/main/java/automaton/Domain.java
 
 gamma.listing: ../../src/main/java/automaton/Domain.java  
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+gamma-example.listing: ../../src/main/java/automaton/Domain.java  
+	awk '/^.*gammaExample.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
 
 warnings:	
 	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 

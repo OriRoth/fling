@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 out = u''
-normalStyle = [u'\xa4']
+normalStyle = [u'\u00a4',u'\u2717',u'\u2713']
 while True:
   try: 
     raw = raw_input()  

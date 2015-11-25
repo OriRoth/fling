@@ -7,37 +7,38 @@ Then, it is possible to have a compile-time representation of~$g$,
 of function~$g$.
 
 \begin{figure}[hbt]
-  \caption{Type encoding of the unary function~$g: T→T$,
-    defined by~$T=❴t₁,t₂❵$,~$g(t₁)=t₂$,~$g(t₂)=t₁$.}
+  \caption{Type encoding of the partial function~$g: \Gamma↛\Gamma$,
+    defined by~$\Gamma=❴\gamma₁,\gamma₂❵$,~$g(\gamma₁)=\gamma₂$, while~$g(\gamma₂)=\gamma₁$ is undefined.}
   \label{Figure:unary:function}
-\begin{minipage}{0.5\linewidth}
-    \begin{Code}{Java}
-abstract class T {¢¢ // Set ¢$T$¢
-  abstract T g();
-  static final class t1 extends T {¢¢ // Value ¢$t₁∈T$¢
-    @Override t2 g() {¢¢ return null; }
-  }
-  static final class t2 extends T {¢¢ // Value ¢$t₂∈T$¢
-    @Override t1 g() {¢¢ return null; }
-  }
-}
-    \end{Code}
-\end{minipage}%
-\hfill
-\hfill
-\hfill
-\begin{minipage}{0.25\linewidth}
-    \input ../Figures/unary-function-classification.tikz
-\end{minipage}%
-\hfill
-\begin{minipage}{0.22\linewidth}
-\begin{code}{Java}
-t2 x = new t1().g(); // ¢✓¢ 
-t1 y = new t2().g(); // ¢✓¢ 
-t1 x = new t1().g(); // ¢✗¢ compile time error
-t2 y = new t2().g(); // ¢✗¢ compile time error
-\end{code}
-\end{minipage}
+  \begin{tabular}{@{}c@{}c@{}c@{}}
+    \parbox[c]{0.26\linewidth}{
+	\input ../Figures/unary-function-classification.tikz
+    }%
+    &
+    \parbox[c]{0.4\linewidth}{
+      \tcbinputlisting{%
+	      codebox=Java,
+	      listing options={style=Java},
+	    % minipage,
+	      %width=\hsize,
+	      listing inputencoding=utf8,
+	      listing file=gamma.listing
+      }
+    }%
+    &
+    \parbox[c]{0.43\linewidth}{
+      \tcbinputlisting{%
+	      codebox=Java,
+	      listing options={style=Java},
+	    % minipage,
+	      %width=\hsize,
+	      listing inputencoding=utf8,
+	      listing file=gamma-example.listing
+      }
+    }%
+    \\
+    (a) type hierarchy & (b) implementation & (c) usage
+  \end{tabular}
 \end{figure}
 
 The code in the figure, comprises class \cc{T} that represents the set~$T$.
