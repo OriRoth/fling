@@ -96,6 +96,9 @@ As one might notice, set~$S$ was not defined by a corresponding class in
 This allowes us to~\cc{@Override} the methods with the different return values of~$f$ as
  in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
  as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
+We use the notion ``type-method'' for an input variable of type~$T$, when in the
+  corresponding implementation of this function, the sending of these arguments is done
+  by invoking a corresponding method, as in the discussed example.
 The feasibility of \emph{type-methods} emerges from the co-variance of return types in 
   \Java. 
 
