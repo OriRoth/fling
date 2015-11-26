@@ -8,13 +8,13 @@ import automaton.Domain.Q.q1.q1_γ2;
 import automaton.Domain.Q.q17.q17_;
 import automaton.Domain.Q.q25.q25_γ1;
 import automaton.Domain.Q.q25.q25_γ2;
+import automaton.Domain.R.r1;
+import automaton.Domain.R.r2;
 import automaton.Domain.Stack.B;
 import automaton.Domain.Stack.P;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
-import automaton.Domain.R.r1;
-import automaton.Domain.R.r2;
 //@formatter:off
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
@@ -23,8 +23,11 @@ public class Domain {
   // gamma.listing
   
   static abstract class Γʹ { 
-    static private final class ¤ extends Γʹ {
-      // Empty, cannot be instantiated by clients.
+    static private abstract class ¤ extends Γʹ {
+      // Empty private class, cannot be used by clients.
+      private ¤() {
+       // Class cannot be extended 
+      }
     }
     static abstract class Γ extends Γʹ { 
       abstract Γʹ g(); 
@@ -45,7 +48,7 @@ public class Domain {
   public static void demo_of_unary_function_g() {
     γ2 _1 = new γ1().g();  // ✓
     γ1 _2 = new γ2().g();  // ✗ type mismatch
-    ¤  _3 = new γ2().g();  // ✗ class ¤ is private
+    Γʹ.¤  _3 = new γ2().g();  // ✗ class ¤ is private
     Γʹ _4 = new γ2().g();  // ✓
     _4.g();  // ✗ method g() is undefined in type Γʹ
   } 
@@ -80,7 +83,11 @@ public class Domain {
 
   
   //binary-function.listing
-  
+  static abstract class f {
+    // A representation of the set ¢$S$¢
+    static r1 r1() { return null; }
+    static r2 r2() { return null; }
+  }  
   static abstract class R {
     abstract Γʹ s1();
     abstract Γʹ s2();
@@ -93,11 +100,7 @@ public class Domain {
       @Override Γʹ.¤ s2() { return null; }
     }
   }
-  static abstract class f {
-    //  f is outside of R for the cause of fluency
-    static r1 r1() { return null; }
-    static r2 r2() { return null; }
-  } 
+
 
   
   //binary-function-example.listing

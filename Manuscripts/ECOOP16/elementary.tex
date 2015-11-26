@@ -9,14 +9,16 @@ We argue that~$g$ can
 \begin{figure}[hbt]
   \caption{\label{Figure:unary:function}
     Type encoding of the partial function~$g:Γ↛Γ$,
-    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$, while~$g(γ₂)$ is undefined.
+    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$, and~$g(γ₂)$ being undefined. 
   }
   \begin{tabular}{@{}c@{}c@{}c@{}}
+    \hspace{-7ex}
     \parbox[c]{0.26\linewidth}{
   \input ../Figures/unary-function-classification.tikz
     }%
     &
-    \parbox[c]{0.42\linewidth}{
+    \hspace{-1ex}
+    \parbox[c]{0.46\linewidth}{
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -25,12 +27,13 @@ We argue that~$g$ can
       }
     }%
     &
+    \hspace{-8ex}
     \parbox[c]{0.84\linewidth}{
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
         listing inputencoding=utf8,
-        listing file = gamma-example.listing
+        listing file=gamma-example.listing
       }
     }%
 ⏎
@@ -45,8 +48,8 @@ The last two are private final class~\cc{¤} that stands for an error value,
   and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
-The full implementation of these classes is provided in \cref{Figure:unary:function}(b).
-(This actual code excerpt should be placed as a nested class of some appropriate host class.)
+The full implementation of these classes is provided in \cref{Figure:unary:function}(b)\footnote{Remember that \Java admits Unicode characters in identifier names}.
+This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
 
 The use cases in \cref{Figure:unary:function}(c) explain better
   what we mean in saying that function~$g$ is encoded in the type system:
@@ -72,36 +75,33 @@ The class can be made~\cc{private} to prevent clients from using it,
   Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
 
 \subsection{Higher arity functions and type-methods}
-We saw that unary functions can be encoded with inheritance and overriding. 
-With the absence of multi-methods, encoding of higher arity is a greater challenge. 
+We saw that unary functions can be encoded with inheritance and overriding.
+With the absence of multi-methods, encoding of higher arity is a greater challenge.
 
-Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite. 
+Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite.
 Specifically, let
 \begin{equation}
   \label{Equation:simple:binary}
-\begin{split}
-  R & = ❴ r₁, r₂❵⏎
-  S & = ❴ s₁, s₂❵⏎
-  f & = ❴ ⟨r₁, s₁,γ₁⟩, ⟨r₁, s₂,γ₂⟩, ⟨r₂, s₁,γ₂⟩ ❵ ⊂R⨉S⨉Γ
-\end{split}
+  \begin{array}{rlc}
+    R & = & ❴ r₁, r₂❵⏎
+    S & = & ❴ s₁, s₂❵⏎
+    f & = & ❴ ⟨r₁, s₁,γ₁⟩, ⟨r₁, s₂,γ₂⟩, ⟨r₂, s₁,γ₂⟩ ❵ ⊂ R⨉S⨉Γ
+  \end{array}
 \end{equation}
-The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
-  can be found in \cref{Figure:simple:binary}(a), while the usage example is in
-  \cref{Figure:simple:binary}(b).
 
-\begin{figure}[h]
-  \caption{ \label{Figure:simple:binary}
-  Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
-  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$, and~$f(r₂,s₁)=γ₂$ while~$f(r₂, s₂)$ is undefined.
-  The body of classes~\cc{$Γ$},\cc{$Γ'$} as well the full implementation of classes~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
-    in \cref{Figure:unary:function}.}
+A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
+  can be found in \cref{Figure:simple:binary}(a).
+As can be seen in the use cases in \cref{Figure:simple:binary}(b),
+  to compute~$f(r₁,s₁)$ we write \cc{f.r1().s1()}.
+
+\begin{figure}[hbt]
   \begin{tabular}{cc}
    \parbox[c]{0.42\linewidth}{
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
       listing inputencoding=utf8,
-      listing file=binary-function.listing
+      listing file = binary-function.listing
     }
    }
    &
@@ -113,28 +113,26 @@ The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bi
       listing file=binary-function-example.listing
     }
    }
-   \\
+⏎
    \hspace{-7ex}(a) implementation & \hspace{-7ex}(b) usage
   \end{tabular}
 \end{figure}
 
-In the latter implementation, the concept of \emph{type-method}s is introduced.
-As one might notice, set~$S$ was not defined by a corresponding class in
+In the implementation we see that see that set~$S$ was not defined by a corresponding class in
   the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
-  class~\cc{R}, with return type~\cc{$\Gamma'$}.
+  class~\cc{R}, with return type~\cc{$Γ'$}.
 This allowes us to~\cc{@Override} the methods with the different return values of~$f$ as
  in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
  as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
- 
-We use the notion ``type-method'' for an input variable of type~$T$, when in the
+We use the notion ‟type-method” for an input variable of type~$T$, when in the
   corresponding implementation of this function, the sending of these arguments is done
   by invoking a corresponding method, as in the discussed example.
-The feasibility of \emph{type-methods} emerges from the co-variance of return types in 
-  \Java. 
+The feasibility of \emph{type-methods} emerges from the co-variance of return types in
+  \Java.
 
-\subsection{Type encoding of unbounded stack}
-Returning to~\cref{Theorem:Gil:Levy} 
-\begin{figure}[h]
+
+\subsection{Stack}
+\begin{figure}[htb]
     \caption{Encoding a stack data structure with
     \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding}
     \begin{tabular}{cc}
