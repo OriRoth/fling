@@ -43,8 +43,8 @@ We argue that~$g$ can
 The type hierarchy depicted in \cref{Figure:unary:function}(a) shows five classes:
 Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
-The last two are private final class~\cc{¤} that stands for an error value,
-  and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
+The remaining two classes are private final class~\cc{¤} that stands for an error value,
+  and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
 The full implementation of these classes is provided in \cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
@@ -64,14 +64,14 @@ Some of the conventions employed in \cref{Figure:unary:function}(b) and hencefor
   \item The interest of frugal management of name-spaces is served by the agreement that if
     a class~\cc{~$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of class~$Y$.
-  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.
-    This is to stress that at runtime, the code does not carry out any useful or interesting computation,
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.  
+      This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
 \end{itemize}
 (By these conventions the augmented class~\cc{$Γ'$} can be used by clients.
 The class can be made~\cc{private} to prevent clients from using it,
   at the small price of breaking the second convention:
-  Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
+  Class~\cc{$Γ$} must then be moved outside of class~\cc{$Γ'$}
 
 We saw that unary functions can be encoded with inheritance and overriding.
 With the absence of multi-methods, encoding higher arity functions is a greater challenge.
@@ -93,7 +93,7 @@ A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bina
 \begin{figure}[hbt]
   \caption{\label{Figure:simple:binary}%
     Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
-  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$, and~$f(r₂,s₁)=γ₂$ and~$f(r₂, s₂) =⊥$.
+  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₂$, and~$f(r₂, s₂) =⊥$.
   Classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} are as in \cref{Figure:unary:function}.}
   \begin{tabular}{cc}
    \parbox[c]{0.57\linewidth}{%
@@ -128,20 +128,34 @@ Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
 The return type of \kk{static} member functions~\cc{r1()} and~\cc{r2()}
   is the respective sub-class of class~\cc{R}:
-The return type of function \cc{r1()} is \kk{class} \cc{R.r1} 
-  and return type of function \cc{r2()} is \kk{class} \cc{R.r2}. 
+The return type of function \cc{r1()} is \kk{class} \cc{R.r1};
+  the return type of function \cc{r2()} is \kk{class} \cc{R.r2}.
 
 Instead of representing set~$S$ as a class,
-  its members are realized as methods~\cc{s1()} and~\cc{s2()} in a class
-  named~\cc{f}.
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in  class~\cc{R}.
 These functions are defined as \kk{abstract} with return type \cc{$Γ$'}
-  in class~\cc{R}.
+  in~\cc{R}.
 They are overridden, with the appropriate co-variant change of the return type,
   in classes \cc{r1} and \cc{r2}.
 
-The encoding scheme presented in \Cref{Figure:binary-function} is easy to extend to any 
-  number of arguments.
+It should be clear now that the encoding scheme presented in \Cref{Figure:simple:binary} can be generalized to functions
+  with any number of arguments, as long as the domain and range sets are finite. 
+The encoding of sets of unbounded size require means for creating an unbounded 
+  number of types. 
+Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
 
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-use-cases}%
+    Use cases of a compile-time stack data structures.
+  }
+  \tcbinputlisting{%
+    codebox=Java,
+    minipage,
+    listing options={style=Java},
+    listing inputencoding=utf8,
+    listing file=stack-use-cases.listing
+  }
+\end{figure}
 
 In the implementation we see that see that set~$S$ was not defined by a corresponding class in
   the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
@@ -154,6 +168,7 @@ We use the notion ‟type-method” for an input variable of type~$T$, when in t
   by invoking a corresponding method, as in the discussed example.
 The feasibility of \emph{type-methods} emerges from the co-variance of return types in
   \Java.
+
 
 \begin{figure}[htb]
     \caption{Encoding a stack data structure with
@@ -171,7 +186,7 @@ The feasibility of \emph{type-methods} emerges from the co-variance of return ty
         listing inputencoding=utf8,
         listing file=stack.listing}
       }
-      \\
+⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
@@ -179,13 +194,6 @@ The feasibility of \emph{type-methods} emerges from the co-variance of return ty
 Note, that the implemented inheritance model previously used, is now extended to express the partiality
   of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
 
-\begin{figure}[ht]
-  \label{Figure:partial:inheritance:model}
-  \caption{Inheritance Model for partial binary function~$f$}
-  \begin{adjustbox}{max width=0.6\linewidth}
-    \input ../Figures/partial-function-classification.tikz
-  \end{adjustbox}
-\end{figure}
 
 We use the notion \emph{Type-Method} when we want to express that the arguments passed to a function
   (i.e., former~$f$) are ‟passed” by invoking a method on the receiver (i.e., r1(),s1() in the former example).

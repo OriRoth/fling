@@ -49,6 +49,7 @@ public class Domain {
     public abstract Γʹ top();
     public abstract Stack<?> γ1(); 
     public abstract Stack<?> γ2();
+    public static final B bottom = null; 
     public static final class B extends Stack<¤> {
       @Override public ¤ pop() { return null; } 
       @Override public Γʹ.¤ top() { return null; }
