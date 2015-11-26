@@ -22,95 +22,76 @@ public class Domain {
   
   // gamma.listing
   
-  static abstract class Γʹ { 
-    static private abstract class ¤ extends Γʹ {
+  public static abstract class Γʹ { 
+    private static abstract class ¤ extends Γʹ {
       // Empty private class, cannot be used by clients.
       private ¤() {
        // Class cannot be extended 
       }
     }
-    static abstract class Γ extends Γʹ { 
-      abstract Γʹ g(); 
-      static final class γ1 extends Γ {
+    public  static abstract class Γ extends Γʹ { 
+      public abstract Γʹ g(); 
+      public static final class γ1 extends Γ {
         // Covariant return type in overriding:
-        @Override  γ2 g() { return null; } 
+        @Override public γ2 g() { return null; } 
       }
-      static final class γ2 extends Γ {
+      public static final class γ2 extends Γ {
         // Covariant return type in overriding:
-        @Override  Γʹ.¤ g() { return null; }
+        @Override  public Γʹ.¤ g() { return null; }
       }
     }
   } 
   
   
-  //gamma-example.listing
-
-  public static void demo_of_unary_function_g() {
-    γ2 _1 = new γ1().g();  // ✓
-    γ1 _2 = new γ2().g();  // ✗ type mismatch
-    Γʹ.¤  _3 = new γ2().g();  // ✗ class ¤ is private
-    Γʹ _4 = new γ2().g();  // ✓
-    _4.g();  // ✗ method g() is undefined in type Γʹ
-  } 
   
+  //stack.listinpublic public g
   
-  //stack.listing
-  
-  static abstract class Stack<Tail extends Stack<?>> { 
-    abstract Tail pop(); 
-    abstract Γʹ top();
-    abstract Stack<?> γ1(); 
-    abstract Stack<?> γ2();
-    static final class B extends Stack<¤> {
-      ¤ pop() { return null; } 
-      Γʹ.¤ top() { return null; }
-      P<γ1, B> γ1() { return null; } 
-      P<γ2, B> γ2() { return null; }
+  public static abstract class Stack<Tail extends Stack<?>> { 
+    public abstract Tail pop(); 
+    public abstract Γʹ top();
+    public abstract Stack<?> γ1(); 
+    public abstract Stack<?> γ2();
+    public static final class B extends Stack<¤> {
+      public ¤ pop() { return null; } 
+      public Γʹ.¤ top() { return null; }
+      public P<γ1, B> γ1() { return null; } 
+      public P<γ2, B> γ2() { return null; }
     }
     static private final class ¤ extends Stack<¤> {
-      ¤ pop() { return null; } 
-      Γʹ.¤ top() { return null; }
-      ¤ γ1() { return null; } 
-      ¤ γ2() { return null; }
+      public ¤ pop() { return null; } 
+      public Γʹ.¤ top() { return null; }
+      public ¤ γ1() { return null; } 
+      public ¤ γ2() { return null; }
     }
     static class P<Head extends Γ, Tail extends Stack<?>> extends Stack<Tail> {
-      Head top() { return null; } 
-      Tail pop() { return null; }
-      P<γ1, P<Head,Tail>> γ1() { return null; } 
-      P<γ2, P<Head,Tail>> γ2() { return null; }
+      public Head top() { return null; } 
+      public Tail pop() { return null; }
+      public P<γ1, P<Head,Tail>> γ1() { return null; } 
+      public P<γ2, P<Head,Tail>> γ2() { return null; }
     }
   }
 
   
   //binary-function.listing
-  static abstract class f {
-    // A representation of the set ¢$S$¢
-    static r1 r1() { return null; }
-    static r2 r2() { return null; }
+  public static abstract class f { // Starting point of fluent API
+    public static r1 r1() { return null; }
+    public static r2 r2() { return null; }
   }  
-  static abstract class R {
-    abstract Γʹ s1();
-    abstract Γʹ s2();
-    static final class r1 extends R {
-      @Override γ1 s1() { return null; } 
-      @Override γ2 s2() { return null; }
+  public static abstract class R { 
+    public abstract Γʹ s1();
+    public abstract Γʹ s2();
+    public static final class r1 extends R {
+      @Override public γ1 s1() { return null; } 
+      @Override public γ2 s2() { return null; }
     }
-    static final class r2 extends R {
-      @Override γ2 s1() { return null; }
-      @Override Γʹ.¤ s2() { return null; }
+    public static final class r2 extends R {
+      @Override public γ2 s1() { return null; }
+      @Override public Γʹ.¤ s2() { return null; }
     }
   }
 
 
-  
-  //binary-function-example.listing
-  
-  public static void demonstration_of_binary_function_f(){
-    γ1 _1 = f.r1().s1();     // ✓
-    γ2 _2 = f.r1().s2();     // ✓
-    γ2 _3 = f.r2().s1();     // ✓
-    f.r2().s2().g(); // ✗ method s2() is undefined for type Γʹ
-  }
+
   
   
 
@@ -129,9 +110,9 @@ public class Domain {
     ¤ x9 = x8.pop();
   } 
 
-  static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
-    static private final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
-    static final class q0 extends Q<B,Γʹ.¤>{
+  public static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
+    public static private final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
+    public static final class q0 extends Q<B,Γʹ.¤>{
       SingleP1<B> σ1() {
         return null;
        }
