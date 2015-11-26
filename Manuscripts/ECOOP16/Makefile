@@ -21,10 +21,10 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 stack.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | sed 's/return null;/.../g' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 stack-use-cases.listing: ../../src/main/java/automaton/DomainDemo.java  
-	awk '/^.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' | sed 's/return null;/.../g' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 gamma.listing: ../../src/main/java/automaton/Domain.java  
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 

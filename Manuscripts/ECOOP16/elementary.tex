@@ -12,12 +12,12 @@ We argue that~$g$ can
   }
   \begin{tabular}{@{}c@{}c@{}c@{}}
     \hspace{-7ex}
-    \parbox[c]{0.26\linewidth}{
-  \input ../Figures/unary-function-classification.tikz
+    \parbox[c]{0.26\linewidth}{%
+      \input ../Figures/unary-function-classification.tikz
     }%
     &
     \hspace{-1ex}
-    \parbox[c]{0.46\linewidth}{
+    \parbox[c]{0.46\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -27,7 +27,7 @@ We argue that~$g$ can
     }%
     &
     \hspace{-8ex}
-    \parbox[c]{0.84\linewidth}{
+    \parbox[c]{0.84\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -96,7 +96,7 @@ A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bina
   defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$, and~$f(r₂,s₁)=γ₂$ and~$f(r₂, s₂) =⊥$.
   Classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} are as in \cref{Figure:unary:function}.}
   \begin{tabular}{cc}
-   \parbox[c]{0.57\linewidth}{
+   \parbox[c]{0.57\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
@@ -106,7 +106,7 @@ A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bina
    }
    &
    \hspace{-10ex}
-   \parbox[c]{0.58\linewidth}{
+   \parbox[c]{0.58\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
@@ -127,20 +127,26 @@ The use cases in \cref{Figure:simple:binary}(b), demonstrate
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
 The return type of \kk{static} member functions~\cc{r1()} and~\cc{r2()}
-is the respective sub-class of class~\cc{R}.
+  is the respective sub-class of class~\cc{R}:
+The return type of function \cc{r1()} is \kk{class} \cc{R.r1} 
+  and return type of function \cc{r2()} is \kk{class} \cc{R.r2}. 
 
 Instead of representing set~$S$ as a class,
-  its members are realized as methods~\cc{s1()} and~\cc{22()} in a class
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in a class
   named~\cc{f}.
 These functions are defined as \kk{abstract} with return type \cc{$Γ$'}
   in class~\cc{R}.
 They are overridden, with the appropriate co-variant change of the return type,
   in classes \cc{r1} and \cc{r2}.
 
+The encoding scheme presented in \Cref{Figure:binary-function} is easy to extend to any 
+  number of arguments.
+
+
 In the implementation we see that see that set~$S$ was not defined by a corresponding class in
   the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
   class~\cc{R}, with return type~\cc{$Γ'$}.
-This allowes us to~\cc{@Override} the methods with the different return values of~$f$ as
+This allows us to~\cc{@Override} the methods with the different return values of~$f$ as
  in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
  as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
 We use the notion ‟type-method” for an input variable of type~$T$, when in the
@@ -149,25 +155,26 @@ We use the notion ‟type-method” for an input variable of type~$T$, when in t
 The feasibility of \emph{type-methods} emerges from the co-variance of return types in
   \Java.
 
-
-\subsection{Stack}
 \begin{figure}[htb]
     \caption{Encoding a stack data structure with
     \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding}
     \begin{tabular}{cc}
-         \parbox[c]{0.74\linewidth}{
+      \hspace{-12ex}
+         \parbox[c]{0.3\linewidth}{%
+          \input ../Figures/stack-classification.tikz
+        }
+          &
+         \parbox[c]{0.86\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
-        listing options={style=numbered,style=Java},
+        listing options={style=Java},
        % minipage,
         %width=\hsize,
         listing inputencoding=utf8,
         listing file=stack.listing}
       }
-        &
-         \parbox[c]{\hsize}{
-          \input ../Figures/stack-classification.tikz
-        }
+      \\
+      \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
 

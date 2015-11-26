@@ -3,12 +3,12 @@
 \usetikzlibrary{calc}
 %\draw[help lines] (-7,-11) grid (7,1);
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=4ex,minimum width=8ex,rectangle ,rounded corners]
-\graph [tree layout] {
+\graph [tree layout] {%
 	"\cc{Stack<Tail>}"[nudge=(up:2ex),concept], 
 	"\cc{Stack.B}"[nudge=(right:6ex),concept], 
-	"\cc{\currency}"[nudge=(down:6ex),xshift=-12ex,concept], 
-	"\cc{Stack.P<Head,Tail>}"[nudge=(left:10ex),yshift=-12ex,concept], 
-  {"\cc{Stack.B}","\cc{\currency}","\cc{Stack.P<Head,Tail>}",   } ->"\cc{Stack<Tail>}",
+	"\cc{Stack.\currency}"[nudge=(down:6ex),xshift=-20ex,concept], 
+	"\cc{Stack.P<Head,Tail>}"[nudge=(left:20ex),yshift=-18ex,concept], 
+  {"\cc{Stack.B}","\cc{Stack.\currency}","\cc{Stack.P<Head,Tail>}",   } ->"\cc{Stack<Tail>}",
 };
 %\draw (current bounding box.south east) rectangle (current bounding box.north west);
 \end{tikzpicture}

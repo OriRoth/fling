@@ -3,7 +3,7 @@
 \usetikzlibrary{calc}
 %\draw[help lines] (-7,-11) grid (7,1);
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=3ex,minimum width=7ex,rectangle ,rounded corners,level distance=10ex]
-\graph [tree layout] { 
+\graph [tree layout] {%
 "\cc{$\Gamma'$}"[concept],
 "\cc{$\Gamma'.\Gamma$}"[concept],
 "\cc{$\Gamma'$.\currency}"[concept],

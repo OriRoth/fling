@@ -52,22 +52,23 @@ public class Domain {
     public abstract Stack<?> γ1(); 
     public abstract Stack<?> γ2();
     public static final class B extends Stack<¤> {
-      public ¤ pop() { return null; } 
-      public Γʹ.¤ top() { return null; }
-      public P<γ1, B> γ1() { return null; } 
-      public P<γ2, B> γ2() { return null; }
+      @Override public ¤ pop() { return null; } 
+      @Override public Γʹ.¤ top() { return null; }
+      @Override public P<γ1, B> γ1() { return null; } 
+      @Override public P<γ2, B> γ2() { return null; }
     }
-    static private final class ¤ extends Stack<¤> {
-      public ¤ pop() { return null; } 
-      public Γʹ.¤ top() { return null; }
-      public ¤ γ1() { return null; } 
-      public ¤ γ2() { return null; }
+    private static final class ¤ extends Stack<¤> {
+      @Override public ¤ pop() { return null; } 
+      @Override public Γʹ.¤ top() { return null; }
+      @Override public ¤ γ1() { return null; } 
+      @Override public ¤ γ2() { return null; }
     }
-    static class P<Head extends Γ, Tail extends Stack<?>> extends Stack<Tail> {
-      public Head top() { return null; } 
-      public Tail pop() { return null; }
-      public P<γ1, P<Head,Tail>> γ1() { return null; } 
-      public P<γ2, P<Head,Tail>> γ2() { return null; }
+    // Type constructor making it possible to push an unlimited number of items (types) into the stack: 
+    public static class P<Head extends Γ, Tail extends Stack<?>> extends Stack<Tail> {
+      @Override public Tail pop() { return null; }
+      @Override public Head top() { return null; } 
+      @Override public P<γ1, P<Head,Tail>> γ1() { return null; } 
+      @Override public P<γ2, P<Head,Tail>> γ2() { return null; }
     }
   }
 
@@ -95,20 +96,7 @@ public class Domain {
   
   
 
-  public static void main2(String[] args) {
-    P<γ1, P<γ2, P<γ1, P<γ2, B>>>> t;
-      
-    B x0 = new B();
-    P<γ1,B> x1 = x0.γ1();
-    P<γ2,P<γ1,B>> x2 = x1.γ2();
-    P<γ1,P<γ1,P<γ2,P<γ1,P<γ1,B>>>>> x3 = ((B) null).γ1().γ1().γ2().γ1().γ1();
-    P<γ1,P<γ2,P<γ1,P<γ1,B>>>> x4 = x3.pop();
-    P<γ2,P<γ1,P<γ1,B>>> x5 = x4.pop();
-    P<γ1,P<γ1,B>> x6 = x5.pop();
-    P<γ1,B> x7 = x6.pop();
-    B x8 = x7.pop();
-    ¤ x9 = x8.pop();
-  } 
+ 
 
   public static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
     public static private final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
