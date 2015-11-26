@@ -17,7 +17,7 @@ We argue that~$g$ can
     }%
     &
     \hspace{-1ex}
-    \parbox[c]{0.46\linewidth}{%
+    \parbox[c]{0.64\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -26,7 +26,11 @@ We argue that~$g$ can
       }
     }%
     &
-    \hspace{0ex}
+% <<<<<<< HEAD
+%     \hspace{0ex}
+% =======
+    \hspace{-18ex}
+% >>>>>>> 79b54440f0d7193622113cc7a7bf5dca02282d81
     \parbox[c]{0.84\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
@@ -36,15 +40,19 @@ We argue that~$g$ can
       }
     }%
 ⏎
-    \hspace{-8ex}(a) type hierarchy & (b) implementation & \hspace{-28ex}(c) use cases
+% <<<<<<< HEAD
+%     \hspace{-8ex}(a) type hierarchy & (b) implementation & \hspace{-28ex}(c) use cases
+% =======
+(a) type hierarchy & (b) implementation & \hspace{-62ex} (c) use cases
+% >>>>>>> 79b54440f0d7193622113cc7a7bf5dca02282d81
   \end{tabular}
 \end{figure}
 
 The type hierarchy depicted in~\cref{Figure:unary:function}(a) shows five classes:
 Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
-The last two are private final class~\cc{¤} that stands for an error value,
-  and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
+The remaining two classes are private final class~\cc{¤} that stands for an error value,
+  and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
 The full implementation of these classes is provided in~\cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
@@ -64,14 +72,14 @@ Some of the conventions employed in~\cref{Figure:unary:function}(b) and hencefor
   \item The interest of frugal management of name-spaces is served by the agreement that if
     a class~\cc{~$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of class~$Y$.
-  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.
-    This is to stress that at runtime, the code does not carry out any useful or interesting computation,
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.  
+      This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
 \end{itemize}
 (By these conventions the augmented class~\cc{$Γ'$} can be used by clients.
 The class can be made~\cc{private} to prevent clients from using it,
   at the small price of breaking the second convention:
-  Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
+  Class~\cc{$Γ$} must then be moved outside of class~\cc{$Γ'$}
 
 We saw that unary functions can be encoded with inheritance and overriding.
 With the absence of multi-methods, encoding higher arity functions is a greater challenge.
@@ -94,11 +102,17 @@ As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
 
 \begin{figure}[hbt]
   \caption{\label{Figure:simple:binary}%
+% <<<<<<< HEAD
   Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
   defined in~\cref{Equation:simple:binary}. The implementation of the classes~\cc{$Γ$},\cc{$Γ'$} 
   as well as~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
   in \cref{Figure:unary:function}.}
 
+% =======
+%     Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
+%   defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₂$, and~$f(r₂, s₂) =⊥$.
+%   Classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} are as in \cref{Figure:unary:function}.}
+% >>>>>>> 79b54440f0d7193622113cc7a7bf5dca02282d81
   \begin{tabular}{cc}
    \hspace{-2.5ex}
    \parbox[c]{0.57\linewidth}{%
@@ -133,25 +147,53 @@ Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
 The return type of \kk{static} member functions~\cc{r1()} and~\cc{r2()}
   is the respective sub-class of class~\cc{R}:
-The return type of function \cc{r1()} is \kk{class} \cc{R.r1} 
-  and return type of function \cc{r2()} is \kk{class} \cc{R.r2}. 
+The return type of function \cc{r1()} is \kk{class} \cc{R.r1};
+  the return type of function \cc{r2()} is \kk{class} \cc{R.r2}.
 
 Instead of representing set~$S$ as a class,
-  its members are realized as methods~\cc{s1()} and~\cc{s2()} in a class
-  named~\cc{f}.
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in  class~\cc{R}.
 These functions are defined as \kk{abstract} with return type \cc{$Γ$'}
-  in class~\cc{R}.
+  in~\cc{R}.
 They are overridden, with the appropriate co-variant change of the return type,
   in classes \cc{r1} and \cc{r2}.
 
+% <<<<<<< HEAD
+% =======
+It should be clear now that the encoding scheme presented in \Cref{Figure:simple:binary} can be generalized to functions
+  with any number of arguments, as long as the domain and range sets are finite. 
+The encoding of sets of unbounded size require means for creating an unbounded 
+  number of types. 
+Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
+
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-use-cases}%
+    Use cases of a compile-time stack data structures.
+  }
+  \tcbinputlisting{%
+    codebox=Java,
+    minipage,
+    listing options={style=Java},
+    listing inputencoding=utf8,
+    listing file=stack-use-cases.listing
+  }
+\end{figure}
+
+In the implementation we see that see that set~$S$ was not defined by a corresponding class in
+  the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
+  class~\cc{R}, with return type~\cc{$Γ'$}.
+This allows us to~\cc{@Override} the methods with the different return values of~$f$ as
+ in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
+ as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
+% >>>>>>> 79b54440f0d7193622113cc7a7bf5dca02282d81
 We use the notion ‟type-method” for an input variable of type~$T$, when in the
   corresponding implementation of this function, the sending of these arguments is done
   by invoking a corresponding method, as in the discussed example.
 The feasibility of \emph{type-methods} emerges from the co-variance of return types in
   \Java.
 
-The encoding scheme presented in \Cref{Figure:simple:binary} is easy to extend to any 
-  number of arguments.
+% <<<<<<< HEAD
+% The encoding scheme presented in \Cref{Figure:simple:binary} is easy to extend to any 
+%   number of arguments.
 
 \subsection{Encoding of the Stack Data Structure}
 In~\cref{Section:elementary} it was shown that encoding a partial binary function is possible, if
@@ -166,9 +208,14 @@ First, it is important to understand the non-triviality of encoding the stack wi
   meaning it can have any finite number of stack symbols~\footnote{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
 Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics.
 In~\cref{Figure:stack:encoding} we provide an implementation of a plain stack.
+% \begin{figure}[htb]
+%     \caption{\label{Figure:stack:encoding}
+%     Encoding an unbounded stack using \Java Generics}    
+% =======
+
 \begin{figure}[htb]
-    \caption{\label{Figure:stack:encoding}
-    Encoding an unbounded stack using \Java Generics}    
+  \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure} 
+% >>>>>>> 79b54440f0d7193622113cc7a7bf5dca02282d81
     \begin{tabular}{cc}
       \hspace{-12ex}
          \parbox[c]{0.3\linewidth}{%
@@ -182,8 +229,7 @@ In~\cref{Figure:stack:encoding} we provide an implementation of a plain stack.
         listing inputencoding=utf8,
         listing file=stack.listing}
       }
-      \\
+⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
-

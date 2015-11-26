@@ -24,10 +24,8 @@ public class Domain {
   
   public static abstract class Γʹ { 
     private static abstract class ¤ extends Γʹ {
-      //  Empty private class, cannot be used by clients.
-      private ¤() {
-        // Class cannot be extended 
-      }
+      // Empty private class, cannot be used by clients.
+      private ¤() { /* Private constructor hinders extension by clients */ }
     }
     public  static abstract class Γ extends Γʹ { 
       public abstract Γʹ g(); 
@@ -49,6 +47,7 @@ public class Domain {
     public abstract Γʹ top();
     public abstract Stack<?> γ1(); 
     public abstract Stack<?> γ2();
+    public static final B bottom = null; 
     public static final class B extends Stack<¤> {
       @Override public ¤ pop() { return null; } 
       @Override public Γʹ.¤ top() { return null; }
