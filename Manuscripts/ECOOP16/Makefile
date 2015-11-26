@@ -5,15 +5,26 @@ LATEX=lualatex -file-line-error
 export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
+LISTINGS=
+LISTINGS+=stack.listing
+LISTINGS+=stack-use-cases.listing
+LISTINGS+=gamma.listing 
+LISTINGS+=gamma-example.listing 
+LISTINGS+=binary-function.listing 
+LISTINGS+=binary-function-example.listing 
+
 # Target to be used for compiles when references did not change
-latex: $(wildcard *.sty *.tex) stack.listing gamma.listing gamma-example.listing binary-function.listing binary-function-example.listing
+latex: $(wildcard *.sty *.tex) $(LISTINGS) 
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
-stack.listing: ../../src/main/java/automaton/Domain.java  
+stack.listing: ../../src/main/java/automaton/Domain.java 
 	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+stack-use-cases.listing: ../../src/main/java/automaton/DomainDemo.java  
+	awk '/^.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 gamma.listing: ../../src/main/java/automaton/Domain.java  
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -26,8 +37,7 @@ binary-function.listing: ../../src/main/java/automaton/Domain.java
 	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
 
 binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
-	awk '/^.*demonstration_of_binary_function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
+	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 
 warnings:	

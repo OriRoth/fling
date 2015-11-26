@@ -151,6 +151,9 @@
   keywordstyle=\color{RoyalBlue}\listingsfont\codesize\textup\bfseries,
   commentstyle=\color{ForestGreen}\commentsfont\codesize\slshape,
   stringstyle=\color{OliveGreen}\listingsfont\codesize\itshape,
+  language=C,
+  directivestyle=\color{Magenta}\listingsfont\codesize\slshape,
+  language=Java,
 }
 
 
@@ -207,7 +210,7 @@
 	% Comments : /* comment */ and // comment
 	comment=[l]{//},
 	morecomment=[s]{/*}{*/},
-	% Options
+	% Optionalss
 	sensitive=true
 }
 
@@ -263,7 +266,7 @@
 \newLanguage{HTML}{AGETEEEMEL}
 \newLanguage{GoOH}{GO}
 \newLanguage[alsoletter={-}]{HTML}{HTML}
-\newLanguage[morekeywords={enum,strictfp,@interface,inherited},alsoletter={@},literate={->}{$\rightarrow$}1]{Java}{JAVA}
+\newLanguage[morekeywords={enum,strictfp,@interface,inherited},alsoletter=@,moredirectives={@Override},literate={->}{$\rightarrow$}1]{Java}{JAVA}
 \newLanguage{Macroscope}{MACROSCOPE}
 \newLanguage{Oberon-2}{OBERON}
 \newLanguage{Pascal}{PASCAL}

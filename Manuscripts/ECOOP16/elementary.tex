@@ -1,24 +1,23 @@
-\subsection{Type encoding of unary partial functions}
 Let~$g:Γ→Γ$ be a function,
   where set~$Γ$ is finite.
 We argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
-\cref{Figure:unary:function} shows a manner of doing so which
-  will turn beneficial later.
+  \cref{Figure:unary:function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
+  and~$g(γ₂)=⊥$, i.e.,~$g(γ₂)$ is undefined.
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:unary:function}
+  \caption{\label{Figure:unary:function}%
     Type encoding of the partial function~$g:Γ↛Γ$,
-    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$, and~$g(γ₂)$ being undefined. 
+    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
   }
   \begin{tabular}{@{}c@{}c@{}c@{}}
     \hspace{-7ex}
-    \parbox[c]{0.26\linewidth}{
-  \input ../Figures/unary-function-classification.tikz
+    \parbox[c]{0.26\linewidth}{%
+      \input ../Figures/unary-function-classification.tikz
     }%
     &
     \hspace{-1ex}
-    \parbox[c]{0.46\linewidth}{
+    \parbox[c]{0.46\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -27,8 +26,8 @@ We argue that~$g$ can
       }
     }%
     &
-    \hspace{-8ex}
-    \parbox[c]{0.84\linewidth}{
+    \hspace{0ex}
+    \parbox[c]{0.84\linewidth}{%
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
@@ -37,7 +36,7 @@ We argue that~$g$ can
       }
     }%
 ⏎
-    (a) type hierarchy & (b) implementation & (c) usage\hspace{40ex}
+    \hspace{-8ex}(a) type hierarchy & (b) implementation & \hspace{-28ex}(c) use cases
   \end{tabular}
 \end{figure}
 
@@ -48,7 +47,7 @@ The last two are private final class~\cc{¤} that stands for an error value,
   and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
-The full implementation of these classes is provided in~\cref{Figure:unary:function}(b)\footnote{Remember that \Java admits Unicode characters in identifier names}.
+The full implementation of these classes is provided in~\cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
 This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
 
 The use cases in~\cref{Figure:unary:function}(c) explain better
@@ -74,15 +73,14 @@ The class can be made~\cc{private} to prevent clients from using it,
   at the small price of breaking the second convention:
   Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
 
-\subsection{Higher arity functions and type-methods}\label{Subsection:arity}
 We saw that unary functions can be encoded with inheritance and overriding.
-With the absence of multi-methods, encoding of higher arity is a greater challenge.
+With the absence of multi-methods, encoding higher arity functions is a greater challenge.
 
 Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite.
 Specifically, let
 \begin{equation}
   \label{Equation:simple:binary}
-  \begin{array}{rlc}
+  \begin{array}{rcl}
     R & = & ❴ r₁, r₂❵⏎
     S & = & ❴ s₁, s₂❵⏎
     f & = & ❴ ⟨r₁, s₁,γ₁⟩, ⟨r₁, s₂,γ₂⟩, ⟨r₂, s₁,γ₂⟩ ❵ ⊂ R⨉S⨉Γ
@@ -95,14 +93,15 @@ As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
   to compute~$f(r₁,s₁)$ we write \cc{f.r1().s1()}.
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:simple:binary}
+  \caption{\label{Figure:simple:binary}%
   Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
   defined in~\cref{Equation:simple:binary}. The implementation of the classes~\cc{$Γ$},\cc{$Γ'$} 
   as well as~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
   in \cref{Figure:unary:function}.}
 
   \begin{tabular}{cc}
-   \parbox[c]{0.42\linewidth}{
+   \hspace{-2.5ex}
+   \parbox[c]{0.57\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
@@ -111,7 +110,8 @@ As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
     }
    }
    &
-   \parbox[c]{0.58\linewidth}{
+   \hspace{-2.5ex}
+   \parbox[c]{0.48\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
@@ -120,25 +120,41 @@ As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
     }
    }
 ⏎
-   \hspace{-7ex}(a) implementation & \hspace{-7ex}(b) usage
+   \hspace{-7ex}(a) implementation & \hspace{-5ex}(b) use cases⏎
   \end{tabular}
 \end{figure}
 
-In the implementation we see that see that set~$S$ was not defined by a corresponding class in
-  the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
-  class~\cc{R}, with return type~\cc{$Γ'$}.
-This allowes us to~\cc{@Override} the methods with the different return values of~$f$ as
- in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
- as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
+The use cases in \cref{Figure:simple:binary}(b), demonstrate
+  that to compute~$f(r₁,s₁)$ we write \cc{f.r1().s1()}
+  and that the fluent API call chain \cc{f.r2().s2()} yields
+  a compile time error since~$f(r₂, s₂)=⊥$.
+
+Class~\cc{f} in the implementation sub-figure serves as
+  the starting point of the little fluent API defined here.
+The return type of \kk{static} member functions~\cc{r1()} and~\cc{r2()}
+  is the respective sub-class of class~\cc{R}:
+The return type of function \cc{r1()} is \kk{class} \cc{R.r1} 
+  and return type of function \cc{r2()} is \kk{class} \cc{R.r2}. 
+
+Instead of representing set~$S$ as a class,
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in a class
+  named~\cc{f}.
+These functions are defined as \kk{abstract} with return type \cc{$Γ$'}
+  in class~\cc{R}.
+They are overridden, with the appropriate co-variant change of the return type,
+  in classes \cc{r1} and \cc{r2}.
+
 We use the notion ‟type-method” for an input variable of type~$T$, when in the
   corresponding implementation of this function, the sending of these arguments is done
   by invoking a corresponding method, as in the discussed example.
 The feasibility of \emph{type-methods} emerges from the co-variance of return types in
   \Java.
 
+The encoding scheme presented in \Cref{Figure:simple:binary} is easy to extend to any 
+  number of arguments.
 
 \subsection{Encoding of the Stack Data Structure}
-In~\cref{Subsection:arity} it was shown that encoding a partial binary function is possible, if
+In~\cref{Section:elementary} it was shown that encoding a partial binary function is possible, if
   the input and output sets are not too big. 
   These ideas and metholodies could be extended to a general, of a higher arity function.
 While it got us closer to the main objective, defined in~\cref{Theorem:Gil:Levy} we still miss a major, 
@@ -154,20 +170,20 @@ In~\cref{Figure:stack:encoding} we provide an implementation of a plain stack.
     \caption{\label{Figure:stack:encoding}
     Encoding an unbounded stack using \Java Generics}    
     \begin{tabular}{cc}
-      \hspace{-3ex}\parbox[c]{0.295\linewidth}{
-	\input ../Figures/stack-classification.tikz
-      }
-      &
-      \parbox[c]{0.74\linewidth}{
-	\tcbinputlisting{%
-	  codebox=Java,
-	  listing options={style=Java},
-	  listing inputencoding=utf8,
-	  listing file=stack.listing
-	}
+      \hspace{-12ex}
+         \parbox[c]{0.3\linewidth}{%
+          \input ../Figures/stack-classification.tikz
+        }
+          &
+         \parbox[c]{0.86\linewidth}{%
+      \tcbinputlisting{%
+        codebox=Java,
+        listing options={style=Java},
+        listing inputencoding=utf8,
+        listing file=stack.listing}
       }
       \\
-      (a) type hierarchy & \hspace{-3ex}(b) implementation
+      \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
 
