@@ -152,7 +152,7 @@
   commentstyle=\color{ForestGreen}\commentsfont\codesize\slshape,
   stringstyle=\color{OliveGreen}\listingsfont\codesize\itshape,
   language=C,
-  directivestyle=\color{Magenta}\listingsfont\codesize\slshape,
+  emphstyle={\color{Magenta}\listingsfont\codesize\slshape},
   language=Java,
 }
 
@@ -266,7 +266,8 @@
 \newLanguage{HTML}{AGETEEEMEL}
 \newLanguage{GoOH}{GO}
 \newLanguage[alsoletter={-}]{HTML}{HTML}
-\newLanguage[morekeywords={enum,strictfp,@interface,inherited},alsoletter=@,moredirectives={@Override},literate={->}{$\rightarrow$}1]{Java}{JAVA}
+\newLanguage[morekeywords={enum,strictfp,@interface,inherited},
+emph={@Override},alsoletter=@,literate={->}{$\rightarrow$}1]{Java}{JAVA}
 \newLanguage{Macroscope}{MACROSCOPE}
 \newLanguage{Oberon-2}{OBERON}
 \newLanguage{Pascal}{PASCAL}

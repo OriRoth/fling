@@ -25,9 +25,7 @@ public class Domain {
   public static abstract class Γʹ { 
     private static abstract class ¤ extends Γʹ {
       // Empty private class, cannot be used by clients.
-      private ¤() {
-       // Class cannot be extended 
-      }
+      private ¤() { /* Private constructor hinders extension by clients */ }
     }
     public  static abstract class Γ extends Γʹ { 
       public abstract Γʹ g(); 
