@@ -1,10 +1,13 @@
 package automaton;
 
+import automaton.Domain.f;
 import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
 public class DomainDemo {
+  
+  
   //gamma-example.listing
 
   public static void five_use_cases_of_function_g() {
@@ -14,4 +17,15 @@ public class DomainDemo {
     Γʹ _4 = new γ2().g();    // ✓
     _4.g();              // ✗ g() undefined in type Γʹ
   } 
+  
+
+  //binary-function-example.listing
+  
+  public static void demonstration_of_binary_function_f(){
+    γ1 _1 = f.r1().s1();     // ✓
+    γ2 _2 = f.r1().s2();     // ✓
+    γ2 _3 = f.r2().s1();     // ✓
+    f.r2().s2().g(); // ✗ method s2() is undefined for type Γʹ
+  }
+
 }

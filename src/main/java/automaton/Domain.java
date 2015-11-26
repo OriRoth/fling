@@ -41,19 +41,7 @@ public class Domain {
       }
     }
   } 
-  
-  
-  //gamma-example.listing
-
-  public static void demo_of_unary_function_g() {
-    γ2 _1 = new γ1().g();  // ✓
-    γ1 _2 = new γ2().g();  // ✗ type mismatch
-    Γʹ.¤  _3 = new γ2().g();  // ✗ class ¤ is private
-    Γʹ _4 = new γ2().g();  // ✓
-    _4.g();  // ✗ method g() is undefined in type Γʹ
-  } 
-  
-  
+   
   //stack.listing
   
   static abstract class Stack<Tail extends Stack<?>> { 
@@ -84,11 +72,11 @@ public class Domain {
   
   //binary-function.listing
   static abstract class f {
-    // A representation of the set ¢$S$¢
     static r1 r1() { return null; }
     static r2 r2() { return null; }
   }  
   static abstract class R {
+    // A representation of the set ¢$S$¢
     abstract Γʹ s1();
     abstract Γʹ s2();
     static final class r1 extends R {
@@ -99,19 +87,7 @@ public class Domain {
       @Override γ2 s1() { return null; }
       @Override Γʹ.¤ s2() { return null; }
     }
-  }
-
-
-  
-  //binary-function-example.listing
-  
-  public static void demonstration_of_binary_function_f(){
-    γ1 _1 = f.r1().s1();     // ✓
-    γ2 _2 = f.r1().s2();     // ✓
-    γ2 _3 = f.r2().s1();     // ✓
-    f.r2().s2().g(); // ✗ method s2() is undefined for type Γʹ
-  }
-  
+  }  
   
 
   public static void main2(String[] args) {

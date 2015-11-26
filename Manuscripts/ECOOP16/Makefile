@@ -13,7 +13,7 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 stack.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | sed 's/return null;/.../g' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 gamma.listing: ../../src/main/java/automaton/Domain.java  
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -25,7 +25,7 @@ binary-function.listing: ../../src/main/java/automaton/Domain.java
 	awk '/^.*static abstract class f {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
 
-binary-function-example.listing: ../../src/main/java/automaton/Domain.java  
+binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
 	awk '/^.*demonstration_of_binary_function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 
