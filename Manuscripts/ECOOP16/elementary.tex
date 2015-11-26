@@ -1,4 +1,4 @@
-\subsection{Type encoding of unary (non-partial) functions}
+\subsection{Type encoding of unary partial functions}
 Let~$g:Γ→Γ$ be a function,
   where the set~$Γ$ is finite, then we argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
@@ -53,7 +53,8 @@ Note the convention we use here and henceforth:
 \begin{itemize}
   \item If class \cc{~$X$} \kk{extends} \kk{class} \cc{~$Y$}, then\cc{~$X$} is also defined
     as a \kk{static} member class of~$Y$.
-  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these, denote members of these sets.
+  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these sets, 
+    denote the members of these sets.
   \item All functions include a \kk{return} \kk{null} command and nothing else. 
     This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
@@ -62,17 +63,17 @@ Note the convention we use here and henceforth:
 \end{itemize}
 
 \subsection{Type-method encoding of partial binary functions}
-Consider a partial function~$f: R⨉S↛T$,
-  where the sets~$R$,~$S$ and~$T$ are all finite (and not too large).
+Consider a partial function~$f: R⨉S↛\Gamma$,
+  where the sets~$R$,~$S$ and~$\Gamma$ are all finite (and not too large).
 Then, it is possible to encode~$f$ within the framework of \Java's type system.
-Before showing how this is done in the general case, consider this example,
-where~$T$ and~$g$ are defined as in \cref{Figure:unary:function}:
+Before showing the general case, consider this example,
+  where~$\Gamma$ and~$g$ are defined as in \cref{Figure:unary:function}:
 \begin{equation}
   \label{Equation:simple:binary}
 \begin{split}
   R & = ❴ r₁, r₂❵⏎
   S & = ❴ s₁, s₂❵⏎
-  f & = ❴ ⟨r₁, s₁, t₁⟩, ⟨r₁, s₂, t₂⟩, ⟨r₂, s₁, t₂⟩ ❵ ⊂R⨉S⨉T
+  f & = ❴ ⟨r₁, s₁, \gamma₁⟩, ⟨r₁, s₂, \gamma₂⟩, ⟨r₂, s₁, \gamma₂⟩ ❵ ⊂R⨉S⨉\Gamma
 \end{split}
 \end{equation}
 The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
@@ -80,37 +81,34 @@ The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bi
 
 \begin{figure}[hbt]
   \begin{Code}{Java}
-abstract class R {¢¢ // Set ¢$R$¢
-  abstract T¢$⁺$¢ s1();
-  abstract T¢$⁺$¢ s2();
-  static final class r1 extends R {¢¢ // Value ¢$r₁∈R$¢
-    t1 s1() {¢¢ return null; }
-    t2 s2() {¢¢ return null; }
+abstract class R {¢¢ 
+  abstract ¢$\Gamma'$¢ s1();
+  abstract ¢$\Gamma'$¢ s2();
+  static final class r1 extends R {¢¢ 
+    @Override ¢$\gamma1$¢ s1() {¢¢ return null; }
+    @Override ¢$\gamma2$¢ s2() {¢¢ return null; }
   }
-  static final class r2 extends R {¢¢ // Value ¢$r₂∈R$¢
-    t2 s1() {¢¢ return null; }
-    ¢$⊥$¢ s2() {¢¢ return null; }
-  }
-  static abstract class T extends T¢$⁺$¢ {¢¢ // Set ¢$T⊂T⁺$¢
-    abstract T g();
-  }
-  abstract class T¢$⁺$¢ {¢¢ // Set ¢$T∪❴⊥❵~$¢
-    static final class ¢$⊥$¢ extends T¢$⁺$¢ {¢¢ /* empty */ } // Error Value ¢$⊥∈T⁺$¢
-    static abstract class T extends T¢$⁺$¢ {¢¢ ¢…¢ } // Set ¢$T⊂T⁺$¢
+  static final class r2 extends R {¢¢
+    @Override ¢$\gamma2$¢ s1() {¢¢ return null; }
+    @Override ¢\currency¢ s2() {¢¢ return null; }
   }
 }
+abstract class f{¢¢
+  static r1 r1() {¢¢ return null; }
+  static r2 r2() {¢¢ return null; }
+}
 \end{Code}
-  \caption{Type-method encoding of partial binary function~$f: R⨉S↛T$,
-  defined by~$f(r₁,s₁)=t₁$,~$f(r₁,s₂)=t₂$, and~$f(r₂,s₁)=t₂$ (while~$f(r₂, s₂) =⊥$).
-  The body of classes \cc{T} as well the full implementation of classes \cc{t1} and \cc{t2} is not included here, and is
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛\Gamma$,
+  defined by~$f(r₁,s₁)=\gamma₁$,~$f(r₁,s₂)=\gamma₂$, and~$f(r₂,s₁)=\gamma₂$ while~$f(r₂, s₂)$ is undefined.
+  The body of classes \cc{$\Gamma$},\cc{$\Gamma'$} as well the full implementation of classes \cc{$\gamma1$} and \cc{$\gamma2$} is not included here, and is
     in \cref{Figure:unary:function}.}
   \label{Figure:simple:binary}
 \end{figure}
 
 With the above definitions, we obtain:
 \begin{JAVA}
-f.r1().s1().g(); // ¢✓¢ returned type is ¢\cc{t2}¢
-f.r1().s2().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
+$\gamma2$ _1 = f.r1().s1().g(); // ¢✓¢
+¢\currency¢ _1 = f.r1().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$\gamma2$¢.
 f.r2().s1().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
