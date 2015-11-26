@@ -1,6 +1,7 @@
 \subsection{Type encoding of unary partial functions}
 Let~$g:Γ→Γ$ be a function,
-  where the set~$Γ$ is finite, then we argue that~$g$ can
+  where set~$Γ$ is finite.
+We argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
 \cref{Figure:unary:function} shows a manner of doing so which
   will turn beneficial later.
@@ -28,8 +29,6 @@ Let~$g:Γ→Γ$ be a function,
       \tcbinputlisting{%
         codebox=Java,
         listing options={style=Java},
-      % minipage,
-        %width=\hsize,
         listing inputencoding=utf8,
         listing file = gamma-example.listing
       }
@@ -40,57 +39,68 @@ Let~$g:Γ→Γ$ be a function,
 \end{figure}
 
 The type hierarchy depicted in \cref{Figure:unary:function}(a) shows five classes:
-Abstract class \cc{Γ} represents the set~$Γ$, final classes \cc{\gamma 1}, \cc{\gamma 2}
+Abstract class~\cc{Γ} represents the set~$Γ$, final classes \cc{γ1}, \cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
-The last two are private final class \cc{¤} that denotes error value, 
-  and class \cc{$Γ'$} that denotes the set~$Γ∪❴\text{¤}❵$.
-Accordingly, both \cc{¤} and \cc{$Γ$} extend \cc{$Γ'$}.
+The last two are private final class~\cc{¤} that stands for an error value,
+  and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
+Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
-\cref{Figure:unary:function}(b) shows the full implementation of these classes.
-While \cref{Figure:unary:function}(c) shows an usage example of the latter.
+The full implementation of these classes is provided in \cref{Figure:unary:function}(b).
+(This actual code excerpt should be placed as a nested class of some appropriate host class.)
 
-Note the convention we use here and henceforth: 
+The use cases in \cref{Figure:unary:function}(c) explain better
+  what we mean in saying that function~$g$ is encoded in the type system:
+  An instance of class \cc{$γ$1} returns a value of type~\cc{$γ$2} upon
+  method call~\cc{g()}, while
+  an instance of class \cc{$γ$2} returns a value of our \kk{private}
+  error type~\cc{$Γ'$.¤} upon the same call.
+
+Some of the conventions employed in \cref{Figure:unary:function}(b) and henceforth:
 \begin{itemize}
-  \item If class \cc{~$X$} \kk{extends} \kk{class} \cc{~$Y$}, then\cc{~$X$} is also defined
-    as a \kk{static} member class of~$Y$.
-  \item \kk{abstract} classes denote sets, while \kk{final} classes that extend these sets, 
-    denote the members of these sets.
-  \item All functions include a \kk{return} \kk{null} command and nothing else. 
+  \item An \kk{abstract} classes denotes a sets. Abstract classes that extend it represent
+      subsets, while \kk{final} classes that encode set members.
+  \item The interest of frugal management of name-spaces is served by the agreement that if
+    a class \cc{~$X$} \kk{extends} another class~\cc{$Y$}, then\cc{$X$} is also defined
+    as a \kk{static} member class of class~$Y$.
+  \item Body of functions is limited to a single \kk{return} \kk{null}~\cc{;} command.
     This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
-    Indeed, \cref{Figure:unary:function}(c) is a little demonstration
-      of these checks.
 \end{itemize}
+(By these conventions the augmented class~\cc{$Γ'$} can be used by clients.
+The class can be made \cc{private} to prevent clients from using it,
+  at the small price of breaking the second convention:
+  Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
 
-\subsection{Type-method encoding of partial binary functions}
-Consider a partial function~$f: R⨉S↛\Gamma$,
-  where the sets~$R$,~$S$ and~$\Gamma$ are all finite (and not too large).
-Then, it is possible to encode~$f$ within the framework of \Java's type system.
-Before showing the general case, consider this example,
-  where~$\Gamma$ and~$g$ are defined as in \cref{Figure:unary:function}:
+\subsection{Higher arity functions}
+We saw that unary functions can be encoded with inheritance and overriding. 
+With the absence of multi-methods, encoding of higher arity requires is a greater challenge. 
+
+Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite. 
+Specifically, let
 \begin{equation}
   \label{Equation:simple:binary}
 \begin{split}
   R & = ❴ r₁, r₂❵⏎
   S & = ❴ s₁, s₂❵⏎
-  f & = ❴ ⟨r₁, s₁, \gamma₁⟩, ⟨r₁, s₂, \gamma₂⟩, ⟨r₂, s₁, \gamma₂⟩ ❵ ⊂R⨉S⨉\Gamma
+  f & = ❴ ⟨r₁, s₁,γ₁⟩, ⟨r₁, s₂,γ₂⟩, ⟨r₂, s₁,γ₂⟩ ❵ ⊂R⨉S⨉Γ
 \end{split}
 \end{equation}
 The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
   can be found in \cref{Figure:simple:binary}.
+In the input enc
 
 \begin{figure}[hbt]
   \begin{Code}{Java}
-abstract class R {¢¢ 
-  abstract ¢$\Gamma'$¢ s1();
-  abstract ¢$\Gamma'$¢ s2();
-  static final class r1 extends R {¢¢ 
+abstract class R {¢¢
+  abstract ¢$Γ'$¢ s1();
+  abstract ¢$Γ'$¢ s2();
+  static final class r1 extends R {¢¢
     @Override ¢$\gamma1$¢ s1() {¢¢ return null; }
     @Override ¢$\gamma2$¢ s2() {¢¢ return null; }
   }
   static final class r2 extends R {¢¢
     @Override ¢$\gamma2$¢ s1() {¢¢ return null; }
-    @Override ¢\currency¢ s2() {¢¢ return null; }
+    @Override ¢¤¢ s2() {¢¢ return null; }
   }
 }
 abstract class f{¢¢
@@ -98,17 +108,17 @@ abstract class f{¢¢
   static r2 r2() {¢¢ return null; }
 }
 \end{Code}
-  \caption{Type-method encoding of partial binary function~$f: R⨉S↛\Gamma$,
-  defined by~$f(r₁,s₁)=\gamma₁$,~$f(r₁,s₂)=\gamma₂$, and~$f(r₂,s₁)=\gamma₂$ while~$f(r₂, s₂)$ is undefined.
-  The body of classes \cc{$\Gamma$},\cc{$\Gamma'$} as well the full implementation of classes \cc{$\gamma1$} and \cc{$\gamma2$} is not included here, and is
+  \caption{Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
+  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$, and~$f(r₂,s₁)=γ₂$ while~$f(r₂, s₂)$ is undefined.
+  The body of classes~\cc{$Γ$},\cc{$Γ'$} as well the full implementation of classes \cc{$\gamma1$} and \cc{$\gamma2$} is not included here, and is
     in \cref{Figure:unary:function}.}
   \label{Figure:simple:binary}
 \end{figure}
 
 With the above definitions, we obtain:
 \begin{JAVA}
-$\gamma2$ _1 = f.r1().s1().g(); // ¢✓¢
-¢\currency¢ _1 = f.r1().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$\gamma2$¢.
+¢$γ₁$¢ = f.r1().s1().g(); // ¢✓¢
+¢¤¢ = f.r1().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$\gamma2$¢.
 f.r2().s1().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
 f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
 \end{JAVA}
@@ -147,12 +157,12 @@ We use the notion \emph{Type-Method} when we want to express that the arguments 
   (i.e., former~$f$) are ‟passed” by invoking a method on the receiver (i.e., r1(),s1() in the former example).
 
 Here is the general process for general sets~$R$,$S$,$T$ and function~$f$:
-First, generate an abstract class \cc{R} that represents set~$R$, and,
-  for each~$r∈R$ a concrete class \cc{r} that extends \cc{R}.
-Similarly, generate an abstract class \cc{T} that represents set~$T$, and,
-  for each~$t∈T$ a concrete class \cc{t} that extends \cc{T}.
+First, generate an abstract class~\cc{R} that represents set~$R$, and,
+  for each~$r∈R$ a concrete class~\cc{r} that extends~\cc{R}.
+Similarly, generate an abstract class~\cc{T} that represents set~$T$, and,
+  for each~$t∈T$ a concrete class~\cc{t} that extends~\cc{T}.
 
-Now, for each~$(r,s)∈f$, introduce an abstract method named \cc{s},
+Now, for each~$(r,s)∈f$, introduce an abstract method named~\cc{s},
   in class~\cc{r}
 
 (the name obtained by
