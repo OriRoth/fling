@@ -39,7 +39,7 @@ We argue that~$g$ can
 \end{figure}
 
 The type hierarchy depicted in \cref{Figure:unary:function}(a) shows five classes:
-Abstract class~\cc{Γ} represents the set~$Γ$, final classes \cc{γ1}, \cc{γ2}
+Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
 The last two are private final class~\cc{¤} that stands for an error value,
   and class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
@@ -50,30 +50,30 @@ The full implementation of these classes is provided in \cref{Figure:unary:funct
 
 The use cases in \cref{Figure:unary:function}(c) explain better
   what we mean in saying that function~$g$ is encoded in the type system:
-  An instance of class \cc{$γ$1} returns a value of type~\cc{$γ$2} upon
+  An instance of class~\cc{$γ$1} returns a value of type~\cc{$γ$2} upon
   method call~\cc{g()}, while
-  an instance of class \cc{$γ$2} returns a value of our \kk{private}
+  an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
   error type~\cc{$Γ'$.¤} upon the same call.
 
 Some of the conventions employed in \cref{Figure:unary:function}(b) and henceforth:
 \begin{itemize}
-  \item An \kk{abstract} class denotes a set. Abstract classes that extend it represent
-      subsets, while \kk{final} classes that encode set members.
+  \item An~\kk{abstract} class denotes a set. Abstract classes that extend it represent
+      subsets, while~\kk{final} classes that encode set members.
   \item The interest of frugal management of name-spaces is served by the agreement that if
-    a class \cc{~$X$} \kk{extends} another class~\cc{$Y$}, then\cc{$X$} is also defined
-    as a \kk{static} member class of class~$Y$.
-  \item Body of functions is limited to a single \kk{return} \kk{null}~\cc{;} command.
+    a class~\cc{~$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
+    as a~\kk{static} member class of class~$Y$.
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.
     This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
 \end{itemize}
 (By these conventions the augmented class~\cc{$Γ'$} can be used by clients.
-The class can be made \cc{private} to prevent clients from using it,
+The class can be made~\cc{private} to prevent clients from using it,
   at the small price of breaking the second convention:
   Class~\cc{$Γ$} must be moved outside of class~\cc{$Γ'$}
 
-\subsection{Higher arity functions}
+\subsection{Higher arity functions and type-methods}
 We saw that unary functions can be encoded with inheritance and overriding. 
-With the absence of multi-methods, encoding of higher arity requires is a greater challenge. 
+With the absence of multi-methods, encoding of higher arity is a greater challenge. 
 
 Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite. 
 Specifically, let
@@ -86,43 +86,50 @@ Specifically, let
 \end{split}
 \end{equation}
 The \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
-  can be found in \cref{Figure:simple:binary}.
-In the input enc
+  can be found in \cref{Figure:simple:binary}(a), while the usage example is in
+  \cref{Figure:simple:binary}(b).
+
+In the latter implementation, the concept of \emph{type-method}s is introduced.
+As one might notice, set~$S$ was not defined by a corresponding class in
+  the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
+  class~\cc{R}, with return type~\cc{$\Gamma'$}.
+This allowes us to~\cc{@Override} the methods with the different return values of~$f$ as
+ in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
+ as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
+The feasibility of \emph{type-methods} emerges from the co-variance of return types in 
+  \Java. 
 
 \begin{figure}[hbt]
-  \begin{Code}{Java}
-abstract class R {¢¢
-  abstract ¢$Γ'$¢ s1();
-  abstract ¢$Γ'$¢ s2();
-  static final class r1 extends R {¢¢
-    @Override ¢$\gamma1$¢ s1() {¢¢ return null; }
-    @Override ¢$\gamma2$¢ s2() {¢¢ return null; }
-  }
-  static final class r2 extends R {¢¢
-    @Override ¢$\gamma2$¢ s1() {¢¢ return null; }
-    @Override ¢¤¢ s2() {¢¢ return null; }
-  }
-}
-abstract class f{¢¢
-  static r1 r1() {¢¢ return null; }
-  static r2 r2() {¢¢ return null; }
-}
-\end{Code}
+  \begin{tabular}{cc}
+   \parbox[c]{0.42\linewidth}{
+    \tcbinputlisting{%
+      codebox=Java,
+      listing options={style=Java},
+      listing inputencoding=utf8,
+      listing file=binary-function.listing
+    }
+   }
+   &
+   \parbox[c]{0.58\linewidth}{
+    \tcbinputlisting{%
+      codebox=Java,
+      listing options={style=Java},
+      listing inputencoding=utf8,
+      listing file=binary-function-example.listing
+    }
+   }
+   \\
+   \hspace{-7ex}(a) implementation & \hspace{-7ex}(b) usage
   \caption{Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
   defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$, and~$f(r₂,s₁)=γ₂$ while~$f(r₂, s₂)$ is undefined.
-  The body of classes~\cc{$Γ$},\cc{$Γ'$} as well the full implementation of classes \cc{$\gamma1$} and \cc{$\gamma2$} is not included here, and is
+  The body of classes~\cc{$Γ$},\cc{$Γ'$} as well the full implementation of classes~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
     in \cref{Figure:unary:function}.}
+  \end{tabular}
   \label{Figure:simple:binary}
 \end{figure}
 
-With the above definitions, we obtain:
-\begin{JAVA}
-¢$γ₁$¢ = f.r1().s1().g(); // ¢✓¢
-¢¤¢ = f.r1().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$\gamma2$¢.
-f.r2().s1().g(); // ¢✓¢ returned type is ¢\cc{t1}¢
-f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefined for type ¢$T⁺$¢.
-\end{JAVA}
 
+\subsection{Stack}
 \begin{figure}[h]
     \caption{Encoding a stack data structure with
     \Java type system including full code (left) and type hierarchy (right)}\label{Figure:stack:encoding}
@@ -146,7 +153,7 @@ f.r2().s2().g(); // ¢✗¢ compile time error, function ¢\cc{g()}¢ is undefin
         of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
 
 \begin{figure}[ht]
-  \label{Figure:partial:inheritence:model}
+  \label{Figure:partial:inheritance:model}
   \caption{Inheritance Model for partial binary function~$f$}
   \begin{adjustbox}{max width=0.6\linewidth}
     \input ../Figures/partial-function-classification.tikz

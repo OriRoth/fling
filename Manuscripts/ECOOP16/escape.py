@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 out = u''
-normalStyle = [u'\u00a4',u'\u2717',u'\u2713']
+normalStyle = [u'\u00a4',u'\u2717',u'\u2713',u'\u00a2']
 while True:
   try: 
     raw = raw_input()  
@@ -16,6 +16,6 @@ while True:
       if c in normalStyle:
         out = out + c
       else:
-        out = out + u'\xa2$'+c+u'$\xa2'
+        out = out + u'\u00a2$'+c+u'$\u00a2'
   out = out +'\n'
 print out[:-1]

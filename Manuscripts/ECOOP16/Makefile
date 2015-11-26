@@ -6,7 +6,7 @@ export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 # Target to be used for compiles when references did not change
-latex: $(wildcard *.sty *.tex) stack.listing gamma.listing gamma-example.listing	
+latex: $(wildcard *.sty *.tex) stack.listing gamma.listing gamma-example.listing binary-function.listing binary-function-example.listing
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
@@ -20,6 +20,14 @@ gamma.listing: ../../src/main/java/automaton/Domain.java
 
 gamma-example.listing: ../../src/main/java/automaton/Domain.java  
 	awk '/^.*demo_of_unary_function_g.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+binary-function.listing: ../../src/main/java/automaton/Domain.java  
+	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*static abstract class f {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
+
+binary-function-example.listing: ../../src/main/java/automaton/Domain.java  
+	awk '/^.*demonstration_of_binary_function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
 
 
 warnings:	

@@ -13,9 +13,15 @@ import automaton.Domain.Stack.P;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.Domain.R.r1;
+import automaton.Domain.R.r2;
 //@formatter:off
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
+  
+  
+  // gamma.listing
+  
   static abstract class Γʹ { 
     static private final class ¤ extends Γʹ {
       // Empty, cannot be instantiated by clients.
@@ -32,6 +38,21 @@ public class Domain {
       }
     }
   } 
+  
+  
+  //gamma-example.listing
+
+  public static void demo_of_unary_function_g() {
+    γ2 _1 = new γ1().g();  // ✓
+    γ1 _2 = new γ2().g();  // ✗ type mismatch
+    ¤  _3 = new γ2().g();  // ✗ class ¤ is private
+    Γʹ _4 = new γ2().g();  // ✓
+    _4.g();  // ✗ method g() is undefined in type Γʹ
+  } 
+  
+  
+  //stack.listing
+  
   static abstract class Stack<Tail extends Stack<?>> { 
     abstract Tail pop(); 
     abstract Γʹ top();
@@ -57,14 +78,39 @@ public class Domain {
     }
   }
 
-  public static void demo_of_unary_function_g() {
-    γ2 _1 = new γ1().g();  // ✓
-    γ1 _2 = new γ2().g();  // ✗ type mismatch
-    ¤  _3 = new γ2().g();  // ✗ class ¤ is private
-    Γʹ _4 = new γ2().g();  // ✓
-    _4.g();  // ✗ method g() is undefined in type Γʹ
-  } 
   
+  //binary-function.listing
+  
+  static abstract class R {
+    abstract Γʹ s1();
+    abstract Γʹ s2();
+    static final class r1 extends R {
+      @Override γ1 s1() { return null; } 
+      @Override γ2 s2() { return null; }
+    }
+    static final class r2 extends R {
+      @Override γ2 s1() { return null; }
+      @Override Γʹ.¤ s2() { return null; }
+    }
+  }
+  static abstract class f {
+    //  f is outside of R for the cause of fluency
+    static r1 r1() { return null; }
+    static r2 r2() { return null; }
+  } 
+
+  
+  //binary-function-example.listing
+  
+  public static void demonstration_of_binary_function_f(){
+    γ1 _1 = f.r1().s1();     // ✓
+    γ2 _2 = f.r1().s2();     // ✓
+    γ2 _3 = f.r2().s1();     // ✓
+    f.r2().s2().g(); // ✗ method s2() is undefined for type Γʹ
+  }
+  
+  
+
   public static void main2(String[] args) {
     P<γ1, P<γ2, P<γ1, P<γ2, B>>>> t;
       
