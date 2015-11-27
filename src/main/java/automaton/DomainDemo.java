@@ -24,22 +24,22 @@ public class DomainDemo {
   //binary-function-example.listing
   
   public static void four_use_cases_of_function_f() {
-    γ1 _1 = f.r1().s1();     // ✓
-    γ2 _2 = f.r1().s2();     // ✓
-    γ2 _3 = f.r2().s1();     // ✓
-    f.r2().s2().g(); // ✗ s2() undefined in type Γʹ
+    γ1 _1 = f.r1().s1(); // ✓ ¢$f(r_1,s_1) = \gamma_1$¢
+    γ2 _2 = f.r1().s2(); // ✓ ¢$f(r_1,s_2) = \gamma_2$¢
+    γ2 _3 = f.r2().s1(); // ✓ ¢$f(r_2,s_1) = \gamma_2$¢
+    f.r2().s2().g();     // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{\Gamma'}¢
   }
   
   public static void use_cases_of_stack() {
     // Create a stack a with five items in it:
-    P<γ1,P<γ1,P<γ2,P<γ1,P<γ1,B>>>>> _1 = Stack.bottom.γ1().γ1().γ2().γ1().γ1(); 
-    P<γ1,P<γ2,P<γ1,P<γ1,B>>>> _2 = _1.pop(); // ✓ Pup one item
-    P<γ2,P<γ1,P<γ1,B>>> _3 = _2.pop();       // ✓ Pop another item
-    P<γ1,P<γ1,B>> _4 = _3.pop();             // ✓ Pop yet another item
-    P<γ1,B> _5 = _4.pop();                   // ✓ Pop penultimate item
-    γ1 _6 = _5.top();                        // ✓ Examine last item 
-    B _7 = _5.pop();                         // ✓ Pop last item
-    Stack.¤  _8 = _7.pop();                  // ✗ Cannot pop from an empty stack 
-    Γʹ.¤ _9 = _7.top();                      // ✗ empty stack has no top element 
+    P<γ1,P<γ1,P<γ2,P<γ1,P<γ1,B>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1(); 
+    P<γ1,P<γ2,P<γ1,P<γ1,B>>>> _2 = _1.pop();   // ✓ Pop one item
+    P<γ2,P<γ1,P<γ1,B>>> _3 = _2.pop();         // ✓ Pop another item
+    P<γ1,P<γ1,B>> _4 = _3.pop();               // ✓ Pop yet another item
+    P<γ1,B> _5 = _4.pop();                     // ✓ Pop penultimate item
+    γ1 _6 = _5.top();                          // ✓ Examine last item 
+    B _7 = _5.pop();                           // ✓ Pop last item
+    Stack.¤  _8 = _7.pop();                    // ✗ Cannot pop from an empty stack 
+    Γʹ.¤ _9 = _7.top();                        // ✗ empty stack has no top element 
   }
 }

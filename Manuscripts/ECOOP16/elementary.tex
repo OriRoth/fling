@@ -1,12 +1,14 @@
+\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},listing file=#2,#1}}
+
 Let~$g:Γ→Γ$ be a function,
   where set~$Γ$ is finite.
 We argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
-  \cref{Figure:unary:function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
+  \cref{Figure:unary-function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
   and~$g(γ₂)=⊥$, i.e.,~$g(γ₂)$ is undefined.
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:unary:function}%
+  \caption{\label{Figure:unary-function}%
     Type encoding of the partial function~$g:Γ↛Γ$,
     defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
   }
@@ -18,46 +20,36 @@ We argue that~$g$ can
     &
     \hspace{-1ex}
     \parbox[c]{0.64\linewidth}{%
-      \tcbinputlisting{%
-        codebox=Java,
-        listing options={style=Java},
-        listing inputencoding=utf8,
-        listing file=gamma.listing
-      }
+      \javaInput{gamma.listing}
     }%
     &
     \hspace{-18ex}
     \parbox[c]{0.84\linewidth}{%
-      \tcbinputlisting{%
-        codebox=Java,
-        listing options={style=Java},
-        listing inputencoding=utf8,
-        listing file=gamma-example.listing
-      }
+      \javaInput{gamma-example.listing}
     }%
 ⏎
 (a) type hierarchy & (b) implementation & \hspace{-62ex} (c) use cases
   \end{tabular}
 \end{figure}
 
-The type hierarchy depicted in~\cref{Figure:unary:function}(a) shows five classes:
+The type hierarchy depicted in~\cref{Figure:unary-function}(a) shows five classes:
 Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
 The remaining two classes are private final class~\cc{¤} that stands for an error value,
   and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
-The full implementation of these classes is provided in~\cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
+The full implementation of these classes is provided in~\cref{Figure:unary-function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
 This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
 
-The use cases in~\cref{Figure:unary:function}(c) explain better
+The use cases in~\cref{Figure:unary-function}(c) explain better
   what we mean in saying that function~$g$ is encoded in the type system:
   An instance of class~\cc{$γ$1} returns a value of type~\cc{$γ$2} upon
   method call~\cc{g()}, while
   an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
   error type~\cc{$Γ'$.¤} upon the same call.
 
-Some of the conventions employed in~\cref{Figure:unary:function}(b) and henceforth:
+Some of the conventions employed in~\cref{Figure:unary-function}(b) and henceforth:
 \begin{itemize}
   \item An~\kk{abstract} class denotes a set. Abstract classes that extend it represent
       subsets, while~\kk{final} classes that encode set members.
@@ -76,8 +68,7 @@ The class can be made~\cc{private} to prevent clients from using it,
 We saw that unary functions can be encoded with inheritance and overriding.
 With the absence of multi-methods, encoding higher arity functions is a greater challenge.
 
-Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite.
-Specifically, let
+Consider the partial binary function~$f: R⨉S↛Γ$, defined by
 \begin{equation}
   \label{Equation:simple-binary}
   \begin{array}{ccc}
@@ -85,42 +76,28 @@ Specifically, let
     S=❴s₁,s₂❵ & f(r₁,s₂)=γ₂ & f(r₂, s₂)=⊥
   \end{array}
 \end{equation}
-
-A \Java type encoding for~\cref{Equation:simple-binary}
+A \Java type encoding of this definition of function~$f$
   is in~\cref{Figure:simple-binary}(a); use cases
     are in~\cref{Figure:simple-binary}(b).
 
 \begin{figure}[hbt]
   \caption{\label{Figure:simple-binary}%
   Type encoding of partial binary function~$f: R⨉S↛Γ$,
-  where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and function~$f$
-  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$,
-  The implementation of classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} is in \cref{Figure:unary:function}.}
+  where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
+  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$.
+  The implementation of classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} is in \cref{Figure:unary-function}.}
   \begin{tabular}{cc}
    \hspace{-2.5ex}
-   \parbox[c]{0.57\linewidth}{%
-    \tcbinputlisting{%
-      codebox=Java,
-      listing options={style=Java},
-      listing file = binary-function.listing
-    }
-   }
+   \parbox[c]{0.57\linewidth}{\javaInput{binary-function.listing}}
    &
-   \hspace{-2.5ex}
-   \parbox[c]{0.48\linewidth}{%
-    \tcbinputlisting{%
-      codebox=Java,
-      listing options={style=Java},
-      listing inputencoding=utf8,
-      listing file=binary-function-example.listing
-    }
-   }
+   \hspace{-16ex}
+   \parbox[c]{53ex}{\javaInput[minipage,width=53ex]{binary-function-example.listing}}
 ⏎
    \hspace{-7ex}(a) implementation & \hspace{-5ex}(b) use cases⏎
   \end{tabular}
 \end{figure}
 
-We see that to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}
+We see that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
   and that the fluent API call chain~\cc{f.r2().s2()} yields
   a compile time error since~$f(r₂, s₂)=⊥$.
 
@@ -138,42 +115,48 @@ These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
 They are overridden, with the appropriate co-variant change of the return type,
   in classes~\cc{r1} and~\cc{r2}.
 
-It should be clear now that the encoding scheme presented 
+It should be clear now that the encoding scheme presented
   in \Cref{Figure:simple-binary} can be generalized to functions
   with any number of arguments, as long as the domain and range sets are finite.
 The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
-Genericity can be employed to serve this end, as we shall see next. 
+Genericity can be employed to serve this end, as we shall see next.
 
 %The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
-%  as the challenge of encoding a general function with \Java's type system seems conceivable.
+% as the challenge of encoding a general function with \Java's type system seems conceivable.
 %While it got us closer, we still miss a major, non-trivial for encoding construct,
-%  which is the PDA's stack.
+% which is the PDA's stack.
 %In this section an encoding of such stack will be provided.
 
 %First, it is important to understand the non-triviality of encoding the stack with \Java's type system.
-%  The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
-%  meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
+% The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
+% meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
 %Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
-%  implement this stack.
+% implement this stack.
 
-\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack data structure. 
-Items that 
-
-
+\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack of unbounded depth.
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structures.
   }
-  \tcbinputlisting{%
-    codebox=Java,
-    minipage,
-    listing options={style=Java},
-    listing inputencoding=utf8,
-    listing file=stack-use-cases.listing
-  }
+  \javaInput[minipage]{stack-use-cases.listing}
 \end{figure}
+
+Items stored in this stack are members of set~$Γ$.
+With type encoding this are precisely classes~\cc{$γ$}1
+  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
+The type of variable~\cc{\_1}⏎
+\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
+encodes in it the sequence of pushing the value~$γ₁$ into an
+  empty followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally~$γ₁$.
+  The non-generic type~\cc{E} (a more full name is \cc{Stack.E}†{%
+    The~\cc{E} abbreviation is made possible
+      thanks to an appropriate \kk{import} statement.
+      For brevity, all \kk{import} statements are omitted.}
+  represents the empty stack.
+The generic type~\cc{P} takes two arguments, the \emph{top} of the stack,
+    which must be a subtype of \cc{$Γ$}, and the \emph{rest} of the stack.
 
 A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
   while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
@@ -187,13 +170,7 @@ A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
       }
       &
       \hspace{1ex}
-      \parbox[c]{0.86\linewidth}{%
-  \tcbinputlisting{%
-    codebox=Java,
-    listing options={style=Java},
-    listing inputencoding=utf8,
-    listing file=stack.listing}
-      }
+      \parbox[c]{0.86\linewidth}{\javaInput{stack.listing}}
 ⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
@@ -203,7 +180,7 @@ The type hierarchy in~\cref{Figure:stack:encoding}(a) is rooted by the main~\kk{
 The former represents an abstract stack, that can be in different concrete states: Empty stack(will be denoted by~\cc{bottom}),
   non-empty stack, and an error state(appearing when trying to~\cc{pop()} from~\cc{bottom}).
 Each of these states is represented by a class in~\cref{Figure:stack:encoding}.
-\kk{class}~\cc{Stack.B} represents the empty stack,~\kk{class}~\cc{Stack.¤} represents the error state,
+\kk{class}~\cc{Stack.E} represents the empty stack,~\kk{class}~\cc{Stack.¤} represents the error state,
   while \kk{class}~\cc{Stack.P<Head,Tail>}(short for Push) serves as a non-empty stack.
 The latter has two type parameters: the first is the top stack symbol, while the second is the rest of the stack.
 
