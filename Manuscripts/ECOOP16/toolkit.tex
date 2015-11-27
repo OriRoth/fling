@@ -96,7 +96,7 @@ A \Java type encoding of this definition of function~$f$
       \hspace{-16ex}
       \parbox[c]{53ex}{\javaInput[minipage,width=53ex]{binary-function-example.listing}}
 ⏎
-\hspace{-7ex}\parbox{0.57\linewidth}{\textbf{(a)} implementation (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} given above
+\parbox{0.57\linewidth}{\textbf{(a)} implementation (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} given above
 in \cref{Figure:unary-function}).}
 & \hspace{-5ex}\textbf{(b)} use cases⏎
     \end{tabular}
@@ -199,21 +199,10 @@ Other points to noice are:
         It is of some notice that the notion of covariance recurs:
           Overriding permits covariant change of the return type of a function,
           Similar covariant change is permitted in extending generic type extending another, e.g.,
-          \begin{JAVA}
-class Mammals {
-  // ¢…¢
-}
-class Whales {
-  // ¢…¢
-}
-class Heap<M extends Mammals> {¢¢
-  // ¢…¢
-}
-class School<W extends Whales> extends Heap<W> {¢¢
-  // ¢…¢
-}
-          \end{JAVA}
-  \item Since empty stack cannot be poposed, function \cc{pop()}, is overriden in~\cc{E} to return
-        the type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack
-        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return the appropriate error type.
+          \begin{center}
+            \javaInput[minipage]{mammal.listing}
+        \end{center}
+  \item Since empty stack cannot be popped, function \cc{pop()} is overriden in~\cc{E} to return
+    the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack
+        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return in turn appropriate error type.
 \end{itemize}

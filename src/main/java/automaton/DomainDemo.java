@@ -9,7 +9,10 @@ import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
 public class DomainDemo {
-  
+  class Mammals { /* … */ }
+  class Heap<M extends Mammals> { /* … */}  
+  class Whales extends Mammals { /* … */} 
+  class School<W extends Whales> extends Heap<W> { /* … */} 
   
   //gamma-example.listing
 

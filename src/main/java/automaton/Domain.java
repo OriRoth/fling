@@ -68,7 +68,10 @@ public class Domain {
       @Override public P<γ2, P<Top,Rest>> γ2() { return null; }
     }
   }
-
+  class Mammals { /* ¢…¢ */ }
+  class Heap<M extends Mammals> { /* ¢…¢ */}  
+  class Whales extends Mammals { /* ¢…¢ */} 
+  class School<W extends Whales> extends Heap<W> { /* ¢…¢ */}
   
   //binary-function.listing
   public static abstract class f { // Starting point of fluent API
