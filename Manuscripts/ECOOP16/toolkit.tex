@@ -52,21 +52,22 @@ The use cases in~\cref{Figure:unary-function}(c) explain better
   an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
   error type~\cc{$Γ'$.¤} upon the same call.
 
-Some of the conventions employed in~\cref{Figure:unary-function}(b) and henceforth:
-\begin{itemize}
-  \item An~\kk{abstract} class denotes a set. Abstract classes that extend it represent
-      subsets, while~\kk{final} classes that encode set members.
-  \item The interest of frugal management of name-spaces is served by the agreement that if
-    a class~\cc{~$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
-    as a~\kk{static} member class of class~$Y$.
+Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
+\begin{enumerate}
+  \item An~\kk{abstract} class encodes a set.
+    Abstract classes that extend it encode
+      subsets, while~\kk{final} classes encode set members.
+  \item The interest of frugal management of name-spaces is served
+    by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
+    as a~\kk{static} member class of~$Y$.
   \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command.
       This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
-\end{itemize}
-(By these conventions the augmented class~\cc{$Γ'$} can be used by clients.
-The class can be made~\cc{private} to prevent clients from using it,
-  at the small price of breaking the second convention:
-  Class~\cc{$Γ$} must then be moved outside of class~\cc{$Γ'$}
+†{
+A consequence of these idioms is that the augmented class~\cc{$Γ'$} is visible to clients.
+It can be made~\cc{private}. Just move class~\cc{$Γ$} to outside of~\cc{$Γ'$}, defying the second idiom.
+}
+\end{enumerate}
 
 We saw that unary functions can be encoded with inheritance and overriding.
 With the absence of multi-methods, encoding higher arity functions is a greater challenge.
@@ -77,7 +78,7 @@ Consider the partial binary function~$f: R⨉S↛Γ$, defined by
   \begin{array}{ccc}
     R=❴r₁,r₂❵ & f(r₁,s₁)=γ₁ & f(r₂,s₁)=γ₁⏎
     S=❴s₁,s₂❵ & f(r₁,s₂)=γ₂ & f(r₂, s₂)=⊥
-  \end{array}
+  \end{array}.
 \end{equation}
 A \Java type encoding of this definition of function~$f$
   is in~\cref{Figure:simple-binary}(a); use cases
@@ -101,7 +102,7 @@ A \Java type encoding of this definition of function~$f$
 \end{figure}
 
 We see that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
-  and that the fluent API call chain~\cc{f.r2().s2()} yields
+and that the fluent API call chain~\cc{f.r2().s2().g()} results in
   a compile time error since~$f(r₂, s₂)=⊥$.
 
 Class~\cc{f} in the implementation sub-figure serves as
@@ -120,25 +121,13 @@ Both functions are overridden in classes~\cc{r1} and~\cc{r2},
 
 It should be clear now that the encoding scheme presented
   in \Cref{Figure:simple-binary} can be generalized to functions
-  with any number of arguments, as long as the domain and range sets are finite.
+  with any number of arguments, provided that the domain and range sets are finite.
 The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end, as we shall see next.
 
-%The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
-% as the challenge of encoding a general function with \Java's type system seems conceivable.
-%While it got us closer, we still miss a major, non-trivial for encoding construct,
-% which is the PDA's stack.
-%In this section an encoding of such stack will be provided.
-
-%First, it is important to understand the non-triviality of encoding the stack with \Java's type system.
-% The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
-% meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
-%Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
-% implement this stack.
-
-\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack of unbounded depth
-  which is limited to storing members of the set~$Γ$.
+\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
+  a stack of unbounded depth, yet can only store members of the set~$Γ$.
 With type encoding these are precisely classes~\cc{$γ$1}
   and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 
@@ -150,26 +139,36 @@ With type encoding these are precisely classes~\cc{$γ$1}
 \end{figure}
 
 The figure demonstrates a stack that starts with five items in it.
-These are popped in order. Just before popping the last item, its 
+These are popped in order. Just before popping the last item, its
   value is examined.
-Trying then to pop from an empty stack, or to examine its top, ends with 
+Trying then to pop from an empty stack, or to examine its top, ends with
   a compile time error.
 
 The expression⏎
-\mbox{\qquad\qquad}\cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1();}⏎
+  \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
 represents the sequence of pushing the value~$γ₁$ into an
-  empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
-The type of this expression is made explicit in examining the type of variable~\cc{\_1}⏎
-\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
-This compound type makes extensive use of the generic type~\cc{P} which takes two arguments,
-  first of which is the \emph{top} of the stack
-    which must be a subtype of~\cc{$Γ$}.
-The second argument represents the \emph{rest} of the stack, which is can be yet another instantiation
-    of generic type~\cc{P}, or the non-generic type~\cc{E}, that represents the empty stack.
-    Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
+empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
+This expression's type is that of~\cc{\_1}:⏎
+\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
+We see in this type a recurring building block: generic type~\cc{P}, \emph{short for ‟Push”}.
+There are two parameters to~\cc{P}:
+  \begin{enumerate}
+    \item the \emph{top} of the stack, always a subtype of~\cc{$Γ$},
+    \item the \emph{rest} of the stack, which can be of two kinds:
+          \begin{enumerate}
+            \item another instantiation of~\cc{P} (in most cases),
+            \item non-generic type~\cc{E}, \emph{short for ‟Empty”}, that encodes the empty
+                  set (only at the deepest~\cc{P}, rest is empty).
+          \end{enumerate}
+  \end{enumerate}
+Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
 
-The type hierarchy of the stack in~\cref{Figure:stack-encoding}(a);
-  while full \Java implementation is in~\cref{Figure:stack-encoding}(b).
+\Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of the \Java
+implementation\footnote{%
+  unless otherwise stated, in saying implementation we mean actual
+  code extract
+}
+implementation in~\cref{Figure:stack-encoding}(b).
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-encoding} Type encoding of an unbounded
@@ -190,12 +189,24 @@ We see that the second parameter of generic type~\cc{P} must extend class \cc{St
   and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
 Other points to noice are:
 \begin{itemize}
-  \item The type at the top of the stack is precisely the return type of function \cc{top()};
+  \item The type at the top of the stack is precisely the return type of \cc{top()};
         it is overridden in~\cc{P} so that its return type is the first argument of~\cc{P}.
         The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
-  \item Pushing into the stack is encoded with functions~\cc{$γ$1()} and~\cc{$γ$2()};
+  \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
         the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
+        \par
+        It is of some notice that the notion of covariance recurs:
+          Overriding permits covariant change of the return type of a function,
+          Similar covariant change is permitted in extending generic type extending another, e.g., 
+          \begin{JAVA}
+class Heap<M extends Mammal> {
+  // ¢\ldots¢
+}
+class School<W extends Whale> extends Heap<W> {
+  // ¢\ldots¢
+}
+          \end{JAVA}
   \item Since empty stack cannot be poposed, function \cc{pop()}, is overriden in~\cc{E} to return
-        the type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack  
+        the type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return the appropriate error type.
 \end{itemize}
