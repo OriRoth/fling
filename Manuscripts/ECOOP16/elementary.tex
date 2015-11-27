@@ -146,25 +146,12 @@ We use the notion ‟type-method” for this type of implementation.
 
 It should be clear now that the encoding scheme presented in \Cref{Figure:simple:binary} can be generalized to functions
   with any number of arguments, as long as the domain and range sets are finite. 
-The encoding of sets of unbounded size require means for creating an unbounded 
-  number of types. 
-Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
-
-\begin{figure}[htb]
-  \caption{\label{Figure:stack-use-cases}%
-    Use cases of a compile-time stack data structures.
-  }
-  \tcbinputlisting{%
-    codebox=Java,
-    minipage,
-    listing options={style=Java},
-    listing inputencoding=utf8,
-    listing file=stack-use-cases.listing
-  }
-\end{figure}
+%The encoding of sets of unbounded size require means for creating an unbounded 
+%  number of types. 
+%Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
 
 \subsection{Encoding of the Stack Data Structure}
-The encoding of partial functions serves us at our attempts to prove~\cref{Theorem:Gil:Levy},
+The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
   as the challenge of encoding a general function with \Java's type system seems conceivable.
 While it got us closer, we still miss a major, non-trivial for encoding construct, 
   which is the PDA's stack.
@@ -176,9 +163,8 @@ First, it is important to understand the non-triviality of encoding the stack wi
 Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
   implement this stack.
 
-A type hierarchy of such stack can be found in ~\cref{Figure:stack:encoding}(a), 
+A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a), 
   while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
-  
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure} 
@@ -200,3 +186,33 @@ A type hierarchy of such stack can be found in ~\cref{Figure:stack:encoding}(a),
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
+
+The type hierarchy in~\cref{Figure:stack:encoding}(a) is rooted by the main~\kk{class}~\cc{Stack<Tail>}.
+The former represents an abstract stack, that can be in different concrete states: Empty stack(will be denoted by~\cc{bottom}),
+  non-empty stack, and an error state(appearing when trying to~\cc{pop()} from~\cc{bottom}).
+Each of these states is represented by a class in~\cref{Figure:stack:encoding}.
+\kk{class}~\cc{Stack.B} represents the empty stack,~\kk{class}~\cc{Stack.¤} represents the error state,
+  while \kk{class}~\cc{Stack.P<Head,Tail>}(short for Push) serves as a non-empty stack.
+The latter has two type parameters: the first is the top stack symbol, while the second is the rest of the stack.
+
+~\cref{Figure:stack:encoding}(b) % TODO: FINISH DESCRIPTION OF CODE
+This class has a single type parameter, denoting the~\cc{Tail} of the stack, because Tail is a
+  of a raw~\cc{Stack} type, the depth of this type stack is bounded, and depends on the argument~\cc{Tail}.
+\cc{Stack<Tail>} has the two basic methods~\cc{pop()} and~\cc{top()} that return objects of types~\cc{Tail} and~\cc{\Gamma'}
+  correspondingly (meaning~\cc{top()} is allowed to return the error class).
+  
+% TODO: INTRODUCE CODE EXAMPLES
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-use-cases}%
+    Use cases of a compile-time stack data structures.
+  }
+  \tcbinputlisting{%
+    codebox=Java,
+    minipage,
+    listing options={style=Java},
+    listing inputencoding=utf8,
+    listing file=stack-use-cases.listing
+  }
+\end{figure}
+
+% TODO: ELABORATE ON EXAMPLES
