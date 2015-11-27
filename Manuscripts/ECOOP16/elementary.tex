@@ -161,7 +161,7 @@ represents the sequence of pushing the value~$γ₁$ into an
   empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 The type of this expression is made explicit in examining the type of variable~\cc{\_1}⏎
 \mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
-This compound type makes extensive use of the generic type~\cc{P} which used takes two arguments,
+This compound type makes extensive use of the generic type~\cc{P} which takes two arguments,
   first of which is the \emph{top} of the stack
     which must be a subtype of~\cc{$Γ$}.
 The second argument represents the \emph{rest} of the stack, which is can be yet another instantiation
@@ -170,24 +170,6 @@ The second argument represents the \emph{rest} of the stack, which is can be yet
 
 The type hierarchy of the stack in~\cref{Figure:stack-encoding}(a);
   while full \Java implementation is in~\cref{Figure:stack-encoding}(b).
-
-Items stored in this stack are members of set~$Γ$.
-With type encoding these are precisely classes~\cc{$γ$}1
-  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
-The type of variable~\cc{\_1}⏎
-\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}⏎
-encodes in it the sequence of pushing the value~$γ₁$ into an
-  empty followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally~$γ₁$.
-  The non-generic type~\cc{E} (a more full name is \cc{Stack.E}†{%
-    The~\cc{E} abbreviation is made possible
-      thanks to an appropriate \kk{import} statement.
-      For brevity, all \kk{import} statements are omitted.})
-  represents the empty stack.
-The generic type~\cc{P} takes two arguments, the \emph{top} of the stack,
-    which must be a subtype of \cc{$Γ$}, and the \emph{rest} of the stack.
-
-A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
-  while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-encoding} Type encoding of an unbounded
@@ -215,5 +197,5 @@ Other points to noice are:
         the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
   \item Since empty stack cannot be poposed, function \cc{pop()}, is overriden in~\cc{E} to return
         the type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack  
-        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()} return appropriate error types.
+        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return the appropriate error type.
 \end{itemize}
