@@ -1,15 +1,15 @@
 package org.spartan.fajita.api.ast;
 
-import java.util.ArrayList;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public abstract class Atomic extends Compound {
-  public Atomic(final Compound parent) {
-    super(parent);
+public class Atomic extends AbstractNode {
+
+  private final Terminal term;
+  public Atomic(Terminal term) {
+    this.term = term;
   }
-  @Override public ArrayList<Compound> getChildren() {
-    return new ArrayList<>();
-  }
-  @Override public String toString() {
-    return super.toString();
+  @Override public Symbol getSymbol() {
+    return term;
   }
 }

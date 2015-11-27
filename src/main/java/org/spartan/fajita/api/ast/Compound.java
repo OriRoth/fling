@@ -1,53 +1,44 @@
 package org.spartan.fajita.api.ast;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-public abstract class Compound implements Iterable<Compound> {
-  protected final ArrayList<Compound> children;
-  public final String name;
-  private Compound parent;
+import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
 
-  public Compound(final Compound parent) {
-    setParent(parent);
-    name = getName();
-    children = getChildren();
+public class Compound extends AbstractNode implements Iterable<AbstractNode> {
+  private final List<AbstractNode> children;
+  public final NonTerminal nt;
+  public Compound(final NonTerminal nt,List<AbstractNode> children) {
+    this.nt = nt;
+    this.children = children;
+    children.forEach(child -> child.parent = this);
   }
-  protected abstract ArrayList<Compound> getChildren();
-  public abstract String getName();
-  public Compound getChild(final int index) {
+  @Override public Symbol getSymbol() {
+    return nt;
+  }
+  public List<AbstractNode> getChildren(){
+    return children;
+  }
+  public AbstractNode child(final int index) {
     return children.get(index);
   }
-  @Override public String toString() {
-    return name.toString() + " : " + this.getClass().getSimpleName();
-  }
-  public Compound getRoot() {
-    Compound current = this;
-    for (; current.getParent() != null; current = current.getParent()) {
-      /**/}
-    return current;
-  }
-  public Compound getParent() {
-    return parent;
-  }
-  protected void setParent(final Compound parent) {
-    this.parent = parent;
-  }
-  @Override public Iterator<Compound> iterator() {
-    return new Iterator<Compound>() {
+  @Override public Iterator<AbstractNode> iterator() {
+    return new Iterator<AbstractNode>() {
       private final int size;
       private int current;
 
       {
-        size = children.size();
+        size = getChildren().size();
         current = 0;
       }
       @Override public boolean hasNext() {
         return current < size;
       }
-      @Override public Compound next() {
-        return getChild(current++);
+      @Override public AbstractNode next() {
+        return child(current++);
       }
     };
   }
+
 }

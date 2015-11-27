@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
+import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
@@ -41,6 +42,8 @@ public class GeneratorsUtils {
 
   public static final String STACK_TYPE_PARAMETER = "Stack";
   public static final String STACK_FIELD = "stack";
+  public static final TypeName REDUCES_TYPE = ParameterizedTypeName.get(List.class,DerivationRule.class);
+  public static final String REDUCES_FIELD = "reduces";
 
   public static ClassName type(final String classname) {
     return ClassName.get("", classname);
@@ -87,7 +90,7 @@ public class GeneratorsUtils {
     TypeSpec errorState = TypeSpec.classBuilder(ERROR_STATE.typename) //
         .superclass(superclass)//
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)//
-        .addMethod(MethodSpec.constructorBuilder().addStatement("super(new $T())", type(EMPTY_STACK)).build()) //
+        .addMethod(MethodSpec.constructorBuilder().addStatement("super(new $T(),null)", type(EMPTY_STACK)).build()) //
         .build();
     return errorState;
   }
@@ -101,7 +104,8 @@ public class GeneratorsUtils {
     return parseError;
   }
   static TypeSpec generateBaseState(TypeArgumentManager tam) {
-    FieldSpec stackField = FieldSpec.builder(tam.getType(0), "stack", Modifier.FINAL, Modifier.PRIVATE).build();
+    FieldSpec stackField = FieldSpec.builder(tam.getType(0), STACK_FIELD, Modifier.FINAL, Modifier.PRIVATE).build();
+    FieldSpec reducesField = FieldSpec.builder(REDUCES_TYPE, REDUCES_FIELD, Modifier.FINAL, Modifier.PROTECTED).build();
     com.squareup.javapoet.TypeSpec.Builder builder = TypeSpec.classBuilder(BASE_STATE.typename);
     builder.addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC, Modifier.STATIC);
     builder.addMethod(MethodSpec.methodBuilder("pop").returns(type(STACK_TYPE_PARAMETER)).addModifiers(Modifier.PROTECTED)
@@ -111,10 +115,13 @@ public class GeneratorsUtils {
     builder.addSuperinterface(ParameterizedTypeName.get(type(BASE_STACK), type(STACK_TYPE_PARAMETER)));
     builder.addAnnotation(suppressWarningAnnot("rawtypes"));
     builder.addField(stackField);
-    ParameterSpec stack = ParameterSpec.builder(tam.getType(0), "stack", Modifier.FINAL).build();
+    builder.addField(reducesField);
+    ParameterSpec stack = ParameterSpec.builder(tam.getType(0), STACK_FIELD, Modifier.FINAL).build();
+    ParameterSpec reduces = ParameterSpec.builder(REDUCES_TYPE, REDUCES_FIELD, Modifier.FINAL).build();
     MethodSpec constuctor = MethodSpec.constructorBuilder() //
-        .addParameter(stack) //
-        .addStatement("this.$N = $N", stackField, stack) //
+        .addParameter(stack).addParameter(reduces) //
+        .addStatement("this.$N = $N", STACK_FIELD, STACK_FIELD) //
+        .addStatement("this.$N = $N", REDUCES_FIELD, REDUCES_FIELD) //
         .build();
     builder.addMethod(constuctor);
     List<Symbol> symbols = new ArrayList<>(tam.symbols);

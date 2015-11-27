@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
-import org.spartan.fajita.api.bnf.rules.Rule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -20,7 +20,7 @@ import org.spartan.fajita.api.bnf.symbols.Type;
  *
  */
 public class BNFBuilder {
-  private final Set<DerivationRule> derivationRules;
+  private final List<DerivationRule> derivationRules;
   private final Set<Terminal> terminals;
   private final Set<NonTerminal> nonterminals;
   private final Set<NonTerminal> startSymbols;
@@ -31,7 +31,7 @@ public class BNFBuilder {
       final Class<NT> nonterminalEnum) {
     terminals = new HashSet<>(EnumSet.allOf(terminalEnum));
     nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
-    derivationRules = new HashSet<>();
+    derivationRules = new LinkedList<>();
     startSymbols = new HashSet<>();
     overloads = new HashSet<>();
   }
@@ -47,7 +47,7 @@ public class BNFBuilder {
   Set<Terminal> getTerminals() {
     return terminals;
   }
-  private BNFBuilder checkNewRule(final Rule r) {
+  private BNFBuilder checkNewRule(final DerivationRule r) {
     if (!symbolExists(r.lhs))
       throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
     if (derivationRules.contains(r))
@@ -103,7 +103,7 @@ public class BNFBuilder {
   private void setApiName(final String apiName) {
     this.apiName = apiName;
   }
-  Set<DerivationRule> getRules() {
+  List<DerivationRule> getRules() {
     return derivationRules;
   }
   private void setStartSymbols(final NonTerminal[] startSymbols) {

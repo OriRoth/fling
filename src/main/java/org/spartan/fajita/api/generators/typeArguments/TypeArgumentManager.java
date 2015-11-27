@@ -114,7 +114,7 @@ public class TypeArgumentManager {
       else
         throw new IllegalStateException("unexpected transition length :" + s.transitions.length);
     });
-    System.out.println(instantiations);
+//    System.out.println(instantiations);
   }
   private void InstantiateSingleTransition(final ContextedState s) {
     assert (s.transitions.length == 1);
@@ -187,7 +187,7 @@ public class TypeArgumentManager {
     }));
     for (State q$B : parser.getStates())
       addStateDependencies(q$B, $);
-    System.out.println($);
+//    System.out.println($);
     // TODO: handle cycles case.
     if ($.vertexSet().size() > 0 && new CycleDetector<>($).detectCycles())
       throw new IllegalArgumentException("Cycles are not handled yet, the graph:" + $);
