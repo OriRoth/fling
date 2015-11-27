@@ -64,7 +64,7 @@ Some of the conventions employed in~\cref{Figure:unary:function}(b) and hencefor
   \item The interest of frugal management of name-spaces is served by the agreement that if
     a class~\cc{~$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of class~$Y$.
-  \item Body of functions is limited to a single~\kk{return}~\kk{null}~\cc{;} command.  
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command.
       This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
 \end{itemize}
@@ -79,33 +79,29 @@ With the absence of multi-methods, encoding higher arity functions is a greater 
 Consider a partial binary function~$f: R⨉S↛Γ$; sets~$R$,~$S$ and~$Γ$ being finite.
 Specifically, let
 \begin{equation}
-  \label{Equation:simple:binary}
-  \begin{array}{rcl}
-    R & = & ❴ r₁, r₂❵⏎
-    S & = & ❴ s₁, s₂❵⏎
-    f & = & ❴ ⟨r₁, s₁,γ₁⟩, ⟨r₁, s₂,γ₂⟩, ⟨r₂, s₁,γ₂⟩ ❵ ⊂ R⨉S⨉Γ
+  \label{Equation:simple-binary}
+  \begin{array}{ccc}
+    R=❴r₁,r₂❵ & f(r₁,s₁)=γ₁ & f(r₂,s₁)=γ₁⏎
+    S=❴s₁,s₂❵ & f(r₁,s₂)=γ₂ & f(r₂, s₂)=⊥
   \end{array}
 \end{equation}
 
-A \Java type encoding for the function~$f$ defined in~\cref{Equation:simple:binary}
-  can be found in~\cref{Figure:simple:binary}(a).
-As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
-  to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}.
+A \Java type encoding for~\cref{Equation:simple-binary}
+  is in~\cref{Figure:simple-binary}(a); use cases
+    are in~\cref{Figure:simple-binary}(b).
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:simple:binary}%
-  Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
-  defined in~\cref{Equation:simple:binary}. The implementation of the classes~\cc{$Γ$},\cc{$Γ'$} 
-  as well as~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
-  in \cref{Figure:unary:function}.}
-
+  \caption{\label{Figure:simple-binary}%
+  Type encoding of partial binary function~$f: R⨉S↛Γ$,
+  where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and function~$f$
+  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$,
+  The implementation of classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} is in \cref{Figure:unary:function}.}
   \begin{tabular}{cc}
    \hspace{-2.5ex}
    \parbox[c]{0.57\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
-      listing inputencoding=utf8,
       listing file = binary-function.listing
     }
    }
@@ -124,8 +120,7 @@ As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
   \end{tabular}
 \end{figure}
 
-The use cases in \cref{Figure:simple:binary}(b), demonstrate
-  that to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}
+We see that to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}
   and that the fluent API call chain~\cc{f.r2().s2()} yields
   a compile time error since~$f(r₂, s₂)=⊥$.
 
@@ -133,41 +128,58 @@ Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
 The return type of~\kk{static} member functions~\cc{r1()} and~\cc{r2()}
   is the respective sub-class of class~\cc{R}:
-The return type of function~\cc{r1()} is~\kk{class}~\cc{R.r1};
-  the return type of function~\cc{r2()} is~\kk{class}~\cc{R.r2}.
+The return type of function~\cc{r1()} is class~\cc{R.r1};
+  the return type of function~\cc{r2()} is class~\cc{R.r2}.
 
 Instead of representing set~$S$ as a class,
-  its members are realized as methods~\cc{s1()} and~\cc{s2()} in  class~\cc{R}.
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in class~\cc{R}.
 These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
-  in~\cc{R}. 
+  in~\cc{R}.
 They are overridden, with the appropriate co-variant change of the return type,
   in classes~\cc{r1} and~\cc{r2}.
-We use the notion ‟type-method” for this type of implementation.
 
-It should be clear now that the encoding scheme presented in \Cref{Figure:simple:binary} can be generalized to functions
-  with any number of arguments, as long as the domain and range sets are finite. 
-%The encoding of sets of unbounded size require means for creating an unbounded 
-%  number of types. 
-%Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
+It should be clear now that the encoding scheme presented 
+  in \Cref{Figure:simple-binary} can be generalized to functions
+  with any number of arguments, as long as the domain and range sets are finite.
+The encoding of sets of unbounded size require means for creating an unbounded
+ number of types.
+Genericity can be employed to serve this end, as we shall see next. 
 
-\subsection{Encoding of the Stack Data Structure}
-The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
-  as the challenge of encoding a general function with \Java's type system seems conceivable.
-While it got us closer, we still miss a major, non-trivial for encoding construct, 
-  which is the PDA's stack.
-In this section an encoding of such stack will be provided.
+%The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
+%  as the challenge of encoding a general function with \Java's type system seems conceivable.
+%While it got us closer, we still miss a major, non-trivial for encoding construct,
+%  which is the PDA's stack.
+%In this section an encoding of such stack will be provided.
 
-First, it is important to understand the non-triviality of encoding the stack with \Java's type system.
-  The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
-  meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
-Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
-  implement this stack.
+%First, it is important to understand the non-triviality of encoding the stack with \Java's type system.
+%  The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
+%  meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
+%Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
+%  implement this stack.
 
-A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a), 
+\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack data structure. 
+Items that 
+
+
+
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-use-cases}%
+    Use cases of a compile-time stack data structures.
+  }
+  \tcbinputlisting{%
+    codebox=Java,
+    minipage,
+    listing options={style=Java},
+    listing inputencoding=utf8,
+    listing file=stack-use-cases.listing
+  }
+\end{figure}
+
+A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
   while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
 
 \begin{figure}[htb]
-  \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure} 
+  \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure}
     \begin{tabular}{cc}
       \hspace{-12ex}
       \parbox[c]{0.3\linewidth}{%
@@ -176,11 +188,11 @@ A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
       &
       \hspace{1ex}
       \parbox[c]{0.86\linewidth}{%
-	\tcbinputlisting{%
-	  codebox=Java,
-	  listing options={style=Java},
-	  listing inputencoding=utf8,
-	  listing file=stack.listing}
+  \tcbinputlisting{%
+    codebox=Java,
+    listing options={style=Java},
+    listing inputencoding=utf8,
+    listing file=stack.listing}
       }
 ⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
@@ -198,21 +210,9 @@ The latter has two type parameters: the first is the top stack symbol, while the
 ~\cref{Figure:stack:encoding}(b) % TODO: FINISH DESCRIPTION OF CODE
 This class has a single type parameter, denoting the~\cc{Tail} of the stack, because Tail is a
   of a raw~\cc{Stack} type, the depth of this type stack is bounded, and depends on the argument~\cc{Tail}.
-\cc{Stack<Tail>} has the two basic methods~\cc{pop()} and~\cc{top()} that return objects of types~\cc{Tail} and~\cc{\Gamma'}
+\cc{Stack<Tail>} has the two basic methods~\cc{pop()} and~\cc{top()} that return objects of types~\cc{Tail} and~\cc{Γ'}
   correspondingly (meaning~\cc{top()} is allowed to return the error class).
-  
+
 % TODO: INTRODUCE CODE EXAMPLES
-\begin{figure}[htb]
-  \caption{\label{Figure:stack-use-cases}%
-    Use cases of a compile-time stack data structures.
-  }
-  \tcbinputlisting{%
-    codebox=Java,
-    minipage,
-    listing options={style=Java},
-    listing inputencoding=utf8,
-    listing file=stack-use-cases.listing
-  }
-\end{figure}
 
 % TODO: ELABORATE ON EXAMPLES
