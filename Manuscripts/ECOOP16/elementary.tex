@@ -37,7 +37,10 @@ Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
 The remaining two classes are private final class~\cc{¤} that stands for an error value,
   and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
-Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
+Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.†{The use
+  short names, e.g.,~\cc{$Γ$} instead of \cc{$Γ'.Γ$},
+    is made possible by to an appropriate \kk{import} statement.
+    For brevity, all \kk{import} statements are omitted.}
 
 The full implementation of these classes is provided in~\cref{Figure:unary-function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
 This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
@@ -112,8 +115,8 @@ Instead of representing set~$S$ as a class,
   its members are realized as methods~\cc{s1()} and~\cc{s2()} in class~\cc{R}.
 These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
   in~\cc{R}.
-They are overridden, with the appropriate co-variant change of the return type,
-  in classes~\cc{r1} and~\cc{r2}.
+Both functions are overridden in classes~\cc{r1} and~\cc{r2},
+   with the appropriate co-variant change of their return type,
 
 It should be clear now that the encoding scheme presented
   in \Cref{Figure:simple-binary} can be generalized to functions
@@ -134,7 +137,10 @@ Genericity can be employed to serve this end, as we shall see next.
 %Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
 % implement this stack.
 
-\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack of unbounded depth.
+\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of a stack of unbounded depth
+  which is limited to storing members of the set~$Γ$.
+With type encoding these are precisely classes~\cc{$γ$1}
+  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-use-cases}%
@@ -143,53 +149,54 @@ Genericity can be employed to serve this end, as we shall see next.
   \javaInput[minipage]{stack-use-cases.listing}
 \end{figure}
 
-Items stored in this stack are members of set~$Γ$.
-With type encoding this are precisely classes~\cc{$γ$}1
-  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
-The type of variable~\cc{\_1}⏎
-\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
-encodes in it the sequence of pushing the value~$γ₁$ into an
-  empty followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally~$γ₁$.
-  The non-generic type~\cc{E} (a more full name is \cc{Stack.E}†{%
-    The~\cc{E} abbreviation is made possible
-      thanks to an appropriate \kk{import} statement.
-      For brevity, all \kk{import} statements are omitted.}
-  represents the empty stack.
-The generic type~\cc{P} takes two arguments, the \emph{top} of the stack,
-    which must be a subtype of \cc{$Γ$}, and the \emph{rest} of the stack.
+The figure demonstrates a stack that starts with five items in it.
+These are popped in order. Just before popping the last item, its 
+  value is examined.
+Trying then to pop from an empty stack, or to examine its top, ends with 
+  a compile time error.
 
-A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
-  while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
+The expression⏎
+\mbox{\qquad\qquad}\cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1();}⏎
+represents the sequence of pushing the value~$γ₁$ into an
+  empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
+The type of this expression is made explicit in examining the type of variable~\cc{\_1}⏎
+\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
+This compound type makes extensive use of the generic type~\cc{P} which used takes two arguments,
+  first of which is the \emph{top} of the stack
+    which must be a subtype of~\cc{$Γ$}.
+The second argument represents the \emph{rest} of the stack, which is can be yet another instantiation
+    of generic type~\cc{P}, or the non-generic type~\cc{E}, that represents the empty stack.
+    Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
+
+The type hierarchy of the stack in~\cref{Figure:stack-encoding}(a);
+  while full \Java implementation is in~\cref{Figure:stack-encoding}(b).
 
 \begin{figure}[htb]
-  \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure}
+  \caption{\label{Figure:stack-encoding} Type encoding of an unbounded
+  stack data containing members of~$Γ$ (as defined in \cref{Figure:unary-function}).}
     \begin{tabular}{cc}
       \hspace{-12ex}
       \parbox[c]{0.3\linewidth}{%
         \input ../Figures/stack-classification.tikz
       }
       &
-      \hspace{1ex}
-      \parbox[c]{0.86\linewidth}{\javaInput{stack.listing}}
+      \hspace{-4ex}
+      \parbox[c]{75ex}{\javaInput[minipage,width=75ex]{stack.listing}}
 ⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
 \end{figure}
 
-The type hierarchy in~\cref{Figure:stack:encoding}(a) is rooted by the main~\kk{class}~\cc{Stack<Tail>}.
-The former represents an abstract stack, that can be in different concrete states: Empty stack(will be denoted by~\cc{bottom}),
-  non-empty stack, and an error state(appearing when trying to~\cc{pop()} from~\cc{bottom}).
-Each of these states is represented by a class in~\cref{Figure:stack:encoding}.
-\kk{class}~\cc{Stack.E} represents the empty stack,~\kk{class}~\cc{Stack.¤} represents the error state,
-  while \kk{class}~\cc{Stack.P<Head,Tail>}(short for Push) serves as a non-empty stack.
-The latter has two type parameters: the first is the top stack symbol, while the second is the rest of the stack.
-
-~\cref{Figure:stack:encoding}(b) % TODO: FINISH DESCRIPTION OF CODE
-This class has a single type parameter, denoting the~\cc{Tail} of the stack, because Tail is a
-  of a raw~\cc{Stack} type, the depth of this type stack is bounded, and depends on the argument~\cc{Tail}.
-\cc{Stack<Tail>} has the two basic methods~\cc{pop()} and~\cc{top()} that return objects of types~\cc{Tail} and~\cc{Γ'}
-  correspondingly (meaning~\cc{top()} is allowed to return the error class).
-
-% TODO: INTRODUCE CODE EXAMPLES
-
-% TODO: ELABORATE ON EXAMPLES
+We see that the second parameter of generic type~\cc{P} must extend class \cc{Stack},
+  and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
+Other points to noice are:
+\begin{itemize}
+  \item The type at the top of the stack is precisely the return type of function \cc{top()};
+        it is overridden in~\cc{P} so that its return type is the first argument of~\cc{P}.
+        The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
+  \item Pushing into the stack is encoded with functions~\cc{$γ$1()} and~\cc{$γ$2()};
+        the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
+  \item Since empty stack cannot be poposed, function \cc{pop()}, is overriden in~\cc{E} to return
+        the type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack  
+        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()} return appropriate error types.
+\end{itemize}
