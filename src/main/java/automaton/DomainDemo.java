@@ -37,7 +37,7 @@ public class DomainDemo {
     P<γ1,B> _5 = _4.pop();                   // ✓ Pop penultimate item
     γ1 _6 = _5.top();                        // ✓ Examine last item 
     B _7 = _5.pop();                         // ✓ Pop last item
-    ¤ _8 = _7.pop();                         // ✗ Cannot pop from an empty stack 
-    ¤ _9 = _8.pop();                         // ✗ empty stack has no top element 
+    Stack.¤  _8 = _7.pop();                  // ✗ Cannot pop from an empty stack 
+    Γʹ.¤ _9 = _7.top();                      // ✗ empty stack has no top element 
   }
 }
