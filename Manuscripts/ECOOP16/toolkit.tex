@@ -200,10 +200,16 @@ Other points to noice are:
           Overriding permits covariant change of the return type of a function,
           Similar covariant change is permitted in extending generic type extending another, e.g.,
           \begin{JAVA}
-class Heap<M extends Mammal> {¢¢
+class Mammals {
   // ¢…¢
 }
-class School<W extends Whale> extends Heap<W> {¢¢
+class Whales {
+  // ¢…¢
+}
+class Heap<M extends Mammals> {¢¢
+  // ¢…¢
+}
+class School<W extends Whales> extends Heap<W> {¢¢
   // ¢…¢
 }
           \end{JAVA}
