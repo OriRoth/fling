@@ -144,16 +144,16 @@ Genericity can be employed to serve this end, as we shall see next.
 \end{figure}
 
 Items stored in this stack are members of set~$Γ$.
-With type encoding this are precisely classes~\cc{$γ$}1
+With type encoding these are precisely classes~\cc{$γ$}1
   and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 The type of variable~\cc{\_1}⏎
-\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}⏎
+\mbox{\qquad\qquad}\cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}⏎
 encodes in it the sequence of pushing the value~$γ₁$ into an
   empty followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally~$γ₁$.
   The non-generic type~\cc{E} (a more full name is \cc{Stack.E}†{%
     The~\cc{E} abbreviation is made possible
       thanks to an appropriate \kk{import} statement.
-      For brevity, all \kk{import} statements are omitted.}
+      For brevity, all \kk{import} statements are omitted.})
   represents the empty stack.
 The generic type~\cc{P} takes two arguments, the \emph{top} of the stack,
     which must be a subtype of \cc{$Γ$}, and the \emph{rest} of the stack.
@@ -170,7 +170,8 @@ A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a),
       }
       &
       \hspace{1ex}
-      \parbox[c]{0.86\linewidth}{\javaInput{stack.listing}}
+      \parbox[c]{0.86\linewidth}{\javaInput{stack.listing}
+    }%
 ⏎
       \hspace{-12ex} (a) type hierarchy & (b) implementation
     \end{tabular}
