@@ -5,9 +5,9 @@
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=4ex,minimum width=8ex,rectangle ,rounded corners]
 \graph [tree layout] {%
 	"\cc{Stack<Tail>}"[nudge=(up:2ex),concept], 
-	"\cc{Stack.B}"[nudge=(right:6ex),concept], 
-	"\cc{Stack.\currency}"[nudge=(down:6ex),xshift=-20ex,concept], 
-	"\cc{Stack.P<Head,Tail>}"[nudge=(left:20ex),yshift=-18ex,concept], 
+	"\cc{Stack.B}"[nudge=(right:7ex),concept], 
+	"\cc{Stack.\currency}"[nudge=(down:6ex),xshift=-21ex,concept], 
+	"\cc{Stack.P<Head,Tail>}"[nudge=(left:20ex),yshift=-13ex,concept], 
   {"\cc{Stack.B}","\cc{Stack.\currency}","\cc{Stack.P<Head,Tail>}",   } ->"\cc{Stack<Tail>}",
 };
 %\draw (current bounding box.south east) rectangle (current bounding box.north west);

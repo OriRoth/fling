@@ -20,8 +20,8 @@ latex: $(wildcard *.sty *.tex) $(LISTINGS)
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
-stack.listing: ../../src/main/java/automaton/Domain.java  
-	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+stack.listing: ../../src/main/java/automaton/Domain.java 
+	awk '/^.*Stack *<Tail.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 stack-use-cases.listing: ../../src/main/java/automaton/DomainDemo.java  
 	awk '/^.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -38,7 +38,6 @@ binary-function.listing: ../../src/main/java/automaton/Domain.java
 
 binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
 	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
 
 
 warnings:	

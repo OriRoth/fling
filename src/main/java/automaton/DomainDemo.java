@@ -9,6 +9,8 @@ import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
 public class DomainDemo {
+  
+  
   //gamma-example.listing
 
   public static void five_use_cases_of_function_g() {
@@ -21,7 +23,7 @@ public class DomainDemo {
   
   //binary-function-example.listing
   
-  public static void four_use_cases_of_binary_function_f() {
+  public static void four_use_cases_of_function_f() {
     γ1 _1 = f.r1().s1();     // ✓
     γ2 _2 = f.r1().s2();     // ✓
     γ2 _3 = f.r2().s1();     // ✓

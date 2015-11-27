@@ -40,24 +40,24 @@ We argue that~$g$ can
   \end{tabular}
 \end{figure}
 
-The type hierarchy depicted in \cref{Figure:unary:function}(a) shows five classes:
+The type hierarchy depicted in~\cref{Figure:unary:function}(a) shows five classes:
 Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
 The remaining two classes are private final class~\cc{¤} that stands for an error value,
   and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
 Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.
 
-The full implementation of these classes is provided in \cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
+The full implementation of these classes is provided in~\cref{Figure:unary:function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
 This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
 
-The use cases in \cref{Figure:unary:function}(c) explain better
+The use cases in~\cref{Figure:unary:function}(c) explain better
   what we mean in saying that function~$g$ is encoded in the type system:
   An instance of class~\cc{$γ$1} returns a value of type~\cc{$γ$2} upon
   method call~\cc{g()}, while
   an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
   error type~\cc{$Γ'$.¤} upon the same call.
 
-Some of the conventions employed in \cref{Figure:unary:function}(b) and henceforth:
+Some of the conventions employed in~\cref{Figure:unary:function}(b) and henceforth:
 \begin{itemize}
   \item An~\kk{abstract} class denotes a set. Abstract classes that extend it represent
       subsets, while~\kk{final} classes that encode set members.
@@ -87,15 +87,20 @@ Specifically, let
   \end{array}
 \end{equation}
 
-A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:binary}
-  can be found in \cref{Figure:simple:binary}(a).
+A \Java type encoding for the function~$f$ defined in~\cref{Equation:simple:binary}
+  can be found in~\cref{Figure:simple:binary}(a).
+As can be seen in the use cases in~\cref{Figure:simple:binary}(b),
+  to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}.
 
 \begin{figure}[hbt]
   \caption{\label{Figure:simple:binary}%
-    Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
-  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₂$, and~$f(r₂, s₂) =⊥$.
-  Classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} are as in \cref{Figure:unary:function}.}
+  Type-method encoding of partial binary function~$f: R⨉S↛Γ$,
+  defined in~\cref{Equation:simple:binary}. The implementation of the classes~\cc{$Γ$},\cc{$Γ'$} 
+  as well as~\cc{$\gamma1$} and~\cc{$\gamma2$} is not included here, and is
+  in \cref{Figure:unary:function}.}
+
   \begin{tabular}{cc}
+   \hspace{-2.5ex}
    \parbox[c]{0.57\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
@@ -105,8 +110,8 @@ A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bina
     }
    }
    &
-   \hspace{-10ex}
-   \parbox[c]{0.58\linewidth}{%
+   \hspace{-2.5ex}
+   \parbox[c]{0.48\linewidth}{%
     \tcbinputlisting{%
       codebox=Java,
       listing options={style=Java},
@@ -115,35 +120,88 @@ A \Java type encoding for the function~$f$ defined in \cref{Equation:simple:bina
     }
    }
 ⏎
-   \hspace{-7ex}(a) implementation & \hspace{-10ex}(b) use cases⏎
+   \hspace{-7ex}(a) implementation & \hspace{-5ex}(b) use cases⏎
   \end{tabular}
 \end{figure}
 
 The use cases in \cref{Figure:simple:binary}(b), demonstrate
-  that to compute~$f(r₁,s₁)$ we write \cc{f.r1().s1()}
-  and that the fluent API call chain \cc{f.r2().s2()} yields
+  that to compute~$f(r₁,s₁)$ we write~\cc{f.r1().s1()}
+  and that the fluent API call chain~\cc{f.r2().s2()} yields
   a compile time error since~$f(r₂, s₂)=⊥$.
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
-The return type of \kk{static} member functions~\cc{r1()} and~\cc{r2()}
+The return type of~\kk{static} member functions~\cc{r1()} and~\cc{r2()}
   is the respective sub-class of class~\cc{R}:
-The return type of function \cc{r1()} is \kk{class} \cc{R.r1};
-  the return type of function \cc{r2()} is \kk{class} \cc{R.r2}.
+The return type of function~\cc{r1()} is~\kk{class}~\cc{R.r1};
+  the return type of function~\cc{r2()} is~\kk{class}~\cc{R.r2}.
 
 Instead of representing set~$S$ as a class,
   its members are realized as methods~\cc{s1()} and~\cc{s2()} in  class~\cc{R}.
-These functions are defined as \kk{abstract} with return type \cc{$Γ$'}
-  in~\cc{R}.
+These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
+  in~\cc{R}. 
 They are overridden, with the appropriate co-variant change of the return type,
-  in classes \cc{r1} and \cc{r2}.
+  in classes~\cc{r1} and~\cc{r2}.
+We use the notion ‟type-method” for this type of implementation.
 
 It should be clear now that the encoding scheme presented in \Cref{Figure:simple:binary} can be generalized to functions
   with any number of arguments, as long as the domain and range sets are finite. 
-The encoding of sets of unbounded size require means for creating an unbounded 
-  number of types. 
-Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
+%The encoding of sets of unbounded size require means for creating an unbounded 
+%  number of types. 
+%Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-use-cases}.
 
+\subsection{Encoding of the Stack Data Structure}
+The encoding of partial functions serves us at our attempts to prove~\Cref{Theorem:Gil:Levy},
+  as the challenge of encoding a general function with \Java's type system seems conceivable.
+While it got us closer, we still miss a major, non-trivial for encoding construct, 
+  which is the PDA's stack.
+In this section an encoding of such stack will be provided.
+
+First, it is important to understand the non-triviality of encoding the stack with \Java's type system.
+  The stack ADT†{\textbf{Abstract Data Structure}} that a PDA employs is an \emph{unbounded} data structure,
+  meaning it can have any finite number of stack symbols†{In~\textbf{Theorem of Automata}, the pushdown automaton's stack is filled with stack symbols}.
+Since plainly only a finite set of \Java classes can be generated, we must heavily rely on \Java Generics in order to
+  implement this stack.
+
+A type hierarchy of such stack can be found in~\cref{Figure:stack:encoding}(a), 
+  while we also provide the full \Java type encoding in~\cref{Figure:stack:encoding}(b).
+
+\begin{figure}[htb]
+  \caption{\label{Figure:stack:encoding} Type encoding of a stack data structure} 
+    \begin{tabular}{cc}
+      \hspace{-12ex}
+      \parbox[c]{0.3\linewidth}{%
+        \input ../Figures/stack-classification.tikz
+      }
+      &
+      \hspace{1ex}
+      \parbox[c]{0.86\linewidth}{%
+	\tcbinputlisting{%
+	  codebox=Java,
+	  listing options={style=Java},
+	  listing inputencoding=utf8,
+	  listing file=stack.listing}
+      }
+⏎
+      \hspace{-12ex} (a) type hierarchy & (b) implementation
+    \end{tabular}
+\end{figure}
+
+The type hierarchy in~\cref{Figure:stack:encoding}(a) is rooted by the main~\kk{class}~\cc{Stack<Tail>}.
+The former represents an abstract stack, that can be in different concrete states: Empty stack(will be denoted by~\cc{bottom}),
+  non-empty stack, and an error state(appearing when trying to~\cc{pop()} from~\cc{bottom}).
+Each of these states is represented by a class in~\cref{Figure:stack:encoding}.
+\kk{class}~\cc{Stack.B} represents the empty stack,~\kk{class}~\cc{Stack.¤} represents the error state,
+  while \kk{class}~\cc{Stack.P<Head,Tail>}(short for Push) serves as a non-empty stack.
+The latter has two type parameters: the first is the top stack symbol, while the second is the rest of the stack.
+
+~\cref{Figure:stack:encoding}(b) % TODO: FINISH DESCRIPTION OF CODE
+This class has a single type parameter, denoting the~\cc{Tail} of the stack, because Tail is a
+  of a raw~\cc{Stack} type, the depth of this type stack is bounded, and depends on the argument~\cc{Tail}.
+\cc{Stack<Tail>} has the two basic methods~\cc{pop()} and~\cc{top()} that return objects of types~\cc{Tail} and~\cc{\Gamma'}
+  correspondingly (meaning~\cc{top()} is allowed to return the error class).
+  
+% TODO: INTRODUCE CODE EXAMPLES
 \begin{figure}[htb]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structures.
@@ -157,56 +215,4 @@ Genericity is employed to serve this end, as demonstrated in \cref{Figure:stack-
   }
 \end{figure}
 
-In the implementation we see that see that set~$S$ was not defined by a corresponding class in
-  the implementation, instead, these methods~\cc{s1()} and~\cc{s2()} were introduced in
-  class~\cc{R}, with return type~\cc{$Γ'$}.
-This allows us to~\cc{@Override} the methods with the different return values of~$f$ as
- in class~\cc{r1}, and still result a compile-time error in case of the undefined mapping of~$f$
- as in class~\cc{r2}'s~\cc{s2()} method(corresponding to the undefined mapping for~$⟨r₂, s₂⟩$).
-We use the notion ‟type-method” for an input variable of type~$T$, when in the
-  corresponding implementation of this function, the sending of these arguments is done
-  by invoking a corresponding method, as in the discussed example.
-The feasibility of \emph{type-methods} emerges from the co-variance of return types in
-  \Java.
-
-
-\begin{figure}[htb]
-  \caption{\label{Figure:stack} Type encoding of a stack data structure} 
-    \begin{tabular}{cc}
-      \hspace{-12ex}
-         \parbox[c]{0.3\linewidth}{%
-          \input ../Figures/stack-classification.tikz
-        }
-          &
-         \parbox[c]{0.86\linewidth}{%
-      \tcbinputlisting{%
-        codebox=Java,
-        listing options={style=Java},
-        listing inputencoding=utf8,
-        listing file=stack.listing}
-      }
-⏎
-      \hspace{-12ex} (a) type hierarchy & (b) implementation
-    \end{tabular}
-\end{figure}
-
-Note, that the implemented inheritance model previously used, is now extended to express the partiality
-  of functions such as~$f$. A visualization of the inheritance model is presented in \cref{Figure:partial:inheritance:model}
-
-
-We use the notion \emph{Type-Method} when we want to express that the arguments passed to a function
-  (i.e., former~$f$) are ‟passed” by invoking a method on the receiver (i.e., r1(),s1() in the former example).
-
-Here is the general process for general sets~$R$,$S$,$T$ and function~$f$:
-First, generate an abstract class~\cc{R} that represents set~$R$, and,
-  for each~$r∈R$ a concrete class~\cc{r} that extends~\cc{R}.
-Similarly, generate an abstract class~\cc{T} that represents set~$T$, and,
-  for each~$t∈T$ a concrete class~\cc{t} that extends~\cc{T}.
-
-Now, for each~$(r,s)∈f$, introduce an abstract method named~\cc{s},
-  in class~\cc{r}
-
-(the name obtained by
-  concatenating the name of~$f$ with the name of~$s$).
-
-It is rather straightforward to encode
+% TODO: ELABORATE ON EXAMPLES

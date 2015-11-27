@@ -39,10 +39,8 @@ public class Domain {
       }
     }
   } 
-  
-  
-  
-  //stack.listinpublic public g
+
+  //stack.listing
   
   public static abstract class Stack<Tail extends Stack<?>> { 
     public abstract Tail pop(); 
@@ -98,7 +96,7 @@ public class Domain {
  
 
   public static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
-    public static private final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
+    private static final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
     public static final class q0 extends Q<B,Γʹ.¤>{
       SingleP1<B> σ1() {
         return null;
