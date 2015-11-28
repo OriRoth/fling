@@ -1,6 +1,6 @@
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA)~$M$ is an 8-tuple
+  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is an 8-tuple
   \[
     M =⟨Q,Σ,Γ, q₀,⊥, A,δ,η⟩
   \]
@@ -18,8 +18,6 @@
     \end{array}
   \]
 \end{Definition}
-We shall be using the following notation for
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
 
 \begin{Definition}[Simplified Pushdown Automaton]
   \label{Definition:SPDA}
@@ -52,34 +50,31 @@ The remainder of this section is dedicated to the proof of \cref{Theorem:SPDA}.
 In particular, we describe how~$J_M$ is constructed from the
   specification of~$M$.
 
-\subsection{Encoding the stack with \Java generics}
-As usual,~$Γ$ the set of stack symbols is encoded as an abstract class,
-  while each stack symbol~$γ∈Γ$ is encoded as a final class that
-  extends class~$Γ$.
+We shall be using the following notation for
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
 
-The stack can then be encoded as in \cref{Figure:stack}
 \begin{figure}
 \begin{JAVA}
-class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {
+class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {¢¢
   Head head;
   Rest rest;
-  Stack(Head head, Rest rest) { this.head = head; this.rest = rest;}
-  Rest pop() { return rest; };
+  Stack(Head head, Rest rest) {¢¢ this.head = head; this.rest = rest;}
+  Rest pop() {¢¢ return rest; };
 }
 \end{JAVA}
 For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
 \begin{JAVA}
-class ¢$ξ$¢ <T extends S> extends S<T> {
-  ¢$ξ$¢(T t) { super(t); }
+class ¢$ξ$¢ <T extends S> extends S<T> {¢¢
+  ¢$ξ$¢(T t) {¢¢ super(t); }
   // ¢…¢
 }
 \end{JAVA}
 \end{figure}
 In addition, we define a special class~$\vdash$ that designates the bottom of the stack.
 \begin{JAVA}
-class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {
-  ¢$\vdash$ ¢() { super(null); }
-  ¢$\vdash$ ¢pop() { throw new RunTimeException(); }
+class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
+  ¢$\vdash$ ¢() {¢¢ super(null); }
+  ¢$\vdash$ ¢pop() {¢¢ throw new RunTimeException(); }
 }
 \end{JAVA}
 The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
@@ -105,10 +100,10 @@ The next input symbol,~$σ∈Σ$, the remaining argument of function~$δ$,
   is encoded as a method.
 
 The type part of the encoding is obtained by instantiating a generic type as follows:
-Let \cc{Q} be the abstract class that represents~$Q$, and let \cc{q} be the concrete class that
-  implements \cc{Q} for an automaton state~$q∈Q$.
+Let~\cc{Q} be the abstract class that represents~$Q$, and let~\cc{q} be the concrete class that
+  implements~\cc{Q} for an automaton state~$q∈Q$.
 Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
-  to class~$Q$ and to every class \cc{q} that implements it.
+  to class~$Q$ and to every class~\cc{q} that implements it.
 Yet another such parameter is added for representing stack contents.
 
 Consider the case~$k=2$.
