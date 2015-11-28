@@ -98,37 +98,32 @@ public class Domain {
   public static abstract class Q<S extends Stack<?>, Top extends Γʹ> {
     private static final class ¤ extends Q<Stack<?>, Γʹ.¤> {/**/}
     public static final class q0 extends Q<E,Γʹ.¤>{
-      SingleP1<E> σ1() {
-        return null;
-       }
-     }
-    
-    static abstract class q1<S extends Stack<?>, T extends Γʹ> extends Q<S, T> {
-      static final class q1_γ1<Rest extends Stack<?>> extends q1<P<γ1,Rest>, γ1> {/**/}
-      static final class q1_γ2<Rest extends Stack<?>> extends q1<P<γ2,Rest>, γ2> {/**/}
-      static private final class ¤ extends q1<E, Γʹ.¤> {/**/}
+      public SingleP1<E> σ1() { return null; }
     }
-    static abstract class q2<S extends Stack<?>, T extends Γʹ> extends Q<S, T> {
-      static final class q2_γ1<S extends Stack<?>> extends q2<S, γ1> {/**/}
-      static final class q2_γ2<S extends Stack<?>> extends q2<S, γ2> {/**/}
-      static private final class ¤ extends q2<E, Γʹ.¤> {/**/}
+    public static abstract class q1<S extends Stack<?>, T extends Γʹ> extends Q<S, T> {
+      public static final class q1_γ1<Rest extends Stack<?>> extends q1<P<γ1,Rest>, γ1> {/**/}
+      public static final class q1_γ2<Rest extends Stack<?>> extends q1<P<γ2,Rest>, γ2> {/**/}
+      private static final class ¤ extends q1<E, Γʹ.¤> {/**/}
     }
-    static abstract class q17<S extends Stack<?> , T extends Γʹ> extends Q<S,T> {
-      static final class q17_ extends q17<E, Γʹ.¤> {
-        DoubleP_γ1_γ2 σ1() { return null; }
+    public static abstract class q2<S extends Stack<?>, T extends Γʹ> extends Q<S, T> {
+      public static final class q2_γ1<S extends Stack<?>> extends q2<S, γ1> {/**/}
+      public static final class q2_γ2<S extends Stack<?>> extends q2<S, γ2> {/**/}
+      private static final class ¤ extends q2<E, Γʹ.¤> {/**/}
+    }
+    public static abstract class q17<S extends Stack<?> , T extends Γʹ> extends Q<S,T> {
+      public static final class q17_ extends q17<E, Γʹ.¤> {
+        public DoubleP_γ1_γ2 σ1() { return null; }
       }
-      static final class q17_γ1<S extends Stack<?>> extends q17<S, γ1> {/**/}
-      static final class q17_γ2<S extends Stack<?>> extends q17<S, γ2> {
-        DoubleP1<S> σ1() { return null; }
+      public static final class q17_γ1<S extends Stack<?>> extends q17<S, γ1> {/**/}
+      public static final class q17_γ2<S extends Stack<?>> extends q17<S, γ2> {
+        public DoubleP1<S> σ1() { return null; }
       }
     }
-    static abstract class q25<S extends Stack<?> , T extends Γʹ> extends Q<S,T> {
-      static private final class ¤ extends q25<E, Γʹ.¤> {/**/}
-      
-      static final class q25_γ1<Rest extends Stack<?>> extends q25<P<γ1,Rest>, γ1> {/**/}
-      
-      static final class q25_γ2<Rest extends Stack<?>> extends q25<P<γ2,Rest>, γ2> {
-        NoOp2<Rest> σ1() { return null; }
+    public static abstract class q25<S extends Stack<?> , T extends Γʹ> extends Q<S,T> {
+      private static final class ¤ extends q25<E, Γʹ.¤> {/**/}
+      public static final class q25_γ1<Rest extends Stack<?>> extends q25<P<γ1,Rest>, γ1> {/**/}
+      public static final class q25_γ2<Rest extends Stack<?>> extends q25<P<γ2,Rest>, γ2> {
+        public NoOp2<Rest> σ1() { return null; }
       }
     }
   }
