@@ -109,21 +109,28 @@ Yet another such parameter is added for representing stack contents.
 
 Consider the case~$k=2$.
 \begin{figure}
-\begin{JAVA}
+  \begin{JAVA}
 abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢
-\end{JAVA}
+  \end{JAVA}
 \end{figure}
 
-Let~$q∈Q$ be a state of the automaton. Then, we
+\begin{figure}
+  \caption{\label{Figure:SPDA:hierarchy}%
+    Type hierarchy of the type encoding of a simple SPDA.
+  }
+  \begin{adjustbox}{}
+    \input ../Figures/automaton.tikz
+  \end{adjustbox}
+\end{figure}
 
 \begin{figure}
-  \caption{\label{Figure:BNF:example}%
-    A type encoding of a simple pushdown automatorn.
+  \caption{\label{Figure:SPDA:example}%
+    A type encoding of a simple pushdown automaton.
   }
   \javaInput[minipage,width=\linewidth]{spda.listing}
 \end{figure}
-  As might be expected, this type is obtained
-  The
-  The
+As might be expected, this type is obtained
+The
+The
 
 To encode this function within
