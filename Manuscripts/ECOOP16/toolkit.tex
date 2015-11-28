@@ -69,8 +69,9 @@ It can be made~\cc{private}. Just move class~\cc{$Γ$} to outside of~\cc{$Γ'$},
 }
 \end{enumerate}
 
-We saw that unary functions can be encoded with inheritance and overriding.
-With the absence of multi-methods, encoding higher arity functions is a greater challenge.
+Having seen how how inheritance and overriding make possible 
+  the encoding of unary functions,  we turn now to encoding higher arity functions.
+With the absence of multi-methods, other techniques must be used. 
 
 Consider the partial binary function~$f: R⨉S↛Γ$, defined by
 \begin{equation}
@@ -179,8 +180,8 @@ implementation in~\cref{Figure:stack-encoding}(b).
         \input ../Figures/stack-classification.tikz
       }
       &
-      \hspace{-4ex}
-      \parbox[c]{63ex}{\javaInput[minipage,width=63ex,left=-2ex]{stack.listing}}⏎
+      \hspace{-3ex}
+      \parbox[c]{63ex}{\javaInput[minipage]{stack.listing}}⏎
       \textbf{(a)} type hierarchy & \textbf{(b)} implementation
     \end{tabular}
 \end{figure}

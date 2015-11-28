@@ -43,30 +43,31 @@ public class Domain {
   //stack.listing
   
   public static abstract class Stack<Rest extends Stack<?>> { 
-    public abstract Γʹ top();
-    public abstract Rest pop(); 
-    public abstract Stack<?> γ1(); 
-    public abstract Stack<?> γ2();
-    public static final E empty = null; 
-    public static final class E extends Stack<¤> { // Type of an empty stack
-      @Override public Γʹ.¤ top() { return null; }
-      @Override public ¤ pop() { return null; } 
-      @Override public P<γ1, E> γ1() { return null; } 
-      @Override public P<γ2, E> γ2() { return null; }
-    }
-    private static final class ¤ extends Stack<¤> {
-      @Override public Γʹ.¤ top() { return null; }
-      @Override public ¤ pop() { return null; } 
-      @Override public ¤ γ1() { return null; } 
-      @Override public ¤ γ2() { return null; }
-    }
-    // Recursive generic type making it possible to generate stacks of unounded depth: 
+    public abstract Γʹ top();      
+    public abstract Rest pop();    
+    public abstract Stack<?> γ1();  // Push type ¢\cc{\scriptsize $\Gamma'.\Gamma.\gamma1$}¢
+    public abstract Stack<?> γ2();  // Push type ¢\cc{\scriptsize $\Gamma'.\Gamma.\gamma2$}¢ 
     public static class P<Top extends Γ, Rest extends Stack<?>> 
-      extends Stack<Rest> {
-        @Override public Top top() { return null; } 
+      extends Stack<Rest> { // Type of a non-empty stack: 
+         @Override public Top top() { return null; } 
          @Override public Rest pop() { return null; }
          @Override public P<γ1, P<Top,Rest>> γ1() { return null; } 
          @Override public P<γ2, P<Top,Rest>> γ2() { return null; }
+    }
+    public static final class E 
+      extends Stack<¤> { // Type of an empty stack
+        @Override public Γʹ.¤ top() { return null; }
+        @Override public ¤ pop() { return null; } 
+        @Override public P<γ1, E> γ1() { return null; } 
+        @Override public P<γ2, E> γ2() { return null; }
+    }
+    public static final E empty = null; 
+    private static final class ¤ 
+      extends Stack<¤> { // Type of stack in error
+        @Override public Γʹ.¤ top() { return null; }
+        @Override public ¤ pop() { return null; } 
+        @Override public ¤ γ1() { return null; } 
+        @Override public ¤ γ2() { return null; }
     }
   }
 
