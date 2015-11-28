@@ -42,7 +42,7 @@ public class DependencyCycle {
     A, B;
   }
 
-  public static LRParser buildBNF() {
+  public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("Balanced Parenthesis") //
@@ -54,6 +54,6 @@ public class DependencyCycle {
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
     System.out.println(parser);
-    return parser;
+    return bnf;
   }
 }

@@ -319,7 +319,7 @@ public class TypeArgumentManager {
       StringBuilder sb = new StringBuilder("Q^{" + context.index + "}_{");
       for (Symbol symb : transitions)
         sb.append(symb.name());
-      sb.append("}\\left(" + stateDesc + "\\right)");
+      sb.append("}(" + stateDesc + ")");
       return sb.toString();
     }
     @Override public int hashCode() {

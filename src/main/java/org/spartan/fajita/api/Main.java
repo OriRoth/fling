@@ -26,7 +26,7 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
-import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
+import org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle;
 import org.spartan.fajita.api.generators.ApiGenerator;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
@@ -36,8 +36,8 @@ import com.squareup.javapoet.TypeSpec;
 
 public class Main {
   public static void main(final String[] args) {
-//     apiGenerator();
-    expressionBuilder();
+    apiGenerator();
+    // expressionBuilder();
     // serializeTest();
   }
   public static void serializeTest() {
@@ -50,10 +50,10 @@ public class Main {
     }
   }
   static void apiGenerator() {
-    final BNF bnf = BalancedParenthesis.buildBNF();
+    final BNF bnf = DependencyCycle.buildBNF();
+    lrAutomatonVisualisation(new LRParser(bnf));
     TypeSpec fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
-    lrAutomatonVisualisation(new LRParser(bnf));
   }
   static void expressionBuilder() {
     AutomatonCycles.expressionBuilder();
@@ -63,7 +63,7 @@ public class Main {
     for (DerivationRule reduce : reduces) {
       List<AbstractNode> children = new ArrayList<>();
       final List<Symbol> rhs = reduce.getChildren();
-      for (int i = rhs.size()-1; i >= 0; i--) {
+      for (int i = rhs.size() - 1; i >= 0; i--) {
         Symbol s = rhs.get(i);
         AbstractNode symbNode;
         if (s.isTerminal())
@@ -73,7 +73,7 @@ public class Main {
         else {
           symbNode = compoundQueue.pop();
         }
-        children.add(0,symbNode);
+        children.add(0, symbNode);
       }
       compoundQueue.add(new Compound(reduce.lhs, children));
     }
