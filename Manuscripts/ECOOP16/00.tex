@@ -1,12 +1,18 @@
-\title
-{%
-  \Self \protect\thanks
-  {%
+\title{%
+  \Self
+  \protect \thanks {%
     \textbf
-  Fluent \textbf API for \textsc{\textbf Java} 
-  (\textbf Inspired by the \textbf Theory of \textbf Automata)
-  } 
+    Fluent \textbf API for \textsc{\textbf Java}
+    (\textbf Inspired by the \textbf Theory of \textbf Automata)
+  }
+  \protect \\
+  \color{red}{\textsc{Thou Moral, Be Warned. \newline 
+    Thou Shallt Not Remove This Commandment \newline 
+    When There Are Signs of Haste in This Document!!!\newline
+  }}
 }
+
+
 
 \documentclass[a4paper,USenglish]{lipics}
 \usepackage{\jobname}
@@ -34,11 +40,13 @@
 \input{aa}
 
 \textbf{Outline.} 
-The remainder of this document is organized as follows.
-\Cref{Section:terminology}, intended mostly to the general, non software engineering, 
-  computer science audience is a brief reminder of pertinent terminology.
-This terminology is then used in \cref{Section:proposal} for 
-  an introductory exposition of \Self.
+The remainder of this manuscript is organized as follows.
+\Cref{Section:toolkit} builds a small toolkit of idioms and techniques for programming generics.  
+This toolkit is then applied to prove \cref{Theorem:Gil-Levy} 
+  in \cref{Section:proof}.
+\cref{Section:proposal} introduces \Self.
+The algorithm of generating the complex type encoding behind the parser genearator 
+is described in \cref{Section:algorithm}. 
 The main ideas behind the bootstrapping definition of \Self 
   are revealed in \Cref{Section:bootstrapping}. 
 \Cref{Section:zz} concludes. 
@@ -52,12 +60,12 @@ The main ideas behind the bootstrapping definition of \Self
 %\input{proposal}
 
 \section{Toolkit for Type Encoding}
-\label{Section:elementary}
-\input{elementary}
+\label{Section:toolkit}
+\input{toolkit}
 
-\section{Proof of \cref{Theorem:Gil:Levy}}
+\section{Proof of \Cref{Theorem:Gil-Levy}}
 \label{Section:proof}
-%\input{proof}
+\input{proof}
 
 \section{Algorithm}
 \label{Section:algorithm}

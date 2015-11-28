@@ -1,0 +1,215 @@
+This section presents techniques of type encoding in \Java.
+Some readers may prefer to skip through to the next section,
+where these are employed in the proof of \Cref{Theorem:Gil-Levy}.
+
+Let~$g:Γ→Γ$ be a function,
+  where set~$Γ$ is finite.
+We argue that~$g$ can
+  be represented using the compile-time mechanism of \Java.
+  \cref{Figure:unary-function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
+  and~$g(γ₂)=⊥$, i.e.,~$g(γ₂)$ is undefined.
+
+\begin{figure}[hbt]
+  \caption{\label{Figure:unary-function}%
+    Type encoding of the partial function~$g:Γ↛Γ$,
+    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
+  }
+  \begin{tabular}{@{}c@{}c@{}c@{}}
+    \hspace{-7ex}
+    \parbox[c]{0.26\linewidth}{%
+      \input ../Figures/unary-function-classification.tikz
+    }%
+    &
+    \hspace{-1ex}
+    \parbox[c]{0.64\linewidth}{%
+      \javaInput{gamma.listing}
+    }%
+    &
+    \hspace{-18ex}
+    \parbox[c]{0.84\linewidth}{%
+      \javaInput{gamma-example.listing}
+    }%
+⏎
+\textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
+  \end{tabular}
+\end{figure}
+
+The type hierarchy depicted in~\cref{Figure:unary-function}(a) shows five classes:
+Abstract class~\cc{Γ} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
+  that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
+The remaining two classes are private final class~\cc{¤} that stands for an error value,
+  and abstract class~\cc{$Γ'$} that denotes the augmented set~$Γ∪❴\text{¤}❵$.
+Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.†{The use
+  short names, e.g.,~\cc{$Γ$} instead of \cc{$Γ'.Γ$},
+    is made possible by to an appropriate \kk{import} statement.
+    For brevity, all \kk{import} statements are omitted.}
+
+The full implementation of these classes is provided in~\cref{Figure:unary-function}(b)†{Remember that \Java admits Unicode characters in identifier names}.
+This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
+
+The use cases in~\cref{Figure:unary-function}(c) explain better
+  what we mean in saying that function~$g$ is encoded in the type system:
+  An instance of class~\cc{$γ$1} returns a value of type~\cc{$γ$2} upon
+  method call~\cc{g()}, while
+  an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
+  error type~\cc{$Γ'$.¤} upon the same call.
+
+Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
+\begin{enumerate}
+  \item An~\kk{abstract} class encodes a set.
+    Abstract classes that extend it encode
+      subsets, while~\kk{final} classes encode set members.
+  \item The interest of frugal management of name-spaces is served
+    by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
+    as a~\kk{static} member class of~$Y$.
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command.
+      This is to stress that at runtime, the code does not carry out any useful or interesting computation,
+      and the class structure is solely for providing compile-time type checks.
+†{%
+A consequence of these idioms is that the augmented class~\cc{$Γ'$} is visible to clients.
+It can be made~\cc{private}. Just move class~\cc{$Γ$} to outside of~\cc{$Γ'$}, defying the second idiom.
+}
+\end{enumerate}
+
+Having seen how how inheritance and overriding make possible
+  the encoding of unary functions, we turn now to encoding higher arity functions.
+With the absence of multi-methods, other techniques must be used.
+
+Consider the partial binary function~$f: R⨉S↛Γ$, defined by
+\begin{equation}
+  \label{Equation:simple-binary}
+  \begin{array}{ccc}
+    R=❴r₁,r₂❵ & f(r₁,s₁)=γ₁ & f(r₂,s₁)=γ₁⏎
+    S=❴s₁,s₂❵ & f(r₁,s₂)=γ₂ & f(r₂, s₂)=⊥
+  \end{array}.
+\end{equation}
+A \Java type encoding of this definition of function~$f$
+  is in~\cref{Figure:simple-binary}(a); use cases
+    are in~\cref{Figure:simple-binary}(b).
+
+\begin{figure}[hbt]
+  \caption{\label{Figure:simple-binary}%
+    Type encoding of partial binary function~$f: R⨉S↛Γ$,
+    where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
+  defined by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$.}
+    \begin{tabular}{cc}
+      \hspace{-2.5ex}
+      \parbox[c]{0.57\linewidth}{\javaInput{binary-function.listing}}
+        &
+      \hspace{-16ex}
+      \parbox[c]{51ex}{\javaInput[minipage,left=-2ex,width=51ex]{binary-function-example.listing}}
+⏎
+\parbox{0.57\linewidth}{\textbf{(a)} implementation (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} given above
+in \cref{Figure:unary-function}).}
+& \hspace{-5ex}\textbf{(b)} use cases⏎
+    \end{tabular}
+  \end{figure}
+
+The figure shows that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
+and that the fluent API call chain~\cc{f.r2().s2().g()} results in
+  a compile time error since~$f(r₂, s₂)=⊥$.
+
+Class~\cc{f} in the implementation sub-figure serves as
+  the starting point of the little fluent API defined here.
+The return type of~\kk{static} member functions~\cc{r1()} and~\cc{r2()}
+  is the respective sub-class of class~\cc{R}:
+The return type of function~\cc{r1()} is class~\cc{R.r1};
+  the return type of function~\cc{r2()} is class~\cc{R.r2}.
+
+Instead of representing set~$S$ as a class,
+  its members are realized as methods~\cc{s1()} and~\cc{s2()} in class~\cc{R}.
+These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
+  in~\cc{R}.
+Both functions are overridden in classes~\cc{r1} and~\cc{r2},
+   with the appropriate co-variant change of their return type,
+
+It should be clear now that the encoding scheme presented
+  in \Cref{Figure:simple-binary} can be generalized to functions
+  with any number of arguments, provided that the domain and range sets are finite.
+The encoding of sets of unbounded size require means for creating an unbounded
+ number of types.
+Genericity can be employed to serve this end, as we shall see next.
+
+\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
+  a stack of unbounded depth, yet can only store members of the set~$Γ$.
+With type encoding these are precisely classes~\cc{$γ$1}
+  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
+
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-use-cases}%
+    Use cases of a compile-time stack data structure.
+  }
+  \javaInput[minipage]{stack-use-cases.listing}
+\end{figure}
+
+The figure demonstrates a stack that starts with five items in it.
+These are popped in order. Just before popping the last item, its
+  value is examined.
+Trying then to pop from an empty stack, or to examine its top, ends with
+  a compile time error.
+
+The expression⏎
+  \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
+represents the sequence of pushing the value~$γ₁$ into an
+empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
+This expression's type is that of~\cc{\_1}:⏎
+\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
+A recurring building block occurs in this type.
+This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
+  \begin{enumerate}
+    \item the \emph{top} of the stack, always a subtype of~\cc{$Γ$},
+    \item the \emph{rest} of the stack, which can be of two kinds:
+          \begin{enumerate}
+            \item another instantiation of~\cc{P} (in most cases),
+            \item non-generic type~\cc{E}, \emph{short for ‟Empty”}, that encodes the empty
+                  set (only at the deepest~\cc{P}, rest is empty).
+          \end{enumerate}
+  \end{enumerate}
+Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
+
+\Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of the \Java
+implementation†{%
+  unless otherwise stated, in saying implementation we mean actual
+  code extract
+}
+implementation in~\cref{Figure:stack-encoding}(b).
+
+\begin{figure}[htb]
+  \caption{\label{Figure:stack-encoding} Type encoding of an unbounded
+  stack containing members of~$Γ$ (as defined in \cref{Figure:unary-function}).}
+    \begin{tabular}{cc}
+      \parbox[c]{0.3\linewidth}{%
+        \input ../Figures/stack-classification.tikz
+      }
+      &
+      \hspace{-3ex}
+      \parbox[c]{63ex}{\javaInput[minipage]{stack.listing}}⏎
+      \textbf{(a)} type hierarchy & \textbf{(b)} implementation
+    \end{tabular}
+\end{figure}
+
+We see that the ‟rest” parameter of generic type~\cc{P} must extend class \cc{Stack},
+  and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
+Other points to noice are:
+\begin{itemize}
+  \item The type at the top of the stack is precisely the return type of \cc{top()};
+        it is overridden in~\cc{P} so that its return type is the first argument of~\cc{P}.
+        The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
+  \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
+        the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
+        \par
+        It is of some notice that the notion of covariance recurs:
+          Overriding permits covariant change of the return type of a function,
+          Similar covariant change is permitted in extending generic type extending another, e.g.,
+          \begin{center}
+            \javaInput[minipage]{mammal.listing}
+        \end{center}
+  \item Since empty stack cannot be popped, function \cc{pop()} is overriden in~\cc{E} to return
+    the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
+        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
+\end{itemize}
+
+It is natural now to ask whether this recursive generic type can give rise to S-expressions and a~$λ$-calculus.
+Indeed, S-experssions can be encoded in the spirit of \cref{Figure:stack-encoding}, with a \cc{Cons} generic type 
+with co-variant \cc{car()} and \cc{cdr)} methods. However, it is unlikely, 
+  as shall be explained in the conclusions section. 
