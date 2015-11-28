@@ -1,0 +1,17 @@
+We recognize that the \Java parser spends sub quadratic time 
+  on its input.
+Therefore, 
+  the type checker implicitly implemented with the fluent API implementation, 
+  cannot recognize languages whose time of recognition is quadratic or above that. 
+
+Explain why we cannot do general non-deterministic languages. This require quadratic time.
+Java type checking works in less than quadratic time. So, if it was possible to 
+do general context free languages, it would be possible to break the record 
+  \cite{cubic time algorithms}.
+It is highly unlikely that such a record is broken incidentally.
+
+The same consideration
+For the same reason, it is highly unlikely to be able to do even deterministic context free languages.
+   \cite{http://www.sciencedirect.com/science/article/pii/S0019995868910875}
+
+The reason is that Generate works in reasonable time  \Self generates classes which encode, in types, with a bottom-up, left-right time parser.
