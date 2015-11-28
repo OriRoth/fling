@@ -1,4 +1,6 @@
-\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},listing file=#2,#1}}
+This section presents techniques of type encoding in \Java.
+Some readers may prefer to skip through to the next section,
+where these are employed in the proof of \Cref{Theorem:Gil-Levy}.
 
 Let~$g:Γ→Γ$ be a function,
   where set~$Γ$ is finite.
@@ -69,9 +71,9 @@ It can be made~\cc{private}. Just move class~\cc{$Γ$} to outside of~\cc{$Γ'$},
 }
 \end{enumerate}
 
-Having seen how how inheritance and overriding make possible 
-  the encoding of unary functions,  we turn now to encoding higher arity functions.
-With the absence of multi-methods, other techniques must be used. 
+Having seen how how inheritance and overriding make possible
+  the encoding of unary functions, we turn now to encoding higher arity functions.
+With the absence of multi-methods, other techniques must be used.
 
 Consider the partial binary function~$f: R⨉S↛Γ$, defined by
 \begin{equation}
@@ -152,7 +154,7 @@ represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 This expression's type is that of~\cc{\_1}:⏎
 \mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
-A recurring building block occurs in this type. 
+A recurring building block occurs in this type.
 This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
     \item the \emph{top} of the stack, always a subtype of~\cc{$Γ$},
@@ -186,7 +188,7 @@ implementation in~\cref{Figure:stack-encoding}(b).
     \end{tabular}
 \end{figure}
 
-We see that the ``rest'' parameter of generic type~\cc{P} must extend class \cc{Stack},
+We see that the ‟rest” parameter of generic type~\cc{P} must extend class \cc{Stack},
   and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
 Other points to noice are:
 \begin{itemize}
@@ -206,3 +208,8 @@ Other points to noice are:
     the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
+
+It is natural now to ask whether this recursive generic type can give rise to S-expressions and a~$λ$-calculus.
+Indeed, S-experssions can be encoded in the spirit of \cref{Figure:stack-encoding}, with a \cc{Cons} generic type 
+with co-variant \cc{car()} and \cc{cdr)} methods. However, it is unlikely, 
+  as shall be explained in the conclusions section. 
