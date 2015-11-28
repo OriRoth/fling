@@ -1,18 +1,18 @@
 \title{%
-  \Self
-  \protect \thanks {%
+  \Self \protect \thanks {%
     \textbf
     Fluent \textbf API for \textsc{\textbf Java}
     (\textbf Inspired by the \textbf Theory of \textbf Automata)
   }
-  \protect \\
-  \color{red}{\textsc{Thou Moral, Be Warned. \newline 
-    Thou Shallt Not Remove This Commandment \newline 
-    When There Are Signs of Haste in This Document!!!\newline
-  }}
+  \newline
+  \color{red}{%
+    \rmfamily\scshape Thou Moral, Be Warned. \newline
+    Thou Shallt Not Remove \newline
+    This Commandment \newline
+    When There Are Signs of Haste \newline
+    in This Document!!!\newline
+  }
 }
-
-
 
 \documentclass[a4paper,USenglish]{lipics}
 \usepackage{\jobname}
@@ -34,26 +34,36 @@
 	\input{abstract} 
 \end{abstract}
 
-
-
 \section{Introduction}
 \input{aa}
 
 \textbf{Outline.} 
 The remainder of this manuscript is organized as follows.
-\Cref{Section:toolkit} builds a small toolkit of idioms and techniques for programming generics.  
-This toolkit is then applied to prove \cref{Theorem:Gil-Levy} 
-  in \cref{Section:proof}.
+\Cref{Section:preliminaries}, the preliminaries, sets a common vocabulary and may remind
+  the reader of notions such as context free languages.  
+A summary of contributions and a perspective to related work is  
+  in \cref{Section:related}.
+\Cref{Section:toolkit} builds a small toolkit of idioms and techniques 
+  for programming generics in \Java.  
+This toolkit is then used in \cref{Section:proof} for
+  proving our main theoretical result.
+\Cref{Section:bridge} explains then why this theoretical result is 
+  unlikely to be improved.
+
 \cref{Section:proposal} introduces \Self.
 The algorithm of generating the complex type encoding behind the parser generator 
-is described in \cref{Section:algorithm}. 
+  is described in \cref{Section:algorithm}. 
 The main ideas behind the bootstrapping definition of \Self 
   are revealed in \Cref{Section:bootstrapping}. 
 \Cref{Section:zz} concludes. 
 
-\section{Terminology}
-\label{Section:terminology}
-%\input{terminology}
+\section{Reminders and Preliminaries}
+\label{Section:preliminaries}
+\input{preliminaries}
+
+\section{Related Work}
+\label{Section:related}
+\input{related}
 
 \section{This Proposal}
 \label{Section:proposal}
