@@ -6,13 +6,14 @@ export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 LISTINGS=
+LISTINGS+=binary-function-example.listing 
+LISTINGS+=binary-function.listing 
+LISTINGS+=gamma-example.listing 
+LISTINGS+=gamma.listing 
+LISTINGS+=mammal.listing 
+LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
-LISTINGS+=gamma.listing 
-LISTINGS+=gamma-example.listing 
-LISTINGS+=binary-function.listing 
-LISTINGS+=binary-function-example.listing 
-LISTINGS+=mammal.listing 
 
 # Target to be used for compiles when references did not change
 latex: $(wildcard *.sty *.tex) $(LISTINGS) 
@@ -41,6 +42,9 @@ mammal.listing: ../../src/main/java/automaton/DomainDemo.java
 
 binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
 	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+spda.listing: ../../src/main/java/automaton/Domain.java  
+		awk '/^.*public static abstract class Q<S\s.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 
 warnings:	
