@@ -4,10 +4,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Stack;
 
 import javax.swing.JFrame;
 
@@ -57,27 +56,29 @@ public class Main {
     lrAutomatonVisualisation(new LRParser(bnf));
   }
   static void expressionBuilder() {
-    BalancedParenthesis.expressionBuilder();
+    AutomatonCycles.expressionBuilder();
   }
   public static Compound generateAST(List<DerivationRule> reduces) {
-    Queue<Compound> compoundQueue = new LinkedList<>();
+    Stack<Compound> compoundQueue = new Stack<>();
     for (DerivationRule reduce : reduces) {
       List<AbstractNode> children = new ArrayList<>();
-      for (Symbol s : reduce.getChildren()) {
+      final List<Symbol> rhs = reduce.getChildren();
+      for (int i = rhs.size()-1; i >= 0; i--) {
+        Symbol s = rhs.get(i);
         AbstractNode symbNode;
         if (s.isTerminal())
           symbNode = new Atomic((Terminal) s);
         else if (s == SpecialSymbols.epsilon)
           symbNode = AbstractNode.epsilon;
         else {
-          symbNode = compoundQueue.remove();
+          symbNode = compoundQueue.pop();
         }
-        children.add(symbNode);
+        children.add(0,symbNode);
       }
       compoundQueue.add(new Compound(reduce.lhs, children));
     }
     assert (compoundQueue.size() == 1);
-    return compoundQueue.remove();
+    return compoundQueue.pop();
   }
 
   private static JGraphModelAdapter<State, LabeledEdge> model;
