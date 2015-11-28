@@ -9,6 +9,8 @@ import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.spartan.fajita.api.ast.AbstractNode;
+import org.spartan.fajita.api.ast.Atomic;
 import org.spartan.fajita.api.ast.Compound;
 
 public class ASTViewer {
@@ -60,13 +62,14 @@ public class ASTViewer {
   private void addView(final Compound c, final String title) {
     tabbedPane.add(title, compoundToTree(c));
   }
-  private JTree compoundToTree(final Compound root) {
+  private JTree compoundToTree(final AbstractNode root) {
     return new JTree(compoundToNode(root));
   }
-  private DefaultMutableTreeNode compoundToNode(final Compound root) {
+  private DefaultMutableTreeNode compoundToNode(final AbstractNode root) {
     DefaultMutableTreeNode top = new DefaultMutableTreeNode(root.toString());
-    for (Compound child : root)
-      top.add(compoundToNode(child));
+    if (root.getClass() != Atomic.class)
+      for (AbstractNode child : ((Compound) root).getChildren())
+        top.add(compoundToNode(child));
     return top;
   }
 }

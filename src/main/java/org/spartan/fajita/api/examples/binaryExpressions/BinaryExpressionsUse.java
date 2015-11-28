@@ -1,38 +1,36 @@
 package org.spartan.fajita.api.examples.binaryExpressions;
 
-import static org.spartan.fajita.api.examples.ASTViewer.*;
-import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.and;
-import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.bool;
-import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.not;
-import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.or;
-import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.*;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.AND;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.EXPRESSION;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.LITERAL;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.NOT;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.OR;
+import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.NT.S;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.and;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.bool;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.not;
 import static org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressionsUse.Term.or;
 
-import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.examples.binaryExpressions.BinaryExpressions.Literal;
 
 public class BinaryExpressionsUse {
-  public static void expressionBuilder() {
-    // top down
-    Compound e0 = bool(true);
-    Literal e1 = bool(true).or().bool(false);
-    Literal e2 = bool(true).or().bool(false).and().bool(false);
-    Literal e3 = not().not().bool(true);
-    // bottom up
-    Compound e4 = not(bool(true));
-    Compound e5 = or(bool(true), bool(false));
-    Compound e6 = and(bool(false), bool(true));
-    Compound e7 = or(or(bool(true), bool(false)), and(bool(true), bool(false)));
-    showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
-  }
+//  public static void expressionBuilder() {
+//    // top down
+//    Compound e0 = bool(true);
+//    Literal e1 = bool(true).or().bool(false);
+//    Literal e2 = bool(true).or().bool(false).and().bool(false);
+//    Literal e3 = not().not().bool(true);
+//    // bottom up
+//    Compound e4 = not(bool(true));
+//    Compound e5 = or(bool(true), bool(false));
+//    Compound e6 = and(bool(false), bool(true));
+//    Compound e7 = or(or(bool(true), bool(false)), and(bool(true), bool(false)));
+//    showASTs(e0, e1, e2, e3, e4, e5, e6, e7);
+//  }
 
   enum Term implements Terminal {
     bool(boolean.class), and, or, not;

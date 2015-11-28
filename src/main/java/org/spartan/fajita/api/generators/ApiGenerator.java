@@ -1,5 +1,9 @@
 package org.spartan.fajita.api.generators;
 
+import static org.spartan.fajita.api.generators.GeneratorsUtils.REDUCES_FIELD;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.REDUCES_TYPE;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.STACK_FIELD;
+import static org.spartan.fajita.api.generators.GeneratorsUtils.STACK_TYPE_PARAMETER;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.generateBaseState;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.generateEmptyStack;
 import static org.spartan.fajita.api.generators.GeneratorsUtils.generateErrorState;
@@ -9,19 +13,23 @@ import static org.spartan.fajita.api.generators.GeneratorsUtils.type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
+import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.examples.ASTViewer;
 import org.spartan.fajita.api.generators.GeneratorsUtils.Classname;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
-import org.spartan.fajita.api.parser.Item;
 import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.State;
 
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -58,12 +66,18 @@ public class ApiGenerator {
         .addModifiers(Modifier.STATIC, Modifier.PUBLIC) //
         .addTypeVariables(tam.getFormalParameters(s)) //
         .superclass(tam.getInstantiatedBaseState(s));
+    // adds reduces
+    $.addFields(serializeReducingRules(s));
     // adds constructor
     if (s.index == 0)
-      $.addMethod(MethodSpec.constructorBuilder().addStatement("super(new EmptyStack())").addModifiers(Modifier.PUBLIC).build());
+      $.addMethod(MethodSpec.constructorBuilder()//
+          .addStatement("super(new EmptyStack(),new $T<>())",ArrayList.class)//
+          .addModifiers(Modifier.PUBLIC).build());
     else
-      $.addMethod(MethodSpec.constructorBuilder().addParameter(type(GeneratorsUtils.STACK_TYPE_PARAMETER), "stack")
-          .addStatement("super(stack)").build());
+      $.addMethod(MethodSpec.constructorBuilder()//
+          .addParameter(type(STACK_TYPE_PARAMETER), STACK_FIELD)//
+          .addParameter(REDUCES_TYPE, REDUCES_FIELD)//
+          .addStatement("super($N,$N)", STACK_FIELD, REDUCES_FIELD).build());
     // adds methods
     ParameterizedTypeName baseState = tam.getInstantiatedBaseState(s);
     for (int i = 0; i < tam.symbols.size(); i++) {
@@ -77,32 +91,39 @@ public class ApiGenerator {
       $.addMethod(getMethodSpec(SpecialSymbols.$, TypeName.get(Object.class), s));
     return $.build();
   }
-  private static MethodSpec getMethodSpec(Symbol symb, TypeName type, State s) {
+  private static Iterable<FieldSpec> serializeReducingRules(State s) {
+    final List<DerivationRule> reduces = s.getItems().stream() //
+        .filter(i -> i.readyToReduce() && !i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)).map(i -> i.rule)
+        .collect(Collectors.toList());
+    final List<FieldSpec> $ = new ArrayList<>();
+    for (DerivationRule rule : reduces)
+      $.add(FieldSpec.builder(String.class, "rule" + rule.getIndex(), Modifier.FINAL, Modifier.PRIVATE)
+          .initializer("$S", rule.serialize()).build());
+    return $;
+  }
+  @SuppressWarnings("boxing") private static MethodSpec getMethodSpec(Symbol symb, TypeName type, State s) {
     final boolean is$ = symb.equals(SpecialSymbols.$);
     com.squareup.javapoet.MethodSpec.Builder $ = MethodSpec.methodBuilder(symb.name()).addAnnotation(Override.class)
         .addModifiers(symb.isTerminal() || is$ ? Modifier.PUBLIC : Modifier.PROTECTED).returns(type);
-    String body;
     if (s.isLegalTransition(symb)) {
-      if (is$)
-        body = "return new Object()";
-      else
-        body = "return new " + (type.getClass().equals(ParameterizedTypeName.class) ? ((ParameterizedTypeName) type).rawType + "<>"
-            : type.toString()) + "(this)";
-      $.addStatement(body);
+      if (is$) {
+        $.addStatement("$T.showASTs($T.generateAST($N))", ASTViewer.class, Main.class, REDUCES_FIELD);
+        $.addStatement("System.out.println(\"finished\")");
+        $.addStatement("return new Object()");
+      } else
+        $.addStatement("return new " + (type.getClass().equals(ParameterizedTypeName.class)
+            ? ((ParameterizedTypeName) type).rawType + "<>" : type.toString()) + "(this,$N)", REDUCES_FIELD);
     } else { // reduce
-      Item reduce = s.getItems().stream().filter(item -> item.readyToReduce() && item.isLegalReduce((Terminal) symb)).findAny()
-          .get();
+      DerivationRule reduce = s.getItems().stream().filter(item -> item.readyToReduce() && item.isLegalReduce((Terminal) symb))
+          .findAny().get().rule;
+      $.addStatement("$N.add($T.deserialize(rule$L))", REDUCES_FIELD,DerivationRule.class,  reduce.getIndex());
       String pops = "pop()";
-      for (int i = 1; i < reduce.dotIndex; i++)
+      for (int i = 1; i < reduce.getChildren().size(); i++)
         pops += ".pop()";
       String cast = is$ ? "" : "(" + type + ")";
-      body = "return " + cast + pops + ".";
-      if (!is$) {
-        body += reduce.rule.lhs.name() + "().";
+      if (!is$)
         $.addAnnotation(GeneratorsUtils.suppressWarningAnnot("unchecked"));
-      }
-      body += "$N" + "()";
-      $.addStatement(body, symb.name());
+      $.addStatement("return " + cast + pops + ".$N().$N()", reduce.lhs.name(), symb.name());
     }
     return $.build();
   }
