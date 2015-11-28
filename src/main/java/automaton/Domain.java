@@ -1,4 +1,5 @@
 package automaton;
+
 import automaton.Domain.Per.DoubleP.DoubleP1;
 import automaton.Domain.Per.DoubleP.DoubleP_γ1_γ2;
 import automaton.Domain.Per.NoOp.NoOp2;
@@ -15,13 +16,19 @@ import automaton.Domain.Stack.P;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
+
+
+/**
+ * This is were we place code that must compile correctly. To be extracted and
+ * placed as part of LaTeX documents.
+ * 
+ * @author yogi
+ * 
+ */
 //@formatter:off
 @SuppressWarnings({"static-method","unused"}) 
 public class Domain { 
-  
-  
   // gamma.listing
-  
   public static abstract class Γʹ { 
     private static abstract class ¤ extends Γʹ {
       // Empty private class, cannot be used by clients.
@@ -41,7 +48,6 @@ public class Domain {
   } 
 
   //stack.listing
-  
   public static abstract class Stack<Rest extends Stack<?>> { 
     public abstract Γʹ top();      
     public abstract Rest pop();    
@@ -63,14 +69,13 @@ public class Domain {
     }
     public static final E empty = null; 
     private static final class ¤ 
-      extends Stack<¤> { // Type of stack in error
+      extends Stack<¤> { // Type of pop from empty stack 
         @Override public Γʹ.¤ top() { return null; }
         @Override public ¤ pop() { return null; } 
         @Override public ¤ γ1() { return null; } 
         @Override public ¤ γ2() { return null; }
     }
   }
-
   
   //binary-function.listing
   public static abstract class f { // Starting point of fluent API

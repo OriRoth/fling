@@ -1,0 +1,39 @@
+We recognize that the \Java parser spends sub quadratic time
+  on its input.
+Therefore,
+  the type checker implicitly implemented with the fluent API implementation,
+  cannot recognize languages whose time of recognition is quadratic or above that.
+
+Explain why we cannot do general non-deterministic languages. This require quadratic time.
+Java type checking works in less than quadratic time. So, if it was possible to
+do general context free languages, it would be possible to break the record
+~\cite{cubic time algorithms}.
+It is highly unlikely that such a record is broken incidentally.
+
+The same consideration
+For the same reason, it is highly unlikely to be able to do even deterministic context free languages.
+~\cite{http://www.sciencedirect.com/science/article/pii/S0019995868910875}
+
+   Mention that there might be few languages between union of LR(k) and deterministic context free.
+
+The reason is that Generate works in reasonable time \Self generates classes which encode, in types, with a bottom-up, left-right time parser.
+
+We show that a particular non-deterministic context free language,
+cannot be of a fluent API.
+Specifically, consider~$L$, the language of all~$αα^r$, where~$\omega∈Σ^*$,~$Σ=❴a,b❵$,
+and~$\omega^r$ being the sequence~$\omega$ in reversed order.
+Language~$L$ is context free since it is defined by the BNF.
+\begin{Grammar}
+  \begin{aligned}
+    \<S> & ::= S | aSa | bsb |ε
+  \end{aligned}
+\end{Grammar}
+It is also non-deterministic~\cite{Tomer:again:start:tracing:from:wikipedia:until:you:find:the excact}
+
+We argue that there is no type encoding that supports fluent API whose
+  which permits the set of type correct call chains defined by~$L$.
+If there was one, then, we could have done something dramatic?
+Is it really known that recognizing $L$  requires quadratic
+  time.
+ the right one 
+To understand

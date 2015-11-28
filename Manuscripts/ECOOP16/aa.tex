@@ -1,3 +1,50 @@
+Ever after their inception~\cite{inception:fowler? not sure} \emph{fluent APIs}
+  increasingly gain popularity~\cite{poplularity:list} and research
+  interest~\cite{research:interest:list}.
+Inspired by the theory of formal languages~\cite{some:text:book} and pushdown automata,
+  this is a study of what can be done, and what can not be done, with a fluent API.
+
+Consider a fluent API definition, permitting only certain call chains.
+Now, think of the formal language that defines the set of permissible call chains.
+The theoretical aspect of the study is a proof (with its implicit algorithm) that
+  there is \Java program that realizes this fluent API, if this
+  language is \emph{deterministic context-free}.
+The essence of the proof is in showing a \Java type encoding of
+  the \emph{deterministic pushdown automaton} that recognizes
+  the formal language behind the automaton.
+With the generated types and methods, a chain of fluent API calls
+  will type check only if the chain is within the language.
+
+Practically speaking,  the poof shows that the (potential)
+  experessive power of fluent APIs,
+  is the same as ANTLR~\cite{give:proper:citation:not:link}:
+If a grammar of a fluent API can be written in ANTLR, then it
+  can be implemented with a \Java library.
+Nevertheless, the algorithim for generating the parser, although polynomial
+  in time and space, is too resource consuming to be implemented. 
+
+The second aspect of this work takes is the actual production 
+  of fluent APIs from their specification.
+\Self, presented here, is a \Java library providing a fluent API for generating fluent APIs:
+To create a new fluent API, use the fluent API of \Self to write, in \Java, a BNF for it.
+Running the \Java program thus written, augmented with the \Self library,
+  generates a \Java class library that implements this new fluent API.
+
+Practicality concerns stopped \Self from realizing the full potential of the proof.
+As a result, the expressive power of \Self is actually stictly less than that of ANTLR:
+\begin{itemize}
+  \item Although \Self can potentially manage all LR(k)~\cite{tomer:is:this:true} grammars,
+        the current implementation is limited to LR(1) languages~\cite{Tomer:is:this:true?}.
+  \item Moreover, all LR(k) languages are strict subsets of deterministic context free languages
+      which precisely those recognized by ANTLR.
+\end{itemize}
+We give reason why bridging this gap is highly unlikely.
+
+Is it possible to implement a fluent API for a general 
+  (that is, non-deterministic) context free languages? 
+Again, we give reason why this might be possible in some cases,
+  but it is highly unlikely that fluent APIs can be made for all context free languages.
+
 Modern programming languages acquire high-level constructs
   at a staggering rate.
 The imminent adoption of closures in \Java and \CC,
@@ -58,7 +105,7 @@ such that
 Furthermore, program~$Jₛ$ can be effectively generated from~$M$.
 \end{Theorem}
 
-The proof shall be made with an algorithm that converts a 
+The proof shall be made with an algorithm that converts a
   PDA~$M$ into a program~$Jₛ$.
 I am currently in the process of implementing a program that
   does precisely that.
@@ -71,7 +118,7 @@ Re-positioning perspective may shed a different light:
 \cref{Theorem:Gutterman} is important not only because it tells us
   that the question of termination of a \CC compiler is as difficult
   the halting problem~\cite{Turing:1936}, but also because it
-  justifies the common belief that is no limit to the power of 
+  justifies the common belief that is no limit to the power of
   template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
   ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:1998,Garcia:Jarvi:2003}.
 
