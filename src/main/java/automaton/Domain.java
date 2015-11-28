@@ -61,17 +61,15 @@ public class Domain {
       @Override public ¤ γ2() { return null; }
     }
     // Recursive generic type making it possible to generate stacks of unounded depth: 
-    public static class P<Top extends Γ, Rest extends Stack<?>> extends Stack<Rest> {
-      @Override public Top top() { return null; } 
-      @Override public Rest pop() { return null; }
-      @Override public P<γ1, P<Top,Rest>> γ1() { return null; } 
-      @Override public P<γ2, P<Top,Rest>> γ2() { return null; }
+    public static class P<Top extends Γ, Rest extends Stack<?>> 
+      extends Stack<Rest> {
+        @Override public Top top() { return null; } 
+         @Override public Rest pop() { return null; }
+         @Override public P<γ1, P<Top,Rest>> γ1() { return null; } 
+         @Override public P<γ2, P<Top,Rest>> γ2() { return null; }
     }
   }
-  class Mammals { /* ¢…¢ */ }
-  class Heap<M extends Mammals> { /* ¢…¢ */}  
-  class Whales extends Mammals { /* ¢…¢ */} 
-  class School<W extends Whales> extends Heap<W> { /* ¢…¢ */}
+
   
   //binary-function.listing
   public static abstract class f { // Starting point of fluent API

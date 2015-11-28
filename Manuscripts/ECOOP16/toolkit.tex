@@ -94,7 +94,7 @@ A \Java type encoding of this definition of function~$f$
       \parbox[c]{0.57\linewidth}{\javaInput{binary-function.listing}}
         &
       \hspace{-16ex}
-      \parbox[c]{53ex}{\javaInput[minipage,width=53ex]{binary-function-example.listing}}
+      \parbox[c]{51ex}{\javaInput[minipage,left=-2ex,width=51ex]{binary-function-example.listing}}
 ⏎
 \parbox{0.57\linewidth}{\textbf{(a)} implementation (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2} given above
 in \cref{Figure:unary-function}).}
@@ -102,7 +102,7 @@ in \cref{Figure:unary-function}).}
     \end{tabular}
   \end{figure}
 
-We see that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
+The figure shows that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
 and that the fluent API call chain~\cc{f.r2().s2().g()} results in
   a compile time error since~$f(r₂, s₂)=⊥$.
 
@@ -134,7 +134,7 @@ With type encoding these are precisely classes~\cc{$γ$1}
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-use-cases}%
-    Use cases of a compile-time stack data structures.
+    Use cases of a compile-time stack data structure.
   }
   \javaInput[minipage]{stack-use-cases.listing}
 \end{figure}
@@ -151,8 +151,8 @@ represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 This expression's type is that of~\cc{\_1}:⏎
 \mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
-We see in this type a recurring building block: generic type~\cc{P}, \emph{short for ‟Push”}.
-There are two parameters to~\cc{P}:
+A recurring building block occurs in this type. 
+This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
     \item the \emph{top} of the stack, always a subtype of~\cc{$Γ$},
     \item the \emph{rest} of the stack, which can be of two kinds:
@@ -173,20 +173,19 @@ implementation in~\cref{Figure:stack-encoding}(b).
 
 \begin{figure}[htb]
   \caption{\label{Figure:stack-encoding} Type encoding of an unbounded
-  stack data containing members of~$Γ$ (as defined in \cref{Figure:unary-function}).}
+  stack containing members of~$Γ$ (as defined in \cref{Figure:unary-function}).}
     \begin{tabular}{cc}
-      \hspace{-12ex}
       \parbox[c]{0.3\linewidth}{%
         \input ../Figures/stack-classification.tikz
       }
       &
       \hspace{-4ex}
-      \parbox[c]{75ex}{\javaInput[minipage,width=75ex]{stack.listing}}⏎
-      \hspace{-12ex} \textbf{(a)} type hierarchy & \textbf{(b)} implementation
+      \parbox[c]{63ex}{\javaInput[minipage,width=63ex,left=-2ex]{stack.listing}}⏎
+      \textbf{(a)} type hierarchy & \textbf{(b)} implementation
     \end{tabular}
 \end{figure}
 
-We see that the second parameter of generic type~\cc{P} must extend class \cc{Stack},
+We see that the ``rest'' parameter of generic type~\cc{P} must extend class \cc{Stack},
   and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
 Other points to noice are:
 \begin{itemize}
@@ -203,6 +202,6 @@ Other points to noice are:
             \javaInput[minipage]{mammal.listing}
         \end{center}
   \item Since empty stack cannot be popped, function \cc{pop()} is overriden in~\cc{E} to return
-    the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that all four stack
-        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return in turn appropriate error type.
+    the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
+        functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
