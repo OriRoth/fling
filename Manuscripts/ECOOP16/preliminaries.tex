@@ -1,7 +1,7 @@
-\subsection{Method Chaining}
+\subsection{Method Chaining \emph{vs.} Fluent API}
 The term \emph{method chaining} is illustrated in neat examples, such
-as in the \nth{3} to \nth{6} line of the following \Java function:
-\begin{JAVA}
+as in the \nth{3} to \nth{6} line of the following \Java function:\\
+\begin{lcode}[minipage,width=\linewidth]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   StringBuilder sb = new StringBuilder();
     return sb
@@ -10,11 +10,12 @@ String time(int hours, int minutes, int seconds) {¢¢
       ¢¢.append(seconds)
       ¢¢.toString();
 }
-\end{JAVA}
-Method chaining is to say that the same object, \cc{sb} of type \cc{StringBuilder} in the above,
+\end{lcode}\\
+Method chaining is means that the same object, \cc{sb} of type \cc{StringBuilder} in the above,
    is the receiver of a chain of methods.
-This is achieved by making each variant of the method \cc{append} return the receiver, denoted by the
-  implicit argument \kk{this}.
+There is syntactic sugar for method chaining in languages such as \Smalltalk.
+In \Java, method chaining is made possible by making each variant
+  of the method \cc{append} return the receiver, i.e., \kk{this}.
 With this convention, the tedious JAVA
 \begin{JAVA}
 sb.append(hours);
@@ -26,7 +27,6 @@ return sb.toString();
 \end{JAVA}
 becomes a bit shorter and less repetitive.
 
-\subsection{Fluent API}
 Now, definition found in the web of the term \emph{fluent API†{API =
     \textbf Application \textbf Program \textbf Interface
 }} are a bit illusive.
@@ -46,7 +46,7 @@ allowing (any(Object.class))
   ¢¢.method("get.*")
   ¢¢.withNoArguments();
 \end{JAVA}
-Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the 
+Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the
   return type of function \cc{method} be denoted by~$τ₂$.
 Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
   in the partial call chain
@@ -57,11 +57,11 @@ is distinct from the set of methods that can be placed after the dot in the part
 \begin{JAVA}
 allowing(any(Object.class)).method("get.*").
 \end{JAVA}
-This distinction make it possible to design expressive and rich fluent APIs, in which a
-  sequence ‟chained” calls is not only readable, but also robust, in the sense that the 
+This distinction makes it possible to design expressive and rich fluent APIs, in which a
+  sequence ‟chained” calls is not only readable, but also robust, in the sense that the
   sequence is type correct, only when it the sequence makes sense semantically.
 
-\subsection{The Type Safe Toilette Seat}
+\subsection{Fluent API and the Type Safe Toilette Seat}
 
 An object of type toilette seat is created in the \cc{down} state, but it can
 then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
@@ -82,7 +82,7 @@ new Seat().female().urinate();\end{JAVA}
   \label{Figure:toilette:legal}
 \end{figure}
 
-Conversely, sequences of method calls made in \cref{Figure:toilette:illegal} 
+Conversely, sequences of method calls made in \cref{Figure:toilette:illegal}
   should be illegal in the desired implementation of the fluent API.
 
 \begin{figure}[htbp]
@@ -102,7 +102,7 @@ far from being trivial.
 
 \subsection{Type State}
 The toilette seat problem may be amusing to some, but it is not contrived in
-any way.  In fact, there is huge body of research on the general topics of
+any way. In fact, there is huge body of research on the general topics of
 \emph{type-states}. (See e.g., review articles such
 as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}) Informally, an object
 that belongs to a certain type (\kk{class} in the object oriented lingo), has
@@ -111,29 +111,29 @@ to the object in all states it may be in.
 
 A classical example of type-states is a file object: which can be in one of two
 states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
-permitted when the file is in an ‟open” state.  In addition, method \cc{open()}
+permitted when the file is in an ‟open” state. In addition, method \cc{open()}
 (respectively \cc{close()}) can only be applied if the object is in the
 ‟closed” (respectively, ‟open”) state.
 
 Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study~\cite{Beckman:2011} estimates 
+In fact, a recent study~\cite{Beckman:2011} estimates
   that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
-Type-state pose two main challenges to software engineering 
+Type-state pose two main challenges to software engineering
 \begin{enumerate}
-  \item \emph{\textbf{Identification.}} 
-    In the typical case, type-state 
+  \item \emph{\textbf{Identification.}}
+    In the typical case, type-state
         receive little to no mention at all in the documentation.
-    The identification problem is to find the implicit 
+    The identification problem is to find the implicit
     type state in existing JAVA: Given an implementation of a class
-    (or more generally of a software framework), 
-    \emph{determine} which sequences of method calls are valid and which violate the 
+    (or more generally of a software framework),
+    \emph{determine} which sequences of method calls are valid and which violate the
     type state hidden in the JAVA.
   \item \emph{\textbf{Maintenance and Enforcement.}}
-    Having identified the type-states, the challenge is in automatically flagging out 
+    Having identified the type-states, the challenge is in automatically flagging out
       illegal sequence of calls that does not conform
-      with the type-state, furthermore, with the 
-      evolution of an API, the challenge is in updating the type-state information, 
-      and the type checking of JAVA of clients. 
+      with the type-state, furthermore, with the
+      evolution of an API, the challenge is in updating the type-state information,
+      and the type checking of JAVA of clients.
 \end{enumerate}
 
 \subsection{What is fluent API?}
