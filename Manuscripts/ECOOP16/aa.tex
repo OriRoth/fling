@@ -1,7 +1,7 @@
 Ever after their inception~\cite{Fowler:web:2005} \emph{fluent APIs}
-  increasingly gain popularity~\cite{poplularity:list} and research
-  interest~\cite{research:interest:list}.
-Inspired by the theory of formal languages~\cite{some:text:book} and pushdown automata,
+  increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
+  interest~\cite{Deursen:2000,Kabanov:2008}.
+Inspired by the theory of formal languages~\cite{Linz:2001} and pushdown automata,
   this is a study of what can be done, and what can not be done, with a fluent API.
 
 Consider a fluent API definition, permitting only certain call chains.
@@ -15,9 +15,9 @@ The essence of the proof is in showing a \Java type encoding of
 With the generated types and methods, a chain of fluent API calls
   will type check only if the chain is within the language.
 
-Practically speaking,  the poof shows that the (potential)
+Practically speaking, the poof shows that the (potential)
   experessive power of fluent APIs,
-  is the same as ANTLR~\cite{give:proper:citation:not:link}:
+  is the same as ANTLR~\cite{Parr:1995:I:Dont:Think:Its:Correct}:
 If a grammar of a fluent API can be written in ANTLR, then it
   can be implemented with a \Java library.
 Nevertheless, the algorithim for generating the parser, although polynomial

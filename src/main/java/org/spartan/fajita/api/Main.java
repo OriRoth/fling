@@ -27,6 +27,7 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
 import org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle;
+import org.spartan.fajita.api.examples.lalr.StrongerThanLALR;
 import org.spartan.fajita.api.generators.ApiGenerator;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
@@ -36,8 +37,8 @@ import com.squareup.javapoet.TypeSpec;
 
 public class Main {
   public static void main(final String[] args) {
-    apiGenerator();
-    // expressionBuilder();
+//    apiGenerator();
+     expressionBuilder();
     // serializeTest();
   }
   public static void serializeTest() {
@@ -50,13 +51,13 @@ public class Main {
     }
   }
   static void apiGenerator() {
-    final BNF bnf = DependencyCycle.buildBNF();
+    final BNF bnf = StrongerThanLALR.buildBNF();
     lrAutomatonVisualisation(new LRParser(bnf));
     TypeSpec fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
   }
   static void expressionBuilder() {
-    AutomatonCycles.expressionBuilder();
+    StrongerThanLALR.expressionBuilder();
   }
   public static Compound generateAST(List<DerivationRule> reduces) {
     Stack<Compound> compoundQueue = new Stack<>();
