@@ -153,7 +153,7 @@ The expression⏎
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 This expression's type is that of~\cc{\_1}:⏎
-\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$¢2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
+\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
 A recurring building block occurs in this type.
 This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
@@ -211,6 +211,7 @@ Other points to noice are:
 
 It is natural now to ask whether this recursive generic type can give rise to S-expressions and a~$λ$-calculus.
 Indeed, S-experssions can be encoded in the spirit of \cref{Figure:stack-encoding}, with a \cc{Cons} generic type
-with co-variant \cc{car()} and \cc{cdr)} methods. However, it is unlikely,
-  as shall be explained in the conclusions section.
+with co-variant \cc{car()} and \cc{cdr()} methods. 
+However, and unlike \CC, encdoing the full $\lambda$-calculus
+is impossible (see below in~\cref{Section:bridge}).
 
