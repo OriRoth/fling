@@ -22,7 +22,8 @@ sb.append(':');
 sb.append(minutes);
 sb.append(':');
 sb.append(seconds);
-return sb.toString():\end{JAVA}
+return sb.toString();
+\end{JAVA}
 becomes a bit shorter and less repetitive.
 
 \subsection{Fluent API}
@@ -45,18 +46,20 @@ allowing (any(Object.class))
   ¢¢.method("get.*")
   ¢¢.withNoArguments();
 \end{JAVA}
-Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the return type of function \cc{method} be denoted by~$τ₂$.
+Let the return type of function \cc{allowing} be denoted by~$τ₁$ and let the 
+  return type of function \cc{method} be denoted by~$τ₂$.
 Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
-in the partial call chain
+  in the partial call chain
 \begin{JAVA}
- allowing(any(Object.class)).
+allowing(any(Object.class)).
 \end{JAVA}
 is distinct from the set of methods that can be placed after the dot in the partial call chain
 \begin{JAVA}
 allowing(any(Object.class)).method("get.*").
 \end{JAVA}
-This distinction make it possible to design expressive and rich fluent APIs, in which a sequence ‟chained” calls is not only readable, but also
-robust, in the sense that the sequence is type correct, only when it the sequence makes sense semantically.
+This distinction make it possible to design expressive and rich fluent APIs, in which a
+  sequence ‟chained” calls is not only readable, but also robust, in the sense that the 
+  sequence is type correct, only when it the sequence makes sense semantically.
 
 \subsection{The Type Safe Toilette Seat}
 
@@ -66,9 +69,10 @@ then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
   This example is inspired by earlier work of
   Richard Harter on the topic~\cite{Harter:05}.
 }
-Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes: \cc{urinate} and \cc{defecate}.
+Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes:
+  \cc{urinate} and \cc{defecate}.
 Now a good fluent API design is one by which the sequences of method calls in
-\cref{Figure:toilette:legal} are type correct.
+  \cref{Figure:toilette:legal} are type correct.
 
 \begin{figure}[htbp]
   \begin{JAVA}
