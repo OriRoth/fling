@@ -29,10 +29,7 @@ public class StateGotoTest {
   @SuppressWarnings("static-method") @Test public void testEmptyNextState()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S) //
-        .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
@@ -45,10 +42,7 @@ public class StateGotoTest {
   @SuppressWarnings("static-method") @Test public void testNextStateTerminalLookahead()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S) //
-        .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
@@ -63,10 +57,7 @@ public class StateGotoTest {
   @SuppressWarnings("static-method") @Test public void testNextStateNonTerminalLookahead()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S) //
-        .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
         .finish();
@@ -81,10 +72,7 @@ public class StateGotoTest {
   @SuppressWarnings("static-method") @Test public void testUsesClosureInNextState()
       throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S) //
-        .endConfig() //
         .derive(NT.S).to(Term.a).and(NT.A) //
         .derive(NT.A).to(Term.b).and(Term.c) //
         .finish();
