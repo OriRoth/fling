@@ -26,6 +26,7 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
+import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle;
 import org.spartan.fajita.api.examples.lalr.StrongerThanLALR;
 import org.spartan.fajita.api.generators.ApiGenerator;
@@ -57,7 +58,7 @@ public class Main {
     System.out.println(fluentAPI.toString());
   }
   static void expressionBuilder() {
-    StrongerThanLALR.expressionBuilder();
+    BalancedParenthesis.expressionBuilder();
   }
   public static Compound generateAST(List<DerivationRule> reduces) {
     Stack<Compound> compoundQueue = new Stack<>();
