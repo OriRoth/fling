@@ -35,10 +35,7 @@ public class LRParserTest {
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class)//
-        .startConfig()//
-        .setApiNameTo("Test taken from Book about compilation") //
         .start(NT.E) //
-        .endConfig() //
         .derive(NT.E).to(NT.E).and(Term.plus).and(NT.T) //
         .derive(NT.E).to(NT.T) //
         .derive(NT.T).to(NT.T).and(Term.multiply).and(NT.F) //
@@ -60,10 +57,7 @@ public class LRParserTest {
       "unused" }) @Test(expected = ShiftReduceConflictException.class) public void testShiftReduceConflict()
           throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf2 = new BNFBuilder(Term.class, NT2.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT2.S) //
-        .endConfig() //
         .derive(NT2.S).to(NT2.A) //
         .derive(NT2.A).to(NT2.S) //
         .derive(NT2.B).to(Term.id) //
@@ -75,10 +69,7 @@ public class LRParserTest {
       "unused" }) @Test(expected = ReduceReduceConflictException.class) public void testReduceReduceConflict()
           throws ReduceReduceConflictException, ShiftReduceConflictException {
     BNF bnf2 = new BNFBuilder(Term.class, NT2.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT2.S) //
-        .endConfig() //
         .derive(NT2.S).to(NT2.A).or().to(NT2.B) //
         .derive(NT2.A).to(Term.id) //
         .derive(NT2.B).to(Term.id) //

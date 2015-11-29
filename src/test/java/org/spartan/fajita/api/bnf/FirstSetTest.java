@@ -27,10 +27,7 @@ public class FirstSetTest {
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.A) //
-        .endConfig() //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b) //
         .derive(NT.AB).to(Term.a).or().to(Term.b) //

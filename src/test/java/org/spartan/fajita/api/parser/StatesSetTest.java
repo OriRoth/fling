@@ -31,10 +31,7 @@ public class StatesSetTest {
 
   @Before public void initializeStates() throws ReduceReduceConflictException, ShiftReduceConflictException {
     bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig()//
-        .setApiNameTo("TEST")//
         .start(NT.S)//
-        .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a) //
         .finish();

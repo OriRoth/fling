@@ -31,10 +31,7 @@ public class FollowSetTest {
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S) //
-        .endConfig() //
         .derive(NT.S).to(NT.A).or().to(NT.B).or().to(NT.AB).or().to(NT.C) //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b)//
@@ -49,10 +46,7 @@ public class FollowSetTest {
   }
   @Test public void testMultipleStartsFollowedBy$() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("TEST") //
         .start(NT.S, NT.A) //
-        .endConfig() //
         .derive(NT.S).to(NT.B).or().to(NT.AB) //
         .derive(NT.A).to(NT.C) //
         .derive(NT.B).to(Term.b)//
