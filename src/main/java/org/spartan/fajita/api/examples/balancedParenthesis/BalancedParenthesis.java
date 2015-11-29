@@ -30,10 +30,7 @@ public class BalancedParenthesis {
 
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("BalancedParenthesis") //
         .start(BALANCED) //
-        .endConfig() //
         .derive(BALANCED).to(lp).and(BALANCED).and(rp) //
         /*        */.or().to(lp).and(BALANCED).and(rp).and(BALANCED) //
         /*        */.or().to(lp).and(rp).and(BALANCED)//

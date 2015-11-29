@@ -34,10 +34,7 @@ public class AutomatonCycles {
 
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("AutomatonCycles") //
         .start(D) //
-        .endConfig() //
         .derive(D).to(C).and(d) //
         .derive(C).to(A).and(B) //
         .derive(A).to(a).and(A) //

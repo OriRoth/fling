@@ -26,10 +26,7 @@ public class SqlFragment {
 
   public static void buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("SqlFragment") //
         .start(SELECT_STATEMENT) //
-        .endConfig() //
         //
         .derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE) //
         /*                */.or().to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES) //

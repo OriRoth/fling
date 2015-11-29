@@ -58,11 +58,7 @@ public class BinaryExpressionsUse {
     // define the rules
     BNF b = new BNFBuilder(Term.class, NT.class) //
         //
-        .startConfig() //
-        .setApiNameTo("Boolean expression builder") //
         .start(S) //
-        .overload(bool).with(Void.class) //
-        .endConfig() //
         //
         .derive(S).to(EXPRESSION) //
         .derive(EXPRESSION).to(OR).or().to(AND).or().to(LITERAL).or().to(NOT) //

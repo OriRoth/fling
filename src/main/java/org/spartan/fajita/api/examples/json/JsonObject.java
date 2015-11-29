@@ -55,16 +55,7 @@ public class JsonObject {
    */
   public static void buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("Json Object Builder") //
         .start(START) //
-        .overload(to).with(boolean.class)//
-        .overload(to).with(double.class) //
-        .overload(to).with(String.class) //
-        .overload(add).with(boolean.class)//
-        .overload(add).with(double.class) //
-        .overload(add).with(String.class) //
-        .endConfig() //
         .derive(START).to(OBJECT) //
         .derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
         .derive(NEXT).to(NEXT_ADD).or().to(LAST_ADD)//

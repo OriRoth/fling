@@ -44,11 +44,7 @@ public class BNFBootstrap {
   // TODO: fix bootstrap.
   public static void buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("BNF Bootstrap") //
         .start(S) //
-        .overload(to).with(Terminal.class) //
-        .endConfig() //
         //
         .derive(S).to(setApiName).and(RULE).and(NEXT) //
         .derive(RULE).to(derive).and(RULE_TYPE) //
