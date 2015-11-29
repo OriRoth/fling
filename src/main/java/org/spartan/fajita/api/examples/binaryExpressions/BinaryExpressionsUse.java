@@ -60,7 +60,7 @@ public class BinaryExpressionsUse {
         //
         .startConfig() //
         .setApiNameTo("Boolean expression builder") //
-        .setStartSymbols(S) //
+        .start(S) //
         .overload(bool).with(Void.class) //
         .endConfig() //
         //

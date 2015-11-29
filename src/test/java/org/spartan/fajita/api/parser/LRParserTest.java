@@ -37,7 +37,7 @@ public class LRParserTest {
     bnf = new BNFBuilder(Term.class, NT.class)//
         .startConfig()//
         .setApiNameTo("Test taken from Book about compilation") //
-        .setStartSymbols(NT.E) //
+        .start(NT.E) //
         .endConfig() //
         .derive(NT.E).to(NT.E).and(Term.plus).and(NT.T) //
         .derive(NT.E).to(NT.T) //
@@ -62,7 +62,7 @@ public class LRParserTest {
     BNF bnf2 = new BNFBuilder(Term.class, NT2.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT2.S) //
+        .start(NT2.S) //
         .endConfig() //
         .derive(NT2.S).to(NT2.A) //
         .derive(NT2.A).to(NT2.S) //
@@ -77,7 +77,7 @@ public class LRParserTest {
     BNF bnf2 = new BNFBuilder(Term.class, NT2.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT2.S) //
+        .start(NT2.S) //
         .endConfig() //
         .derive(NT2.S).to(NT2.A).or().to(NT2.B) //
         .derive(NT2.A).to(Term.id) //

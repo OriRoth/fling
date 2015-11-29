@@ -28,7 +28,7 @@ public class NullablesTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.A) //
+        .start(NT.A) //
         .endConfig() //
         .derive(NT.Nullable).to(SpecialSymbols.epsilon).or().to(NT.A) //
         .derive(NT.Nullable2).to(NT.Nullable).or().to(NT.A) //

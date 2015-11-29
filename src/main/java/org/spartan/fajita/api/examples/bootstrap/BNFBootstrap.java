@@ -46,7 +46,7 @@ public class BNFBootstrap {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("BNF Bootstrap") //
-        .setStartSymbols(S) //
+        .start(S) //
         .overload(to).with(Terminal.class) //
         .endConfig() //
         //

@@ -33,7 +33,7 @@ public class OverloadTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .overload(Term.t1).with(String.class).endConfig() //
         .derive(NT.S).to(NT.A) //
         .derive(NT.A).to(Term.t1) //
@@ -44,7 +44,7 @@ public class OverloadTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .overload(Term.t1).with(Term.class, String.class, int.class).endConfig() //
         .derive(NT.S).to(NT.A) //
         .derive(NT.A).to(Term.t1) //
@@ -55,7 +55,7 @@ public class OverloadTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .overload(Term.t1).with(String.class, int.class, Type.class)//
         .overload(Term.t1).with(String.class, int.class) //
         .overload(Term.t1).with(Integer.class, Object.class) //
@@ -71,7 +71,7 @@ public class OverloadTest {
     new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .overload(Term.t1).with(Void.class)//
         .endConfig() //
         .derive(NT.S).to(NT.A) //
@@ -85,7 +85,7 @@ public class OverloadTest {
     new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .overload(Term.t1).with(clss1) //
         .overload(Term.t1).with(clss2) //
         .endConfig() //

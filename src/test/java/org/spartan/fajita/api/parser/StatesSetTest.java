@@ -33,7 +33,7 @@ public class StatesSetTest {
     bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig()//
         .setApiNameTo("TEST")//
-        .setStartSymbols(NT.S)//
+        .start(NT.S)//
         .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a) //

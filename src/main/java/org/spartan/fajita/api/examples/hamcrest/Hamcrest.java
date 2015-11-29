@@ -51,7 +51,7 @@ import org.spartan.fajita.api.parser.LRParser;
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("Hamcrest") //
-        .setStartSymbols(ASSERT) //
+        .start(ASSERT) //
         .endConfig() //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
         .derive(MATCHER).to(instance_of).and(type) //

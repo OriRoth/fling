@@ -38,7 +38,7 @@ public class StrongerThanLALR {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("AutomatonCycles") //
-        .setStartSymbols(S) //
+        .start(S) //
         .endConfig() //
         .derive(S).to(a).and(E).and(c) //
         /* */.or().to(a).and(F).and(d) //

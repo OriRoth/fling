@@ -29,7 +29,7 @@ public class FirstSetTest {
     bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.A) //
+        .start(NT.A) //
         .endConfig() //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b) //

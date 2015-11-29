@@ -31,7 +31,7 @@ public class StateGotoTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
@@ -47,7 +47,7 @@ public class StateGotoTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
@@ -65,7 +65,7 @@ public class StateGotoTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .endConfig() //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
@@ -83,7 +83,7 @@ public class StateGotoTest {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .endConfig() //
         .derive(NT.S).to(Term.a).and(NT.A) //
         .derive(NT.A).to(Term.b).and(Term.c) //

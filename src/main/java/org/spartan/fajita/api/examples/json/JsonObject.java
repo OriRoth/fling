@@ -57,7 +57,7 @@ public class JsonObject {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("Json Object Builder") //
-        .setStartSymbols(START) //
+        .start(START) //
         .overload(to).with(boolean.class)//
         .overload(to).with(double.class) //
         .overload(to).with(String.class) //

@@ -13,7 +13,6 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 
 /**
  * @author Tomer
@@ -24,8 +23,6 @@ public class BNFBuilder {
   private final Set<Terminal> terminals;
   private final Set<NonTerminal> nonterminals;
   private final Set<NonTerminal> startSymbols;
-  private final Set<Terminal> overloads;
-  private String apiName;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
@@ -33,10 +30,6 @@ public class BNFBuilder {
     nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
     derivationRules = new LinkedList<>();
     startSymbols = new HashSet<>();
-    overloads = new HashSet<>();
-  }
-  public InitialConfigurator startConfig() {
-    return new InitialConfigurator();
   }
   private boolean symbolExists(final Symbol symb) {
     return getNonTerminals().contains(symb) || getTerminals().contains(symb);
@@ -59,29 +52,8 @@ public class BNFBuilder {
     checkNewRule(r);
     getRules().add(r);
   }
-  private void addOverload(final String name, final Type type) {
-    overloads.add(new Terminal() {
-      @Override public String name() {
-        return name;
-      }
-      @Override public String toString() {
-        return methodSignatureString();
-      }
-      @Override public Type type() {
-        return type;
-      }
-    });
-  }
   private void validate() {
     validateNonterminals();
-    validateOverloads();
-  }
-  private void validateOverloads() {
-    overloads.forEach(t -> {
-      if (overloads.stream().anyMatch(t2 -> t2.name().equals(t.name()) && t2.type().equals(t.type()) && t != t2)
-          || terminals.stream().anyMatch(t2 -> t2.name().equals(t.name()) && t2.type().equals(t.type())))
-        throw new IllegalStateException("overload: " + t.methodSignatureString() + " already exists.");
-    });
   }
   private void validateNonterminals() {
     for (NonTerminal nonTerminal : getNonTerminals())
@@ -92,24 +64,20 @@ public class BNFBuilder {
     validate();
     nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     terminals.add(SpecialSymbols.$);
-    terminals.addAll(overloads);
     for (NonTerminal startSymbol : startSymbols)
       addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
-  String getApiName() {
-    return apiName;
-  }
-  private void setApiName(final String apiName) {
-    this.apiName = apiName;
-  }
   List<DerivationRule> getRules() {
     return derivationRules;
   }
-  private void setStartSymbols(final NonTerminal[] startSymbols) {
-    this.startSymbols.addAll(Arrays.asList(startSymbols));
-  }
 
+  public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
+    NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
+    newNts[nts.length] = nt;
+    BNFBuilder.this.startSymbols.addAll(Arrays.asList(newNts));
+    return new FirstDerive();
+  }
   private abstract class Deriver {
     protected final NonTerminal lhs;
     protected final ArrayList<Symbol> symbols;
@@ -174,44 +142,7 @@ public class BNFBuilder {
     }
   }
 
-  public class InitialConfigurator {
-    @SuppressWarnings("synthetic-access") public AfterName setApiNameTo(final String apiName) {
-      setApiName(apiName);
-      return new AfterName();
-    }
-  }
-
-  public class AfterName {
-    @SuppressWarnings("synthetic-access") public NewOverload setStartSymbols(final NonTerminal nt, final NonTerminal... nts) {
-      NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
-      newNts[nts.length] = nt;
-      BNFBuilder.this.setStartSymbols(newNts);
-      return new NewOverload();
-    }
-  }
-
-  public class NewOverload {
-    public OverloadWith overload(final Terminal t) {
-      return new OverloadWith(t.name());
-    }
-    public EndConfig endConfig() {
-      return new EndConfig();
-    }
-  }
-
-  public class OverloadWith {
-    private final String terminalName;
-
-    OverloadWith(final String terminalName) {
-      this.terminalName = terminalName;
-    }
-    @SuppressWarnings("synthetic-access") public NewOverload with(final Class<?> clss1, final Class<?>... classes) {
-      addOverload(terminalName, new Type(clss1, classes));
-      return new NewOverload();
-    }
-  }
-
-  public class EndConfig {
+  public class FirstDerive {
     public InitialDeriver derive(final NonTerminal nt) {
       return new InitialDeriver(nt);
     }

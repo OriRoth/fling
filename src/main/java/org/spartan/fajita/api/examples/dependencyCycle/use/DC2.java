@@ -39,10 +39,10 @@ public class DC2 {
 
   public static LRParser buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("list of a's") //
-        .setStartSymbols(A) //
-        .endConfig() //
+        
+        
+        .start(A) //
+        
         .derive(A).to(A).and(a).or().to(a) //
         .finish();
     System.out.println(bnf);

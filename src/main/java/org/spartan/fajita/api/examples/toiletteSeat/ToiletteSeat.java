@@ -47,7 +47,7 @@ public class ToiletteSeat {
     BNF bnf = new BNFBuilder(ToiletteTerminals.class,ToiletteVariables.class)
     .startConfig() //
     .setApiNameTo("Toilette Seat") //
-    .setStartSymbols(Visitors) //
+    .start(Visitors) //
     .endConfig() //
     .derive(Visitors) //
       .to(Down_Visitors) //

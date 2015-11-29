@@ -33,7 +33,7 @@ public class FollowSetTest {
     bnf = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S) //
+        .start(NT.S) //
         .endConfig() //
         .derive(NT.S).to(NT.A).or().to(NT.B).or().to(NT.AB).or().to(NT.C) //
         .derive(NT.A).to(Term.a) //
@@ -51,7 +51,7 @@ public class FollowSetTest {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .startConfig() //
         .setApiNameTo("TEST") //
-        .setStartSymbols(NT.S, NT.A) //
+        .start(NT.S, NT.A) //
         .endConfig() //
         .derive(NT.S).to(NT.B).or().to(NT.AB) //
         .derive(NT.A).to(NT.C) //

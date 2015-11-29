@@ -44,10 +44,7 @@ public class DependencyCycle {
 
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .startConfig() //
-        .setApiNameTo("Balanced Parenthesis") //
-        .setStartSymbols(A) //
-        .endConfig() //
+        .start(A) //
         .derive(A).to(B).and(d).or().to(a) //
         .derive(B).to(A).and(e) //
         .finish();
