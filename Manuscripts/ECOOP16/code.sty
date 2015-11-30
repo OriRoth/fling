@@ -48,18 +48,22 @@
 \tcbset{codebox/.style={
   after=\relax,
   before=\relax,
-  left=0pt,
+  left=-2ex,
   right=0pt,
+  left skip=0pt,
+  right skip=0pt,
   top=0pt,
   bottom=0pt,
   boxsep=0pt,
- % boxrule=0pt,
- % boxsep=2pt,
+  toprule=0pt,
+  bottomrule=0pt,
+  leftrule=0pt,
+  rightrule=0pt,
   clip title=false,
   colbacklower=blue!90,
   colback=olive!10!white,
   colbacktitle=yellow!85!orange!77!white,
-  colframe=white,
+  colframe=black,
   sharp corners=all,
   collower=Blue,
   coltitle=blue!50!black,
@@ -95,7 +99,6 @@
 
 \newtcblisting{lcode}[2][]{%
   codebox=#2,
-  before=\par\smallskip,
   #1
 }
 

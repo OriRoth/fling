@@ -1,7 +1,13 @@
 \subsection{Method Chaining \emph{vs.} Fluent API}
 The term \emph{method chaining} is illustrated in neat examples, such
-as in the \nth{3} to \nth{6} line of the following \Java function:\\
-\begin{lcode}[minipage,width=\linewidth]{Java}
+as in the \nth{3} to \nth{6} line of the \Java function
+in \cref{Figure:chaining}
+
+\begin{wrapfigure}[10]{r}{44ex}
+  \caption{\label{Figure:chaining}%
+    Method chaining onto an object of class \cc{StreamBuilder}.
+  }
+  \begin{lcode}[minipage,width=\linewidth]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   StringBuilder sb = new StringBuilder();
     return sb
@@ -9,23 +15,34 @@ String time(int hours, int minutes, int seconds) {¢¢
       ¢¢.append(minutes).append(':')
       ¢¢.append(seconds)
       ¢¢.toString();
-}
-\end{lcode}\\
-Method chaining is means that the same object, \cc{sb} of type \cc{StringBuilder} in the above,
+}\end{lcode}
+\end{wrapfigure}
+
+Method chaining means that the same object, \cc{sb} of type \cc{StringBuilder} in the figure 
    is the receiver of a chain of methods.
-There is syntactic sugar for method chaining in languages such as \Smalltalk.
-In \Java, method chaining is made possible by making each variant
-  of the method \cc{append} return the receiver, i.e., \kk{this}.
-With this convention, the tedious JAVA
-\begin{JAVA}
-sb.append(hours);
-sb.append(':');
-sb.append(minutes);
-sb.append(':');
-sb.append(seconds);
-return sb.toString();
-\end{JAVA}
-becomes a bit shorter and less repetitive.
+There is syntactic sugar for method chaining in languages, 
+  e.g., \Smalltalk where it takes the name ``\emph{cascading}''. 
+In \Java, the method chaining of \cref{Figure:chaining} is 
+  made possible by making each overloaded variant of 
+  of \cc{append} return the receiver, i.e., \kk{this}.
+To appreciate the convention, compare with the 
+  non-chaining version in \cref{Figure:non-chaining}.
+  
+\begin{wrapfigure}[10]{r}{44ex}
+  \caption{\label{Figure:non-chaining}%
+    A non-chaining version of \cref{Figure:chaining}
+  }
+  \begin{lcode}[minipage,width=\linewidth]{Java}
+String time(int hours, int minutes, int seconds) {¢¢
+  StringBuilder sb = new StringBuilder();
+  sb.append(hours);
+  sb.append(':');
+  sb.append(minutes);
+  sb.append(':');
+  sb.append(seconds);
+  return sb.toString();
+}\end{lcode}
+\end{wrapfigure}
 
 Now, definition found in the web of the term \emph{fluent API†{API =
     \textbf Application \textbf Program \textbf Interface
@@ -34,12 +51,10 @@ Invariably, such definitions liken fluent API to method chaining;
   they also tend to emphasize that fluent API is ‟more” than method
   chaining, and ask the reader to extrapolate from one term to the other.
 
-Indeed, fluent API looks much like method chaining; indeed method chaining is a kind
-  of fluent API{}.
-However, the main distinction between the two terms is the identity of the receiver.
+The distinction between the two terms is the identity of the receiver.
 In method chaining, all methods are invoked on the same object, whereas in fluent API
   the receiver of each method in the chain may be arbitrary.
-Perhaps surprisingly, this difference makes fluent API significantly more expressive.
+Perhaps surprisingly, this difference makes fluent API more expressive.
 Consider, for example, the following JAVA fragment (drawn from JMock~\cite{Freeman:Pryce:06})
 \begin{JAVA}
 allowing (any(Object.class))
