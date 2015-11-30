@@ -18,7 +18,6 @@ import static org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat.Toilette
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
 
@@ -31,9 +30,6 @@ public class ToiletteSeat {
     male, female,
     urinate, defecate,
     lower, raise;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum ToiletteVariables implements NonTerminal {
@@ -51,11 +47,11 @@ public class ToiletteSeat {
     .derive(Down_Visitors) //
       .to(Down_Visitor).and(Down_Visitors) //
       .or().to(Raising_Visitor).and(Up_Visitors) //
-      .or().to(SpecialSymbols.epsilon) //
+      .orNone() //
     .derive(Up_Visitors) //
       .to(Up_Visitor).and(Up_Visitors) //
       .or().to(Lowering_Visitor).and(Down_Visitors) //
-      .or().to(SpecialSymbols.epsilon) //
+      .orNone() //
     .derive(Up_Visitor)//
       .to(male).and(urinate) //
     .derive(Down_Visitor) //

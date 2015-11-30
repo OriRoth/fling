@@ -33,9 +33,6 @@ public class DependencyCycle {
 
   static enum Term implements Terminal {
     a, d, e;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum NT implements NonTerminal {

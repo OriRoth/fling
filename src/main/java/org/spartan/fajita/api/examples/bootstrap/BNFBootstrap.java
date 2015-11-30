@@ -16,20 +16,9 @@ public class BNFBootstrap {
   }
 
   static enum Term implements Terminal {
-    setApiName(String.class), derive(NonTerminal.class), to(NonTerminal.class), //
-    and(Symbol.class), toOneOf(NonTerminal.class), or(NonTerminal.class), //
+    setApiName, derive, to, //
+    and, toOneOf, or, //
     finish;
-    private final Type type;
-
-    private Term(final Class<?> cls1, final Class<?>... type) {
-      this.type = new Type(cls1, type);
-    }
-    private Term() {
-      type = new Type();
-    }
-    @Override public Type type() {
-      return type;
-    }
     @Override public String toString() {
       return methodSignatureString();
     }

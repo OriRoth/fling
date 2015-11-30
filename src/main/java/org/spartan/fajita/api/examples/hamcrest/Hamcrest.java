@@ -37,9 +37,6 @@ import org.spartan.fajita.api.parser.LRParser;
 
   enum Term implements Terminal {
     assertThat, instance_of, anything, not, equals_to, any_of, value, type;
-    @Override public Type type() {
-      return new Type();
-    }
   }
 
   static enum NT implements NonTerminal {

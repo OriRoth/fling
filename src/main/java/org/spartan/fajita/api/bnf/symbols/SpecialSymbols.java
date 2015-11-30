@@ -20,9 +20,6 @@ public class SpecialSymbols {
     @Override public String toString() {
       return name();
     }
-    @Override public Type type() {
-      return Type.notype;
-    }
     @Override public String methodSignatureString() {
       return name();
     }

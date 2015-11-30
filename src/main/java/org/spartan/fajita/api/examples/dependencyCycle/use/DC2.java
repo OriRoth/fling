@@ -28,9 +28,6 @@ public class DC2 {
 
   static enum Term implements Terminal {
     a;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum NT implements NonTerminal {

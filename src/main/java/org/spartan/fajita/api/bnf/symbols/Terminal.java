@@ -3,7 +3,6 @@ package org.spartan.fajita.api.bnf.symbols;
 import java.util.List;
 
 public interface Terminal extends Symbol {
-  public Type type();
   @Override public default String methodSignatureString() {
     List<Class<?>> classes = type().classes;
     if (classes.size() == 1 && classes.iterator().next() == Void.class)

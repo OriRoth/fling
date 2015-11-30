@@ -19,9 +19,6 @@ public class BalancedParenthesis {
 
   static enum Term implements Terminal {
     lp, rp, build;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum NT implements NonTerminal {

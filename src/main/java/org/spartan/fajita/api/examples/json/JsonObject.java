@@ -27,9 +27,6 @@ public class JsonObject {
     private Term() {
       type = new Type();
     }
-    @Override public Type type() {
-      return type;
-    }
   }
 
   static enum NT implements NonTerminal {

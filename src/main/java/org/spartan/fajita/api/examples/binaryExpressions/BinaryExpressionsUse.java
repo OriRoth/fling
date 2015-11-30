@@ -33,18 +33,8 @@ public class BinaryExpressionsUse {
 //  }
 
   enum Term implements Terminal {
-    bool(boolean.class), and, or, not;
-    private final Type type;
+    bool, and, or, not;
 
-    Term(final Class<?> c1, final Class<?>... classes) {
-      type = new Type(c1, classes);
-    }
-    Term() {
-      type = new Type();
-    }
-    @Override public Type type() {
-      return type;
-    }
     @Override public String toString() {
       return methodSignatureString();
     }

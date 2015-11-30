@@ -25,9 +25,6 @@ public class StrongerThanLALR {
 
   static enum Term implements Terminal {
     a, b, c, d,e;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum NT implements NonTerminal {

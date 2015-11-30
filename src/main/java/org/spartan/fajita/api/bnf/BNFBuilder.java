@@ -2,6 +2,7 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,7 +48,7 @@ public class BNFBuilder {
       throw new IllegalArgumentException("rule " + r + " already exists");
     return this;
   }
-  private void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
+  void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
     DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
     checkNewRule(r);
     getRules().add(r);
@@ -71,13 +72,13 @@ public class BNFBuilder {
   List<DerivationRule> getRules() {
     return derivationRules;
   }
-
   public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
     NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
     newNts[nts.length] = nt;
     BNFBuilder.this.startSymbols.addAll(Arrays.asList(newNts));
     return new FirstDerive();
   }
+
   private abstract class Deriver {
     protected final NonTerminal lhs;
     protected final ArrayList<Symbol> symbols;
@@ -112,8 +113,15 @@ public class BNFBuilder {
     InitialDeriver(final NonTerminal lhs) {
       this.lhs = lhs;
     }
-    public NormalDeriver to(final Symbol term) {
+    public NormalDeriver to(final Terminal term, Class<?>... type) {
       return new NormalDeriver(lhs, term);
+    }
+    public NormalDeriver to(final NonTerminal nt) {
+      return new NormalDeriver(lhs, nt);
+    }
+    FirstDerive toNone() {
+      addRule(lhs, Collections.emptyList());
+      return new FirstDerive();
     }
   }
 
@@ -124,20 +132,23 @@ public class BNFBuilder {
    *
    */
   public final class NormalDeriver extends Deriver {
-    NormalDeriver(final NonTerminal lhs, final Symbol child) {
+    NormalDeriver(final NonTerminal lhs, final NonTerminal child) {
       super(lhs, child);
     }
-    NormalDeriver(final NonTerminal lhs, final Symbol firstChild, final Symbol secondChild) {
-      super(lhs, firstChild, secondChild);
+    public NormalDeriver(NonTerminal lhs,final Terminal child,Class<?> ... type) {
+     
     }
     public InitialDeriver or() {
       return derive(lhs);
+    }
+    public FirstDerive orNone() {
+      return derive(lhs).toNone();
     }
     public NormalDeriver and(final Symbol symb) {
       symbols.add(symb);
       return this;
     }
-    @SuppressWarnings("synthetic-access") @Override protected void addRuleToBNF() {
+    @Override protected void addRuleToBNF() {
       addRule(lhs, symbols);
     }
   }

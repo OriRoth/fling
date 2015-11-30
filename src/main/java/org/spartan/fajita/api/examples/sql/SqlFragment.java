@@ -12,9 +12,6 @@ import org.spartan.fajita.api.bnf.symbols.Type;
 public class SqlFragment {
   enum Term implements Terminal {
     select, column, from, all, distinct, table, where, equals, geq, leq, literal;
-    @Override public Type type() {
-      return new Type();
-    }
     @Override public String toString() {
       return methodSignatureString();
     }
