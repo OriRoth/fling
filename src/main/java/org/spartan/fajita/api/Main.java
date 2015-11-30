@@ -36,11 +36,11 @@ import com.squareup.javapoet.JavaFile;
 public class Main {
   public static void main(final String[] args) {
      apiGenerator();
-    // expressionBuilder();
+     expressionBuilder();
   }
   static void apiGenerator() {
     final BNF bnf = AutomatonCycles.buildBNF();
-    lrAutomatonVisualisation(new LRParser(bnf));
+//    lrAutomatonVisualisation(new LRParser(bnf));
     JavaFile fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
   }
@@ -72,7 +72,7 @@ public class Main {
 
   private static JGraphModelAdapter<State, LabeledEdge> model;
 
-  private static void lrAutomatonVisualisation(final LRParser parser) {
+  @SuppressWarnings("unused") private static void lrAutomatonVisualisation(final LRParser parser) {
     DirectedGraph<State, LabeledEdge> graph = generateGraph(parser);
     model = new JGraphModelAdapter<>(graph);
     parser.getStates().forEach(s -> positionVertexAt(s, 100 + (s.index % 4) * 350, 100 + (s.index / 4) * 100));

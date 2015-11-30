@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Type {
   public final List<Class<?>> classes;
@@ -59,16 +58,16 @@ public class Type {
       byte[] byteArray = o.toByteArray();
       String $ = "";
       for (byte b : byteArray)
-        $ += (String.format("%d,", new Byte(b)));
+        $ += (String.format("%d:", new Byte(b)));
       return $.substring(0, $.length() - 1);
     } catch (IOException e) {
       throw new RuntimeException("serialization of type failed.", e);
     }
   }
   @SuppressWarnings("unchecked") public static Type deserialize(String $) {
-    Byte[] bArray = (Byte[])Arrays.stream($.split(",")).map(b -> Byte.decode(b)).collect(Collectors.toList()).toArray();
-    byte[] byteArray = new byte[bArray.length];
-    int i = 0; for (Byte B : bArray) byteArray[i++] = B.byteValue();
+    String split[] = $.split(":");
+    byte[] byteArray = new byte[split.length];
+    int i = 0; for (String strByte : split) byteArray[i++] = Byte.decode(strByte).byteValue();
     try (ByteArrayInputStream o = new ByteArrayInputStream(byteArray) //
     ; ObjectInputStream oos = new ObjectInputStream(o)) {
       List<Class<?>> l = (List<Class<?>>) oos.readObject();

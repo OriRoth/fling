@@ -75,18 +75,18 @@ import org.spartan.fajita.api.examples.ASTViewer;
   }
 
   public static class Q0 extends
-      BaseState<EmptyStack, Q1<Q0, Q7<Q2<Q0, ?, ?>, Q6<Q4<Q0>>, Q5<Q4<Q0>>>>, ErrorState, ErrorState, ErrorState, Q2<Q0, Q6<Q4<Q0>>, Q5<Q4<Q0>>>, ErrorState, Q4<Q0>, Q3<Q0>> {
+      BaseState<EmptyStack, Q1<Q0, Q5<Q4<Q0, ?, ?>, Q8<Q2<Q0>>, Q7<Q2<Q0>>>>, ErrorState, ErrorState, ErrorState, Q4<Q0, Q8<Q2<Q0>>, Q7<Q2<Q0>>>, ErrorState, Q2<Q0>, Q3<Q0>> {
     public Q0() {
       super(new EmptyStack(), new ArrayList<>());
     }
-    @Override public Q1<Q0, Q7<Q2<Q0, ?, ?>, Q6<Q4<Q0>>, Q5<Q4<Q0>>>> a() {
+    @Override public Q1<Q0, Q5<Q4<Q0, ?, ?>, Q8<Q2<Q0>>, Q7<Q2<Q0>>>> a() {
       return new Q1<>(this, reduces);
     }
-    @Override protected Q2<Q0, Q6<Q4<Q0>>, Q5<Q4<Q0>>> A() {
-      return new Q2<>(this, reduces);
-    }
-    @Override protected Q4<Q0> C() {
+    @Override protected Q4<Q0, Q8<Q2<Q0>>, Q7<Q2<Q0>>> A() {
       return new Q4<>(this, reduces);
+    }
+    @Override protected Q2<Q0> C() {
+      return new Q2<>(this, reduces);
     }
     @Override protected Q3<Q0> D() {
       return new Q3<>(this, reduces);
@@ -96,7 +96,7 @@ import org.spartan.fajita.api.examples.ASTViewer;
   public static class Q1<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, A_1_b_4019 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
       extends
       BaseState<Stack, Q1<Q1<Stack, ?>, A_1_b_4019>, A_1_b_4019, ErrorState, ErrorState, Q9<Q1<Stack, ?>, A_1_b_4019>, ErrorState, ErrorState, ErrorState> {
-    private final String rule4 = "4,<A>,%a%*-84,-19,0,5,115,114,0,19,106,97,118,97,46,117,116,105,108,46,65,114,114,97,121,76,105,115,116,120,-127,-46,29,-103,-57,97,-99,3,0,1,73,0,4,115,105,122,101,120,112,0,0,0,0,119,4,0,0,0,0,120*";
+    private final String rule4 = "4,<A>,%a%*-84:-19:0:5:115:114:0:19:106:97:118:97:46:117:116:105:108:46:65:114:114:97:121:76:105:115:116:120:-127:-46:29:-103:-57:97:-99:3:0:1:73:0:4:115:105:122:101:120:112:0:0:0:0:119:4:0:0:0:0:120*";
 
     Q1(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
@@ -113,16 +113,15 @@ import org.spartan.fajita.api.examples.ASTViewer;
     }
   }
 
-  public static class Q2<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_1_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_1_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
-      extends
-      BaseState<Stack, ErrorState, Q7<Q2<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147>, ErrorState, ErrorState, ErrorState, Q8<Q2<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147>, ErrorState, ErrorState> {
+  public static class Q2<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>> extends
+      BaseState<Stack, ErrorState, ErrorState, Q7<Q2<Stack>>, Q8<Q2<Stack>>, ErrorState, ErrorState, ErrorState, ErrorState> {
     Q2(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
     }
-    @Override public Q7<Q2<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147> b() {
+    @Override public Q7<Q2<Stack>> d(String arg0) {
       return new Q7<>(this, reduces);
     }
-    @Override protected Q8<Q2<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147> B() {
+    @Override public Q8<Q2<Stack>> d(Integer arg0) {
       return new Q8<>(this, reduces);
     }
   }
@@ -139,51 +138,26 @@ import org.spartan.fajita.api.examples.ASTViewer;
     }
   }
 
-  public static class Q4<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>> extends
-      BaseState<Stack, ErrorState, ErrorState, Q5<Q4<Stack>>, Q6<Q4<Stack>>, ErrorState, ErrorState, ErrorState, ErrorState> {
+  public static class Q4<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_1_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_1_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
+      extends
+      BaseState<Stack, ErrorState, Q5<Q4<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147>, ErrorState, ErrorState, ErrorState, Q6<Q4<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147>, ErrorState, ErrorState> {
     Q4(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
     }
-    @Override public Q5<Q4<Stack>> d(String arg0) {
+    @Override public Q5<Q4<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147> b() {
       return new Q5<>(this, reduces);
     }
-    @Override public Q6<Q4<Stack>> d(Integer arg0) {
+    @Override protected Q6<Q4<Stack, ?, ?>, C_1_d_1418485606, C_1_d_692408147> B() {
       return new Q6<>(this, reduces);
     }
   }
 
-  public static class Q5<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>>
-      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
-    private final String rule0 = "0,<D>,<C>,%d%*-84,-19,0,5,115,114,0,19,106,97,118,97,46,117,116,105,108,46,65,114,114,97,121,76,105,115,116,120,-127,-46,29,-103,-57,97,-99,3,0,1,73,0,4,115,105,122,101,120,112,0,0,0,1,119,4,0,0,0,1,118,114,0,16,106,97,118,97,46,108,97,110,103,46,83,116,114,105,110,103,-96,-16,-92,56,122,59,-77,66,2,0,0,120,112,120*";
-
-    Q5(Stack stack, List<DerivationRule> reduces) {
-      super(stack, reduces);
-    }
-    @Override public Object $() {
-      reduces.add(DerivationRule.deserialize(rule0));
-      return pop().pop().D().$();
-    }
-  }
-
-  public static class Q6<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>>
-      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
-    private final String rule1 = "1,<D>,<C>,%d%*-84,-19,0,5,115,114,0,19,106,97,118,97,46,117,116,105,108,46,65,114,114,97,121,76,105,115,116,120,-127,-46,29,-103,-57,97,-99,3,0,1,73,0,4,115,105,122,101,120,112,0,0,0,1,119,4,0,0,0,1,118,114,0,17,106,97,118,97,46,108,97,110,103,46,73,110,116,101,103,101,114,18,-30,-96,-92,-9,-127,-121,56,2,0,1,73,0,5,118,97,108,117,101,120,114,0,16,106,97,118,97,46,108,97,110,103,46,78,117,109,98,101,114,-122,-84,-107,29,11,-108,-32,-117,2,0,0,120,112,120*";
-
-    Q6(Stack stack, List<DerivationRule> reduces) {
-      super(stack, reduces);
-    }
-    @Override public Object $() {
-      reduces.add(DerivationRule.deserialize(rule1));
-      return pop().pop().D().$();
-    }
-  }
-
-  public static class Q7<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, B_1_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, B_1_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
+  public static class Q5<Stack extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, B_1_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, B_1_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
       extends
       BaseState<Stack, ErrorState, ErrorState, B_1_d_692408147, B_1_d_1418485606, ErrorState, ErrorState, ErrorState, ErrorState> {
-    private final String rule5 = "5,<B>,%b%*-84,-19,0,5,115,114,0,19,106,97,118,97,46,117,116,105,108,46,65,114,114,97,121,76,105,115,116,120,-127,-46,29,-103,-57,97,-99,3,0,1,73,0,4,115,105,122,101,120,112,0,0,0,0,119,4,0,0,0,0,120*";
+    private final String rule5 = "5,<B>,%b%*-84:-19:0:5:115:114:0:19:106:97:118:97:46:117:116:105:108:46:65:114:114:97:121:76:105:115:116:120:-127:-46:29:-103:-57:97:-99:3:0:1:73:0:4:115:105:122:101:120:112:0:0:0:0:119:4:0:0:0:0:120*";
 
-    Q7(Stack stack, List<DerivationRule> reduces) {
+    Q5(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
     }
     @Override @SuppressWarnings({ "unchecked" }) public B_1_d_692408147 d(String arg0) {
@@ -196,12 +170,12 @@ import org.spartan.fajita.api.examples.ASTViewer;
     }
   }
 
-  public static class Q8<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>, C_2_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_2_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
+  public static class Q6<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>, C_2_d_1418485606 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, C_2_d_692408147 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
       extends
       BaseState<Stack, ErrorState, ErrorState, C_2_d_692408147, C_2_d_1418485606, ErrorState, ErrorState, ErrorState, ErrorState> {
     private final String rule2 = "2,<C>,<A>,<B>";
 
-    Q8(Stack stack, List<DerivationRule> reduces) {
+    Q6(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
     }
     @Override @SuppressWarnings({ "unchecked" }) public C_2_d_692408147 d(String arg0) {
@@ -214,9 +188,35 @@ import org.spartan.fajita.api.examples.ASTViewer;
     }
   }
 
+  public static class Q7<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+    private final String rule0 = "0,<D>,<C>,%d%*-84:-19:0:5:115:114:0:19:106:97:118:97:46:117:116:105:108:46:65:114:114:97:121:76:105:115:116:120:-127:-46:29:-103:-57:97:-99:3:0:1:73:0:4:115:105:122:101:120:112:0:0:0:1:119:4:0:0:0:1:118:114:0:16:106:97:118:97:46:108:97:110:103:46:83:116:114:105:110:103:-96:-16:-92:56:122:59:-77:66:2:0:0:120:112:120*";
+
+    Q7(Stack stack, List<DerivationRule> reduces) {
+      super(stack, reduces);
+    }
+    @Override public Object $() {
+      reduces.add(DerivationRule.deserialize(rule0));
+      return pop().pop().D().$();
+    }
+  }
+
+  public static class Q8<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>>
+      extends BaseState<Stack, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
+    private final String rule1 = "1,<D>,<C>,%d%*-84:-19:0:5:115:114:0:19:106:97:118:97:46:117:116:105:108:46:65:114:114:97:121:76:105:115:116:120:-127:-46:29:-103:-57:97:-99:3:0:1:73:0:4:115:105:122:101:120:112:0:0:0:1:119:4:0:0:0:1:118:114:0:17:106:97:118:97:46:108:97:110:103:46:73:110:116:101:103:101:114:18:-30:-96:-92:-9:-127:-121:56:2:0:1:73:0:5:118:97:108:117:101:120:114:0:16:106:97:118:97:46:108:97:110:103:46:78:117:109:98:101:114:-122:-84:-107:29:11:-108:-32:-117:2:0:0:120:112:120*";
+
+    Q8(Stack stack, List<DerivationRule> reduces) {
+      super(stack, reduces);
+    }
+    @Override public Object $() {
+      reduces.add(DerivationRule.deserialize(rule1));
+      return pop().pop().D().$();
+    }
+  }
+
   public static class Q9<Stack extends BaseState<? extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?, ?, ?, ?, ?, ?, ?, ?>, A_2_b_4019 extends BaseState<?, ?, ?, ?, ?, ?, ?, ?, ?>>
       extends BaseState<Stack, ErrorState, A_2_b_4019, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState, ErrorState> {
-    private final String rule3 = "3,<A>,%a%*-84,-19,0,5,115,114,0,19,106,97,118,97,46,117,116,105,108,46,65,114,114,97,121,76,105,115,116,120,-127,-46,29,-103,-57,97,-99,3,0,1,73,0,4,115,105,122,101,120,112,0,0,0,0,119,4,0,0,0,0,120*,<A>";
+    private final String rule3 = "3,<A>,%a%*-84:-19:0:5:115:114:0:19:106:97:118:97:46:117:116:105:108:46:65:114:114:97:121:76:105:115:116:120:-127:-46:29:-103:-57:97:-99:3:0:1:73:0:4:115:105:122:101:120:112:0:0:0:0:119:4:0:0:0:0:120*,<A>";
 
     Q9(Stack stack, List<DerivationRule> reduces) {
       super(stack, reduces);
