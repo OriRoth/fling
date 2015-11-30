@@ -1,4 +1,4 @@
-Ever after their inception~\cite{Fowler:web:2005} \emph{fluent APIs}
+Ever after their inception~†{\url{http://martinfowler.com/bliki/FluentInterface.html}} \emph{fluent APIs}
   increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
   interest~\cite{Deursen:2000,Kabanov:2008}.
 Inspired by the theory of formal languages~\cite{Linz:2001} and pushdown automata,
@@ -17,9 +17,9 @@ With the generated types and methods, a chain of fluent API calls
 
 Practically speaking, the poof shows that the (potential)
   experessive power of fluent APIs,
-  is the same as ANTLR~\cite{Parr:1995:I:Dont:Think:Its:Correct}:
-If a grammar of a fluent API can be written in ANTLR, then it
-  can be implemented with a \Java library.
+  is the same as deterministic context-free grammars.
+%If a grammar of a fluent API can be written in ANTLR, then it
+%  can be implemented with a \Java library.
 Nevertheless, the algorithim for generating the parser, although polynomial
   in time and space, is too resource consuming to be implemented. 
 
@@ -35,8 +35,8 @@ As a result, the expressive power of \Self is actually stictly less than that of
 \begin{itemize}
   \item Although \Self can potentially manage all LR(k) grammars,
         the current implementation is limited to LR(1) languages
-  \item Moreover, all LR(k) languages are strict subsets of deterministic context free languages
-      which precisely those recognized by ANTLR.~\cite{Thats not true according to Knuth:65. Any DPDA have a equal LR(k) grammar}
+  \item Moreover, all LR(k) languages are strict subsets of deterministic context free languages %according to Knuth:65 LR(*)=D-CFG
+      which precisely those recognized by ANTLR. % ANTLR does not contain D-CFG,and not the opposite either.
 \end{itemize}
 We give reason why bridging this gap is highly unlikely.
 
