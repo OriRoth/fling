@@ -1,20 +1,32 @@
 package org.spartan.fajita.api.examples.sql;
 
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.*;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.*;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.COLOUMNS;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.EXPRESSION;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.OP;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.QUANTIFIER;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.SELECT_STATEMENT;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.TABLES;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.WHERE;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.all;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.column;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.distinct;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.equals;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.from;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.geq;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.leq;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.literal;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.select;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.table;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.where;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class SqlFragment {
   enum Term implements Terminal {
     select, column, from, all, distinct, table, where, equals, geq, leq, literal;
-    @Override public String toString() {
-      return methodSignatureString();
-    }
   }
 
   static enum NT implements NonTerminal {

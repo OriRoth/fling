@@ -1,13 +1,41 @@
 package org.spartan.fajita.api.examples.json;
 
-import static org.spartan.fajita.api.examples.json.JsonObject.NT.*;
-import static org.spartan.fajita.api.examples.json.JsonObject.Term.*;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ADD;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ARRAY;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ARRAY_ELEMENT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ELEMENT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ELEMENTS;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.ELEMENT_TYPE;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.LAST_ADD;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.LAST_ELEMENT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.NEXT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.NEXT_ADD;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.NEXT_ELEMENT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.OBJECT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.OBJECT_ELEMENT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.START;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.TO;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.TO_ARRAY;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.TO_NULL;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.TO_OBJECT;
+import static org.spartan.fajita.api.examples.json.JsonObject.NT.TO_TYPE;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.add;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.addArray;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.addObject;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.endArray;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.endObject;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.name;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.startArray;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.startObject;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.to;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.toArray;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.toNull;
+import static org.spartan.fajita.api.examples.json.JsonObject.Term.toObject;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class JsonObject {
   public static void expressionBuilder() {
@@ -15,18 +43,10 @@ public class JsonObject {
   }
 
   static enum Term implements Terminal {
-    startObject, endObject, name(String.class), //
-    to(int.class), toNull, toObject, toArray, //
+    startObject, endObject, name, //
+    to, toNull, toObject, toArray, //
     startArray, endArray, //
-    add(int.class), addObject, addArray;
-    private final Type type;
-
-    private Term(final Class<?> cls1, final Class<?>... type) {
-      this.type = new Type(cls1, type);
-    }
-    private Term() {
-      type = new Type();
-    }
+    add, addObject, addArray;
   }
 
   static enum NT implements NonTerminal {

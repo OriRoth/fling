@@ -2,18 +2,20 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 /**
  * @author Tomer
@@ -21,25 +23,28 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
  */
 public class BNFBuilder {
   private final List<DerivationRule> derivationRules;
-  private final Set<Terminal> terminals;
-  private final Set<NonTerminal> nonterminals;
-  private final Set<NonTerminal> startSymbols;
+  private final List<Terminal> terminals;
+  private final Set<Verb> verbs;
+  private final List<NonTerminal> nonterminals;
+  private final List<NonTerminal> startSymbols;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
-    terminals = new HashSet<>(EnumSet.allOf(terminalEnum));
-    nonterminals = new HashSet<>(EnumSet.allOf(nonterminalEnum));
-    derivationRules = new LinkedList<>();
-    startSymbols = new HashSet<>();
+    terminals = new ArrayList<>(EnumSet.allOf(terminalEnum));
+    verbs = new LinkedHashSet<>();
+    nonterminals = new ArrayList<>(EnumSet.allOf(nonterminalEnum));
+    derivationRules = new ArrayList<>();
+    startSymbols = new ArrayList<>();
   }
   private boolean symbolExists(final Symbol symb) {
-    return getNonTerminals().contains(symb) || getTerminals().contains(symb);
+    return getNonTerminals().contains(symb) //
+        || terminals.stream().anyMatch(term -> term.name().equals(symb.name()));
   }
-  Set<NonTerminal> getNonTerminals() {
+  List<NonTerminal> getNonTerminals() {
     return nonterminals;
   }
-  Set<Terminal> getTerminals() {
-    return terminals;
+  Set<Verb> getVerbs() {
+    return verbs;
   }
   private BNFBuilder checkNewRule(final DerivationRule r) {
     if (!symbolExists(r.lhs))
@@ -48,8 +53,9 @@ public class BNFBuilder {
       throw new IllegalArgumentException("rule " + r + " already exists");
     return this;
   }
-  void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
+  @SuppressWarnings("unchecked") void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
     DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
+    verbs.addAll((Collection<? extends Verb>) symbols.stream().filter(symbol -> symbol.getClass()==Verb.class).collect(Collectors.toList()));
     checkNewRule(r);
     getRules().add(r);
   }
@@ -64,7 +70,7 @@ public class BNFBuilder {
   private BNF finish() {
     validate();
     nonterminals.add(SpecialSymbols.augmentedStartSymbol);
-    terminals.add(SpecialSymbols.$);
+    verbs.add(SpecialSymbols.$);
     for (NonTerminal startSymbol : startSymbols)
       addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
@@ -114,7 +120,7 @@ public class BNFBuilder {
       this.lhs = lhs;
     }
     public NormalDeriver to(final Terminal term, Class<?>... type) {
-      return new NormalDeriver(lhs, term);
+      return new NormalDeriver(lhs, new Verb(term.name(),type));
     }
     public NormalDeriver to(final NonTerminal nt) {
       return new NormalDeriver(lhs, nt);
@@ -132,11 +138,11 @@ public class BNFBuilder {
    *
    */
   public final class NormalDeriver extends Deriver {
-    NormalDeriver(final NonTerminal lhs, final NonTerminal child) {
+    NormalDeriver(final NonTerminal lhs, final Symbol child) {
       super(lhs, child);
     }
-    public NormalDeriver(NonTerminal lhs,final Terminal child,Class<?> ... type) {
-     
+    public NormalDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
+      super(lhs, new Verb(child.name(),type));
     }
     public InitialDeriver or() {
       return derive(lhs);
@@ -144,8 +150,12 @@ public class BNFBuilder {
     public FirstDerive orNone() {
       return derive(lhs).toNone();
     }
-    public NormalDeriver and(final Symbol symb) {
-      symbols.add(symb);
+    public NormalDeriver and(final NonTerminal nt) {
+      symbols.add(nt);
+      return this;
+    }
+    public NormalDeriver and(final Terminal term,Class<?> ...type) {
+      symbols.add(new Verb(term.name(),type));
       return this;
     }
     @Override protected void addRuleToBNF() {

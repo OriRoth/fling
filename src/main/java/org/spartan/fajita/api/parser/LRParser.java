@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,7 @@ import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.parser.ActionTable.Accept;
 import org.spartan.fajita.api.parser.ActionTable.Action;
 import org.spartan.fajita.api.parser.ActionTable.Reduce;
@@ -33,8 +34,8 @@ public class LRParser {
   private final List<State> states;
   private final ActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
-  private final Map<Symbol, Set<Terminal>> baseFirstSets;
-  private final Map<NonTerminal, Set<Terminal>> followSets;
+  private final Map<Symbol, Set<Verb>> baseFirstSets;
+  private final Map<NonTerminal, Set<Verb>> followSets;
 
   public LRParser(final BNF bnf) {
     this.bnf = bnf;
@@ -57,12 +58,12 @@ public class LRParser {
     } while (moreChanges);
     return nullables;
   }
-  private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
-    Map<Symbol, Set<Terminal>> $ = new HashMap<>();
+  private Map<Symbol, Set<Verb>> calculateSymbolFirstSet() {
+    Map<Symbol, Set<Verb>> $ = new HashMap<>();
     for (NonTerminal nt : bnf.getNonTerminals())
-      $.put(nt, new HashSet<>());
-    for (Terminal term : bnf.getTerminals())
-      $.put(term, new HashSet<>(Arrays.asList(term)));
+      $.put(nt, new LinkedHashSet<>());
+    for (Verb term : bnf.getVerbs())
+      $.put(term, new LinkedHashSet<>(Arrays.asList(term)));
     boolean moreChanges;
     do {
       moreChanges = false;
@@ -75,8 +76,8 @@ public class LRParser {
     } while (moreChanges);
     return $;
   }
-  private Map<NonTerminal, Set<Terminal>> calculateFollowSets() {
-    Map<NonTerminal, Set<Terminal>> $ = new HashMap<>();
+  private Map<NonTerminal, Set<Verb>> calculateFollowSets() {
+    Map<NonTerminal, Set<Verb>> $ = new HashMap<>();
     // initialization
     for (NonTerminal nt : bnf.getNonTerminals())
       $.put(nt, new HashSet<>());
@@ -90,7 +91,7 @@ public class LRParser {
           if (!dRule.getChildren().get(i).isNonTerminal())
             continue;
           Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
-          Set<Terminal> ntFollowSet = $.get(dRule.getChildren().get(i));
+          Set<Verb> ntFollowSet = $.get(dRule.getChildren().get(i));
           moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
           if (isNullable(subExpression))
             moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
@@ -110,8 +111,8 @@ public class LRParser {
     return Arrays.asList(expression).stream()
         .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
   }
-  public Set<Terminal> firstSetOf(final Symbol... expression) {
-    HashSet<Terminal> $ = new HashSet<>();
+  public List<Verb> firstSetOf(final Symbol... expression) {
+    List<Verb> $ = new ArrayList<>();
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))
@@ -119,7 +120,7 @@ public class LRParser {
     }
     return $;
   }
-  public Set<Terminal> followSetOf(final NonTerminal nt) {
+  public Set<Verb> followSetOf(final NonTerminal nt) {
     return followSets.get(nt);
   }
   private void fillParsingTable() {
@@ -130,14 +131,14 @@ public class LRParser {
             addAcceptAction(state);
           else
             addReduceAction(state, item);
-        else if (item.rule.getChildren().get(item.dotIndex).isTerminal())
+        else if (item.rule.getChildren().get(item.dotIndex).isVerb())
           addShiftAction(state, item);
   }
   private void addAcceptAction(final State state) {
     actionTable.set(state, SpecialSymbols.$, new Accept());
   }
   private void addShiftAction(final State state, final Item item) {
-    Terminal nextTerminal = (Terminal) item.rule.getChildren().get(item.dotIndex);
+    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
     State shift = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(shift));
   }
@@ -159,12 +160,11 @@ public class LRParser {
       moreChanges = false;
       List<Item> dotBeforeNT = items.stream()
           .filter(item -> (!item.readyToReduce()) && item.rule.getChildren().get(item.dotIndex).isNonTerminal()) //
-          .sorted((i1,i2)->i1.toString().compareTo(i2.toString())).distinct()
-          .collect(Collectors.toList());
+          .sorted((i1, i2) -> i1.toString().compareTo(i2.toString())).distinct().collect(Collectors.toList());
       for (Item item : dotBeforeNT) {
         NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
         for (DerivationRule dRule : bnf.getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList()))
-          for (Terminal t : firstSetOf(LRParser.subExpressionBuilder(item.rule.getChildren(), item.dotIndex + 1, item.lookahead)))
+          for (Verb t : firstSetOf(LRParser.subExpressionBuilder(item.rule.getChildren(), item.dotIndex + 1, item.lookahead)))
             moreChanges |= items.add(new Item(dRule, t, 0));
       }
     } while (moreChanges);
@@ -197,22 +197,22 @@ public class LRParser {
   private State generateNextState(final State state, final Symbol lookahead) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState(bnf, getStates().size());
+        return new AcceptState(bnf);
     Set<Item> initialItems = state.getItems().stream().//
-        filter(item -> item.isLegalTransition(lookahead) ) //
+        filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
     return new State(closure, bnf, getStates().size());
   }
-  public Action actionTable(final State state, final Terminal lookahead) {
+  public Action actionTable(final State state, final Verb lookahead) {
     return actionTable.get(state.index, lookahead);
   }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();
     Set<Symbol> symbols = new HashSet<>();
     symbols.addAll(bnf.getNonTerminals());
-    symbols.addAll(bnf.getTerminals());
+    symbols.addAll(bnf.getVerbs());
     symbols.removeAll(notAllowed);
     return symbols;
   }
@@ -226,7 +226,4 @@ public class LRParser {
   public List<State> getStates() {
     return states;
   }
-  // public State getState(final int index) {
-  // return states.get(index);
-  // }
 }

@@ -31,7 +31,7 @@ import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.parser.ActionTable.Action;
 import org.spartan.fajita.api.parser.ActionTable.Reduce;
 import org.spartan.fajita.api.parser.ActionTable.Shift;
@@ -70,13 +70,15 @@ public class TypeArgumentManager {
     // Stack type parameter
     $.add(TypeVariableName.get(STACK_TYPE_PARAMETER, ParameterizedTypeName.get(type(BASE_STACK), wildcardArray(1))));
     // symbol type parameters
-    for (Symbol s : symbols)
-      $.add(TypeVariableName.get(s.name(), type(BASE_STATE)));
+    for (Symbol s : symbols) {
+      final String name = s.name() + (s.isVerb() ? Integer.toString(s.hashCode()) : "");
+      $.add(TypeVariableName.get(name, type(BASE_STATE)));
+    }
     return $;
   }
   private List<Symbol> initializeSymbolIndexes() {
     List<Symbol> $ = new LinkedList<>();
-    $.addAll(bnf.getTerminals());
+    $.addAll(bnf.getVerbs());
     $.addAll(bnf.getNonTerminals());
     $.remove(SpecialSymbols.$);
     $.remove(SpecialSymbols.augmentedStartSymbol);
@@ -86,8 +88,8 @@ public class TypeArgumentManager {
   public static Comparator<Symbol> symbolComparator() {
     return new Comparator<Symbol>() {
       @Override public int compare(Symbol symb1, Symbol symb2) {
-        return symb1.isTerminal() && symb2.isNonTerminal() ? -1
-            : symb1.isNonTerminal() && symb2.isTerminal() ? 1 : symb1.name().compareTo(symb2.name());
+        return symb1.isVerb() && symb2.isNonTerminal() ? -1
+            : symb1.isNonTerminal() && symb2.isVerb() ? 1 : symb1.name().compareTo(symb2.name());
       }
     };
   }
@@ -114,7 +116,7 @@ public class TypeArgumentManager {
       else
         throw new IllegalStateException("unexpected transition length :" + s.transitions.length);
     });
-//    System.out.println(instantiations);
+    // System.out.println(instantiations);
   }
   private void InstantiateSingleTransition(final ContextedState s) {
     assert (s.transitions.length == 1);
@@ -124,7 +126,7 @@ public class TypeArgumentManager {
       Collection<InheritedParameter> q$BParams = q$B_Data.getInheritedParameters();
       for (InheritedParameter A_i_a : q_X$B_Data.getInheritedParameters()) {
         NonTerminal A = A_i_a.lhs;
-        Terminal a = A_i_a.lookahead;
+        Verb a = A_i_a.lookahead;
         int i = A_i_a.depth;
         InheritedParameter q$B_Param = new InheritedParameter(i - 1, A, a);
         TypeName instantiatedType;
@@ -148,7 +150,7 @@ public class TypeArgumentManager {
       Collection<InheritedParameter> q$B_Params = q$B_Data.getInheritedParameters();
       for (InheritedParameter A_i_a : q_XY$B_Data.getInheritedParameters()) {
         NonTerminal A = A_i_a.lhs;
-        Terminal a = A_i_a.lookahead;
+        Verb a = A_i_a.lookahead;
         int i = A_i_a.depth;
         InheritedParameter q_X$B_Param = new InheritedParameter(i - 1, A, a);
         InheritedParameter q$B_Param = new InheritedParameter(i - 2, A, a);
@@ -182,12 +184,12 @@ public class TypeArgumentManager {
       else if (state.isLegalReduce(symb)) {
         Item item = state.getItems().stream() //
             .filter(i -> i.readyToReduce() && i.lookahead.equals(symb)).findAny().get();
-        $.addVertex(new InheritedContexedState(state, item.rule.lhs, item.dotIndex, (Terminal) symb, symb));
+        $.addVertex(new InheritedContexedState(state, item.rule.lhs, item.dotIndex, (Verb) symb, symb));
       }
     }));
     for (State q$B : parser.getStates())
       addStateDependencies(q$B, $);
-//    System.out.println($);
+    // System.out.println($);
     // TODO: handle cycles case.
     if ($.vertexSet().size() > 0 && new CycleDetector<>($).detectCycles())
       throw new IllegalArgumentException("Cycles are not handled yet, the graph:" + $);
@@ -208,9 +210,9 @@ public class TypeArgumentManager {
       ContextedState q_X$B = new ContextedState(q$B.goTo(X), q$B, X);
       addEdge(g, q_Ab$B, q_X$B);
       // By rule [ A -> Cd , b]
-      if (rhs.size() == 2 && rhs.get(0).isNonTerminal() && rhs.get(1).isTerminal()) {
+      if (rhs.size() == 2 && rhs.get(0).isNonTerminal() && rhs.get(1).isVerb()) {
         NonTerminal C = (NonTerminal) rhs.get(0);
-        Terminal d = (Terminal) rhs.get(1);
+        Verb d = (Verb) rhs.get(1);
         ContextedState q_Cd$B = find(q$B, C, d);
         if (!q_Cd$B.isInherited())
           addEdge(g, q_Ab$B, q_Cd$B);
@@ -221,7 +223,7 @@ public class TypeArgumentManager {
       return v.transitions.length == 2 && v.context.equals(q$B) && !v.isInherited();
     }).forEach(q_Ab$B -> {
       NonTerminal A = (NonTerminal) q_Ab$B.transitions[0];
-      Terminal b = (Terminal) q_Ab$B.transitions[1];
+      Verb b = (Verb) q_Ab$B.transitions[1];
       ContextedState q_A$B = new ContextedState(q$B.goTo(A), q$B, A);
       addEdge(g, q_A$B, q_Ab$B);
       ContextedState q_b$A = find(q$B.goTo(A), b);
@@ -239,7 +241,7 @@ public class TypeArgumentManager {
     g.addVertex(dst);
     g.addEdge(src, dst);
   }
-  private ContextedState find(final State q$B, final NonTerminal A, final Terminal b) {
+  private ContextedState find(final State q$B, final NonTerminal A, final Verb b) {
     Action action = parser.actionTable(q$B.goTo(A), b);
     if (action.isShift())
       return new ContextedState(((Shift) action).state, q$B, A, b);
@@ -253,7 +255,7 @@ public class TypeArgumentManager {
       return find(q$B, C, b);
     return find(q$B.goTo(A), C, b);
   }
-  private ContextedState find(final State q$B, final Terminal b) {
+  private ContextedState find(final State q$B, final Verb b) {
     Action action = parser.actionTable(q$B, b);
     if (action.isShift())
       return new ContextedState(((Shift) action).state, q$B, b);
@@ -363,9 +365,9 @@ public class TypeArgumentManager {
   private class InheritedContexedState extends ContextedState {
     NonTerminal lhs;
     int depth;
-    Terminal lookahead;
+    Verb lookahead;
 
-    public InheritedContexedState(final State context, final NonTerminal lhs, final int depth, final Terminal lookahead,
+    public InheritedContexedState(final State context, final NonTerminal lhs, final int depth, final Verb lookahead,
         final Symbol... transitions) {
       super(context, transitions);
       this.lhs = lhs;

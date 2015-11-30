@@ -1,6 +1,8 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public class SpecialSymbols {
+  // TODO: i think no one really uses it since an epsilon rule is denoted by a
+  // rule with NO children
   public static final Symbol epsilon = new Symbol() {
     @Override public String name() {
       return "\u03B5"; // epsilon symbol
@@ -8,20 +10,11 @@ public class SpecialSymbols {
     @Override public String toString() {
       return name();
     }
-    @Override public String methodSignatureString() {
-      return name();
-    }
   };
   // TODO: make $,augmentedStartSymbol not visible to end user.
-  public static final Terminal $ = new Terminal() {
-    @Override public String name() {
-      return "$";
-    }
+  public static final Verb $ = new Verb("$") {
     @Override public String toString() {
-      return name();
-    }
-    @Override public String methodSignatureString() {
-      return name();
+      return "$";
     }
   };
   public static final NonTerminal augmentedStartSymbol = new NonTerminal() {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 /**
  * A LR0 Item
@@ -15,9 +16,9 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 public class Item {
   public final DerivationRule rule;
   public final int dotIndex;
-  public final Terminal lookahead;
+  public final Verb lookahead;
 
-  public Item(final DerivationRule rule, final Terminal lookahead, final int dotIndex) {
+  public Item(final DerivationRule rule, final Verb lookahead, final int dotIndex) {
     this.lookahead = lookahead;
     this.dotIndex = dotIndex;
     this.rule = rule;
@@ -34,7 +35,6 @@ public class Item {
     return ((rule.getChildren().size() > dotIndex) //
         && symb.equals(rule.getChildren().get(dotIndex)));
   }
-  
   public boolean isLegalReduce(final Terminal term) {
     return readyToReduce() && lookahead.equals(term);
   }
@@ -48,17 +48,17 @@ public class Item {
     return dotIndex == i.dotIndex && rule.equals(i.rule) && lookahead.equals(i.lookahead);
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder(rule.lhs.methodSignatureString() + " ::= ");
+    StringBuilder sb = new StringBuilder(rule.lhs.serialize() + " ::= ");
     List<Symbol> expression = rule.getChildren();
     for (int i = 0; i < expression.size(); i++) {
       if (i == dotIndex)
         sb.append(". ");
       Symbol symb = expression.get(i);
-      sb.append(symb.methodSignatureString() + " ");
+      sb.append(symb.toString() + " ");
     }
     if (expression.size() == dotIndex)
       sb.append(". ");
-    sb.append(", " + lookahead.methodSignatureString());
+    sb.append(", " + lookahead.toString());
     return sb.toString();
   }
 }

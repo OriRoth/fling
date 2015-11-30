@@ -24,41 +24,28 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
-import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.examples.dependencyCycle.use.DependencyCycle;
-import org.spartan.fajita.api.examples.lalr.StrongerThanLALR;
 import org.spartan.fajita.api.generators.ApiGenerator;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
 import org.spartan.fajita.api.parser.State;
 
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.JavaFile;
 
 public class Main {
   public static void main(final String[] args) {
-//    apiGenerator();
-     expressionBuilder();
-    // serializeTest();
-  }
-  public static void serializeTest() {
-    BNF buildBNF = AutomatonCycles.buildBNF();
-    for (DerivationRule d : buildBNF.getRules()) {
-      final String serial = d.serialize();
-      System.out.println(serial);
-      System.out.println(DerivationRule.deserialize(serial));
-      System.out.println("");
-    }
+     apiGenerator();
+    // expressionBuilder();
   }
   static void apiGenerator() {
-    final BNF bnf = StrongerThanLALR.buildBNF();
+    final BNF bnf = AutomatonCycles.buildBNF();
     lrAutomatonVisualisation(new LRParser(bnf));
-    TypeSpec fluentAPI = ApiGenerator.generate(bnf);
+    JavaFile fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
   }
   static void expressionBuilder() {
-    BalancedParenthesis.expressionBuilder();
+    AutomatonCycles.expressionBuilder();
   }
   public static Compound generateAST(List<DerivationRule> reduces) {
     Stack<Compound> compoundQueue = new Stack<>();
@@ -68,8 +55,8 @@ public class Main {
       for (int i = rhs.size() - 1; i >= 0; i--) {
         Symbol s = rhs.get(i);
         AbstractNode symbNode;
-        if (s.isTerminal())
-          symbNode = new Atomic((Terminal) s);
+        if (s.isVerb())
+          symbNode = new Atomic((Verb) s);
         else if (s == SpecialSymbols.epsilon)
           symbNode = AbstractNode.epsilon;
         else {

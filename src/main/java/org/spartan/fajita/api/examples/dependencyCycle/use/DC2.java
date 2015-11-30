@@ -1,13 +1,12 @@
 package org.spartan.fajita.api.examples.dependencyCycle.use;
 
-import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.NT.*;
-import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.Term.*;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.NT.A;
+import static org.spartan.fajita.api.examples.dependencyCycle.use.DC2.Term.a;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q0;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q1;

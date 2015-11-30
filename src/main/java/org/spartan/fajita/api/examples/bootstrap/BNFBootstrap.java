@@ -1,14 +1,27 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.ABSTRACT_RULE;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.AND;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_ABSTRACT;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_NORMAL;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_RULE;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NORMAL_RULE;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.OR;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.RULE;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.RULE_TYPE;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.S;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.and;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derive;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.finish;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.or;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.setApiName;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.to;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class BNFBootstrap {
   public static void expressionBuilder() {
@@ -19,9 +32,6 @@ public class BNFBootstrap {
     setApiName, derive, to, //
     and, toOneOf, or, //
     finish;
-    @Override public String toString() {
-      return methodSignatureString();
-    }
   }
 
   static enum NT implements NonTerminal {

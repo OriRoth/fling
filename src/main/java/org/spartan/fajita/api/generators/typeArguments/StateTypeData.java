@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.parser.State;
 
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -82,7 +82,7 @@ public class StateTypeData {
     return typeParameters.get(data);
   }
   
-  TypeVariableName getFormalParameter(NonTerminal lhs,int depth,Terminal lookahead) {
+  TypeVariableName getFormalParameter(NonTerminal lhs,int depth,Verb lookahead) {
     return getFormalParameter(new InheritedParameter(depth, lhs, lookahead));
   }
   List<TypeVariableName> getFormalParameters() {

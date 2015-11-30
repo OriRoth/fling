@@ -1,15 +1,14 @@
 package org.spartan.fajita.api.ast;
 
-import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class Atomic extends AbstractNode {
 
-  private final Terminal term;
-  public Atomic(Terminal term) {
+  private final Verb term;
+  public Atomic(Verb term) {
     this.term = term;
   }
-  @Override public Symbol getSymbol() {
+  @Override public Verb getSymbol() {
     return term;
   }
 }
