@@ -201,21 +201,23 @@ Other points to noice are:
         The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
   \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
         the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
-        \par
-        As a matter of curiosity, observe that the notion of covariance recurs:
-          Overriding permits covariant change of the return type of a function,
-          Similar covariant change is permitted in extending generic type extending another, e.g.,
-          \begin{center}
-            \javaInput[minipage]{mammal.listing}
-        \end{center}
+
   \item Since empty stack cannot be popped, function \cc{pop()} is overriden in~\cc{E} to return
     the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
 
-It is natural now to ask whether this recursive generic type can give rise to S-expressions and a~$λ$-calculus.
-Indeed, S-experssions can be encoded in the spirit of \cref{Figure:stack-encoding}, with a \cc{Cons} generic type
-with co-variant \cc{car()} and \cc{cdr()} methods. 
-However, and unlike \CC, encdoing the full $\lambda$-calculus
-is impossible (see below in~\cref{Section:bridge}).
+As a matter of curiosity: covariance recurs here.
+Overriding permits covariant change of the return type of a function,
+As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type: 
+The type of the parameter (\kk{extends} \cc{Whales}) to a genric (\cc{Heap}) may 
+be specialized with the inheritance (class \cc{School} extending \cc{Heap}). 
+\begin{wrapfigure}[7]{r}{38ex}
+  \caption{\label{Figure:generic} Covariance with generics}
+  \javaInput[minipage]{mammal.listing}
+\end{wrapfigure}
+
+This recursive generic type technique can used to encode S-expressions: In the spirit of 
+  \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
+  with co-variant \cc{car()} and \cc{cdr()} methods. 
 
