@@ -10,13 +10,13 @@ The theoretical aspect of the study is a proof (with its implicit algorithm) tha
   there is a \Java type definition that \emph{realizes} this fluent definition, if this
   language is \emph{deterministic context-free}.
 Roughly speaking, deterministic context free languages are those context free languages
-  that can be recongized by an LR (left-right~\cite{provide:lr:grammars}) parser.
-    this is also the set of LL(*) languges~\cite{Knuth:65}, which happens also
+  that can be recognized by an LR (left-right~\cite{provide:lr:grammars}) parser.
+    this is also the set of LL(*) languages~\cite{Knuth:65}, which happens also
       to to be the language of the popular ANTLR tool~\cite{ANTL}.
 
 For a type definition to \emph{realize} a definition of fluent API,
   two must happen: Call chains that conform with the API definition
-  compile correctly; conveserly, call chains that are forbidden by the API definition
+  compile correctly; conversely, call chains that are forbidden by the API definition
   do not type-check, and result in compile-time error.
 
 \begin{wraptable}[9]r{27ex}
@@ -62,7 +62,7 @@ Moreover, there is a way
 
 The proof is a construction of a \Java type encoding of
   the \emph{deterministic pushdown automaton} that recognizes
-  a given \emph{determinisic context free language}.
+  a given \emph{deterministic context free language}.
 With the generated types and methods, any chain of fluent API calls,
   actually runs the pushdown automaton against the specific input that the chain represents.
 When used appropriately, if this run of the automaton ends with an accepting state,
@@ -70,7 +70,7 @@ When used appropriately, if this run of the automaton ends with an accepting sta
 If however this run ends with a failure, i.e., non-accepting state,
   compile time error will occur.
 
-The algorithm for generating the pushdown automaton is unofrunately impractical.
+The algorithm for generating the pushdown automaton is unfortunately impractical.
 It is indeed polynomial time and space,
   yet formidable resource consuming.
 A practical alternative is offered by the second aspect of this study:
@@ -84,11 +84,11 @@ This class library, ready for use by~$ϕ$'s clients, does more
   of the language of~$ϕ$.
 The execution of a call chain of~$ϕ$, creates an AST data structure.
   compliant with the BNF of~$ϕ$, and augmented with a visiting API, all ready
-  for use by the implementor of~$ϕ$.
+  for use by the implementer of~$ϕ$.
 
 \Self generates LR(1) parsers. Experience shows that these are
-  sufficient for many purpooses.
-Still, LR(1) languages make a strict subset of determinisic context-free languages.
+  sufficient for many purposes.
+Still, LR(1) languages make a strict subset of deterministic context-free languages.
 Practicality concerns stop \Self from implementing LR($k$) higher~$k$. 
 
 One may ask whether the theoretical result is the

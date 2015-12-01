@@ -192,30 +192,29 @@ implementation†{%
 implementation in~\cref{Figure:stack-encoding}(b).
 
 \begin{figure}[htb]
-  \caption{\label{Figure:stack-encoding}%
-    Type encoding of an unbounded stack data strucutre.
-  }
+  \caption{Type encoding of an unbounded stack data structure.}
+  \label{Figure:stack-encoding} 
   \begin{tabular}{cc}
     \parbox[c]{0.3\linewidth}{\input ../Figures/stack-classification.tikz} &
     \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage]{stack.listing}}⏎
-    \textbf{(a)} type hierarchy &
+    \textbf{(a)} type hierarchy                                            &
     \hspace{-3ex} \parbox[t]{63ex}{%
-      \textbf{(b)} implementation (except 
-        for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
+    \textbf{(b)} implementation (except
+    for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
   \end{tabular}
 \end{figure}
 
 The code in the figure shows that the ‟rest” parameter of~\cc{P} must extend class \cc{Stack},
   and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
-Other points to noice are:
+Other points to notice are:
 \begin{itemize}
   \item The type at the top of the stack is precisely the return type of \cc{top()};
         it is overridden in~\cc{P} so that its return type is the first argument of~\cc{P}.
         The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
   \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
-        the two are overriden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
+        the two are overridden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
 
-  \item Since empty stack cannot be popped, function \cc{pop()} is overriden in~\cc{E} to return
+  \item Since empty stack cannot be popped, function \cc{pop()} is overridden in~\cc{E} to return
     the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
@@ -223,7 +222,7 @@ Other points to noice are:
 As a matter of curiosity: covariance recurs here.
 Overriding permits covariant change of the return type of a function,
 As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type: 
-The type of the parameter (\kk{extends} \cc{Whales}) to a genric (\cc{Heap}) may 
+The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may 
 be specialized with the inheritance (class \cc{School} extending \cc{Heap}). 
 \begin{wrapfigure}[7]{r}{38ex}
   \caption{\label{Figure:generic} Covariance with generics}
