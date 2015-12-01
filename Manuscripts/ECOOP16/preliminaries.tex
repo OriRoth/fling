@@ -158,6 +158,34 @@ Type-state pose two main challenges to software engineering
 \subsection{What is fluent API?}
 
 \subsection{Context Free Languages and Pushdown Automata}
+To conclude this section, we will cover some formal
+  constructs that will be prompted in the remind of this manuscript.
+  For a more extensive read of formal definitions and properties
+  of these constructs, consult J. Hopcroft et al.~\footnote{Hopcroft:book:2001}
+  
+\paragraph{Context Free Grammar}
+A \emph{Context Free Grammar}(CFG) is a formal grammatical description of a language,
+  composed of four components: A finite set of input symbols, also referred to as terminals,
+  a finite set of abstract symbols, referred to as nonterminals, a start symbol from the 
+  nonterminal set, and a set of productions, sometimes referred to as rules. 
+A production is constructed from a nonterminal known as left-hand side and a 
+  string of terminals and nonterminal called right-hand side.
+The language of a context free grammar, is defined by the set of terminal strings 
+  that can be derived from the start symbol, through the various nonterminals.
+\paragraph{Context Free Language}
+Language~$\mathcal{L}$ is said to be a \emph{Context Free Language}(CFL), if there
+  is a \emph{Context Free Grammar}~$G$ such that,~$L(G)=\mathcal{L}$.
+The context free languages set, contains the regular languages, 
+  is contained in the recursively enumerable set, and the context-sensitive languages set.
+A classic example of a language that is CF and not a regular, 
+  is the language~${a^nb^n|n\in\mathbb{N}}$ over the alphabet~$\Sigma={a,b}$,
+  while the analogous language~${a^nb^nc^n|n\in\mathbb{N}}$ is context-sensitive 
+  and not context-free over the same~$\Sigma$.
+A CFL can be defined using BNF, which is also an important and widespread tool for 
+  defining programming languages.
+\paragraph{Pushdown Automaton}
+A pushdown automaton is an abstract machine consisting a 
+\paragraph{LR($k$)}
 \begin{wrapfigure}r{0.5\linewidth}
   \caption{Hierarchy of CFGs and pushdown automata}
   \input ../Figures/expressiveness-diagram.tikz
