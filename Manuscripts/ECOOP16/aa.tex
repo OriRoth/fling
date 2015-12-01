@@ -47,10 +47,10 @@ The proof makes a general recipe for handling examples of this sort:
 Consider the language defined by the fluent API.
 In the box example, this language is
 \[
-  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|\epsilon\big).
+  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
 \]
 
-If the language defined by the API is deterministic context free, then, 
+If the language defined by the API is deterministic context free, then,
   the fluent API can be realized, and,
   there is algorithm to the type definition.
 In the box example, language~$L$ is written as a regular expression already,
@@ -79,24 +79,23 @@ To create a new fluent API~$ϕ$, use the fluent API of \Self to write, in \Java,
 Running the \Java program thus written, augmented with the \Self library,
   generates a \Java class library that realizes~$ϕ$.
 
-This class library, ready for use by~$ϕ$'s clients, does more 
+This class library, ready for use by~$ϕ$'s clients, does more
   than compile time recognition
   of the language of~$ϕ$.
 The execution of a call chain of~$ϕ$, creates an AST data structure.
   compliant with the BNF of~$ϕ$, and augmented with a visiting API, all ready
   for use by the implementor of~$ϕ$.
 
-\Self generates LR(1) parsers. Experience shows that these are 
-  sufficient for many purpooses. 
-Still, LR(1) languages make a strict subset of determinisic context-free languages. 
-Practicality concerns stop \Self from implementing LR($k$) parsing for any 
-  higher values of $k$.
+\Self generates LR(1) parsers. Experience shows that these are
+  sufficient for many purpooses.
+Still, LR(1) languages make a strict subset of determinisic context-free languages.
+Practicality concerns stop \Self from implementing LR($k$) higher~$k$. 
 
-One may ask whether the theoretical result is the 
-  best possible: 
+One may ask whether the theoretical result is the
+  best possible:
 Is it possible to implement a fluent API for a general
   (that is, non-deterministic) context free languages?
-We give reason why but it is highly unlikely that 
+We give reason why but it is highly unlikely that
   fluent APIs can be made for all context free languages.
 
 Modern programming languages acquire high-level constructs

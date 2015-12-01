@@ -152,7 +152,13 @@ public class Domain {
       }
     }
   }
-
+  
+  interface ID<T extends ID> {
+    default T id() { return null; }
+  }
+  class X implements ID<X> { /* .. */ }
+  class Y implements ID<Y> { /* .. */ }
+  
   @SuppressWarnings("null")
   public static void main(String[] args) {
     q0 x1 = null;
