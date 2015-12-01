@@ -11,8 +11,8 @@ The theoretical aspect of the study is a proof (with its implicit algorithm) tha
   language is \emph{deterministic context-free}.
 Roughly speaking, deterministic context free languages are those context free languages
   that can be recognized by an LR (left-right~\cite{provide:lr:grammars}) parser.
-    this is also the set of LL(*) languages~\cite{Knuth:65}, which happens also
-      to to be the language of the popular ANTLR tool~\cite{ANTL}.
+    It is also the set of LL(*) languages~\cite{Knuth:65}, which happens also
+      to to be the language of the popular ANTLR tool~\cite{ANTLR}.
 
 For a type definition to \emph{realize} a definition of fluent API,
   two must happen: Call chains that conform with the API definition
@@ -44,15 +44,15 @@ Some skill is required to make this type definition: proper design of class \cc{
   some auxiliary other auxiliary classes extending it, an appropriate method definition here and there, etc.
 
 The proof makes a general recipe for handling examples of this sort:
-Consider the language defined by the fluent API.
+First, consider the language defined by the fluent API.
 In the box example, this language is
 \[
   L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
 \]
 
-If the language defined by the API is deterministic context free, then,
-  the fluent API can be realized, and,
-  there is algorithm to the type definition.
+Second, check whether this language defined is deterministic context-free. 
+If it is, the fluent API can be realized, and,
+  there is an algorithm to produce the respective type definition.
 In the box example, language~$L$ is written as a regular expression already,
   and hence is trivially deterministic context-free.
 It follows from the proof that there exists a type definition
@@ -129,7 +129,7 @@ In the same fashion, it is mundane to make the judgment that
   in these are unconditional.
 In one sense, my research shall give a lower bound on the
   expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky:1963}.
-I hope to show that it is possible to enJAVA context free grammars within the \Java type system,
+I hope to show that it is possible to encode context free grammars within the \Java type system,
   in such a way that type-checking is equivalent to membership queries.
 This objective is more precisely expressed in the following conjecture.
 
@@ -162,8 +162,7 @@ This program, along with its API, other lesser components and
 
 The above discussion, formalism and conjecture may seem at sight too abstract
   and of little practical value.
-Re-positioning perspective may shed a different light:
-~\cref{Theorem:Gutterman} is important not only because it tells us
+Re-positioning perspective may shed a different light:~\cref{Theorem:Gutterman} is important not only because it tells us
   that the question of termination of a \CC compiler is as difficult
   the halting problem~\cite{Turing:1936}, but also because it
   justifies the common belief that is no limit to the power of

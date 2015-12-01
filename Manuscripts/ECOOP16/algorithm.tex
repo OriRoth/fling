@@ -7,29 +7,32 @@ Otherwise, \Self produces this parser, and
   then generates a \Java type encoding for it.
 
 Let the input alphabet of~$G$ be~$Σ$, and let~$Ξ$ be the set of non-terminal symbols
-  of~$G$.
+of~$G$.
 Then a production \emph{rule}~$r∈G$ takes the form~$r =ξ→β$,~$ξ∈Ξ$,~$β∈\left(Σ∪Ξ\right)^*$.
-An LR(1) parser for $G$ has three  components:
+An LR(1) parser for~$G$ has three components:
 \begin{description}
-  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$, and where~$q₀$ is the initial state.
-  \item[A stack] which may contain any member of $Q$. 
-  \item[Specification of state transition represented by two tables
-  \begin{description}
-    \item[Goto table] which make a partial function~$δ:Q⨉Ξ↛Q$ of transitions
-    between the states of the automaton.
-    \item[Action table] which makes a  partial 
-      function $\eta:Q⨉Σ↛ ❴ \textsf{Shift}(q') \,|\, q'∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵
-   $. 
-  \end{description}
+  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
+  \item[A stack] which may contain any member of~$Q$.
+  \item[Specification of state transition] with the aid of two tables:
+        \begin{description}
+          \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+          between the states of the automaton.
+          \item[Action table] which makes a partial
+          function~$η:Q⨉Σ↛ ❴ \textsf{Shift}(q') \,|\, q'∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵$.
+        \end{description}
 \end{description}
+The parser begins by pushing~$q₀$ (the initial stack()),
+and then repetitively execute the following:
+Let~$q∈Q$ be the state at the top of the stack.
+If~$q=qₙ$ (the accepting state), then the parser accepts and stops.
 Let~$σ∈Σ$ be the next input symobl,
-  and let~$q∈Q$ be the state state at the top of the stack.
-If~$a(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ onto the stack.
-  If however,~$a(q',σ) = \textsf{Reduce}(r)$,
-  where~$r =ξ\rightarrowβ$,~$β∈\left(Σ∪Ξ\right)^*$,
-  the automaton pops~$|β|$ stack symbols.
-  Let the state at the top of the stack following these pops be~$q'$, then
-  then the automaton pops~$q'$, replacing it with the state~$δ(q',ξ)$.
+If~$η(q,σ)=⊥$, the parser fails.
+If~$η(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ onto the stack.
+If however,~$a(q,σ) = \textsf{Reduce}(r)$,
+where~$r=ξ→β$,~$β∈\left(Σ∪Ξ\right)^*$,
+the automaton pops~$|β|$ stack symbols.
+Let~$q'$ be state at the top of the stack after these pops. 
+Then, pop~$q'$, and push instead state $q''$, defined by the transition function~$q”=δ(q',ξ)$.
 
 \subsection{Building the automaton's dependency graph}
 
