@@ -15,7 +15,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 
 public class BinaryExpressionsUse {
 //  public static void expressionBuilder() {
@@ -33,21 +32,7 @@ public class BinaryExpressionsUse {
 //  }
 
   enum Term implements Terminal {
-    bool(boolean.class), and, or, not;
-    private final Type type;
-
-    Term(final Class<?> c1, final Class<?>... classes) {
-      type = new Type(c1, classes);
-    }
-    Term() {
-      type = new Type();
-    }
-    @Override public Type type() {
-      return type;
-    }
-    @Override public String toString() {
-      return methodSignatureString();
-    }
+    bool, and, or, not;
   }
 
   static enum NT implements NonTerminal {

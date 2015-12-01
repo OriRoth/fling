@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class DerivationRule implements Comparable<DerivationRule>, Serializable {
   private static final long serialVersionUID = -1509740550195808093L;
@@ -22,9 +22,9 @@ public class DerivationRule implements Comparable<DerivationRule>, Serializable 
     this.expression = new ArrayList<>(expression.stream().filter(s -> s != SpecialSymbols.epsilon).collect(Collectors.toList()));
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder(lhs.methodSignatureString() + " ::= ");
+    StringBuilder sb = new StringBuilder(lhs.serialize() + " ::= ");
     for (Symbol symb : expression)
-      sb.append(symb.methodSignatureString() + " ");
+      sb.append(symb.toString() + " ");
     return sb.toString();
   }
   public List<Symbol> getChildren() {
@@ -59,7 +59,7 @@ public class DerivationRule implements Comparable<DerivationRule>, Serializable 
       switch(data[i].charAt(0)){
         case '^': rhs.add(Symbol.deserialize(data[i]));
           break;
-        case '%': rhs.add(Terminal.deserialize(data[i]));
+        case '%': rhs.add(Verb.deserialize(data[i]));
           break;
         case '<': rhs.add(NonTerminal.deserialize(data[i]));
           break;

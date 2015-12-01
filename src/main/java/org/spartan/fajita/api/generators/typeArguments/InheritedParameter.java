@@ -1,14 +1,14 @@
 package org.spartan.fajita.api.generators.typeArguments;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public final class InheritedParameter implements Comparable<InheritedParameter> {
   public final int depth;
   public final NonTerminal lhs;
-  public final Terminal lookahead;
+  public final Verb lookahead;
 
-  public InheritedParameter(final int depth, final NonTerminal lhs, final Terminal l) {
+  public InheritedParameter(final int depth, final NonTerminal lhs, final Verb l) {
     this.depth = depth;
     this.lhs = lhs;
     lookahead = l;
@@ -29,7 +29,7 @@ public final class InheritedParameter implements Comparable<InheritedParameter> 
     return $;
   }
   @Override public int compareTo(final InheritedParameter o) {
-    if(o == null)
+    if (o == null)
       return -1;
     int depthComparison = depth - o.depth;
     if (depthComparison != 0)
@@ -41,6 +41,6 @@ public final class InheritedParameter implements Comparable<InheritedParameter> 
     return lookaheadComparison;
   }
   @Override public String toString() {
-    return lhs.name() + '_' + depth + '_' + lookahead;
+    return lhs.name() + '_' + depth + '_' + lookahead.name()+"_"+Math.abs(lookahead.hashCode());
   }
 }

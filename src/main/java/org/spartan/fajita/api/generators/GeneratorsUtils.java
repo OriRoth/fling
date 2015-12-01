@@ -15,6 +15,7 @@ import javax.lang.model.element.Modifier;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
 
 import com.squareup.javapoet.AnnotationSpec;
@@ -42,7 +43,7 @@ public class GeneratorsUtils {
 
   public static final String STACK_TYPE_PARAMETER = "Stack";
   public static final String STACK_FIELD = "stack";
-  public static final TypeName REDUCES_TYPE = ParameterizedTypeName.get(List.class,DerivationRule.class);
+  public static final TypeName REDUCES_TYPE = ParameterizedTypeName.get(List.class, DerivationRule.class);
   public static final String REDUCES_FIELD = "reduces";
 
   public static ClassName type(final String classname) {
@@ -127,13 +128,23 @@ public class GeneratorsUtils {
     List<Symbol> symbols = new ArrayList<>(tam.symbols);
     symbols.add(SpecialSymbols.$);
     for (Symbol s : symbols) {
-      MethodSpec method = MethodSpec.methodBuilder(s.name()) //
+      com.squareup.javapoet.MethodSpec.Builder method = MethodSpec.methodBuilder(s.name()) //
           .addModifiers(Modifier.PROTECTED) //
           .returns(tam.getType(s)) //
-          .addStatement("throw new ParseError(\"unexpected symbol on state \" + getClass().getSimpleName())") //
-          .build();
-      builder.addMethod(method);
+          .addStatement("throw new ParseError(\"unexpected symbol on state \" + getClass().getSimpleName())");
+      if (s.isVerb())
+        for (int i = 0; i < ((Verb) s).type.classes.size(); i++)
+          method.addParameter(((Verb) s).type.classes.get(i), "arg" + i);
+      builder.addMethod(method.build());
     }
     return builder.build();
+  }
+  public static String commaSeperatedArgs(int n) {
+    if (n == 0)
+      return "";
+    String $ = "arg0";
+    for (int i = 1; i < n; i++)
+      $ += ",arg" + i;
+    return $;
   }
 }

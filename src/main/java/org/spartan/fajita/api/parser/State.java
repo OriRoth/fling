@@ -11,7 +11,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
-import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class State {
   private final Set<Item> items;
@@ -31,12 +31,12 @@ public class State {
     transitions.put(symbol, newState);
   }
   public boolean isLegalTransition(final Symbol lookahead) {
-    if (lookahead == SpecialSymbols.$)
+    if (lookahead.equals(SpecialSymbols.$))
       return getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol));
     return transitions.containsKey(lookahead) || getItems().stream().anyMatch(item -> item.isLegalTransition(lookahead));
   }
   public boolean isLegalReduce(final Symbol lookahead) {
-    return lookahead.isTerminal() && getItems().stream().anyMatch(item -> item.isLegalReduce((Terminal)lookahead));
+    return lookahead.isVerb() && getItems().stream().anyMatch(item -> item.isLegalReduce((Verb)lookahead));
   }
   
   public Set<Symbol> allLegalTransitions() {
@@ -58,7 +58,7 @@ public class State {
         if (i == 0)
           $ += "[" + match.toString();
         else
-          $ += "/" + match.lookahead.methodSignatureString();
+          $ += "/" + match.lookahead.toString();
       }
       $ += "]" + System.lineSeparator();
     }

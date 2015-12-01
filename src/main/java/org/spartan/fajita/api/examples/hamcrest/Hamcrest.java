@@ -1,6 +1,5 @@
 package org.spartan.fajita.api.examples.hamcrest;
 
-import static org.spartan.fajita.api.examples.ASTViewer.showASTs;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.ASSERT;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.MATCHER;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.anything;
@@ -11,15 +10,13 @@ import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.not;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.type;
 import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.value;
 
-import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.parser.LRParser;
 
-@SuppressWarnings("unused") public class Hamcrest {
+public class Hamcrest {
   public static void expressionBuilder() {
 //    // top down
 //    Compound e0 = assertThat("A", anything());
@@ -37,9 +34,6 @@ import org.spartan.fajita.api.parser.LRParser;
 
   enum Term implements Terminal {
     assertThat, instance_of, anything, not, equals_to, any_of, value, type;
-    @Override public Type type() {
-      return new Type();
-    }
   }
 
   static enum NT implements NonTerminal {

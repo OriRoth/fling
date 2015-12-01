@@ -10,7 +10,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
 import org.spartan.fajita.api.examples.dependencyCycle.States;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q0;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q1;
@@ -33,9 +32,6 @@ public class DependencyCycle {
 
   static enum Term implements Terminal {
     a, d, e;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   static enum NT implements NonTerminal {

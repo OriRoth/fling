@@ -2,27 +2,20 @@ package org.spartan.fajita.api.bnf.symbols;
 
 public interface Symbol {
   public String name();
-  public String methodSignatureString();
-  public default boolean isTerminal() {
-    return Terminal.class.isAssignableFrom(getClass());
+  public default boolean isVerb() {
+    return Verb.class.isAssignableFrom(getClass());
   }
   public default boolean isNonTerminal() {
     return NonTerminal.class.isAssignableFrom(getClass());
   }
   public default String serialize() {
-    return "^" + methodSignatureString() + "^";
+    return "^" + name() + "^";
   }
   public static Symbol deserialize(String signature) {
-    return new Symbol(){
-
+    return new Symbol() {
       @Override public String name() {
-        return signature;
+        return signature.substring(1, signature.length() - 1);
       }
-
-      @Override public String methodSignatureString() {
-        return signature;
-      }
-      
     };
   }
 }
