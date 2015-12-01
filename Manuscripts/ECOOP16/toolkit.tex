@@ -134,16 +134,18 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end. 
 
-\begin{wrapfigure}[7]{r}{31ex}
+\begin{wrapfigure}[4]{r}{31ex}
   \caption{\label{Figure:id}%
   Function \cc{id()}  
   }
   \javaInput[left=0ex,width=31ex]{id.listing}
 \end{wrapfigure}
 
-Consider first \Cref{Figure:id}, showing a recipe, based on genericity for 
-  creating a function whose return type 
-  is the same as the receiver type, for an unbounded number of types. 
+Consider first \Cref{Figure:id} showing a a genericity based recipe for 
+  a function whose return type 
+  is the same as the receiver type.
+This recipe is applied in the figure to classes \cc{X} and \cc{Y}, and 
+  is applicable to an unbounded number of classes.
 
 \Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
   a stack of unbounded depth, yet can only store members of the set~$Γ$.
