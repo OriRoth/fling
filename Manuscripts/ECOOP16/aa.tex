@@ -33,7 +33,7 @@ An instance of class \cc{Box}
 may receive two method invocations: \cc{open()} and \cc{close()},
 and can be in either ‟open” or ‟closed” state,
 Initially the instance is ‟closed”.
-Its behavior henceforth is defined in \cref{Table:box}.
+Its behavior henceforth is defined by \cref{Table:box}.
 
 To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, and
   all other blue regions in the table, type-check.
@@ -47,12 +47,13 @@ The proof makes a general recipe for handling examples of this sort:
 Consider the language defined by the fluent API.
 In the box example, this language is
 \[
-  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}\big)?
+  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|\epsilon\big).
 \]
 
-If this language is deterministic context free, then, the fluent API can be implemented, and,
-  there is algorithm to produce this fluent API for you.
-In the example, language~$L$ is written as a regular expression already,
+If the language defined by the API is deterministic context free, then, 
+  the fluent API can be realized, and,
+  there is algorithm to the type definition.
+In the box example, language~$L$ is written as a regular expression already,
   and hence is trivially deterministic context-free.
 It follows from the proof that there exists a type definition
   for the box example.
@@ -72,7 +73,6 @@ If however this run ends with a failure, i.e., non-accepting state,
 The algorithm for generating the pushdown automaton is unofrunately impractical.
 It is indeed polynomial time and space,
   yet formidable resource consuming.
-
 A practical alternative is offered by the second aspect of this study:
 \Self is a \Java library with a fluent interface, designed for generating fluent APIs.
 To create a new fluent API~$ϕ$, use the fluent API of \Self to write, in \Java, a BNF for~$ϕ$.
@@ -83,28 +83,21 @@ This class library, ready for use by~$ϕ$'s clients, does more
   than compile time recognition
   of the language of~$ϕ$.
 The execution of a call chain of~$ϕ$, creates an AST data structure.
-  compliant with the BNF of~$ϕ$, and augmented with a visitor, all ready
+  compliant with the BNF of~$ϕ$, and augmented with a visiting API, all ready
   for use by the implementor of~$ϕ$.
 
-\Self generates LR(1) parsers, which as experience shows, is sufficient for many purpooses. 
-Still, LR(1) are a stict subset of determinisic context-free languages. 
+\Self generates LR(1) parsers. Experience shows that these are 
+  sufficient for many purpooses. 
+Still, LR(1) languages make a strict subset of determinisic context-free languages. 
 Practicality concerns stop \Self from implementing LR($k$) parsing for any 
-  desired~$k$, and even the complete LR(*) .
-  
+  higher values of $k$.
 
-It is just pra
-\begin{itemize}
-  \item Although \Self can potentially manage all LR($k$) grammars,
-        the current implementation is limited to LR(1) languages
-  \item Moreover, all LR($k$) languages are strict subsets of deterministic context free languages %according to Knuth:65 LR(*)=D-CFG
-      which precisely those recognized by ANTLR. % ANTLR does not contain D-CFG,and not the opposite either.
-\end{itemize}
-We give reason why bridging this gap is highly unlikely.
-
+One may ask whether the theoretical result is the 
+  best possible: 
 Is it possible to implement a fluent API for a general
   (that is, non-deterministic) context free languages?
-Again, we give reason why this might be possible in some cases,
-  but it is highly unlikely that fluent APIs can be made for all context free languages.
+We give reason why but it is highly unlikely that 
+  fluent APIs can be made for all context free languages.
 
 Modern programming languages acquire high-level constructs
   at a staggering rate.
@@ -143,7 +136,7 @@ This objective is more precisely expressed in the following conjecture.
 
 \begin{Theorem}
 \label{Theorem:Gil-Levy}
-Let~$Σ$ be finite alphabet.
+Let~$Σ$ a be finite alphabet.
 Let~$M$ be a \emph{push-down automaton(PDA)}, and let~$𝓛ₛ⊆Σ^*$ be
 the \emph{formal language} such that~$M$ recognizes.
 Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$
