@@ -10,9 +10,9 @@ The theoretical aspect of the study is a proof (with its implicit algorithm) tha
   there is a \Java type definition that \emph{realizes} this fluent definition, if this
   language is \emph{deterministic context-free}.
 Roughly speaking, deterministic context free languages are those context free languages
-  that can be recognized by an LR (left-right~\cite{provide:lr:grammars}) parser.
+  that can be recognized by an LR (L for reading input from left to right,and R for rightmost derivation)~\cite{Aho:86} parser.
     It is also the set of LL(*) languages~\cite{Knuth:65}, which happens also
-      to to be the language of the popular ANTLR tool~\cite{ANTLR}.
+      to to be the language of the popular ANTLR tool~\cite{Parr:2011}.
 
 For a type definition to \emph{realize} a definition of fluent API,
   two must happen: Call chains that conform with the API definition
