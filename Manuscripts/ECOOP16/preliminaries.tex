@@ -1,11 +1,11 @@
 \subsection{Method Chaining \emph{vs.} Fluent API}
-The pattern ``invoke function on \cc{sb}'' occurs
+The pattern ‟invoke function on \cc{sb}” occurs
   six times in the code in \cref{Figure:non-chaining}.
 
 \begin{wrapfigure}[10]{r}{44ex}
   \caption{\label{Figure:non-chaining}%
-    Recurring invocations of the pattern ``invoke function on the same 
-      receiver''.
+    Recurring invocations of the pattern ‟invoke function on the same
+      receiver”.
   }
   \begin{lcode}[minipage,width=\linewidth]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
@@ -19,16 +19,16 @@ String time(int hours, int minutes, int seconds) {¢¢
 }\end{lcode}
 \end{wrapfigure}
 
-Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, for this pattern. 
-Method chaining is a ``programmer made'' syntactic sugar for this pattern: 
-  If a method $f$ returns its receiver, i.e., \kk{this}, 
-  then, instead of the series of two commands \mbox{\cc{o.$f$(); o.$g$();}}, clients can write 
-  only one command \mbox{\cc{o.$f()$.$g$();}}. 
+Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, for this pattern.
+Method chaining is a ‟programmer made” syntactic sugar for this pattern:
+  If a method~$f$ returns its receiver, i.e., \kk{this},
+  then, instead of the series of two commands \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
+  only one command \mbox{\cc{o.$f()$.$g$();}}.
 \cref{Figure:chaining} is the method chaining
-  (also, shorter and arguably clearer) version of 
+  (also, shorter and arguably clearer) version of
   \cref{Figure:non-chaining}.
-It is made possible by the designer of class \cc{StreamBuilder} making sure that all overloaded variants of 
-  of \cc{append} return their receiver. 
+It is made possible by the designer of class \cc{StreamBuilder} making sure that all overloaded variants of
+  of \cc{append} return their receiver.
 
 \begin{wrapfigure}[8]{r}{44ex}
   \caption{\label{Figure:chaining}%
@@ -44,7 +44,6 @@ String time(int hours, int minutes, int seconds) {¢¢
       ¢¢.toString();
 }\end{lcode}
 \end{wrapfigure}
-  
 
 Now, definition found in the web of the term \emph{fluent API†{API =
     \textbf Application \textbf Program \textbf Interface
@@ -96,8 +95,8 @@ Now a good fluent API design is one by which the sequences of method calls in
 Seat s0x = Seat.create.\$();
 Seat s0y = Seat.create.male().\$();
 Seat s0z = Seat.create.male().urinate().\$();
-Seat s1  = Seat.create.male().raise().urinate();
-Seat s2  = Seat.create.female().urinate();\end{JAVA}
+Seat s1 = Seat.create.male().raise().urinate();
+Seat s2 = Seat.create.female().urinate();\end{JAVA}
   \caption{Legal sequences of calls in the toilette seat example}
   \label{Figure:toilette:legal}
 \end{figure}

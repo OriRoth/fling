@@ -1,42 +1,47 @@
-In this section, we explain the inner working of \Self. 
-\Self employs the standard algorithm for converting an input 
-  BNF definition, over the $\Sigma$, the input alphabet, 
-    and $\text{NT}$ the set of non-terminals. 
-    and the set of  
-  into an LR(1) parser.
-If the input grammar is not LR(1), \Self issues an 
+In this section, we explain the inner working of \Self.
+\Self employs the textbook algorithm~\cite{Textbook} for converting an input
+  BNF grammar~$G$ into an LR(1) parser.
+If~$G$ is not LR(1), \Self issues an
   appropriate error message and fails.
-After this, \Self generates a type encoding 
-  for this parser. 
+Otherwise, \Self produces this parser, and
+  then generates a \Java type encoding for it.
 
-Let
-The LR(1) parser includes the following components: 
+Let the input alphabet of~$G$ be~$Σ$, and let~$Ξ$ be the set of non-terminal symbols
+  of~$G$.
+Then a production \emph{rule}~$r∈G$ takes the form~$r =ξ→β$,~$ξ∈Ξ$,~$β∈\left(Σ∪Ξ\right)^*$.
+An LR(1) parser for $G$ has three  components:
 \begin{description}
-  \item[A pushdown automaton] whose states are $q_0, \ldots, q_n$, $q_0$ being the initial state. 
-  \item[A stack] which contains states of the pushdown automaton. 
-  \item[A transition function] represented by two tables
-    \begin{description}
-      \item[Action table] which represents a partial function 
-          $\text{action}: Q^* \times \Sigma \rightarrow \Sigma \cup \cup  
-
-
-
-        Q X Verb -> Q X Q^*
-      \item[Goto table]
-    \end{description}
+  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$, and where~$q₀$ is the initial state.
+  \item[A stack] which may contain any member of $Q$. 
+  \item[Specification of state transition represented by two tables
+  \begin{description}
+    \item[Goto table] which make a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+    between the states of the automaton.
+    \item[Action table] which makes a  partial 
+      function $\eta:Q⨉Σ↛ ❴ \textsf{Shift}(q') \,|\, q'∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵
+   $. 
+  \end{description}
+\end{description}
+Let~$σ∈Σ$ be the next input symobl,
+  and let~$q∈Q$ be the state state at the top of the stack.
+If~$a(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ onto the stack.
+  If however,~$a(q',σ) = \textsf{Reduce}(r)$,
+  where~$r =ξ\rightarrowβ$,~$β∈\left(Σ∪Ξ\right)^*$,
+  the automaton pops~$|β|$ stack symbols.
+  Let the state at the top of the stack following these pops be~$q'$, then
+  then the automaton pops~$q'$, replacing it with the state~$δ(q',ξ)$.
 
 \subsection{Building the automaton's dependency graph}
 
-
   We employ the following convention:
-  lower case letters from the beginning of the Latin alphabet,~$a$,~$b$, $c$, …,
+  lower case letters from the beginning of the Latin alphabet,~$a$,~$b$,~$c$, …,
   denote \emph{terminals} (but never the special terminal~$\cc{\$}$),
-    upper case such letters~$A$,~$B$, $C$, …, denote \emph{variables}
-  (but never the automatically generated special variable $S'$), 
+    upper case such letters~$A$,~$B$,~$C$, …, denote \emph{variables}
+  (but never the automatically generated special variable~$S'$),
   nonterminals(not including S').
-  An upper case sans-serif letter $\mathsf X$, $\mathsf Y$, denote
+  An upper case sans-serif letter~$\mathsf X$,~$\mathsf Y$, denote
     either symbols, i.e., either variables or terminals,
-    while lower case Greek~$α$, $β$, $γ$, \ldots denote \emph{strings} of grammar symbols
+    while lower case Greek~$α$,~$β$,~$γ$,…denote \emph{strings} of grammar symbols
 
     Let~$σ$ be a transition from~$Q$ then~$Q_{σ}$
     is the instantiation of~$action(Q_{B},σ)$ in context
@@ -56,21 +61,21 @@ The LR(1) parser includes the following components:
     \FORALL[Create edges of~$G$]{state~$Q∈P$}
     \FORALL{$∀[A→·Xα,b]∈Q$}
     \STATE~$Q_{Ab}←\textsf{Find}(Q,A,b)$
-    \STATE~$V←V\cup \bigcup❴ Q_{Ab}❵~$
-    \STATE~$E←E\cup \bigcup❴ (Q_{Ab},Q_{X})❵~$
+    \STATE~$V←V∪\bigcup❴ Q_{Ab}❵~$
+    \STATE~$E←E∪\bigcup❴ (Q_{Ab},Q_{X})❵~$
     \ENDFOR
     \FORALL{$[A→·Cd,b]∈Q$}
     \STATE~$Q_{Ab}←\textsf{Find}(Q,A,b)$
     \STATE~$Q_{Cd}←\textsf{Find}(Q,C,d)$
     \IF{$Q_{Cd}$ is not inherited ($≠(A,i,b)$ )}
-    \STATE~$V←V\cup \bigcup❴ Q_{Ab},Q_{Cd}❵~$
-    \STATE~$E←E\cup \bigcup❴ (Q_{Ab},Q_{Cd})❵~$
+    \STATE~$V←V∪\bigcup❴ Q_{Ab},Q_{Cd}❵~$
+    \STATE~$E←E∪\bigcup❴ (Q_{Ab},Q_{Cd})❵~$
     \ENDIF
     \ENDFOR
     \FORALL {$Q_{Ab}∈V.Q_{Ab}≠(A,i,b)$}
-    \STATE~$E←E\cup \bigcup❴ (Q_{A},Q_{Ab})❵~$
+    \STATE~$E←E∪\bigcup❴ (Q_{A},Q_{Ab})❵~$
     \STATE~$Q_{b}^{A}←\textsf{Find}(Q^{A},b)$
-    \STATE~$E←E\cup \bigcup❴ (Q_{b}^{A},Q_{Ab})❵~$
+    \STATE~$E←E∪\bigcup❴ (Q_{b}^{A},Q_{Ab})❵~$
     \ENDFOR
     \ENDFOR
     \RETURN{$⟨V,E⟩$}
