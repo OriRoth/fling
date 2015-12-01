@@ -27,8 +27,9 @@
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
-\usepackage{yogi-lang}
+\usepackage[terse]{yogi-lang}
 \usepackage{yogi-unicode}
+\renewcommand\languageShape[1]{\textrm{#1}}
 
 \usetikzlibrary{graphdrawing}
 \usetikzlibrary{graphs} 
@@ -51,7 +52,6 @@
 \newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
 \newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
 
-
 \newtheorem{Theorem}{Theorem}
 \newtheorem{Definition}{Definition}
 \newtheorem{Conjecture}{Conjecture}
@@ -68,10 +68,17 @@
 \Crefname{conjecture}{Conjecture}{Conjectures}
 \crefname{figure}{Fig.}{figs.}
 \Crefname{figure}{Fig.}{Figs.}
+\crefname{table}{Table}{tables}
+\Crefname{table}{Table}{Tables}
 \crefname{section}{Sect.}{sects.}
 \Crefname{section}{Sect.}{Sects.}
 \crefname{equation}{eq.}{eqs.}
 \Crefname{equation}{Eq.}{Eqs.}
+\crefname{theorem}{Thm.}{thms.}
+\Crefname{theorem}{Thm.}{Thms.}
+
+
+\intextsep=0pt
 
 \newcommand \urlref [1] {\footnote{\url{#1}}}
 

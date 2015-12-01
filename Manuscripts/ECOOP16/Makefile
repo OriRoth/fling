@@ -14,6 +14,7 @@ LISTINGS+=mammal.listing
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
+LISTINGS+=id.listing
 
 # Target to be used for compiles when references did not change
 latex: $(wildcard *.sty *.tex) $(LISTINGS) 
@@ -38,7 +39,7 @@ binary-function.listing: ../../src/main/java/automaton/Domain.java
 	awk '/^.*static abstract class f {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
 mammal.listing: ../../src/main/java/automaton/DomainDemo.java  
-	awk '/^.*Mammals.*$$/,/^.*School.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*Mammals.*$$/,/^.*extends Heap.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
 	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -46,6 +47,8 @@ binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java
 spda.listing: ../../src/main/java/automaton/Domain.java  
 		awk '/^.*public static abstract class Q<S\s.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
+id.listing: ../../src/main/java/automaton/Domain.java  
+		awk '/^.*interface ID.*$$/,/^.*class Y/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 warnings:	
 	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 

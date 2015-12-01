@@ -6,7 +6,7 @@
   }
   \newline
   \color{red}{%
-    \rmfamily\scshape Thou Moral, Be Warned. \newline
+    \rmfamily\scshape Thou Mortal, Be Warned. \newline
     Thou Shallt Not Remove \newline
     This Commandment \newline
     While There Are Signs of Haste \newline
@@ -39,8 +39,8 @@
 
 \textbf{Outline.}
 The first main result is presented in \cref{Section:proof}.
-Towards this, \Cref{section:preliminaries}, the preliminaries, 
-  recalls the main notions we rely on: DSL, fluent API,
+Towards this,  \cref{Section:preliminaries}, the preliminaries, 
+  recalls the central notions we rely on: DSL, fluent API,
   context free languages, pushdown automaton, etc. 
 A summary of contributions and a perspective on related work is
   in \cref{Section:related}.
@@ -53,7 +53,7 @@ This toolkit is then used in \cref{Section:proof} for
 This section also explains why the expressive power of \Self
   is unlikely to be improved much.
 
-\Cref{Section:proposal} introduces \Self.
+\Cref{Section:fajita} introduces \Self.
 The algorithm that drives \Self, of generating the complex
   type encoding behind the parser generator
   is described in \cref{Section:algorithm}.
@@ -95,13 +95,15 @@ The main ideas behind the bootstrapping definition of \Self
 \label{Section:algorithm}
 \input{algorithm}
 
+\section{Bootstrapping Definition}
+\label{Section:bootstrapping}
+\input{bootstrapping}
+
 \section{Using \Self for Producing ASTs}
 \label{Section:AST}
 \input{AST}
 
-\section{Bootstrapping Definition}
-\label{Section:bootstrapping}
-\input{bootstrapping}
+\
 
 \section{Conclusion}
 \label{Section:zz}

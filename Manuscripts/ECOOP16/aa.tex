@@ -1,49 +1,102 @@
-Ever after their inception~†{\url{http://martinfowler.com/bliki/FluentInterface.html}} \emph{fluent APIs}
+Ever after their inception~\urlref{http://martinfowler.com/bliki/FluentInterface.html} \emph{fluent APIs}
   increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
   interest~\cite{Deursen:2000,Kabanov:2008}.
 Inspired by the theory of formal languages~\cite{Linz:2001} and pushdown automata,
   this is a study of what can be done, and what can not be done, with a fluent API.
 
-Consider a fluent API definition, permitting only certain call chains.
-Now, think of the formal language that defines the set of permissible call chains.
+Consider some fluent API definition, permitting only certain call chains.
+Now, think of the formal language that defines the set of these permissible chains.
 The theoretical aspect of the study is a proof (with its implicit algorithm) that
-  there is \Java program that realizes this fluent API, if this
+  there is a \Java type definition that \emph{realizes} this fluent definition, if this
   language is \emph{deterministic context-free}.
-The essence of the proof is in showing a \Java type encoding of
+Roughly speaking, deterministic context free languages are those context free languages
+  that can be recongized by an LR (left-right~\cite{provide:lr:grammars}) parser.
+    this is also the set of LL(*) languges~\cite{Knuth:65}, which happens also
+      to to be the language of the popular ANTLR tool~\cite{ANTL}.
+
+For a type definition to \emph{realize} a definition of fluent API,
+  two must happen: Call chains that conform with the API definition
+  compile correctly; conveserly, call chains that are forbidden by the API definition
+  do not type-check, and result in compile-time error.
+
+\begin{wraptable}[9]r{27ex}
+\caption{\label{Table:box}Fluent API of a box object}
+  \begin{tabular}{m{7ex} | m{8ex} @{}| m{8ex}}
+           & \cc{open()} & \cc{close()}⏎ \hline
+    ‟closed” & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
+    ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
+  \end{tabular}
+\end{wraptable}
+
+To make the proof concrete, consider this example of fluent API definition:
+An instance of class \cc{Box}
+may receive two method invocations: \cc{open()} and \cc{close()},
+and can be in either ‟open” or ‟closed” state,
+Initially the instance is ‟closed”.
+Its behavior henceforth is defined by \cref{Table:box}.
+
+To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, and
+  all other blue regions in the table, type-check.
+Conversely, with this type definition, type error occurs in \cc{\kk{new} Box.close()},
+  and in all other red regions in the table.
+
+Some skill is required to make this type definition: proper design of class \cc{Box}, perhaps with
+  some auxiliary other auxiliary classes extending it, an appropriate method definition here and there, etc.
+
+The proof makes a general recipe for handling examples of this sort:
+Consider the language defined by the fluent API.
+In the box example, this language is
+\[
+  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
+\]
+
+If the language defined by the API is deterministic context free, then,
+  the fluent API can be realized, and,
+  there is algorithm to the type definition.
+In the box example, language~$L$ is written as a regular expression already,
+  and hence is trivially deterministic context-free.
+It follows from the proof that there exists a type definition
+  for the box example.
+Moreover, there is a way
+  to automatically produce this type definition.
+
+The proof is a construction of a \Java type encoding of
   the \emph{deterministic pushdown automaton} that recognizes
-  the formal language behind the automaton.
-With the generated types and methods, a chain of fluent API calls
-  will type check only if the chain is within the language.
+  a given \emph{determinisic context free language}.
+With the generated types and methods, any chain of fluent API calls,
+  actually runs the pushdown automaton against the specific input that the chain represents.
+When used appropriately, if this run of the automaton ends with an accepting state,
+  then the fluent API chain type checks correctly.
+If however this run ends with a failure, i.e., non-accepting state,
+  compile time error will occur.
 
-Practically speaking, the poof shows that the (potential)
-  experessive power of fluent APIs,
-  is the same as deterministic context-free grammars.
-%If a grammar of a fluent API can be written in ANTLR, then it
-%  can be implemented with a \Java library.
-Nevertheless, the algorithim for generating the parser, although polynomial
-  in time and space, is too resource consuming to be implemented. 
-
-The second aspect of this work takes is the actual production 
-  of fluent APIs from their specification.
-\Self, presented here, is a \Java library providing a fluent API for generating fluent APIs:
-To create a new fluent API, use the fluent API of \Self to write, in \Java, a BNF for it.
+The algorithm for generating the pushdown automaton is unofrunately impractical.
+It is indeed polynomial time and space,
+  yet formidable resource consuming.
+A practical alternative is offered by the second aspect of this study:
+\Self is a \Java library with a fluent interface, designed for generating fluent APIs.
+To create a new fluent API~$ϕ$, use the fluent API of \Self to write, in \Java, a BNF for~$ϕ$.
 Running the \Java program thus written, augmented with the \Self library,
-  generates a \Java class library that implements this new fluent API.
+  generates a \Java class library that realizes~$ϕ$.
 
-Practicality concerns stopped \Self from realizing the full potential of the proof.
-As a result, the expressive power of \Self is actually stictly less than that of ANTLR:
-\begin{itemize}
-  \item Although \Self can potentially manage all LR(k) grammars,
-        the current implementation is limited to LR(1) languages
-  \item Moreover, all LR(k) languages are strict subsets of deterministic context free languages %according to Knuth:65 LR(*)=D-CFG
-      which precisely those recognized by ANTLR. % ANTLR does not contain D-CFG,and not the opposite either.
-\end{itemize}
-We give reason why bridging this gap is highly unlikely.
+This class library, ready for use by~$ϕ$'s clients, does more
+  than compile time recognition
+  of the language of~$ϕ$.
+The execution of a call chain of~$ϕ$, creates an AST data structure.
+  compliant with the BNF of~$ϕ$, and augmented with a visiting API, all ready
+  for use by the implementor of~$ϕ$.
 
-Is it possible to implement a fluent API for a general 
-  (that is, non-deterministic) context free languages? 
-Again, we give reason why this might be possible in some cases,
-  but it is highly unlikely that fluent APIs can be made for all context free languages.
+\Self generates LR(1) parsers. Experience shows that these are
+  sufficient for many purpooses.
+Still, LR(1) languages make a strict subset of determinisic context-free languages.
+Practicality concerns stop \Self from implementing LR($k$) higher~$k$. 
+
+One may ask whether the theoretical result is the
+  best possible:
+Is it possible to implement a fluent API for a general
+  (that is, non-deterministic) context free languages?
+We give reason why but it is highly unlikely that
+  fluent APIs can be made for all context free languages.
 
 Modern programming languages acquire high-level constructs
   at a staggering rate.
@@ -59,14 +112,9 @@ For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
 
 \begin{Theorem}
   \label{Theorem:Gutterman}
-  For every Turing machine~$m$†{We tacitly assume that a Turing machine
-    enJAVAs in it its input}, there exists a \CC program,~$Cₘ$ such that
-  \begin{quote}
+  For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
     compilation of~$Cₘ$ of terminates if and only if
-    \begin{quote}
       Turing-machine~$m$ halts.
-    \end{quote}
-  \end{quote}
   Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
     effective~$≈$‟~\emph{there is time
   bounded algorithm for carrying out the task}”.} generated from~$m$.
@@ -87,7 +135,7 @@ This objective is more precisely expressed in the following conjecture.
 
 \begin{Theorem}
 \label{Theorem:Gil-Levy}
-Let~$Σ$ be finite alphabet.
+Let~$Σ$ a be finite alphabet.
 Let~$M$ be a \emph{push-down automaton(PDA)}, and let~$𝓛ₛ⊆Σ^*$ be
 the \emph{formal language} such that~$M$ recognizes.
 Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$

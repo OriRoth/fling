@@ -12,7 +12,8 @@ public class DomainDemo {
   class Mammals { /* … */ }
   class Heap<M extends Mammals> { /* … */}  
   class Whales extends Mammals { /* … */} 
-  class School<W extends Whales> extends Heap<W> { /* … */} 
+  class School<W extends Whales> 
+    extends Heap<W> { /* … */} 
   
   //gamma-example.listing
 
