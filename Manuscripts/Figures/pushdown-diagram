@@ -1,0 +1,19 @@
+\usetikzlibrary{automata,positioning,topaths}
+\tikzstyle{state-style}=[state,every node={draw=black}];
+\begin{tikzpicture}
+
+\node[state-style,initial,initial where=above] (q0) {$q_0$};
+\node[state-style] (q1) [right=of q0] {$q_{1}$};
+\node[state-style] (q2) [right=of q1] {$q_{2}$};
+\node[state-style] (q3) [right=of q2] {$q_{3}$};
+
+\path[->,distance = 2ex,above] 
+
+				(q0) edge[] node {$\sigma_1$,E$/\gamma_2$} (q1)
+
+				(q1) edge node {$\sigma_1$,$\gamma_2/\epsilon$} (q2)
+
+				(q2) edge[bend left,below] node {$\sigma_1$,$\gamma_2/\gamma_1\gamma_1$} (q1)
+						edge node {$\sigma_1$,E$/\gamma_1\gamma_2$}  (q3);
+
+\end{tikzpicture}
