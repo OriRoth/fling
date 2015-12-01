@@ -92,11 +92,8 @@ Now a good fluent API design is one by which the sequences of method calls in
 
 \begin{figure}[htbp]
   \begin{JAVA}
-Seat s0x = Seat.create.\$();
-Seat s0y = Seat.create.male().\$();
-Seat s0z = Seat.create.male().urinate().\$();
-Seat s1 = Seat.create.male().raise().urinate();
-Seat s2 = Seat.create.female().urinate();\end{JAVA}
+new Seat().male().raise().urinate();
+new Seat().female().urinate();\end{JAVA}
   \caption{Legal sequences of calls in the toilette seat example}
   \label{Figure:toilette:legal}
 \end{figure}
@@ -184,7 +181,26 @@ A classic example of a language that is CF and not a regular,
 A CFL can be defined using BNF, which is also an important and widespread tool for 
   defining programming languages.
 \paragraph{Pushdown Automaton}
-A pushdown automaton is an abstract machine consisting a 
+A \emph{pushdown automaton}(PDA) is an model machine, consisting a non-deterministic state machine
+  and a stack. 
+The non-determinism of the state machine is expressed by the fact that the transition function
+  is non-deterministic, meaning that a single mapping results in a set of results, instead of one.
+The stack can hold an unbounded number of stack symbols, as a consequence, informally, 
+  this model can ``remember'' arbitrary amount of information, with the inherent FIFO restriction 
+  of a stack.
+The language accepted by a PDA is defined by the set of words the PDA accepts on 
+  (via empty stack or accepting states).
+An important result is, the equivalence of PDA's and CFG's expressiveness, in a sense that
+  the set of languages that CFGs can define is equivalent to the set of languages that can be
+  accepted by a pushdown automaton.
+\paragraph{Deterministic PDA and Deterministic CFL}
+Informally, the difference between a deterministic and non-deterministic PDA resides in the
+  the transition function. 
+While the latter defined to return a set of results, the former returns a single result.
+The DPDA languages are strictly stronger than regular languages, and strictly weaker than
+  general CFL.
+Deterministic CFL can be defined by the set of languages that D-PDA accept.
+This is an interesting class because 
 \paragraph{LR($k$)}
 \begin{wrapfigure}r{0.5\linewidth}
   \caption{Hierarchy of CFGs and pushdown automata}
