@@ -21,7 +21,7 @@ It uses the notation introduced in~\cref{Figure:BNF}
       \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
       \<Rules>                   & ::= \<Rule> \~\<Rules>\hfill⏎
       {}                         & \| \<Rule> \hfill⏎
-      \<Rule>                    & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
+      \<Rule>                    & ::= \cc{derives(Class<? \kk{extends} Variable>)} \<Conjunctions>\hfill⏎
       \<Conjunctions>            & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
       \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{toNone()}\hfill⏎

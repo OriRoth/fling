@@ -1,26 +1,13 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.ABSTRACT_RULE;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.AND;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_ABSTRACT;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_NORMAL;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NEXT_RULE;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.NORMAL_RULE;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.OR;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.RULE;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.RULE_TYPE;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.S;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.and;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derive;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.finish;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.or;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.setApiName;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.to;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.*;
 
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNF.ClassEllipsis;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class BNFBootstrap {
@@ -29,37 +16,46 @@ public class BNFBootstrap {
   }
 
   static enum Term implements Terminal {
-    setApiName, derive, to, //
-    and, toOneOf, or, //
-    finish;
+    start, derives, with, //
+    to, and, toNone, or, orNone, //
+    go;
   }
 
   static enum NT implements NonTerminal {
-    S, RULE, RULE_TYPE, ABSTRACT_RULE, //
-    NEXT_ABSTRACT, OR, NORMAL_RULE, NEXT_NORMAL, //
-    AND, NEXT, NEXT_RULE;
+    BNF, Header, Body, Footer, //
+    Variables, Terminals, Start, //
+    Rules, Rule, Conjunctions, //
+    First_Conjunction, Extra_Conjunctions, //
+    Extra_Conjunction, //
+    Symbol_Sequence
   }
 
-  // TODO: fix bootstrap.
   public static void buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .start(S) //
+        .start(BNF) //
         //
-        .derive(S).to(setApiName).and(RULE).and(NEXT) //
-        .derive(RULE).to(derive).and(RULE_TYPE) //
-        .derive(RULE_TYPE).to(ABSTRACT_RULE).or().to(NORMAL_RULE) //
-        .derive(ABSTRACT_RULE).to(to) //
-        /*             */.or().to(to).and(NEXT_ABSTRACT) //
-        .derive(NEXT_ABSTRACT).to(OR) //
-        /*             */.or().to(OR).and(NEXT_ABSTRACT) //
-        .derive(OR).to(or).and(NEXT_ABSTRACT) //
-        .derive(NORMAL_RULE).to(to) //
-        /*           */.or().to(to).and(NEXT_NORMAL) //
-        .derive(NEXT_NORMAL).to(AND) //
-        /*            */.or().to(AND).and(NEXT_NORMAL) //
-        .derive(AND).to(and).and(NEXT_NORMAL) //
-        .derive(NEXT).to(NEXT_RULE).or().to(finish) //
-        .derive(NEXT_RULE).to(RULE).and(NEXT) //
+        .derive(BNF)/*               */.to(Header).and(Body).and(Footer) //
+        .derive(Header)/*            */.to(Variables).and(Terminals) //
+        /*                               */.or().to(Terminals).and(Variables) //
+        .derive(Variables)/*         */.to(with, NonTerminal.class)//
+        .derive(Terminals)/*         */.to(with, Terminal.class)//
+        .derive(Body)/*              */.to(Start).and(Rules) //
+        .derive(Rules)/*             */.to(Rule).and(Rules) //
+        /*                               */.or().to(Rule) //
+        .derive(Rule)/*              */.to(derives, NonTerminal.class).and(Conjunctions) //
+        .derive(Conjunctions)/*      */.to(First_Conjunction).and(Extra_Conjunctions) //
+        .derive(First_Conjunction)/* */.to(to, NonTerminal.class).and(Symbol_Sequence) //
+        /*                                 */.or().to(to, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence) //
+        /*                                 */.or().to(toNone) //
+        .derive(Extra_Conjunctions)/**/.to(Extra_Conjunction).and(Extra_Conjunctions) //
+        /*                                 */.orNone() //
+        .derive(Extra_Conjunction)/* */.to(or, NonTerminal.class).and(Symbol_Sequence) //
+        /*                                 */.or().to(or, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence)//
+        /*                                 */.or().to(orNone)//
+        .derive(Symbol_Sequence)/*   */.to(and, NonTerminal.class) //
+        /*                    */.or().to(and, Terminal.class, ClassEllipsis.class) //
+        /*                    */.orNone() //
+        .derive(Footer).to(go)//
         .finish();
     System.out.println(b);
   }

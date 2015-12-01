@@ -38,4 +38,8 @@ public final class BNF {
   public List<DerivationRule> getRules() {
     return derivationRules;
   }
+
+  public static class ClassEllipsis {
+    //
+  }
 }
