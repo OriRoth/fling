@@ -3,15 +3,7 @@
 
 \tikzstyle{set}=[circle,font=\scriptsize,above,draw,thick];
 
-% \node[set,scale=2,rotate=4] (A) {A};
-% \node[set] (A) {B};
-% 
-% \node[set] (A) {C};
-% \node[set] (A) {D};
-% \node[set] (A) {E};
-% \node[set] (A) {F};
-
-\draw (-2.7,4) node [above] {$\mathcal L \subseteq{\Sigma^*}$} (-3*1.3,-3) rectangle (3*1.3,3);
+\draw (-2.7,2.8) node [above] {$\mathcal L \subseteq{\Sigma^*}$} (-3*1.3,-2.8) rectangle (3*1.3,2.8);
 
 \draw[blue!50!black] %CFG
 (0,0) circle [x radius=2.5*1.4,y radius=2.5] (0,2.5) node[above, left=40]{$\text{CFG}$};
@@ -24,7 +16,7 @@
 
 % \draw (0,2.4) node[above,font=] {$\vdots$};
 
-\draw[green!60!black] (0,0) circle [x radius=3.8,y radius=0.6,rotate=37.5,] (3.5,1.3) node[above] {LL(*)};
+\draw[green!60!black] (0,0) circle [x radius=3.8,y radius=0.6,rotate=37.5,] (3.3,2.3) node[above] {LL(*)};
 
 \draw[orange!50!black] (0,0) circle [x radius=0.95*1.4,y radius=0.95] node {$\text{LR}(1)=\textsf{Fajita}$};
 
