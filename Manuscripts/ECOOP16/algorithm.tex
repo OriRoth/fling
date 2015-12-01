@@ -25,7 +25,7 @@ The parser begins by pushing~$q₀$ (the initial state) into the stack,
 and then repetitively execute the following:
 Examine~$q∈Q$, the state at the top of the stack.
 If~$q=qₙ$ (the accepting state), then the parser stops in accepting.
-Let~$σ∈Σ$ be the next input symobl.
+Let~$σ∈Σ$ be the next input symbol.
 If~$η(q,σ)=⊥$, the parser stops in rejecting the input.
 If~$η(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ into the stack.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
