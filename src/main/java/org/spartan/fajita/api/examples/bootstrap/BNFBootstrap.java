@@ -1,13 +1,33 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.BNF;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Body;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Conjunctions;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Extra_Conjunction;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Extra_Conjunctions;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.First_Conjunction;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Footer;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Header;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Rule;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Rules;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Start;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Symbol_Sequence;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Terminals;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Variables;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.and;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derives;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.go;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.or;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.orNone;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.start;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.to;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.toNone;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.with;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNF.ClassEllipsis;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class BNFBootstrap {
@@ -30,7 +50,7 @@ public class BNFBootstrap {
     Symbol_Sequence
   }
 
-  public static void buildBNF() {
+  public static BNF buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .start(BNF) //
         //
@@ -40,6 +60,7 @@ public class BNFBootstrap {
         .derive(Variables)/*         */.to(with, NonTerminal.class)//
         .derive(Terminals)/*         */.to(with, Terminal.class)//
         .derive(Body)/*              */.to(Start).and(Rules) //
+        .derive(Start)/*             */.to(start,NonTerminal.class)//
         .derive(Rules)/*             */.to(Rule).and(Rules) //
         /*                               */.or().to(Rule) //
         .derive(Rule)/*              */.to(derives, NonTerminal.class).and(Conjunctions) //
@@ -57,6 +78,6 @@ public class BNFBootstrap {
         /*                                */.orNone() //
         .derive(Footer)/*            */.to(go)//
         .finish();
-    System.out.println(b);
+    return b;
   }
 }

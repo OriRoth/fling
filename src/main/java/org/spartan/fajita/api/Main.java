@@ -26,6 +26,7 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
+import org.spartan.fajita.api.examples.bootstrap.BNFBootstrap;
 import org.spartan.fajita.api.generators.ApiGenerator;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
@@ -39,7 +40,7 @@ public class Main {
      expressionBuilder();
   }
   static void apiGenerator() {
-    final BNF bnf = AutomatonCycles.buildBNF();
+    final BNF bnf = BNFBootstrap.buildBNF();
 //    lrAutomatonVisualisation(new LRParser(bnf));
     JavaFile fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
