@@ -200,9 +200,24 @@ While the latter defined to return a set of results, the former returns a single
 The DPDA languages are strictly stronger than regular languages, and strictly weaker than
   general CFL.
 Deterministic CFL can be defined by the set of languages that D-PDA accept.
-This is an interesting class because 
+This is an interesting class because as we will prove, the \Java compiler can determine,
+  given a D-CFG and a word in the corresponding alphabet, whether the word is in the 
+  grammar's language, or not.
 \paragraph{LR($k$)}
+The class of LR($k$) grammars are well known for their role in theory of compilation~\cite{Aho:86}
+In terms of expressiveness, Knuth~\cite{Knuth:65} proved that for every~$k>0$ the set of languages
+  that LR($k$) parsers can parse is equal to D-CFL.
+LR($k$) parsers will be discussed in detail, at~\cref{Section:algorithm}.
+\paragraph{LL{$*$}}
+In order to see the full picture of the expressiveness of the discussed classes, we will only 
+  only mention the LL($*$) class and it's expressiveness. The LL($*$)~\cite{Parr:2011} class does not contain,
+  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also 
+  parser some context-sensitive grammars.
+  
+\Cref{Figure:expressiveness} is a visualization of the discussed grammar's hierarchy.
+
 \begin{wrapfigure}r{0.5\linewidth}
-  \caption{Hierarchy of CFGs and pushdown automata}
+  \caption{ \label{Figure:expressiveness}
+  Hierarchy of CFGs and pushdown automata}
   \input ../Figures/expressiveness-diagram.tikz
 \end{wrapfigure}

@@ -360,8 +360,52 @@ year = 2001
 @book{Hopcroft:book:2001,
 author = {Hopcroft, John E. and Motwani, Rajeev and Ullman, Jeffrey D.},
 edition = {\nth{2}},
-pages = 249,
 publisher = {Addison-Wesley},
 title = {Introduction to automata theory, languages, and computation},
 year = 2001
+}
+@book{Aho:86,
+abstract = {This book is a descendant of Principles of Compiler Design by Alfred V. Aho and Jeffrey D. Ullman. Like its ancestor, it is intended as a text for a first course in compiler design. The emphasis is on solving problems universally encountered in designing a language translator, regardless of the source or tar- get machine.},
+author = {Aho, Alfred V and Sethi, Ravi and Ullman, Jeffrey D},
+isbn = {0201100886},
+number = 11,
+pmid = {2859937},
+publisher = {Addison-Wesley},
+title = {Compilers: Principles Techniques, and Tools},
+volume = 11,
+year = 1986
+}
+@article{Knuth:1965,
+abstract = {There has been much recent interest in languages whose grammar is sufficiently simple 
+that an efficient left-to-right parsing algorithm can be mechanically produced from the grammar. 
+In this paper, we define LR(k) grammars, which are perhaps the most general ones of this type, 
+and they provide the basis for understanding all of the special tricks which have been used in 
+the construction of parsing algorithms for languages with simple structure, e.g., algebraic languages.
+We give algorithms for deciding if a given grammar satisfies the LR(k) condition, for given k, 
+and also give methods for generating recognizes for LR(k) grammars. 
+It is shown that the problem of whether or not a grammar is LR(k) for some k is undecidable, 
+and the paper concludes by establishing various connections between LR(k) grammars and deterministic languages. 
+In particular, the LR(k) condition is a natural analogue, for grammars, of the deterministic condition, for languages.},
+author = {Knuth, Donald E.},
+doi = {10.1016/S0019-9958(65)90426-2},
+issn = {00199958},
+journal = {Information and Control},
+number = 6,
+pages = {607--639},
+title = {On the translation of languages from left to right},
+volume = 8,
+year = 1965
+}
+@article{Parr:2011,
+abstract = {Despite the power of Parser Expression Grammars (PEGs) and GLR, parsing is not a solved problem. Adding nondeterminism (parser speculation) to traditional LL and LR parsers can lead to unexpected parse-time behavior and introduces practical issues with error handling, single-step debugging, and side-effecting embedded grammar actions. This paper introduces the LL(*) parsing strategy and an associated grammar analysis algorithm that constructs LL(*) parsing decisions from ANTLR grammars. At parse-time, decisions gracefully throttle up from conventional fixed k>=1 lookahead to arbitrary lookahead and, finally, fail over to backtracking depending on the complexity of the parsing decision and the input symbols. LL(*) parsing strength reaches into the context-sensitive languages, in some cases beyond what GLR and PEGs can express. By statically removing as much speculation as possible, LL(*) provides the expressivity of PEGs while retaining LL's good error handling and unrestricted grammar actions. Widespread use of ANTLR (over 70,000 downloads/year) shows that it is effective for a wide variety of applications.},
+author = {Parr, Terence and Fisher, Kathleen},
+doi = {http://doi.acm.org/10.1145/1993498.1993548},
+isbn = {978-1-4503-0663-8},
+issn = {03621340},
+journal = {Proceedings of the \nth{32} ACM SIGPLAN conference on Programming language design and implementation},
+keywords = {augmented transition networks,backtracking,context-sensitive parsing,deterministic finite automata,glr,memoization,nondeterministic parsing,peg,semantic predicates,subset construction,syntactic predicates},
+pages = {425--436},
+title = {{LL}(*): the foundation of the {ANTLR} parser generator},
+url = {http://doi.acm.org/10.1145/1993498.1993548},
+year = 2011
 }
