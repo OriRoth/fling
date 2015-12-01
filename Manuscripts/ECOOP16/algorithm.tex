@@ -1,4 +1,32 @@
-\subsubsection*{Building the automaton's dependency graph}
+In this section, we explain the inner working of \Self. 
+\Self employs the standard algorithm for converting an input 
+  BNF definition, over the $\Sigma$, the input alphabet, 
+    and $\text{NT}$ the set of non-terminals. 
+    and the set of  
+  into an LR(1) parser.
+If the input grammar is not LR(1), \Self issues an 
+  appropriate error message and fails.
+After this, \Self generates a type encoding 
+  for this parser. 
+
+Let
+The LR(1) parser includes the following components: 
+\begin{description}
+  \item[A pushdown automaton] whose states are $q_0, \ldots, q_n$, $q_0$ being the initial state. 
+  \item[A stack] which contains states of the pushdown automaton. 
+  \item[A transition function] represented by two tables
+    \begin{description}
+      \item[Action table] which represents a partial function 
+          $\text{action}: Q^* \times \Sigma \rightarrow \Sigma \cup \cup  
+
+
+
+        Q X Verb -> Q X Q^*
+      \item[Goto table]
+    \end{description}
+
+\subsection{Building the automaton's dependency graph}
+
 
   We employ the following convention:
   lower case letters from the beginning of the Latin alphabet,~$a$,~$b$, $c$, …,
