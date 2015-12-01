@@ -33,25 +33,26 @@ and can be in either ‟open” or ‟closed” state,
 Initially the instance is ‟closed”.
 Its behavior henceforth is defined by \cref{Table:box}.
 
-To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, and
-  all other blue regions in the table, type-check.
-Conversely, with this type definition, compile time type error occurs in \cc{\kk{new} Box.close()},
-  and in all other red regions in the table.
+To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, more generally
+  blue regions in the table, type-check.
+Conversely, with this type definition, compile time type error should occur in \cc{\kk{new} Box.close()},
+  and, more generally, in red regions in the table.
 
 Some skill is required to make this type definition: proper design of class \cc{Box}, perhaps with
-  some auxiliary other auxiliary classes extending it, an appropriate method definition here and there, etc.
+  some auxiliary classes extending it, an appropriate method definition here and there, etc.
 
 The proof makes a general recipe for handling examples of this sort:
-First, consider the regular language defined by the fluent API.
-In the box example, this language could be defined by the informal regular expression:
+
+First, consider the regular language defined by the fluent API\@.
+In the box example, this language could be defined by the regular expression:
 \[
   L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
 \]
 
-Second, check whether this language defined is deterministic context-free. 
+Second, check whether this language defined is deterministic context-free.
 If it is, the fluent API can be realized, and,
   there is an algorithm to produce the respective type definition.
-In the box example, language~$L$ is written as a regular expression already,
+In the box example, language~$L$ is written as a regular expression,
   and hence is trivially deterministic context-free.
 It follows from the proof that there exists a type definition
   for the box example.
@@ -86,16 +87,20 @@ The execution of a call chain of~$ϕ$, creates an AST data structure,
   for use by the implementer of~$ϕ$.
 
 \Self generates LR(1) parsers. Experience shows that these are
-  sufficient for many purposes.
+  sufficient for many purposes~\cite{find some references, perhaps the bison manual, but I am sure there are better references}.
 Still, LR(1) grammars make a strict subset of deterministic context-free grammars.
 Practicality concerns stop \Self from implementing LR($k$) higher~$k$. 
 
+It is parser size explosion that stops mature tools such as Bison~\cite{Bison},
+  SableCC~\cite{Sable:Search in databased, it should be there} and Lemon Parser Generator~\cite{something}
+  from reaching up to LR($k$),~$k≥2$.
+The same concern stops \Self from this venture.
+
 One may ask whether the theoretical result is the
   best possible:
-Is it possible to implement a fluent API for a general
+Can one implement a fluent API for a general
   (that is, non-deterministic) context free languages?
-We give reason why it is highly unlikely that
-  fluent APIs can be made for all context free languages.
+We give reason why this possibility is unlikely. 
 
 Modern programming languages acquire high-level constructs
   at a staggering rate.

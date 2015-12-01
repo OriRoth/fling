@@ -8,7 +8,7 @@ Otherwise, \Self produces this parser, and
 
 Let the input alphabet of~$G$ be~$Σ$, and let~$Ξ$ be the set of non-terminal symbols
 of~$G$.
-Then a production \emph{rule}~$r∈G$ takes the form~$r =ξ→β$,~$ξ∈Ξ$,~$β∈\left(Σ∪Ξ\right)^*$.
+Then a production \emph{rule}~$r∈G$ is of the form~$r =ξ→β$, where~$ξ∈Ξ$,and~$β∈\left(Σ∪Ξ\right)^*$.
 An LR(1) parser for~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -17,22 +17,22 @@ An LR(1) parser for~$G$ has three components:
         \begin{description}
           \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
           between the states of the automaton.
-          \item[Action table] which makes a partial
-          function~$η:Q⨉Σ↛ ❴ \textsf{Shift}(q') \,|\, q'∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵$.
+          \item[Action table] which
+            defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
         \end{description}
 \end{description}
-The parser begins by pushing~$q₀$ (the initial stack()),
+The parser begins by pushing~$q₀$ (the initial state) into the stack,
 and then repetitively execute the following:
-Let~$q∈Q$ be the state at the top of the stack.
-If~$q=qₙ$ (the accepting state), then the parser accepts and stops.
-Let~$σ∈Σ$ be the next input symobl,
-If~$η(q,σ)=⊥$, the parser fails.
-If~$η(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ onto the stack.
+Examine~$q∈Q$, the state at the top of the stack.
+If~$q=qₙ$ (the accepting state), then the parser stops in accepting.
+Let~$σ∈Σ$ be the next input symbol.
+If~$η(q,σ)=⊥$, the parser stops in rejecting the input.
+If~$η(q',σ) = \textsf{Shift}(q')$, the automaton pushes state~$q'$ into the stack.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
-where~$r=ξ→β$,~$β∈\left(Σ∪Ξ\right)^*$,
-the automaton pops~$|β|$ stack symbols.
-Let~$q'$ be state at the top of the stack after these pops. 
-Then, pop~$q'$, and push instead state $q''$, defined by the transition function~$q”=δ(q',ξ)$.
+where~$r=ξ→β$,
+the parser pops~$|β|$ stack symbols from the stack.
+Let~$q'$ be the state at the top of the stack after these pops.
+The parser then pops~$q'$, and pushes instead state~$q”$, defined by applying the transition function on~$ξ$, i.e.,~$q”=δ(q',ξ)$.
 
 \subsection{Building the automaton's dependency graph}
 
