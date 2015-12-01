@@ -1,36 +1,32 @@
-\begin{tikzpicture}[fill=gray]
-% left hand
-
-%help lines
-%\draw [help lines] (-5,-4) grid (5,4);
+\begin{tikzpicture}
 \begin{scope}[very thick,font=\scriptsize]
 
-\tikzstyle{set}=[circle,xscale=3,font=\scriptsize,above,draw,thick];
+\tikzstyle{set}=[circle,font=\scriptsize,above,draw,thick];
 
-\node[set,scale=2,rotate=4] (A) {A};
-\node[set] (A) {B};
+% \node[set,scale=2,rotate=4] (A) {A};
+% \node[set] (A) {B};
+% 
+% \node[set] (A) {C};
+% \node[set] (A) {D};
+% \node[set] (A) {E};
+% \node[set] (A) {F};
 
-\node[set] (A) {C};
-\node[set] (A) {D};
-\node[set] (A) {E};
-\node[set] (A) {F};
+\draw (-2.7,4) node [above] {$\mathcal L \subseteq{\Sigma^*}$} (-5,-4) rectangle (5,4);
 
-\draw (-2.7,4) node [text=black,above] {$\mathcal L \subseteq{\Sigma^*}$} (-5,-4) rectangle (5,4);
+\draw[blue!50!black] %CFG
+(0,0) circle [x radius=3.5*1.3,y radius=3.5] (0,3.3) node[above=4, left=40]{$\text{CFG}$};
 
-\draw[blue!50] %CFG
-(0,0) circle [x radius=4.6,y radius=3.7] (0,3.5) node[above=4, left=40]{$\text{CFG}$};
+\draw[red!85!black] %D-CFG
+(0,0) circle [x radius=2.8*1.3,y radius=2.8] (0,2.75) node[above] {$\text{DCFG} =\bigcup_k\text{LR($k$)}$};
 
-\draw[red!70] %D-CFG
-(0,0) circle [x radius=3.3,y radius=3] (0,2.85) node[above] {$\text{DCFG} =\bigcup_k\text{LR($k$)}$};
-
-\draw[brown!80] 
+\draw[brown!80!black] 
 (0,0) circle [x radius=2.5,y radius=2] (0,2) node[above] {LR($k$)};
 
-\draw (0,2.45) node[above] {$\vdots$};
+\draw (0,2.4) node[above,font=\huge] {$\vdots$};
 
-\draw[green!80] (0,0) circle [x radius=3.8,y radius=0.6,rotate=37.5,] (3.5,1.3) node[above] {LL(*)};
+\draw[green!80!black] (0,0) circle [x radius=3.8,y radius=0.6,rotate=37.5,] (3.5,1.3) node[above] {LL(*)};
 
-\node[orange!50!blue,circle,x radius=1.5,y radius=1.2,above,draw] at (0,0) {$\text{LR}(1)=\textsf{Fajita}$};
+\draw[orange!50!black] (0,0) circle [x radius=1.5,y radius=1.2] node {$\text{LR}(1)=\textsf{Fajita}$};
 
 \end{scope}
 \end{tikzpicture}
