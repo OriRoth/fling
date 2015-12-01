@@ -53,9 +53,9 @@ public class BNFBootstrap {
         /*                                 */.or().to(or, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence)//
         /*                                 */.or().to(orNone)//
         .derive(Symbol_Sequence)/*   */.to(and, NonTerminal.class) //
-        /*                    */.or().to(and, Terminal.class, ClassEllipsis.class) //
-        /*                    */.orNone() //
-        .derive(Footer).to(go)//
+        /*                                */.or().to(and, Terminal.class, ClassEllipsis.class) //
+        /*                                */.orNone() //
+        .derive(Footer)/*            */.to(go)//
         .finish();
     System.out.println(b);
   }
