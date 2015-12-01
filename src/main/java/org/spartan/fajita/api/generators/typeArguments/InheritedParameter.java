@@ -41,6 +41,6 @@ public final class InheritedParameter implements Comparable<InheritedParameter> 
     return lookaheadComparison;
   }
   @Override public String toString() {
-    return lhs.name() + '_' + depth + '_' + lookahead.name()+"_"+lookahead.hashCode();
+    return lhs.name() + '_' + depth + '_' + lookahead.name()+"_"+Math.abs(lookahead.hashCode());
   }
 }

@@ -202,20 +202,20 @@ public class TypeArgumentManager {
     for (Item i : items) {
       ContextedState q_Ab$B = find(q$B, i.rule.lhs, i.lookahead);
       List<Symbol> rhs = i.rule.getChildren();
-      // By rule (A-> ε. , b)
-      if (rhs.size() == 0)// epsilon rule
-        rhs.add(i.lookahead);
-      // By rule [A -> .Xα , b]
-      Symbol X = rhs.get(0);
-      ContextedState q_X$B = new ContextedState(q$B.goTo(X), q$B, X);
+      ContextedState q_X$B;
+      if (rhs.size() == 0) {// By rule (A-> ε. , b)
+        q_X$B = find(q$B, i.lookahead);
+      } else {// By rule [A -> .Xα , b]
+        Symbol X = rhs.get(0);
+        q_X$B = new ContextedState(q$B.goTo(X), q$B, X);
+      }
       addEdge(g, q_Ab$B, q_X$B);
       // By rule [ A -> Cd , b]
       if (rhs.size() == 2 && rhs.get(0).isNonTerminal() && rhs.get(1).isVerb()) {
         NonTerminal C = (NonTerminal) rhs.get(0);
         Verb d = (Verb) rhs.get(1);
         ContextedState q_Cd$B = find(q$B, C, d);
-        if (!q_Cd$B.isInherited())
-          addEdge(g, q_Ab$B, q_Cd$B);
+        addEdge(g, q_Ab$B, q_Cd$B);
       }
     }
     // By rules on two transition contexts
@@ -229,7 +229,6 @@ public class TypeArgumentManager {
       ContextedState q_b$A = find(q$B.goTo(A), b);
       // if (q_b$A.isInherited())
       addEdge(g, q_b$A, q_Ab$B);
-      // /**
       // * else ;// the state is known in a higher place. maybe Q$b know about
       // it.
       // */
