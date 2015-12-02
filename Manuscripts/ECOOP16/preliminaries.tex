@@ -116,92 +116,104 @@ It should also be clear that fabricating the \kk{class}es, \kk{interface}s
 and the \kk{extends} and \kk{implements} relationships between these, is
 far from being trivial.
 
-\subsection{Type State}
-The toilette seat problem may be amusing to some, but it is not contrived in
-any way. In fact, there is huge body of research on the general topics of
-\emph{type-states}. (See e.g., review articles such
-as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}) Informally, an object
-that belongs to a certain type (\kk{class} in the object oriented lingo), has
-type-states, if not all methods defined in this object's class are applicable
-to the object in all states it may be in.
-
-A classical example of type-states is a file object: which can be in one of two
-states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
-permitted when the file is in an ‟open” state. In addition, method \cc{open()}
-(respectively \cc{close()}) can only be applied if the object is in the
-‟closed” (respectively, ‟open”) state.
-
-Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study~\cite{Beckman:2011} estimates
-  that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
-Type-state pose two main challenges to software engineering
-\begin{enumerate}
-  \item \emph{\textbf{Identification.}}
-    In the typical case, type-state
-        receive little to no mention at all in the documentation.
-    The identification problem is to find the implicit
-    type state in existing JAVA: Given an implementation of a class
-    (or more generally of a software framework),
-    \emph{determine} which sequences of method calls are valid and which violate the
-    type state hidden in the JAVA.
-  \item \emph{\textbf{Maintenance and Enforcement.}}
-    Having identified the type-states, the challenge is in automatically flagging out
-      illegal sequence of calls that does not conform
-      with the type-state, furthermore, with the
-      evolution of an API, the challenge is in updating the type-state information,
-      and the type checking of JAVA of clients.
-\end{enumerate}
-
 \subsection{What is fluent API?}
 
-\subsection{Context Free Languages and Pushdown Automata}
-To conclude this section, we will cover some formal
-  constructs that will be prompted in the remind of this manuscript.
-  For a more extensive read of formal definitions and properties
-  of these constructs, consult J. Hopcroft et al.~\footnote{Hopcroft:book:2001}
-  
-\paragraph{Context Free Grammar}
-A \emph{Context Free Grammar}(CFG) is a formal grammatical description of a language,
-  composed of four components: A finite set of input symbols, also referred to as terminals,
-  a finite set of abstract symbols, referred to as nonterminals, a start symbol from the 
-  nonterminal set, and a set of productions, sometimes referred to as rules. 
-A production is constructed from a nonterminal known as left-hand side and a 
-  string of terminals and nonterminal called right-hand side.
-The language of a context free grammar, is defined by the set of terminal strings 
-  that can be derived from the start symbol, through the various nonterminals.
-\paragraph{Context Free Language}
-Language~$\mathcal{L}$ is said to be a \emph{Context Free Language}(CFL), if there
-  is a \emph{Context Free Grammar}~$G$ such that,~$L(G)=\mathcal{L}$.
-The context free languages set, contains the regular languages, 
-  is contained in the recursively enumerable set, and the context-sensitive languages set.
-A classic example of a language that is CF and not a regular, 
-  is the language~${a^nb^n|n\in\mathbb{N}}$ over the alphabet~$\Sigma={a,b}$,
-  while the analogous language~${a^nb^nc^n|n\in\mathbb{N}}$ is context-sensitive 
-  and not context-free over the same~$\Sigma$.
-A CFL can be defined using BNF, which is also an important and widespread tool for 
-  defining programming languages.
+\subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
+Each of the notions discussed here is probably common knowledge
+(see e.g.,~\cite{Hopcroft:book:2001,must be others}).
+The purpose here is to set a common vocabulary. 
+
+Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input symbols).
+A \emph{language} over $Σ$
+  is a subset of~$Σ^*$ (the set of all strings, including the empty string,
+whose characters are drawn from~$Σ$).
+Keep~$Σ$ implicit henceforth.
+
+A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
+A CFG~$G$ has three components:~$Ξ$,
+a set of \emph{variables} (also called nonterminals), a unique \emph{start variable}~$ξ∈Ξ$, and
+  a finite set of (production) \emph{rules}.
+A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
+  a string of \emph{symbols}, where symbols are either terminals or variables.
+Accordingly,~$r$ is written in the form~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
+This description is often called BNF.
+
+The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
+  that can be derived from the start symbol, following any sequence of applications of the rules.
+CFG languages include regular languages, and are contained in the set
+  of ‟context-sensitive” languages.
+
+An LR(1) parser for a grammar~$G$ has three components:
+\begin{description}
+  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
+  \item[A stack] which may contain any member of~$Q$.
+  \item[Specification of state transition] with the aid of two tables:
+        \begin{description}
+          \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+          between the states of the automaton.
+          \item[Action table] which
+            defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
+        \end{description}
+\end{description}
+The parser begins by pushing~$q₀$ (the initial state) into the stack,
+and then repetitively executes the following:
+Examine~$q∈Q$, the state at the top of the stack.
+If~$q=qₙ$ (the accepting state), then the parser stops in accepting the input.
+Let~$σ∈Σ$ be the next input symbol.
+If~$η(q,σ)=⊥$, the parser stops in rejecting the input.
+If~$η(q',σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
+If however,~$a(q,σ) = \textsf{Reduce}(r)$,
+where~$r=ξ→β$,
+the parser pops~$|β|$ stack symbols from the stack.
+Let~$q'$ be the state at the top of the stack after these pops.
+The parser then pops~$q'$, the new state it reached,
+  and pushes instead a state,~$q”$, defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
+
+\begin{Definition}[Deterministinc Pushdown Automaton]
+  \label{Definition:DPDA}
+  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is an 8-tuple
+  \[
+    M =⟨Q,Σ,Γ, q₀,⊥, A,δ,η⟩
+  \]
+  where~$Q$ is a finite set of
+  \emph{the states of~$M$},~$Σ$ is a finite
+  \emph{set of input symbols},~$Γ$ is a finite
+  \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
+  is a \emph{special symbol designating the bottom of the stack}
+  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
+  the \emph{partial functions of state transition}
+  \[
+    \begin{array}{crlc}
+      δ: & Q⨉Σ⨉Γ &↛& Q⨉Γ^*⏎
+      η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
+    \end{array}
+  \]
+\end{Definition}
+
+
+
 \paragraph{Pushdown Automaton}
 A \emph{pushdown automaton}(PDA) is an model machine, consisting a non-deterministic state machine
-  and a stack. 
+  and a stack.
 The non-determinism of the state machine is expressed by the fact that the transition function
   is non-deterministic, meaning that a single mapping results in a set of results, instead of one.
-The stack can hold an unbounded number of stack symbols, as a consequence, informally, 
-  this model can ``remember'' arbitrary amount of information, with the inherent FIFO restriction 
+The stack can hold an unbounded number of stack symbols, as a consequence, informally,
+  this model can ‟remember” arbitrary amount of information, with the inherent FIFO restriction
   of a stack.
-The language accepted by a PDA is defined by the set of words the PDA accepts on 
+The language accepted by a PDA is defined by the set of words the PDA accepts on
   (via empty stack or accepting states).
 An important result is, the equivalence of PDA's and CFG's expressiveness, in a sense that
   the set of languages that CFGs can define is equivalent to the set of languages that can be
   accepted by a pushdown automaton.
 \paragraph{Deterministic PDA and Deterministic CFL}
 Informally, the difference between a deterministic and non-deterministic PDA resides in the
-  the transition function. 
+  the transition function.
 While the latter defined to return a set of results, the former returns a single result.
 The DPDA languages are strictly stronger than regular languages, and strictly weaker than
   general CFL.
 Deterministic CFL can be defined by the set of languages that D-PDA accept.
 This is an interesting class because as we will prove, the \Java compiler can determine,
-  given a D-CFG and a word in the corresponding alphabet, whether the word is in the 
+  given a D-CFG and a word in the corresponding alphabet, whether the word is in the
   grammar's language, or not.
 \paragraph{LR($k$)}
 The class of LR($k$) grammars are well known for their role in theory of compilation~\cite{Aho:86}
@@ -209,11 +221,11 @@ In terms of expressiveness, Knuth~\cite{Knuth:65} proved that for every~$k>0$ th
   that LR($k$) parsers can parse is equal to D-CFL.
 LR($k$) parsers will be discussed in detail, at~\cref{Section:algorithm}.
 \paragraph{LL{$*$}}
-In order to see the full picture of the expressiveness of the discussed classes, we will only 
+In order to see the full picture of the expressiveness of the discussed classes, we will only
   only mention the LL($*$) class and it's expressiveness. The LL($*$)~\cite{Parr:2011} class does not contain,
-  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also 
+  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also
   parser some context-sensitive grammars.
-  
+
 \Cref{Figure:expressiveness} is a visualization of the discussed grammar's hierarchy.
 
 \begin{wrapfigure}r{0.5\linewidth}
