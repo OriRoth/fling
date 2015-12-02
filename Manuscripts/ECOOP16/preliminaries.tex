@@ -1,13 +1,14 @@
 \subsection{Method Chaining \emph{vs.} Fluent API}
-The pattern ‟invoke function on \cc{sb}” occurs
-  six times in the code in \cref{Figure:non-chaining}.
+The pattern ‟invoke function on variable \cc{sb}” occurs
+six times in the code in \cref{Figure:chaining}(a).
 
-\begin{wrapfigure}[10]{r}{44ex}
-  \caption{\label{Figure:non-chaining}%
+\begin{figure}[H]
+  \caption{\label{Figure:chaining}%
     Recurring invocations of the pattern ‟invoke function on the same
-      receiver”.
+      receiver”, before, and after method chaining.
   }
-  \begin{lcode}[minipage,width=\linewidth]{Java}
+  \begin{tabular}{cc}
+  \begin{lcode}[minipage,width=44ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   StringBuilder sb = new StringBuilder();
   sb.append(hours);
@@ -17,33 +18,32 @@ String time(int hours, int minutes, int seconds) {¢¢
   sb.append(seconds);
   return sb.toString();
 }\end{lcode}
-\end{wrapfigure}
+\hfill
+&
+  \begin{lcode}[minipage,width=44ex,box align=center]{Java}
+String time(int hours, int minutes, int seconds) {¢¢
+    return new StringBuilder()
+      ¢¢.append(hours).append(':')
+      ¢¢.append(minutes).append(':')
+      ¢¢.append(seconds)
+      ¢¢.toString();
+}\end{lcode}
+\\
+\textbf{(a)} before & \textbf{(b)} after 
+\end{tabular}
+\end{figure}
 
 Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, for this pattern.
 Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   If a method~$f$ returns its receiver, i.e., \kk{this},
   then, instead of the series of two commands \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
   only one command \mbox{\cc{o.$f()$.$g$();}}.
-\cref{Figure:chaining} is the method chaining
+  \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
-  \cref{Figure:non-chaining}.
+  \cref{Figure:non-chaining}(a).
 It is made possible by the designer of class \cc{StreamBuilder} making sure that all overloaded variants of
   of \cc{append} return their receiver.
 
-\begin{wrapfigure}[8]{r}{44ex}
-  \caption{\label{Figure:chaining}%
-    Method chaining onto an object of class \cc{StreamBuilder}.
-  }
-  \begin{lcode}[minipage,width=\linewidth]{Java}
-String time(int hours, int minutes, int seconds) {¢¢
-  StringBuilder sb = new StringBuilder();
-    return sb
-      ¢¢.append(hours).append(':')
-      ¢¢.append(minutes).append(':')
-      ¢¢.append(seconds)
-      ¢¢.toString();
-}\end{lcode}
-\end{wrapfigure}
 
 Now, definition found in the web of the term \emph{fluent API†{API =
     \textbf Application \textbf Program \textbf Interface
@@ -120,14 +120,26 @@ far from being trivial.
 
 \subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
 Each of the notions discussed here is probably common knowledge
-(see e.g.,~\cite{Hopcroft:book:2001,must be others}).
-The purpose here is to set a common vocabulary. 
+ (see e.g.,~\cite{Hopcroft:book:2001,must be others} for more precise definitions).
+The purpose here is to set a unifying common vocabulary. 
 
 Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input symbols).
 A \emph{language} over $Σ$
   is a subset of~$Σ^*$ (the set of all strings, including the empty string,
-whose characters are drawn from~$Σ$).
+  whose characters are drawn from~$Σ$).
 Keep~$Σ$ implicit henceforth.
+
+A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition, 
+  made of a non-deterministic finite automaton 
+  and a stack of unbounded depth of states.
+An NPDA begins by pushing into the initial state into the empty stack.
+In each step the NPDA examines the next input symbol and the state at the
+  top of the stack.
+It then non-deterministically between three options: to proceed to the next input symbol,  
+  to pop a state from a stack, or to push a state into it. 
+
+The language recognized by an NPDA is the set of strings the it accepts,
+  either by reaching an empty stack or by encountering an empty state. 
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
 A CFG~$G$ has three components:~$Ξ$,
@@ -135,14 +147,19 @@ a set of \emph{variables} (also called nonterminals), a unique \emph{start varia
   a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
-Accordingly,~$r$ is written in the form~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
+Accordingly,~$r$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
 This description is often called BNF.
-
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
 CFG languages include regular languages, and are contained in the set
   of ‟context-sensitive” languages.
 
+The expressive power of NPDAs and BNFs is the same: 
+  For every language recognized by a BNF, there is an NPDA that recognizes it. 
+Conversely, there is a BNF definition for any language recognized by some NPDA. 
+
+NPDAs run in exponential deterministic time. 
+A more sane, but weaker, alternative is offered by LR(1) parsers.  
 An LR(1) parser for a grammar~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -167,17 +184,27 @@ where~$r=ξ→β$,
 the parser pops~$|β|$ stack symbols from the stack.
 Let~$q'$ be the state at the top of the stack after these pops.
 The parser then pops~$q'$, the new state it reached,
-  and pushes instead a state,~$q”$, defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
+  and pushes instead a state,~$q”$, 
+  defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
 
+More general, LL($k$)-parsers, $k>1$, can be defined. These make their
+  decisions based on the next $k$ input symbols, rather than just the first of these.
+These are rarely used, because they offer essentially the same expressive power as 
+  LL(1) parsers, at a greater toll on resources. 
+
+To characterize the expressive power of LR(1) parsers, we need the notion 
+of ``\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}'' (DPDA). 
+DPDA are similar to NPDA, except that they are forced 
+  to make deterministic choices.
+More formally, 
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is an 8-tuple
+  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 7-tuple
   \[
-    M =⟨Q,Σ,Γ, q₀,⊥, A,δ,η⟩
+    M =⟨Q,Γ, q₀,⊥, A,δ,η⟩
   \]
   where~$Q$ is a finite set of
-  \emph{the states of~$M$},~$Σ$ is a finite
-  \emph{set of input symbols},~$Γ$ is a finite
+  \emph{the states of~$M$},~$Γ$ is a finite
   \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
   is a \emph{special symbol designating the bottom of the stack}
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
@@ -190,46 +217,37 @@ The parser then pops~$q'$, the new state it reached,
   \]
 \end{Definition}
 
+As mentioned above, NPDA languages are the same as CFG languages.
+It is convenient to speak of also of DCFG languages, the \emph{deterministic context-free grammar} languages, 
+  which are those context-free languages recognizable by DPDA.
+  
+DCFG languages are strictly contain regular languages, and are strictly contained
+  in CFG languages.
+DPDA are however easier to parse. Recognition of a DPDA language 
+  can be done in linear time and one pass.
+  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{CYK,I forget the nnames}. 
 
+Where do LR(1) languages stand with respect to DCFG context free languages? 
+LR(1) languages are indeed equivalent to DCFG languages, but 
+the answer hinges on the distinction 
+  between LR(1) languages and LR(1) grammars. 
+To actually produce an LR(1) parser for a given language, 
+  one needs to find an``\emph{LR(1) grammar}'', for the language.
+Such a grammar is amenable to 
+  the automatic production of an LR(1) parser.
+However the time for obtaining this LR(1) grammar and the processing it, 
+  though polynomial, may be prohibitive. 
 
-\paragraph{Pushdown Automaton}
-A \emph{pushdown automaton}(PDA) is an model machine, consisting a non-deterministic state machine
-  and a stack.
-The non-determinism of the state machine is expressed by the fact that the transition function
-  is non-deterministic, meaning that a single mapping results in a set of results, instead of one.
-The stack can hold an unbounded number of stack symbols, as a consequence, informally,
-  this model can ‟remember” arbitrary amount of information, with the inherent FIFO restriction
-  of a stack.
-The language accepted by a PDA is defined by the set of words the PDA accepts on
-  (via empty stack or accepting states).
-An important result is, the equivalence of PDA's and CFG's expressiveness, in a sense that
-  the set of languages that CFGs can define is equivalent to the set of languages that can be
-  accepted by a pushdown automaton.
-\paragraph{Deterministic PDA and Deterministic CFL}
-Informally, the difference between a deterministic and non-deterministic PDA resides in the
-  the transition function.
-While the latter defined to return a set of results, the former returns a single result.
-The DPDA languages are strictly stronger than regular languages, and strictly weaker than
-  general CFL.
-Deterministic CFL can be defined by the set of languages that D-PDA accept.
-This is an interesting class because as we will prove, the \Java compiler can determine,
-  given a D-CFG and a word in the corresponding alphabet, whether the word is in the
-  grammar's language, or not.
-\paragraph{LR($k$)}
-The class of LR($k$) grammars are well known for their role in theory of compilation~\cite{Aho:86}
-In terms of expressiveness, Knuth~\cite{Knuth:65} proved that for every~$k>0$ the set of languages
-  that LR($k$) parsers can parse is equal to D-CFL.
-LR($k$) parsers will be discussed in detail, at~\cref{Section:algorithm}.
-\paragraph{LL{$*$}}
-In order to see the full picture of the expressiveness of the discussed classes, we will only
-  only mention the LL($*$) class and it's expressiveness. The LL($*$)~\cite{Parr:2011} class does not contain,
-  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also
-  parser some context-sensitive grammars.
-
-\Cref{Figure:expressiveness} is a visualization of the discussed grammar's hierarchy.
 
 \begin{wrapfigure}r{0.5\linewidth}
   \caption{ \label{Figure:expressiveness}
   Hierarchy of CFGs and pushdown automata}
   \input ../Figures/expressiveness-diagram.tikz
 \end{wrapfigure}
+In order to see the full picture of the expressiveness of the discussed classes, we will only
+  only mention the LL($*$) class and it's expressiveness. The LL($*$)~\cite{Parr:2011} class does not contain,
+  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also
+  parse some context-sensitive grammars.
+\Cref{Figure:expressiveness} is a visualization of the discussed grammar's hierarchy.
+
+
