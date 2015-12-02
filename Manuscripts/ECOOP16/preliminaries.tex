@@ -1,5 +1,6 @@
 \subsection{Method Chaining \emph{vs.} Fluent API: Reminder and Terminology}
-The pattern ‟invoke function on variable \cc{sb}” occurs
+The pattern ‟invoke function on variable \cc{sb}”, specifically with
+  a function named \cc{append}, occurs
 six times in the code in \cref{Figure:chaining}(a).
 
 \begin{figure}[H]
@@ -10,7 +11,7 @@ six times in the code in \cref{Figure:chaining}(a).
     \begin{tabular}{@{}cc@{}}%
   \begin{lcode}[minipage,width=44ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
-  StringBuilder sb = new StringBuilder();
+  final StringBuilder sb = new StringBuilder();
   sb.append(hours);
   sb.append(':');
   sb.append(minutes);
@@ -29,8 +30,8 @@ String time(int hours, int minutes, int seconds) {¢¢
       ¢¢.append(seconds)
       ¢¢.toString();
 }\end{lcode}
-\\
-\textbf{(a)} before & \textbf{(b)} after 
+⏎
+\textbf{(a)} before & \textbf{(b)} after
 \end{tabular}
 \end{figure}
 
@@ -38,11 +39,11 @@ Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method casc
 Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   If a method~$f$ returns its receiver, i.e., \kk{this},
   then, instead of the series of two commands \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
-  only one command \mbox{\cc{o.$f()$.$g$();}}.
+  only one command \mbox{\cc{o.$f$().$g$();}}.
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
   \cref{Figure:chaining}(a).
-It is made possible by the designer of class \cc{StreamBuilder} ensuring that all overloaded variants of
+It is made possible thanks to the designer of class \cc{StreamBuilder} who made sure that all overloaded variants of
   of \cc{append} return their receiver.
 
 The distinction between fluent API and method chaining is the identity of the receiver:
@@ -73,25 +74,26 @@ This distinction makes it possible to design expressive and rich fluent APIs, in
 \subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
 Each of the notions discussed here is probably common knowledge
  (see e.g.,~\cite{Hopcroft:book:2001,must be others} for more precise definitions).
-The purpose here is to set a unifying common vocabulary. 
+The purpose here is to set a unifying common vocabulary.
 
 Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input symbols).
-A \emph{language} over $Σ$
+A \emph{language} over~$Σ$
   is a subset of~$Σ^*$ (the set of all strings, including the empty string,
   whose characters are drawn from~$Σ$).
 Keep~$Σ$ implicit henceforth.
 
-A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition, 
-  made of a non-deterministic finite automaton 
+A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
+  made of a non-deterministic finite automaton
   and a stack of unbounded depth of states.
-An NPDA begins by pushing into the initial state into the empty stack.
-In each step the NPDA examines the next input symbol and the state at the
+An NPDA begins execution by pushing into the initial state into the empty stack.
+Then, in each step the NPDA 
+  examines the next input symbol and the state at the
   top of the stack.
-It then non-deterministically between three options: to proceed to the next input symbol,  
-  to pop a state from a stack, or to push a state into it. 
+It then non-deterministically selects one of three options: to proceed to the next input symbol,
+  to pop a state from the stack, or to push a new state into it.
 
-The language recognized by an NPDA is the set of strings the it accepts,
-  either by reaching an empty stack or by encountering an empty state. 
+The language recognized by an NPDA is the set of strings that it accepts,
+  either by reaching an empty stack or by encountering an empty state.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
 A CFG~$G$ has three components:~$Ξ$,
@@ -99,19 +101,19 @@ a set of \emph{variables} (also called nonterminals), a unique \emph{start varia
   a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
-Accordingly,~$r$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
+Accordingly, rule~$r∈G$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
 This description is often called BNF.
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
 CFG languages include regular languages, and are contained in the set
   of ‟context-sensitive” languages.
 
-The expressive power of NPDAs and BNFs is the same: 
-  For every language recognized by a BNF, there is an NPDA that recognizes it. 
-Conversely, there is a BNF definition for any language recognized by some NPDA. 
+The expressive power of NPDAs and BNFs is the same:
+  For every language defined by a BNF, there is an NPDA that recognizes it.
+Conversely, there is a BNF definition for any language recognized by some NPDA.
 
-NPDAs run in exponential deterministic time. 
-A more sane, but weaker, alternative is offered by LR(1) parsers.  
+NPDAs run in exponential deterministic time.
+A more sane, but weaker, alternative is offered by LR(1) parsers.
 An LR(1) parser for a grammar~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -136,19 +138,19 @@ where~$r=ξ→β$,
 the parser pops~$|β|$ stack symbols from the stack.
 Let~$q'$ be the state at the top of the stack after these pops.
 The parser then pops~$q'$, the new state it reached,
-  and pushes instead a state,~$q”$, 
+  and pushes instead a state,~$q”$,
   defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
 
-More general, LL($k$)-parsers, $k>1$, can be defined. These make their
-  decisions based on the next $k$ input symbols, rather than just the first of these.
-These are rarely used, because they offer essentially the same expressive power as 
-  LL(1) parsers, at a greater toll on resources. 
+More general, LL($k$) parsers,~$k>1$, can be defined. These make their
+  decisions based on the next~$k$ input symbols, rather than just the first of these.
+  General LL($k$) parsers are rarely used, since they offer essentially 
+    the same expressive power as LL(1) parsers, at a greater toll on resources.
 
-To characterize the expressive power of LR(1) parsers, we need the notion 
-of ``\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}'' (DPDA). 
-DPDA are similar to NPDA, except that they are forced 
+To characterize the expressive power of LR(1) parsers, we need the notion
+of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
+DPDA are similar to NPDA, except that they are forced
   to make deterministic choices.
-More formally, 
+More formally,
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
   A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 7-tuple
@@ -170,29 +172,29 @@ More formally,
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.
-It is convenient to speak of also of DCFG languages, the \emph{deterministic context-free grammar} languages, 
+It is convenient to speak also of DCFG languages, the \emph{deterministic context-free grammar} languages,
   which are those context-free languages recognizable by DPDA.
-  
-DCFG languages are strictly contain regular languages, and are strictly contained
-  in CFG languages.
-DPDA are however easier to parse. Recognition of a DPDA language 
-  can be done in linear time and one pass.
-  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{CYK,I forget the nnames}. 
 
-Where do LR(1) languages stand with respect to DCFG context free languages? 
-LR(1) languages are indeed equivalent to DCFG languages, but 
-the answer hinges on the distinction 
-  between LR(1) languages and LR(1) grammars. 
-To actually produce an LR(1) parser for a given language, 
-  one needs to find an``\emph{LR(1) grammar}'', for the language.
-Such a grammar is amenable to 
+DCFG languages are a strict container of regular languages, 
+  and are strictly contained in CFG languages.
+  On the other hand, DPDA are easier to parse. Recognition of a DPDA language
+  can be done in linear time and one pass.
+  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{CYK,I forget the nnames}.
+
+Where do LR(1) languages stand with respect to DCFG context free languages?
+LR(1) languages are indeed equivalent to DCFG languages, but
+the answer hinges on the distinction
+  between LR(1) languages and LR(1) grammars.
+To actually produce an LR(1) parser for a given language,
+  one needs to find an‟\emph{LR(1) grammar}”, for the language.
+Such a grammar is amenable to
   the automatic production of an LR(1) parser.
 However, the time for obtaining this LR(1) grammar and the processing it to produce an LR(1) parser,
-  as well as parser's size, 
-  though polynomial, are prohibitive. 
+  as well as parser's size,
+  though polynomial, are prohibitive.
 
-Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011-is this where it was introduced? I doubt it was so soon} parser generators such 
+Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011-is this where it was introduced? I doubt it was so soon} parser generators such
   as ANTLR~\cite{ANTLR}?
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\cite{Tomer check this}, 
-neither are they contained in it. If fact LL(*) languages 
-  contain even some non-deterministic context free languages. 
+  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\cite{Tomer check this},
+neither are they contained in it. If fact LL(*) languages
+  contain even some non-deterministic context free languages.
