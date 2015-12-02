@@ -38,8 +38,8 @@ String time(int hours, int minutes, int seconds) {¢¢
 Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, for this pattern.
 Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   If a method~$f$ returns its receiver, i.e., \kk{this},
-  then, instead of the series of two commands \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
-  only one command \mbox{\cc{o.$f$().$g$();}}.
+  then, instead of the series of two commandsr: \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
+  only one: \mbox{\cc{o.$f$().$g$();}}.
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
   \cref{Figure:chaining}(a).
@@ -85,24 +85,25 @@ Keep~$Σ$ implicit henceforth.
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a non-deterministic finite automaton
   and a stack of unbounded depth of stack symbols.
-An NPDA begins execution when the finite automaton in the initial state, and the stack holds only the initial stack symbol.
+An NPDA begins execution with the stack a single copy of the initial stack symbol.
 In each step, the NPDA 
   examines the next input symbol,
   the state of the automaton,
   and the top of the stack.
-It then pops the top symbol in the stack, and nondeterministically chooses what to perform (must conform with the transition function) : 
-  it might consume the input symbol,
-  it might push new stack symbols, 
-  it might move to a new state,
-  and every combination of the three.
+It then pops the top symbol in the stack, and nondeterministically chooses which action of  perform 
+  its transition function: 
+  Consuming the next input symbol,
+popping the current state from the stack,
+  or, pushing a new state into it.
+Non-determinism effectively means 
+  that any number of these can be carried out.
 
 The language recognized by an NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
-A CFG~$G$ has four components: an \emph{alphabet}~$\Sigma$,
-a set of \emph{variables}~$Ξ$(also called nonterminals), a unique \emph{start variable}~$ξ∈Ξ$, and
-  a finite set of (production) \emph{rules}.
+A CFG~$G$ has three components: $\Xi$< a set of \emph{variables}~$Ξ$ (also called nonterminals), 
+  a unique \emph{start variable}~$ξ∈Ξ$, and a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
 Accordingly, rule~$r∈G$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
@@ -117,7 +118,8 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR($1$) parsers.
+A more sane, but weaker, alternative is offered by LR($1$) parsers, 
+  which are deterministic linear time and space.
 An LR($1$) parser for a grammar~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -130,8 +132,6 @@ An LR($1$) parser for a grammar~$G$ has three components:
             defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
         \end{description}
 \end{description}
-We will define the general, formal, coarse-gained operation of the parser, without reintroducing 
-  the classic LR items, LR state, and other specifics.
 The parser begins by pushing~$q₀$ (the initial state) into the stack,
 and then repetitively executes the following:
 Examine~$q∈Q$, the state at the top of the stack.
@@ -146,10 +146,15 @@ Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
   defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
+The specifics of parser  generation, including notions such the famous LR items lie beyond our interest here. 
+We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
+LALR($1$) (which \Self uses).
+
+
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
   General LR($k$) parsers are rarely used, since they offer essentially 
-    the same expressive power~\footnote{In term of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR($1$) parsers, at a greater toll on resources.
+the same expressive power\footnote{In fact, in terms of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR($1$) parsers}, at a greater toll on resources.
 
 To characterize the expressive power of LR($1$) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
@@ -183,8 +188,9 @@ It is convenient to speak also of DCFG languages, the \emph{deterministic contex
 
 DCFG languages are a strict container of regular languages, 
   and are strictly contained in CFG languages.
-  On the other hand, DPDA are easier to parse.
-Recognition of a DPDA language can be done in linear time and one pass.
+On the other hand, DPDA are easier to parse: 
+  Recognition of a DPDA language
+  can be done in linear time and one pass.
   In contrast, CYK, one of the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
 Where do LR($1$) languages stand with respect to DCFG context free languages?
@@ -192,7 +198,7 @@ LR($1$) languages are indeed equivalent to DCFG languages, but
 the answer hinges on the distinction
   between LR($1$) languages and LR($1$) grammars.
 To actually produce an LR($1$) parser for a given language,
-  one needs to find an‟\emph{LR($1$) grammar}”, for the language.
+  one needs to find an‟\emph{LR($1$) grammar}” for the language.
 Such a grammar is amenable to
   the automatic production of an LR($1$) parser.
 However, the time for obtaining this LR($1$) grammar and the processing it to produce an LR($1$) parser,
@@ -201,6 +207,6 @@ However, the time for obtaining this LR($1$) grammar and the processing it to pr
 
 Where does \Self compare in terms of grammar expressive power with a popular LL($*$)~\cite{Parr:2011} parser generators such %it was introduced there. you can see at Mendeley, i highlighted it.
   as ANTLR~\cite{Parr:1995}?
-  As it turns out, LL($*$) grammars do not contain the set of LR($1$) grammars~\footnote{As LL($*$) does not contain left-recursive grammars~\cite{Parr:2011}.}, 
-neither are they contained in it. 
-  In fact some context-sensitive languages can be parsed by LL($*$) parsers.
+As it turns out, LL($*$) grammars do not contain the set of LR($1$) grammars~\footnote{As LL($*$) does not contain left-recursive grammars~\cite{Parr:2011}.}, 
+  neither are they contained in it. In fact some context-sensitive 
+  languages can be parsed by LL($*$) parsers.
