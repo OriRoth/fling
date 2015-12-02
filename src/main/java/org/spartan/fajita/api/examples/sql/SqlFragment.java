@@ -38,13 +38,13 @@ public class SqlFragment {
         .start(SELECT_STATEMENT) //
         //
         .derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE) //
-        /*                */.or().to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES) //
-        .derive(QUANTIFIER).to(all).or().to(distinct) //
-        .derive(COLOUMNS).to(column).or().to(column).and(COLOUMNS)//
-        .derive(TABLES).to(table).or().to(table).and(TABLES) //
+        /*                */.or(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES) //
+        .derive(QUANTIFIER).to(all).or(distinct) //
+        .derive(COLOUMNS).to(column).or(column).and(COLOUMNS)//
+        .derive(TABLES).to(table).or(table).and(TABLES) //
         .derive(WHERE).to(where).and(EXPRESSION) //
         .derive(EXPRESSION).to(column).and(OP).and(literal) //
-        .derive(OP).to(equals).or().to(geq).or().to(leq) //
+        .derive(OP).to(equals).or(geq).or(leq) //
         .finish();
     System.out.println(b);
   }

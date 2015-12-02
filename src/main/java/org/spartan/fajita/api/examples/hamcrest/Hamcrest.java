@@ -46,12 +46,12 @@ public class Hamcrest {
         .start(ASSERT) //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
         .derive(MATCHER).to(instance_of).and(type) //
-        /*       */.or().to(anything) //
-        /*       */.or().to(equals_to).and(value) //
-        /*       */.or().to(not).and(MATCHER) //
-        // /* */.or().to(any_of).and(MATCHERS) //
+        /*       */.or(anything) //
+        /*       */.or(equals_to).and(value) //
+        /*       */.or(not).and(MATCHER) //
+        // /* */.or(any_of).and(MATCHERS) //
         // .derive(MATCHERS).to(MATCHER)//
-        // /* */.or().to(MATCHER).and(MATCHERS) //
+        // /* */.or(MATCHER).and(MATCHERS) //
         .finish();
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
