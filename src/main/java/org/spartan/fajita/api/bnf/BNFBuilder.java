@@ -144,8 +144,14 @@ public class BNFBuilder {
     public NormalDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
       super(lhs, new Verb(child.name(),type));
     }
-    public InitialDeriver or() {
-      return derive(lhs);
+//    public InitialDeriver or() {
+//      return derive(lhs);
+//    }
+    public NormalDeriver or(final Terminal term, Class<?>... type) {
+      return new NormalDeriver(lhs, new Verb(term.name(),type));
+    }
+    public NormalDeriver or(final NonTerminal nt) {
+      return new NormalDeriver(lhs, nt);
     }
     public FirstDerive orNone() {
       return derive(lhs).toNone();

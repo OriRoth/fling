@@ -39,7 +39,7 @@ public class DC2 {
         
         .start(A) //
         
-        .derive(A).to(A).and(a).or().to(a) //
+        .derive(A).to(A).and(a).or(a) //
         .finish();
     System.out.println(bnf);
     LRParser parser = new LRParser(bnf);
