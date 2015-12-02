@@ -73,7 +73,7 @@ If however this run ends with a failure, i.e., non-accepting state,
 
 The algorithm for generating the pushdown automaton is unfortunately impractical.
 It is indeed polynomial time and space,
-  yet formidable resource consuming.
+  yet a consumer of formidable resources.
 A practical alternative is offered by the second aspect of this study:
 \Self is a \Java library with a fluent interface, designed for generating fluent APIs.
 To create a new fluent API~$ϕ$, use the fluent API of \Self to write, in \Java, a BNF for~$ϕ$.
@@ -91,16 +91,13 @@ At the moment, the AST's nodes are un-typed, though it is planned
 % and augmented with a visiting API, all ready
 % for use by the implementer of~$ϕ$.
 
-\Self generates LR($1$) parsers. Experience shows that these are
-  sufficient for many purposes, for evidence, the perhaps most common~†{As noted in the conclusion of T\@. parr's work~\cite{Parr:1995}} parser Bison,
-  generates parsers for a strict subset of LR($1$) parsers (LALR).~\cite{Bison:manual}.
-Still, LR(1) grammars make a strict subset of deterministic context-free grammars.
-Practicality concerns stop \Self from implementing LR($k$) higher~$k$.
-
-It is parser size explosion that stops mature tools as the previously mentioned Bison~\cite{Bison:manual},
-  SableCC\urlref{http://www.sablecc.org} and Lemon Parser Generator\urlref{http://www.hwaci.com/sw/lemon/}
-  from reaching up to LR($k$),~$k≥2$.
-The same concern stops \Self from this venture.
+\Self generates LR($1$) parsers. Experience shows that these and even the strictly smaller set of 
+  LALR grammars is sufficient for many purposes (see e.g., an acknowledgement by T\@. Parr, the developer of LL($*$) grammars
+~\cite{Parr:1995}).  
+Evidently, Bison{Bison:manual}, 
+  SableCC\urlref{http://www.sablecc.org}, Lemon Parser Generator\urlref{http://www.hwaci.com/sw/lemon/}
+  and other popular generators of left to right parsers opt to stay within the confinement of LALR parsers.
+Practicality concerns stop \Self from trying to achieve more.
 
 One may ask whether the theoretical result is the
   best possible:
