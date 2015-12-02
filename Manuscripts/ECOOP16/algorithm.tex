@@ -30,7 +30,7 @@ Otherwise, \Self produces this parser, and
     %\protect\caption{Instantiating state's type argument.}
     \REQUIRE{An LR(1) parser~$P$}.
     \ENSURE{The dependency graph~$G =⟨V, E⟩$}
-    \STATE{$G=(E,V)←∅$} \COMMENT {Output graph is initially empty}
+    \STATE{$G=(V,E)←∅$} \COMMENT {Output graph is initially empty}
     \FORALL[Create initial set of vertices of~$G$]{$⟨Qᵢ,Qⱼ,X⟩∈\textsf{edges}(P)$}
     \STATE{$V←❴ Q_{X}|Q∈P∧∃transition(Q,X)❵$}
     \ENDFOR
