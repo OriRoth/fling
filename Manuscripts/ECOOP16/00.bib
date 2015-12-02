@@ -8,6 +8,7 @@ annote = {JMock reference},
 author = {Freeman, Steve and Pryce, Nat},
 doi = {10.1145/1176617.1176735},
 isbn = {159593491X},
+puslisher = {Addison-Wesley Longman Publishing Co., Inc.},
 journal = {Companion to the \nth{21} ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications},
 keywords = {embedded domain-specific language,java,mock},
 title = {Evolving an embedded domain-specific language in {\Java}},
@@ -110,7 +111,7 @@ year = 2000
  url = {http://doi.acm.org/10.1145/1639950.1640073},
  doi = {10.1145/1639950.1640073},
  acmid = 1640073,
- publisher = {ACM},
+ publisher = ACM,
  address = {New York, NY, USA},
  keywords = {objects, paradigms, permissions, programming language, states, types, typestate},
 } 
@@ -208,7 +209,7 @@ year = 2000
   title={Generic programming and the STL: using and extending the {\CC} Standard Template Library},
   author={Austern, Matthew H},
   year=1998,
-  publisher={Addison-Wesley Longman Publishing Co., Inc.}
+  publisher=AW
 }
 
 
@@ -231,7 +232,7 @@ year = 2000
   editor    = {Freeman, Bj{\o}rn N. {-}Benson and Chambers, Craig },
   title     = {Proceedings of the 1998 {ACM} {SIGPLAN} Conference on Object-Oriented
                Programming Systems, Languages {\&} Applications ({OOPSLA}'98)},
-  publisher = {{ACM}},
+  publisher = ACM,
   year      = 1998,
   url       = {http://dl.acm.org/citation.cfm?id=286936},
   isbn      = {1-58113-005-8},
@@ -278,6 +279,7 @@ abstract = {Projects like jMock and Hibernate Criteria Query introduced
 author = {Kabanov, Jevgeni and
       Raudj{\"{a}}rv, Rein},
 doi = {10.1145/1411732.1411758},
+publisher = {Addison-Wesley Longman Publishing Co., Inc.},
 isbn = 9781605582238,
 journal = {Proceedings of the \nth{6} international symposium on Principles and practice of programming in \Java - PPPJ '08},
 keywords = {domain-specific,dsl,java,typesafe},
@@ -352,7 +354,7 @@ year = 1995
 author = {Hopcroft, John E. and Motwani, Rajeev and Ullman, Jeffrey D.},
 edition = {\nth{2}},
 pages = 249,
-publisher = {Addison-Wesley},
+publisher = AW,
 title = {Introduction to automata theory, languages, and computation},
 year = 2001
 }
@@ -360,7 +362,7 @@ year = 2001
 @book{Hopcroft:book:2001,
 author = {Hopcroft, John E. and Motwani, Rajeev and Ullman, Jeffrey D.},
 edition = {\nth{2}},
-publisher = {Addison-Wesley},
+publisher = AW,
 title = {Introduction to automata theory, languages, and computation},
 year = 2001
 }
@@ -369,7 +371,7 @@ abstract = {This book is a descendant of Principles of Compiler Design by Alfred
 author = {Aho, Alfred V and Sethi, Ravi and Ullman, Jeffrey D},
 isbn = {0201100886},
 pmid = {2859937},
-publisher = {Addison-Wesley},
+publisher = AW,
 title = {Compilers: Principles Techniques, and Tools},
 volume = 11,
 year = 1986
@@ -388,7 +390,7 @@ In particular, the LR(k) condition is a natural analogue, for grammars, of the d
 author = {Knuth, Donald E.},
 doi = {10.1016/S0019-9958(65)90426-2},
 issn = {00199958},
-journal = {Information and Control},
+journal = inf&ctrl,
 number = 6,
 pages = {607--639},
 title = {On the translation of languages from left to right},
@@ -412,4 +414,37 @@ year = 2011
 author = {Donnelly, Charles and Stallman, Richard},
 title = {Bison},
 year = 2015
+}
+
+@book{Cocke:1969,
+author = {Cocke, John},
+publisher = {Courant Institute of Mathematical Sciences, New York University},
+title = {Programming Languages and Their Compilers: Preliminary Notes},
+year = 1969
+}
+@article{Earley:1970,
+abstract = {A parsing algorithm which seems to be the most efficient general context-free algorithm known is described. It is similar to both Knuth's LR(k) algorithm and the familiar top-down algorithm. It has a time bound proportional to n3 (where n is the length of the string being parsed) in general; it has an n2 bound for unambiguous grammars; and it runs in linear time on a large class of grammars, which seems to include most practical context-free programming language grammars. In an empirical comparison it appears to be superior to the top-down and bottom-up algorithms studied by Griffiths and Petrick.},
+author = {Earley, Jay},
+doi = {10.1145/362007.362035},
+isbn = {0001-0782},
+issn = {00010782},
+journal = jCommunications,
+number = 2,
+pages = {94--102},
+title = {An efficient context-free parsing algorithm},
+volume = 13,
+year = 1970
+}
+@article{Younger:1967,
+abstract = {A recognition algorithm is exhibited whereby an arbitrary string over a given vocabulary can be tested for containment in a given context-free language. A special merit of this algorithm is that it is completed in a number of steps proportional to the “cube” of the number of symbols in the tested string. As a byproduct of the grammatical analysis, required by the recognition algorithm, one can obtain, by some additional processing not exceeding the “cube” factor of computational complexity, a parsing matrix—a complete summary of the grammatical structure of the sentence. It is also shown how, by means of a minor modification of the recognition algorithm, one can obtain an integer representing the ambiguity of the sentence, i.e., the number of distinct ways in which that sentence can be generated by the grammar. The recognition algorithm is then simulated on a Turing Machine. It is shown that this simulation likewise requires a number of steps proportional to only the “cube” of the test string length.},
+author = {Younger, Daniel H.},
+doi = {10.1016/S0019-9958(67)80007-X},
+issn = {00199958},
+journal = inf&ctrl,
+number = 2,
+pages = {189--208},
+title = {Recognition and parsing of context-free languages in time {$n^3$}},
+url = {http://www.sciencedirect.com/science/article/pii/S001999586780007X},
+volume = 10,
+year = 1967
 }

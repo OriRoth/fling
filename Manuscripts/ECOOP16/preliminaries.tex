@@ -43,7 +43,7 @@ Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
   \cref{Figure:chaining}(a).
-It is made possible thanks to the designer of class \cc{StreamBuilder} who made sure that all overloaded variants of
+It is made possible thanks to the designer of class \cc{StringBuilder} who made sure that all overloaded variants of
   of \cc{append} return their receiver.
 
 The distinction between fluent API and method chaining is the identity of the receiver:
@@ -73,7 +73,7 @@ This distinction makes it possible to design expressive and rich fluent APIs, in
 
 \subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
 Each of the notions discussed here is probably common knowledge
- (see e.g.,~\cite{Hopcroft:book:2001,must be others} for more precise definitions).
+ (see e.g.,~\cite{Hopcroft:book:2001,Linz:2001} for more precise definitions).
 The purpose here is to set a unifying common vocabulary.
 
 Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input symbols).
@@ -84,20 +84,24 @@ Keep~$Σ$ implicit henceforth.
 
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a non-deterministic finite automaton
-  and a stack of unbounded depth of states.
-An NPDA begins execution by pushing into the initial state into the empty stack.
-Then, in each step the NPDA 
-  examines the next input symbol and the state at the
-  top of the stack.
-It then non-deterministically selects one of three options: to proceed to the next input symbol,
-  to pop a state from the stack, or to push a new state into it.
+  and a stack of unbounded depth of stack symbols.
+An NPDA begins execution when the finite automaton in the initial state, and the stack holds only the initial stack symbol.
+In each step, the NPDA 
+  examines the next input symbol,
+  the state of the automaton,
+  and the top of the stack.
+It then pops the top symbol in the stack, and nondeterministically chooses what to perform (must conform with the transition function) : 
+  it might consume the input symbol,
+  it might push new stack symbols, 
+  it might move to a new state,
+  and every combination of the three.
 
 The language recognized by an NPDA is the set of strings that it accepts,
-  either by reaching an empty stack or by encountering an empty state.
+  either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
-A CFG~$G$ has three components:~$Ξ$,
-a set of \emph{variables} (also called nonterminals), a unique \emph{start variable}~$ξ∈Ξ$, and
+A CFG~$G$ has four components: an \emph{alphabet}~$\Sigma$,
+a set of \emph{variables}~$Ξ$(also called nonterminals), a unique \emph{start variable}~$ξ∈Ξ$, and
   a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
@@ -105,7 +109,7 @@ Accordingly, rule~$r∈G$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\r
 This description is often called BNF.
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
-CFG languages include regular languages, and are contained in the set
+CFG languages include regular languages, and are strictly contained in the set
   of ‟context-sensitive” languages.
 
 The expressive power of NPDAs and BNFs is the same:
@@ -126,25 +130,26 @@ An LR(1) parser for a grammar~$G$ has three components:
             defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
         \end{description}
 \end{description}
+We will define the general, formal, coarse-gained operation of the parser, without reintroducing 
+  the classic LR items, LR state, and other specifics.
 The parser begins by pushing~$q₀$ (the initial state) into the stack,
 and then repetitively executes the following:
 Examine~$q∈Q$, the state at the top of the stack.
-If~$q=qₙ$ (the accepting state), then the parser stops in accepting the input.
+If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
 Let~$σ∈Σ$ be the next input symbol.
-If~$η(q,σ)=⊥$, the parser stops in rejecting the input.
-If~$η(q',σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
+If~$η(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
-where~$r=ξ→β$,
-the parser pops~$|β|$ stack symbols from the stack.
-Let~$q'$ be the state at the top of the stack after these pops.
-The parser then pops~$q'$, the new state it reached,
-  and pushes instead a state,~$q”$,
-  defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
+where~$r=ξ→β$, the parser does not consume $\sigma$ from the input string,
+  and pops~$|β|$ stack symbols from the stack.
+Let~$q'$ be the state at the top of the stack after these pops, then
+  the parser pushes a state,~$q”$,
+  defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
-More general, LL($k$) parsers,~$k>1$, can be defined. These make their
+More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
-  General LL($k$) parsers are rarely used, since they offer essentially 
-    the same expressive power as LL(1) parsers, at a greater toll on resources.
+  General LR($k$) parsers are rarely used, since they offer essentially 
+    the same expressive power~\footnote{In term of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR(1) parsers, at a greater toll on resources.
 
 To characterize the expressive power of LR(1) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
@@ -177,10 +182,10 @@ It is convenient to speak also of DCFG languages, the \emph{deterministic contex
 
 DCFG languages are a strict container of regular languages, 
   and are strictly contained in CFG languages.
-  On the other hand, DPDA are easier to parse. 
+On the other hand, DPDA are easier to parse: 
   Recognition of a DPDA language
   can be done in linear time and one pass.
-  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{CYK,I forget the nnames}.
+  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
 Where do LR(1) languages stand with respect to DCFG context free languages?
 LR(1) languages are indeed equivalent to DCFG languages, but
@@ -194,8 +199,8 @@ However, the time for obtaining this LR(1) grammar and the processing it to prod
   as well as parser's size,
   though polynomial, are prohibitive.
 
-Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011-is this where it was introduced? I doubt it was so soon} parser generators such
-  as ANTLR~\cite{ANTLR}?
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\cite{Tomer check this},
+Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such %it was introduced there. you can see at Mendeley, i highlighted it.
+  as ANTLR~\cite{Parr:1995}?
+  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\footnote{As it can't handle left-recursive grammars~\cite{Parr:2011}.}, 
 neither are they contained in it. If fact LL(*) languages
   contain even some non-deterministic context free languages.
