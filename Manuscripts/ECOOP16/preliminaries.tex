@@ -187,18 +187,12 @@ To actually produce an LR(1) parser for a given language,
   one needs to find an``\emph{LR(1) grammar}'', for the language.
 Such a grammar is amenable to 
   the automatic production of an LR(1) parser.
-However the time for obtaining this LR(1) grammar and the processing it, 
-  though polynomial, may be prohibitive. 
+However, the time for obtaining this LR(1) grammar and the processing it to produce an LR(1) parser,
+  as well as parser's size, 
+  though polynomial, are prohibitive. 
 
-\begin{wrapfigure}r{0.5\linewidth}
-  \caption{ \label{Figure:expressiveness}
-  Hierarchy of CFGs and pushdown automata}
-  \input ../Figures/expressiveness-diagram.tikz
-\end{wrapfigure}
-In order to see the full picture of the expressiveness of the discussed classes, we will only
-  only mention the LL($*$) class and it's expressiveness. The LL($*$)~\cite{Parr:2011} class does not contain,
-  and neither contained by any of the LR($k$) grammar classes, in addition, LL($*$) can also
-  parse some context-sensitive grammars.
-\Cref{Figure:expressiveness} is a visualization of the discussed grammar's hierarchy.
-
-
+Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011-is this where it was introduced? I doubt it was so soon} parser generators such 
+  as ANTLR~\cite{ANTLR}?
+  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\cite{Tomer check this}, 
+neither are they contained in it. If fact LL(*) languages 
+  contain even some non-deterministic context free languages. 
