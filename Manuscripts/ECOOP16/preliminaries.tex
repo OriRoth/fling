@@ -117,8 +117,8 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR(1) parsers.
-An LR(1) parser for a grammar~$G$ has three components:
+A more sane, but weaker, alternative is offered by LR($1$) parsers.
+An LR($1$) parser for a grammar~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
   \item[A stack] which may contain any member of~$Q$.
@@ -149,13 +149,13 @@ Let~$q'$ be the state at the top of the stack after these pops, then
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
   General LR($k$) parsers are rarely used, since they offer essentially 
-    the same expressive power~\footnote{In term of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR(1) parsers, at a greater toll on resources.
+    the same expressive power~\footnote{In term of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR($1$) parsers, at a greater toll on resources.
 
-To characterize the expressive power of LR(1) parsers, we need the notion
+To characterize the expressive power of LR($1$) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
   to make deterministic choices.
-More formally,
+We propose a slightly different definition from the classic:,
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
   A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 7-tuple
@@ -174,6 +174,7 @@ More formally,
       η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
     \end{array}
   \]
+  $η$ is the partial function for epsilon moves, and $δ$ is the remaining of the classic transition function.
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.
@@ -186,20 +187,20 @@ DCFG languages are a strict container of regular languages,
 Recognition of a DPDA language can be done in linear time and one pass.
   In contrast, one of the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
-Where do LR(1) languages stand with respect to DCFG context free languages?
-LR(1) languages are indeed equivalent to DCFG languages, but
+Where do LR($1$) languages stand with respect to DCFG context free languages?
+LR($1$) languages are indeed equivalent to DCFG languages, but
 the answer hinges on the distinction
-  between LR(1) languages and LR(1) grammars.
-To actually produce an LR(1) parser for a given language,
-  one needs to find an‟\emph{LR(1) grammar}”, for the language.
+  between LR($1$) languages and LR($1$) grammars.
+To actually produce an LR($1$) parser for a given language,
+  one needs to find an‟\emph{LR($1$) grammar}”, for the language.
 Such a grammar is amenable to
-  the automatic production of an LR(1) parser.
-However, the time for obtaining this LR(1) grammar and the processing it to produce an LR(1) parser,
+  the automatic production of an LR($1$) parser.
+However, the time for obtaining this LR($1$) grammar and the processing it to produce an LR($1$) parser,
   as well as parser's size,
   though polynomial, are prohibitive.
 
-Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such %it was introduced there. you can see at Mendeley, i highlighted it.
+Where does \Self compare in terms of grammar expressive power with a popular LL($*$)~\cite{Parr:2011} parser generators such %it was introduced there. you can see at Mendeley, i highlighted it.
   as ANTLR~\cite{Parr:1995}?
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\footnote{As it can't handle left-recursive grammars~\cite{Parr:2011}.}, 
-neither are they contained in it. If fact LL(*) languages
-  contain even some non-deterministic context free languages.
+  As it turns out, LL($*$) grammars do not contain the set of LR($1$) grammars~\footnote{As LL($*$) does not contain left-recursive grammars~\cite{Parr:2011}.}, 
+neither are they contained in it. 
+  In fact some context-sensitive languages can be parsed by LL($*$) parsers.
