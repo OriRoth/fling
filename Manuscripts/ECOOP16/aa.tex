@@ -84,8 +84,12 @@ This class library, ready for use by~$ϕ$'s clients, does more
   than compile time recognition
   of the language of~$ϕ$.
 The execution of a call chain of~$ϕ$, creates an AST data structure,
-  compliant with the BNF of~$ϕ$, and augmented with a visiting API, all ready
-  for use by the implementer of~$ϕ$.
+  compliant with the BNF of~$ϕ$.
+At the moment, the AST's nodes are un-typed, though it is planned
+  to them typed, in order to augment a visiting API, for the use of the
+  implementor of~$ϕ$.
+% and augmented with a visiting API, all ready
+%  for use by the implementer of~$ϕ$.
 
 \Self generates LR(1) parsers. Experience shows that these are
   sufficient for many purposes~\cite{find some references, perhaps the bison manual, but I am sure there are better references}.
