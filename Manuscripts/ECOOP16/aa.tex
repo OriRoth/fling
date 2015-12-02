@@ -141,25 +141,6 @@ In a sense, this article shall give a lower bound on the
   expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky:1963}.
 This objective is more precisely expressed in the following conjecture.
 
-\begin{Theorem}
-\label{Theorem:Gil-Levy}
-Let~$Σ$ a be finite alphabet.
-Let~$M$ be a \emph{push-down automaton(PDA)}, and let~$𝓛ₛ⊆Σ^*$ be
-the \emph{formal language} such that~$M$ recognizes.
-Then, there exists a \Java program,~$Jₛ$ and a location~$ℓ∈Jₛ$
-such that
-\begin{quote}
-  if a string~$α∈Σ$ is
-  placed at location~$ℓ$ in~$Jₛ$ then
-  \begin{quote}
-    program~$Jₛ$ type checks, if an only if
-    \[
-      α∈𝓛ₛ.
-    \]
-  \end{quote}
-\end{quote}
-Furthermore, program~$Jₛ$ can be effectively generated from~$M$.
-\end{Theorem}
 
 The proof shall be made in~\Cref{Section:proof} with an algorithm that converts a
   PDA~$M$ into a program~$Jₛ$.

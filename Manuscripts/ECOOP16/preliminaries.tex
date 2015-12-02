@@ -118,7 +118,7 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR($1$) parsers, 
+A more sane, but weaker, alternative is offered by LR($1$) parsers,
   which are deterministic linear time and space.
 An LR($1$) parser for a grammar~$G$ has three components:
 \begin{description}
@@ -146,7 +146,7 @@ Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
   defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
-The specifics of parser generation, including notions such the famous LR items lie beyond our interest here. 
+The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
 We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
 LALR($1$) (which \Self uses).
 
@@ -159,11 +159,7 @@ To characterize the expressive power of LR($1$) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
   to make deterministic choices.
-<<<<<<< HEAD
 The more formal and detailed definition is:
-=======
-We propose a slightly different definition from the classic:,
->>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
   A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 6-tuple~$M =⟨Q,Γ, q₀,⊥, A,δ⟩$
@@ -171,7 +167,6 @@ We propose a slightly different definition from the classic:,
   \emph{the states of~$M$},~$Γ$ is a finite
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
   is a \emph{special symbol designating the bottom of the stack}
-<<<<<<< HEAD
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial functions of state transition}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
 
@@ -181,12 +176,12 @@ At each step, the automaton examines:~$a$, the next input token, the current sta
 
 If~$γ=⊥$, the DPDA accepts the input and halts.
 The same happens if~$q∈A$.
-Suppose that~$δ(ε,q,γ) \ne \bot$. 
-(In this case, the definition requires that~$δ(a',q,γ)=\bot$ for any~$a'∈Σ$
+Suppose that~$δ(ε,q,γ)≠⊥$.
+(In this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for any~$a'∈Σ$
 Let~$δ(ε,q,γ)=(q',ζ)$, then as before, the automaton pops~$γ$,
   pushes~$ζ$ into the stack, but also irrevocably consumes the token~$a$.
 
-If~$δ(ε,q,γ)=δ(a,q,γ)=\bot$, then 
+If~$δ(ε,q,γ)=δ(a,q,γ)=⊥$, then
 the automaton rejects the input and stops.
 =======
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
@@ -197,7 +192,7 @@ the automaton rejects the input and stops.
       η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
     \end{array}
   \]
-  $η$ is the partial function for epsilon moves, and $δ$ is the remaining of the classic transition function.
+~$η$ is the partial function for epsilon moves, and~$δ$ is the remaining of the classic transition function.
 >>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
 \end{Definition}
 
@@ -220,21 +215,42 @@ To actually produce an LR($1$) parser for a given language,
   one needs to find an ‟\emph{LR($1$) grammar}” for the language.
 Such a grammar is amenable to
   the automatic production of an LR($1$) parser.
-However, the time for obtaining this LR($1$) grammar and 
+However, the time for obtaining this LR($1$) grammar and
   then processing it to produce an LR($1$) parser,
   as well as resulting parser's size,
   though polynomial, are prohibitive.
 
-
-Where does \Self compare in terms of grammar expressive power with a popular LL($*$)~\cite{Parr:2011} parser generators such
-  as ANTLR~\cite{Parr:1995}?
-<<<<<<< HEAD
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages†{LL(*) language fail to handle left-recursive 
+How does \Self compare
+with popular LL($*$)~\cite{Parr:2011} parser generators such
+  as ANTLR~\cite{Parr:1995}
+in terms of grammar expressive power?
+  As it turns out, languages of LL($*$) do not contain the set
+    of LALR($1$) languages†{LL(*) language fail to handle left-recursive
     grammars~\cite{Parr:2011}.},
 neither are they contained in it. If fact LL(*) languages
   contain even some non-deterministic context free languages.
-=======
-As it turns out, LL($*$) grammars do not contain the set of LR($1$) grammars~†{As LL($*$) does not contain left-recursive grammars~\cite{Parr:2011}.}, 
-  neither are they contained in it. In fact some context-sensitive 
-  languages can be parsed by LL($*$) parsers.
->>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
+
+\subsection{Fluent APIs realizing Deterministic Context Free Grammars}
+The following definition is pertinent.
+Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
+into a call to a uniquely named function (with respect to~$σ$).
+Let~$\textsf{java}(α)$, be the function
+  that translates a string~$α∈Σ^*$ into a fluent API call chain.
+If~$α=σ₁⋯σₙ∈Σ^*$, then⏎
+  \mbox{\qquad\qquad}~\cc{.}$\textsf{java}(σ₁)$\cc{().}~$⋯$~\cc{.}$\textsf{java}(σₙ)$\cc{()}⏎
+For~$Σ=❴a,b,c❵$ we can define~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
+With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
+
+\begin{theorem}\label{Theorem:Gil-Levy}
+  Let~$D$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and other types with the following
+  property: Consider the \Java command
+  \[
+    \cc{L_= M.build.$\textsf{java}(α)$}\cc{.\$()};
+  \]
+  (in words: starting from the \kk{static} field of \kk{class}~\cc{M},
+  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
+  end symbol~\cc{\$()} and then assign to newly declared variable~‟\cc{\_}” of type~\cc{L}).
+  Then, this command type checks against~$Jₘ$ if an only if~$α∈L$.
+  Furthermore, program~$J_M$ can be effectively generated from~$M$.
+\end{theorem}

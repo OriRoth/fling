@@ -1,4 +1,3 @@
-
 \begin{Definition}[Simplified Pushdown Automaton]
   \label{Definition:SDPDA}
   A \emph{\textbf simplified \textbf pushdown \textbf automaton} (SDPDA)~$M$ of order~$k$ is a 7-tuple
@@ -14,16 +13,14 @@
     \end{equation}
 \end{Definition}
 
-Let $\Sigma$ be a finite alphabet. 
-Let $\textsf{java}$ be a function that translates a terminal $\sigma \in \Sigma$
 
 \begin{Theorem}
   \label{Theorem:SDPDA}
-  For every SDPDA~$M$ there exists a set~$J_M$ of \Java type declarations, such that
+  For every SDPDA~$M$ there exists a set~$J_M$ of \Java type definitions, such that
   the command \[
-    \cc{M x = M.build.$\textsf{java}(Σ)$}.\$();
+    \cc{M x = M.build.$\textsf{java}(α)$}.\$();
   \]
-    I do not know what to so say here yet.
+  compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
 \end{Theorem}
 
 The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
@@ -33,7 +30,7 @@ In particular, we describe how~$J_M$ is constructed from the
 We will use the following notation for
 The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
 
-\begin{figure}
+\begin{figure}[H]
 \begin{JAVA}
 class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {¢¢
   Head head;
