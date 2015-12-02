@@ -1,44 +1,29 @@
 We recognize that the \Java parser spends sub quadratic time
   on its input.
-Moreover, we know that the known algorithms today for parsing general 
-  non-deterministic CFG,
+Moreover, the known algorithms today for parsing general 
+  non-deterministic CFG, as mentioned in~\Cref{preliminaries}, run in 
+  super quadric time.
 Therefore,
-  the type checker implicitly implemented with the fluent API implementation,
+  the type checker implicitly implemented with any fluent API implementation,
   cannot recognize languages whose time of recognition is quadratic or above that.
 
-The reason resides on the assumption that
-Explain why we cannot do general non-deterministic languages. This require quadratic time.
-Java type checking works in less than quadratic time. So, if it was possible to
-do general context free languages, it would be possible to
-  break the record~\cite{cubic time algorithms}.
-It is highly unlikely that such a record is broken incidentally.
+The problem is, there is no proven lower bound on the recognition time of general CFG,
+  and therefore it's hard to contradict the ability of the type system to parse such 
+  encoded grammars.
+But considering the fact that the best known algorithms today, 
+  are not only super linear, but super quadric in time,
+  it is fair to admit, that it is highly unlikely to parse general CFGs
+  with any set of \Java types and methods, including any engineering trickery.
 
-The same consideration
-For the same reason, it is highly unlikely to be able to do even deterministic
-context free languages~\cite{http://www.sciencedirect.com/science/article/pii/S0019995868910875}.
+Another upper bound to \Self in term of expressiveness, is~$\lambda$-calculus.
+In 1937 Turing~\cite{Turing:37} proved that~$\lambda$-calculus is as expressive as Turing machine.
+Since a Turing machine is strictly more expressive than a pushdown automaton, 
+  it should be clear by now that \Self is not capable of general~$\lambda$-calculus.
+% I removed these lines because they were false.
 
-   Mention that there might be few languages between union of LR(k) and deterministic context free.
+% I removed the example because i don't think it adds any interesting information.
 
-The reason is that Generate works in reasonable time \Self generates classes which encode, in types, with a bottom-up, left-right time parser.
-
-We show that a particular non-deterministic context free language,
-cannot be of a fluent API\@.
-Specifically, consider~$L$, the language of all~$αα^r$, where~$\omega∈Σ^*$,~$Σ=❴0,1❵$,
-and~$α^r$ being the sequence~$α$ in reversed order.
-Language~$L$ is context free since it is defined by the BNF.
-\begin{Grammar}
-  \begin{aligned}
-    \<S> & ::= S | 0S0 | 1s1 |ε
-  \end{aligned}
-\end{Grammar}
-It is also non-deterministic~\cite{Hopcroft:2001}.
-
-We argue that there is no type encoding that supports fluent API whose
-  which permits the set of type correct call chains defined by~$L$.
-If there was one, then, we could have done something dramatic?
-Is it really known that recognizing~$L$ requires quadratic
-  time.
-To understand
- the right one.
-
-Explain why we cannot do the lambda calculus.
+To conclude, we argue that there is no type encoding that supports fluent API whose
+  which permits the set of type correct call chains defined by~$L$ where~$L$ is a general CFG. 
+If there was one, we could give a by-far better algorithm for parsing CFG,
+  crushing all previously known algorithms.

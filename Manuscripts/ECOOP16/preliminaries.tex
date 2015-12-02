@@ -118,9 +118,9 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR(1) parsers,
+A more sane, but weaker, alternative is offered by LR($1$) parsers, 
   which are deterministic linear time and space.
-An LR(1) parser for a grammar~$G$ has three components:
+An LR($1$) parser for a grammar~$G$ has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
   \item[A stack] which may contain any member of~$Q$.
@@ -146,20 +146,24 @@ Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
   defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
-The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
-We do mention however that the same LR(1) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
-LALR(1) (which \Self uses).
+The specifics of parser generation, including notions such the famous LR items lie beyond our interest here. 
+We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
+LALR($1$) (which \Self uses).
 
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
-  General LR($k$) parsers are rarely used, since they offer essentially
-the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, at a greater toll on resources.
+General LR($k$) parsers are rarely used, since they offer essentially
+  the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, at a greater toll on resources.
 
-To characterize the expressive power of LR(1) parsers, we need the notion
+To characterize the expressive power of LR($1$) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
   to make deterministic choices.
+<<<<<<< HEAD
 The more formal and detailed definition is:
+=======
+We propose a slightly different definition from the classic:,
+>>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
   A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 6-tuple~$M =⟨Q,Γ, q₀,⊥, A,δ⟩$
@@ -167,6 +171,7 @@ The more formal and detailed definition is:
   \emph{the states of~$M$},~$Γ$ is a finite
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
   is a \emph{special symbol designating the bottom of the stack}
+<<<<<<< HEAD
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial functions of state transition}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
 
@@ -183,6 +188,17 @@ Let~$δ(ε,q,γ)=(q',ζ)$, then as before, the automaton pops~$γ$,
 
 If~$δ(ε,q,γ)=δ(a,q,γ)=\bot$, then 
 the automaton rejects the input and stops.
+=======
+  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
+  the \emph{partial functions of state transition}
+  \[
+    \begin{array}{crlc}
+      δ: & Q⨉Σ⨉Γ &↛& Q⨉Γ^*⏎
+      η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
+    \end{array}
+  \]
+  $η$ is the partial function for epsilon moves, and $δ$ is the remaining of the classic transition function.
+>>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.
@@ -194,23 +210,31 @@ DCFG languages are a strict container of regular languages,
 On the other hand, DPDA are easier to parse:
   Recognition of a DPDA language
   can be done in linear time and one pass.
-  In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
+  In contrast, CYK, one of the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
-Where do LR(1) languages stand with respect to DCFG context free languages?
-LR(1) languages are indeed equivalent to DCFG languages, but
+Where do LR($1$) languages stand with respect to DCFG context free languages?
+LR($1$) languages are indeed equivalent to DCFG languages, but
 the answer hinges on the distinction
-  between LR(1) languages and LR(1) grammars.
-To actually produce an LR(1) parser for a given language,
-  one needs to find an ‟\emph{LR(1) grammar}” for the language.
+  between LR($1$) languages and LR($1$) grammars.
+To actually produce an LR($1$) parser for a given language,
+  one needs to find an ‟\emph{LR($1$) grammar}” for the language.
 Such a grammar is amenable to
-  the automatic production of an LR(1) parser.
-However, the time for obtaining this LR(1) grammar and the processing it to produce an LR(1) parser,
-  as well as parser's size,
+  the automatic production of an LR($1$) parser.
+However, the time for obtaining this LR($1$) grammar and 
+  then processing it to produce an LR($1$) parser,
+  as well as resulting parser's size,
   though polynomial, are prohibitive.
 
-Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such
+
+Where does \Self compare in terms of grammar expressive power with a popular LL($*$)~\cite{Parr:2011} parser generators such
   as ANTLR~\cite{Parr:1995}?
+<<<<<<< HEAD
   As it turns out, languages of LL(*) do not contain the set of LALR(1) languages†{LL(*) language fail to handle left-recursive 
     grammars~\cite{Parr:2011}.},
 neither are they contained in it. If fact LL(*) languages
   contain even some non-deterministic context free languages.
+=======
+As it turns out, LL($*$) grammars do not contain the set of LR($1$) grammars~†{As LL($*$) does not contain left-recursive grammars~\cite{Parr:2011}.}, 
+  neither are they contained in it. In fact some context-sensitive 
+  languages can be parsed by LL($*$) parsers.
+>>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
