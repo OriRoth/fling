@@ -76,7 +76,7 @@ Each of the notions discussed here is probably common knowledge
  (see e.g.,~\cite{Hopcroft:book:2001,Linz:2001} for more precise definitions).
 The purpose here is to set a unifying common vocabulary.
 
-Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input symbols).
+Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input characters or tokens).
 A \emph{language} over~$Σ$
   is a subset of~$Σ^*$ (the set of all strings, including the empty string,
   whose characters are drawn from~$Σ$).
@@ -85,24 +85,24 @@ Keep~$Σ$ implicit henceforth.
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a non-deterministic finite automaton
   and a stack of unbounded depth of stack symbols.
-An NPDA begins execution with the stack a single copy of the initial stack symbol.
+An NPDA begins execution with a single copy of the initial stack symbol on the stack.
 In each step, the NPDA
-  examines the next input symbol,
+  examines the next input token,
   the state of the automaton,
   and the top of the stack.
-It then pops the top symbol in the stack, and nondeterministically chooses which action of perform
-  its transition function:
-  Consuming the next input symbol,
+It then pops the top symbol in the stack, and nondeterministically chooses which actions of
+  its transition function to perform:
+  Consuming the next input token,
 popping the current state from the stack,
   or, pushing a new state into it.
 Non-determinism effectively means
-  that any number of these can be carried out.
+  that any number of these can be done.
 
 The language recognized by an NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
-A CFG~$G$ has three components:~$Ξ$< a set of \emph{variables}~$Ξ$ (also called nonterminals),
+A CFG~$G$ has three components:~$Ξ$ a set of \emph{variables} (also called nonterminals),
   a unique \emph{start variable}~$ξ∈Ξ$, and a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
@@ -114,7 +114,7 @@ CFG languages include regular languages, and are strictly contained in the set
   of ‟context-sensitive” languages.
 
 The expressive power of NPDAs and BNFs is the same:
-  For every language defined by a BNF, there is an NPDA that recognizes it.
+  For every language defined by a BNF, there exists an NPDA that recognizes it.
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
@@ -159,30 +159,35 @@ To characterize the expressive power of LR(1) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
   to make deterministic choices.
-More formally,
+The more formal and detailed definition is:
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 7-tuple
-  \[
-    M =⟨Q,Γ, q₀,⊥, A,δ,η⟩
-  \]
+  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 6-tuple~$M =⟨Q,Γ, q₀,⊥, A,δ⟩$
   where~$Q$ is a finite set of
   \emph{the states of~$M$},~$Γ$ is a finite
-  \emph{set of stack symbols},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
+  \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
   is a \emph{special symbol designating the bottom of the stack}
-  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
-  the \emph{partial functions of state transition}
-  \[
-    \begin{array}{crlc}
-      δ: & Q⨉Σ⨉Γ &↛& Q⨉Γ^*⏎
-      η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
-    \end{array}
-  \]
+  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
+  the \emph{partial functions of state transition}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
+
+A DPDA begins its work in the initial state with a designated stack symbol residing on the stack.
+At each step, the automaton examines:~$a$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack and based on
+  their values, decides how to proceed.
+
+If~$γ=⊥$, the DPDA accepts the input and halts.
+The same happens if~$q∈A$.
+Suppose that~$δ(ε,q,γ) \ne \bot$. 
+(In this case, the definition requires that~$δ(a',q,γ)=\bot$ for any~$a'∈Σ$
+Let~$δ(ε,q,γ)=(q',ζ)$, then as before, the automaton pops~$γ$,
+  pushes~$ζ$ into the stack, but also irrevocably consumes the token~$a$.
+
+If~$δ(ε,q,γ)=δ(a,q,γ)=\bot$, then 
+the automaton rejects the input and stops.
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.
 It is convenient to speak also of DCFG languages, the \emph{deterministic context-free grammar} languages,
-  which are those context-free languages recognizable by DPDA.
+  which are those context-free languages that are recognizable by a DPDA.
 
 DCFG languages are a strict container of regular languages,
   and are strictly contained in CFG languages.
@@ -196,7 +201,7 @@ LR(1) languages are indeed equivalent to DCFG languages, but
 the answer hinges on the distinction
   between LR(1) languages and LR(1) grammars.
 To actually produce an LR(1) parser for a given language,
-  one needs to find an‟\emph{LR(1) grammar}” for the language.
+  one needs to find an ‟\emph{LR(1) grammar}” for the language.
 Such a grammar is amenable to
   the automatic production of an LR(1) parser.
 However, the time for obtaining this LR(1) grammar and the processing it to produce an LR(1) parser,
@@ -205,6 +210,7 @@ However, the time for obtaining this LR(1) grammar and the processing it to prod
 
 Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such
   as ANTLR~\cite{Parr:1995}?
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~†{As it can't handle left-recursive grammars~\cite{Parr:2011}.},
+  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages†{LL(*) language fail to handle left-recursive 
+    grammars~\cite{Parr:2011}.},
 neither are they contained in it. If fact LL(*) languages
   contain even some non-deterministic context free languages.
