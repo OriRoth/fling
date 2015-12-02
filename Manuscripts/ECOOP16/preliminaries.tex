@@ -1,4 +1,4 @@
-\subsection{Method Chaining \emph{vs.} Fluent API}
+\subsection{Method Chaining \emph{vs.} Fluent API: Reminder and Terminology}
 The pattern ‟invoke function on variable \cc{sb}” occurs
 six times in the code in \cref{Figure:chaining}(a).
 
@@ -6,8 +6,8 @@ six times in the code in \cref{Figure:chaining}(a).
   \caption{\label{Figure:chaining}%
     Recurring invocations of the pattern ‟invoke function on the same
       receiver”, before, and after method chaining.
-  }
-  \begin{tabular}{cc}
+  }%
+    \begin{tabular}{@{}cc@{}}%
   \begin{lcode}[minipage,width=44ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   StringBuilder sb = new StringBuilder();
@@ -20,6 +20,7 @@ String time(int hours, int minutes, int seconds) {¢¢
 }\end{lcode}
 \hfill
 &
+\hspace{1ex}
   \begin{lcode}[minipage,width=44ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
     return new StringBuilder()
@@ -40,22 +41,14 @@ Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   only one command \mbox{\cc{o.$f()$.$g$();}}.
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
-  \cref{Figure:non-chaining}(a).
-It is made possible by the designer of class \cc{StreamBuilder} making sure that all overloaded variants of
+  \cref{Figure:chaining}(a).
+It is made possible by the designer of class \cc{StreamBuilder} ensuring that all overloaded variants of
   of \cc{append} return their receiver.
 
-
-Now, definition found in the web of the term \emph{fluent API†{API =
-    \textbf Application \textbf Program \textbf Interface
-}} are a bit illusive.
-Invariably, such definitions liken fluent API to method chaining;
-  they also tend to emphasize that fluent API is ‟more” than method
-  chaining, and ask the reader to extrapolate from one term to the other.
-
-The distinction between the two terms is the identity of the receiver.
+The distinction between fluent API and method chaining is the identity of the receiver:
 In method chaining, all methods are invoked on the same object, whereas in fluent API
   the receiver of each method in the chain may be arbitrary.
-Perhaps surprisingly, this difference makes fluent API more expressive.
+Fluent API are more interesting for this reason.
 Consider, for example, the following JAVA fragment (drawn from JMock~\cite{Freeman:Pryce:06})
 \begin{JAVA}
 allowing (any(Object.class))
@@ -76,47 +69,6 @@ allowing(any(Object.class)).method("get.*").
 This distinction makes it possible to design expressive and rich fluent APIs, in which a
   sequence ‟chained” calls is not only readable, but also robust, in the sense that the
   sequence is type correct, only when it the sequence makes sense semantically.
-
-\subsection{Fluent API and the Type Safe Toilette Seat}
-
-An object of type toilette seat is created in the \cc{down} state, but it can
-then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
-\cc{down} state.†{%
-  This example is inspired by earlier work of
-  Richard Harter on the topic~\cite{Harter:05}.
-}
-Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes:
-  \cc{urinate} and \cc{defecate}.
-Now a good fluent API design is one by which the sequences of method calls in
-  \cref{Figure:toilette:legal} are type correct.
-
-\begin{figure}[htbp]
-  \begin{JAVA}
-new Seat().male().raise().urinate();
-new Seat().female().urinate();\end{JAVA}
-  \caption{Legal sequences of calls in the toilette seat example}
-  \label{Figure:toilette:legal}
-\end{figure}
-
-Conversely, sequences of method calls made in \cref{Figure:toilette:illegal}
-  should be illegal in the desired implementation of the fluent API.
-
-\begin{figure}[htbp]
-  \begin{JAVA}
-new Seat().female().raise();
-new Seat().male().raise().defecate();
-new Seat().male().male();
-new Seat().male().raise().urinate().female().urinate();\end{JAVA}
-  \caption{Illegal sequences of calls in the toilette seat example}
-  \label{Figure:toilette:illegal}
-\end{figure}
-It should be clear that the type checking engine of the compiler can
-be employed to distinguish between legal and illegal sequences.
-It should also be clear that fabricating the \kk{class}es, \kk{interface}s
-and the \kk{extends} and \kk{implements} relationships between these, is
-far from being trivial.
-
-\subsection{What is fluent API?}
 
 \subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
 Each of the notions discussed here is probably common knowledge
@@ -237,7 +189,6 @@ Such a grammar is amenable to
   the automatic production of an LR(1) parser.
 However the time for obtaining this LR(1) grammar and the processing it, 
   though polynomial, may be prohibitive. 
-
 
 \begin{wrapfigure}r{0.5\linewidth}
   \caption{ \label{Figure:expressiveness}
