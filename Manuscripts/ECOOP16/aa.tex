@@ -90,13 +90,14 @@ At the moment, the AST's nodes are un-typed, though it is planned
 % and augmented with a visiting API, all ready
 %  for use by the implementer of~$ϕ$.
 
-\Self generates LR(1) parsers. Experience shows that these are
-  sufficient for many purposes~\cite{find some references, perhaps the bison manual, but I am sure there are better references}.
+\Self generates LR($1$) parsers. Experience shows that these are
+  sufficient for many purposes, for evidence, the perhaps most common~\footnote{As noted in the conclusion of T\@. parr's work~\cite{Parr:1995}} parser Bison,
+  generates parsers for a strict subset of LR($1$) parsers (LALR).~\cite{Bison:manual}.
 Still, LR(1) grammars make a strict subset of deterministic context-free grammars.
 Practicality concerns stop \Self from implementing LR($k$) higher~$k$. 
 
-It is parser size explosion that stops mature tools such as Bison~\cite{Bison},
-  SableCC~\cite{Sable:Search in databased, it should be there} and Lemon Parser Generator~\cite{something}
+It is parser size explosion that stops mature tools as the previously mentioned Bison~\cite{Bison:manual},
+  SableCC~\href{http://www.sablecc.org} and Lemon Parser Generator~\href{http://www.hwaci.com/sw/lemon/}
   from reaching up to LR($k$),~$k≥2$.
 The same concern stops \Self from this venture.
 
