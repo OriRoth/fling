@@ -28,9 +28,9 @@ public class BalancedParenthesis {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(BALANCED) //
         .derive(BALANCED).to(lp).and(BALANCED).and(rp) //
-        /*        */.or().to(lp).and(BALANCED).and(rp).and(BALANCED) //
-        /*        */.or().to(lp).and(rp).and(BALANCED)//
-        /*        */.or().to(lp).and(rp) //
+        /*        */.or(lp).and(BALANCED).and(rp).and(BALANCED) //
+        /*        */.or(lp).and(rp).and(BALANCED)//
+        /*        */.or(lp).and(rp) //
         .finish();
     return bnf;
   }
