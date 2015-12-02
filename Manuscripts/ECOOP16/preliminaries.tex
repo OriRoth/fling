@@ -1,7 +1,9 @@
 \subsection{Method Chaining \emph{vs.} Fluent API: Reminder and Terminology}
 The pattern ‟invoke function on variable \cc{sb}”, specifically with
   a function named \cc{append}, occurs
-six times in the code in \cref{Figure:chaining}(a).
+six times in the code in \cref{Figure:chaining}(a), designed
+  to convert a clock reading, given as integer hours, minutes and 
+  seconds into a string.
 
 \begin{figure}[H]
   \caption{\label{Figure:chaining}%
@@ -43,7 +45,7 @@ Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
   \cref{Figure:chaining}(a).
-It is made possible thanks to the designer of class \cc{StringBuilder} who made sure that all overloaded variants of
+It is made possible thanks to the designer of class \cc{StringBuilder} ensuring that all overloaded variants of
   of \cc{append} return their receiver.
 
 The distinction between fluent API and method chaining is the identity of the receiver:
@@ -168,7 +170,7 @@ The more formal and detailed definition is:
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
   is a \emph{special symbol designating the bottom of the stack}
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
-  the \emph{partial functions of state transition}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
+  the \emph{partial state transition function}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
 
 A DPDA begins its work in the initial state with a designated stack symbol residing on the stack.
 At each step, the automaton examines:~$a$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack and based on
@@ -177,23 +179,11 @@ At each step, the automaton examines:~$a$, the next input token, the current sta
 If~$γ=⊥$, the DPDA accepts the input and halts.
 The same happens if~$q∈A$.
 Suppose that~$δ(ε,q,γ)≠⊥$.
-(In this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for any~$a'∈Σ$
+(In this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for any~$a'∈Σ$.)
 Let~$δ(ε,q,γ)=(q',ζ)$, then as before, the automaton pops~$γ$,
   pushes~$ζ$ into the stack, but also irrevocably consumes the token~$a$.
 
-If~$δ(ε,q,γ)=δ(a,q,γ)=⊥$, then
-the automaton rejects the input and stops.
-=======
-  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ and~$η$ are
-  the \emph{partial functions of state transition}
-  \[
-    \begin{array}{crlc}
-      δ: & Q⨉Σ⨉Γ &↛& Q⨉Γ^*⏎
-      η: & Q⨉Γ &↛& Q⨉Γ^*,⏎
-    \end{array}
-  \]
-~$η$ is the partial function for epsilon moves, and~$δ$ is the remaining of the classic transition function.
->>>>>>> f3f1f7dd796d9e7d4d6a0ec84fd85c4e0f3cf6db
+If~$δ(ε,q,γ)=δ(a,q,γ)=⊥$ the automaton rejects the input and stops.
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.

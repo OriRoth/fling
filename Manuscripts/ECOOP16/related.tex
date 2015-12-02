@@ -1,4 +1,37 @@
-Mention all C++ template programming, there are many classics, including the BOOST library I think. 
+Modern programming languages acquire high-level constructs
+  at a staggering rate.
+The imminent adoption of closures in \Java and \CC,
+  the generators of \CSharp, and ‟concepts” in
+  \CC are just a few examples.
+
+A theoretical motivation for this work
+  is the exploration of the computational
+  expressiveness of such features.
+For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
+  \kk{template}s in \CC are Turing complete in the following precise sense:
+
+\begin{Theorem}
+  \label{Theorem:Gutterman}
+  For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
+    compilation of~$Cₘ$ of terminates if and only if
+      Turing-machine~$m$ halts.
+  Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
+    effective~$≈$‟~\emph{there is time
+  bounded algorithm for carrying out the task}”.} generated from~$m$.
+\end{Theorem}
+
+Intuitively, the proof relies on the fact that \kk{template}s
+  feature recursive invocation and conditionals (in the form of
+  ‟\emph{template specialization}”).
+
+In the same fashion, it is mundane to make the judgment that
+  \Java's generics are not Turing-complete: all recursive calls
+  in these are unconditional.
+In a sense, this article shall give a lower bound on the
+  expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky:1963}.
+This objective is more precisely expressed in the following conjecture.
+
+Mention all \CC{} template programming, there are many classics, including the BOOST library I think. 
 
 Mention funny tricks with annotations to Java. There is Michael Earnst from 
   Washington State university. He fought for more support for annotations 

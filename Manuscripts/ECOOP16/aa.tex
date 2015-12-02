@@ -91,57 +91,16 @@ At the moment, the AST's nodes are un-typed, though it is planned
 % and augmented with a visiting API, all ready
 % for use by the implementer of~$ϕ$.
 
-\Self generates LR($1$) parsers. Experience shows that these and even the strictly smaller set of 
-  LALR grammars is sufficient for many purposes (see e.g., an acknowledgement by T\@. Parr, the developer of LL($*$) grammars
-~\cite{Parr:1995}).  
-Evidently, Bison{Bison:manual}, 
+\Self generates LR($1$) parsers. Experience shows that these and even the strictly smaller set of
+  LALR grammars is sufficient for many purposes (see e.g., an acknowledgement by T\@. Parr,
+    the developer of LL($*$) grammars~\cite{Parr:1995}).
+Evidently, Bison~\cite{Bison:manual},
   SableCC\urlref{http://www.sablecc.org}, Lemon Parser Generator\urlref{http://www.hwaci.com/sw/lemon/}
   and other popular generators of left to right parsers opt to stay within the confinement of LALR parsers.
-Practicality concerns stop \Self from trying to achieve more.
+Practicality concerns stop \Self from trangressing this limitation.
 
 One may ask whether the theoretical result is the
   best possible:
-Can one implement a fluent API for a general
+It is possible to implement a fluent API for general
   (that is, non-deterministic) context free languages?
-We give reason why this possibility is unlikely.
-
-Modern programming languages acquire high-level constructs
-  at a staggering rate.
-The imminent adoption of closures in \Java and \CC,
-  the generators of \CSharp, and ‟concepts” in
-  \CC are just a few examples.
-
-A theoretical motivation for this work
-  is the exploration of the computational
-  expressiveness of such features.
-For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
-  \kk{template}s in \CC are Turing complete in the following precise sense:
-
-\begin{Theorem}
-  \label{Theorem:Gutterman}
-  For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
-    compilation of~$Cₘ$ of terminates if and only if
-      Turing-machine~$m$ halts.
-  Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
-    effective~$≈$‟~\emph{there is time
-  bounded algorithm for carrying out the task}”.} generated from~$m$.
-\end{Theorem}
-
-Intuitively, the proof relies on the fact that \kk{template}s
-  feature recursive invocation and conditionals (in the form of
-  ‟\emph{template specialization}”).
-
-In the same fashion, it is mundane to make the judgment that
-  \Java's generics are not Turing-complete: all recursive calls
-  in these are unconditional.
-In a sense, this article shall give a lower bound on the
-  expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky:1963}.
-This objective is more precisely expressed in the following conjecture.
-
-
-The proof shall be made in~\Cref{Section:proof} with an algorithm that converts a
-  PDA~$M$ into a program~$Jₛ$.
-  an actual program that produces a fluent API from a BNF definition.
-  to be known as
-  along with its API, other lesser components and
-  some connecting tissue, are
+  We give reason why this possibility is unlikely.
