@@ -130,25 +130,26 @@ An LR(1) parser for a grammar~$G$ has three components:
             defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
         \end{description}
 \end{description}
+We will define the general, formal, coarse-gained operation of the parser, without reintroducing 
+  the classic LR items, LR state, and other specifics.
 The parser begins by pushing~$q₀$ (the initial state) into the stack,
 and then repetitively executes the following:
 Examine~$q∈Q$, the state at the top of the stack.
-If~$q=qₙ$ (the accepting state), then the parser stops in accepting the input.
+If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
 Let~$σ∈Σ$ be the next input symbol.
-If~$η(q,σ)=⊥$, the parser stops in rejecting the input.
-If~$η(q',σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
+If~$η(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
-where~$r=ξ→β$,
-the parser pops~$|β|$ stack symbols from the stack.
-Let~$q'$ be the state at the top of the stack after these pops.
-The parser then pops~$q'$, the new state it reached,
-  and pushes instead a state,~$q”$,
-  defined by applying the transition function on~$ξ$, the variable just discovered and~$q'$ , i.e.,~$q”=δ(q',ξ)$.
+where~$r=ξ→β$, the parser does not consume $\sigma$ from the input string,
+  and pops~$|β|$ stack symbols from the stack.
+Let~$q'$ be the state at the top of the stack after these pops, then
+  the parser pushes a state,~$q”$,
+  defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
-More general, LL($k$) parsers,~$k>1$, can be defined. These make their
+More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
-  General LL($k$) parsers are rarely used, since they offer essentially 
-    the same expressive power as LL(1) parsers, at a greater toll on resources.
+  General LR($k$) parsers are rarely used, since they offer essentially 
+    the same expressive power~\footnote{In term of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR(1) parsers, at a greater toll on resources.
 
 To characterize the expressive power of LR(1) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
