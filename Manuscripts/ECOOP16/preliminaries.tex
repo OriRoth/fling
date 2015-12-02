@@ -2,7 +2,7 @@
 The pattern ‟invoke function on variable \cc{sb}”, specifically with
   a function named \cc{append}, occurs
 six times in the code in \cref{Figure:chaining}(a), designed
-  to convert a clock reading, given as integer hours, minutes and 
+  to convert a clock reading, given as integer hours, minutes and
   seconds into a string.
 
 \begin{figure}[H]
@@ -160,35 +160,36 @@ General LR($k$) parsers are rarely used, since they offer essentially
 To characterize the expressive power of LR($1$) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
-  to make deterministic choices.
+to make deterministic choices.
 The more formal and detailed definition is:
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA),~$M$, is a 6-tuple~$M =⟨Q,Γ, q₀,⊥, A,δ⟩$
+  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ, q₀,A,δ⟩$
   where~$Q$ is a finite set of
-  \emph{the states of~$M$},~$Γ$ is a finite
-  \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$⊥∈Γ$
-  is a \emph{special symbol designating the bottom of the stack}
-  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
-  the \emph{partial state transition function}~$δ: (Γ∪❴ε❵)⨉Q⨉Σ ↛ Q⨉Γ^*.~$.
-
-A DPDA begins its work in the initial state with a designated stack symbol residing on the stack.
-At each step, the automaton examines:~$a$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack and based on
+  \emph{states},~$Γ$ is a finite
+  \emph{set of stack elements},~$q₀∈Q$ is the initial state, and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
+  the \emph{partial state transition function}~$δ:(Γ∪❴ε❵)⨉Q⨉Σ↛Q⨉Γ^*$.
+  \par\itshape
+  A DPDA begins its work in the initial state with a designated stack symbol residing on the stack.
+  At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack and based on
   their values, decides how to proceed.
-
-If~$γ=⊥$, the DPDA accepts the input and halts.
-The same happens if~$q∈A$.
-Suppose that~$δ(ε,q,γ)≠⊥$.
-(In this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for any~$a'∈Σ$.)
-Let~$δ(ε,q,γ)=(q',ζ)$, then as before, the automaton pops~$γ$,
-  pushes~$ζ$ into the stack, but also irrevocably consumes the token~$a$.
-
-If~$δ(ε,q,γ)=δ(a,q,γ)=⊥$ the automaton rejects the input and stops.
+  \par
+  If~$γ$ is undefined, i.e., the stack is empty, the DPDA accepts the input and halts.
+  The same happens if~$q∈A$.
+  \par
+  Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ$).
+  and let~$δ(ε,q,γ)=(q',ζ)$.
+  Then the automaton pops~$γ$
+  and pushes the string of stack elements~$ζ \inΓ^*$ into the stack.
+  If~$δ(a,q,γ)=(q',ζ)$, then the same happens, but the
+  automaton also irrevocably consumes the token~$σ$.
+  \par
+  If~$δ(ε,q,γ)=δ(a,q,γ)=⊥$ the automaton rejects the input and stops.
 \end{Definition}
 
 As mentioned above, NPDA languages are the same as CFG languages.
 It is convenient to speak also of DCFG languages, the \emph{deterministic context-free grammar} languages,
-  which are those context-free languages that are recognizable by a DPDA.
+which are those context-free languages that are recognizable by a DPDA.
 
 DCFG languages are a strict container of regular languages,
   and are strictly contained in CFG languages.
