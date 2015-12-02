@@ -1,12 +1,14 @@
 We recognize that the \Java parser spends sub quadratic time
   on its input.
 Moreover, we know that the known algorithms today for parsing general 
-  non-deterministic CFG,
+  non-deterministic CFG, as mentioned in~\Cref{preliminaries}, run in 
+  super quadric time.
 Therefore,
   the type checker implicitly implemented with the fluent API implementation,
   cannot recognize languages whose time of recognition is quadratic or above that.
 
 The reason resides on the assumption that
+
 Explain why we cannot do general non-deterministic languages. This require quadratic time.
 Java type checking works in less than quadratic time. So, if it was possible to
 do general context free languages, it would be possible to
