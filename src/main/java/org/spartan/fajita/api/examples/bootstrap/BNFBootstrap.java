@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.BNF;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Body;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Conjunctions;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Extra_Conjunction;
@@ -15,7 +15,7 @@ import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Symbol_S
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Terminals;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Variables;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.and;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derives;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derive;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.go;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.or;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.orNone;
@@ -36,7 +36,7 @@ public class BNFBootstrap {
   }
 
   static enum Term implements Terminal {
-    start, derives, with, //
+    start, derive, with, //
     to, and, toNone, or, orNone, //
     go;
   }
@@ -47,7 +47,7 @@ public class BNFBootstrap {
     Rules, Rule, Conjunctions, //
     First_Conjunction, Extra_Conjunctions, //
     Extra_Conjunction, //
-    Symbol_Sequence
+    Symbol_Sequence //
   }
 
   public static BNF buildBNF() {
@@ -56,26 +56,26 @@ public class BNFBootstrap {
         //
         .derive(BNF)/*               */.to(Header).and(Body).and(Footer) //
         .derive(Header)/*            */.to(Variables).and(Terminals) //
-        /*                               */.or().to(Terminals).and(Variables) //
+        /*                             */.or(Terminals).and(Variables) //
         .derive(Variables)/*         */.to(with, NonTerminal.class)//
         .derive(Terminals)/*         */.to(with, Terminal.class)//
         .derive(Body)/*              */.to(Start).and(Rules) //
         .derive(Start)/*             */.to(start,NonTerminal.class)//
         .derive(Rules)/*             */.to(Rule).and(Rules) //
-        /*                               */.or().to(Rule) //
-        .derive(Rule)/*              */.to(derives, NonTerminal.class).and(Conjunctions) //
+        /*                             */.or(Rule) //
+        .derive(Rule)/*              */.to(derive, NonTerminal.class).and(Conjunctions) //
         .derive(Conjunctions)/*      */.to(First_Conjunction).and(Extra_Conjunctions) //
         .derive(First_Conjunction)/* */.to(to, NonTerminal.class).and(Symbol_Sequence) //
-        /*                                 */.or().to(to, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence) //
-        /*                                 */.or().to(toNone) //
+        /*                             */.or(to, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence) //
+        /*                             */.or(toNone) //
         .derive(Extra_Conjunctions)/**/.to(Extra_Conjunction).and(Extra_Conjunctions) //
-        /*                                 */.orNone() //
+        /*                             */.orNone() //
         .derive(Extra_Conjunction)/* */.to(or, NonTerminal.class).and(Symbol_Sequence) //
-        /*                                 */.or().to(or, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence)//
-        /*                                 */.or().to(orNone)//
+        /*                             */.or(or, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence)//
+        /*                             */.or(orNone)//
         .derive(Symbol_Sequence)/*   */.to(and, NonTerminal.class) //
-        /*                                */.or().to(and, Terminal.class, ClassEllipsis.class) //
-        /*                                */.orNone() //
+        /*                             */.or(and, Terminal.class, ClassEllipsis.class) //
+        /*                             */.orNone() //
         .derive(Footer)/*            */.to(go)//
         .finish();
     return b;

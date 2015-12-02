@@ -75,20 +75,20 @@ public class JsonObject {
         .start(START) //
         .derive(START).to(OBJECT) //
         .derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
-        .derive(NEXT).to(NEXT_ADD).or().to(LAST_ADD)//
+        .derive(NEXT).to(NEXT_ADD).or(LAST_ADD)//
         .derive(NEXT_ADD).to(ADD).and(NEXT) //
         .derive(LAST_ADD).to(ADD) //
         .derive(ADD).to(name).and(TO_TYPE)//
-        .derive(TO_TYPE).to(TO).or().to(TO_NULL).or().to(TO_ARRAY).or().to(TO_OBJECT)//
+        .derive(TO_TYPE).to(TO).or(TO_NULL).or(TO_ARRAY).or(TO_OBJECT)//
         .derive(TO).to(to)//
         .derive(TO_NULL).to(toNull) //
         .derive(TO_OBJECT).to(toObject).and(OBJECT) //
         .derive(TO_ARRAY).to(toArray).and(ARRAY) //
         .derive(ARRAY).to(startArray).and(ELEMENTS).and(endArray) //
-        .derive(ELEMENTS).to(LAST_ELEMENT).or().to(NEXT_ELEMENT) //
+        .derive(ELEMENTS).to(LAST_ELEMENT).or(NEXT_ELEMENT) //
         .derive(LAST_ELEMENT).to(ELEMENT_TYPE) //
         .derive(NEXT_ELEMENT).to(ELEMENT_TYPE).and(ELEMENTS) //
-        .derive(ELEMENT_TYPE).to(ELEMENT).or().to(ARRAY_ELEMENT).or().to(OBJECT_ELEMENT) //
+        .derive(ELEMENT_TYPE).to(ELEMENT).or(ARRAY_ELEMENT).or(OBJECT_ELEMENT) //
         .derive(ELEMENT).to(add) //
         .derive(OBJECT_ELEMENT).to(addObject).and(OBJECT) //
         .derive(ARRAY_ELEMENT).to(addArray).and(ARRAY) //

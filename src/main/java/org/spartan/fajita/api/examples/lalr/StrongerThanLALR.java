@@ -34,9 +34,9 @@ public class StrongerThanLALR {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(S) //
         .derive(S).to(a).and(E).and(c) //
-        /* */.or().to(a).and(F).and(d) //
-        /* */.or().to(b).and(F).and(c) //
-        /* */.or().to(b).and(E).and(d) //
+        /* */.or(a).and(F).and(d) //
+        /* */.or(b).and(F).and(c) //
+        /* */.or(b).and(E).and(d) //
         .derive(F).to(e) //
         .derive(E).to(e) //
         .finish();

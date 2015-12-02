@@ -45,25 +45,25 @@ public class ToiletteSeat {
       .to(Down_Visitors) //
     .derive(Down_Visitors) //
       .to(Down_Visitor).and(Down_Visitors) //
-      .or().to(Raising_Visitor).and(Up_Visitors) //
+      .or(Raising_Visitor).and(Up_Visitors) //
       .orNone() //
     .derive(Up_Visitors) //
       .to(Up_Visitor).and(Up_Visitors) //
-      .or().to(Lowering_Visitor).and(Down_Visitors) //
+      .or(Lowering_Visitor).and(Down_Visitors) //
       .orNone() //
     .derive(Up_Visitor)//
       .to(male).and(urinate) //
     .derive(Down_Visitor) //
       .to(female).and(Action) //
-      .or().to(male).and(defecate) //
+      .or(male).and(defecate) //
     .derive(Raising_Visitor)//
       .to(male).and(raise).and(urinate) //
     .derive(Lowering_Visitor) //
       .to(female).and(lower).and(Action) //
-      .or().to(male).and(lower).and(defecate) //
+      .or(male).and(lower).and(defecate) //
     .derive(Action) //
       .to(urinate) //
-      .or().to(defecate) //
+      .or(defecate) //
     .finish(); 
     return bnf;
   }

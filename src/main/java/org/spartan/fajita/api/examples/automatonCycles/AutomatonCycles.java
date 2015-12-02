@@ -32,10 +32,10 @@ public class AutomatonCycles {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(D) //
         .derive(D).to(C).and(d,String.class) //
-        /* */.or().to(C).and(d,Integer.class) //
+        /* */.or(C).and(d,Integer.class) //
         .derive(C).to(A).and(B) //
         .derive(A).to(a).and(A) //
-        /* */.or().to(a) //
+        /* */.or(a) //
         .derive(B).to(b) //
         .finish();
     return bnf;
