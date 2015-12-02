@@ -42,22 +42,23 @@ Some skill is required to make this type definition: proper design of class \cc{
   some auxiliary classes extending it, an appropriate method definition here and there, etc.
 
 The proof makes a general recipe for handling examples of this sort:
-
-First, consider the regular language defined by the fluent API\@.
-In the box example, this language could be defined by the regular expression:
+\begin{itemize}
+  \item First, consider the language defined by the fluent API\@.
+In the box example, this language is defined by the regular expression:
 \[
   L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
 \]
-
-Second, check whether this language defined is deterministic context-free.
+\item Second, check whether this language is deterministic context-free.
 If it is, the fluent API can be realized, and,
   there is an algorithm to produce the respective type definition.
-In the box example, language~$L$ is written as a regular expression,
-  and hence is trivially deterministic context-free.
+In the box example, since language~$L$ is specified by a regular expression,
+  it is trivially deterministic context-free.
+
 It follows from the proof that there exists a type definition
-  for the box example.
+  which realizes the box example.
 Moreover, there is a way
   to automatically produce this type definition.
+\end{itemize}
 
 The proof is a construction of a \Java type encoding of
   the \emph{deterministic pushdown automaton} that recognizes

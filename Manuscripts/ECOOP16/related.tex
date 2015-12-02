@@ -10,3 +10,38 @@ Mention this German (?) guy, who did suggest something like ours.
 
 Anything else you can find.
 
+\subsection{Type State}
+The toilette seat problem may be amusing to some, but it is not contrived in
+any way. In fact, there is huge body of research on the general topics of
+\emph{type-states}. (See e.g., review articles such
+as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}) Informally, an object
+that belongs to a certain type (\kk{class} in the object oriented lingo), has
+type-states, if not all methods defined in this object's class are applicable
+to the object in all states it may be in.
+
+A classical example of type-states is a file object: which can be in one of two
+states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
+permitted when the file is in an ‟open” state. In addition, method \cc{open()}
+(respectively \cc{close()}) can only be applied if the object is in the
+‟closed” (respectively, ‟open”) state.
+
+Objects with type states such as toilette seats and files are not rarities.
+In fact, a recent study~\cite{Beckman:2011} estimates
+  that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
+Type-state pose two main challenges to software engineering
+\begin{enumerate}
+  \item \emph{\textbf{Identification.}}
+    In the typical case, type-state
+        receive little to no mention at all in the documentation.
+    The identification problem is to find the implicit
+    type state in existing JAVA: Given an implementation of a class
+    (or more generally of a software framework),
+    \emph{determine} which sequences of method calls are valid and which violate the
+    type state hidden in the JAVA.
+  \item \emph{\textbf{Maintenance and Enforcement.}}
+    Having identified the type-states, the challenge is in automatically flagging out
+      illegal sequence of calls that does not conform
+      with the type-state, furthermore, with the
+      evolution of an API, the challenge is in updating the type-state information,
+      and the type checking of JAVA of clients.
+\end{enumerate}
