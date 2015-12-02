@@ -86,28 +86,28 @@ A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a
   made of a non-deterministic finite automaton
   and a stack of unbounded depth of stack symbols.
 An NPDA begins execution with the stack a single copy of the initial stack symbol.
-In each step, the NPDA 
+In each step, the NPDA
   examines the next input symbol,
   the state of the automaton,
   and the top of the stack.
-It then pops the top symbol in the stack, and nondeterministically chooses which action of  perform 
-  its transition function: 
+It then pops the top symbol in the stack, and nondeterministically chooses which action of perform
+  its transition function:
   Consuming the next input symbol,
 popping the current state from the stack,
   or, pushing a new state into it.
-Non-determinism effectively means 
+Non-determinism effectively means
   that any number of these can be carried out.
 
 The language recognized by an NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
-A CFG~$G$ has three components: $\Xi$< a set of \emph{variables}~$Ξ$ (also called nonterminals), 
+A CFG~$G$ has three components:~$Ξ$< a set of \emph{variables}~$Ξ$ (also called nonterminals),
   a unique \emph{start variable}~$ξ∈Ξ$, and a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
 Accordingly, rule~$r∈G$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\right)^*$.
-This description is often called BNF.
+This description is often called BNF\@.
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
 CFG languages include regular languages, and are strictly contained in the set
@@ -118,7 +118,7 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR(1) parsers, 
+A more sane, but weaker, alternative is offered by LR(1) parsers,
   which are deterministic linear time and space.
 An LR(1) parser for a grammar~$G$ has three components:
 \begin{description}
@@ -140,21 +140,20 @@ Let~$σ∈Σ$ be the next input symbol.
 If~$η(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
 If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
-where~$r=ξ→β$, the parser does not consume $\sigma$ from the input string,
+where~$r=ξ→β$, the parser does not consume~$σ$ from the input string,
   and pops~$|β|$ stack symbols from the stack.
 Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
   defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
-The specifics of parser  generation, including notions such the famous LR items lie beyond our interest here. 
+The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
 We do mention however that the same LR(1) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
 LALR(1) (which \Self uses).
 
-
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
-  General LR($k$) parsers are rarely used, since they offer essentially 
-the same expressive power\footnote{In fact, in terms of language expressiveness, they are equivalent~\cite{Knuth:65}} as LR(1) parsers}, at a greater toll on resources.
+  General LR($k$) parsers are rarely used, since they offer essentially
+the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, at a greater toll on resources.
 
 To characterize the expressive power of LR(1) parsers, we need the notion
 of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
@@ -185,9 +184,9 @@ As mentioned above, NPDA languages are the same as CFG languages.
 It is convenient to speak also of DCFG languages, the \emph{deterministic context-free grammar} languages,
   which are those context-free languages recognizable by DPDA.
 
-DCFG languages are a strict container of regular languages, 
+DCFG languages are a strict container of regular languages,
   and are strictly contained in CFG languages.
-On the other hand, DPDA are easier to parse: 
+On the other hand, DPDA are easier to parse:
   Recognition of a DPDA language
   can be done in linear time and one pass.
   In contrast, the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
@@ -204,8 +203,8 @@ However, the time for obtaining this LR(1) grammar and the processing it to prod
   as well as parser's size,
   though polynomial, are prohibitive.
 
-Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such 
+Where does \Self compare in terms of expressive power with of popular LL(*)~\cite{Parr:2011} parser generators such
   as ANTLR~\cite{Parr:1995}?
-  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~\footnote{As it can't handle left-recursive grammars~\cite{Parr:2011}.}, 
+  As it turns out, languages of LL(*) do not contain the set of LALR(1) languages~†{As it can't handle left-recursive grammars~\cite{Parr:2011}.},
 neither are they contained in it. If fact LL(*) languages
   contain even some non-deterministic context free languages.
