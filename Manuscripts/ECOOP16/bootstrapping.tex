@@ -21,7 +21,7 @@ It uses the notation introduced in~\cref{Figure:BNF}
       \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
       \<Rules>                   & ::= \<Rule> \~\<Rules>\hfill⏎
       {}                         & \| \<Rule> \hfill⏎
-      \<Rule>                    & ::= \cc{derives(Class<? \kk{extends} Variable>)} \<Conjunctions>\hfill⏎
+      \<Rule>                    & ::= \cc{derive(Class<? \kk{extends} Variable>)} \<Conjunctions>\hfill⏎
       \<Conjunctions>            & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
       \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
       {}                         & \| \cc{toNone()}\hfill⏎
@@ -187,7 +187,7 @@ Such tokens, the building blocks of grammars, come in two flavors:
 This distinction applies also to fluent APIs:
 Methods, or verbs, are the tokens, and a fluent APIs sequence consists of
 method calls that come in two kinds: those that do not take parameters (such as~\cc{toNone()} in~\cref{Figure:BNF:fluent}),
-and those that do (such as the call~\cc{derives($·$)} in the figure).
+and those that do (such as the call~\cc{derive($·$)} in the figure).
 
 \Self supports verbs with, and without, noun parameters.
 The following examples,`drawn from~\cref{Figure:fluent} and~\cref{Figure:BNF:fluent},

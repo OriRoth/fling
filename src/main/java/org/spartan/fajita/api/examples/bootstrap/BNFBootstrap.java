@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.BNF;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Body;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Conjunctions;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Extra_Conjunction;
@@ -15,7 +15,7 @@ import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Symbol_S
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Terminals;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Variables;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.and;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derives;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.derive;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.go;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.or;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.orNone;
@@ -36,7 +36,7 @@ public class BNFBootstrap {
   }
 
   static enum Term implements Terminal {
-    start, derives, with, //
+    start, derive, with, //
     to, and, toNone, or, orNone, //
     go;
   }
@@ -47,7 +47,7 @@ public class BNFBootstrap {
     Rules, Rule, Conjunctions, //
     First_Conjunction, Extra_Conjunctions, //
     Extra_Conjunction, //
-    Symbol_Sequence
+    Symbol_Sequence //
   }
 
   public static BNF buildBNF() {
@@ -63,7 +63,7 @@ public class BNFBootstrap {
         .derive(Start)/*             */.to(start,NonTerminal.class)//
         .derive(Rules)/*             */.to(Rule).and(Rules) //
         /*                             */.or(Rule) //
-        .derive(Rule)/*              */.to(derives, NonTerminal.class).and(Conjunctions) //
+        .derive(Rule)/*              */.to(derive, NonTerminal.class).and(Conjunctions) //
         .derive(Conjunctions)/*      */.to(First_Conjunction).and(Extra_Conjunctions) //
         .derive(First_Conjunction)/* */.to(to, NonTerminal.class).and(Symbol_Sequence) //
         /*                             */.or(to, Terminal.class, ClassEllipsis.class).and(Symbol_Sequence) //
