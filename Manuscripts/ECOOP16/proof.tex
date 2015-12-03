@@ -79,13 +79,13 @@ Each such edge takes the weight~$1-|ζ|$ to denote the fact
     while~$|ζ|$ (which could also be zero), are pushed.
 The value of $k$ is simply the heaviest path in this graph. 
 
-For brevity, we ignore in this manuscript the 
-  more subtle case of cycles in this graph.
-We know that any reasonable DPDA cannot indefinitely pop from the stack,
-  nor can it indefinitely push into it,
-  so this omission is mostly technical.
-
-Now, we shall describe the transition function of an SDPDA in the terms of a DPDA.
+In the former graph, cycles might occour.
+Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the 
+  stack, and therefore, the required~$\epsilon$-closure cannot be computed.
+As shown by someone~\cite{i:need:to::find:it}, DPDAs with no $\epsilon$-moves are less expressive than a normal DPDAs,
+  and therefore, not all DPDA can be computed.
+  
+Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
 Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$S_m=⟨Q_m,Γ,q_{0m},A_m,δ_m⟩$ 
   of order k, the corresponding SDPDA.
 Notice that the stack elements are the same in both.
