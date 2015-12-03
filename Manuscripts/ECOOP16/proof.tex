@@ -36,11 +36,32 @@ The following definition is of a deterministic pushdown automata without such mo
 
 Consider a state~$q$ of a DPDA, and assume the top of the stack is~$γ$.
 If~$δ(q,γ,σ)$ is defined for some~$σ∈Σ$, then the definition of a
-  DPDA requries that there are no~$ε$-moves.
-Such moves occur when~$δ(q,γ,ε) =(q',ζ)$ for
-  some state~$q'$ and a sequence of stack elements~$ζ$.
-  (Note that in this case,~$δ(q,γ,σ)=⊥$ for all~$σ∈Σ$).
-Let us compute the~$ε$-closure of the state~$(q,γ)$ as follows:
+  DPDA requires that there are no~$ε$-moves on the state~$(q,σ)$.
+If~$δ(q,γ,ε) =(q',ζ)$ for
+  some~$q'∈Q$ and a sequence of stack elements~$ζ$,
+  then we call~$(q,γ)$ an \emph{$ε$-configuration}.
+An~$ε$-configuration has precisely one outgoing transition, 
+  since~$δ(q,γ,σ)=⊥$ for all~$σ∈Σ$.
+
+To simplify the description, we will rewrite the automaton so that it has three kinds of nodes: 
+\begin{description}
+  \item[Configuration] which are nodes of the form $(q,\gamma)$, $q\in Q$, $\gamma \in \Gamma$. 
+    Configurations can be of two kinds:
+    \begin{description}
+      \item[$\epsilon$-configurations]
+      \item[non $\epsilon$-configurations]
+    \end{description}
+  \item[Readers]
+\end{description}
+
+Let $a$ denote some $\epsilon$-state and let $b$ be the  can be removed from the automaton.
+To do so, replace all ingoing transition  
+  
+  removing 
+  by s
+Consider now a transition that leads into 
+The we can delete this epsilon state,   
+Compute now the~\emph{$ε$-closure} of the state~$(q,γ)$ as follows.
 
 \subsection{Type Encoding}
 \begin{Theorem}

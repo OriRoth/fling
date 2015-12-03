@@ -1,9 +1,9 @@
 package automaton;
 
-import automaton.Domain.Per.DoubleP.DoubleP_γ1_γ1;
-import automaton.Domain.Per.DoubleP.DoubleP_γ1_γ2;
-import automaton.Domain.Per.NoOp.NoOp2;
-import automaton.Domain.Per.SingleP.SingleP_γ2;
+import automaton.Domain.MultiPush.DoubleP.DoubleP_γ1_γ1;
+import automaton.Domain.MultiPush.DoubleP.DoubleP_γ1_γ2;
+import automaton.Domain.MultiPush.NoOp.NoOp2;
+import automaton.Domain.MultiPush.SingleP.SingleP_γ2;
 import automaton.Domain.Q.q0;
 import automaton.Domain.Q.q3.q3_γ2;
 import automaton.Domain.Q.q2.q2_E;
@@ -123,9 +123,9 @@ public class Domain {
     }
   }
   // Γʹ.¤
-  static abstract class Per<S extends Stack<?>>{
+  static abstract class MultiPush<S extends Stack<?>>{
     abstract Q<?,?> go();
-    static abstract class NoOp<S extends Stack<?>> extends Per<S>{
+    static abstract class NoOp<S extends Stack<?>> extends MultiPush<S>{
       static final class NoOp1<S extends P<γ2,?>> extends NoOp<S>{
         @Override q3_γ2<S> go() { return null; }
       }
@@ -133,12 +133,12 @@ public class Domain {
         @Override q2_E go() { return null; }
       }      
     }
-    static abstract class SingleP<S extends Stack<?>> extends Per<S>{
+    static abstract class SingleP<S extends Stack<?>> extends MultiPush<S>{
       static final class SingleP_γ2<S extends Stack<?>> extends SingleP<S>{
         @Override q1_γ2<S> go() { return null; }
       }     
     }
-    static abstract class DoubleP<S extends Stack<?>> extends Per<S>{
+    static abstract class DoubleP<S extends Stack<?>> extends MultiPush<S>{
       static final class DoubleP_γ1_γ1<S extends Stack<?>> extends DoubleP<S>{
         @Override q1_γ1<P<γ1,P<γ1,S>>> go() { return null; }
       }
