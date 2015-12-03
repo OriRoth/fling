@@ -10,28 +10,31 @@ The theoretical aspect of the study is a proof (with its implicit algorithm) tha
   there is a \Java type definition that \emph{realizes} this fluent definition, if this
   language is \emph{deterministic context-free}.
 Roughly speaking, deterministic context free languages are those context free languages that can be recognized
-  by an LR parser~†{The ‟L" means reading the input left to righ; the ‟R" stands for rightmost derivation}~\cite{Aho:86}.
+  by an LR parser~†{The ‟L" means reading the input left to right; the ‟R" stands for rightmost derivation}~\cite{Aho:86}.
 
 For a type definition to \emph{realize} a definition of fluent API,
   two must happen: Call chains that conform with the API definition
   compile correctly; conversely, call chains that are forbidden by the API definition
   do not type-check, and result in some compile-time type error.
 
-\begin{wraptable}[9]r{32.05ex}
-\caption{\label{Table:box}Fluent API of a box object}
-  \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
-           & \cc{open()} & \cc{close()}⏎ \hline
-    ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
-    ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
-  \end{tabular}
-\end{wraptable}
+\begin{wrapfigure}[9]r{35.05ex}
+\caption{\label{Figure:box}Fluent API of a box object}
+%   \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
+%            & \cc{open()} & \cc{close()}⏎ \hline
+%     ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
+%     ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
+%   \end{tabular}
+
+  \input ../Figures/open-close-example.tikz
+  % suggested improved visualisation
+\end{wrapfigure}
 
 To make the proof concrete, consider this example of fluent API definition:
 An instance of class \cc{Box}
 may receive two method invocations: \cc{open()} and \cc{close()},
 and can be in either ‟open” or ‟closed” state,
 Initially the instance is ‟closed”.
-Its behavior henceforth is defined by \cref{Table:box}.
+Its behavior henceforth is defined by \cref{Figure:box}.
 
 To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, more generally
   blue regions in the table, type-check.
