@@ -4,10 +4,10 @@ The proof is by reduction to type encoding of SDPDAs, which are simpler version 
 \subsection{Reduction}
 The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
 A DPDA is allowed to make a transition into a different state,
-  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack symbols,
+  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack elements,
   all without consuming a single input symbol.
 
-In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one character at a time, as a sequence of method calls.
+In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
 A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
   they are.
 The following definition is of a deterministic pushdown automata without such moves.
@@ -91,7 +91,7 @@ We know that any reasonable DPDA cannot indefinitely pop from the stack,
   \label{Theorem:SDPDA}
   For every SDPDA~$M$ there exists a set~$J_M$ of \Java type definitions, such that
   the command \[
-    \cc{M x = M.build.$\textsf{java}(α)$}.\$();
+    \cc{M x = M.build $\textsf{java}(α)$}.\$();
   \]
   compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
 \end{Theorem}
