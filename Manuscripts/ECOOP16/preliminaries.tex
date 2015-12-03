@@ -2,8 +2,8 @@
 The pattern ‟invoke function on variable \cc{sb}”, specifically with
   a function named \cc{append}, occurs
 six times in the code in \cref{Figure:chaining}(a), designed
-  to convert a clock reading, given as integer hours, minutes and
-  seconds into a string.
+  to format a clock reading, given as integer hours, minutes and
+  seconds.
 
 \begin{figure}[H]
   \caption{\label{Figure:chaining}%
@@ -40,7 +40,7 @@ String time(int hours, int minutes, int seconds) {¢¢
 Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, for this pattern.
 Method chaining is a ‟programmer made” syntactic sugar for this pattern:
   If a method~$f$ returns its receiver, i.e., \kk{this},
-  then, instead of the series of two commandsr: \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
+  then, instead of the series of two commands: \mbox{\cc{o.$f$(); o.$g$();}}, clients can write
   only one: \mbox{\cc{o.$f$().$g$();}}.
   \cref{Figure:chaining}(b) is the method chaining
   (also, shorter and arguably clearer) version of
@@ -80,8 +80,7 @@ The purpose here is to set a unifying common vocabulary.
 
 Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input characters or tokens).
 A \emph{language} over~$Σ$
-  is a subset of~$Σ^*$ (the set of all strings, including the empty string,
-  whose characters are drawn from~$Σ$).
+  is a subset of~$Σ^*$.
 Keep~$Σ$ implicit henceforth.
 
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
@@ -95,16 +94,16 @@ In each step, the NPDA
 It then pops the top symbol in the stack, and nondeterministically chooses which actions of
   its transition function to perform:
   Consuming the next input token,
-popping the current state from the stack,
-  or, pushing a new state into it.
+  moving to a new state,
+  or, pushing stack symbols to the stack.
 Non-determinism effectively means
-  that any number of these can be done.
+  that any combination of these can be done.
 
 The language recognized by an NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
-A CFG~$G$ has three components:~$Ξ$ a set of \emph{variables} (also called nonterminals),
+A CFG~$G$ has three components:~$Ξ$ a set of \emph{variables} (also called nonterminals), % It is worth adding the fourth element- alphabet or at least add a footnote on it.
   a unique \emph{start variable}~$ξ∈Ξ$, and a finite set of (production) \emph{rules}.
 A rule~$r∈G$ describes the derivation of a variable~$ξ∈Ξ$ into
   a string of \emph{symbols}, where symbols are either terminals or variables.
@@ -140,17 +139,17 @@ Examine~$q∈Q$, the state at the top of the stack.
 If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
 Let~$σ∈Σ$ be the next input symbol.
 If~$η(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
-If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
+If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack, and consumes~$σ$.
 If however,~$a(q,σ) = \textsf{Reduce}(r)$,
 where~$r=ξ→β$, the parser does not consume~$σ$ from the input string,
   and pops~$|β|$ stack symbols from the stack.
 Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
-  defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
+  defined by applying the transition function~$δ$ on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
 
 The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
 We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
-LALR($1$) (which \Self uses).
+LALR($1$). %(which \Self uses).
 
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
@@ -164,20 +163,21 @@ to make deterministic choices.
 The more formal and detailed definition is:
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ, q₀,A,δ⟩$
+  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ, q₀,A,δ,\text{¤}⟩$
   where~$Q$ is a finite set of
   \emph{states},~$Γ$ is a finite
-  \emph{set of stack elements},~$q₀∈Q$ is the initial state, and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
+  \emph{set of stack elements},~$q₀∈Q$ is the initial state,~$\text{¤}∈Γ$
+  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial state transition function}~$δ:(Γ∪❴ε❵)⨉Q⨉Σ↛Q⨉Γ^*$.
   \par\itshape
-  A DPDA begins its work in the initial state with a designated stack symbol residing on the stack.
+  A DPDA begins its work in the initial state with only ¤ residing on the stack.
   At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack and based on
   their values, decides how to proceed.
   \par
   If~$γ$ is undefined, i.e., the stack is empty, the DPDA accepts the input and halts.
   The same happens if~$q∈A$.
   \par
-  Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ$).
+  Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ,σ'≠σ$).
   and let~$δ(ε,q,γ)=(q',ζ)$.
   Then the automaton pops~$γ$
   and pushes the string of stack elements~$ζ \inΓ^*$ into the stack.
