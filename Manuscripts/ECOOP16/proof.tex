@@ -1,34 +1,46 @@
-We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language. 
-The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata. 
+We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
+The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
 
 \subsection{Reduction}
-The difficulty in type-encoding of general DPDAs is that of $\epsilon$-moves:
-A DPDA is allowed to make a transition into a different state, 
+The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
+A DPDA is allowed to make a transition into a different state,
   pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack symbols,
-  all without reading a single input symbol. 
+  all without reading a single input symbol.
 
-In contrast, our type encoding relies on the encoding of an input string $\alpha \in \Sigma^*$, one character at a time, as a sequence of method calls. 
-A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding $\epsilon$-moves, however determistic
+In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one character at a time, as a sequence of method calls.
+A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
   they are.
 The following definition is of a deterministic pushdown automata without such moves.
 
 \begin{Definition}
   \label{Definition:SDPDA}
-  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA)~$M$ of order~$k$ is a quintuple
-  \[
-    M =⟨Γ,Q,q₀,A,δ⟩
-  \]
-  where~$Γ$, $Q$,~$q₀\in Q$,~$A\subseteq Q$ are precisely as in \cref{Definition:DPDA}.
-  However, the signature of function~$δ$, the \emph{generalized partial transition function}
-  of an SDPDA of order~$k$, is:
-  \begin{equation}
-    \label{Equation:generalized:transition}
-      δ: Q⨉Σ⨉Γᵏ↛Q⨉Γ^*
-    \end{equation}
+  \slshape
+  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA) of order~$k$ is
+    a quintuple~$⟨Γ,Q,q₀,A,δ⟩$,
+  where~$Γ$,~$Q$,~$q₀∈Q$,~$A⊆Q$ are precisely as in \cref{Definition:DPDA}.
+  The signature of function~$δ$, the \emph{generalized partial transition function}
+  of an SDPDA of order~$k$, is however~$δ: Q⨉Γᵏ⨉Σ↛Q⨉Γ^*$. % this is the right order
+  \par
+  An SDPDA begins as a DPDA. At each step it examines~$σ∈Σ$,
+    the next input symbol,~$q∈Q$, the current state,
+    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most stack elements,
+  \par
+  If the stack is empty, or~$q∈A$, the automaton stops in accepting.
+  If the transition function is undefined, i.e.,~$δ(q,γ₁,…,γₖ,σ)=⊥$ the automaton
+    stops in rejection.
+  Otherwise, and since there are no~$ε$-moves, there are~$q'∈Q$ and~$ζ∈Γ^*$
+    such that~$δ(q,γ₁,…,γₖ,σ)=(q',ζ)$.
+  The automaton then pops~$γ₁$ through~$γₖ$, pushes the sequence~$ζ$, and
+    moves to state~$q'$.
 \end{Definition}
 
-
-
+Consider a state~$q$ of a DPDA, and assume the top of the stack is~$γ$.
+If~$δ(q,γ,σ)$ is defined for some~$σ∈Σ$, then the definition of a
+  DPDA requries that there are no~$ε$-moves.
+Such moves occur when~$δ(q,γ,ε) =(q',ζ)$ for
+  some state~$q'$ and a sequence of stack elements~$ζ$.
+  (Note that in this case,~$δ(q,γ,σ)=⊥$ for all~$σ∈Σ$).
+Let us compute the~$ε$-closure of the state~$(q,γ)$ as follows:
 
 \subsection{Type Encoding}
 \begin{Theorem}

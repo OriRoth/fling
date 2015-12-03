@@ -169,13 +169,14 @@ The more formal and detailed definition is:
 
 \begin{Definition}[Deterministic Pushdown Automaton]
   \label{Definition:DPDA}
+  \slshape
   A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
   where~$Q$ is a finite set of
     \emph{states},~$Γ$ is a finite
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial state transition function}~$δ:(Γ∪❴ε❵)⨉Q⨉Σ↛Q⨉Γ^*$.
-  \par\itshape
+  \par
   A DPDA begins its work in the initial state with a single designated stack element residing on the stack. 
   At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack. Based on the values of these, it decides how to proceed:
   \par
