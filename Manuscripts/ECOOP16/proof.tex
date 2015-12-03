@@ -94,7 +94,12 @@ The other components of $S_m$ are constructed as follows:
  \item $Q_m$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$ 
  \item $q_{0m}$ is the state $(q₀,\vdash^{k-1}\gamma)$ where~$\gamma$ is the stack start element of~$Γ$.
  \item $A_m$ is the set~$❴(q,ζ)\in Q_m | q \in A❵$
- \item and $\delta_m$ is worth some thinking.
+ \item for $\delta(q,\gamma,\sigma) = (q',\zeta)$
+ \begin{itemize}
+  \item if $\sigma\neq\epsilon$ than for all $(q,\zeta'\gamma')$ such that $\zeta'\gamma \in \Gamma^k$
+    we define $\delta_m(q,\zeta'\gamma,\sigma)=(q',\zeta'\zeta)$
+ \end{itemize}
+
 \end{itemize}
 
 \subsection{Type Encoding}
