@@ -1,8 +1,8 @@
 We recognize that the \Java parser spends sub quadratic time
   on its input.
 Moreover, the known algorithms today for parsing general 
-  non-deterministic CFG, as mentioned in~\Cref{preliminaries}, run in 
-  super quadric time.
+  nondeterministic CFG, as mentioned in~\Cref{preliminaries}, run in 
+  super quadratic time.
 Therefore,
   the type checker implicitly implemented with any fluent API implementation,
   cannot recognize languages whose time of recognition is quadratic or above that.
@@ -11,7 +11,7 @@ The problem is, there is no proven lower bound on the recognition time of genera
   and therefore it's hard to contradict the ability of the type system to parse such 
   encoded grammars.
 But considering the fact that the best known algorithms today, 
-  are not only super linear, but super quadric in time,
+  are not only super linear, but super quadratic in time,
   it is fair to admit, that it is highly unlikely to parse general CFGs
   with any set of \Java types and methods, including any engineering trickery.
 

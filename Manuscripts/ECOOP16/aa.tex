@@ -69,7 +69,7 @@ The proof is a construction of a \Java type encoding of
 With the generated types and methods, the compilation process of
   any chain of fluent API calls, actually runs the pushdown automaton against the
   specific input string that the chain represents.
-When used appropriately, if this run of the automaton ends with an accepting state†{The acceptence of a PDA can also be defined by an empty stack, we will use the accepting state type of PDAs},
+When used appropriately, if this run of the automaton ends with an accepting state†{The acceptance of a PDA can also be defined by an empty stack, we will use the accepting state type of PDAs},
   then the fluent API chain type checks correctly.
 If however this run ends with a failure, i.e., non-accepting state,
   compile time error will occur.
@@ -90,20 +90,20 @@ The execution of a call chain of~$ϕ$, creates an AST data structure,
   compliant with the BNF of~$ϕ$.
 At the moment, the AST's nodes are un-typed, though it is planned
   to make them typed, in order to augment a visiting API, for the use of the
-  implementor of~$ϕ$.
+  Implementer of~$ϕ$.
 % and augmented with a visiting API, all ready
 % for use by the implementer of~$ϕ$.
 
 \Self generates LR($1$) parsers. Experience shows that these and even the strictly smaller set of
-  LALR grammars is sufficient for many purposes (see e.g., an acknowledgement by T\@. Parr,
+  LALR grammars is sufficient for many purposes (see e.g., an acknowledgment by T\@. Parr,
     the developer of LL($*$) grammars~\cite{Parr:1995}).
 Evidently, Bison~\cite{Bison:manual},
   SableCC\urlref{http://www.sablecc.org}, Lemon Parser Generator\urlref{http://www.hwaci.com/sw/lemon/}
   and other popular generators of left to right parsers opt to stay within the confinement of LALR parsers.
-Practicality concerns stop \Self from trangressing this limitation.
+Practicality concerns stop \Self from transgressing this limitation.
 
 One may ask whether the theoretical result is the
   best possible:
 It is possible to implement a fluent API for general
-  (that is, non-deterministic) context free languages?
+  (that is, nondeterministic) context free languages?
   We give reason why this possibility is unlikely.
