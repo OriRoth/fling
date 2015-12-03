@@ -141,10 +141,10 @@ If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then 
 Let~$σ∈Σ$ be the next input symbol.
 If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
 
-If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ 
+If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$
   into the stack and consumes~$σ$.
 If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
-  then the parser does not consume~$σ$. 
+  then the parser does not consume~$σ$.
   Instead it makes~$|β|$ pop operations.
 Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
@@ -158,7 +158,7 @@ We do mention however that the same LR($1$) parser can serve parsing table drawn
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
 General LR($k$) parsers are rarely used, since they offer essentially
-  the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, 
+  the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}},
    at a greater toll on resources.
 
 To characterize the expressive power of LR($1$) parsers, we need the notion
@@ -169,18 +169,20 @@ The more formal and detailed definition is:
 
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
-  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
-  where~$Q$ is a finite set of
-    \emph{states},~$Γ$ is a finite
-  \emph{set of stack elements},~$q₀∈Q$ is the initial state,
-  and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
+  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Γ,Q,q₀,qₙ,δ⟩$
+  where~$Γ$ is a finite set of \emph{stack elements},~$Q$ is a finite set of
+    \emph{states},~$q₀∈Q$ is the initial state,
+    and~$qₙ∈Q$ is the \emph{accepting state}.
+Function~$δ$ is
   the \emph{partial state transition function}~$δ:(Γ∪❴ε❵)⨉Q⨉Σ↛Q⨉Γ^*$.
   \par\itshape
-  A DPDA begins its work in the initial state with a single designated stack element residing on the stack. 
-  At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack. Based on the values of these, it decides how to proceed:
+  A DPDA begins its work in the initial state with a single designated stack element residing on the stack. On course of the computation,
+  the stack is never emptied.
+\par
+  At each step, the automaton examines:~$σ∈Σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack.
+  Based on the values of these, it decides how to proceed:
   \par
-  If~$γ$ is undefined, i.e., the stack is empty, the DPDA accepts the input and halts.
-  The same happens if~$q∈A$.
+  If~$q=q_n$, the DPDA accepts the input and halts.
   \par
   Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ$),
   and let~$δ(ε,q,γ)=(q',ζ)$.
@@ -223,9 +225,9 @@ in terms of grammar expressive power?
   As it turns out, LL($*$) grammars of do not contain the set
     of LALR($1$) grammars†{LL($*$) fails to handle left-recursive
     grammars~\cite{Parr:2011}.},
-neither are they contained in it. 
+neither are they contained in it.
 If fact LL($*$) grammars
-  can handle even some languages which are not only nondeterministic, 
+  can handle even some languages which are not only nondeterministic,
    but also non-context-free.
 
 \subsection{Fluent APIs realizing Deterministic Context Free Grammars}
@@ -244,7 +246,7 @@ With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
   Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and other types with the following
   property: Consider the \Java command
   \[
-    \cc{L _= M.build $\textsf{java}(α)$}\cc{.\$()};
+    \cc{L_= M.build~$\textsf{java}(α)$}\cc{.\$()};
   \]
   (in words: starting from the \kk{static} field of \kk{class}~\cc{M},
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
