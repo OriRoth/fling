@@ -72,7 +72,7 @@ class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
 }
 \end{JAVA}
 The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
-where~$ξ₁,ξ₂∈Q$ are stack symbols,
+where~$ξ₁,ξ₂∈Q$ are stack elements,
 is represented by the following type
 \begin{JAVA}
   ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
@@ -83,7 +83,7 @@ that will be extended in the future.
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function \cref{Equation:generalized:transition}
   takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
-    and~$k$ stack symbols drawn from~$Γ$.
+    and~$k$ stack elements drawn from~$Γ$.
 To capture the full behavior of the automaton, the transition function
   must be able to pass along, in one way or another, the full contents of the stack.
 

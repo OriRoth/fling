@@ -85,8 +85,8 @@ Keep~$Σ$ implicit henceforth.
 
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a nondeterministic finite automaton
-  and a stack of unbounded depth of stack symbols.
-An NPDA begins execution with a single copy of the initial stack symbol on the stack.
+  and a stack of unbounded depth of stack elements.
+An NPDA begins execution with a single copy of the initial stack element on the stack.
 In each step, the NPDA
   examines the next input token,
   the state of the automaton,
@@ -95,7 +95,7 @@ It then pops the top symbol in the stack, and nondeterministically chooses which
   its transition function to perform:
   Consuming the next input token,
   moving to a new state,
-  or, pushing stack symbols to the stack.
+  or, pushing stack elements to the stack.
 Nondeterminism effectively means
   that any combination of these can be done.
 
