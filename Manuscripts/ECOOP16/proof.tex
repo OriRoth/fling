@@ -19,7 +19,7 @@ The following definition is of a deterministic pushdown automata without such mo
     a quintuple~$⟨Γ,Q,q₀,A,δ⟩$,
   where~$Γ$,~$Q$,~$q₀∈Q$,~$A⊆Q$ are precisely as in \cref{Definition:DPDA}.
   The signature of function~$δ$, the \emph{generalized partial transition function}
-  of an SDPDA of order~$k$, is however~$δ: Q⨉Γᵏ⨉Σ↛Q⨉Γ^*$. % this is the right order
+  of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
   \par
   An SDPDA begins as a DPDA. At each step it examines~$σ∈Σ$,
     the next input symbol,~$q∈Q$, the current state,
@@ -46,7 +46,7 @@ Our objective is to remove all~$ε$-configurations,
   replacing these with the non-$ε$ configuration that
   they (eventually) lead to.
 This is easy to do when~$|ζ|≥1$, in which
-  case the top of the stack must is known to be~$γ'$,~$γ'$ being the first
+  case the top of the stack is known to be~$γ'$,~$γ'$ being the first
     element of~$ζ$; the configuration at the end of transition
     would be then be~$(q',γ')$, which in its turn may, or may not be,
     an~$ε$-configuration.
@@ -57,7 +57,7 @@ The transition from the current configuration can thus lead to \emph{multiple} c
   depending on the actual element left at the top of the stack after popping~$γ$.
 The definition of a configuration thus must be changed to include the \emph{two} top
   most stack elements.
-But, even this would fail if the next configuration is also an~$ε$-configuration.
+But, even this would fail if the next configuration is also an~$ε$-configuration that pushes no elements.
 
 To be able to compute the closure of~$ε$-configuration, we shall
   therefore include with the configuration the~$k$ top most stack elements,
@@ -67,13 +67,13 @@ To be able to compute the closure of~$ε$-configuration, we shall
 
 To compute~$k$ we need to compute the largest possible overdraft
   from the stack along a series of transitions through~$ε$-configuration.
-To do so, define the following directed labeled graph:
+To do so, define the following directed weighted graph:
 Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
   of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
 Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
 Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
   to all possible ‟guesses” of the stack element beneath~$γ$.
-Each such edge takes the label~$1-|ζ|$ to denote the fact
+Each such edge takes the weight~$1-|ζ|$ to denote the fact
   that the total ‟charge” to the stack is~$1-|ζ|$:
     one stack element (specifically~$γ$) is popped,
     while~$|ζ|$ (which could also be zero), are pushed.
@@ -85,6 +85,17 @@ We know that any reasonable DPDA cannot indefinitely pop from the stack,
   nor can it indefinitely push into it,
   so this omission is mostly technical.
 
+Now, we shall describe the transition function of an SDPDA in the terms of a DPDA.
+Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$S_m=⟨Q_m,Γ,q_{0m},A_m,δ_m⟩$ 
+  of order k, the corresponding SDPDA.
+Notice that the stack elements are the same in both.
+The other components of $S_m$ are constructed as follows:
+\begin{itemize}
+ \item $Q_m$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$ 
+ \item $q_{0m}$ is the state $(q₀,\vdash^{k-1}\gamma)$ where~$\gamma$ is the stack start element of~$Γ$.
+ \item $A_m$ is the set~$❴(q,ζ)\in Q_m | q \in A❵$
+ \item and $\delta_m$ is worth some thinking.
+\end{itemize}
 
 \subsection{Type Encoding}
 \begin{Theorem}
