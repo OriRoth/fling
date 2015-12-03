@@ -1,10 +1,24 @@
-\begin{Definition}[Simplified Pushdown Automaton]
+We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language. 
+The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata. 
+
+\subsection{Reduction}
+The difficulty in type-encoding of general DPDAs is that of $\epsilon$-moves:
+A DPDA is allowed to make a transition into a different state, 
+  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack symbols,
+  all without reading a single input symbol. 
+
+In contrast, our type encoding relies on the encoding of an input string $\alpha \in \Sigma^*$, one character at a time, as a sequence of method calls. 
+A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding $\epsilon$-moves, however determistic
+  they are.
+The following definition is of a deterministic pushdown automata without such moves.
+
+\begin{Definition}
   \label{Definition:SDPDA}
-  A \emph{\textbf simplified \textbf pushdown \textbf automaton} (SDPDA)~$M$ of order~$k$ is a 7-tuple
+  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA)~$M$ of order~$k$ is a quintuple
   \[
-    M =⟨Q,Σ,Γ,q₀,⊥, A,δ⟩
+    M =⟨Γ,Q,q₀,A,δ⟩
   \]
-  where~$Q$,~$Σ$,~$Γ$,~$q₀$,~$⊥∈Γ$ and~$A$ are precisely as in \cref{Definition:DPDA}.
+  where~$Γ$, $Q$,~$q₀\in Q$,~$A\subseteq Q$ are precisely as in \cref{Definition:DPDA}.
   However, the signature of function~$δ$, the \emph{generalized partial transition function}
   of an SDPDA of order~$k$, is:
   \begin{equation}
@@ -14,6 +28,9 @@
 \end{Definition}
 
 
+
+
+\subsection{Type Encoding}
 \begin{Theorem}
   \label{Theorem:SDPDA}
   For every SDPDA~$M$ there exists a set~$J_M$ of \Java type definitions, such that
