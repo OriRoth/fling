@@ -120,7 +120,7 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is offered by LR($1$) parsers,
+A more sane, but weaker, alternative is found in LR($1$) parsers,
   which are deterministic linear time and space.
 An LR($1$) parser for a grammar~$G$ has three components:
 \begin{description}
@@ -134,23 +134,24 @@ An LR($1$) parser for a grammar~$G$ has three components:
             defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
         \end{description}
 \end{description}
-The parser begins by pushing~$q₀$ (the initial state) into the stack,
+The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
 and then repetitively executes the following:
 Examine~$q∈Q$, the state at the top of the stack.
 If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
 Let~$σ∈Σ$ be the next input symbol.
-If~$η(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
-If~$η(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack.
-If however,~$a(q,σ) = \textsf{Reduce}(r)$,
-where~$r=ξ→β$, the parser does not consume~$σ$ from the input string,
-  and pops~$|β|$ stack symbols from the stack.
+If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+
+If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ into the stack and consumes~$σ$.
+If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
+  then the parser does not consume~$σ$. Instead it makes~$|β|$ pop operations.
 Let~$q'$ be the state at the top of the stack after these pops, then
   the parser pushes a state,~$q”$,
-  defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$, i.e.,~$q”=δ(q',ξ)$.
+  defined by applying the transition function on~$ξ$, the left-hand side of the reduced production and~$q'$,
+    i.e.,~$q”=η(q',ξ)$.
 
 The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
-We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR algorithms, including SLR and
-LALR($1$) (which \Self uses).
+We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR parser generators,
+  including SLR and LALR (which \Self uses).
 
 More general, LR($k$) parsers,~$k>1$, can be defined. These make their
   decisions based on the next~$k$ input symbols, rather than just the first of these.
@@ -162,6 +163,7 @@ of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
 DPDA are similar to NPDA, except that they are forced
 to make deterministic choices.
 The more formal and detailed definition is:
+
 \begin{Definition}[Deterministinc Pushdown Automaton]
   \label{Definition:DPDA}
   A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ, q₀,A,δ⟩$
@@ -177,10 +179,10 @@ The more formal and detailed definition is:
   If~$γ$ is undefined, i.e., the stack is empty, the DPDA accepts the input and halts.
   The same happens if~$q∈A$.
   \par
-  Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ$).
+  Suppose that~$δ(ε,q,γ)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(a',q,γ)=⊥$ for all~$σ'∈Σ$),
   and let~$δ(ε,q,γ)=(q',ζ)$.
   Then the automaton pops~$γ$
-  and pushes the string of stack elements~$ζ \inΓ^*$ into the stack.
+  and pushes the string of stack elements~$ζ∈Γ^*$ into the stack.
   If~$δ(a,q,γ)=(q',ζ)$, then the same happens, but the
   automaton also irrevocably consumes the token~$σ$.
   \par
