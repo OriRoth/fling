@@ -5,7 +5,7 @@ The proof is by reduction to type encoding of SDPDAs, which are simpler version 
 The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
 A DPDA is allowed to make a transition into a different state,
   pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack symbols,
-  all without reading a single input symbol.
+  all without consuming a single input symbol.
 
 In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one character at a time, as a sequence of method calls.
 A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
@@ -34,34 +34,57 @@ The following definition is of a deterministic pushdown automata without such mo
     moves to state~$q'$.
 \end{Definition}
 
-Consider a state~$q$ of a DPDA, and assume the top of the stack is~$γ$.
-If~$δ(q,γ,σ)$ is defined for some~$σ∈Σ$, then the definition of a
-  DPDA requires that there are no~$ε$-moves on the state~$(q,σ)$.
-If~$δ(q,γ,ε) =(q',ζ)$ for
-  some~$q'∈Q$ and a sequence of stack elements~$ζ$,
-  then we call~$(q,γ)$ an \emph{$ε$-configuration}.
-An~$ε$-configuration has precisely one outgoing transition, 
-  since~$δ(q,γ,σ)=⊥$ for all~$σ∈Σ$.
+We say that
+a \emph{configuration}~$(q,γ)$,~$q∈Q$,~$γ∈Γ$,
+  is an \emph{$ε$-configuration} if~$δ(q,γ,ε)=(q',ζ)$ for
+    some~$q'∈Q$ and a sequence of stack elements~$ζ$,
+Recall that by definition of DPDAs,~$δ(q,γ,σ)=⊥$ for
+  all~$σ∈Σ$, i.e., there is precisely one transition
+  leading out of an~$ε$-configuration.
 
-To simplify the description, we will rewrite the automaton so that it has three kinds of nodes: 
-\begin{description}
-  \item[Configuration] which are nodes of the form $(q,\gamma)$, $q\in Q$, $\gamma \in \Gamma$. 
-    Configurations can be of two kinds:
-    \begin{description}
-      \item[$\epsilon$-configurations]
-      \item[non $\epsilon$-configurations]
-    \end{description}
-  \item[Readers]
-\end{description}
+Our objective is to remove all~$ε$-configurations,
+  replacing these with the non-$ε$ configuration that
+  they (eventually) lead to.
+This is easy to do when~$|ζ|≥1$, in which
+  case the top of the stack must is known to be~$γ'$,~$γ'$ being the first
+    element of~$ζ$; the configuration at the end of transition
+    would be then be~$(q',γ')$, which in its turn may, or may not be,
+    an~$ε$-configuration.
 
-Let $a$ denote some $\epsilon$-state and let $b$ be the  can be removed from the automaton.
-To do so, replace all ingoing transition  
-  
-  removing 
-  by s
-Consider now a transition that leads into 
-The we can delete this epsilon state,   
-Compute now the~\emph{$ε$-closure} of the state~$(q,γ)$ as follows.
+However, if~$ζ=ε$, we do not know which element resides at the top
+  of the stack.
+The transition from the current configuration can thus lead to \emph{multiple} configurations,
+  depending on the actual element left at the top of the stack after popping~$γ$.
+The definition of a configuration thus must be changed to include the \emph{two} top
+  most stack elements.
+But, even this would fail if the next configuration is also an~$ε$-configuration.
+
+To be able to compute the closure of~$ε$-configuration, we shall
+  therefore include with the configuration the~$k$ top most stack elements,
+  where~$k$ is defined to be large enough so that
+  the top of the stack must never be guessed while going
+  through~$ε$-configurations.
+
+To compute~$k$ we need to compute the largest possible overdraft
+  from the stack along a series of transitions through~$ε$-configuration.
+To do so, define the following directed labeled graph:
+Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
+  of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
+Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
+Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
+  to all possible ‟guesses” of the stack element beneath~$γ$.
+Each such edge takes the label~$1-|ζ|$ to denote the fact
+  that the total ‟charge” to the stack is~$1-|ζ|$:
+    one stack element (specifically~$γ$) is popped,
+    while~$|ζ|$ (which could also be zero), are pushed.
+The value of $k$ is simply the heaviest path in this graph. 
+
+For brevity, we ignore in this manuscript the 
+  more subtle case of cycles in this graph.
+We know that any reasonable DPDA cannot indefinitely pop from the stack,
+  nor can it indefinitely push into it,
+  so this omission is mostly technical.
+
 
 \subsection{Type Encoding}
 \begin{Theorem}
