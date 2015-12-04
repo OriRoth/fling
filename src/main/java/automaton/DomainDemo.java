@@ -58,6 +58,15 @@ public class DomainDemo {
     P<γ1, P<γ1, E>> _3 = peel(_2, (γ2) null);
     E _3 = peel(_3, (γ1) null);
   }
+  public static E peel(E _, ? extends Γ ) { return null; } // First overloaded version of ¢\cc{peep()}¢
+  public static                                       // Second overloaded version of ¢\cc{peep()}¢
+   < γ extends Γ, Rest extends ?> // Two generic parameters
+    P<γ , Rest>>               // Function return type
+  peep(P<γ, Rest> _) { return null; }    // Function parameters and body
+  public static 
+    <Top1 extends Γ, Top2 extends Γ, Rest extends Stack<?>> // Three generic parameters
+    Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
+    peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
 
 
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {
