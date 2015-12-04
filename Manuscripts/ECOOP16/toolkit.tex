@@ -133,7 +133,7 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end. 
 
-\begin{wrapfigure}[7]{r}{29ex}
+\begin{wrapfigure}[8]{r}{29ex}
   \caption{\label{Figure:id}%
   Covrariant return type of function \cc{id()} 
   with \Java generics.
@@ -153,7 +153,7 @@ Consider first \Cref{Figure:id} showing a a genericity based recipe for
 With type encoding these are precisely classes~\cc{$γ$1}
   and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 
-\begin{figure}[H]
+\begin{figure}[!htp]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
@@ -185,8 +185,6 @@ This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parame
   \end{enumerate}
 Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
 
-DomainDemo.State2<γ2,γ1,P<γ1,P<γ2,P<γ1,P<γ2,E>>>>> to 
-DomainDemo.State2<γ2,γ1,P<γ2,P<γ1,P<γ2,P<γ1,P<γ2,E>>>>>>>
 \Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of the \Java
 implementation†{%
   unless otherwise stated, in saying implementation we mean actual
@@ -224,15 +222,15 @@ Other points to notice are:
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
 
+\begin{wrapfigure}[5]r{38ex}
+  \caption{\label{Figure:generic} Covariance with generics}
+  \javaInput[minipage]{mammal.listing}
+\end{wrapfigure}
 As a matter of curiosity: covariance recurs here.
 Overriding permits covariant change of the return type of a function,
 As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type: 
 The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may 
 be specialized with the inheritance (class \cc{School} extending \cc{Heap}). 
-\begin{wrapfigure}[5]r{38ex}
-  \caption{\label{Figure:generic} Covariance with generics}
-  \javaInput[minipage]{mammal.listing}
-\end{wrapfigure}
 
 This recursive generic type technique can used to encode S-expressions: In the spirit of 
   \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
