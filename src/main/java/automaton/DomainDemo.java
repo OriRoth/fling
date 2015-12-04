@@ -8,6 +8,7 @@ import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.DomainDemo.Peep2;
 
 public class DomainDemo {
   class Mammals { /* … */ }
@@ -52,7 +53,7 @@ public class DomainDemo {
   }
   
 
-  
+  //Single peeping
   public static class Peep<γ extends  Γʹ, S extends Stack<? extends Stack<?>>> {}
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2(); 
@@ -65,17 +66,9 @@ public class DomainDemo {
     <Top extends  Γ, Rest extends Stack<?> >  // Two generic parameters
       Peep<Top, P<Top,Rest>>                  // Function return type
    peep(P<Top,Rest> _)   { return null; }     // Function parameters and body
-  public static void double_peeping_into_a_stack_use_cases() {
-    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2(); 
-    Peep2<γ2,γ1,P<γ2,P<γ1,P<Γʹ.Γ.γ2,P<γ1,P<γ2,Stack.E>>>>>>  _2 = double_peep(_1);
-    P<γ1,E> _3 = Stack.empty.γ1(); 
-    Peep2<γ1,?, E>_4 = double_peep(_3);
-    E _5 = Stack.empty; 
-    Peep2<?,?, E>_6 = double_peep(_3);
-  }
-
   
-  public static class Peep2<γ extends  Γʹ,γ2 extends  Γʹ, S extends Stack<? extends Stack<?>>> {}
+ 
+  
   
   public static 
     <Top1 extends  Γ, Top2 extends  Γ, Rest extends Stack<?>>   // Three generic parameters
