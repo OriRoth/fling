@@ -109,9 +109,8 @@ which is in \cref{Figure:unary-function}).}
     \end{tabular}
   \end{figure}
 
-The figure shows that to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}
-and that the fluent API call chain~\cc{f.r2().s2().g()} results in
-  a compile time error since~$f(r₂, s₂)=⊥$.
+As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
+Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time error since~$f(r₂, s₂)=⊥$.
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
@@ -134,25 +133,27 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end. 
 
-\begin{wrapfigure}[4]{r}{31ex}
+\begin{wrapfigure}[7]{r}{29ex}
   \caption{\label{Figure:id}%
-  Function \cc{id()}  
+  Covrariant return type of function \cc{id()} 
+  with \Java generics.
   }
-  \javaInput[left=0ex,width=31ex]{id.listing}
+  \javaInput[left=-2ex,minipage,width=29ex]{id.listing}
 \end{wrapfigure}
 
 Consider first \Cref{Figure:id} showing a a genericity based recipe for 
   a function whose return type 
   is the same as the receiver type.
-This recipe is applied in the figure to classes \cc{X} and \cc{Y}, and 
-  is applicable to an unbounded number of classes.
+  This recipe is applied in the figure to classes \cc{A}, \cc{B}, and \cc{C}.
+  In each of these classes, the return type of \cc{id} is, 
+  without overriding, is (at least) the class itself. 
 
 \Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
   a stack of unbounded depth, yet can only store members of the set~$Γ$.
 With type encoding these are precisely classes~\cc{$γ$1}
   and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 
-\begin{figure}[htb]
+\begin{figure}[H]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
@@ -184,14 +185,16 @@ This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parame
   \end{enumerate}
 Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
 
+DomainDemo.State2<γ2,γ1,P<γ1,P<γ2,P<γ1,P<γ2,E>>>>> to 
+DomainDemo.State2<γ2,γ1,P<γ2,P<γ1,P<γ2,P<γ1,P<γ2,E>>>>>>>
 \Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of the \Java
 implementation†{%
   unless otherwise stated, in saying implementation we mean actual
   code extract
 }
-implementation in~\cref{Figure:stack-encoding}(b).
+is in~\cref{Figure:stack-encoding}(b).
 
-\begin{figure}[htb]
+\begin{figure}[H]
   \caption{Type encoding of an unbounded stack data structure.}
   \label{Figure:stack-encoding} 
   \begin{tabular}{cc}
@@ -235,3 +238,8 @@ This recursive generic type technique can used to encode S-expressions: In the s
   \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
   with co-variant \cc{car()} and \cc{cdr()} methods. 
 
+\begin{figure}[htb]%
+  \caption{Peeping into the stack}%
+  \label{Figure:peep}%
+  \javaInput[minipage]{peep.listing}
+\end{figure}

@@ -6,15 +6,17 @@ export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
 
 LISTINGS=
+LISTINGS+=abc.listing 
 LISTINGS+=binary-function-example.listing 
 LISTINGS+=binary-function.listing 
+LISTINGS+=peep.listing 
 LISTINGS+=gamma-example.listing 
 LISTINGS+=gamma.listing 
+LISTINGS+=id.listing
 LISTINGS+=mammal.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
-LISTINGS+=id.listing
 
 # Target to be used for compiles when references did not change
 latex: $(wildcard *.sty *.tex) $(LISTINGS) 
@@ -23,32 +25,43 @@ latex: $(wildcard *.sty *.tex) $(LISTINGS)
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
-stack.listing: ../../src/main/java/automaton/Domain.java 
+DOMAIN=../../src/main/java/automaton/Domain.java 
+DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
+
+stack.listing: $(DOMAIN)
 	awk '/^.*Stack *<Rest.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-stack-use-cases.listing: ../../src/main/java/automaton/DomainDemo.java  
-	awk '/^.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+stack-use-cases.listing: $(DOMAIN_DEMO)
+	awk '/^.* use.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-gamma.listing: ../../src/main/java/automaton/Domain.java  
+gamma.listing: $(DOMAIN)
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-gamma-example.listing: ../../src/main/java/automaton/DomainDemo.java  
+gamma-example.listing: $(DOMAIN_DEMO)
 	awk '/^.*function_g.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-binary-function.listing: ../../src/main/java/automaton/Domain.java  
+binary-function.listing: $(DOMAIN)
 	awk '/^.*static abstract class f {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
-mammal.listing: ../../src/main/java/automaton/DomainDemo.java  
+
+mammal.listing: $(DOMAIN_DEMO)
 	awk '/^.*Mammals.*$$/,/^.*extends Heap.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-binary-function-example.listing: ../../src/main/java/automaton/DomainDemo.java  
+binary-function-example.listing:  $(DOMAIN_DEM)
 	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-spda.listing: ../../src/main/java/automaton/Domain.java  
+spda.listing: $(DOMAIN)
 		awk '/^.*public static abstract class Q<S\s.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-id.listing: ../../src/main/java/automaton/Domain.java  
-		awk '/^.*interface ID.*$$/,/^.*class Y/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+id.listing: $(DOMAIN)
+		awk '/^.*interface ID.*$$/,/^.*class C/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+abc.listing: $(DOMAIN_DEMO)
+		awk '/^.*interface ID.*$$/,/^.*class C/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+peep.listing:  $(DOMAIN_DEMO)
+		awk '/^.*Peep *<.*$$/,/^ *peep.P.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
+
 
 warnings:	
 	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 

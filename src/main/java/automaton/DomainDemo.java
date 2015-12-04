@@ -5,6 +5,7 @@ import automaton.Domain.Stack.E;
 import automaton.Domain.Stack.P;
 import automaton.Domain.f;
 import automaton.Domain.Γʹ;
+import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
@@ -46,4 +47,39 @@ public class DomainDemo {
     Stack.¤  _8 = _7.pop();                    // ✗ Cannot pop from an empty stack 
     Γʹ.¤ _9 = _7.top();                        // ✗ empty stack has no top element 
   }
+  interface ID<T extends ID> {
+    default T id() { return null; }
+  }
+  
+
+  
+  public static class Peep<γ extends  Γʹ, S extends Stack<? extends Stack<?>>> {}
+  public static void peeping_into_a_stack_use_cases() {
+    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2(); 
+    Peep<γ2,P<γ2,P<γ1,P<Γʹ.Γ.γ2,P<γ1,P<γ2,Stack.E>>>>>>  _2 = peep(_1);
+    E _3 = Stack.empty; 
+    Peep<?, E>_4 = peep(_3);
+  }
+  public static Peep<?, E>  peep(E _) { return null; }   
+  public static 
+    <Top extends  Γ, Rest extends Stack<?> >  // Two generic parameters
+      Peep<Top, P<Top,Rest>>                  // Function return type
+   peep(P<Top,Rest> _)   { return null; }     // Function parameters and body
+
+  
+  
+  
+  public static 
+    <Top1 extends  Γ, Top2 extends  Γ, Rest extends Stack<?>>   // Three generic parameters
+    State2<Top1, Top2, P<Top2,Rest>>                            // Function return type
+  pull2(P<Top1,P<Top2,Rest>>_) {                                
+      return null;
+  }
+  public static class State2<γ1 extends  Γ, γ2 extends  Γ, s extends Stack<? extends Stack<?>>> {}
+  public static void use_cases_of_pulling_from_a_stack() {
+    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2(); 
+    State2<γ2, γ1, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> pull2 = pull2(_1);
+  }
+
+
 }

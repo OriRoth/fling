@@ -5,10 +5,10 @@ import automaton.Domain.MultiPush.DoubleP.DoubleP_γ1_γ2;
 import automaton.Domain.MultiPush.NoOp.NoOp2;
 import automaton.Domain.MultiPush.SingleP.SingleP_γ2;
 import automaton.Domain.Q.q0;
-import automaton.Domain.Q.q3.q3_γ2;
-import automaton.Domain.Q.q2.q2_E;
 import automaton.Domain.Q.q1.q1_γ1;
 import automaton.Domain.Q.q1.q1_γ2;
+import automaton.Domain.Q.q2.q2_E;
+import automaton.Domain.Q.q3.q3_γ2;
 import automaton.Domain.R.r1;
 import automaton.Domain.R.r2;
 import automaton.Domain.Stack.E;
@@ -46,6 +46,13 @@ public class Domain {
       }
     }
   } 
+  
+  interface ID<T extends ID> {
+    default T id() { return null; }
+  }
+  class A implements ID<A> { /**/ }
+  abstract class B<Z extends B> implements ID<Z> { /**/ }
+  class C extends B<C> { /**/ }
 
   //stack.listing
   public static abstract class Stack<Rest extends Stack<?>> { 
@@ -148,11 +155,7 @@ public class Domain {
     }
   }
   
-  interface ID<T extends ID> {
-    default T id() { return null; }
-  }
-  class X implements ID<X> { /* .. */ }
-  class Y implements ID<Y> { /* .. */ }
+
   
   @SuppressWarnings("null")
   public static void main(String[] args) {
