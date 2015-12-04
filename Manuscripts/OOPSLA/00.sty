@@ -1,0 +1,107 @@
+\def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
+
+\passOptions{algorithm}{plain}
+\passOptions{amsmath}{fleqn} 
+\passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
+\passOptions{lmodern}{lighttt}
+\passOptions{xcolor} {usenames, dvipsnames, table} 
+
+\usepackage{adjustbox}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb} %load more math symbols
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{code}
+\usepackage{float}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{hyperref,cleveref}
+\usepackage{listingsutf8}
+\usepackage{nth}
+\usepackage{pifont}
+\usepackage{syntax}
+\usepackage[terse]{yogi_algorithm}
+\usepackage{tikz}
+\usepackage{wasysym}
+\usepackage{wrapfig}
+\usepackage[terse]{yogi-lang}
+\usepackage{yogi-unicode}
+\renewcommand\languageShape[1]{\textrm{#1}}
+
+\usetikzlibrary{graphdrawing}
+\usetikzlibrary{graphs} 
+\usetikzlibrary{shapes} 
+
+\usegdlibrary{circular}
+\usegdlibrary{trees}
+
+\renewcommand{\algorithmicforall}{\textbf{For each}}
+
+\floatstyle{ruled}
+\restylefloat{figure}
+\restylefloat{table}
+
+\adjustboxset{max width=\columnwidth}
+\adjustboxset{max height=0.8\textheight}
+\adjustboxset{center}
+\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
+\newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
+\newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
+\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
+
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Definition}{Definition}
+\newtheorem{Conjecture}{Conjecture}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+
+\def\sectionautorefname{Sect.}
+\def\subsectionautorefname{Sect.}
+\def\figurename{Fig.}
+\def\figureautorefname{\figurename}
+\def\tablename{Table}
+
+\crefname{conjecture}{Conjecture}{conjectures}
+\Crefname{conjecture}{Conjecture}{Conjectures}
+\crefname{definition}{Def.}{defs.}
+\Crefname{definition}{Def.}{Defs.}
+\crefname{figure}{Fig.}{figs.}
+\Crefname{figure}{Fig.}{Figs.}
+\crefname{table}{Table}{tables}
+\Crefname{table}{Table}{Tables}
+\crefname{section}{Sect.}{sects.}
+\Crefname{section}{Sect.}{Sects.}
+\crefname{equation}{eq.}{eqs.}
+\Crefname{equation}{Eq.}{Eqs.}
+\crefname{theorem}{Thm.}{thms.}
+\Crefname{theorem}{Thm.}{Thms.}
+
+
+\intextsep=0pt
+
+\newcommand \urlref [1] {\footnote{\url{#1}}}
+
+\def \Self {\textsf{Fajita}\xspace}
+\def\nthscript#1{\textsuperscript{\textit{#1}}}
+\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},listing file=#2,#1}}
+
+\newenvironment{Grammar}
+{%
+  \scriptsize
+  \renewcommand\baselinestretch{0.8}
+  \def\~{\text{~}}
+  \def\|{\~\~|\~\~\~}
+  \def\<##1>{\textcolor{black}{\text{$\langle\text{\mdseries\rmfamily\/\textit{##1}}\rangle$}}}
+  \let\oldCc=\cc
+  \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
+  \let\oldKk=\kk
+  \def\kk##1{{\text{{\scriptsize\oldKk{##1}}}}}
+  \begin{equation*}
+}
+{
+  \end{equation*}
+}
+

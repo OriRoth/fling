@@ -1,0 +1,208 @@
+We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
+The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
+
+\subsection{Reduction}
+The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
+A DPDA is allowed to make a transition into a different state,
+  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack elements,
+  all without consuming a single input symbol.
+
+In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
+A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
+  they are.
+The following definition is of a deterministic pushdown automata without such moves.
+
+\begin{Definition}
+  \label{Definition:SDPDA}
+  \slshape
+  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA) of order~$k$ is
+    a quintuple~$⟨Γ,Q,q₀,A,δ⟩$,
+  where~$Γ$,~$Q$,~$q₀∈Q$,~$A⊆Q$ are precisely as in \cref{Definition:DPDA}.
+  The signature of function~$δ$, the \emph{generalized partial transition function}
+  of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
+  \par
+  An SDPDA begins as a DPDA. At each step it examines~$σ∈Σ$,
+    the next input symbol,~$q∈Q$, the current state,
+    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most stack elements,
+  \par
+  If the stack is empty, or~$q∈A$, the automaton stops in accepting.
+  If the transition function is undefined, i.e.,~$δ(q,γ₁,…,γₖ,σ)=⊥$ the automaton
+    stops in rejection.
+  Otherwise, and since there are no~$ε$-moves, there are~$q'∈Q$ and~$ζ∈Γ^*$
+    such that~$δ(q,γ₁,…,γₖ,σ)=(q',ζ)$.
+  The automaton then pops~$γ₁$ through~$γₖ$, pushes the sequence~$ζ$, and
+    moves to state~$q'$.
+\end{Definition}
+
+We say that
+a \emph{configuration}~$(q,γ)$,~$q∈Q$,~$γ∈Γ$,
+  is an \emph{$ε$-configuration} if~$δ(q,γ,ε)=(q',ζ)$ for
+    some~$q'∈Q$ and a sequence of stack elements~$ζ$,
+Recall that by definition of DPDAs,~$δ(q,γ,σ)=⊥$ for
+  all~$σ∈Σ$, i.e., there is precisely one transition
+  leading out of an~$ε$-configuration.
+
+Our objective is to remove all~$ε$-configurations,
+  replacing these with the non-$ε$ configuration that
+  they (eventually) lead to.
+This is easy to do when~$|ζ|≥1$, in which
+  case the top of the stack is known to be~$γ'$,~$γ'$ being the first
+    element of~$ζ$; the configuration at the end of transition
+    would be then be~$(q',γ')$, which in its turn may, or may not be,
+    an~$ε$-configuration.
+
+However, if~$ζ=ε$, we do not know which element resides at the top
+  of the stack.
+The transition from the current configuration can thus lead to \emph{multiple} configurations,
+  depending on the actual element left at the top of the stack after popping~$γ$.
+The definition of a configuration thus must be changed to include the \emph{two} top
+  most stack elements.
+But, even this would fail if the next configuration is also an~$ε$-configuration that pushes no elements.
+
+To be able to compute the closure of~$ε$-configuration, we shall
+  therefore include with the configuration the~$k$ top most stack elements,
+  where~$k$ is defined to be large enough so that
+  the top of the stack must never be guessed while going
+  through~$ε$-configurations.
+
+To compute~$k$ we need to compute the largest possible overdraft
+  from the stack along a series of transitions through~$ε$-configuration.
+To do so, define the following directed weighted graph:
+Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
+  of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
+Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
+Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
+  to all possible ‟guesses” of the stack element beneath~$γ$.
+Each such edge takes the weight~$1-|ζ|$ to denote the fact
+  that the total ‟charge” to the stack is~$1-|ζ|$:
+    one stack element (specifically~$γ$) is popped,
+    while~$|ζ|$ (which could also be zero), are pushed.
+The value of $k$ is simply the heaviest path in this graph. 
+
+In the former graph, cycles might occour.
+Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the 
+  stack, and therefore, the required~$\epsilon$-closure cannot be computed.
+As shown by someone~\cite{i:need:to::find:it}, DPDAs with no $\epsilon$-moves are less expressive than a normal DPDAs,
+  and therefore, not all DPDA can be computed.
+  
+Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
+Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$S_m=⟨Q_m,Γ,q_{0m},A_m,δ_m⟩$ 
+  of order k, the corresponding SDPDA.
+Notice that the stack elements are the same in both.
+The other components of $S_m$ are constructed as follows:
+\begin{itemize}
+ \item $Q_m$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$ 
+ \item $q_{0m}$ is the state $(q₀,\vdash^{k-1}\gamma)$ where~$\gamma$ is the stack start element of~$Γ$.
+ \item $A_m$ is the set~$❴(q,ζ)\in Q_m | q \in A❵$
+ \item for $\delta(q,\gamma,\sigma) = (q',\zeta)$
+ \begin{itemize}
+  \item if $\sigma\neq\epsilon$ than for all $(q,\zeta'\gamma')$ such that $\zeta'\gamma \in \Gamma^k$
+    we define $\delta_m(q,\zeta'\gamma,\sigma)=(q',\zeta'\zeta)$
+  \item if $\sigma = \epsilon$ then~$\delta_m(q,\zeta,\epsilon)=(q',\zeta')$ when~$(q',\zeta')$ 
+    is the~$\epsilon$-closure on~$(q,\zeta)$.
+    The~$\epsilon$-closure of~$(q,\zeta)$ is the series of consecutive $\epsilon$-transitions from $\delta$
+    that end with a single ``input consuming'' transition. 
+    This computation is possible due to the definition of~$k$, that assures us, that during this ``static''
+    computition on~$\delta$, we will at all times know the top of the stack, and therefore, this computition
+    is viable.
+ \end{itemize}
+
+\end{itemize}
+
+\subsection{Type Encoding}
+\begin{Theorem}
+  \label{Theorem:SDPDA}
+  For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
+  the command \[
+    \cc{A _ = M.build $\textsf{java}(α)$.\$()};
+  \]
+  compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
+\end{Theorem}
+
+The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
+In particular, we describe how~$J_M$ is constructed from the
+  specification of~$M$.
+
+We will use the following notation for
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
+
+\begin{figure}[H]
+\begin{JAVA}
+class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {¢¢
+  Head head;
+  Rest rest;
+  Stack(Head head, Rest rest) {¢¢ this.head = head; this.rest = rest;}
+  Rest pop() {¢¢ return rest; };
+}
+\end{JAVA}
+For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
+\begin{JAVA}
+class ¢$ξ$¢ <T extends S> extends S<T> {¢¢
+  ¢$ξ$¢(T t) {¢¢ super(t); }
+  // ¢…¢
+}
+\end{JAVA}
+\end{figure}
+In addition, we define a special class~$\vdash$ to designate the empty stack.
+\begin{JAVA}
+class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
+  ¢$\vdash$ ¢() {¢¢ super(null); }
+  ¢$\vdash$ ¢pop() {¢¢ throw new RunTimeException(); }
+}
+\end{JAVA}
+The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
+where~$ξ₁,ξ₂∈Q$ are stack elements,
+is represented by the following type
+\begin{JAVA}
+  ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
+\end{JAVA}
+This is a general concept for implementing an unbounded stack with \Java's type system,
+that will be extended in the future.
+
+\subsection{Encoding states of pushdown automaton with \Java generics}
+The generalized transition function \cref{Equation:generalized:transition}
+  takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
+    and~$k$ stack elements drawn from~$Γ$.
+To capture the full behavior of the automaton, the transition function
+  must be able to pass along, in one way or another, the full contents of the stack.
+
+Since the scheme described above can only be applied for binary functions,
+  we shall pack together the state~$q$, the stack, and the~$k$ top most
+  elements of it into a single type.
+The next input symbol,~$σ∈Σ$, the remaining argument of function~$δ$,
+  is encoded as a method.
+
+The type part of the encoding is obtained by instantiating a generic type as follows:
+Let~\cc{Q} be the abstract class that represents~$Q$, and let~\cc{q} be the concrete class that
+  implements~\cc{Q} for an automaton state~$q∈Q$.
+Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
+  to class~$Q$ and to every class~\cc{q} that implements it.
+Yet another such parameter is added for representing stack contents.
+
+Consider the case~$k=2$.
+\begin{figure}
+  \begin{JAVA}
+abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢
+  \end{JAVA}
+\end{figure}
+
+\begin{figure}
+  \caption{\label{Figure:SDPDA:hierarchy}%
+    Type hierarchy of the type encoding of a simple SDPDA.
+  }
+  \begin{adjustbox}{}
+    \input ../Figures/automaton.tikz
+  \end{adjustbox}
+\end{figure}
+
+\begin{figure}
+  \caption{\label{Figure:SDPDA:example}%
+    A type encoding of a simple pushdown automaton.
+  }
+  \javaInput[minipage,width=\linewidth]{spda.listing}
+\end{figure}
+As might be expected, this type is obtained
+The
+The
+
+To encode this function within
