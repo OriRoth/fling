@@ -70,16 +70,14 @@ public class DomainDemo {
     Peep<?, E> _4 = peep(_3);
   }
   public static Peep<?, E> peep(E _) { return null; } // First overloaded version of ¢\cc{peep()}¢
-  public static // Second overloaded version of ¢\cc{peep()}¢
-  <Top extends Γ, Rest extends Stack<?>> // Two generic parameters
-  Peep<Top, P<Top, Rest>> // Function return type
-  peep(P<Top, Rest> _) { return null; } // Function parameters and body
+  public static                                       // Second overloaded version of ¢\cc{peep()}¢
+    <Top extends Γ, Rest extends Stack<?>> // Two generic parameters
+    Peep<Top, P<Top, Rest>>                // Function return type
+  peep(P<Top, Rest> _) { return null; }    // Function parameters and body
   public static 
     <Top1 extends Γ, Top2 extends Γ, Rest extends Stack<?>> // Three generic parameters
     Peel2<Top1, Top2, P<Top2, Rest>> // Function return type
-  peep2(P<Top1, P<Top2, Rest>> _) {
-    return null;
-  }
+    peep2(P<Top1, P<Top2, Rest>> _) { return null; }
 
   public static class Peel2<γ1 extends Γ, γ2 extends Γ, s extends Stack<? extends Stack<?>>> {
   }
