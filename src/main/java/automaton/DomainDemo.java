@@ -8,6 +8,7 @@ import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.DomainDemo.Peep2;
 
 //@Formatter:off
 public class DomainDemo {
@@ -68,7 +69,8 @@ public class DomainDemo {
     Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
     peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
 
-
+  
+  
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {
   }
 
@@ -88,11 +90,25 @@ public class DomainDemo {
     Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
     peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
 
-  public static class Peel2<γ1 extends Γ, γ2 extends Γ, s extends Stack<? extends Stack<?>>> {
+  //Double peeping
+  public static class Peep2<γ_top extends  Γʹ,γ2_second extends  Γʹ, S extends Stack<? extends Stack<?>>> {}
+  public static void double_peeping_into_a_stack_use_cases() {
+    E _5 = Stack.empty; 
+    Peep2<?,?, E>_6 = double_peep(_5);
+    P<γ1,E> _3 = Stack.empty.γ1(); 
+    Peep2<γ1,?, P<γ1,E>>_4 = double_peep(_3);
+    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2(); 
+    Peep2<γ2,γ1,P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>>>  _2 = double_peep_problem_with_type_erasure(_1);
   }
-
-  public static void use_cases_of_pulling_from_a_stack() {
-    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
-    Peel2<γ2, γ1, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> pull2 = pull2(_1);
-  }
+  public static Peep2<?,?, E>  double_peep(E _) { return null; }    // First overloaded version of ¢\cc{peep()}¢
+  public static                                                     // Second overloaded version of ¢\cc{peep()}¢
+    <Top extends  Γ>                                            // One generic parameter
+    Peep2<Top,?, P<Top,E>>                                      // Function return type
+    double_peep(P<Top,E> _) { return null; }                    // Function parameters and body
+  public static                                                     // Third overloaded version of ¢\cc{peep()}¢
+    <Top extends  Γ,Second extends  Γ, Rest extends Stack<?> >  // Three generic parameters
+    Peep2<Top,Second, P<Top,P<Second,Rest>>>                  // Function return type
+    double_peep_problem_with_type_erasure(P<Top,P<Second,Rest>> _)   { return null; }     // Function parameters and body
+  
+  
 }
