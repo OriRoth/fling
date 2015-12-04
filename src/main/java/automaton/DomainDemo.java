@@ -60,8 +60,8 @@ public class DomainDemo {
     E _3 = Stack.empty; 
     Peep<?, E>_4 = peep(_3);
   }
-  public static Peep<?, E>  peep(E _) { return null; }   
-  public static 
+  public static Peep<?, E>  peep(E _) { return null; }  // First overloaded version of ¢\cc{peep()}¢
+  public static                                         // Second overloaded version of ¢\cc{peep()}¢
     <Top extends  Γ, Rest extends Stack<?> >  // Two generic parameters
       Peep<Top, P<Top,Rest>>                  // Function return type
    peep(P<Top,Rest> _)   { return null; }     // Function parameters and body
