@@ -112,9 +112,9 @@ The other components of $S_m$ are constructed as follows:
 \subsection{Type Encoding}
 \begin{Theorem}
   \label{Theorem:SDPDA}
-  For every SDPDA~$M$ there exists a set~$J_M$ of \Java type definitions, such that
+  For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
   the command \[
-    \cc{M x = M.build $\textsf{java}(α)$}.\$();
+    \cc{A _ = M.build $\textsf{java}(α)$.\$()};
   \]
   compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
 \end{Theorem}
