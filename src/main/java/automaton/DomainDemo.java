@@ -76,8 +76,8 @@ public class DomainDemo {
   peep(P<Top, Rest> _) { return null; }    // Function parameters and body
   public static 
     <Top1 extends Γ, Top2 extends Γ, Rest extends Stack<?>> // Three generic parameters
-    Peel2<Top1, Top2, P<Top2, Rest>> // Function return type
-    peep2(P<Top1, P<Top2, Rest>> _) { return null; }
+    Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
+    peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
 
   public static class Peel2<γ1 extends Γ, γ2 extends Γ, s extends Stack<? extends Stack<?>>> {
   }
