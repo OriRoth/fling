@@ -3,7 +3,7 @@ Some readers may prefer to skip through to the next section,
 where these are employed in the proof of \Cref{Theorem:Gil-Levy}.
 
 Let~$g:Γ↛Γ$ be a partial function,
-  from the finite set~$Γ$ into itself. 
+  from the finite set~$Γ$ into itself.
 We argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
   \cref{Figure:unary-function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
@@ -87,7 +87,6 @@ A \Java type encoding of this definition of function~$f$
   is in~\cref{Figure:simple-binary}(a); use cases
     are in~\cref{Figure:simple-binary}(b).
 
-
 \begin{figure}[hbt]
   \caption{\label{Figure:simple-binary}%
     Type encoding of partial binary function~$f:R⨉S↛Γ$,
@@ -103,7 +102,7 @@ A \Java type encoding of this definition of function~$f$
       \parbox[c]{51ex}{\javaInput[minipage,leftrule=3pt,toprule=3pt,bottomrule=3pt,width=51ex]{binary-function-example.listing}}
 ⏎
 \parbox{0.57\linewidth}
-{\textbf{(a)} implementation (for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, 
+{\textbf{(a)} implementation (for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
 which is in \cref{Figure:unary-function}).}
 & \hspace{-5ex}\textbf{(b)} use cases⏎
     \end{tabular}
@@ -131,22 +130,22 @@ It should be clear now that the encoding scheme presented
   with any number of arguments, provided that the domain and range sets are finite.
 The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
-Genericity can be employed to serve this end. 
+Genericity can be employed to serve this end.
 
 \begin{wrapfigure}[8]{r}{29ex}
   \caption{\label{Figure:id}%
-  Covrariant return type of function \cc{id()} 
+  Covrariant return type of function \cc{id()}
   with \Java generics.
   }
   \javaInput[left=-2ex,minipage,width=29ex]{id.listing}
 \end{wrapfigure}
 
-Consider first \Cref{Figure:id} showing a a genericity based recipe for 
-  a function whose return type 
+Consider first \Cref{Figure:id} showing a a genericity based recipe for
+  a function whose return type
   is the same as the receiver type.
-  This recipe is applied in the figure to classes \cc{A}, \cc{B}, and \cc{C}.
-  In each of these classes, the return type of \cc{id} is, 
-  without overriding, is (at least) the class itself. 
+  This recipe is applied in the figure to classes~\cc{A},~\cc{B}, and~\cc{C}.
+  In each of these classes, the return type of \cc{id} is,
+  without overriding, is (at least) the class itself.
 
 \Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
   a stack of unbounded depth, yet can only store members of the set~$Γ$.
@@ -194,13 +193,13 @@ is in~\cref{Figure:stack-encoding}(b).
 
 \begin{figure}[H]
   \caption{Type encoding of an unbounded stack data structure.}
-  \label{Figure:stack-encoding} 
+  \label{Figure:stack-encoding}
   \begin{tabular}{cc}
     \parbox[c]{0.3\linewidth}{%
       \input ../Figures/stack-classification.tikz
     } &
     \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage]{stack.listing}}⏎
-    \textbf{(a)} type hierarchy                                            &
+    \textbf{(a)} type hierarchy &
     \hspace{-3ex} \parbox[t]{63ex}{%
     \textbf{(b)} implementation (except
     for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
@@ -228,13 +227,13 @@ Other points to notice are:
 \end{wrapfigure}
 As a matter of curiosity: covariance recurs here.
 Overriding permits covariant change of the return type of a function,
-As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type: 
-The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may 
-be specialized with the inheritance (class \cc{School} extending \cc{Heap}). 
+As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type:
+The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may
+be specialized with the inheritance (class \cc{School} extending \cc{Heap}).
 
-This recursive generic type technique can used to encode S-expressions: In the spirit of 
+This recursive generic type technique can used to encode S-expressions: In the spirit of
   \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
-  with co-variant \cc{car()} and \cc{cdr()} methods. 
+  with co-variant \cc{car()} and \cc{cdr()} methods.
 
 \begin{figure}[htb]%
   \caption{Peeping into the stack}%
