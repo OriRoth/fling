@@ -8,7 +8,6 @@ import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
-import automaton.DomainDemo.Peep2;
 
 //@Formatter:off
 public class DomainDemo {
@@ -52,28 +51,11 @@ public class DomainDemo {
     Stack.¤ _8 = _7.pop(); // ✗ Cannot pop from an empty stack
     Γʹ.¤ _9 = _7.top(); // ✗ empty stack has no top element
   }
-  public static void use_cases_of_peel() {
-    // Create a stack a with five items in it:
-    P<γ1, P<γ1, P<γ2, P<γ1, P<γ1, E>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1();
-    P<γ2, P<γ1, P<γ1, E>>> _2 = peel(_1, (γ1) null);
-    P<γ1, P<γ1, E>> _3 = peel(_2, (γ2) null);
-    E _3 = peel(_3, (γ1) null);
-  }
-  public static E peel(E _, ? extends Γ ) { return null; } // First overloaded version of ¢\cc{peep()}¢
-  public static                                       // Second overloaded version of ¢\cc{peep()}¢
-   < γ extends Γ, Rest extends ?> // Two generic parameters
-    P<γ , Rest>>               // Function return type
-  peep(P<γ, Rest> _) { return null; }    // Function parameters and body
-  public static 
-    <Top1 extends Γ, Top2 extends Γ, Rest extends Stack<?>> // Three generic parameters
-    Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
-    peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
+
 
   
   
-  public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {
-  }
-
+  public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {}
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
     Peep<γ2, P<γ2, P<γ1, P<Γʹ.Γ.γ2, P<γ1, P<γ2, Stack.E>>>>>> _2 = peep(_1);
