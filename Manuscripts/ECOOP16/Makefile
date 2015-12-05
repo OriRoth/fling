@@ -30,6 +30,20 @@ latex: $(wildcard *.sty *.tex) $(LISTINGS)
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
+all:	graphs bibtex $(MAIN).pdf
+
+view: $(MAIN).pdf 
+	okular $(MAIN).pdf &> /dev/null &
+
+graphs: $(wildcard *.sty *.tex) $(LISTINGS) 
+	$(LATEX) -shell-escape ./$(MAIN).tex
+
+
+$(MAIN).blg bibtex:	
+	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
+	bibtex $(MAIN)
+	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
+
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
 
@@ -100,17 +114,6 @@ warnings:
 	- lacheck *.tex
 	- for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
 
-all:	graphs bibtex $(MAIN).pdf
-
-view: $(MAIN).pdf 
-	okular $(MAIN).pdf &> /dev/null &
-
-graphs: 
-
-$(MAIN).blg bibtex:	
-	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
-	bibtex $(MAIN)
-	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
 
 
 .PHONY: clean graphs bibtex latex
@@ -129,6 +132,8 @@ JUNKFILES+=$(wildcard DELME* )
 JUNKFILES+=$(wildcard *.dvi )
 JUNKFILES+=$(wildcard *.fdb_)
 JUNKFILES+=$(wildcard *.fls )
+JUNKFILES+=$(wildcard *gnuplottex* )
+JUNKFILES+=$(wildcard *.gnuplot)
 JUNKFILES+=$(wildcard latexmk )
 JUNKFILES+=$(wildcard *.listing )
 JUNKFILES+=$(wildcard *.log )

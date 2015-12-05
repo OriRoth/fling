@@ -21,14 +21,17 @@
 % Department of Computer Science⏎
 % Technion---Israel Institute of Technology⏎
 % \texttt{\small \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}}}
-%\date{%
-% Research Proposal⏎
-% \small Advised by Prof.\ Yossi Gil
-%}
 
 \author{Anonymized for the submission}
 
 \begin{document}
+\begin{wrapfigure}r{40ex}%
+  \caption{\label{Figure:kill} Compile time (sec) \emph{vs.} nasty program length}%
+  \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
+
+  \end{gnuplot}%
+\end{wrapfigure}%
+
 \maketitle
 \begin{abstract}
   \input{abstract}
@@ -69,6 +72,7 @@ The main ideas behind the bootstrapping definition of \Self
     And, of course, this AST is compliant with the BNF definition
       of the fluent API.
 
+
 \section{Reminders and Preliminaries}
 \label{Section:preliminaries}
 \input{preliminaries}
@@ -81,7 +85,6 @@ The main ideas behind the bootstrapping definition of \Self
 \label{Section:toolkit}
 \input{toolkit}
 
-
 \section{The Jump-Stack Data-Structure}
 \label{Section:jump}
 \input{jump}
@@ -93,22 +96,6 @@ The main ideas behind the bootstrapping definition of \Self
 \section{Parser of Non Deterministic Pushdown Automata}
 \label{Section:bridge}
 \input{bridge}
-
-\section{Introducing \Self}
-\label{Section:fajita}
-% \input{fajita}
-
-\section{Algorithm}
-\label{Section:algorithm}
-% \input{algorithm}
-
-\section{Bootstrapping Definition}
-\label{Section:bootstrapping}
-% \input{bootstrapping}
-
-\section{Using \Self for Producing ASTs}
-\label{Section:AST}
-% \input{AST}
 
 \section{Conclusion}
 \label{Section:zz}
