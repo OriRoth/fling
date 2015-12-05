@@ -53,6 +53,7 @@ jump-stack-E.listing: $(DOMAIN)
 jump-stack-P.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
 	| awk '/^.*interface *P *<.*$$/,/^    }.*$$/' | sed 's/^    //' \
+	| sed -e 's/@Override //' \
 	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	
 
@@ -60,7 +61,7 @@ stack.listing: $(DOMAIN)
 	awk '/^.*Stack *<Rest.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 stack-use-cases.listing: $(DOMAIN_DEMO)
-	awk '/^.* use.*stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.* use.*of_stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 gamma.listing: $(DOMAIN)
 	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
