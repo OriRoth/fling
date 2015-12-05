@@ -83,15 +83,15 @@ public class Domain {
     }
   }
   //@Formatter:on
-  private interface Pʹ<// // ¢$2+k+1$¢ generic arguments: 
+  private interface Pʹ<// ¢$2+k+1$¢ generic arguments: 
     Top extends Γ,   
     Rest extends JS<?,?,?>, 
     J_γ1 extends JS<?,?,?>, 
     J_γ2 extends JS<?,?,?>,
     Me extends JS<?,?,?>
-   > extends JS<Rest, J_γ1, J_γ2> {
+  > extends JS<Rest, J_γ1, J_γ2> {
      @Override public Top top();
-     @Override P<γ1, Me, Me,   J_γ2> γ1();
+     @Override P<γ1, Me, Me, J_γ2> γ1();
      @Override P<γ2, Me, J_γ2, Me> γ2();
   }
 
@@ -118,13 +118,15 @@ public class Domain {
       @Override public P<γ1, E, E, ¤> γ1();
       @Override public P<γ2, E, ¤, E> γ2();
     }
+    public static final E empty = null;
     public interface P<// ¢$2+k$¢ generic arguments:
         Top extends Γ, 
         Rest extends JS<?,?,?>,    
         J_γ1 extends JS<?,?,?>, 
         J_γ2 extends JS<?,?,?>
-    > extends Pʹ<Top, Rest, J_γ1, J_γ2, P<Top, Rest, J_γ1, J_γ2>> { /**/ }
-    public static final E empty = null;
+    > extends 
+        Pʹ<Top, Rest, J_γ1, J_γ2, 
+          P<Top, Rest, J_γ1, J_γ2>> { /**/ }
   }
   
   //binary-function.listing

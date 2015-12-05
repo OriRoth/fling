@@ -15,7 +15,7 @@ LISTINGS+=id.listing
 LISTINGS+=jump-stack.listing 
 LISTINGS+=jump-stack-currency.listing 
 LISTINGS+=jump-stack-E.listing 
-LISTINGS+=jump-stack-P.listing 
+LISTINGS+=jump-stack-push.listing 
 LISTINGS+=mammal.listing 
 LISTINGS+=peep.listing 
 LISTINGS+=spda.listing 
@@ -50,9 +50,8 @@ jump-stack-E.listing: $(DOMAIN)
 	| awk '/^.*interface *E .*$$/,/^    }.*$$/' | sed 's/^    //' \
 	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-jump-stack-P.listing: $(DOMAIN)
-	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
-	| awk '/^.*interface *P *<.*$$/,/^    }.*$$/' | sed 's/^    //' \
+jump-stack-push.listing: $(DOMAIN)
+	awk '/^.*private *interface *P.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
 	| sed -e 's/@Override //' \
 	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	
