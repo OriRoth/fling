@@ -21,6 +21,7 @@ LISTINGS+=peep.listing
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
+LISTINGS+=jump-stack-example.listing
 
 # Target to be used for compiles when references did not change
 latex: $(wildcard *.sty *.tex) $(LISTINGS) 
@@ -32,6 +33,8 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
 
+jump-stack-example.listing: $(DOMAIN_DEMO)
+	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 jump-stack.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \

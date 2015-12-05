@@ -68,3 +68,18 @@ The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of \cc{P}, i.e
 The auxliary type \cc{JS.Pʹ} itself is depicted in \cref{Figure:jump-stack}.
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it, 
 \cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump}) 
+
+Use cases for the encoded jump stack data structure in presented in \cref{Figure:jump-stack-example}.
+
+\begin{wrapfigure}[12]r{63ex}
+  \caption{\label{Figure:jump-stack-example} Use cases for the ~\cc{JS} type hierarchy}
+  \javaInput[minipage,width=63ex,left=-2ex]{jump-stack-example.listing}
+\end{wrapfigure}
+
+\cc{\_1} represents a stack that has been pushed \cc{$\gamma$2}, \cc{$\gamma$1}, \cc{$\gamma$1}.
+Its first type argument is the Top,~$\gamma1$.
+The second and third arguments,~\cc{Rest} and~\cc{J_$\gamma$1} correspondingly, 
+  are represented by the same type, since the top of the stack is type~\cc{$\gamma$1}
+  former~$\textsf{jump}(γᵢ)$ pops only the topmost element.
+The last argument is~\cc{JS.E} represents~\cc{J_$\gamma$2}, and truly,
+  operation~$\textsf{jump}(γ_2)$ in that case causes popping the whole stack.

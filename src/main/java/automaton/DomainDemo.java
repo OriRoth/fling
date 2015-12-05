@@ -1,5 +1,7 @@
 package automaton;
 
+import automaton.Domain.JS;
+import automaton.Domain.JS.¤;
 import automaton.Domain.Stack;
 import automaton.Domain.Stack.E;
 import automaton.Domain.Stack.P;
@@ -46,7 +48,7 @@ public class DomainDemo {
   } 
   
 
-  
+  //peek
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {}
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
@@ -84,5 +86,20 @@ public class DomainDemo {
     Peep2<Top,Second, P<Top,P<Second,Rest>>>                  // Function return type
     double_peep_problem_with_type_erasure(P<Top,P<Second,Rest>> _)   { return null; }     // Function parameters and body
   
-  
+  // jump-stack-example.listing
+  public static void jump_stack_use_cases(){
+    JS.P<
+      γ1,                                                      // Top   
+      JS.P<γ1,JS.P<γ2,JS.E,¤,JS.E>,JS.P<γ2,JS.E,¤,JS.E>,JS.E>,// Rest 
+      JS.P<γ1,JS.P<γ2,JS.E,¤,JS.E>,JS.P<γ2,JS.E,¤,JS.E>,JS.E>,// jump(γ1) 
+      JS.E                                                    // jump(γ2)                      
+    > _1 = JS.empty.γ2().γ1().γ1();
+    JS.E _2 = _1.jump_γ2();
+    JS.P<
+      γ1,                      // Top
+      JS.P<γ2,JS.E,¤,JS.E>,    // Rest
+      JS.P<γ2,JS.E,¤,JS.E>     // jump(γ1)
+      ,JS.E                    // jump(γ2)
+    > _3 = _1.jump_γ1();
+  }
 }
