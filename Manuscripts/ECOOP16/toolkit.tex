@@ -244,17 +244,17 @@ In~\cref{Figure:peep} we introduce the special type,~\cc{Peep}, for doing exactl
 Lines 5-8 present use cases of the discussed~\cc{peep} operation.
 
 The first use case (line 5-6) considers the ``normal'' case of a non-empty stack.
-\cc{_1} is a stack state, that represents the series 
+\cc{\_1} is a stack state, that represents the series 
   of pushes~\cc{$γ2$},\cc{$γ1$},\cc{$γ2$},\cc{$γ1$},\cc{$γ2$}.
-Assume we now want to~\cc{peep} into \cc{_1}.
-In order to do so, we invoke~\kk{static} method~\cc{peep} on~\cc{_1}(we will soon introduce~\cc{peep}'s structure).
-\cc{_2} is the received ~\cc{Peep} object, its first type argument is~\cc{$γ_2$},
-  while the second is the stack represented by the type of~\cc{_1}.
-Notice that as expected, ~\cc{_1}'s first type argument is the type of the top element of stack~\cc{_1}
-  and the second type argument is the type of~\cc{_1} itself.
+Assume we now want to~\cc{peep} into \cc{\_1}.
+In order to do so, we invoke~\kk{static} method~\cc{peep} on~\cc{\_1}(we will soon introduce~\cc{peep}'s structure).
+\cc{\_2} is the received ~\cc{Peep} object, its first type argument is~\cc{$γ\_2$},
+  while the second is the stack represented by the type of~\cc{\_1}.
+Notice that as expected, ~\cc{\_1}'s first type argument is the type of the top element of stack~\cc{\_1}
+  and the second type argument is the type of~\cc{\_1} itself.
 The second use case considers the empty stack. 
-We defined \cc{_3} to be an empty stack object, and invoked the second overloaded version of~\cc{peek}.
-\cc{_4} is the received object, and its first type argument is anonymized (as~\cc{$\Gamma'$.\currency} is defined private)
+We defined \cc{\_3} to be an empty stack object, and invoked the second overloaded version of~\cc{peek}.
+\cc{\_4} is the received object, and its first type argument is anonymized (as~\cc{$\Gamma'$.\currency} is defined private)
 and the second is the expected empty stack.
 
 Lines 10-14 are has the two overloaded methods~\cc{peep}.
