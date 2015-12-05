@@ -21,7 +21,7 @@ elements are drawn from type~\cc{$Γ$}
 Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)),
   the generic type \cc{JS} which encodes jump-stacks, takes
   a \cc{Rest} parameter which is the type of a jump-stack after popping.
-In addition \cc{JS} takes~$k$ type parameters, one for~$γ∈Γ$,
+In addition \cc{JS} takes~$k$ type parameters, one for each~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
   operation.
 In the figure, there are two such parameters: \cc{J\_$γ$1}, and
@@ -39,7 +39,8 @@ The type hierarchy rooted at \cc{JS} is similar to that of
   almost identical to their \cc{Stack}
   counterparts:
 \cc{JS.E} encodes an empty jump-stack; \cc{JS.¤} encodes a jump-stack in error,
-e.g., a after popping from \cc{JS.E}.
+e.g., a after popping from \cc{JS.E}. 
+The body of these two types is omitted here.
 
 Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, representing
 Type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
@@ -64,7 +65,7 @@ to type \cc{Pʹ} which it extends (l.21)
 The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e.,
   \cc{P<Top, Rest, J\_γ1, J\_γ2>}.
 
-The auxliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack}.
+The auxliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
 By extending type \cc{JS} and passing the correct \cc{Rest} (respectively \cc{J\_$γ$1}, \cc{J\_$γ$2})
   parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
   (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).

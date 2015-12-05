@@ -113,7 +113,8 @@ A \Java type encoding of this definition of function~$f$
 \end{figure}
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
-Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time error since~$f(r₂, s₂)=⊥$.
+Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
+  error precisely because~$f(r₂, s₂)=⊥$.
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
@@ -173,7 +174,7 @@ The expression⏎
   \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
-This expression's type is that of~\cc{\_1}:⏎
+This expression's type is that of variable~\cc{\_1}:⏎
 \mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
 A recurring building block occurs in this type.
 This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
@@ -217,69 +218,59 @@ Other points to notice are:
         The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
   \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
         the two are overridden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
-
   \item Since empty stack cannot be popped, function \cc{pop()} is overridden in~\cc{E} to return
     the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
-
-\begin{wrapfigure}[5]r{38ex}
-  \caption{\label{Figure:generic} Covariance with generics}
-  \javaInput[minipage]{mammal.listing}
-\end{wrapfigure}
-As a matter of curiosity: covariance recurs here.
-Overriding permits covariant change of the return type of a function,
-As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type:
-The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may
-be specialized with the inheritance (class \cc{School} extending \cc{Heap}).
-
-This recursive generic type technique can used to encode S-expressions: In the spirit of
+In fact, this recursive generic type technique can used to encode S-expressions: In the spirit of
   \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
   with co-variant \cc{car()} and \cc{cdr()} methods.
 
-In order to make compile-time decisions corresponding to the top of the stack,
-  we need to know how to statically ‟extract” it.
-In~\cref{Figure:peep} we introduce the special type,~\cc{Peep}, for doing exactly that.
+A standard technique of template programming in \CC is to encode conditionals with template specialization.
+Since \Java forbids specialization of generics, we used in lieu covraiant overloading of function
+  return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
+  return type of of \cc{top()} in \cref{Figure:stack-encoding}).
+
+\begin{wrapfigure}[6]r{36ex}
+  \caption{\label{Figure:generic} Covariance of parameters to generics}
+  \javaInput[minipage,left=-2ex]{mammal.listing}
+\end{wrapfigure}
+
+As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type:
+The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may
+be specialized with the inheritance (class \cc{School} extending \cc{Heap}).
+Similarly, the idea behind \cref{Figure:generic} will be used
+  below as another idiom of conditionals.
+
+Overloading makes a third idiom for partial emulation of conditionals, as can be seen
+  in~\cref{Figure:peep}.
 
 \begin{figure}[htb]%
   \caption{Peeping into the stack}%
   \label{Figure:peep}%
   \lstset{style=numbered}
-  \javaInput[minipage]{peep.listing}
+  \javaInput[minipage,left=-2ex]{peep.listing}
 \end{figure}
 
-\cc{Peep} has two generic parameters, the first,~\cc{$γ$} of type~\cc{$Γ'$}, is the top of the stack,
-  and the second,~\cc{S} of type~\cc{Stack$⟨\text{? extends }\text{Stack}⟨\text{?}⟩⟩$}, represents the whole stack (including former~\cc{$γ$}).
-Lines 5-8 present use cases of the discussed~\cc{peep} operation.
+The figure depicts type \cc{Peep} and the overloaded versions of \cc{peep()} which can be used to
+  extract the top of the stack.
+The first generic parameter to \cc{Peep} is the top of the stack, the second is the stack itself.
+Indeed, we see (l.6) that peeping into an empty stack, places a~\cc{?}
+  in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.8).
 
-The first use case (line 5-6) considers the ‟normal” case of a non-empty stack.
-\cc{\_1} is a stack state, that represents the series
-  of pushes~\cc{$γ2$},\cc{$γ1$},\cc{$γ2$},\cc{$γ1$},\cc{$γ2$}.
-Assume we now want to~\cc{peep} into \cc{\_1}.
-In order to do so, we invoke~\kk{static} method~\cc{peep} on~\cc{\_1}(we will soon introduce~\cc{peep}'s structure).
-\cc{\_2} is the received~\cc{Peep} object, its first type argument is~\cc{$γ\_2$},
-  while the second is the stack represented by the type of~\cc{\_1}.
-Notice that as expected,~\cc{\_1}'s first type argument is the type of the top element of stack~\cc{\_1}
-  and the second type argument is the type of~\cc{\_1} itself.
-The second use case considers the empty stack.
-We defined \cc{\_3} to be an empty stack object, and invoked the second overloaded version of~\cc{peek}.
-\cc{\_4} is the received object, and its first type argument is anonymized (as~\cc{$Γ'$.¤} is defined private)
-and the second is the expected empty stack.
+The second overloaded version of \cc{peep()} (ll.9--12) matches
+ against all non-empty stacks. The return type
+ of this version encodes,
+ in its first parameter,
+ the top of the stack.
+A use case can be seen in line~4.
 
-Lines 10-14 are has the two overloaded methods~\cc{peep}.
-The first version is for the empty stack use case.
-It receives an empty stack object as parameter and return a peep object with unknown top, and empty stack.
-Reminder : the implementation of this method is simply the~\kk{return null} statement since
-  we have no intention of any runtime computation in this article.
-The second version of~\cc{peek} has two generic
-  parameters:~\cc{Top}, that represents the type of the top element,
-  and~\cc{Rest} that represents the stack of the received object.
-It receives a parameter of type~\cc{P$⟨\text{Top, Rest}⟩$} and
-  it's return type is constructed as follows:
-  \cc{Top} is returned as the top of the stack (first argument of~\cc{Peek}),
-  while~\cc{P$⟨\text{Top, Rest}⟩$} is returned as the stack.
-Since we require that the received argument
-  will be of type~\cc{P$⟨\text{Top, Rest}⟩$},
-  any invocation of~\cc{peek} with a non-empty stack (hence of type~\cc{P})
-  will cause the type-inference mechanism of \Java to disassemble the type parameter,
-  and hence, allow the existence of~\cc{peek}.
+Let~$τ$ be the type of the top of a given stack.
+Then, both \cc{top()} and \cc{peep()} can be used to extract~$τ$.
+There is a subtle difference between the two though:
+Obtaining~$τ$ from \cc{top()} does
+  not make it possible to define variables, function return types, and
+  parameters to functions and generics whose type is~$τ$ or depends on it in any way.
+However, since \cc{Peep} is a type that receives~$τ$ as parameter,
+  the body of \cc{Peep} is free to define e.g., functions signature includes on $\tau$, 
+  or pass $\tau$ further to other generics. 

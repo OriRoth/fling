@@ -124,9 +124,9 @@ public class Domain {
         Rest extends JS<?,?,?>,    
         J_γ1 extends JS<?,?,?>, 
         J_γ2 extends JS<?,?,?>
-    > extends 
-        Pʹ<Top, Rest, J_γ1, J_γ2, 
-          P<Top, Rest, J_γ1, J_γ2>> { /**/ }
+    > extends Pʹ<Top, Rest, J_γ1, J_γ2, 
+          P<Top, Rest, J_γ1, J_γ2>
+    > { /**/ }
   }
   
   //binary-function.listing
