@@ -119,54 +119,57 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-A more sane, but weaker, alternative is found in LR($1$) parsers,
-  which are deterministic linear time and space.
-An LR($1$) parser for a grammar~$G$ has three components:
-\begin{description}
-  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
-  \item[A stack] which may contain any member of~$Q$.
-  \item[Specification of state transition] with the aid of two tables:
-        \begin{description}
-          \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
-          between the states of the automaton.
-          \item[Action table] which
-            defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
-        \end{description}
-\end{description}
-The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
-and then repetitively executes the following:
-Examine~$q∈Q$, the state at the top of the stack.
-If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
-
-Let~$σ∈Σ$ be the next input symbol.
-If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
-
-If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ 
-  into the stack and consumes~$σ$.
-If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
-  then the parser does not consume~$σ$. 
-  Instead it makes~$|β|$ pop operations.
-Let~$q'$ be the state at the top of the stack after these pops, then
-  the parser pushes a state,~$q”$,
-  defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
-    i.e.,~$q”=η(q',ξ)$.
-
-The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
-We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR parser generators,
-  including SLR and LALR (which \Self uses).
-
-More general, LR($k$) parsers,~$k>1$, can be defined. These make their
-  decisions based on the next~$k$ input symbols, rather than just the first of these.
-General LR($k$) parsers are rarely used, since they offer essentially
-  the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, 
-   at a greater toll on resources.
-
-To characterize the expressive power of LR($1$) parsers, we need the notion
-of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
-DPDA are similar to NPDA, except that they are forced
-to make deterministic choices.
-The more formal and detailed definition is:
-
+% A more sane, but weaker, alternative is found in LR($1$) parsers,
+%   which are deterministic linear time and space.
+% An LR($1$) parser for a grammar~$G$ has three components:
+% \begin{description}
+%   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
+%   \item[A stack] which may contain any member of~$Q$.
+%   \item[Specification of state transition] with the aid of two tables:
+%         \begin{description}
+%           \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+%           between the states of the automaton.
+%           \item[Action table] which
+%             defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
+%         \end{description}
+% \end{description}
+% The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
+% and then repetitively executes the following:
+% Examine~$q∈Q$, the state at the top of the stack.
+% If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
+% 
+% Let~$σ∈Σ$ be the next input symbol.
+% If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+% 
+% If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$ 
+%   into the stack and consumes~$σ$.
+% If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
+%   then the parser does not consume~$σ$. 
+%   Instead it makes~$|β|$ pop operations.
+% Let~$q'$ be the state at the top of the stack after these pops, then
+%   the parser pushes a state,~$q”$,
+%   defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
+%     i.e.,~$q”=η(q',ξ)$.
+% 
+% The specifics of parser generation, including notions such the famous LR items lie beyond our interest here.
+% We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR parser generators,
+%   including SLR and LALR (which \Self uses).
+% 
+% More general, LR($k$) parsers,~$k>1$, can be defined. These make their
+%   decisions based on the next~$k$ input symbols, rather than just the first of these.
+% General LR($k$) parsers are rarely used, since they offer essentially
+%   the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}}, 
+%    at a greater toll on resources.
+% 
+% To characterize the expressive power of LR($1$) parsers, we need the notion
+% of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA).
+% DPDA are similar to NPDA, except that they are forced
+% to make deterministic choices.
+% 
+% The more formal and detailed definition is:
+Since our encoding surely will be deterministic, we need a simpler
+  model, that runs in polinomial deterministic time.
+  
 \begin{Definition}[Deterministic Pushdown Automaton]
   \label{Definition:DPDA}
   \slshape
@@ -175,7 +178,7 @@ The more formal and detailed definition is:
     \emph{states},~$Γ$ is a finite
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
-  the \emph{partial state transition function}~$δ:Q⨉(Γ∪❴ε❵)⨉Σ↛Q⨉Γ^*$.
+  the \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛Q⨉Γ^*$.
   \par
   A DPDA begins its work in the initial state with a single designated stack element residing on the stack. 
   At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack. Based on the values of these, it decides how to proceed:
@@ -204,31 +207,68 @@ On the other hand, DPDA are easier to parse:
   can be done in linear time and one pass.
   In contrast, CYK, one of the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
-Where do LR($1$) languages stand with respect to DCFG context free languages?
-LR($1$) languages are indeed equivalent to DCFG languages, but
-the answer hinges on the distinction
-  between LR($1$) languages and LR($1$) grammars.
-To actually produce an LR($1$) parser for a given language,
-  one needs to find an ‟\emph{LR($1$) grammar}” for the language.
-Such a grammar is amenable to
-  the automatic production of an LR($1$) parser.
-However, the time for obtaining this LR($1$) grammar and
-  then processing it to produce an LR($1$) parser,
-  as well as resulting parser's size,
-  though polynomial, are prohibitive.
+\begin{Definition}
+  \label{Definition:realtime}
+  \slshape
+We say a DPDA supplies the \emph{realtime condition} if 
+  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
+\end{Definition}
+% Where do LR($1$) languages stand with respect to DCFG context free languages?
+% LR($1$) languages are indeed equivalent to DCFG languages, but
+% the answer hinges on the distinction
+%   between LR($1$) languages and LR($1$) grammars.
+% To actually produce an LR($1$) parser for a given language,
+%   one needs to find an ‟\emph{LR($1$) grammar}” for the language.
+% Such a grammar is amenable to
+%   the automatic production of an LR($1$) parser.
+% However, the time for obtaining this LR($1$) grammar and
+%   then processing it to produce an LR($1$) parser,
+%   as well as resulting parser's size,
+%   though polynomial, are prohibitive.
+% 
+% How does \Self compare
+% with popular LL($*$)~\cite{Parr:2011} parser generators such
+%   as ANTLR~\cite{Parr:1995}
+% in terms of grammar expressive power?
+%   As it turns out, LL($*$) grammars of do not contain the set
+%     of LALR($1$) grammars†{LL($*$) fails to handle left-recursive
+%     grammars~\cite{Parr:2011}.},
+% neither are they contained in it. 
+% If fact LL($*$) grammars
+%   can handle even some languages which are not only nondeterministic, 
+%    but also non-context-free.
 
-How does \Self compare
-with popular LL($*$)~\cite{Parr:2011} parser generators such
-  as ANTLR~\cite{Parr:1995}
-in terms of grammar expressive power?
-  As it turns out, LL($*$) grammars of do not contain the set
-    of LALR($1$) grammars†{LL($*$) fails to handle left-recursive
-    grammars~\cite{Parr:2011}.},
-neither are they contained in it. 
-If fact LL($*$) grammars
-  can handle even some languages which are not only nondeterministic, 
-   but also non-context-free.
+The last construct we remind, is the less known \emph{Simple Jump Deterministic Pushdown Automaton},
+the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder:05}.
 
+\begin{Definition}[Simple-Jump Deterministic Pushdown Automaton]
+  \label{Definition:JDPDA}
+  \slshape
+  A \emph{simple-jump deterministic pushdown automaton} (jump-DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
+  where~$Q,\Gamma,q_0,A$ are exactly as in~\cref{Definition:DPDA},
+  and~$δ$ is the 
+  \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛(Q⨉Γ^*)∪(Q⨉❴E❵⨉Γ)$
+  (E is a special symbol which means ``erase'').
+  \par
+  A jump-DPDA begins its work like a general DPDA\@. 
+  \par
+  Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack. 
+  If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA.
+  If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped,and the automaton
+  moves to state~$q$, but in addition, stack elements are popped until
+  popping a single~$γ'$. 
+  If there is no~$γ'$ in the stack, the result is undefined.
+  \par
+  If~$γ$ is undefined, i.e., the stack is empty, the automaton accepts the input and halts.
+  The same happens if~$q∈A$.
+  \par
+  If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+\end{Definition}
+
+A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
+  as defined in~\cref{Definition:JDPDA} 
+  that supplies~\cref{Definition:realtime}.
+  
 \subsection{Fluent APIs realizing Deterministic Context Free Grammars}
 The following definition is pertinent.
 Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
