@@ -210,7 +210,7 @@ On the other hand, DPDA are easier to parse:
 \begin{Definition}
   \label{Definition:realtime}
   \slshape
-We say a DPDA supplies the \emph{runtime condition} if 
+We say a DPDA supplies the \emph{realtime condition} if 
   for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
 \end{Definition}
 % Where do LR($1$) languages stand with respect to DCFG context free languages?
@@ -250,7 +250,7 @@ the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder
   \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛(Q⨉Γ^*)∪(Q⨉❴E❵⨉Γ)$
   (E is a special symbol which means ``erase'').
   \par
-  A jump-DPDA begins its work like a general DPDA. 
+  A jump-DPDA begins its work like a general DPDA\@. 
   \par
   Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack. 
   If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA.
@@ -265,9 +265,9 @@ the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder
   If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
 \end{Definition}
 
-A runtime simple-jump deterministic pushdown automaton is a jump-DPDA
+A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
   as defined in~\cref{Definition:JDPDA} 
-  that supplies~\cref{Definition:runtime}.
+  that supplies~\cref{Definition:realtime}.
   
 \subsection{Fluent APIs realizing Deterministic Context Free Grammars}
 The following definition is pertinent.
