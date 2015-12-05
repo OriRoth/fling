@@ -8,7 +8,7 @@ A DPDA is allowed to make a transition into a different state,
   all without consuming a single input symbol.
 
 In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
-A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
+A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however deterministic
   they are.
 The following definition is of a deterministic pushdown automata without such moves.
 
@@ -79,7 +79,7 @@ Each such edge takes the weight~$1-|ζ|$ to denote the fact
     while~$|ζ|$ (which could also be zero), are pushed.
 The value of~$k$ is simply the heaviest path in this graph.
 
-In the former graph, cycles might occour.
+In the former graph, cycles might occur.
 Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the
   stack, and therefore, the required~$ε$-closure cannot be computed.
 As shown by someone~\cite{i:need:to::find:it}, DPDAs with no~$ε$-moves are less expressive than a normal DPDAs,
@@ -103,7 +103,7 @@ The other components of~$Sₘ$ are constructed as follows:
     The~$ε$-closure of~$(q,ζ)$ is the series of consecutive~$ε$-transitions from~$δ$
     that end with a single ‟input consuming” transition.
     This computation is possible due to the definition of~$k$, that assures us, that during this ‟static”
-    computition on~$δ$, we will at all times know the top of the stack, and therefore, this computition
+    computation on~$δ$, we will at all times know the top of the stack, and therefore, this computation
     is viable.
  \end{itemize}
 
