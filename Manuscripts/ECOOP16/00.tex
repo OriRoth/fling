@@ -29,22 +29,11 @@
 \author{Anonymized for the submission}
 
 \begin{document}
+\makesureyourun "make graphs", and then remove this line
 \begin{wrapfigure}r{40ex}%
   \caption{\label{Figure:kill} Compile time (sec) \emph{vs.} nasty program length}%
-  \begin{gnuplot}[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]
-    # set border 3
-    set bmargin 3 
-    set tmargin 0.4
-    set rmargin 0.2
-    set lmargin 6
-    set format y "2^{%L}"
-    set datafile separator ","
-    set logscale y 2
-    set logscale x 2
-    set ylabel "Time (sec)"
-    set xlabel "size" 
-    set xrange [1:35]
-    plot "../Figures/kill.csv" every ::1 using 1:2 notitle with linespoints
+  \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
+
   \end{gnuplot}%
 \end{wrapfigure}%
 

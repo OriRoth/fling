@@ -1,11 +1,11 @@
 We coninue on our journey to encode DPDA in \Java.
-In this section we encode the tricky ``jump'' action defined in~\cref{Definition:JDPDA}.
+In this section we encode the tricky ‟jump” action defined in~\cref{Definition:JDPDA}.
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
   except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations,
     which means
   ‟repetetively pop elements from the stack up to and including the first occurrence of~$γ$”.
-Let $k=|\Gamma|$. 
+Let~$k=|Γ|$.
 
 \begin{wrapfigure}[16]{r}{42ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
@@ -21,7 +21,7 @@ elements are drawn from type~\cc{$Γ$}
 Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)),
   the generic type \cc{JS} which encodes jump-stacks, takes
   a \cc{Rest} parameter which is the type of a jump-stack after popping.
-In addition \cc{JS} takes $k$ type parameters, one for~$γ∈Γ$,
+In addition \cc{JS} takes~$k$ type parameters, one for~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
   operation.
 In the figure, there are two such parameters: \cc{J\_$γ$1}, and
@@ -41,9 +41,8 @@ The type hierarchy rooted at \cc{JS} is similar to that of
 \cc{JS.E} encodes an empty jump-stack; \cc{JS.¤} encodes a jump-stack in error,
 e.g., a after popping from \cc{JS.E}.
 
-
-Type \cc{JS.P} (line 15 in the figure) makes  the third specialization of \cc{JS}, representing 
-Type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes  the third specialization of \cc{JS}, encoding 
+Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, representing
+Type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
 Just like in \cref{Figure:id}, there are no overriden functions in \cc{JS.P}; it achieves
   its purpose by the parameters it takes and those it passes
@@ -54,18 +53,18 @@ Just like in \cref{Figure:id}, there are no overriden functions in \cc{JS.P}; it
   \javaInput[minipage,width=43ex,left=-2ex]{jump-stack-push.listing}
 \end{wrapfigure}
 
-Specifically, \cc{JS.P} takes 
+Specifically, \cc{JS.P} takes
 the same \cc{Top} and \cc{Rest} paramters (ll.16--17) as type \cc{Stack.P}:
-  as well as $k$ additional paramters:
+  as well as~$k$ additional paramters:
   \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.18--18)
 which are the types encoding the jump-stack
   after the executation~$\textsf{jump}(γᵢ)$,~$i=1,2$.
-Type \cc{JP.P'} passes these four parameters 
+Type \cc{JP.P'} passes these four parameters
 to type \cc{Pʹ} which it extends (l.21)
-The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of \cc{P}, i.e., 
+The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e.,
   \cc{P<Top, Rest, J\_γ1, J\_γ2>}.
 
 The auxliary type \cc{JS.Pʹ} itself is depicted in \cref{Figure:jump-stack}.
-Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it, 
-\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump}) 
-
+By extending type \cc{JS} and passing the correct \cc{Rest} (respectively \cc{J\_$γ$1}, \cc{J\_$γ$2})
+ parameter to it, \cc{JS.Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
+ (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
