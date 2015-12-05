@@ -1,0 +1,52 @@
+A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
+  except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations,
+    which means
+  ‟repetetively pop elements from the stack up to and including the first occurrence of~$γ$”.
+
+\begin{wrapfigure}[16]{r}{42ex}
+  \caption{Skeleton of type encoding for the jump-stack data structure}%
+  \label{Figure:jump}%
+  \javaInput[minipage,left=-2ex]{jump-stack.listing}
+\end{wrapfigure}
+
+\Cref{Figure:jump} shows the skeleton of type-encoding of a jump-stack whose
+elements are drawn from type~\cc{$Γ$}
+(\cref{Figure:unary-function}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
+
+Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)),
+  the generic type \cc{JS} which encodes jump-stacks, takes
+  a \cc{Rest} parameter which is the type of a jump-stack after popping.
+  In addition \cc{JS} takes a type parameter for each~$γ∈Γ$,
+  which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
+  operation.
+In the figure, since~$Γ=❴γ₁,γ₂❵$, there are two such parameters:
+  \cc{J\_$γ$1}, and
+  \cc{J\_$γ$2}.
+
+Functions defined in \cc{JS} include not only the standard stack opertions: \cc{top},
+\cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
+  but also functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
+  which encode~$\textsf{jump}(γᵢ)$
+  thanks to the return type being~\cc{J\_$γ$i},~$i=1,2$.
+
+The type hierarchy rooted at \cc{JS} is similar to that of
+\cref{Figure:stack-encoding}(a):
+  there are a three specialiazed versions of \cc{JS}.
+  Two of these are parameterless and are
+  almost identical to their \cc{Stack}
+  counterparts:
+\cc{JS.E} encodes an empty jump-stack, \cc{JS.¤} encodes a jump-stack in error,
+e.g., a after popping from \cc{JS.E}.
+
+\begin{wrapfigure}[7]r{49ex}
+  \caption{\label{Figure:jump-stack-push} Type \cc{JS.P} encoding a non-empty jump-stack}
+  \javaInput[minipage,width=49ex,left=-2ex]{jump-stack-P.listing}
+\end{wrapfigure}
+
+Type \cc{JS.P}, the third specialization of \cc{JS},
+  takes the same \cc{Top} and \cc{Rest} paramters as type \cc{Stack.P},
+  but also two more paramters:
+\cc{J\_$γ$1} and \cc{J\_$γ$2}
+which are the types encoding the jump-stack
+  after~$\textsf{jump}(γᵢ)$,~$i=1,2$.
+
