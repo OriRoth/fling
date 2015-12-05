@@ -1,10 +1,8 @@
 package automaton;
 
-import automaton.Domain.JS;
-import automaton.Domain.JS.E;
-import automaton.Domain.JS.P;
-import automaton.Domain.JS.¤;
 import automaton.Domain.Stack;
+import automaton.Domain.Stack.E;
+import automaton.Domain.Stack.P;
 import automaton.Domain.f;
 import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
@@ -32,28 +30,11 @@ public class DomainDemo {
     γ1 _1 = f.r1().s1(); // ✓ ¢$f(r_1,s_1) = \gamma_1$¢
     γ2 _2 = f.r1().s2(); // ✓ ¢$f(r_1,s_2) = \gamma_2$¢
     γ2 _3 = f.r2().s1(); // ✓ ¢$f(r_2,s_1) = \gamma_2$¢
-    f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{$\scriptsize\Gamma$'}¢
+    f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{$\scriptsize \Gamma$'}¢
   }
   public static void use_cases_of_stack() {
     // Create a stack a with five items in it:
     P<γ1, P<γ1, P<γ2, P<γ1, P<γ1, E>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1();
-    P<γ1, P<γ2, P<γ1, P<γ1, E>>>> _2 = _1.pop(); // ✓ Pop one item
-    P<γ2, P<γ1, P<γ1, E>>> _3 = _2.pop();        // ✓ Pop another item
-    P<γ1, P<γ1, E>> _4 = _3.pop();               // ✓ Pop yet another item
-    P<γ1, E> _5 = _4.pop();                      // ✓ Pop penultimate item
-    γ1 _6 = _5.top();                            // ✓ Examine last item
-    E _7 = _5.pop();                             // ✓ Pop last item
-    Stack.¤ _8 = _7.pop();                       // ✗ Cannot pop from an empty stack
-    Γʹ.¤ _9 = _7.top();                          // ✗ empty stack has no top element
-  } 
-  
-  public static void use_cases_of_jump_stack() {
-    // Create a stack a with five items in it:
-    E empty = JS.empty;
-    P<γ1,E,E,¤> γ1 = empty.γ1();
-    P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤> γ12 = γ1.γ1();
-    P<γ2,P<γ2,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>>,P<γ1,E,E,¤>,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>> γ2 = γ12.γ2();
-    P<γ1, E, P<γ1, E, P<γ2, E, P<γ1, E, E, ¤>, P<γ1, E, P<γ1, E, E, ¤>, ¤>>, P<γ1, E, P<γ1, E, E, ¤>, ¤>>, P<γ1, E, P<γ1, E, E, ¤>, ¤>> _1 = JS.empty.γ1().γ1().γ2().γ1().γ1();
     P<γ1, P<γ2, P<γ1, P<γ1, E>>>> _2 = _1.pop(); // ✓ Pop one item
     P<γ2, P<γ1, P<γ1, E>>> _3 = _2.pop(); // ✓ Pop another item
     P<γ1, P<γ1, E>> _4 = _3.pop(); // ✓ Pop yet another item
@@ -64,6 +45,8 @@ public class DomainDemo {
     Γʹ.¤ _9 = _7.top(); // ✗ empty stack has no top element
   } 
   
+
+  
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {}
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
@@ -71,7 +54,6 @@ public class DomainDemo {
     E _3 = Stack.empty;
     Peep<?, E> _4 = peep(_3);
   }
- 
   public static Peep<?, E> peep(E _) { return null; } // First overloaded version of ¢\cc{peep()}¢
   public static                                       // Second overloaded version of ¢\cc{peep()}¢
     <Top extends Γ, Rest extends Stack<?>> // Two generic parameters

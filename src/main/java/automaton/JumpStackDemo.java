@@ -8,6 +8,7 @@ import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
+//@formatter:off
 enum a {
   ;
   public static void use_cases_of_jump_stack() {

@@ -82,7 +82,19 @@ public class Domain {
         @Override public ¤ γ2() { return null; }
     }
   }
-  
+  //@Formatter:on
+  private interface Pʹ<// generic parameters: 
+  Top extends Γ, 
+  Rest extends JS<?,?,?>, 
+  J_γ1 extends JS<?,?,?>, 
+  J_γ2 extends JS<?,?,?>,
+  Me extends JS<?,?,?>
+ >
+   extends JS<Rest, J_γ1, J_γ2> {
+     @Override public Top top();
+     @Override P<γ1, Me, Me,   J_γ2> γ1();
+     @Override P<γ2, Me, J_γ2, Me> γ2();
+   }
   public interface JS<  // Generic parameters
       Rest extends JS<?,?,?>, 
       J_γ1 extends JS<?,?,?>, 
