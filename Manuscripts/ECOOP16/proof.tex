@@ -77,33 +77,33 @@ Each such edge takes the weight~$1-|ζ|$ to denote the fact
   that the total ‟charge” to the stack is~$1-|ζ|$:
     one stack element (specifically~$γ$) is popped,
     while~$|ζ|$ (which could also be zero), are pushed.
-The value of $k$ is simply the heaviest path in this graph. 
+The value of~$k$ is simply the heaviest path in this graph.
 
 In the former graph, cycles might occour.
-Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the 
-  stack, and therefore, the required~$\epsilon$-closure cannot be computed.
-As shown by someone~\cite{i:need:to::find:it}, DPDAs with no $\epsilon$-moves are less expressive than a normal DPDAs,
+Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the
+  stack, and therefore, the required~$ε$-closure cannot be computed.
+As shown by someone~\cite{i:need:to::find:it}, DPDAs with no~$ε$-moves are less expressive than a normal DPDAs,
   and therefore, not all DPDA can be computed.
-  
+
 Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
-Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$S_m=⟨Q_m,Γ,q_{0m},A_m,δ_m⟩$ 
+Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
   of order k, the corresponding SDPDA.
 Notice that the stack elements are the same in both.
-The other components of $S_m$ are constructed as follows:
+The other components of~$Sₘ$ are constructed as follows:
 \begin{itemize}
- \item $Q_m$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$ 
- \item $q_{0m}$ is the state $(q₀,\vdash^{k-1}\gamma)$ where~$\gamma$ is the stack start element of~$Γ$.
- \item $A_m$ is the set~$❴(q,ζ)\in Q_m | q \in A❵$
- \item for $\delta(q,\gamma,\sigma) = (q',\zeta)$
+ \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
+ \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the stack start element of~$Γ$.
+ \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
+ \item for~$δ(q,γ,σ) = (q',ζ)$
  \begin{itemize}
-  \item if $\sigma\neq\epsilon$ than for all $(q,\zeta'\gamma')$ such that $\zeta'\gamma \in \Gamma^k$
-    we define $\delta_m(q,\zeta'\gamma,\sigma)=(q',\zeta'\zeta)$
-  \item if $\sigma = \epsilon$ then~$\delta_m(q,\zeta,\epsilon)=(q',\zeta')$ when~$(q',\zeta')$ 
-    is the~$\epsilon$-closure on~$(q,\zeta)$.
-    The~$\epsilon$-closure of~$(q,\zeta)$ is the series of consecutive $\epsilon$-transitions from $\delta$
-    that end with a single ``input consuming'' transition. 
-    This computation is possible due to the definition of~$k$, that assures us, that during this ``static''
-    computition on~$\delta$, we will at all times know the top of the stack, and therefore, this computition
+  \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$
+    we define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
+  \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$
+    is the~$ε$-closure on~$(q,ζ)$.
+    The~$ε$-closure of~$(q,ζ)$ is the series of consecutive~$ε$-transitions from~$δ$
+    that end with a single ‟input consuming” transition.
+    This computation is possible due to the definition of~$k$, that assures us, that during this ‟static”
+    computition on~$δ$, we will at all times know the top of the stack, and therefore, this computition
     is viable.
  \end{itemize}
 
@@ -114,7 +114,7 @@ The other components of $S_m$ are constructed as follows:
   \label{Theorem:SDPDA}
   For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
   the command \[
-    \cc{A _ = M.build $\textsf{java}(α)$.\$()};
+    \cc{A_= M.build~$\textsf{java}(α)$.\$()};
   \]
   compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
 \end{Theorem}
