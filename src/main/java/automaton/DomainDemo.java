@@ -1,8 +1,9 @@
 package automaton;
 
-import automaton.Domain.Stack;
-import automaton.Domain.Stack.E;
-import automaton.Domain.Stack.P;
+import automaton.Domain.JS;
+import automaton.Domain.JS.E;
+import automaton.Domain.JS.P;
+import automaton.Domain.JS.¤;
 import automaton.Domain.f;
 import automaton.Domain.Γʹ;
 import automaton.Domain.Γʹ.Γ;
@@ -39,9 +40,26 @@ public class DomainDemo {
     f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{$\scriptsize
                      // \Gamma$'}¢
   }
-  public static void use_cases_of_stack() {
+//  public static void use_cases_of_stack() {
+//    // Create a stack a with five items in it:
+//    P<γ1, P<γ1, P<γ2, P<γ1, P<γ1, E>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1();
+//    P<γ1, P<γ2, P<γ1, P<γ1, E>>>> _2 = _1.pop(); // ✓ Pop one item
+//    P<γ2, P<γ1, P<γ1, E>>> _3 = _2.pop(); // ✓ Pop another item
+//    P<γ1, P<γ1, E>> _4 = _3.pop(); // ✓ Pop yet another item
+//    P<γ1, E> _5 = _4.pop(); // ✓ Pop penultimate item
+//    γ1 _6 = _5.top(); // ✓ Examine last item
+//    E _7 = _5.pop(); // ✓ Pop last item
+//    Stack.¤ _8 = _7.pop(); // ✗ Cannot pop from an empty stack
+//    Γʹ.¤ _9 = _7.top(); // ✗ empty stack has no top element
+//  } 
+  
+  public static void use_cases_of_jump_stack() {
     // Create a stack a with five items in it:
-    P<γ1, P<γ1, P<γ2, P<γ1, P<γ1, E>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1();
+    E empty = JS.empty;
+    P<γ1,E,E,¤> γ1 = empty.γ1();
+    P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤> γ12 = γ1.γ1();
+    P<γ2,P<γ2,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>>,P<γ1,E,E,¤>,P<γ1,P<γ1,P<γ1,E,E,¤>,P<γ1,E,E,¤>,¤>,P<γ1,E,E,¤>,¤>> γ2 = γ12.γ2();
+    P<γ1, E, P<γ1, E, P<γ2, E, P<γ1, E, E, ¤>, P<γ1, E, P<γ1, E, E, ¤>, ¤>>, P<γ1, E, P<γ1, E, E, ¤>, ¤>>, P<γ1, E, P<γ1, E, E, ¤>, ¤>> _1 = JS.empty.γ1().γ1().γ2().γ1().γ1();
     P<γ1, P<γ2, P<γ1, P<γ1, E>>>> _2 = _1.pop(); // ✓ Pop one item
     P<γ2, P<γ1, P<γ1, E>>> _3 = _2.pop(); // ✓ Pop another item
     P<γ1, P<γ1, E>> _4 = _3.pop(); // ✓ Pop yet another item

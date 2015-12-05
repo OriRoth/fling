@@ -17,7 +17,6 @@ import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
 
-
 /**
  * This is were we place code that must compile correctly. To be extracted and
  * placed as part of LaTeX documents.
@@ -46,7 +45,7 @@ public class Domain {
       }
     }
   } 
-  
+  // id.listing
   interface ID<T extends ID<?>> {
     default T id() { return null; }
   }
@@ -54,7 +53,7 @@ public class Domain {
   abstract class B<Z extends B<?>> implements ID<Z> { /**/ }
   class C extends B<C> { /**/ }
 
-  //stack.listing
+  // stack.listing
   public static abstract class Stack<Rest extends Stack<?>> { 
     public abstract Γʹ top();      
     public abstract Rest pop();    
@@ -83,7 +82,7 @@ public class Domain {
         @Override public ¤ γ2() { return null; }
     }
   }
-  
+  // jump-stack.listing
   public interface JS<Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?> > {
     Γʹ top();
     Rest pop();
@@ -110,8 +109,8 @@ public class Domain {
         J_γ2 extends JS<?, ?, ?>
     > extends JS<Rest, J_γ1, J_γ2> {
         @Override public Top top();
-        @Override P<γ1, Rest, P<Top, Rest,  J_γ1,  J_γ2>, J_γ2> γ1();
-        @Override P<γ2, Rest, J_γ1, P<Top, Rest,  J_γ1,  J_γ2>> γ2();
+        @Override P<γ1, P<γ1,P<Top, Rest,  J_γ1,  J_γ2>,P<Top, Rest,  J_γ1,  J_γ2>,J_γ2>, P<Top, Rest,  J_γ1,  J_γ2>, J_γ2> γ1();
+        @Override P<γ2, P<γ2,P<Top, Rest,  J_γ1,  J_γ2>,J_γ1,P<Top, Rest,  J_γ1,  J_γ2>>, J_γ1, P<Top, Rest,  J_γ1,  J_γ2>> γ2();
     }
     public static final E empty = null;
   }
