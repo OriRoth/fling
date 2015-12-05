@@ -9,11 +9,12 @@ LISTINGS=
 LISTINGS+=abc.listing 
 LISTINGS+=binary-function-example.listing 
 LISTINGS+=binary-function.listing 
-LISTINGS+=peep.listing 
 LISTINGS+=gamma-example.listing 
 LISTINGS+=gamma.listing 
 LISTINGS+=id.listing
+LISTINGS+=jump-stack.listing 
 LISTINGS+=mammal.listing 
+LISTINGS+=peep.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -27,6 +28,14 @@ $(MAIN).pdf: latex $(wildcard *.sty *.tex)
 
 DOMAIN=../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
+
+jump-stack.listing: $(DOMAIN)
+	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
+		| grep -v Override  \
+    | awk 'BEGIN{RS="{[\n\t ]+}\n"; ORS="{ … }\n"}{print}' \
+		| head -n -1 \
+	  | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	
 
 stack.listing: $(DOMAIN)
 	awk '/^.*Stack *<Rest.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -61,6 +70,7 @@ abc.listing: $(DOMAIN_DEMO)
 
 peep.listing:  $(DOMAIN_DEMO)
 		awk '/^.*Peep *<.*$$/,/^ *peep.P.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
+
 
 
 warnings:	

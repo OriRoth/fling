@@ -84,42 +84,37 @@ public class Domain {
     }
   }
   
-  public interface JumpStack<
-      Rest extends JumpStack<?, ?, ?>, 
-      Jump_γ1 extends JumpStack<?, ?, ?>, 
-      Jump_γ2 extends JumpStack<?, ?, ?>
-  > {
-  Γʹ top();
-  Rest pop();
-  JumpStack<?, ?, ?> γ1();
-  JumpStack<?, ?, ?> γ2();
-  Jump_γ1 jump_γ1();
-  Jump_γ2 jump_γ2();
-
-  interface ¤ extends JumpStack<¤, ¤, ¤> {
-    @Override public Γʹ.¤ top();
-    @Override public ¤ pop();
-    @Override public ¤ γ1();
-    @Override public ¤ γ2();
+  public interface JS<Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?> > {
+    Γʹ top();
+    Rest pop();
+    JS<?, ?, ?> γ1();
+    JS<?, ?, ?> γ2();
+    J_γ1 jump_γ1();
+    J_γ2 jump_γ2();
+    interface ¤ extends JS<¤, ¤, ¤> {
+      @Override public Γʹ.¤ top();
+      @Override public ¤ pop();
+      @Override public ¤ γ1();
+      @Override public ¤ γ2();
+    }
+    public interface E extends JS<¤, ¤, ¤> {
+      @Override public Γʹ.¤ top();
+      @Override public ¤ pop();
+      @Override public P<γ1, E, E, ¤> γ1();
+      @Override public P<γ2, E, ¤, E> γ2();
+    }
+    public interface P<
+        Top extends Γ, 
+        Rest extends JS<?, ?, ?>,    
+        J_γ1 extends JS<?, ?, ?>,  
+        J_γ2 extends JS<?, ?, ?>
+    > extends JS<Rest, J_γ1, J_γ2> {
+        @Override public Top top();
+        @Override P<γ1, Rest, P<Top, Rest,  J_γ1,  J_γ2>, J_γ2> γ1();
+        @Override P<γ2, Rest, J_γ1, P<Top, Rest,  J_γ1,  J_γ2>> γ2();
+    }
+    public static final E empty = null;
   }
-  public interface E extends JumpStack<¤, ¤, ¤> {
-    @Override public Γʹ.¤ top();
-    @Override public ¤ pop();
-    @Override public P<γ1, E, E, ¤> γ1();
-    @Override public P<γ2, E, ¤, E> γ2();
-  }
-  public interface P< // Generic parameters:
-      Top extends Γ, 
-      Rest extends JumpStack<?, ?, ?>,    
-      Jump_γ1 extends JumpStack<?, ?, ?>,  
-      Jump_γ2 extends JumpStack<?, ?, ?>
-  > extends JumpStack<Rest, Jump_γ1, Jump_γ2> {
-    @Override public Top top();
-    @Override P<γ1, Rest, P<Top, Rest,  Jump_γ1,  Jump_γ2>, Jump_γ2> γ1();
-    @Override P<γ2, Rest, Jump_γ1, P<Top, Rest,  Jump_γ1,  Jump_γ2>> γ2();
-  }
-  public static final E empty = null;
-}
   
   //binary-function.listing
   public static abstract class f { // Starting point of fluent API
