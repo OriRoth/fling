@@ -1,13 +1,13 @@
-We coninue on our journey to encode DPDA in \Java.
+We continue on our journey to encode DPDA in \Java.
 In this section we encode the tricky ‟jump” action defined in~\cref{Definition:JDPDA}.
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
   except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations,
     which means
-  ‟repetetively pop elements from the stack up to and including the first occurrence of~$γ$”.
+  ‟repetitively pop elements from the stack up to and including the first occurrence of~$γ$”.
 Let~$k=|Γ|$.
 
-\begin{wrapfigure}[16]{r}{42ex}
+\begin{wrapfigure}[18]{r}{42ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \lstset{style=numbered}
@@ -27,53 +27,53 @@ In addition \cc{JS} takes~$k$ type parameters, one for each~$γ∈Γ$,
 In the figure, there are two such parameters: \cc{J\_$γ$1}, and
   \cc{J\_$γ$2}.
 
-Functions defined in \cc{JS} include not only the standard stack opertions: \cc{top},
+Functions defined in \cc{JS} include not only the standard stack operations: \cc{top},
 \cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
   but also functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   which encode~$\textsf{jump}(γᵢ)$
-  thanks to the return type being~\cc{J\_$γ$i},~$i=1,2$.
+  thanks to the return type being~\cc{J\_$γ$$i$},~$i=1,2$.
 
 The type hierarchy rooted at \cc{JS} is similar to that of
 \cref{Figure:stack-encoding}(a):
-  Two of the specializations are parameterless and are
+Two of the specializations are parameter-less and are
   almost identical to their \cc{Stack}
   counterparts:
 \cc{JS.E} encodes an empty jump-stack; \cc{JS.¤} encodes a jump-stack in error,
-e.g., a after popping from \cc{JS.E}. 
+e.g., a after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
 Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, representing
 Type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
-Just like in \cref{Figure:id}, there are no overriden functions in \cc{JS.P}; it achieves
+Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it achieves
   its purpose by the parameters it takes and those it passes
   to the type it extends.
 
-\begin{wrapfigure}[10]r{43ex}
-  \caption{\label{Figure:jump-stack-push} Type \cc{JS.P} encoding a non-empty jump-stack}
-  \javaInput[minipage,width=43ex,left=-2ex]{jump-stack-push.listing}
+\begin{wrapfigure}[12]r{30ex}
+  \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
+  \javaInput[minipage,width=30ex,left=-2ex]{jump-stack-push.listing}
 \end{wrapfigure}
 
 Specifically, \cc{JS.P} takes
-the same \cc{Top} and \cc{Rest} paramters (ll.16--17) as type \cc{Stack.P}:
-  as well as~$k$ additional paramters:
+the same \cc{Top} and \cc{Rest} parameters (ll.16--17) as type \cc{Stack.P}:
+  as well as~$k$ additional parameters:
   \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.18--18)
 which are the types encoding the jump-stack
-  after the executation~$\textsf{jump}(γᵢ)$,~$i=1,2$.
+  after the execution~$\textsf{jump}(γᵢ)$,~$i=1,2$.
 Type \cc{JP.P'} passes these four parameters
 to type \cc{Pʹ} which it extends (l.21)
 The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e.,
   \cc{P<Top, Rest, J\_γ1, J\_γ2>}.
 
-The auxliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
+The auxiliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
 By extending type \cc{JS} and passing the correct \cc{Rest} (respectively \cc{J\_$γ$1}, \cc{J\_$γ$2})
   parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
   (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
 More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} that extends it,
-  along with its actual paramers.
-The return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succintly.
-Conisder, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$, the return type of \cc{$γ$1()}.
-Type~$τ$ is a generic instantation of \cc{J.P}, to say that after pushing~\cc{$γ$1},
+  along with its actual parameters.
+The return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succinctly.
+Consider, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$, the return type of \cc{$γ$1()}.
+Type~$τ$ is a generic instantiation of \cc{J.P}, to say that after pushing~\cc{$γ$1},
   we obtain a compound jump-stack.
   whose top element is \cc{$γ$1}, while the rest of the stack is
   the type of the receiver.
@@ -85,17 +85,16 @@ Type~$τ$ is a generic instantation of \cc{J.P}, to say that after pushing~\cc{$
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
 \cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump})
 
-Use cases for the encoded jump stack data structure in presented in \cref{Figure:jump-stack-example}.
-
 \begin{wrapfigure}[12]r{63ex}
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=63ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
 
-\cc{\_1} represents a stack that has been pushed \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1}.
-Its first type argument is the Top,~$\gamma1$.
-The second and third arguments,~\cc{Rest} and~\cc{J\_$γ$1} correspondingly,
-  are represented by the same type, since the top of the stack is type~\cc{$γ$1}
-  former~$\textsf{jump}(γᵢ)$ pops only the topmost element.
-The last argument is~\cc{JS.E} represents~\cc{J\_$γ$2}, and truly,
-  operation~$\textsf{jump}(γ₂)$ in that case causes popping the whole stack.
+Use cases for the encoded jump stack data structure are presented in \cref{Figure:jump-stack-example}.
+The type of variable \cc{\_1} encodes a stack into which \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1} were pushed
+  (in this order).
+Examining the type of \cc{\_2} we see that executing \cc{jump\_$γ$2} on
+  \cc{\_1}, yields the empty stack in a single step.
+The type of \cc{\_3} is that state of the same stack
+  after executing~\cc{jump\_$γ$1};
+  it is exactly the same as popping a single element from the stack.

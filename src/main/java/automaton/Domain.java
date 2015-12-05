@@ -83,7 +83,8 @@ public class Domain {
     }
   }
   //@Formatter:on
-  private interface Pʹ<// ¢$2+k+1$¢ generic arguments: 
+  private interface Pʹ<
+  // ¢$2+k+1$¢ generic arguments: 
     Top extends Γ,   
     Rest extends JS<?,?,?>, 
     J_γ1 extends JS<?,?,?>, 

@@ -9,7 +9,7 @@ We argue that~$g$ can
   \cref{Figure:unary-function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
   and~$g(γ₂)=⊥$, i.e.,~$g(γ₂)$ is undefined.%
 †{Unless otherwise stated,
-      all code exerpts here represent full implementations,
+      all code excerpts here represent full implementations,
       and automatically extracted, omitting headers and footers,
     from \Java programs that compile correctly with a \Java 8 compiler}
 
@@ -82,7 +82,7 @@ With the absence of multi-methods, other techniques must be used.
 Consider the partial binary function~$f: R⨉S↛Γ$, defined by
 \begin{equation}
   \label{Equation:simple-binary}
-  \begin{array}{ccc}
+  \begin{array}{*3c}
     R=❴r₁,r₂❵ & f(r₁,s₁)=γ₁ & f(r₂,s₁)=γ₁⏎
     S=❴s₁,s₂❵ & f(r₁,s₂)=γ₂ & f(r₂, s₂)=⊥
   \end{array}.
@@ -139,7 +139,7 @@ Genericity can be employed to serve this end.
 
 \begin{wrapfigure}[8]{r}{29ex}
   \caption{\label{Figure:id}%
-  Covrariant return type of function \cc{id()}
+  Covariant return type of function \cc{id()}
   with \Java generics.
   }
   \javaInput[left=-2ex,minipage,width=29ex]{id.listing}
@@ -190,7 +190,7 @@ This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parame
 Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
 
 \Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of
-of type \cc{Stak} and its subtypes.
+of type \cc{Stack} and its subtypes.
 \Cref{Figure:stack-encoding}(b).
 gives the implementation of these types.
 
@@ -227,7 +227,7 @@ In fact, this recursive generic type technique can used to encode S-expressions:
   with co-variant \cc{car()} and \cc{cdr()} methods.
 
 A standard technique of template programming in \CC is to encode conditionals with template specialization.
-Since \Java forbids specialization of generics, we used in lieu covraiant overloading of function
+Since \Java forbids specialization of generics, we used in lieu covariant overloading of function
   return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
   return type of of \cc{top()} in \cref{Figure:stack-encoding}).
 
@@ -272,5 +272,5 @@ Obtaining~$τ$ from \cc{top()} does
   not make it possible to define variables, function return types, and
   parameters to functions and generics whose type is~$τ$ or depends on it in any way.
 However, since \cc{Peep} is a type that receives~$τ$ as parameter,
-  the body of \cc{Peep} is free to define e.g., functions signature includes on $\tau$, 
-  or pass $\tau$ further to other generics. 
+  the body of \cc{Peep} is free to define e.g., functions signature includes on~$τ$,
+  or pass~$τ$ further to other generics.
