@@ -13,6 +13,9 @@ LISTINGS+=gamma-example.listing
 LISTINGS+=gamma.listing 
 LISTINGS+=id.listing
 LISTINGS+=jump-stack.listing 
+LISTINGS+=jump-stack-currency.listing 
+LISTINGS+=jump-stack-E.listing 
+LISTINGS+=jump-stack-P.listing 
 LISTINGS+=mammal.listing 
 LISTINGS+=peep.listing 
 LISTINGS+=spda.listing 
@@ -26,8 +29,9 @@ latex: $(wildcard *.sty *.tex) $(LISTINGS)
 $(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
-DOMAIN=../../src/main/java/automaton/Domain.java 
+DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
+
 
 jump-stack.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
@@ -35,6 +39,21 @@ jump-stack.listing: $(DOMAIN)
     | awk 'BEGIN{RS="{[\n\t ]+}\n"; ORS="{ … }\n"}{print}' \
 		| head -n -1 \
 	  | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+jump-stack-currency.listing: $(DOMAIN)
+	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
+	| awk '/^.*interface *¤ .*$$/,/^    }.*$$/' $< | sed 's/^    //' \
+	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+jump-stack-E.listing: $(DOMAIN)
+	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
+	| awk '/^.*interface *E .*$$/,/^    }.*$$/' | sed 's/^    //' \
+	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+jump-stack-P.listing: $(DOMAIN)
+	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
+	| awk '/^.*interface *P *<.*$$/,/^    }.*$$/' | sed 's/^    //' \
+	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 	
 
 stack.listing: $(DOMAIN)

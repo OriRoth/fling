@@ -11,17 +11,11 @@ import automaton.Domain.Γʹ.Γ.γ2;
 
 //@Formatter:off
 public class DomainDemo {
-  class Mammals {
-    /* … */ }
-
-  class Heap<M extends Mammals> {
-    /* … */}
-
-  class Whales extends Mammals {
-    /* … */}
-
-  class School<W extends Whales> extends Heap<W> {
-    /* … */}
+  class Mammals { /* … */ }
+  class Heap<M extends Mammals> { /* … */}
+  class Whales extends Mammals { /* … */}
+  class School<W extends Whales> 
+    extends Heap<W> { /* … */}
 
   // gamma-example.listing
   public static void five_use_cases_of_function_g() {
