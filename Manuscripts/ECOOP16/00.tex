@@ -29,6 +29,23 @@
 \author{Anonymized for the submission}
 
 \begin{document}
+\begin{figure}
+  \caption{\label{Figure:kill} Compile time (sec) \emph{vs.} nasty program length}
+  \begin{center}%
+  \begin{gnuplot}[terminal=pdf,terminaloptions={color enhanced font ",10" linewidth 1}]
+    set format y "2^{%L}"
+    set datafile separator ","
+    set logscale y 2
+    set logscale x 2
+    set ylabel "Time (sec)"
+    set xlabel "size" 
+    set xrange [1:35]
+    plot "../Figures/kill.csv" every ::1 using 1:2 notitle with linespoints
+  \end{gnuplot}
+\end{center}
+\end{figure}%
+\end{document}
+
 \maketitle
 \begin{abstract}
   \input{abstract}
@@ -69,6 +86,7 @@ The main ideas behind the bootstrapping definition of \Self
     And, of course, this AST is compliant with the BNF definition
       of the fluent API.
 
+
 \section{Reminders and Preliminaries}
 \label{Section:preliminaries}
 \input{preliminaries}
@@ -80,7 +98,6 @@ The main ideas behind the bootstrapping definition of \Self
 \section{Toolkit for Type Encoding}
 \label{Section:toolkit}
 \input{toolkit}
-
 
 \section{The Jump-Stack Data-Structure}
 \label{Section:jump}

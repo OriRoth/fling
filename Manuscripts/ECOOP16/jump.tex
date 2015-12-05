@@ -39,7 +39,6 @@ The type hierarchy rooted at \cc{JS} is similar to that of
 e.g., a after popping from \cc{JS.E}.
 
 
-
 Type \cc{JS.P} (line 15 in the figure) makes  the third specialization of \cc{JS}, representing 
   a stack with one or more elements.
 There are no overriden functions in \cc{JS.P}; it achieves
@@ -65,3 +64,4 @@ The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of \cc{P}, i.e
 The auxliary type \cc{JS.Pʹ} itself is depicted in \cref{Figure:jump-stack}.
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it, 
 \cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump}) 
+
