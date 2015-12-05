@@ -22,6 +22,7 @@ LISTINGS+=spda.listing
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
 LISTINGS+=jump-stack-example.listing
+LISTINGS+=compiler.listing
 
 # Target to be used for compiles when references did not change
 latex: $(wildcard *.sty *.tex) $(LISTINGS) 
@@ -46,9 +47,13 @@ $(MAIN).blg bibtex:
 
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  
-
+COMPILER=../../src/main/java/automaton/KillCompiler.java
+  
 jump-stack-example.listing: $(DOMAIN_DEMO)
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+compiler.listing: $(COMPILER)
+	awk '/^.*class N.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 jump-stack.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \

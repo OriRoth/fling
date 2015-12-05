@@ -75,7 +75,7 @@ Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
 Use cases for the encoded jump stack data structure in presented in \cref{Figure:jump-stack-example}.
 
 \begin{wrapfigure}[12]r{63ex}
-  \caption{\label{Figure:jump-stack-example} Use cases for the ~\cc{JS} type hierarchy}
+  \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=63ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
 
@@ -86,3 +86,6 @@ The second and third arguments,~\cc{Rest} and~\cc{J_$\gamma$1} correspondingly,
   former~$\textsf{jump}(γᵢ)$ pops only the topmost element.
 The last argument is~\cc{JS.E} represents~\cc{J_$\gamma$2}, and truly,
   operation~$\textsf{jump}(γ_2)$ in that case causes popping the whole stack.
+  
+\cc{\_2} is the result of~$\textsf{jump}(γ_1)$ on~\cc{\_1}.
+As we saw the fourth type argument of~\cc{\_1}, the result's type is~\cc{JS.E}

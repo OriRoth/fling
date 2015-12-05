@@ -245,8 +245,7 @@
                   \rlap{%
                     \vtop{%
                       \vskip10mm
-%                      \colorbox[rgb]{0.99,0.78,0.07}
-                      \colorbox[rgb]{1,1,1}
+                      \colorbox[rgb]{0.99,0.78,0.07}
                                     {\@tempdima\evensidemargin
                                      \advance\@tempdima1in
                                      \advance\@tempdima\hoffset

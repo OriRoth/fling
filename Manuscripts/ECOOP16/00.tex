@@ -25,12 +25,6 @@
 \author{Anonymized for the submission}
 
 \begin{document}
-\begin{wrapfigure}r{40ex}%
-  \caption{\label{Figure:kill} Compile time (sec) \emph{vs.} nasty program length}%
-  \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
-
-  \end{gnuplot}%
-\end{wrapfigure}%
 
 \maketitle
 \begin{abstract}
@@ -53,10 +47,8 @@ This terminology is used again in \Cref{Section:related} to offer
   for programming generics in \Java.
 This toolkit is used in the subsequent~\cref{Section:proof} for
   proving our main theoretical result.
-\Cref{Section:bridge} explains then why
-  this theoretical result is unlikely to be improved.
-This section also explains why the expressive power of \Self
-  is unlikely to be improved much.
+On~\Cref{Section:compiler} we will discuss our main computational tool, 
+  e.g., the \Java compiler, and its expressiveness.
 
 \Cref{Section:fajita} introduces \Self.
 The algorithm that drives \Self, of generating the complex
@@ -81,10 +73,6 @@ The main ideas behind the bootstrapping definition of \Self
 \label{Section:related}
 \input{related}
 
-\section{Toolkit for Type Encoding}
-\label{Section:toolkit}
-\input{toolkit}
-
 \section{The Jump-Stack Data-Structure}
 \label{Section:jump}
 \input{jump}
@@ -93,9 +81,9 @@ The main ideas behind the bootstrapping definition of \Self
 \label{Section:proof}
 \input{proof}
 
-\section{Parser of Non Deterministic Pushdown Automata}
-\label{Section:bridge}
-\input{bridge}
+\section{\Java Compiler expressiveness}
+\label{Section:compiler}
+\input{compiler}
 
 \section{Conclusion}
 \label{Section:zz}

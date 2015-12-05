@@ -5,7 +5,7 @@ import sys
 code = 'package automaton; \n\
   public class KillCompiler {  \n\
   static class A<Recurse_1,Recurse_2>{ \n\
-    A<A<Recurse_1,Recurse_2>,A<Recurse_1,Recurse_2>> d2() { return null; } \n\
+    A<A<Recurse_1,Recurse_2>,A<Recurse_1,Recurse_2>> d() { return null; } \n\
   } \n\
   \n\
   public static void main(String[] args) { \n\
@@ -15,7 +15,7 @@ code = 'package automaton; \n\
 }'
 
 def n_invocations(n): 
-  return code %('.d2()'*n,)
+  return code %('.d()'*n,)
 
 runtimes = []
 for i in xrange(0,int(sys.argv[1])):

@@ -9,6 +9,6 @@
     set logscale y 2
     set logscale x 2
     set ylabel "Time (sec)"
-    set xlabel "size" 
+    set xlabel "number of method invocations" 
     set xrange [1:35]
     plot "../Figures/kill.csv" every ::1 using 1:2 notitle with linespoints
