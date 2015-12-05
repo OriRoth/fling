@@ -21,7 +21,7 @@ import automaton.Domain.Γʹ.Γ.γ2;
  * This is were we place code that must compile correctly. To be extracted and
  * placed as part of LaTeX documents.
  * 
- * @author yogi
+ * @author Yossi Gil
  * 
  */
 //@formatter:off
@@ -82,12 +82,16 @@ public class Domain {
         @Override public ¤ γ2() { return null; }
     }
   }
-  // jump-stack.listing
-  public interface JS<Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?> > {
+  
+  public interface JS<  // Generic parameters
+      Rest extends JS<?,?,?>, 
+      J_γ1 extends JS<?,?,?>, 
+      J_γ2 extends JS<?,?,?> 
+  > {
     Γʹ top();
     Rest pop();
-    JS<?, ?, ?> γ1();
-    JS<?, ?, ?> γ2();
+    JS<?,?,?> γ1();
+    JS<?,?,?> γ2();
     J_γ1 jump_γ1();
     J_γ2 jump_γ2();
     interface ¤ extends JS<¤, ¤, ¤> {
@@ -103,10 +107,9 @@ public class Domain {
       @Override public P<γ2, E, ¤, E> γ2();
     }
     public interface P<
-        Top extends Γ, 
-        Rest extends JS<?, ?, ?>,    
-        J_γ1 extends JS<?, ?, ?>,  
-        J_γ2 extends JS<?, ?, ?>
+        Top extends Γ, Rest extends JS<?,?,?>,    
+        J_γ1 extends JS<?,?,?>, 
+        J_γ2 extends JS<?,?,?>
     > extends JS<Rest, J_γ1, J_γ2> {
         @Override public Top top();
         @Override P<γ1, P<γ1,P<Top, Rest,  J_γ1,  J_γ2>,P<Top, Rest,  J_γ1,  J_γ2>,J_γ2>, P<Top, Rest,  J_γ1,  J_γ2>, J_γ2> γ1();
