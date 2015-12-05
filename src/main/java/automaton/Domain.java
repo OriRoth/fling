@@ -82,8 +82,20 @@ public class Domain {
         @Override public ¤ γ2() { return null; }
     }
   }
-  
-  public interface JS<  // Generic parameters
+  //@Formatter:on
+  private interface Pʹ<// // ¢$2+k+1$¢ generic arguments: 
+    Top extends Γ,   
+    Rest extends JS<?,?,?>, 
+    J_γ1 extends JS<?,?,?>, 
+    J_γ2 extends JS<?,?,?>,
+    Me extends JS<?,?,?>
+   > extends JS<Rest, J_γ1, J_γ2> {
+     @Override public Top top();
+     @Override P<γ1, Me, Me,   J_γ2> γ1();
+     @Override P<γ2, Me, J_γ2, Me> γ2();
+  }
+
+  public interface JS<  // ¢$1+k$¢ generic parameters
       Rest extends JS<?,?,?>, 
       J_γ1 extends JS<?,?,?>, 
       J_γ2 extends JS<?,?,?> 
@@ -106,15 +118,12 @@ public class Domain {
       @Override public P<γ1, E, E, ¤> γ1();
       @Override public P<γ2, E, ¤, E> γ2();
     }
-    public interface P<
-        Top extends Γ, Rest extends JS<?,?,?>,    
+    public interface P<// ¢$2+k$¢ generic arguments:
+        Top extends Γ, 
+        Rest extends JS<?,?,?>,    
         J_γ1 extends JS<?,?,?>, 
         J_γ2 extends JS<?,?,?>
-    > extends JS<Rest, J_γ1, J_γ2> {
-        @Override public Top top();
-        @Override P<γ1, P<γ1,P<Top, Rest,  J_γ1,  J_γ2>,P<Top, Rest,  J_γ1,  J_γ2>,J_γ2>, P<Top, Rest,  J_γ1,  J_γ2>, J_γ2> γ1();
-        @Override P<γ2, P<γ2,P<Top, Rest,  J_γ1,  J_γ2>,J_γ1,P<Top, Rest,  J_γ1,  J_γ2>>, J_γ1, P<Top, Rest,  J_γ1,  J_γ2>> γ2();
-    }
+    > extends Pʹ<Top, Rest, J_γ1, J_γ2, P<Top, Rest, J_γ1, J_γ2>> { /**/ }
     public static final E empty = null;
   }
   
