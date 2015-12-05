@@ -64,25 +64,37 @@ to type \cc{Pʹ} which it extends (l.21)
 The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e.,
   \cc{P<Top, Rest, J\_γ1, J\_γ2>}.
 
-The auxliary type \cc{JS.Pʹ} itself is depicted in \cref{Figure:jump-stack}.
+The auxliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack}.
 By extending type \cc{JS} and passing the correct \cc{Rest} (respectively \cc{J\_$γ$1}, \cc{J\_$γ$2})
-  parameter to it, \cc{JS.Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
+  parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
   (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
+More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} that extends it,
+  along with its actual paramers.
+The return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succintly.
+Conisder, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$, the return type of \cc{$γ$1()}.
+Type~$τ$ is a generic instantation of \cc{J.P}, to say that after pushing~\cc{$γ$1},
+  we obtain a compound jump-stack.
+  whose top element is \cc{$γ$1}, while the rest of the stack is
+  the type of the receiver.
+  The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
+  of a~$\textsf{jump}(γ₁)$ is the type of the receiver.
+  The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
+  change the result of~$\textsf{jump}(γ₁)$.
 
-Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it, 
-\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump}) 
+Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
+\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump})
 
 Use cases for the encoded jump stack data structure in presented in \cref{Figure:jump-stack-example}.
 
 \begin{wrapfigure}[12]r{63ex}
-  \caption{\label{Figure:jump-stack-example} Use cases for the ~\cc{JS} type hierarchy}
+  \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=63ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
 
-\cc{\_1} represents a stack that has been pushed \cc{$\gamma$2}, \cc{$\gamma$1}, \cc{$\gamma$1}.
+\cc{\_1} represents a stack that has been pushed \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1}.
 Its first type argument is the Top,~$\gamma1$.
-The second and third arguments,~\cc{Rest} and~\cc{J_$\gamma$1} correspondingly, 
-  are represented by the same type, since the top of the stack is type~\cc{$\gamma$1}
+The second and third arguments,~\cc{Rest} and~\cc{J\_$γ$1} correspondingly,
+  are represented by the same type, since the top of the stack is type~\cc{$γ$1}
   former~$\textsf{jump}(γᵢ)$ pops only the topmost element.
-The last argument is~\cc{JS.E} represents~\cc{J_$\gamma$2}, and truly,
-  operation~$\textsf{jump}(γ_2)$ in that case causes popping the whole stack.
+The last argument is~\cc{JS.E} represents~\cc{J\_$γ$2}, and truly,
+  operation~$\textsf{jump}(γ₂)$ in that case causes popping the whole stack.
