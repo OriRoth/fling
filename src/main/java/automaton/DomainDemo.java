@@ -50,10 +50,7 @@ public class DomainDemo {
     E _7 = _5.pop(); // ✓ Pop last item
     Stack.¤ _8 = _7.pop(); // ✗ Cannot pop from an empty stack
     Γʹ.¤ _9 = _7.top(); // ✗ empty stack has no top element
-  }
-
-
-  
+  } 
   
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {}
   public static void peeping_into_a_stack_use_cases() {
