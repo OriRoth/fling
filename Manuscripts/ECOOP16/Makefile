@@ -47,7 +47,7 @@ binary-function.listing: $(DOMAIN)
 mammal.listing: $(DOMAIN_DEMO)
 	awk '/^.*Mammals.*$$/,/^.*extends Heap.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-binary-function-example.listing:  $(DOMAIN_DEM)
+binary-function-example.listing:  $(DOMAIN_DEMO)
 	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 spda.listing: $(DOMAIN)
@@ -68,8 +68,7 @@ warnings:
 	- lacheck *.tex
 	- for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
 
-
-full:	graphs bibtex final
+all:	graphs bibtex $(MAIN).pdf
 
 view: $(MAIN).pdf 
 	okular $(MAIN).pdf &> /dev/null &
@@ -81,11 +80,34 @@ $(MAIN).blg bibtex:
 	bibtex $(MAIN)
 	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
 
-all:	graphs bibtex $(MAIN).pdf
 
 .PHONY: clean graphs bibtex latex
 
-JUNKFILES=$(wildcard [dD]elme* DELME* *~ *.aux *.listing *.fls *.bbl *.blg *.bcf *.fdb_latexmk *.synctex.gz *.run.xml *blx.bib *.log *.dvi *.out *.o $(MAIN).pdf *.listing .*swp .*swo *.bak *.backup *.vtc)
+JUNKFILES=
+JUNKFILES+=$(wildcard )
+JUNKFILES+=$(wildcard *~ *.aux )
+JUNKFILES+=$(wildcard *.backup )
+JUNKFILES+=$(wildcard *.bak )
+JUNKFILES+=$(wildcard *.bbl )
+JUNKFILES+=$(wildcard *.bcf )
+JUNKFILES+=$(wildcard *.blg )
+JUNKFILES+=$(wildcard *blx.bib )
+JUNKFILES+=$(wildcard [dD]elme* )
+JUNKFILES+=$(wildcard DELME* )
+JUNKFILES+=$(wildcard *.dvi )
+JUNKFILES+=$(wildcard *.fdb_)
+JUNKFILES+=$(wildcard *.fls )
+JUNKFILES+=$(wildcard latexmk )
+JUNKFILES+=$(wildcard *.listing )
+JUNKFILES+=$(wildcard *.log )
+JUNKFILES+=$(wildcard $(MAIN).pdf )
+JUNKFILES+=$(wildcard *.o )
+JUNKFILES+=$(wildcard *.out )
+JUNKFILES+=$(wildcard *.run.xml )
+JUNKFILES+=$(wildcard .*swo )
+JUNKFILES+=$(wildcard .*swp )
+JUNKFILES+=$(wildcard *.synctex.gz )
+JUNKFILES+=$(wildcard *.vtc)
 
 clean: $(JUNKFILES) 
 	- [ -z '$^' ] || mv -f $^ /tmp
