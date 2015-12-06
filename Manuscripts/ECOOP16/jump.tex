@@ -2,10 +2,9 @@ We continue on our journey to encode DPDA in \Java.
 In this section we encode the tricky ‟jump” action defined in~\cref{Definition:JDPDA}.
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
-  except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations,
-    which means
-  ‟repetitively pop elements from the stack up to and including the first occurrence of~$γ$”.
-Let~$k=|Γ|$.
+  except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations
+  (which means ‟repetitively \emph{pop} elements from the stack up 
+  to and including the first occurrence of~$γ$”).
 
 \begin{wrapfigure}[18]{r}{42ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
@@ -20,7 +19,7 @@ Let~$k=|Γ|$.
 
 Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)), \cc{JS} takes 
   a \cc{Rest} parameter encoding the type of a jump-stack after popping.
-In addition \cc{JS} takes~$k$ type parameters, one for each~$γ∈Γ$,
+In addition \cc{JS} takes~$k=|Γ|$ type parameters, one for each~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
   operation.
 In the figure, there are two such parameters: \cc{J\_$γ$1}, and
@@ -28,9 +27,9 @@ In the figure, there are two such parameters: \cc{J\_$γ$1}, and
 
 Functions defined in \cc{JS} include not only the standard stack operations: \cc{top},
 \cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
-  but also functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
+  but also~$k$ functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   which encode~$\textsf{jump}(γᵢ)$
-  thanks to the return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
+  thanks to their return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
 
 The type hierarchy rooted at \cc{JS} is similar to that of
 \cref{Figure:stack-encoding}(a):
