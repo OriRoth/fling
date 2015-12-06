@@ -3,7 +3,7 @@ import timeit
 import sys
 
 code = 'package automaton; \n\
-  public class KillCompiler {  \n\
+  public class _ {  \n\
   static interface Cons<Car,Cdr>{ \n\
     Cons<Cons<Car,Cdr>,Cons<Car,Cdr>> d(); \n\
   } \n\
@@ -21,11 +21,11 @@ def n_invocations(n):
 
 runtimes = []
 for i in xrange(0,int(sys.argv[1])):
-  f = open('KillCompiler.java','w')
+  f = open('_.java','w')
   f.write(n_invocations(i))
   f.flush()
   f.close()
-  current = [timeit.timeit(r'os.system("javac KillCompiler.java")','import os',number=1)]
+  current = [timeit.timeit(r'os.system("javac _.java")','import os',number=1)]
   print '%i,%f,' %(i,current[0])
   runtimes += current
 print runtimes
