@@ -69,16 +69,17 @@ By extending type \cc{JS} and passing the correct \cc{Rest} (respectively, \cc{J
   parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
   (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
 
-More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} that extends it,
-  with its actual parameters \emph{included},
-  the return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succinctly.
+  More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} 
+    that extends \cc{Pʹ}.
+Type \cc{Me} also captures the actual parameters \emph{included} to \cc{JP.P},
+  which makes it possible to write the return type of \cc{$γ$1()} and \cc{$γ$2()} more succinctly.
 Let, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$ be the return type of \cc{$γ$1()}.
-Type~$τ$ is a generic instantiation of \cc{J.P}. to say that after pushing~\cc{$γ$1},
-  we obtain a compound jump-stack, whose top element is \cc{$γ$1}, while the rest of the stack is
-  the curent type.
-  The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
+The first two parameters to $\tau$ say that pushing~\cc{$γ$1},
+  results in a compound jump-stack, whose top element is \cc{$γ$1}, 
+  and where the rest of the jump-stack is the curent type.
+The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
   of a~$\textsf{jump}(γ₁)$ is the type of the receiver.
-  The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
+The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ₁)$.
 
 \begin{wrapfigure}[12]r{42ex}
