@@ -25,10 +25,11 @@ LISTINGS+=jump-stack-example.listing
 LISTINGS+=compiler.listing
 
 # Target to be used for compiles when references did not change
-latex: $(wildcard *.sty *.tex) $(LISTINGS) 
-	$(LATEX) -synctex=1 ./$(MAIN).tex
+.PHONY: clean graphs bibtex latex view
 
-$(MAIN).pdf: latex $(wildcard *.sty *.tex) 	
+latex: $(MAIN).pdf 
+
+$(MAIN).pdf: $(wildcard *.sty *.tex) $(LISTINGS)	
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 all:	graphs bibtex $(MAIN).pdf
@@ -38,7 +39,6 @@ view: $(MAIN).pdf
 
 graphs: $(wildcard *.sty *.tex) $(LISTINGS) 
 	$(LATEX) -shell-escape ./$(MAIN).tex
-
 
 $(MAIN).blg bibtex:	
 	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
@@ -121,7 +121,6 @@ warnings:
 
 
 
-.PHONY: clean graphs bibtex latex
 
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
