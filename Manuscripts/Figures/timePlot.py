@@ -27,10 +27,12 @@ out.write('x,y')
 for i in xrange(1,1+int(sys.argv[1])):
   f = open('$.java','w')
   f.write(n_invocations(i))
-  f.flush()
   f.close()
   current = [timeit.timeit(r'os.system("javac $.java")','import os',number=1)]
   out.write(',\n%i,%f' %(i,current[0]))
   runtimes += current
+
+out.close()
+
 print 'output printed to file %s' %(output,)
 print runtimes
