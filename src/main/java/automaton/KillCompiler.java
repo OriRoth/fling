@@ -1,8 +1,7 @@
 package automaton;
 
 public class KillCompiler {
-  static class N<LL, RL> {
-    N<N<LL, RL>, N<LL, RL>> d()
-      { return null; }
+  interface Cons<Car, Cdr> {
+    Cons< Cons<Car, Cdr>, Cons<Car, Cdr> > d();
   }
 }
