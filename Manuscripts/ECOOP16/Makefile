@@ -124,7 +124,6 @@ warnings:
 .PHONY: clean graphs bibtex latex
 
 JUNKFILES=
-JUNKFILES+=$(wildcard )
 JUNKFILES+=$(wildcard *~ *.aux )
 JUNKFILES+=$(wildcard *.backup )
 JUNKFILES+=$(wildcard *.bak )
@@ -137,8 +136,7 @@ JUNKFILES+=$(wildcard DELME* )
 JUNKFILES+=$(wildcard *.dvi )
 JUNKFILES+=$(wildcard *.fdb_)
 JUNKFILES+=$(wildcard *.fls )
-JUNKFILES+=$(wildcard *gnuplottex* )
-JUNKFILES+=$(wildcard *.gnuplot)
+JUNKFILES+=$(wildcard *gnuplottex-fig[0-9]*.*)
 JUNKFILES+=$(wildcard latexmk )
 JUNKFILES+=$(wildcard *.listing )
 JUNKFILES+=$(wildcard *.log )
