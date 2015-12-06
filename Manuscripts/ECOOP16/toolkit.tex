@@ -65,7 +65,8 @@ Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
   \item The interest of frugal management of namespaces is served
     by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of~$Y$.
-  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command.
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command 
+      (with interfaces the method body is redundant).
       This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
 †{%
@@ -127,7 +128,7 @@ Instead of representing set~$S$ as a class,
 These functions are defined as~\kk{abstract} with return type~\cc{$Γ$'}
   in~\cc{R}.
 Both functions are overridden in classes~\cc{r1} and~\cc{r2},
-   with the appropriate co-variant change of their return type,
+   with the appropriate covariant change of their return type,
 
 It should be clear now that the encoding scheme presented
   in \Cref{Figure:simple-binary} can be generalized to functions
@@ -144,7 +145,7 @@ Genericity can be employed to serve this end.
   \javaInput[left=-2ex,minipage,width=29ex]{id.listing}
 \end{wrapfigure}
 
-Consider first \Cref{Figure:id} showing a a genericity based recipe for
+\Cref{Figure:id} shows a genericity based recipe for
   a function whose return type
   is the same as the receiver type.
   This recipe is applied in the figure to classes~\cc{A},~\cc{B}, and~\cc{C}.
@@ -152,7 +153,7 @@ Consider first \Cref{Figure:id} showing a a genericity based recipe for
   without overriding, (at least) the class itself.
 
 \Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
-  a stack of unbounded depth, yet can only store members of the set~$Γ$.
+  a stack of \emph{unbounded} depth, yet can only store members of the set~$Γ$.
 With type encoding these are precisely classes~\cc{$γ$1}
   and \cc{$γ$2} defined in \cref{Figure:unary-function}.
 
@@ -173,7 +174,7 @@ The expression⏎
   \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
-This expression's type is that of variable~\cc{\_1}:⏎
+This expression's type is that of variable~\cc{\_1}, i.e,⏎
 \mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
 A recurring building block occurs in this type.
 This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
@@ -217,13 +218,13 @@ Other points to notice are:
         The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
   \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
         the two are overridden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
-  \item Since empty stack cannot be popped, function \cc{pop()} is overridden in~\cc{E} to return
+  \item Since an empty stack cannot be popped, function \cc{pop()} is overridden in~\cc{E} to return
     the \emph{error} type \cc{Stack.¤}. This type is indeed a kind of a stack, except that each of the four stack
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
 In fact, this recursive generic type technique can used to encode S-expressions: In the spirit of
   \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
-  with co-variant \cc{car()} and \cc{cdr()} methods.
+  with covariant \cc{car()} and \cc{cdr()} methods.
 
 A standard technique of template programming in \CC is to encode conditionals with template specialization.
 Since \Java forbids specialization of generics, we used in lieu covariant overloading of function
