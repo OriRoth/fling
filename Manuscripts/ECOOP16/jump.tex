@@ -30,7 +30,7 @@ Functions defined in \cc{JS} include not only the standard stack operations: \cc
 \cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
   but also functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   which encode~$\textsf{jump}(γᵢ)$
-  thanks to the return type being~\cc{J\_$γ$$i$},~$i=1,2$.
+  thanks to the return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
 
 The type hierarchy rooted at \cc{JS} is similar to that of
 \cref{Figure:stack-encoding}(a):
@@ -73,9 +73,8 @@ More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.
 The return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succinctly.
 Consider, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$, the return type of \cc{$γ$1()}.
 Type~$τ$ is a generic instantiation of \cc{J.P}, to say that after pushing~\cc{$γ$1},
-  we obtain a compound jump-stack.
-  whose top element is \cc{$γ$1}, while the rest of the stack is
-  the type of the receiver.
+  we obtain a compound jump-stack, whose top element is \cc{$γ$1}, while the rest of the stack is
+  the curent type.
   The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
   of a~$\textsf{jump}(γ₁)$ is the type of the receiver.
   The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not

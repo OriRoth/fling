@@ -21,7 +21,7 @@ The following definition is of a deterministic pushdown automata without such mo
   The signature of function~$δ$, the \emph{generalized partial transition function}
   of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
   \par
-  An SDPDA begins as a DPDA. At each step it examines~$σ∈Σ$,
+  An SDPDA begins as a DPDA\@. At each step it examines~$σ∈Σ$,
     the next input symbol,~$q∈Q$, the current state,
     and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most stack elements,
   \par
@@ -87,7 +87,7 @@ As shown by someone~\cite{i:need:to::find:it}, DPDAs with no~$ε$-moves are less
 
 Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
 Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
-  of order k, the corresponding SDPDA.
+  of order k, the corresponding SDPDA\@.
 Notice that the stack elements are the same in both.
 The other components of~$Sₘ$ are constructed as follows:
 \begin{itemize}

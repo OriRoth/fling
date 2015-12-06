@@ -11,7 +11,7 @@ The reason this question is interesting, is its implication
 
 For example, if we recognized that the \Java parser spends
   linear time on its input, we could say that it's not
-  likely that we can type-encode nondeterministic CFG.
+  likely that we can type-encode nondeterministic CFG\@.
 The reason is the fact that the best known algorithms
   today for parsing general nondeterministic CFG,
   as mentioned in~\Cref{Section:preliminaries}, run in super quadratic time.
@@ -44,8 +44,7 @@ the size of the resulting type is~$O(2ⁿ)$.
 \begin{wrapfigure}r{43ex}%
   \begin{minipage}{43ex}
   \caption{\label{Figure:compile-empiric} Compilation time
-    (sec†{
-  Tested on an Intel i5-2520M CPU @ 2.50GHz~$⨉$ 4, 3.7GB memory, Ubuntu 15.04 64-bit,javac 1.8.0\_66}%
+    (sec†{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit,javac 1.8.0\_66}%
     ) \emph{vs.}
       length of call chain.
 }
