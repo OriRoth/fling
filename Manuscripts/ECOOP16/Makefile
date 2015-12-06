@@ -27,7 +27,7 @@ LISTINGS+=compiler.listing
 .PHONY: latex view bibtex graphs all bibtex clean 
 
 # Target to be used for compiles when references did not change
-$(MAIN).pdf again latex: $(wildcard *.sty *.tex) $(LISTINGS) Makefile
+$(MAIN).pdf again latex: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).blg bibtex:	
@@ -42,7 +42,6 @@ graphs: $(wildcard *.sty *.tex) $(LISTINGS)
 	$(LATEX) -shell-escape ./$(MAIN).tex
 
 all:	graphs bibtex latex 
-
 
 CODE_PATH = ../../src/main/java/automaton
 
