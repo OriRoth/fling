@@ -1,27 +1,27 @@
-The \Java compiler, is the main computational tool we use 
+The \Java compiler, is the main computational tool we use
   in this manuscript.
 In particular, the \Java Generics mechanism is what
   boosted our expressiveness from the trivial \emph{regular languages}
   set, to the practical, reasonable \emph{deterministic context free languages} set.
-  
+
 An interesting question that was raised during this research,
   is what the runtime complexity of the \Java compiler is.
-The reason this question is interesting, is its implication 
+The reason this question is interesting, is its implication
   on the computational expressiveness of type-encoding.
-  
-For example, if we recognized that the \Java parser spends 
-  linear time on its input, we could say that it's not 
+
+For example, if we recognized that the \Java parser spends
+  linear time on its input, we could say that it's not
   likely that we can type-encode nondeterministic CFG.
-The reason is the fact that the best known algorithms 
-  today for parsing general nondeterministic CFG, 
+The reason is the fact that the best known algorithms
+  today for parsing general nondeterministic CFG,
   as mentioned in~\Cref{Section:preliminaries}, run in super quadratic time.
 And it is highly unlikely that the type-checker of \Java incidentally
   found an algorithm that is practically perfect in big-O notation.
 
 As we explored this venue, we discovered that the type-checker of
   \Java actually runs in exponential time.
-  
-Consider an encoded binary type tree. \kk{class}~\cc{N} 
+
+Consider an encoded binary type tree. \kk{class}~\cc{N}
   (denotes node) defined in~\cref{Figure:compiler} defines such tree.
 
 \begin{wrapfigure}[6]r{27ex}
@@ -30,11 +30,11 @@ Consider an encoded binary type tree. \kk{class}~\cc{N}
 \end{wrapfigure}
 
 The class has two type parameters, \cc{RL} (denotes right leaf),
-  and \cc{LL} (denotes left leaf), both values are insignificant 
+  and \cc{LL} (denotes left leaf), both values are insignificant
   as they act as the base case of a recursive definition.
 The class has only one method, \cc{d()} (denotes the keyword double),
   that performs our recursive step : create a new node, that its two
-  sons, are the instance of the receiver itself. 
+  sons, are the instance of the receiver itself.
 The actual return type of \cc{d()} is
   \cc{N$⟨\text{N}⟨\text{LL, RL}⟩\text{, N}⟨\text{LL, RL}⟩⟩$}.
 It is clear that the tree represented after each~\cc{d()} invocation is
@@ -43,23 +43,22 @@ It is clear that the tree represented after each~\cc{d()} invocation is
 Consider a sequence of \cc{d()} invocations on a \kk{new} \cc{N()} object,
   for which the \Java compiler tries to compute a type.
 If the input of the compiler is the former sequence of invocations,
-  and we will define its length as $n$,
-  than surely, the type length of the result is $O(2^n)$.
+  and we will define its length as~$n$,
+  than surely, the type length of the result is~$O(2ⁿ)$.
 
-  
 \begin{wrapfigure}r{43ex}%
   \caption{\label{Figure:compile-empiric} Compile time (sec) \emph{vs.} sequential method invocation length}%
   \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
 \end{wrapfigure}%
-  
-An empirical result of the former example is exhibited in \cref{Figure:compile-empiric}.  
+
+An empirical result of the former example is exhibited in \cref{Figure:compile-empiric}.
 The \Java compiler therefore runs at an exponential complexity at worst case,
-  not only that, it is not confined to~$O(2^n)$, it is clear that
-  writing a similar type-encoding for a trinary type tree would result in
-  a lower-bound for the \Java compiler of~$O(3^n)$, and for a k-nary tree
-  we would get~$O(k^n)$.
+  not only that, it is not confined to~$O(2ⁿ)$, it is clear that
+  writing a similar type-encoding for a ternary type tree would result in
+  a lower-bound for the \Java compiler of~$O(3ⁿ)$, and for a k-nary tree
+  we would get~$O(kⁿ)$.
 
 Thus, we get that the compile time of a \Java is in the E complexity class :~$O(2^O(n))$.
 
-The theoretical question of type-encoding a stronger machine (i.e., Turing Machine) 
-  is outside the scope of this paper. 
+The theoretical question of type-encoding a stronger machine (i.e., Turing Machine)
+  is outside the scope of this paper.
