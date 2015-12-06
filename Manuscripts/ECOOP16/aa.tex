@@ -1,42 +1,35 @@
 Ever after their inception\urlref{http://martinfowler.com/bliki/FluentInterface.html} \emph{fluent APIs}
   increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
   interest~\cite{Deursen:2000,Kabanov:2008}.
-In many ways, fluent APIs are a kind of 
+In many ways, fluent APIs are a kind of
   \emph{internal} \emph{\textbf Domain \textbf Specific \textbf Language}:
 They make it possible to ecrich a host programming language without changing it.
 Advantages are many: base langauge tools (compiler, debugger, IDE, etc.) remain
-  applicable, programmers are saved the trouble of learning a new syntax, etc. 
-However, these advantages come at the cost of expressive power; 
-  in the words of M. Fowler: 
-  ``\emph{Internal DSLs are limited by the syntax and structure of your base language.}''\footnote
-  {M. Fowler, 
+  applicable, programmers are saved the trouble of learning a new syntax, etc.
+However, these advantages come at the cost of expressive power;
+  in the words of M. Fowler:
+  ‟\emph{Internal DSLs are limited by the syntax and structure of your base language.}”†
+  {M. Fowler,
     \emph{Language Workbenches: The Killer-App for Domain Specific Languages?},
-  \url{http://www.martinfowler.com/articles/languageWorkbench.html\#InternalDsl}.}
-Indeed, in langauges such as \CC{}, fluent APIs 
-  often make extensive use of operator overloading (examine, e.g., \textsf{AraRat}~\cite{Gil:Lenz:07}),
+  \url{http://www.martinfowler.com/articles/languageWorkbench.html＃InternalDsl}.}
+Indeed, in langauges such as \CC{}, fluent APIs
+  often make extensive use of operator overloading (examine, e.g., \textsf{AraRat}~\cite{Gil:Lenz:10}),
   but this capability is not available in \Java.
 
 Despite this limitation, fluent API in \Java can be rich and expressive, as demonstrated
-  in \cref{Figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10} 
-(open-source integration framework), 
-and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing 
+  in \cref{Figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
+(open-source integration framework),
+and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
-Other examples of fluent APIs in \Java are abundant: jMock, Hamcrest, \cite{find:manY:more:and:put:urlref:to:these}.
+Other examples of fluent APIs in \Java are abundant: jMock, Hamcrest,~\cite{find:manY:more:and:put:urlref:to:these}.
 
-  \begin{figure}[H]
+\begin{figure}[H]
   \caption{\label{Figure:DSL} Two examples of \Java fluent API}
   \begin{tabular}{@{}c@{}c@{}}
-    \parbox[c]{44ex}{%
-      \javaInput[left=0ex]{camel-apache.java.fragment}
-    }
-&
-    \hspace{-3ex}
-    \parbox[c]{59ex}{%
-      \javaInput[left=0ex]{jOOQ.java.fragment}
-    }
-\\
-\textbf{(a)} Apache Camel& \textbf{(b)} jOOQ
-\end{tabular}
+    \parbox[c]{44ex}{\javaInput[left=0ex]{camel-apache.java.fragment}} &
+    \hspace{-3ex} \parbox[c]{59ex}{\javaInput[left=0ex]{jOOQ.java.fragment}} ⏎
+    \textbf{(a)} Apache Camel                                          & \textbf{(b)} jOOQ
+  \end{tabular}
 \end{figure}
 
 Inspired by the theory of formal languages and pushdown automata
@@ -58,32 +51,31 @@ language is \emph{deterministic context-free}, where
     An important property of this family is that none of its members is ambigious.
 \end{itemize}
 
-A problem related to that of recognition a formal langauge, 
-  is that of parsing, i.e., creating a parse tree for input which is within the language. 
-In the fluent APIs domain the distinction between recognition and parsing is 
+A problem related to that of recognition a formal langauge,
+  is that of parsing, i.e., creating a parse tree for input which is within the language.
+In the fluent APIs domain the distinction between recognition and parsing is
   the distinction between compile time and runtime.
 Before a program is run, the compiler checks whether the fluent API call is legal,
-  and code completion tools will only suggest legal extensions of a current call chain.  
+  and code completion tools will only suggest legal extensions of a current call chain.
 
-In contrast, the parse tree is created at runtime. 
-Some fluent API definitions create the parse-tree 
+In contrast, the parse tree is created at runtime.
+Some fluent API definitions create the parse-tree
   iteratively, where each method invocations in the call chain adding
   more components to this tree.
-However, it is always possible to genererate this tree in ``batch'' mode:
-This is done by maintaining an ordered list of the methods 
+However, it is always possible to genererate this tree in ‟batch” mode:
+This is done by maintaining an ordered list of the methods
   called---each method inovacation adding to this list an item containg the method's name
   parameters.
-The parse tree is by applying some appropriate parser to this list 
+The parse tree is by applying some appropriate parser to this list
   once it is complete.
-
 
 \begin{wrapfigure}[9]r{35.05ex}
 \caption{\label{Figure:box}Fluent API of a box object, defined by a DFA}
-%   \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
-%            & \cc{open()} & \cc{close()}⏎ \hline
-%     ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
-%     ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
-%   \end{tabular}
+% \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
+% & \cc{open()} & \cc{close()}⏎ \hline
+% ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
+% ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
+% \end{tabular}
 
   \input ../Figures/open-close-example.tikz
   % suggested improved visualisation
