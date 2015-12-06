@@ -1,8 +1,7 @@
 \subsection{Method Chaining \emph{vs.} Fluent API: Reminder and Terminology}
 The pattern ‟invoke function on variable \cc{sb}”, specifically with
-  a function named \cc{append}, occurs
-six times in the code in \cref{Figure:chaining}(a), designed
-  to format a clock reading, given as integer hours, minutes and
+  a function named \cc{append}, occurs six times in the code in \cref{Figure:chaining}(a), designed
+  to format a clock reading, given as integers hours, minutes and
   seconds.
 
 \begin{figure}[H]
@@ -37,7 +36,7 @@ String time(int hours, int minutes, int seconds) {¢¢
 \end{tabular}
 \end{figure}
 
-Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{method cascading}, 
+Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{cascading}, 
   for abbreviating this pattern.
 \emph{Method chaining} is a ‟programmer made” syntactic sugar serving the same purpose:
   If a method~$f$ returns its receiver, i.e., \kk{this},
