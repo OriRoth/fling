@@ -15,9 +15,7 @@ For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
   For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
     compilation of~$Cₘ$ of terminates if and only if
       Turing-machine~$m$ halts.
-  Furthermore, program~$Cₘ$ can be effectively†{in the computability lingo:
-    effective~$≈$‟~\emph{there is time
-  bounded algorithm for carrying out the task}”.} generated from~$m$.
+  Furthermore, program~$Cₘ$ can be effectively generated from~$m$.
 \end{Theorem}
 
 Intuitively, the proof relies on the fact that \kk{template}s
@@ -44,11 +42,9 @@ Mention this German (?) guy, who did suggest something like ours.
 Anything else you can find.
 
 \subsection{Type State}
-The toilette seat problem may be amusing to some, but it is not contrived in
-any way. In fact, there is huge body of research on the general topics of
-\emph{type-states}. (See e.g., review articles such
-as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}) Informally, an object
-that belongs to a certain type (\kk{class} in the object oriented lingo), has
+There is large body of research on \emph{type-states} (See e.g., review articles such
+  as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}).
+Informally, an object that belongs to a certain type, has
 type-states, if not all methods defined in this object's class are applicable
 to the object in all states it may be in.
 
@@ -58,7 +54,7 @@ permitted when the file is in an ‟open” state. In addition, method \cc{open(
 (respectively \cc{close()}) can only be applied if the object is in the
 ‟closed” (respectively, ‟open”) state.
 
-Objects with type states such as toilette seats and files are not rarities.
+Objects with type states such as files are not rarities.
 In fact, a recent study~\cite{Beckman:2011} estimates
   that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
 Type-state pose two main challenges to software engineering
