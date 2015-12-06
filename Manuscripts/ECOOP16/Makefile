@@ -24,26 +24,24 @@ LISTINGS+=stack-use-cases.listing
 LISTINGS+=jump-stack-example.listing
 LISTINGS+=compiler.listing
 
+.PHONY: latex view bibtex graphs all bibtex clean 
+
 # Target to be used for compiles when references did not change
-.PHONY: clean graphs bibtex latex view
-
-latex: $(MAIN).pdf 
-
-$(MAIN).pdf: $(wildcard *.sty *.tex) $(LISTINGS)	
+$(MAIN).pdf latex: $(wildcard *.sty *.tex) $(LISTINGS) Makefile
 	$(LATEX) -synctex=1 ./$(MAIN).tex
-
-all:	graphs bibtex $(MAIN).pdf
-
-view: $(MAIN).pdf 
-	okular $(MAIN).pdf &> /dev/null &
-
-graphs: $(wildcard *.sty *.tex) $(LISTINGS) 
-	$(LATEX) -shell-escape ./$(MAIN).tex
 
 $(MAIN).blg bibtex:	
 	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
 	bibtex $(MAIN)
 	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
+
+view: $(MAIN).pdf 
+	okular --unique $(MAIN).pdf &> /dev/null &
+
+graphs: $(wildcard *.sty *.tex) $(LISTINGS) 
+	$(LATEX) -shell-escape ./$(MAIN).tex
+
+all:	graphs bibtex latex 
 
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO=../../src/main/java/automaton/DomainDemo.java  

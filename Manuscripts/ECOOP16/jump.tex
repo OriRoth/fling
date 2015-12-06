@@ -14,13 +14,12 @@ Let~$k=|Γ|$.
   \javaInput[minipage,left=-2ex]{jump-stack.listing}
 \end{wrapfigure}
 
-\Cref{Figure:jump} shows the skeleton of type-encoding of a jump-stack whose
-elements are drawn from type~\cc{$Γ$}
+\Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},  
+  of a jump-stack whose elements are drawn from type~\cc{$Γ$}
 (\cref{Figure:unary-function}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
 
-Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)),
-  the generic type \cc{JS} which encodes jump-stacks, takes
-  a \cc{Rest} parameter which is the type of a jump-stack after popping.
+Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)), \cc{JS} takes 
+  a \cc{Rest} parameter encoding the type of a jump-stack after popping.
 In addition \cc{JS} takes~$k$ type parameters, one for each~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
   operation.
