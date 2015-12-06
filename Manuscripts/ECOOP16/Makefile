@@ -39,7 +39,7 @@ view: $(MAIN).pdf
 	okular --unique $(MAIN).pdf &> /dev/null &
 
 graphs: $(wildcard *.sty *.tex) $(LISTINGS) 
-	$(LATEX) -shell-escape ./$(MAIN).tex
+	$(LATEX) -interaction=batchmode -draftmode -shell-escape ./$(MAIN).tex
 
 all:	graphs bibtex latex 
 
