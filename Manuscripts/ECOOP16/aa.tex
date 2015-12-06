@@ -49,7 +49,7 @@ The proof makes a general recipe for handling examples of this sort:
   \item First, consider the language defined by the fluent API\@.
 In the box example, this language is defined by the regular expression:
 \[
-  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}|ε\big).
+  L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}\:|\:ε\big).
 \]
 \item Second, check whether this language is deterministic context-free.
 If it is, the fluent API can be realized, and,
@@ -77,32 +77,8 @@ If however this run ends with a failure, i.e., non-accepting state,
 The algorithm for generating the pushdown automaton is unfortunately impractical.
 It is indeed polynomial time and space,
   yet a consumer of formidable resources.
-A practical alternative is offered by the second aspect of this study:
-\Self is a \Java library with a fluent interface, designed for generating fluent APIs.
-To create a new fluent API~$ϕ$, use the fluent API of \Self to write, in \Java, a BNF for~$ϕ$.
-Running the \Java program thus written, augmented with the \Self library,
-  generates a \Java class library that realizes~$ϕ$.
 
-This class library, ready for use by~$ϕ$'s clients, does more
-  than compile time recognition
-  of the language of~$ϕ$.
-The execution of a call chain of~$ϕ$, creates an AST data structure,
-  compliant with the BNF of~$ϕ$.
-At the moment, the AST's nodes are un-typed, though it is planned
-  to make them typed, in order to augment a visiting API, for the use of the
-  Implementer of~$ϕ$.
-% and augmented with a visiting API, all ready
-% for use by the implementer of~$ϕ$.
-
-\Self generates LR($1$) parsers. Experience shows that these and even the strictly smaller set of
-  LALR grammars is sufficient for many purposes (see e.g., an acknowledgment by T\@. Parr,
-    the developer of LL($*$) grammars~\cite{Parr:1995}).
-Evidently, Bison~\cite{Bison:manual},
-  SableCC\urlref{http://www.sablecc.org}, Lemon Parser Generator\urlref{http://www.hwaci.com/sw/lemon/}
-  and other popular generators of left to right parsers opt to stay within the confinement of LALR parsers.
-Practicality concerns stop \Self from transgressing this limitation.
-
-One may ask whether the theoretical result is the
+One may ask whether our theoretical result is the
   best possible:
 It is possible to implement a fluent API for general
   (that is, nondeterministic) context free languages?
