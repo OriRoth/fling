@@ -45,13 +45,13 @@ all:	graphs bibtex latex
 
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO = ../../src/main/java/automaton/DomainDemo.java  
-COMPILER = ../../src/main/java/automaton/KillCompiler.java
+COMPILER = ../Figures/KillCompiler.java
   
 jump-stack-example.listing: $(DOMAIN_DEMO)
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 compiler.listing: $(COMPILER)
-	awk '/^.*interface Cons.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*interface.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 jump-stack.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \

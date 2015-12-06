@@ -21,7 +21,7 @@ And it is highly unlikely that the type-checker of \Java incidentally
 As we explored this venue, we discovered that the type-checker of
   \Java actually runs in exponential time.
 
-Consider an encoding of an S-expession in type~\cc{Cons}
+Consider an encoding of an S-expression in type~\cc{Cons}
   defined in~\cref{Figure:compiler}.
 
 \begin{wrapfigure}[6]r{27ex}
@@ -32,27 +32,34 @@ Consider an encoding of an S-expession in type~\cc{Cons}
 Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
 Denote the return type of \cc{d()} is~$τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}$.
 Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
-Since~$τ= \cc{Const<}σ,σ\cc{>}$, we have~$|τ|≥2|Σ|$,
+Since~$τ= \cc{Cons<}σ,σ\cc{>}$, we have~$|τ|≥2|Σ|$,
   where the size of a type is measured, e.g., in number of characters in its textual representation.
-In a chain of $n$ calls to \cc{d()} 
+In a chain of~$n$ calls to \cc{d()}
 \begin{equation}
-  \cc{(Cons<?,?>(null)).d().}\cdots{.d();} 
+  \label{Equation:n}
+  \cc{(Cons<?,?>(null)).}\overbrace{\cc{d().}⋯\cc{.d()}}^{\text{$n$ times}}\cc{;}
 \end{equation}
-the size of the resulting type~$O(2ⁿ)$.
+the size of the resulting type is~$O(2ⁿ)$.
 
 \begin{wrapfigure}r{43ex}%
-  \caption{\label{Figure:compile-empiric} Compile time (sec) \emph{vs.} sequential method invocation length}%
+  \begin{minipage}{43ex}
+  \caption{\label{Figure:compile-empiric} Compilation time
+    (sec†{
+  Tested on an Intel i5-2520M CPU @ 2.50GHz~$⨉$ 4, 3.7GB memory, Ubuntu 15.04 64-bit,javac 1.8.0\_66}%
+    ) \emph{vs.}
+      length of call chain.
+}
   \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
+\end{minipage}
 \end{wrapfigure}%
 
-An empirical result of the former example is exhibited in \cref{Figure:compile-empiric}.
-The \Java compiler therefore runs at an exponential complexity at worst case,
-  not only that, it is not confined to~$O(2ⁿ)$, it is clear that
-  writing a similar type-encoding for a ternary type tree would result in
-  a lower-bound for the \Java compiler of~$O(3ⁿ)$, and for a k-nary tree
-  we would get~$O(kⁿ)$.
+\Cref{Figure:compile-empiric} shows on the doubly logarithmic plane that the runtime (on a Lenovo X220)
+  of the ‟javac” compiler (version 1.8.0\_66) in face of a \Java program
+  consisting of \cref{Equation:n} in its \cc{main()} and \cref{Figure:compiler}.
+We see that this runtime is asymptotically exponential.
+(In fact, a variation of the construction may lead to even super-exponential growth rate of the size of types.)
 
-Thus, we get that the compile time of a \Java is in the E complexity class :~$O(2^O(n))$.
-
-The theoretical question of type-encoding a stronger machine (i.e., Turing Machine)
-  is outside the scope of this paper.
+We however note that this exponential growth is due to a design decision of the compiler.
+Had the compiler used a representation of types that allows sharing of,
+The footprint of exponentially sized types created by can be made linear
+  with appropriate sharing of constituent types.

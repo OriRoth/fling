@@ -4,12 +4,14 @@ import sys
 
 code = 'package automaton; \n\
   public class KillCompiler {  \n\
-  static class A<Recurse_1,Recurse_2>{ \n\
-    A<A<Recurse_1,Recurse_2>,A<Recurse_1,Recurse_2>> d() { return null; } \n\
+  static interface Cons<Car,Cdr>{ \n\
+    Cons<Cons<Car,Cdr>,Cons<Car,Cdr>> d(); \n\
   } \n\
   \n\
   public static void main(String[] args) { \n\
-  A<?,?> s =new A<String,String>()%s; \n\
+  Cons<?,?> s =new Cons<String,String>(){ \n\
+	public Cons<Cons<String,String>,Cons<String,String>>d() {return null;}\n\
+}%s; \n\
    \n\
   } \n\
 }'
