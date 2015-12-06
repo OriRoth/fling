@@ -1,6 +1,15 @@
 Ever after their inception\urlref{http://martinfowler.com/bliki/FluentInterface.html} \emph{fluent APIs}
   increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
   interest~\cite{Deursen:2000,Kabanov:2008}.
+In many ways, fluent APIs are a kind of 
+  \emph{internal} \emph{\textbf Domain \textbf Specific \textbf Language}:
+They make it possible to ecrich a host programming language without changing it.
+Advantages are many: base langauge tools (compiler, debugger, IDE, etc.) are
+  to the base langauge.
+  changes to the host. 
+Such 
+  Internal DSLs are limited by the syntax and structure of your base language.
+The similarity between DSL
 Inspired by the theory of formal languages~\cite{Linz:2001} and pushdown automata,
   this is a study of what can be done, and what can not be done, with a fluent API.
 
