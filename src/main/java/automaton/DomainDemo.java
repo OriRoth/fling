@@ -50,21 +50,17 @@ public class DomainDemo {
 
   //peek
   public static class Peep<γ extends Γʹ, S extends Stack<? extends Stack<?>>> {}
+  public static Peep<?, E> peep(E _) { return null; } // First overloaded version of ¢\cc{peep()}¢
+  public static                                       // Second overloaded version of ¢\cc{peep()}¢
+  <Top extends Γ, Rest extends Stack<?>> // Two generic parameters
+  Peep<Top, P<Top, Rest>>                // Function return type
+  peep(P<Top, Rest> _) { return null; }    // Function parameters and body
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
     Peep<γ2, P<γ2, P<γ1, P<Γʹ.Γ.γ2, P<γ1, P<γ2, Stack.E>>>>>> _2 = peep(_1);
     E _3 = Stack.empty;
     Peep<?, E> _4 = peep(_3);
   }
-  public static Peep<?, E> peep(E _) { return null; } // First overloaded version of ¢\cc{peep()}¢
-  public static                                       // Second overloaded version of ¢\cc{peep()}¢
-    <Top extends Γ, Rest extends Stack<?>> // Two generic parameters
-    Peep<Top, P<Top, Rest>>                // Function return type
-  peep(P<Top, Rest> _) { return null; }    // Function parameters and body
-  public static 
-    <Top1 extends Γ, Top2 extends Γ, Rest extends Stack<?>> // Three generic parameters
-    Peel2<Top1, Top2, P<Top2, Rest>>                        // Function return type
-    peep2(P<Top1, P<Top2, Rest>> _) { return null; }        // Parameters and body
 
   //Double peeping
   public static class Peep2<γ_top extends  Γʹ,γ2_second extends  Γʹ, S extends Stack<? extends Stack<?>>> {}

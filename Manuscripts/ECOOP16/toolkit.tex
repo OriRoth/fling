@@ -255,15 +255,15 @@ Overloading makes a third idiom for partial emulation of conditionals, as can be
 The figure depicts type \cc{Peep} and the overloaded versions of \cc{peep()} which can be used to
   extract the top of the stack.
 The first generic parameter to \cc{Peep} is the top of the stack, the second is the stack itself.
-Indeed, we see (l.6) that peeping into an empty stack, places a~\cc{?}
-  in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.8).
+Indeed, we see (l.11) that peeping into an empty stack, places a~\cc{?}
+  in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.2).
 
-The second overloaded version of \cc{peep()} (ll.9--12) matches
+The second overloaded version of \cc{peep()} (ll.3--6) matches
  against all non-empty stacks. The return type
  of this version encodes,
  in its first parameter,
  the top of the stack.
-A use case can be seen in line~4.
+A use case can be seen in line~9.
 
 Let~$τ$ be the type of the top of a given stack.
 Then, both \cc{top()} and \cc{peep()} can be used to extract~$τ$.
