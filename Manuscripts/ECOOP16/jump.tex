@@ -41,8 +41,8 @@ Two of the specializations are parameter-less and are
 e.g., a after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, representing
-Type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
+Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, encodind
+type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
 Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it achieves
   its purpose by the parameters it takes and those it passes
@@ -56,23 +56,24 @@ Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; i
 Specifically, \cc{JS.P} takes
 the same \cc{Top} and \cc{Rest} parameters (ll.16--17) as type \cc{Stack.P}:
   as well as~$k$ additional parameters:
-  \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.18--18)
+  \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.18--19)
 which are the types encoding the jump-stack
   after the execution~$\textsf{jump}(γᵢ)$,~$i=1,2$.
-Type \cc{JP.P'} passes these four parameters
-to type \cc{Pʹ} which it extends (l.21)
+Type \cc{JP.P} passes these four parameters
+to type \cc{Pʹ} which it extends (l.21).
 The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e.,
   \cc{P<Top, Rest, J\_γ1, J\_γ2>}.
 
 The auxiliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
-By extending type \cc{JS} and passing the correct \cc{Rest} (respectively \cc{J\_$γ$1}, \cc{J\_$γ$2})
+By extending type \cc{JS} and passing the correct \cc{Rest} (respectively, \cc{J\_$γ$1}, \cc{J\_$γ$2})
   parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
   (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
+
 More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} that extends it,
-  along with its actual parameters.
-The return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succinctly.
-Consider, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$, the return type of \cc{$γ$1()}.
-Type~$τ$ is a generic instantiation of \cc{J.P}, to say that after pushing~\cc{$γ$1},
+  with its actual parameters \emph{included},
+  the return type of \cc{$γ$1()} and \cc{$γ$2()} can be written more succinctly.
+Let, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$ be the return type of \cc{$γ$1()}.
+Type~$τ$ is a generic instantiation of \cc{J.P}. to say that after pushing~\cc{$γ$1},
   we obtain a compound jump-stack, whose top element is \cc{$γ$1}, while the rest of the stack is
   the curent type.
   The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
