@@ -31,9 +31,9 @@ $(MAIN).pdf again latex: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).blg bibtex:	
-	$(LATEX) -interaction=nonstopmode -draftmode $(MAIN).tex
+	$(LATEX) -interaction=batchmode -draftmode $(MAIN).tex
 	bibtex $(MAIN)
-	$(LATEX) -interaction=nonstopmode -draftmode ./$(MAIN).tex
+	$(LATEX) -interaction=batchmode -draftmode ./$(MAIN).tex
 
 view: $(MAIN).pdf 
 	okular --unique $(MAIN).pdf &> /dev/null &
