@@ -27,7 +27,7 @@ LISTINGS+=compiler.listing
 .PHONY: latex view bibtex graphs all bibtex clean 
 
 # Target to be used for compiles when references did not change
-$(MAIN).pdf latex: $(wildcard *.sty *.tex) $(LISTINGS) Makefile
+$(MAIN).pdf again latex: $(wildcard *.sty *.tex) $(LISTINGS) Makefile
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 $(MAIN).blg bibtex:	
@@ -115,9 +115,13 @@ peep.listing:  $(DOMAIN_DEMO)
 
 
 warnings:	
-	- $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
-	- lacheck *.tex
-	- for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
+	 $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
+
+lacheck:
+	lacheck *.tex
+
+spelling:
+	for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
 
 
 
