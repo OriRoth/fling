@@ -1,3 +1,40 @@
+\begin{Definition}
+  \label{Definition:realtime}
+  \slshape
+We say a DPDA supplies the \emph{realtime condition} if
+  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
+\end{Definition}
+
+The last construct we remind, is the less known \emph{Simple Jump Deterministic Pushdown Automaton},
+the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder:05}.
+
+\begin{Definition}[Simple-Jump Deterministic Pushdown Automaton]
+  \label{Definition:JDPDA}
+  \slshape
+  A \emph{simple-jump deterministic pushdown automaton} (jump-DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
+  where~$Q,Γ,q₀,A$ are exactly as in~\cref{Definition:DPDA},
+  and~$δ$ is the
+  \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛(Q⨉Γ^*)∪(Q⨉❴E❵⨉Γ)$
+  (E is a special symbol which means ‟erase”).
+  \par
+  A jump-DPDA begins its work like a general DPDA\@.
+  \par
+  Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack.
+  If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA\@.
+  If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped, and the automaton
+  moves to state~$q$, but in addition, stack elements are popped until
+  popping a single~$γ'$.
+  If there is no~$γ'$ in the stack, the result is undefined.
+  \par
+  If~$γ$ is undefined, i.e., the stack is empty, the automaton accepts the input and halts.
+  The same happens if~$q∈A$.
+  \par
+  If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+\end{Definition}
+
+A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
+  as defined in~\cref{Definition:JDPDA}
+  that supplies~\cref{Definition:realtime}.
 We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
 The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
 

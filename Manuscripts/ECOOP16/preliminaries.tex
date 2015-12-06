@@ -36,7 +36,7 @@ String time(int hours, int minutes, int seconds) {¢¢
 \end{tabular}
 \end{figure}
 
-Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{cascading}, 
+Some languages, e.g., \Smalltalk offer syntactic sugar, called \emph{cascading},
   for abbreviating this pattern.
 \emph{Method chaining} is a ‟programmer made” syntactic sugar serving the same purpose:
   If a method~$f$ returns its receiver, i.e., \kk{this},
@@ -56,20 +56,21 @@ Consider, e.g., the following \Java code fragment (drawn from JMock~\cite{Freema
 \[
   \cc{allowing(any(Object.\kk{class})).method("get.*").withNoArguments();}
 \]
-Let the return type of function \cc{allowing} (respectively \cc{method}) be denoted by~$τ₁$ 
+Let the return type of function \cc{allowing} (respectively \cc{method}) be denoted by~$τ₁$
 (respectively~$τ₂$).
 Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
-in the partial call chain $\cc{allowing(any(Object.\kk{class})).}$
+in the partial call chain~$\cc{allowing(any(Object.\kk{class})).}$
 is distinct from the set of methods that can be placed after the dot in the partial call chain
-  $\cc{allowing(any(Object.\kk{class})).method("get.*").}$
+~$\cc{allowing(any(Object.\kk{class})).method("get.*").}$
 This distinction makes it possible to design expressive and rich fluent APIs, in which a
 sequence ‟chained” calls is not only readable, but also robust, in the sense that the
 sequence is type correct only when it the sequence makes sense semantically.
 
+
 \subsection{Context Free Languages and Pushdown Automata: Reminder and Terminology}
 Notions discussed here are probably common knowledge
- (see e.g.,~\cite{Hopcroft:book:2001,Linz:2001} for a text book description, 
- or~\cite{Autebert:97} for a systematic review).
+ (see e.g.,~\cite{Hopcroft:book:2001,Linz:2001} for a text book description,
+ or~\cite{Autebert:97} for a scientific review).
 The purpose here is to set a unifying common vocabulary.
 
 Let~$Σ$ be a finite alphabet of \emph{terminals} (often called input characters or tokens).
@@ -91,7 +92,7 @@ It then pops the top element from the stack, and nondeterministically chooses wh
   moving to a new state,
   or, pushing stack elements to the stack.
 Nondeterminism effectively means
-  that any combination of these actions can be done.
+  that any combination of these actions may be selected.
 
 The language recognized by an NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
@@ -113,107 +114,50 @@ The expressive power of NPDAs and BNFs is the same:
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-Since our encoding will be deterministic, we need a simpler
-  model, that runs in a polynomial deterministic time.
+ A more sane, but weaker, alternative is found in LR($1$) parsers,
+  which are deterministic linear time and space.
+Such parsers employ a stack and a finite automaton structure,
+  to parse the input.
+ More general, LR($k$) parsers,~$k>1$, can be defined. These make their
+ decisions based on the next~$k$ input symbols, rather than just the first of these.
+ General LR($k$) parsers are rarely used, since they offer essentially
+ the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}},
+ at a greater toll on resources (e.g., size of the automaton).
+In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
+ of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA),
+  which are similar to NPDA, except that their conduct is deterministic.
 
 \begin{Definition}[Deterministic Pushdown Automaton]
   \label{Definition:DPDA}
   \slshape
   A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
-  where~$Q$ is a finite set of
-    \emph{states},~$Γ$ is a finite
+  where~$Q$ is a finite set of \emph{states},~$Γ$ is a finite
   \emph{set of stack elements},~$q₀∈Q$ is the initial state,
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛Q⨉Γ^*$.
   \par
-  A DPDA begins its work in the initial state with a single designated stack element residing on the stack.
-  At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack. Based on the values of these, it decides how to proceed:
-  \par
-  If~$γ$ is undefined, i.e., the stack is empty, the DPDA accepts the input and halts.
-  The same happens if~$q∈A$.
-  \par
-  Suppose that~$δ(q,γ,ε)≠⊥$ (in this case, the definition of a DPDA requires that~$δ(q,γ,a')=⊥$ for all~$σ'∈Σ$),
-  and let~$δ(q,γ,ε)=(q',ζ)$.
-  Then the automaton pops~$γ$
-  and pushes the string of stack elements~$ζ∈Γ^*$ into the stack.
-  If~$δ(q,γ,a)=(q',ζ)$, then the same happens, but the
-  automaton also irrevocably consumes the token~$σ$.
-  \par
-  If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+  A DPDA begins its work in state~$q₀$ with a single designated stack element residing on the stack.
+  At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack.
+  Based on the values of these, it decides how to proceed:
+  \begin{enumerate}
+    \item If~$q∈A$ and the input is exhausted, the automaton accepts the input and stops.
+    \item Suppose that~$δ(q,γ,ε)≠⊥$ (in this case, the definition of a DPDA
+          requires that~$δ(q,γ,a')=⊥$ for all~$σ'∈Σ$), and let~$δ(q,γ,ε)=(q',ζ)$.
+          Then the automaton pops~$γ$ and pushes the string of stack
+          elements~$ζ∈Γ^*$ into the stack.
+    \item If~$δ(q,γ,a)=(q',ζ)$, then the same happens, but the automaton also
+          irrevocably consumes the token~$σ$.
+    \item If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+  \end{enumerate}
 \end{Definition}
-
+Proceeding along the second alternative in the above is called an~$ε$-transition.
+Such transitions turn out to be a major source of complication, 
+  since an automaton may conduct any number of these, including non-trivial 
+  maneuvers of the stack, without making any progress in the input word.
+  
 As mentioned above, NPDA languages are the same as CFG languages.
-It is convenient to speak also of DCFG languages, the \emph{deterministic context-free grammar} languages,
-which are those context-free languages that are recognizable by a DPDA.
-
-DCFG languages are a strict container of regular languages,
+Equivalently, \emph{DCFG languages} (deterministic context-free grammar languages)
+  are context-free languages that are recognizable by a DPDA.
+DCFG languages make a strict container of regular languages,
   and are strictly contained in CFG languages.
-On the other hand, DPDA are easier to parse:
-  Recognition of a DPDA language
-  can be done in linear time and one pass.
-  In contrast, CYK, one of the best algorithms for recognizing NPDA languages run in super-quadratic time~\cite{Younger:1967,Cocke:1969,Earley:1970}.
 
-\begin{Definition}
-  \label{Definition:realtime}
-  \slshape
-We say a DPDA supplies the \emph{realtime condition} if
-  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
-\end{Definition}
-
-The last construct we remind, is the less known \emph{Simple Jump Deterministic Pushdown Automaton},
-the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder:05}.
-
-\begin{Definition}[Simple-Jump Deterministic Pushdown Automaton]
-  \label{Definition:JDPDA}
-  \slshape
-  A \emph{simple-jump deterministic pushdown automaton} (jump-DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
-  where~$Q,Γ,q₀,A$ are exactly as in~\cref{Definition:DPDA},
-  and~$δ$ is the
-  \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛(Q⨉Γ^*)∪(Q⨉❴E❵⨉Γ)$
-  (E is a special symbol which means ‟erase”).
-  \par
-  A jump-DPDA begins its work like a general DPDA\@.
-  \par
-  Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack.
-  If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA\@.
-  If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped, and the automaton
-  moves to state~$q$, but in addition, stack elements are popped until
-  popping a single~$γ'$.
-  If there is no~$γ'$ in the stack, the result is undefined.
-  \par
-  If~$γ$ is undefined, i.e., the stack is empty, the automaton accepts the input and halts.
-  The same happens if~$q∈A$.
-  \par
-  If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
-\end{Definition}
-
-A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
-  as defined in~\cref{Definition:JDPDA}
-  that supplies~\cref{Definition:realtime}.
-
-\subsection{Fluent APIs realizing Deterministic Context Free Grammars}
-The following definition is pertinent.
-Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
-into a call to a uniquely named function (with respect to~$σ$).
-Let~$\textsf{java}(α)$, be the function
-  that translates a string~$α∈Σ^*$ into a fluent API call chain.
-If~$α=σ₁⋯σₙ∈Σ^*$, then⏎
-  \mbox{\qquad\qquad}$\textsf{java}(α)=$~\cc{.}$\textsf{java}(σ₁)$\cc{().}~$⋯$~\cc{.}$\textsf{java}(σₙ)$\cc{()}⏎
-For~$Σ=❴a,b,c❵$ we can define~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
-With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
-
-\begin{theorem}\label{Theorem:Gil-Levy}
-  Let~$D$ be a DPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and other types with the following
-  property: Consider the \Java command
-  \[
-    \cc{L_= M.build~$\textsf{java}(α)$}\cc{.\$()};
-  \]
-  (in words: starting from the \kk{static} field of \kk{class}~\cc{M},
-  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
-  end symbol~\cc{\$()} and then assign to newly declared variable~‟\cc{\_}” of type~\cc{L}).
-  Then, this command type checks against~$J_M$ if an only if~$α∈L$.
-  Furthermore, program~$J_M$ can be effectively generated†{in the computability lingo:
-    effective~$≈$‟~\emph{there is time
-  bounded algorithm for carrying out the task}”.} from~$M$.
-\end{theorem}

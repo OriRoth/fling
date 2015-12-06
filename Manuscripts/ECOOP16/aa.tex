@@ -33,9 +33,11 @@ Other examples of fluent APIs in \Java are abundant: jMock, Hamcrest,~\cite{find
   \end{tabular}
 \end{figure}
 
+\subsection{A Type Perspective on Fluent APIs}
 Inspired by the theory of formal languages and pushdown automata
 this study explores the of what can be done, and what can not be done, with fluent API in \Java.
-Consider of some fluent API definition, permitting only certain call
+
+Consider some fluent API definition, permitting only certain call
 chains and disallowing all others.
 Now, think of the formal language that defines the set of these permissible chains.
 The main contribution of this paper is a proof (with its implicit algorithm) that
@@ -69,3 +71,18 @@ This is done by maintaining an ordered list of the methods
   parameters.
 The parse tree is by applying some appropriate parser to this list
   once it is complete.
+
+\subsection{Contribution}
+Concrete contributions made by this work include
+\begin{itemize}
+  \item the understanding that the definition of fluent APIs is analogous to the 
+      the definition of a formal language.
+  \item a lower bound (deterministic pushdown automata). 
+    on the theoretical ``computational complexity'' of the \Java type system.
+  \item an algorithm for producing fluent API for deterministic context free languages.
+  \item a collection of generic programming techniques, developed towards this algorithm. 
+  \item a demonstration that the runtime Oracle's \texttt{javac} compiler may be exponential in the program size. 
+\end{itemize}
+
+
+
