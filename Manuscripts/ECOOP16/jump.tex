@@ -27,7 +27,8 @@ In the figure, there are two such parameters: \cc{J\_$γ$1}, and
 
 Functions defined in \cc{JS} include not only the standard stack operations: \cc{top},
 \cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
-  but also~$k$ functions \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
+but also~$k$ functions encoding $\textsf{jump}(\gamma)$, $\gamma \in \Gamma$.
+In our case, these are \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   which encode~$\textsf{jump}(γᵢ)$
   thanks to their return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
 
