@@ -113,15 +113,15 @@ This description is often called BNF\@.
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
 CFG languages include regular languages, and are strictly contained in the set
-  of ‟context-sensitive” languages.
+  of ‟context-sensitive” languages~\cite{Hopcroft:79}.
 
 The expressive power of NPDAs and BNFs is the same:
   For every language defined by a BNF, there exists an NPDA that recognizes it.
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
-Since our encoding surely will be deterministic, we need a simpler
-  model, that runs in polynomial deterministic time.
+Since our encoding will be deterministic, we need a simpler
+  model, that runs in a polynomial deterministic time.
 
 \begin{Definition}[Deterministic Pushdown Automaton]
   \label{Definition:DPDA}
@@ -220,5 +220,7 @@ With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
   end symbol~\cc{\$()} and then assign to newly declared variable~‟\cc{\_}” of type~\cc{L}).
   Then, this command type checks against~$J_M$ if an only if~$α∈L$.
-  Furthermore, program~$J_M$ can be effectively generated from~$M$.
+  Furthermore, program~$J_M$ can be effectively generated†{in the computability lingo:
+    effective~$≈$‟~\emph{there is time
+  bounded algorithm for carrying out the task}”.} from~$M$.
 \end{theorem}
