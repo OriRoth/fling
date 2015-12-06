@@ -22,4 +22,4 @@ target/
 :w
 \\
 \\\\\\\\
-*gnuplottex-fig*.gnuplot
+*gnuplottex-fig[0-9]*.*
