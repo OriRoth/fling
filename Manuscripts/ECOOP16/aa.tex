@@ -16,8 +16,11 @@ Indeed, in langauges such as \CC{}, fluent APIs
   often make extensive use of operator overloading (examine e.g., AraRat~\cite{Gil:Lenz}),
   but this capability is not available in \Java.
 
-Despite this limitation, fluent API in \Java can be rich and expressive.
+Despite this limitation, fluent API in \Java can be rich and expressive, as demonstrated
+  in \cref{Figure:DSL}
 \begin{figure}
+  \caption{\label{Figure:DSL} Two examples of \Java fluent API}
+  }
 \begin{tabular}{cc}
   \begin{lcode}{JAVA}
 from("direct:a")
@@ -43,8 +46,10 @@ create.select(AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, count())
   .offset(1)
 \end{lcode}
 \\
+\textbf{(a)}
 Apache Camel~\cite{Ibsen:Anstey:10} &
-
+\textbf{(b)}
+jOOQ API definitions~[\url{http://www.jooq.org}]
 \end{tabular}
 \end{figure}
 
