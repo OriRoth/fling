@@ -214,8 +214,4 @@ public class Domain {
     q3_γ2<P<γ2, P<γ1, E>>> go = x6.go();
   }
 }
- 
-  
-  
-  
 //@formatter:on
