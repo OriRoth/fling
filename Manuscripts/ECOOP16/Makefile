@@ -43,14 +43,16 @@ graphs: $(wildcard *.sty *.tex) $(LISTINGS)
 
 all:	graphs bibtex latex 
 
-DOMAIN = ../../src/main/java/automaton/Domain.java 
-DOMAIN_DEMO = ../../src/main/java/automaton/DomainDemo.java  
-COMPILER = ../Figures/Cons.java
+
+CODE_PATH = ../../src/main/java/automaton
+
+DOMAIN = $(CODE_PATH)/Domain.java 
+DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  
   
-jump-stack-example.listing: $(DOMAIN_DEMO)
+jump-stack-example.listing: $(CODE_PATH)/JumpStackDemo.java
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-compiler.listing: $(COMPILER)
+compiler.listing: ../Figures/Cons.java
 	awk '/^.*interface.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 jump-stack.listing: $(DOMAIN)
