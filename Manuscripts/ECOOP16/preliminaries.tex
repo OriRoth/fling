@@ -59,14 +59,9 @@ Consider, e.g., the following \Java code fragment (drawn from JMock~\cite{Freema
 Let the return type of function \cc{allowing} (respectively \cc{method}) be denoted by~$τ₁$ 
 (respectively~$τ₂$).
 Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
-in the partial call chain
-\[
-  \cc{allowing(any(Object.class)).}
-\]
+in the partial call chain $\cc{allowing(any(Object.\kk{class})).}$
 is distinct from the set of methods that can be placed after the dot in the partial call chain
-\[
-  \cc{allowing(any(Object.class)).method("get.*").}
-\]
+  $\cc{allowing(any(Object.\kk{class})).method("get.*").}$
 This distinction makes it possible to design expressive and rich fluent APIs, in which a
 sequence ‟chained” calls is not only readable, but also robust, in the sense that the
 sequence is type correct only when it the sequence makes sense semantically.
