@@ -29,7 +29,7 @@ Consider an encoding of an S-expession in type~\cc{Cons}
   \javaInput[minipage,width=27ex,left=-2ex]{compiler.listing}
 \end{wrapfigure}
 
-Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Car} (denoting left and right branches).
+Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
 Denote the return type of \cc{d()} is~$τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}$.
 Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
 Since~$τ= \cc{Const<}σ,σ\cc{>}$, we have~$|τ|≥2|Σ|$,

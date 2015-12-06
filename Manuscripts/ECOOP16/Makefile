@@ -51,7 +51,7 @@ jump-stack-example.listing: $(DOMAIN_DEMO)
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 compiler.listing: $(COMPILER)
-	awk '/^.*class N.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+	awk '/^.*interface Cons.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 jump-stack.listing: $(DOMAIN)
 	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
