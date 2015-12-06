@@ -45,7 +45,7 @@ all:	graphs bibtex latex
 
 DOMAIN = ../../src/main/java/automaton/Domain.java 
 DOMAIN_DEMO = ../../src/main/java/automaton/DomainDemo.java  
-COMPILER = ../Figures/KillCompiler.java
+COMPILER = ../Figures/Cons.java
   
 jump-stack-example.listing: $(DOMAIN_DEMO)
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
