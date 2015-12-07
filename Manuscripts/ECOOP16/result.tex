@@ -11,26 +11,26 @@ With these, \[
   \]
 
 \begin{theorem}\label{Theorem:Gil-Levy}
-  Let~$D$ be a DPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
     other types such that the \Java command
   \begin{equation}
     \label{Equation:result}
-    \cc{L~$ℓ$ = M.build~$\textsf{java}(α)$}\cc{.\$();}
+    \cc{L~$ℓ$ = A.build~$\textsf{java}(α)$}\cc{.\$();}
   \end{equation}
-  type checks against~$J_M$ if an only if~$α∈L$.
-  Furthermore, program~$J_M$ can be effectively generated from~$M$.
+  type checks against~$J_A$ if an only if~$α∈L$.
+  Furthermore, program~$J_A$ can be effectively generated from~$A$.
 \end{theorem}
 
-\Cref{Equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{M},
+\Cref{Equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{A},
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
   ending character~\cc{\$()} and then assign to newly declared \Java variable~\cc{$ℓ$} of type~\cc{L}.
 
 The proof of the theorem is by a scheme for encoding in \Java types
   the pushdown automaton~$A=A(L)$ that recognizes language~$L$.
-Concretely, the scheme assigns a type~$τ(c)$.
+Concretely, the scheme assigns a type~$τ(c)$
   to each possible configuration~$c$ of~$A$.
-Also, the type of \cc{M.build} is~$τ(c₀)$, where~$c₀$ initial configuration of~$A$,
+Also, the type of \cc{A.build} is~$τ(c₀)$, where~$c₀$ is the initial configuration of~$A$,
 
 Further, in each such type the scheme places
   a function~$σ()$ for every~$σ∈Σ$.
@@ -39,23 +39,23 @@ Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$
 Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
 
 With this encoding the call chain in \cref{Equation:result}
-  mimics the computation of~$A$, starting at~$c+0$ and ending with
+  mimics the computation of~$A$, starting at~$c_0$ and ending with
   rejection or acceptance.
-More details of the proof are in \cref{Section:proof}.
+The full proof is in \cref{Section:proof}.
 
 There are several, mostly minor, differences between the structure of the \Java code
 in \cref{Equation:result}
 and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
 \begin{description}
-  \item[Prefix, i.e., the stating \cc{M.build} variable.]
+  \item[Prefix, i.e., the stating \cc{A.build} variable.]
   All variables and functions of \Java are defined within a class.
-  Therefore, a call chain must start with an object (\cc{M.build} in \cref{Equation:result})
+  Therefore, a call chain must start with an object (\cc{A.build} in \cref{Equation:result})
   or, in case of \cc{static} methods, with the name of a class.
   In fluent API frameworks this prefix is typically eliminated
   with appropriate \cc{import} statements.
   \begin{quote}
   If so desired, the same can be done by our type encoding scheme: define all
-  methods in type~$τ(c₀)$ as \cc{staic} and \cc{import static} of of these.
+  methods in type~$τ(c₀)$ as \cc{staic} and \cc{import static} these.
 \end{quote}
   \item[Suffix, i.e., the terminal \cc{.\$()} call.]
   In order to know whether~$α∈L$ the automaton recognizing~$L$ must
@@ -66,8 +66,8 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   an accepting configuration, as subypte of~\cc{L}.
   \end{quote}
   \item[Parametrized methods.]
-  Fluent APIs frameworks support call chains with including phrases such as
-    \lstset{language=Java,style=code}, 
+  Fluent API frameworks support call chains with including phrases such as:
+    \lstset{language=Java,style=code} 
   \begin{itemize}
     \item \lstinline{.when(header(foo).isEqualTo("bar")).}, and, 
     \item \lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}.
@@ -75,7 +75,7 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   \end{itemize}
   while our encoding scheme assumes methods which do not take any parameters.  
   \begin{quote}
-    Even though  methods with parameters contribute to the user
+    Even though methods with parameters contribute to the user
       experience and readability of fluent APIS, extending 
       \cref{Theorem:Gil-Levy} to support requires three simple steps: 
       \begin{itemize}
