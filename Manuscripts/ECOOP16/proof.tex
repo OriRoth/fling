@@ -1,39 +1,60 @@
-Thanks to these, an automaton may move between an unbounded number of 
-  configurations and maneuver the stack in a non-trivial manner, 
-  without making any progress on the input.
-every DPDA can be converted ot JPDA.
-\begin{Definition}
-  \label{Definition:realtime}
-  \slshape
-We say a DPDA supplies the \emph{realtime condition} if
-  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
-\end{Definition}
+Proof of \cref{Theorem:Gil-Levy} follows the type encoding scheme
+  sketched in \cref{Section:result}.
+Transitions are nothing but partial functions with multiple parameters.
+As we saw in \cref{Section:toolkit}
+  it is possible to encode these as types, and just as the unbounded
+    stack data found in DPDA.
 
+The difficulty in applying the scheme to a plain DPDA
+  (\cref{Definition:DPDA}) is with~$ε$-transitions.
+With these, the automaton may move between an unbounded number of
+  configurations and maneuver the stack in a non-trivial manner,
+  without making any progress on the input.
+However, in our scheme, compile time computation is carried out
+by the~$\textsf{java}(σ)()$ functions, each converting
+  their receiver type to the type of the receiver of the next call in the chain.
+We not aware of a \Java type encoding which makes
+  it possible to convert an input type into an output type, where
+  the output is a computed from the input by an unbounded number o steps.†{
+    With the presumption that the \Java compiler halts for all inputs (a presumption that does
+    not hold for e.g., \CC), the claim that there is no \Java type encoding of all DPDAs:
+ Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
+  never halts on any input.
+A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
+}
+
+The following definition is of a deterministic pushdown automata without such moves.
 The last construct we remind, is the less known \emph{Simple Jump Deterministic Pushdown Automaton},
 the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Courcelle:77}.
 
 \begin{Definition}[Simple-Jump Deterministic Pushdown Automaton]
   \label{Definition:JDPDA}
   \slshape
-  A \emph{simple-jump deterministic pushdown automaton} (jump-DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
-  where~$Q,Γ,q₀,A$ are exactly as in~\cref{Definition:DPDA},
-  and~$δ$ is the
-  \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛(Q⨉Γ^*)∪(Q⨉❴E❵⨉Γ)$
-  (E is a special symbol which means ‟erase”).
-  \par
-  A jump-DPDA begins its work like a general DPDA\@.
-  \par
-  Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack.
-  If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA\@.
-  If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped, and the automaton
-  moves to state~$q$. 
-  In addition, the automaton repeatedly pops, stopping after the first occurrence of~$γ'$ is popped.
-  Behavior is undefined if no such~$γ'$ in the stack 
-  \par
-  If~$γ$ is undefined, i.e., the stack is empty, the automaton accepts the input and halts.
-  The same happens if~$q∈A$.
-  \par
-  If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+  A \textit{simple-jump, one-state, realtime deterministic pushdown automaton}
+  (jDPDA, for short) is a triplet~$⟨Γ,γ₀,δ⟩$
+  where~$Γ$ is a set of stack elements,~$γ₀∈Γ$ is the initial stack element,
+  and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
+  \[
+    j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
+  \]
+  A configuration of a jPDA is some~$c∈Γ^*$ representing the stack contents.
+  Initially,~$ζ=γ₀$.
+  At each steps a jPDA examines~$σ∈Σ$,
+  the next input character and~$γ$ the element at the top of the stack, and
+  executes the following:
+  \begin{quote}
+    \begin{enumerate}
+      \item consume~$σ$
+      \item pop~$γ$
+      \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
+      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetetively
+            pops stack elements upto and incuding the first occurrence of~$γ$.
+    \end{enumerate}
+  \end{quote}
+  The automaton accepts by reaching the end of the input.
+  It rejects if~$δ(γ,σ) =⊥$, or if it encounters
+  an empty stack (either at the beginning of a step or on course
+  a \textsf{jump operations}.
 \end{Definition}
 
 A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
@@ -42,116 +63,8 @@ A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
 We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
 The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
 
-\subsection{Reduction}
-The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
-A DPDA is allowed to make a transition into a different state,
-  pop one or more elements, and then, pop, push or even both pop and push, any number of elements,
-  all without consuming a single input character.
 
-In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one character at a time, as a sequence of method calls.
-A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however deterministic
-  they are.
-The following definition is of a deterministic pushdown automata without such moves.
 
-\begin{Definition}
-  \label{Definition:SDPDA}
-  \slshape
-  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA) of order~$k$ is
-    a quintuple~$⟨Γ,Q,q₀,A,δ⟩$,
-  where~$Γ$,~$Q$,~$q₀∈Q$,~$A⊆Q$ are precisely as in \cref{Definition:DPDA}.
-  The signature of function~$δ$, the \emph{generalized partial transition function}
-  of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
-  \par
-  An SDPDA begins as a DPDA\@. At each step it examines~$σ∈Σ$,
-    the next input character,~$q∈Q$, the current state,
-    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most elements,
-  \par
-  If the stack is empty, or~$q∈A$, the automaton stops in accepting.
-  If the transition function is undefined, i.e.,~$δ(q,γ₁,…,γₖ,σ)=⊥$ the automaton
-    stops in rejection.
-  Otherwise, and since there are no~$ε$-moves, there are~$q'∈Q$ and~$ζ∈Γ^*$
-    such that~$δ(q,γ₁,…,γₖ,σ)=(q',ζ)$.
-  The automaton then pops~$γ₁$ through~$γₖ$, pushes the sequence~$ζ$, and
-    moves to state~$q'$.
-\end{Definition}
-
-We say that
-a \emph{configuration}~$(q,γ)$,~$q∈Q$,~$γ∈Γ$,
-  is an \emph{$ε$-configuration} if~$δ(q,γ,ε)=(q',ζ)$ for
-    some~$q'∈Q$ and a sequence of elements~$ζ$,
-Recall that by definition of DPDAs,~$δ(q,γ,σ)=⊥$ for
-  all~$σ∈Σ$, i.e., there is precisely one transition
-  leading out of an~$ε$-configuration.
-
-Our objective is to remove all~$ε$-configurations,
-  replacing these with the non-$ε$ configuration that
-  they (eventually) lead to.
-This is easy to do when~$|ζ|≥1$, in which
-  case the top of the stack is known to be~$γ'$,~$γ'$ being the first
-    element of~$ζ$; the configuration at the end of transition
-    would be then be~$(q',γ')$, which in its turn may, or may not be,
-    an~$ε$-configuration.
-
-However, if~$ζ=ε$, we do not know which element resides at the top
-  of the stack.
-The transition from the current configuration can thus lead to \emph{multiple} configurations,
-  depending on the actual element left at the top of the stack after popping~$γ$.
-The definition of a configuration thus must be changed to include the \emph{two} top
-  most elements.
-But, even this would fail if the next configuration is also an~$ε$-configuration that pushes no elements.
-
-To be able to compute the closure of~$ε$-configuration, we shall
-  therefore include with the configuration the~$k$ top most elements,
-  where~$k$ is defined to be large enough so that
-  the top of the stack must never be guessed while going
-  through~$ε$-configurations.
-
-To compute~$k$ we need to compute the largest possible overdraft
-  from the stack along a series of transitions through~$ε$-configuration.
-To do so, define the following directed weighted graph:
-Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
-  of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
-Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
-Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
-  to all possible ‟guesses” of the element beneath~$γ$.
-Each such edge takes the weight~$1-|ζ|$ to denote the fact
-  that the total ‟charge” to the stack is~$1-|ζ|$:
-    one element (specifically~$γ$) is popped,
-    while~$|ζ|$ (which could also be zero), are pushed.
-The value of~$k$ is simply the heaviest path in this graph.
-
-In the former graph, cycles might occur.
-Sadly, we cannot solve those cycles, since arbitrary number of elements might be removed from the
-  stack, and therefore, the required~$ε$-closure cannot be computed.
-As shown by someone~\cite{Autebert:97}, DPDAs with no~$ε$-moves are less expressive than a normal DPDAs,
-  and therefore, not all DPDA can be computed.
-
-Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
-Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
-of order k, the corresponding SDPDA\@.
-Notice that the elements are the same in both.
-The other components of~$Sₘ$ are constructed as follows:
-\begin{itemize}
-  \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
-  \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
-  \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
-  \item for~$δ(q,γ,σ) = (q',ζ)$
-        \begin{itemize}
-          \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$ we
-            define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
-          \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$ is
-            the~$ε$-closure on~$(q,ζ)$.  The~$ε$-closure of~$(q,ζ)$ is the
-            series of consecutive~$ε$-transitions from~$δ$ that end with a
-            single ‟input consuming” transition.  This computation is possible
-            due to the definition of~$k$, that assures us, that during this
-            ‟static” computation on~$δ$, we will at all times know the top of
-            the stack, and therefore, this computation is viable.
-        \end{itemize}
-\end{itemize}
-
-The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
-In particular, we describe how~$J_M$ is constructed from the
-  specification of~$M$.
 
 We will use the following notation for
 The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
@@ -188,7 +101,6 @@ is represented by the following type
 \end{JAVA}
 This is a general concept for implementing an unbounded stack with \Java's type system,
 that will be extended in the future.
-
 
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function \cref{Equation:generalized:transition}
@@ -232,3 +144,9 @@ abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢>
   }
   \javaInput[minipage,width=\linewidth]{spda.listing}
 \end{figure}
+\begin{Definition}
+  \label{Definition:realtime}
+  \slshape
+We say a DPDA supplies the \emph{realtime condition} if
+  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
+\end{Definition}

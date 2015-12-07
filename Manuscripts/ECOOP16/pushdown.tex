@@ -60,7 +60,7 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
 \begin{Definition}[Deterministic Pushdown Automaton]
   \label{Definition:DPDA}
   \slshape
-  A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
+  A \textit{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
   where~$Q$ is a finite set of \emph{states},~$Γ$ is a finite
   \emph{set of elements},~$q₀∈Q$ is the initial state,
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
@@ -70,6 +70,7 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
   At each step, the automaton examines: the current state~$q∈Q$, 
   the element~$γ∈Γ$ at the top of the stack, and~$σ$, the next input token, 
   Based on the values of these, it decides how to proceed:
+  \begin{quote}
   \begin{enumerate}
     \item If~$q∈A$ and the input is exhausted, the automaton accepts the input and stops.
     \item Suppose that~$δ(q,γ,ε)≠⊥$ (in this case, the definition of a DPDA
@@ -80,6 +81,7 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
           irrevocably consumes the token~$σ$.
     \item If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
   \end{enumerate}
+  \end{quote}
 \end{Definition}
 
 A \emph{configuration} is the pair of the current state and the stack contents.

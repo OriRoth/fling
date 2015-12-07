@@ -39,9 +39,14 @@ Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$
 Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
 
 With this encoding the call chain in \cref{Equation:result}
-  mimics the computation of~$A$, starting at~$c_0$ and ending with
+  mimics the computation of~$A$, starting at~$c₀$ and ending with
   rejection or acceptance.
 The full proof is in \cref{Section:proof}.
+
+Since the depth of the stack is unbounded, the number of configurations of $A$ is unbounded,
+  and the scheme must generate an infinite number of types.
+Genericity makes this possible, since a generic type is
+  actually device for creating an unbounded number of types.
 
 There are several, mostly minor, differences between the structure of the \Java code
 in \cref{Equation:result}
@@ -53,32 +58,30 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   or, in case of \cc{static} methods, with the name of a class.
   In fluent API frameworks this prefix is typically eliminated
   with appropriate \cc{import} statements.
-  \begin{quote}
+  \par
   If so desired, the same can be done by our type encoding scheme: define all
   methods in type~$τ(c₀)$ as \cc{staic} and \cc{import static} these.
-\end{quote}
   \item[Suffix, i.e., the terminal \cc{.\$()} call.]
   In order to know whether~$α∈L$ the automaton recognizing~$L$ must
   know when~$α$ is terminated.
-  \begin{quote}
+  \par
   With a bit of engineering, this suffix can also be eliminated.
   One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
   an accepting configuration, as subypte of~\cc{L}.
-  \end{quote}
   \item[Parametrized methods.]
-  Fluent API frameworks support call chains including phrases such as:
-    \lstset{language=Java,style=code} 
+  Fluent API frameworks support call chains with phrases such as:
+    \lstset{language=Java,style=code}
   \begin{itemize}
-    \item \lstinline{.when(header(foo).isEqualTo("bar")).}, and,
-    \item \lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}.
-    \item \lstinline{.allowing(any(Object.class)).}
+    \item ‟\lstinline{.when(header(foo).isEqualTo("bar")).}”,
+    \item ‟\lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}”, and,
+    \item ‟\lstinline{.allowing(any(Object.class)).}”.
   \end{itemize}
-
   while our encoding scheme assumes methods with no parameters.  
-  \begin{quote}
-    Even though methods with parameters contribute to the user
-      experience and readability of fluent APIs, extending
-      \cref{Theorem:Gil-Levy} to support these requires three simple steps: 
+  \par
+    Methods with parameters contribute to the user
+      experience and readability of fluent APIs but their ``computational expressive power"' is the same.
+      In fact, extending
+      \cref{Theorem:Gil-Levy} to support these requires three simple steps:
       \begin{enumerate}
         \item Define the structure of parameters to methods with appropriate fluent API, which may or
           may not be, the same as the fluent API of the outer chain, or the fluent API of parameters to
@@ -87,8 +90,7 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
           If there are several overloaded versions of a method, consider each such version as a distinct
           character in the alphabet~$Σ$ and in the type encoding of the automaton.
         \item
-          Let each method with parameters store the value of its parameters for the
-            runtime parsing procedure.
+          Adding to the implementation of each method code to store the 
+          parameters store the value of its argument(s) in the call list. 
       \end{enumerate}
-  \end{quote}
 \end{description}

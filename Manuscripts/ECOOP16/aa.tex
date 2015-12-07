@@ -74,11 +74,11 @@ Some fluent API definitions create the parse-tree
   iteratively, where each method invocations in the call chain adding
   more components to this tree.
 However, it is always possible to generate this tree in ‟batch” mode:
-This is done by maintaining an ordered list of the methods
-  called---each method invocation adding to this list an item containing the method's name
-  parameters.
-The parse tree can then be made by applying some appropriate parser to this list
-  once it is complete.
+This is done by maintaining a \emph{call list} which 
+  starts empty and grows at runtime by having each method invoked add to it 
+  a record storing the method's name and values of its parameters.  
+The list is completed at the end of the call list, at which point it is fed to an appropriate parser that
+  converts it into a parse tree (or even an AST).
 
 \subsection{Contribution}
 Concrete contributions made by this work include
