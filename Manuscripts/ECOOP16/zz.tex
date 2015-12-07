@@ -6,7 +6,7 @@ its realization:
     \item Convert the specification into a plain BNF form
     \urlref{http://lampwww.epfl.ch/teaching/archive/compilation-ssc/2000/part4/parsing/node3.html}.
     \item Convert this BNF into a definition of a DPDA. If conversion fails,
-      then the given specification is not deterministic context free. ~\cite{C1}
+      then the given specification is not deterministic context-free. ~\cite{C1}
     \item Convert this DPDA into a jDPDA. (Conversion is guaranteed to succeed.) ~\cite{CONVERT}
     \item Apply the proof to generate appropriate \Java type definitions, making sure to
         augment methods with code to maintain the fluent-call-list.
@@ -20,7 +20,7 @@ The \Java compiler is the main computational tool we use
 in this manuscript.
 In particular, the \Java generics mechanism is what
 boosted our expressiveness from the trivial \emph{regular languages}
-set, to the practical, reasonable \emph{deterministic context free languages} set.
+set, to the practical, reasonable \emph{deterministic context-free languages} set.
 
 An interesting question that was raised during this research,
   is what the runtime complexity of the \Java compiler is.
@@ -103,7 +103,7 @@ Accordingly, the contribution of this work is double folded:
 One may ask whether our theoretical result is the
   best possible:
 It is possible to implement a fluent API for general
-  (that is, nondeterministic) context free languages?
+  (that is, nondeterministic) context-free languages?
   We give reason why this possibility is unlikely.
 
 \subsection{Further Research}
