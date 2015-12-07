@@ -22,8 +22,6 @@ Intuitively, the proof relies on the fact that \kk{template}s
   feature recursive invocation and conditionals (in the form of
   ‟\emph{template specialization}”).
 
-There has already been a similar \Java implementation for regular
-  languages\urlref{https://github.com/verhas/fluflu}.
   
 In the same fashion, it is mundane to make the judgment that
   \Java's generics are not Turing-complete: all recursive calls
@@ -42,7 +40,8 @@ Expression templates is a \CC technique for passing expressions as function argu
 
 Mention work by \cite{Bracha} on non-standard type systems.  
 
-regular expressions.
+There has already been a similar \Java implementation for regular expressions
+  \urlref{https://github.com/verhas/fluflu}.
 
 Eric Bodden wrote an article about fluent APIs, static and dynamic analysis, and type-state~\cite{Bodden:14}
 
@@ -129,7 +128,7 @@ The proof makes a general recipe for handling examples of this sort:
 
 The proof is a construction of a \Java type encoding of
   the \emph{deterministic pushdown automaton} that recognizes
-  a given \emph{deterministic context free language}.
+  a given \emph{deterministic context-free language}.
 With the generated types and methods, the compilation process of
   any chain of fluent API calls, actually runs the pushdown automaton against the
   specific input string that the chain represents.
