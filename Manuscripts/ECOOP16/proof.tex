@@ -7,8 +7,8 @@ The techniques however fail with~$ε$-transitions,
   which allow the automaton to move between an unbounded number of
   configurations and maneuver the stack in a non-trivial manner,
   without making any progress on the input.
-The fault in scheme lies with compile time computation being carried out
-  by the~$\textsf{java}(σ)()$ functions, each convertin>g
+The fault in the scheme lies with compile time computation being carried out
+  by the~$\textsf{java}(σ)()$ functions, each converting
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
@@ -21,7 +21,7 @@ A type encoding of~$A^∞$ creates programs that send the compiler in an infinit
 }
 
 The literature speaks of finite-delay DPDAs, in which the number
-  of consecutive~$ε$-transitions is uniformally bounded and even of
+  of consecutive~$ε$-transitions is uniformly bounded and even of
   realtime DPDAs in which this bound is 0, i.e., no~$ε$-transitions.
 Our proof relies on a special kind of realtime automata,
   described by Courcelle~\cite{Courcelle:77}.
@@ -46,8 +46,8 @@ Our proof relies on a special kind of realtime automata,
       \item consume~$σ$
       \item pop~$γ$
       \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
-      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetetively
-            pops stack elements upto and incuding the first occurrence of~$γ$.
+      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetitively
+            pops stack elements up-to and including the first occurrence of~$γ$.
     \end{enumerate}
   \end{quote}
   The automaton accepts by reaching the end of the input.
