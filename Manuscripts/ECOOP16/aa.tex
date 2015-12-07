@@ -9,10 +9,10 @@ Advantages are many: base language tools (compiler, debugger, IDE, etc.) remain
 However, these advantages come at the cost of expressive power;
   in the words of Fowler:
   ‟\emph{Internal DSLs are limited by the syntax and structure of your base language.}”†
-  {M. Fowler, \emph{Language Workbenches: The Killer-App for Domain Specific Languages?}, 
+  {M. Fowler, \emph{Language Workbenches: The Killer-App for Domain Specific Languages?},
     2005
     \newline
-  \url{http://www.martinfowler.com/articles/languageWorkbench.html\#InternalDsl}}.
+  \url{http://www.martinfowler.com/articles/languageWorkbench.html＃InternalDsl}}.
 Indeed, in languages such as \CC, fluent APIs
   often make extensive use of operator overloading (examine, e.g., \textsf{Ara-Rat}~\cite{Gil:Lenz:07}),
   but this capability is not available in \Java.
@@ -27,13 +27,13 @@ and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   \caption{\label{Figure:DSL} Two examples of \Java fluent API}
   \begin{tabular}{@{}c@{}c@{}}
     \parbox[c]{44ex}{\javaInput[left=0ex]{camel-apache.java.fragment}} &
-    \hspace{-3ex} \parbox[c]{59ex}{\javaInput[left=0ex]{jOOQ.java.fragment}} ⏎
-    \textbf{(a)} Apache Camel                                          & \textbf{(b)} jOOQ
+    \hspace{-3ex} \parbox[c]{59ex}{\javaInput[left=0ex]{jOOQ.java.fragment}}⏎
+    \textbf{(a)} Apache Camel & \textbf{(b)} jOOQ
   \end{tabular}
 \end{figure}
 
-Other examples of fluent APIs in \Java are abundant: 
-  jMock\cite{Freeman:Pryce:06}, 
+Other examples of fluent APIs in \Java are abundant:
+  jMock~\cite{Freeman:Pryce:06},
   Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
   EasyMock\urlref{http://easymock.org/},
   jOOR\urlref{https://github.com/jOOQ/jOOR},
@@ -41,29 +41,51 @@ Other examples of fluent APIs in \Java are abundant:
   and many more.
 
 \subsection{A Type Perspective on Fluent APIs}
-Inspired by the theory of formal languages and automata,
-this study explores what can be done, and what can not be done, with fluent API in \Java.
+\Cref{Figure:DSL}(B) suggests that jOOQ imitates SQL,
+but is it possible at all to produce a fluent API
+for the entire SQL language,
+or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
+Of course, with no operator overloading it is impossible
+to fully emulate tokens; method names though make a good substitute for tokens, as done
+in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{Figure:DSL}).
+The questions that motivate that this research are:
+\begin{quote}
+  \begin{itemize}
+    \item Given a specification of a DSL, determine whether there exists
+        a fluent API can be made for this specification?
+    \item In the cases that such a fluent API is possible,
+      can it be produced automatically?
+    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison} tool
+        to convert a language specification into a fluent API?
+\end{itemize}
+\end{quote}
 
-Consider some fluent API definition, permitting only certain call
+Inspired by the theory of formal languages and automata,
+  this study explores what can be done, and what can not be done, with fluent API in \Java.
+
+Consider some fluent API (or DSL) specification, permitting only certain call
 chains and disallowing all others.
 Now, think of the formal language that defines the set of these permissible chains.
 The main contribution of this paper is a proof (with its implicit algorithm) that
 there is always \Java type definition that \emph{realizes} this fluent definition, provided that this
 language is \emph{deterministic context-free}, where
 \begin{itemize}
-  \item In saying that a type definition \emph{realizes} a definition of fluent
+  \item In saying that a type definition \emph{realizes} a specification of fluent
     API, we mean that call chains that conform with the API definition compile
     correctly, and, conversely, call chains that are forbidden by the API
     definition do not type-check, resulting in an appropriate compiler error.
   \item Roughly speaking, deterministic context free languages are those
-    context free languages that can be recognized by an LR parser~†{The ‟L"
+    context free languages that can be recognized by an LR parser†{The ‟L"
     means reading the input left to right; the ‟R" stands for rightmost derivation}~\cite{Aho:86}.
+    \par
     An important property of this family is that none of its members is ambiguous.
+    Also, it is generally believed that most practical programming languages
+    are deterministic context-free.
 \end{itemize}
 
 A problem related to that of recognizing a formal language,
 is that of parsing, i.e., creating, for input which is within the language,
-  a parse tree according to the language's grammar, 
+  a parse tree according to the language's grammar,
 In the fluent APIs domain, the distinction between recognition and parsing is
   the distinction between compile time and runtime.
 Before a program is run, the compiler checks whether the fluent API call is legal,
@@ -74,20 +96,50 @@ Some fluent API definitions create the parse-tree
   iteratively, where each method invocations in the call chain adding
   more components to this tree.
 However, it is always possible to generate this tree in ‟batch” mode:
-This is done by maintaining a \emph{call list} which 
-  starts empty and grows at runtime by having each method invoked add to it 
-  a record storing the method's name and values of its parameters.  
+This is done by maintaining a \emph{call list} which
+  starts empty and grows at runtime by having each method invoked add to it
+  a record storing the method's name and values of its parameters.
 The list is completed at the end of the call list, at which point it is fed to an appropriate parser that
   converts it into a parse tree (or even an AST).
 
 \subsection{Contribution}
-Concrete contributions made by this work include
+The answers we provide for the three questions above is:
+\begin{quote}
+  \begin{enumerate}
+  \item If the DSL specification is that of deterministic context-free
+    language, then a fluent API exists for the language, but we do not know
+    whether such a fluent API exists for more general languages.
+  \par
+  Recall that there are universal cubic time parsing
+  algorithms~\cite{add:refs:to:this:cubics} which can parse (and recognize) any
+  context free language. What we do not know is whether algorithms of this sort
+  can be encoded within the framework of the \Java type system.
+  \item
+  There exists an algorithm to generate a fluent API that realize any
+  deterministic context-free languages.  Moreover, this fluent API can create
+  at runtime, a parse tree for the given language.  This parse tree can then be
+  supplied as input to the library that implements the language's semantic.
+  \item
+  Unfortunately, a general purpose compiler-compiler
+  is not yet feasible with the current algorithm.
+  \begin{itemize}
+    \item One difficulty is that the algorithm is complicated and relies on
+      modules implementing some theoretical results, which, to the best of our
+      knowledge have never been implemented.
+    \item Another difficulty is that a certain design decision in the
+      implementation of the standard \texttt{javac} compiler may choke on the
+      Java code produced by the algorithm.
+  \end{itemize}
+  \end{enumerate}
+\end{quote}
+
+Other concrete contributions made by this work include
 \begin{itemize}
-  \item the understanding that the definition of fluent APIs is analogous to 
+  \item the understanding that the definition of fluent APIs is analogous to
       the definition of a formal language.
-  \item a lower bound (deterministic pushdown automata). 
-    on the theoretical ``computational complexity'' of the \Java type system.
+  \item a lower bound (deterministic pushdown automata).
+    on the theoretical ‟computational complexity” of the \Java type system.
   \item an algorithm for producing a fluent API for deterministic context free languages.
-  \item a collection of generic programming techniques, developed towards this algorithm. 
-  \item a demonstration that the runtime Oracle's \texttt{javac} compiler may be exponential in the program size. 
+  \item a collection of generic programming techniques, developed towards this algorithm.
+  \item a demonstration that the runtime of Oracle's \texttt{javac} compiler may be exponential in the program size.
 \end{itemize}
