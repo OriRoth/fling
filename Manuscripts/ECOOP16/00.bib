@@ -433,3 +433,48 @@ year = 1977
   publisher={Manning Publications Co.},
   address={Shelter Island, NY},
 }
+@mastersthesis{Papi:08,
+  abstract = {This paper introduces the Checker Framework, which supports adding pluggable type systems to the \Java language in a 
+	      backward-compatible way. A type system designer defines type qualifiers and their semantics, and a compiler plug-in 
+	      enforces the semantics. Programmers can write the type qualifiers in their programs and use the plug-in to detect or 
+	      prevent errors. The Checker Framework is useful both to programmers who wish to write error-free code, and to type system 
+	      designers who wish to evaluate and deploy their type systems. The Checker Framework includes new \Java syntax for 
+	      expressing type qualifiers; declarative and procedural mechanisms for writing type-checking rules; and support for 
+	      flow-sensitive local type qualifier inference and for polymorphism over types and qualifiers. The Checker Framework 
+	      is well-integrated with the \Java language and toolset. We have evaluated the Checker Framework by writing 5 checkers 
+	      and running them on over 600K lines of existing code. The checkers found real errors, then confirmed the absence of 
+	      further errors in the fixed code. The case studies also shed light on the type systems themselves.},
+  author = {Papi, Matthew M},
+  doi = {10.1145/1390630.1390656},
+  isbn = {9781605580500},
+  keywords = {annotation,bug finding,case study,compiler,flow,igj,immutable,intern,java,javac,javari,nonnull,pluggable type,polymorphism,readonly,sensitivity,type qualifier,type sys},
+  pages = 87,
+  school = {Massachusetts Institute of Technology},
+  title = {Practical pluggable types for {\Java}},
+  url = {http://portal.acm.org/citation.cfm?doid=1390630.1390656},
+  year = 2008
+}
+@inproceedings{Bodden:14,
+  abstract = {Typestate analyses determine whether a program's use of a given API obeys this API's usage constraints in the sense 
+	      that the right methods are called on the right objects in the right order. Previously, we and others have described 
+	      approaches that generate typestate analyses from textual finite-state property definitions written in specialized 
+	      domain-specific languages. While such an approach is feasible, it requires a heavyweight compiler, hindering an effective 
+	      integration into the programmer's development environment and thus often also into her software-development practice. 
+	      Here we explain the design of a pure-\Java interface facilitating both the definition and evaluation of typestate analyses. 
+	      The interface is fluent, a term coined by Eric Evans and Martin Fowler. Fluent interfaces provide the user with the possibility 
+	      to write method-invocation chains that almost read like natural-language text, in our case allowing for a seemingly declarative 
+	      style of typestate definitions. In all previously described approaches, however, fluent APIs are used to build configuration objects. 
+	      In this work, for the first time we show how to design a fluent API in such a way that it also encapsulates actual computation, not 
+	      just configuration. We describe an implementation on top of Soot, Heros and Eclipse, which we are currently evaluating together with 
+	      pilot customers in an industrial context at Fraunhofer SIT.},
+  author = {Bodden, Eric},
+  booktitle = {Proceedings of the \nth{3} ACM SIGPLAN International Workshop on the State of the Art in \Java Program Analysis - SOAP '14},
+  doi = {10.1145/2614628.2614629},
+  file = {:home/tomerlevi/Downloads/bodden14ts4j.pdf:pdf},
+  isbn = {9781450329194},
+  keywords = {dynamic analysis,fluent interfaces,static analysis},
+  pages = {1--6},
+  title = {{TS4J} : A Fluent Interface for Defining and Computing Typestate Analyses},
+  url = {http://dl.acm.org/citation.cfm?doid=2614628.2614629 http://www.bodden.de/pubs/bodden14ts4j.pdf},
+  year = 2014
+}
