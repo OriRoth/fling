@@ -35,7 +35,7 @@ Also, the type of \cc{A.build} is~$τ(c₀)$, where~$c₀$ is the initial config
 Further, in each such type the scheme places
   a function~$σ()$ for every~$σ∈Σ$.
 Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$cⱼ$
-  in response to an input chracter~$σₖ$.
+  in response to an input character~$σₖ$.
 Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
 
 With this encoding the call chain in \cref{Equation:result}
@@ -84,12 +84,12 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
       \begin{enumerate}
         \item Define the structure of parameters to methods with appropriate fluent API, which may or
           may not be, the same as the fluent API of the outer chain, or the fluent API of parameters to
-          other methods. Apply the threorem to each of these fluent APIs.
+          other methods. Apply the theorem to each of these fluent APIs.
         \item
           If there are several overloaded versions of a method, consider each such version as a distinct
           character in the alphabet~$Σ$ and in the type encoding of the automaton.
         \item
           Add code to the implementation of each method code to store the 
-          store the value of its argument(s) in a record placed ath the end of the fluent-call-list. 
+          store the value of its argument(s) in a record placed at the end of the fluent-call-list. 
       \end{enumerate}
 \end{description}

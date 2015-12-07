@@ -7,8 +7,8 @@ The techniques however fail with~$ε$-transitions,
   which allow the automaton to move between an unbounded number of
   configurations and maneuver the stack in a non-trivial manner,
   without making any progress on the input.
-The fault in scheme lies with compile time computation being carried out
-  by the~$\textsf{java}(σ)()$ functions, each convertin>g
+The fault in the scheme lies with compile time computation being carried out
+  by the~$\textsf{java}(σ)()$ functions, each converting
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
@@ -21,12 +21,12 @@ A type encoding of~$A^∞$ creates programs that send the compiler in an infinit
 }
 
 The literature speaks of finite-delay DPDAs, in which the number
-  of consecutive~$ε$-transitions is uniformally bounded and even of
+  of consecutive~$ε$-transitions is uniformly bounded and even of
   realtime DPDAs in which this bound is 0, i.e., no~$ε$-transitions.
 Our proof relies on a special kind of realtime automata,
   described by Courcelle~\cite{Courcelle:77}.
 
-\begin{Definition}[Simple-Jump Single-State Deterministic Pushdown Automaton]
+\begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
   \label{Definition:JDPDA}
   \slshape
   A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
@@ -36,9 +36,9 @@ Our proof relies on a special kind of realtime automata,
   \[
     j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
   \]
-  A configuration of a jPDA is some~$c∈Γ^*$ representing the stack contents.
+  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially,~$ζ=γ₁$.
-  At each steps a jPDA examines~$σ∈Σ$,
+  At each steps a jDPDA examines~$σ∈Σ$,
   the next input character and~$γ$ the element at the top of the stack, and
   executes the following:
   \begin{quote}
@@ -46,8 +46,8 @@ Our proof relies on a special kind of realtime automata,
       \item consume~$σ$
       \item pop~$γ$
       \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
-      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetetively
-            pops stack elements upto and incuding the first occurrence of~$γ$.
+      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetitively
+            pops stack elements up-to and including the first occurrence of~$γ$.
     \end{enumerate}
   \end{quote}
   The automaton accepts by reaching the end of the input with an empty stack.
@@ -56,11 +56,11 @@ Our proof relies on a special kind of realtime automata,
   of a \textsf{jump operations}.
 \end{Definition}
 
-As it turns out, every DCFG language is recognized by some jDPDA~\cite{Courcelle:77}.
-The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jPDA.
+As it turns out, every DCF language is recognized by some jDPDA~\cite{Courcelle:77}.
+The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
 Towards this end, we use the above type encoding of the jump-stack data structure.
-In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jPDA and
-assume that
+In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jDPDA and
+assume that % text is missing XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function
