@@ -13,7 +13,7 @@ However, these advantages come at the cost of expressive power;
     2005
     \newline
   \url{http://www.martinfowler.com/articles/languageWorkbench.html\#InternalDsl}.}
-Indeed, in languages such as \CC{}, fluent APIs
+Indeed, in languages such as \CC, fluent APIs
   often make extensive use of operator overloading (examine, e.g., \textsf{Ara-Rat}~\cite{Gil:Lenz:07}),
   but this capability is not available in \Java.
 
@@ -22,13 +22,7 @@ Despite this limitation, fluent API in \Java can be rich and expressive, as demo
 (open-source integration framework),
 and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
-Other examples of fluent APIs in \Java are abundant: 
-  jMock\cite{Freeman:Pryce:06}, 
-  Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
-  EasyMock\urlref{http://easymock.org/},
-  jOOR\urlref{https://github.com/jOOQ/jOOR},
-  jRTF\urlref{https://github.com/ullenboom/jrtf}
-  and many more.
+
 \begin{figure}[H]
   \caption{\label{Figure:DSL} Two examples of \Java fluent API}
   \begin{tabular}{@{}c@{}c@{}}
@@ -37,6 +31,14 @@ Other examples of fluent APIs in \Java are abundant:
     \textbf{(a)} Apache Camel                                          & \textbf{(b)} jOOQ
   \end{tabular}
 \end{figure}
+
+Other examples of fluent APIs in \Java are abundant: 
+  jMock\cite{Freeman:Pryce:06}, 
+  Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
+  EasyMock\urlref{http://easymock.org/},
+  jOOR\urlref{https://github.com/jOOQ/jOOR},
+  jRTF\urlref{https://github.com/ullenboom/jrtf}
+  and many more.
 
 \subsection{A Type Perspective on Fluent APIs}
 Inspired by the theory of formal languages and pushdown automata
@@ -88,6 +90,3 @@ Concrete contributions made by this work include
   \item a collection of generic programming techniques, developed towards this algorithm. 
   \item a demonstration that the runtime Oracle's \texttt{javac} compiler may be exponential in the program size. 
 \end{itemize}
-
-
-
