@@ -1,19 +1,22 @@
 package automaton;
 
-import automaton.jDPDA.JS.E;
-import automaton.jDPDA.JS.P;
-import automaton.jDPDA.JS.¤;
-import automaton.jDPDA.Γʹ.Γ;
-import automaton.jDPDA.Γʹ.Γ.γ1;
-import automaton.jDPDA.Γʹ.Γ.γ2;
+import automaton.A.JS.E;
+import automaton.A.JS.P;
+import automaton.A.JS.¤;
+import automaton.A.Γʹ.Γ;
+import automaton.A.Γʹ.Γ.γ1;
+import automaton.A.Γʹ.Γ.γ2;
 
-class jDPDA {
+class A {
+
   interface Γʹ {
     // @Formatter:off
     interface Γ extends Γʹ {
-      interface γ1 extends Γ { }
+      interface γ1 extends Γ {
+      }
 
-      interface γ2 extends Γ { }
+      interface γ2 extends Γ {
+      }
     }
 
     interface ¤ extends Γʹ {
@@ -58,10 +61,7 @@ class jDPDA {
     }
   }
 
-  interface C<T extends Γʹ, R extends JS<?, ?, ?>> {
-    C<?, ?> σ1();
-    C<?, ?> σ2();
-  }
+
 
   static C<?, E> pjs(E _) {
     return null;
@@ -70,15 +70,23 @@ class jDPDA {
       P<T, R, J_γ1, J_γ2> _) {
     return null;
   }
-
-  interface Cγ1 extends C<γ1, JS<?, ?, ?>> {
+  interface C<T extends Γʹ, R extends JS<?, ?, ?>> {
     C<?, ?> σ1();
+    C<?, ?> σ2();
+    C<?, ?> $();
+  }
+  interface Cγ1<C extends JS<?, ?, ?>> extends C<γ1, JS<?, ?, ?>> {
+    C<γ2, ?> σ1();
     C<?, ?> σ2();
   }
 
   interface Cγ2 extends C<γ2, JS<?, ?, ?>> {
     C<?, ?> σ1();
     C<?, ?> σ2();
+  }
+  static C<γ1,P<γ1, E, E, ¤> > build = null;
+  static void use_cases() {
+    A.build.σ1();
   }
 
   static void pjsing_into_a_stack_use_cases() {
@@ -88,5 +96,6 @@ class jDPDA {
         _1);
     E _3 = JS.empty;
     C<?, E> _4 = pjs(_3);
+
   }
 }
