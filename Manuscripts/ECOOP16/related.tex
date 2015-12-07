@@ -79,15 +79,16 @@ Type-state pose two main challenges to software engineering
 \end{enumerate}
 
 \begin{wrapfigure}[9]r{35.05ex}
-\caption{\label{Figure:box}Fluent API of a box object, defined by a DFA}
-% \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
-% & \cc{open()} & \cc{close()}⏎ \hline
-% ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
-% ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
-% \end{tabular}
+ \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
+ & \cc{open()} & \cc{close()}⏎ \hline
+ ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
+ ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
+ \end{tabular}
+\end{wrapfigure}
 
+\begin{wrapfigure}[9]r{35.05ex}
+\caption{\label{Figure:box}Fluent API of a box object, defined by a DFA}
   \input ../Figures/open-close-example.tikz
-  % suggested improved visualisation
 \end{wrapfigure}
 
 To make the proof concrete, consider this example of fluent API definition:
