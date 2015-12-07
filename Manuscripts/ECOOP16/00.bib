@@ -294,35 +294,7 @@
   year = 1965
 }
 
-@InProceedings{Parr:2011,
-  abstract = {Despite the power of Parser Expression Grammars (PEGs) and GLR,
-    parsing is not a solved problem. Adding nondeterminism (parser speculation)
-    to traditional LL and LR parsers can lead to unexpected parse-time
-    behavior and introduces practical issues with error handling, single-step
-    debugging, and side-effecting embedded grammar actions. This paper
-    introduces the LL(*) parsing strategy and an associated grammar analysis
-    algorithm that constructs LL(*) parsing decisions from ANTLR grammars. At
-    parse-time, decisions gracefully throttle up from conventional fixed k>=1
-    lookahead to arbitrary lookahead and, finally, fail over to backtracking
-    depending on the complexity of the parsing decision and the input
-    symbols. LL(*) parsing strength reaches into the context-sensitive
-    languages, in some cases beyond what GLR and PEGs can express. By
-    statically removing as much speculation as possible, LL(*) provides the
-    expressivity of PEGs while retaining LL's good error handling and
-    unrestricted grammar actions. Widespread use of ANTLR (over 70,000
-    downloads/year) shows that it is effective for a wide variety of
-  applications.},
-  author = {Parr, Terence and Fisher, Kathleen},
-  doi = {http://doi.acm.org/10.1145/1993498.1993548},
-  isbn = {978-1-4503-0663-8},
-  issn = {03621340},
-  journal = {Proceedings of the \nth{32} ACM SIGPLAN conference on Programming language design and implementation},
-  keywords = {augmented transition networks,backtracking,context-sensitive parsing,deterministic finite automata,glr,memoization,nondeterministic parsing,peg,semantic predicates,subset construction,syntactic predicates},
-  pages = {425--436},
-  title = {{LL}(*): the foundation of the {ANTLR} parser generator},
-  url = {http://doi.acm.org/10.1145/1993498.1993548},
-  year = 2011
-}
+
 
 @manual{Bison:manual,
   author = {Donnelly, Charles and Stallman, Richard},
