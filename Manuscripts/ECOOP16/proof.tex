@@ -125,37 +125,26 @@ As shown by someone~\cite{i:need:to::find:it}, DPDAs with no~$ε$-moves are less
 
 Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
 Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
-  of order k, the corresponding SDPDA\@.
+of order k, the corresponding SDPDA\@.
 Notice that the elements are the same in both.
 The other components of~$Sₘ$ are constructed as follows:
 \begin{itemize}
- \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
- \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
- \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
- \item for~$δ(q,γ,σ) = (q',ζ)$
- \begin{itemize}
-  \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$
-    we define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
-  \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$
-    is the~$ε$-closure on~$(q,ζ)$.
-    The~$ε$-closure of~$(q,ζ)$ is the series of consecutive~$ε$-transitions from~$δ$
-    that end with a single ‟input consuming” transition.
-    This computation is possible due to the definition of~$k$, that assures us, that during this ‟static”
-    computation on~$δ$, we will at all times know the top of the stack, and therefore, this computation
-    is viable.
- \end{itemize}
-
+  \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
+  \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
+  \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
+  \item for~$δ(q,γ,σ) = (q',ζ)$
+        \begin{itemize}
+          \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$ we
+            define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
+          \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$ is
+            the~$ε$-closure on~$(q,ζ)$.  The~$ε$-closure of~$(q,ζ)$ is the
+            series of consecutive~$ε$-transitions from~$δ$ that end with a
+            single ‟input consuming” transition.  This computation is possible
+            due to the definition of~$k$, that assures us, that during this
+            ‟static” computation on~$δ$, we will at all times know the top of
+            the stack, and therefore, this computation is viable.
+        \end{itemize}
 \end{itemize}
-
-\subsection{Type Encoding}
-\begin{Theorem}
-  \label{Theorem:SDPDA}
-  For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
-  the command \[
-    \cc{A_= M.build~$\textsf{java}(α)$.\$()};
-  \]
-  compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
-\end{Theorem}
 
 The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
 In particular, we describe how~$J_M$ is constructed from the

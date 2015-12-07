@@ -9,20 +9,21 @@ With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
 
 \begin{theorem}\label{Theorem:Gil-Levy}
   Let~$D$ be a DPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and other types with the following
-  property: Consider the \Java command
+  Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and 
+    other types such that the \Java command
   \begin{equation}
     \label{Equation:result}
     \cc{L~$ℓ$ = M.build~$\textsf{java}(α)$}\cc{.\$();}
   \end{equation}
-  (in words: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{M},
-  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
-  end symbol~\cc{\$()} and then assign to newly declared variable~\cc{$ℓ$} of type~\cc{L}).
-  Then, this command type checks against~$J_M$ if an only if~$α∈L$.
+  type checks against~$J_M$ if an only if~$α∈L$.
   Furthermore, program~$J_M$ can be effectively generated†{in the computability lingo:
     effective~$≈$ ‟\emph{there is time
   bounded algorithm for carrying out the task}”.} from~$M$.
 \end{theorem}
+
+\Cref{Equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{M},
+  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
+  end symbol~\cc{\$()} and then assign to newly declared variable~\cc{$ℓ$} of type~\cc{L}.
 
 There are several, mostly minor, differences between the structure \Java code in \cref{Equation:result}
   and the examples of fluent API we saw above in \cref{Figure:DSL}:
