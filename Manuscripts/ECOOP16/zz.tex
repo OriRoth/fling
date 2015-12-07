@@ -1,9 +1,10 @@
 \Cref{Theorem:Gil-Levy} and its proof above also provide
-an algorithm for converting an EBNF specification of a fluent API into its
+an algorithm for converting an EBNF specification of a fluent API into
 its realization:
 \begin{quote}
   \begin{enumerate}
-    \item Convert the specification into a plain BNF form.~\cite{CONVERT}
+    \item Convert the specification into a plain BNF form
+    \urlref{http://lampwww.epfl.ch/teaching/archive/compilation-ssc/2000/part4/parsing/node3.html}.
     \item Convert this BNF into a definition of a DPDA. If conversion fails,
       then the given specification is not deterministic context free. ~\cite{C1}
     \item Convert this DPDA into a jDPDA. (Conversion is guaranteed to succeed.) ~\cite{CONVERT}
