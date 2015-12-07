@@ -16,7 +16,6 @@ import automaton.Domain.Stack.P;
 import automaton.Domain.Γʹ.Γ;
 import automaton.Domain.Γʹ.Γ.γ1;
 import automaton.Domain.Γʹ.Γ.γ2;
-
 /**
  * This is were we place code that must compile correctly. To be extracted and
  * placed as part of LaTeX documents.
@@ -200,9 +199,6 @@ public class Domain {
       }
     }
   }
-  
-
-  
   @SuppressWarnings("null")
   public static void main(String[] args) {
     q0 x1 = null;

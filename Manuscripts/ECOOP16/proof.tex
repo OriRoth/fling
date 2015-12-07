@@ -1,13 +1,13 @@
 On a first sight, the proof of \cref{Theorem:Gil-Levy} could follows the techniques
   sketched in \cref{Section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
-The partial transition function $\delta$ may be type encoded as in \cref{Figure:simple-binary}, 
-and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}. 
+The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
+and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}.
 
-The techniques however fail with~$ε$-transitions, 
+The techniques however fail with~$ε$-transitions,
   which allow the automaton to move between an unbounded number of
   configurations and maneuver the stack in a non-trivial manner,
   without making any progress on the input.
-The fault in scheme lies with  compile time computation being carried out
+The fault in scheme lies with compile time computation being carried out
   by the~$\textsf{java}(σ)()$ functions, each convertin>g
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
@@ -20,26 +20,24 @@ We are not aware of a \Java type encoding which makes
 A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
 }
 
-The literature speaks of finite-delay DPDAs, in which the number 
-  of consecutive $\epsilon$-transitions is uniformally bounded and even of 
-  realtime DPDAs in which this bound is 0, i.e., with no  
+The literature speaks of finite-delay DPDAs, in which the number
+  of consecutive~$ε$-transitions is uniformally bounded and even of
+  realtime DPDAs in which this bound is 0, i.e., no~$ε$-transitions.
+Our proof relies on a special kind of realtime automata,
+  described by Courcelle~\cite{Courcelle:77}.
 
-The following definition is of a deterministic pushdown automata without such moves.
-The last construct we remind, is the less known \emph{Simple Jump Deterministic Pushdown Automaton},
-the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Courcelle:77}.
-
-\begin{Definition}[Simple-Jump Deterministic Pushdown Automaton]
+\begin{Definition}[Simple-Jump Single-State Deterministic Pushdown Automaton]
   \label{Definition:JDPDA}
   \slshape
-  A \textit{simple-jump, one-state, realtime deterministic pushdown automaton}
-  (jDPDA, for short) is a triplet~$⟨Γ,γ₀,δ⟩$
-  where~$Γ$ is a set of stack elements,~$γ₀∈Γ$ is the initial stack element,
+  A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
+  (jDPDA, for short) is a triplet~$⟨Γ,γ₁,δ⟩$
+  where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
   and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
   \[
     j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
   \]
   A configuration of a jPDA is some~$c∈Γ^*$ representing the stack contents.
-  Initially,~$ζ=γ₀$.
+  Initially,~$ζ=γ₁$.
   At each steps a jPDA examines~$σ∈Σ$,
   the next input character and~$γ$ the element at the top of the stack, and
   executes the following:
@@ -55,53 +53,14 @@ the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Cource
   The automaton accepts by reaching the end of the input.
   It rejects if~$δ(γ,σ) =⊥$, or if it encounters
   an empty stack (either at the beginning of a step or on course
-  a \textsf{jump operations}.
+  of a \textsf{jump operations}.
 \end{Definition}
 
-A realtime simple-jump deterministic pushdown automaton is a jump-DPDA
-  as defined in~\cref{Definition:JDPDA}
-  that supplies~\cref{Definition:realtime}.
-We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
-The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
-
-
-
-
-We will use the following notation for
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
-
-\begin{figure}[H]
-\begin{JAVA}
-class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {¢¢
-  Head head;
-  Rest rest;
-  Stack(Head head, Rest rest) {¢¢ this.head = head; this.rest = rest;}
-  Rest pop() {¢¢ return rest; };
-}
-\end{JAVA}
-For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
-\begin{JAVA}
-class ¢$ξ$¢ <T extends S> extends S<T> {¢¢
-  ¢$ξ$¢(T t) {¢¢ super(t); }
-  // ¢…¢
-}
-\end{JAVA}
-\end{figure}
-In addition, we define a special class~$\vdash$ to designate the empty stack.
-\begin{JAVA}
-class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
-  ¢$\vdash$ ¢() {¢¢ super(null); }
-  ¢$\vdash$ ¢pop() {¢¢ throw new RunTimeException(); }
-}
-\end{JAVA}
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
-where~$ξ₁,ξ₂∈Q$ are elements,
-is represented by the following type
-\begin{JAVA}
-  ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
-\end{JAVA}
-This is a general concept for implementing an unbounded stack with \Java's type system,
-that will be extended in the future.
+As it turns out, every DCFG language is recognized by some jDPDA~\cite{is:this:true}.
+The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jPDA.
+Towards this end, we use the above type encoding of the jump-stack data structure.
+In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jPDA and
+assume that
 
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function
@@ -151,4 +110,3 @@ abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢>
 We say a DPDA supplies the \emph{realtime condition} if
   for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
 \end{Definition}
-
