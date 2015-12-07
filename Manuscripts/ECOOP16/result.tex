@@ -69,14 +69,14 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
   an accepting configuration, as subypte of~\cc{L}.
   \item[Parametrized methods.]
-  Fluent API frameworks support call chains with including phrases such as:
+  Fluent API frameworks support call chains with phrases such as:
     \lstset{language=Java,style=code}
   \begin{itemize}
     \item ‟\lstinline{.when(header(foo).isEqualTo("bar")).}”,
     \item ‟\lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}”, and,
     \item ‟\lstinline{.allowing(any(Object.class)).}”.
   \end{itemize}
-  while our encoding scheme assumes methods which do not take any parameters.
+  while our encoding scheme assumes methods with no parameters.  
   \par
     Methods with parameters contribute to the user
       experience and readability of fluent APIs but their ``computational expressive power"' is the same.
@@ -88,7 +88,7 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
           other methods. Apply the threorem to each of these fluent APIs.
         \item
           If there are several overloaded versions of a method, consider each such version as a distinct
-          character in the alphabet~$Σ$ and in the type encoding of the autmaton.
+          character in the alphabet~$Σ$ and in the type encoding of the automaton.
         \item
           Adding to the implementation of each method code to store the 
           parameters store the value of its argument(s) in the call list. 
