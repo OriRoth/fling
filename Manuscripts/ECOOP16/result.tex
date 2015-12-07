@@ -67,8 +67,8 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   \end{quote}
   \item[Parametrized methods.]
   Fluent APIs frameworks support call chains with including phrases such as
-  \begin{itemize}
     \lstset{language=Java,style=code}, 
+  \begin{itemize}
     \item \lstinline{.when(header(foo).isEqualTo("bar")).}, and, 
     \item \lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}.
     \item \lstinline{.allowing(any(Object.class)).}
@@ -80,10 +80,9 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
       \cref{Theorem:Gil-Levy} to support requires three simple steps: 
       \begin{itemize}
         \item Define the structure of parameters to methods with appropriate fluent API, which may or
-          may not be the same of the API of the outer chain, or the API of parameters to
+          may not be the same as the API of the outer chain, or the API of parameters to
           other methods. Apply the threorem to each of these fluent APIs.
         \item 
-
       \end{itemize}
   \end{quote}
 \end{description}
