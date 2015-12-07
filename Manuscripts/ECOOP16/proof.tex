@@ -36,9 +36,9 @@ Our proof relies on a special kind of realtime automata,
   \[
     j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
   \]
-  A configuration of a jPDA is some~$c∈Γ^*$ representing the stack contents.
+  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially,~$ζ=γ₁$.
-  At each steps a jPDA examines~$σ∈Σ$,
+  At each steps a jDPDA examines~$σ∈Σ$,
   the next input character and~$γ$ the element at the top of the stack, and
   executes the following:
   \begin{quote}
@@ -57,9 +57,9 @@ Our proof relies on a special kind of realtime automata,
 \end{Definition}
 
 As it turns out, every DCF language is recognized by some jDPDA~\cite{Courcelle:77}.
-The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jPDA.
+The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
 Towards this end, we use the above type encoding of the jump-stack data structure.
-In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jPDA and
+In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jDPDA and
 assume that
 
 \subsection{Encoding states of pushdown automaton with \Java generics}
