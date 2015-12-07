@@ -26,38 +26,64 @@ With these, \[
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
   ending character~\cc{\$()} and then assign to newly declared \Java variable~\cc{$ℓ$} of type~\cc{L}.
 
-The proof of the theorem is through a scheme for encoding in \Java types
+The proof of the theorem is by a scheme for encoding in \Java types
   the pushdown automaton~$A=A(L)$ that recognizes language~$L$.
 Concretely, the scheme assigns a type~$τ(c)$.
   to each possible configuration~$c$ of~$A$.
-Also, the type of \cc{M.build} is type encoding of the initial configuration of~$A$,
+Also, the type of \cc{M.build} is~$τ(c₀)$, where~$c₀$ initial configuration of~$A$,
 
 Further, in each such type the scheme places
   a function~$σ()$ for every~$σ∈Σ$.
-Suppose that~$A$ takes a transition from configuration~$c₁$ to configuration~$c₂$
-  in response to an input chracter~$σ$.
-Then, the return type of function \cc{$σ$()} in type~$τ(c₁)$ is type~$τ(c₂)$.
+Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$cⱼ$
+  in response to an input chracter~$σₖ$.
+Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
 
-With this encoding the call chain in \cref{Equation:result} 
-  mimics the computation of~$A$, starting at the initial configuration and ending with
+With this encoding the call chain in \cref{Equation:result}
+  mimics the computation of~$A$, starting at~$c+0$ and ending with
   rejection or acceptance.
-Finer details of the proof are in \cref{Section:proof}. 
-
-Then, the type that~$a$
+More details of the proof are in \cref{Section:proof}.
 
 There are several, mostly minor, differences between the structure of the \Java code
-  in \cref{Equation:result}
-  and the examples of fluent API we saw above in \cref{Figure:DSL}:
+in \cref{Equation:result}
+and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
 \begin{description}
-  \item[Prefix, i.e., the stating \cc{M.build}.]
-    All variables and functions of \Java are defined within a class.
-    Therefore, a call chain must start with an object (\cc{M.build} in \cref{Equation:result})
-      or, in case of \cc{static} methods, with the name of a class.
-    With an appropriate \cc{import} statement, this prefix can be eliminated.
+  \item[Prefix, i.e., the stating \cc{M.build} variable.]
+  All variables and functions of \Java are defined within a class.
+  Therefore, a call chain must start with an object (\cc{M.build} in \cref{Equation:result})
+  or, in case of \cc{static} methods, with the name of a class.
+  In fluent API frameworks this prefix is typically eliminated
+  with appropriate \cc{import} statements.
+  \begin{quote}
+  If so desired, the same can be done by our type encoding scheme: define all
+  methods in type~$τ(c₀)$ as \cc{staic} and \cc{import static} of of these.
+\end{quote}
   \item[Suffix, i.e., the terminal \cc{.\$()} call.]
-    In order to know whether~$α∈L$ the automaton recognizing~$L$ must
-      know when~$α$ is terminated.
-    With some engineering work, this suffix can be eliminated, e.g., it is possible to define
-      type~\cc{L} as an interface,
+  In order to know whether~$α∈L$ the automaton recognizing~$L$ must
+  know when~$α$ is terminated.
+  \begin{quote}
+  With a bit of engineering, this suffix can also be eliminated.
+  One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
+  an accepting configuration, as subypte of~\cc{L}.
+  \end{quote}
   \item[Parametrized methods.]
+  Fluent APIs frameworks support call chains with including phrases such as
+  \begin{itemize}
+    \lstset{language=Java,style=code}, 
+    \item \lstinline{.when(header(foo).isEqualTo("bar")).}, and, 
+    \item \lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}.
+    \item \lstinline{.allowing(any(Object.class)).}
+  \end{itemize}
+  while our encoding scheme assumes methods which do not take any parameters.  
+  \begin{quote}
+    Even though  methods with parameters contribute to the user
+      experience and readability of fluent APIS, extending 
+      \cref{Theorem:Gil-Levy} to support requires three simple steps: 
+      \begin{itemize}
+        \item Define the structure of parameters to methods with appropriate fluent API, which may or
+          may not be the same of the API of the outer chain, or the API of parameters to
+          other methods. Apply the threorem to each of these fluent APIs.
+        \item 
+
+      \end{itemize}
+  \end{quote}
 \end{description}

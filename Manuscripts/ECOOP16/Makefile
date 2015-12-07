@@ -37,6 +37,8 @@ $(TARGET) again latex: $(SOURCES)
 silent: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 	$(LATEX) -interaction=batchmode -synctex=1 -halt-on-error -file-line-error ./$(MAIN).tex
 
+again: silent
+
 $(MAIN).blg bibtex:	
 	$(LATEX) -interaction=batchmode -draftmode $(MAIN).tex
 	bibtex $(MAIN)
