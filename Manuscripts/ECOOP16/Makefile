@@ -26,9 +26,14 @@ LISTINGS+=compiler.listing
 
 .PHONY: latex view bibtex graphs all bibtex clean 
 
+SOURCES=$(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
+
 # Target to be used for compiles when references did not change
-$(MAIN).pdf again latex: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
+$(MAIN).pdf again latex: $(SOURCES)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
+
+silent: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
+	$(LATEX) -interaction=batchmode -synctex=1 -halt-on-error -file-line-error ./$(MAIN).tex
 
 $(MAIN).blg bibtex:	
 	$(LATEX) -interaction=batchmode -draftmode $(MAIN).tex
@@ -109,7 +114,7 @@ abc.listing: $(DOMAIN_DEMO)
 		awk '/^.*interface ID.*$$/,/^.*class C/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 peep.listing:  $(DOMAIN_DEMO)
-		awk '/^.*Peep *<.*$$/,/^ *peep.P.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
+		awk '/^.*Peep *<.*$$/,/^  }/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
 
 
 

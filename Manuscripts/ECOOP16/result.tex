@@ -11,9 +11,10 @@ With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
   Let~$D$ be a DPDA recognizing a language~$L⊆Σ^*$.
   Then, there exists a \Java type definition,~$J_D$ for types~\cc{L},~\cc{D} and other types with the following
   property: Consider the \Java command
-  \[
-    \cc{L_= M.build~$\textsf{java}(α)$}\cc{.\$();}
-  \]
+  \begin{equation}
+    \label{Equation:result}
+    \cc{L~$ℓ$ = M.build~$\textsf{java}(α)$}\cc{.\$();}
+  \end{equation}
   (in words: starting from the \kk{static} field of \kk{class}~\cc{M},
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
   end symbol~\cc{\$()} and then assign to newly declared variable~‟\cc{\_}” of type~\cc{L}).
@@ -23,9 +24,17 @@ With these definitions,~$\textsf{java}(caba) = \cc{.c().a().b().a()}$.
   bounded algorithm for carrying out the task}”.} from~$M$.
 \end{theorem}
 
-Several comments are in place
+There are several, mostly minor, differences between the structure \Java code in \cref{Equation:result}
+  and the examples of fluent API we saw above in \cref{Figure:DSL}:
 \begin{description}
-  \item[The starting point \cc{M.build}]
-  \item[The terminal \cc{.\$()} call]
+  \item[Prefix, i.e., the stating \cc{M.build}]
+    All variables and functions of \Java are defined within a class.
+    Therefore, a call chain must start with an object (\cc{M.build} in \cref{Equation:result})
+      or, in case of \cc{static} methods, with the name of a class.
+    With an appropriate \cc{import} statement, this prefix can be eliminated.
+  \item[Suffix, i.e., the terminal \cc{.\$()} call]
+    In order to know whether~$α∈L$ the automaton recognizing~$L$ must
+      know when~$α$ is terminated.
+
   \item[Parametrized methods]
 \end{description}
