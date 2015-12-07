@@ -32,7 +32,7 @@ public class DomainDemo {
     γ1 _1 = f.r1().s1(); // ✓ ¢$f(r_1,s_1) = \gamma_1$¢
     γ2 _2 = f.r1().s2(); // ✓ ¢$f(r_1,s_2) = \gamma_2$¢
     γ2 _3 = f.r2().s1(); // ✓ ¢$f(r_2,s_1) = \gamma_2$¢
-    f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{$\scriptsize \Gamma$'}¢
+    f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{\scriptsize $\Gamma$'}¢
   }
   public static void use_case_of_stack() {
     // Create a stack a with five items in it:
