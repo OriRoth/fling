@@ -1,3 +1,6 @@
+Thanks to these, an automaton may move between an unbounded number of 
+  configurations and maneuver the stack in a non-trivial manner, 
+  without making any progress on the input.
 every DPDA can be converted ot JPDA.
 \begin{Definition}
   \label{Definition:realtime}
@@ -43,9 +46,9 @@ The proof is by reduction to type encoding of SDPDAs, which are simpler version 
 The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
 A DPDA is allowed to make a transition into a different state,
   pop one or more elements, and then, pop, push or even both pop and push, any number of elements,
-  all without consuming a single input symbol.
+  all without consuming a single input character.
 
-In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
+In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one character at a time, as a sequence of method calls.
 A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however deterministic
   they are.
 The following definition is of a deterministic pushdown automata without such moves.
@@ -60,7 +63,7 @@ The following definition is of a deterministic pushdown automata without such mo
   of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
   \par
   An SDPDA begins as a DPDA\@. At each step it examines~$σ∈Σ$,
-    the next input symbol,~$q∈Q$, the current state,
+    the next input character,~$q∈Q$, the current state,
     and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most elements,
   \par
   If the stack is empty, or~$q∈A$, the automaton stops in accepting.
@@ -118,44 +121,33 @@ Each such edge takes the weight~$1-|ζ|$ to denote the fact
 The value of~$k$ is simply the heaviest path in this graph.
 
 In the former graph, cycles might occur.
-Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the
+Sadly, we cannot solve those cycles, since arbitrary number of elements might be removed from the
   stack, and therefore, the required~$ε$-closure cannot be computed.
 As shown by someone~\cite{Autebert:97}, DPDAs with no~$ε$-moves are less expressive than a normal DPDAs,
   and therefore, not all DPDA can be computed.
 
 Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
 Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
-  of order k, the corresponding SDPDA\@.
+of order k, the corresponding SDPDA\@.
 Notice that the elements are the same in both.
 The other components of~$Sₘ$ are constructed as follows:
 \begin{itemize}
- \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
- \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
- \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
- \item for~$δ(q,γ,σ) = (q',ζ)$
- \begin{itemize}
-  \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$
-    we define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
-  \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$
-    is the~$ε$-closure on~$(q,ζ)$.
-    The~$ε$-closure of~$(q,ζ)$ is the series of consecutive~$ε$-transitions from~$δ$
-    that end with a single ‟input consuming” transition.
-    This computation is possible due to the definition of~$k$, that assures us, that during this ‟static”
-    computation on~$δ$, we will at all times know the top of the stack, and therefore, this computation
-    is viable.
- \end{itemize}
-
+  \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
+  \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
+  \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
+  \item for~$δ(q,γ,σ) = (q',ζ)$
+        \begin{itemize}
+          \item if~$σ≠ε$ than for all~$(q,ζ'γ')$ such that~$ζ'γ∈Γᵏ$ we
+            define~$δₘ(q,ζ'γ,σ)=(q',ζ'ζ)$
+          \item if~$σ=ε$ then~$δₘ(q,ζ,ε)=(q',ζ')$ when~$(q',ζ')$ is
+            the~$ε$-closure on~$(q,ζ)$.  The~$ε$-closure of~$(q,ζ)$ is the
+            series of consecutive~$ε$-transitions from~$δ$ that end with a
+            single ‟input consuming” transition.  This computation is possible
+            due to the definition of~$k$, that assures us, that during this
+            ‟static” computation on~$δ$, we will at all times know the top of
+            the stack, and therefore, this computation is viable.
+        \end{itemize}
 \end{itemize}
-
-\subsection{Type Encoding}
-\begin{Theorem}
-  \label{Theorem:SDPDA}
-  For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
-  the command \[
-    \cc{A_= M.build~$\textsf{java}(α)$.\$()};
-  \]
-  compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
-\end{Theorem}
 
 The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
 In particular, we describe how~$J_M$ is constructed from the
@@ -200,7 +192,7 @@ that will be extended in the future.
 
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function \cref{Equation:generalized:transition}
-  takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
+  takes~$k+2$ arguments: a state~$q∈Q$, an input character~$σ∈Σ$
     and~$k$ elements drawn from~$Γ$.
 To capture the full behavior of the automaton, the transition function
   must be able to pass along, in one way or another, the full contents of the stack.
@@ -208,7 +200,7 @@ To capture the full behavior of the automaton, the transition function
 Since the scheme described above can only be applied for binary functions,
   we shall pack together the state~$q$, the stack, and the~$k$ top most
   elements of it into a single type.
-The next input symbol,~$σ∈Σ$, the remaining argument of function~$δ$,
+The next input character,~$σ∈Σ$, the remaining argument of function~$δ$,
   is encoded as a method.
 
 The type part of the encoding is obtained by instantiating a generic type as follows:
