@@ -81,13 +81,19 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
     \item If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
   \end{enumerate}
 \end{Definition}
-Proceeding along the second alternative in the above is called an~$ε$-transition.
-Such transitions turn out to be a major source of complication, 
-  since an automaton may conduct any number of these, including non-trivial 
-  maneuvers of the stack, without making any progress in the input word.
-  
+
 As mentioned above, NPDA languages are the same as CFG languages.
 Equivalently, \emph{DCFG languages} (deterministic context-free grammar languages)
   are context-free languages that are recognizable by a DPDA.
 The set of DCFG languages is still a proper superset of regular languages,
   but a proper subset of CFG languages.
+
+A \emph{configuration} is the pair of the current state and the stack contents.
+Configurations represent the complete information on the 
+    state of an automaton at any given point during its computation.
+
+A \emph{transition} of a DPDA takes it from one configuration to another.
+Transitions which do not consume an input character are called~\emph{$ε$-transitions}.
+Thanks to these, an automaton may move between an unbounded number of 
+  configurations and maneuver the stack in a non-trivial manner, 
+  without making any progress on the input.
