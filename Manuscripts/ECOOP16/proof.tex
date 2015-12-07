@@ -23,9 +23,9 @@ the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Cource
   Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack.
   If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA\@.
   If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped, and the automaton
-  moves to state~$q$, but in addition, elements are popped until
-  popping a single~$γ'$.
-  If there is no~$γ'$ in the stack, the result is undefined.
+  moves to state~$q$. 
+  In addition, the automaton repeatedly pops, stopping after the first occurrence of~$γ'$ is popped.
+  Behavior is undefined if no such~$γ'$ in the stack 
   \par
   If~$γ$ is undefined, i.e., the stack is empty, the automaton accepts the input and halts.
   The same happens if~$q∈A$.
