@@ -10,8 +10,8 @@ Keep~$Σ$ implicit henceforth.
 
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a nondeterministic finite automaton
-  and a stack of unbounded depth of stack elements.
-An NPDA begins execution with a single copy of the initial stack element on the stack.
+  and a stack of unbounded depth of (stack) \emph{elements}.
+An NPDA begins execution with a single copy of the initial element on the stack.
 In each step, the NPDA
   examines the next input token,
   the state of the automaton,
@@ -20,7 +20,7 @@ It then pops the top element from the stack, and nondeterministically chooses wh
   its transition function to perform:
   Consuming the next input token,
   moving to a new state,
-  or, pushing stack elements to the stack.
+  or, pushing any number of elements to the stack.
 Nondeterminism effectively means
   that any combination of these actions may be selected.
 
@@ -36,8 +36,8 @@ Accordingly, rule~$r∈G$ is written as~$r=ξ→β$, where~$β∈\left(Σ∪Ξ\r
 This description is often called BNF\@.
 The \emph{language} of a CFG is the set of strings of terminals (and terminals only)
   that can be derived from the start symbol, following any sequence of applications of the rules.
-CFG languages include regular languages, and are strictly contained in the set
-  of ‟context-sensitive” languages~\cite{Hopcroft:79}.
+CFG languages make a proper superset of regular languages, and a proper subset of 
+  ‟context-sensitive” languages~\cite{Hopcroft:79}.
 
 The expressive power of NPDAs and BNFs is the same:
   For every language defined by a BNF, there exists an NPDA that recognizes it.
@@ -62,12 +62,13 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
   \slshape
   A \emph{deterministic pushdown automaton} (DPDA) is a quintuple~$⟨Q,Γ,q₀,A,δ⟩$
   where~$Q$ is a finite set of \emph{states},~$Γ$ is a finite
-  \emph{set of stack elements},~$q₀∈Q$ is the initial state,
+  \emph{set of elements},~$q₀∈Q$ is the initial state,
   and~$A⊆Q$ is the \emph{set of accepting states} while~$δ$ is
   the \emph{partial state transition function}~$δ:Q⨉Γ⨉(Σ∪❴ε❵)↛Q⨉Γ^*$.
   \par
   A DPDA begins its work in state~$q₀$ with a single designated stack element residing on the stack.
-  At each step, the automaton examines:~$σ$, the next input token, the current state~$q∈Q$, and the element~$γ∈Γ$ at the top of the stack.
+  At each step, the automaton examines: the current state~$q∈Q$, 
+  the element~$γ∈Γ$ at the top of the stack, and~$σ$, the next input token, 
   Based on the values of these, it decides how to proceed:
   \begin{enumerate}
     \item If~$q∈A$ and the input is exhausted, the automaton accepts the input and stops.
@@ -88,6 +89,6 @@ Such transitions turn out to be a major source of complication,
 As mentioned above, NPDA languages are the same as CFG languages.
 Equivalently, \emph{DCFG languages} (deterministic context-free grammar languages)
   are context-free languages that are recognizable by a DPDA.
-DCFG languages make a strict container of regular languages,
-  and are strictly contained in CFG languages.
+The set of DCFG languages is a proper subset of regular languages,
+  and a proper superset of CFG languages.
 

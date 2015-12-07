@@ -28,8 +28,10 @@ LISTINGS+=compiler.listing
 
 SOURCES=$(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 
+TARGET=$(MAIN).pdf 
+
 # Target to be used for compiles when references did not change
-$(MAIN).pdf again latex: $(SOURCES)
+$(TARGET) again latex: $(SOURCES)
 	$(LATEX) -synctex=1 ./$(MAIN).tex
 
 silent: $(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
@@ -147,7 +149,6 @@ JUNKFILES+=$(wildcard *gnuplottex-fig[0-9]*.*)
 JUNKFILES+=$(wildcard latexmk )
 JUNKFILES+=$(wildcard *.listing )
 JUNKFILES+=$(wildcard *.log )
-JUNKFILES+=$(wildcard $(MAIN).pdf )
 JUNKFILES+=$(wildcard *.o )
 JUNKFILES+=$(wildcard *.out )
 JUNKFILES+=$(wildcard *.run.xml )
@@ -157,5 +158,6 @@ JUNKFILES+=$(wildcard *.synctex.gz )
 JUNKFILES+=$(wildcard *.vtc)
 
 clean: $(JUNKFILES) 
-	- [ -z '$^' ] || mv -f $^ /tmp
+	- [ -z '$^' ]        || mv -f $^ /tmp
+	- [ -z '$(wildcard $(TARGET))' ] || mv -f $(TARGET) /tmp
 

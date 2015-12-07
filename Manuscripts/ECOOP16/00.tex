@@ -31,20 +31,21 @@
 \input{aa}
 
 \textbf{Outline.}
-The main result is presented in~\cref{Section:proof}.
-Towards this,~\cref{Section:preliminaries}, the preliminaries, 
-  recalls the central notions we rely on: DSL, fluent API,
-  context free languages, pushdown automata, etc. 
-At the end of this section, the accumulated vocabulary is used to state this
-  result more formally.
-This terminology is used again in \Cref{Section:related} to offer 
-  a perspective on related work.
-\Cref{Section:toolkit} then builds a small toolkit of idioms and techniques
-  for programming generics in \Java.
-This toolkit is used in the subsequent~\cref{Section:proof} for
-  proving our main theoretical result.
-On~\Cref{Section:compiler} we will discuss our main computational tool, 
-  e.g., the \Java compiler, and its expressiveness.
+\Cref{Section:fluent} is a brief reminder of fluent APIs 
+  and DSLs, and is followed by a similar reminder of 
+  context free languages, pushdown automata, and the such in \cref{Section:pushdown}.
+Based on the vocabulary established in these, 
+  the main result is stated in~\cref{Section:result}.
+\Cref{Section:related} offers a perspective on related work.
+
+Towards the proof in \cref{Section:proof}, \cref{Section:toolkit} 
+  shows idioms and techniques for encoding computation with    
+  the \Java type-checker.
+\Cref{Section:jump} makes use of these for encoding 
+  ``jump-stack'', a non-trivial data-structure.
+Issues that might be raised in converting 
+  this work into a practical tool are discussed in \cref{Section:zz}.
+This section also sketches directions for further research.
 
 \section{Background I/II: Method Chaining \emph{vs.} Fluent API}
 \label{Section:fluent}
@@ -78,7 +79,7 @@ On~\Cref{Section:compiler} we will discuss our main computational tool,
 \label{Section:compiler}
 \input{compiler}
 
-\section{Conclusion}
+\section{Discussion}
 \label{Section:zz}
 \input{zz}
 

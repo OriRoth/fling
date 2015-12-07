@@ -22,7 +22,7 @@ the definition relies on Olsder's jump-DPDA supplying condition (S)~\cite{Olsder
   Let~$σ$ be in~$Σ∪❴ε❵$,~$q∈Q$ the current state, and~$γ∈Γ$ be the top of the stack.
   If~$δ(q,γ,σ)=(q,ζ)$ then it acts as a DPDA\@.
   If~$δ(q,γ,σ)=(q,E,γ')$ then as in a DPDA,~$γ$ is popped, and the automaton
-  moves to state~$q$, but in addition, stack elements are popped until
+  moves to state~$q$, but in addition, elements are popped until
   popping a single~$γ'$.
   If there is no~$γ'$ in the stack, the result is undefined.
   \par
@@ -41,7 +41,7 @@ The proof is by reduction to type encoding of SDPDAs, which are simpler version 
 \subsection{Reduction}
 The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
 A DPDA is allowed to make a transition into a different state,
-  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack elements,
+  pop one or more elements, and then, pop, push or even both pop and push, any number of elements,
   all without consuming a single input symbol.
 
 In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
@@ -60,7 +60,7 @@ The following definition is of a deterministic pushdown automata without such mo
   \par
   An SDPDA begins as a DPDA\@. At each step it examines~$σ∈Σ$,
     the next input symbol,~$q∈Q$, the current state,
-    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most stack elements,
+    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most elements,
   \par
   If the stack is empty, or~$q∈A$, the automaton stops in accepting.
   If the transition function is undefined, i.e.,~$δ(q,γ₁,…,γₖ,σ)=⊥$ the automaton
@@ -74,7 +74,7 @@ The following definition is of a deterministic pushdown automata without such mo
 We say that
 a \emph{configuration}~$(q,γ)$,~$q∈Q$,~$γ∈Γ$,
   is an \emph{$ε$-configuration} if~$δ(q,γ,ε)=(q',ζ)$ for
-    some~$q'∈Q$ and a sequence of stack elements~$ζ$,
+    some~$q'∈Q$ and a sequence of elements~$ζ$,
 Recall that by definition of DPDAs,~$δ(q,γ,σ)=⊥$ for
   all~$σ∈Σ$, i.e., there is precisely one transition
   leading out of an~$ε$-configuration.
@@ -93,11 +93,11 @@ However, if~$ζ=ε$, we do not know which element resides at the top
 The transition from the current configuration can thus lead to \emph{multiple} configurations,
   depending on the actual element left at the top of the stack after popping~$γ$.
 The definition of a configuration thus must be changed to include the \emph{two} top
-  most stack elements.
+  most elements.
 But, even this would fail if the next configuration is also an~$ε$-configuration that pushes no elements.
 
 To be able to compute the closure of~$ε$-configuration, we shall
-  therefore include with the configuration the~$k$ top most stack elements,
+  therefore include with the configuration the~$k$ top most elements,
   where~$k$ is defined to be large enough so that
   the top of the stack must never be guessed while going
   through~$ε$-configurations.
@@ -109,10 +109,10 @@ Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
   of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
 Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
 Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
-  to all possible ‟guesses” of the stack element beneath~$γ$.
+  to all possible ‟guesses” of the element beneath~$γ$.
 Each such edge takes the weight~$1-|ζ|$ to denote the fact
   that the total ‟charge” to the stack is~$1-|ζ|$:
-    one stack element (specifically~$γ$) is popped,
+    one element (specifically~$γ$) is popped,
     while~$|ζ|$ (which could also be zero), are pushed.
 The value of~$k$ is simply the heaviest path in this graph.
 
@@ -125,11 +125,11 @@ As shown by someone~\cite{i:need:to::find:it}, DPDAs with no~$ε$-moves are less
 Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
 Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$Sₘ=⟨Qₘ,Γ,q_{0m},Aₘ,δₘ⟩$
   of order k, the corresponding SDPDA\@.
-Notice that the stack elements are the same in both.
+Notice that the elements are the same in both.
 The other components of~$Sₘ$ are constructed as follows:
 \begin{itemize}
  \item~$Qₘ$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$
- \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the stack start element of~$Γ$.
+ \item~$q_{0m}$ is the state~$(q₀,\vdash^{k-1}γ)$ where~$γ$ is the start element of~$Γ$.
  \item~$Aₘ$ is the set~$❴(q,ζ)∈Qₘ | q∈A❵$
  \item for~$δ(q,γ,σ) = (q',ζ)$
  \begin{itemize}
@@ -188,7 +188,7 @@ class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
 }
 \end{JAVA}
 The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
-where~$ξ₁,ξ₂∈Q$ are stack elements,
+where~$ξ₁,ξ₂∈Q$ are elements,
 is represented by the following type
 \begin{JAVA}
   ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
@@ -200,7 +200,7 @@ that will be extended in the future.
 \subsection{Encoding states of pushdown automaton with \Java generics}
 The generalized transition function \cref{Equation:generalized:transition}
   takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
-    and~$k$ stack elements drawn from~$Γ$.
+    and~$k$ elements drawn from~$Γ$.
 To capture the full behavior of the automaton, the transition function
   must be able to pass along, in one way or another, the full contents of the stack.
 
