@@ -34,7 +34,7 @@ public class DomainDemo {
     γ2 _3 = f.r2().s1(); // ✓ ¢$f(r_2,s_1) = \gamma_2$¢
     f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{$\scriptsize \Gamma$'}¢
   }
-  public static void use_cases_of_stack() {
+  public static void use_case_of_stack() {
     // Create a stack a with five items in it:
     P<γ1, P<γ1, P<γ2, P<γ1, P<γ1, E>>>>> _1 = Stack.empty.γ1().γ1().γ2().γ1().γ1();
     P<γ1, P<γ2, P<γ1, P<γ1, E>>>> _2 = _1.pop(); // ✓ Pop one item
@@ -83,7 +83,7 @@ public class DomainDemo {
     double_peep_problem_with_type_erasure(P<Top,P<Second,Rest>> _)   { return null; }     // Function parameters and body
   
   // jump-stack-example.listing
-  public static void jump_stack_use_cases(){
+  public static void jump_stack_use_case(){
     JS.P<
       γ1,                                                      // Top   
       JS.P<γ1,JS.P<γ2,JS.E,¤,JS.E>,JS.P<γ2,JS.E,¤,JS.E>,JS.E>,// Rest 

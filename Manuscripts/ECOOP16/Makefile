@@ -118,8 +118,6 @@ abc.listing: $(DOMAIN_DEMO)
 peep.listing:  $(DOMAIN_DEMO)
 		awk '/^.*Peep *<.*$$/,/^  }/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
 
-
-
 warnings:	
 	 $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
 
@@ -128,9 +126,6 @@ lacheck:
 
 spelling:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
-
-
-
 
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
@@ -160,4 +155,3 @@ JUNKFILES+=$(wildcard *.vtc)
 clean: $(JUNKFILES) 
 	- [ -z '$^' ]        || mv -f $^ /tmp
 	- [ -z '$(wildcard $(TARGET))' ] || mv -f $(TARGET) /tmp
-

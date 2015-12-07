@@ -65,7 +65,7 @@ Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
   \item The interest of frugal management of namespaces is served
     by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of~$Y$.
-  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command 
+  \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command
       (with interfaces the method body is redundant).
       This is to stress that at runtime, the code does not carry out any useful or interesting computation,
       and the class structure is solely for providing compile-time type checks.
@@ -75,7 +75,7 @@ It can be made~\cc{private}. Just move class~\cc{$Γ$} to outside of~\cc{$Γ'$},
 }
 \end{enumerate}
 
-Having seen how how inheritance and overriding make possible
+Having seen how inheritance and overriding make possible
   the encoding of unary functions, we turn now to encoding higher arity functions.
 With the absence of multi-methods, other techniques must be used.
 
@@ -106,15 +106,15 @@ A \Java type encoding of this definition of function~$f$
     \parbox[c]{51ex}{\javaInput[minipage,leftrule=3pt,toprule=3pt,bottomrule=3pt,width=51ex]{binary-function-example.listing}}
 ⏎
     \parbox{0.57\linewidth}
-    {\textbf{(a)} implementation (for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
-    which is in \cref{Figure:unary-function}).}
+    {\textbf{(a)} implementation (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
+    found in \cref{Figure:unary-function}).}
       & \hspace{-5ex}\textbf{(b)} use cases⏎
   \end{tabular}
 \end{figure}
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
 Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
-  error precisely because~$f(r₂, s₂)=⊥$.
+  error because~$f(r₂, s₂)=⊥$.
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
@@ -137,7 +137,7 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end.
 
-\begin{wrapfigure}[8]{r}{29ex}
+\begin{wrapfigure}[9]{r}{29ex}
   \caption{\label{Figure:id}%
   Covariant return type of function \cc{id()}
   with \Java generics.
@@ -152,46 +152,51 @@ Genericity can be employed to serve this end.
   In each of these classes, the return type of \cc{id} is,
   without overriding, (at least) the class itself.
 
-\Cref{Figure:stack-use-cases} shows some use cases of a type encoding of
-  a stack of \emph{unbounded} depth, yet can only store members of the set~$Γ$.
-With type encoding these are precisely classes~\cc{$γ$1}
-  and \cc{$γ$2} defined in \cref{Figure:unary-function}.
+It is also possible to encode wita \Java types unbounded
+  data structure as demonstrated in \cref{Figure:stack-use-cases} featuring
+  a use case of a stack of \emph{unbounded} depth.
 
 \begin{figure}[!htp]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
-  \javaInput[minipage,left=-2ex]{stack-use-cases.listing}
+  \javaInput[minipage,left=-2ex,listing style=numbered]{stack-use-cases.listing}
 \end{figure}
 
-The figure demonstrates a stack that starts with five items in it.
-These are popped in order. Just before popping the last item, its
-  value is examined.
-Trying then to pop from an empty stack, or to examine its top, ends with
+In line 3 of the figure, a stack with five elements is created:
+These are popped in order (ll.4--7,l.9).
+Just before popping the last item, its value is examined (l.8).
+Trying then to pop from an empty stack (l.10), or to examine its top (l.11), ends with
   a compile time error.
 
+Stack elements may be drawn from some abstract set~$Γ$.
+In the figure these are either class~\cc{$γ$1}
+or class \cc{$γ$2} (both defined in \cref{Figure:unary-function}).
+A call to function \cc{$γ$}$i$ pushes the type \cc{$γ$}$i$
+  into the stack, for~$i=1,$.
 The expression⏎
   \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
-This expression's type is that of variable~\cc{\_1}, i.e,⏎
+This expression's type is that of variable~\cc{\_1}, i.e.,⏎
 \mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
-A recurring building block occurs in this type.
-This is generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
+A recurring building block occurs in this type: 
+  generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
     \item the \emph{top} of the stack, always a subtype of~\cc{$Γ$},
     \item the \emph{rest} of the stack, which can be of two kinds:
           \begin{enumerate}
             \item another instantiation of~\cc{P} (in most cases),
             \item non-generic type~\cc{E}, \emph{short for ‟Empty”}, which encodes the empty
-                  set (only at the deepest~\cc{P}, rest is empty).
+              stack. Note that \cc{E} can only occur at the deepest~\cc{P}, encoding a stack 
+              with one element, in which the rest is empty. 
           \end{enumerate}
   \end{enumerate}
-Incidentally, \kk{static} field \cc{Stack.bottom} is of type~\cc{E}.
+Incidentally, \kk{static} field \cc{Stack.empty} is of type~\cc{E}.
 
-\Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy of
+\Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy 
 of type \cc{Stack} and its subtypes.
-\Cref{Figure:stack-encoding}(b).
+\Cref{Figure:stack-encoding}(b)
 gives the implementation of these types.
 
 \begin{figure}[!htb]
@@ -215,7 +220,7 @@ Other points to notice are:
 \begin{itemize}
   \item The type at the top of the stack is precisely the return type of \cc{top()};
         it is overridden in~\cc{P} so that its return type is the first argument of~\cc{P}.
-        The return type of \cc{top()} in~\cc{B} is the error value {$Γ'$.¤}.
+        The return type of \cc{top()} in~\cc{E} is the error value {$Γ'$.¤}.
   \item Pushing into the stack is encoded as functions~\cc{$γ$1()} and~\cc{$γ$2()};
         the two are overridden with appropriate covariant change of the return type in~\cc{P} and~\cc{E}.
   \item Since an empty stack cannot be popped, function \cc{pop()} is overridden in~\cc{E} to return
@@ -227,7 +232,7 @@ In fact, this recursive generic type technique can used to encode S-expressions:
   with covariant \cc{car()} and \cc{cdr()} methods.
 
 A standard technique of template programming in \CC is to encode conditionals with template specialization.
-Since \Java forbids specialization of generics, we used in lieu covariant overloading of function
+Since \Java forbids specialization of generics, in lieu we use covariant overloading of function
   return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
   return type of of \cc{top()} in \cref{Figure:stack-encoding}).
 
@@ -236,13 +241,17 @@ Since \Java forbids specialization of generics, we used in lieu covariant overlo
   \javaInput[minipage,left=-2ex]{mammal.listing}
 \end{wrapfigure}
 
-As can be seen in \cref{Figure:generic}, similar covariant change might happen in extending a generic type:
-The type of the parameter (\kk{extends} \cc{Whales}) to a generic (\cc{Heap}) may
-be specialized with the inheritance (class \cc{School} extending \cc{Heap}).
-Similarly, the idea behind \cref{Figure:generic} will be used
-  below as another idiom of conditionals.
+\cref{Figure:generic} shows that a similar covariant change is possible 
+  in extending a generic type.
+The type of the parameter \cc{M} 
+  to \cc{Heap} is ``\mbox{\cc{?} \kk{extends} \cc{Mammals}}''.
+This type is specialized as \cc{School} extends \cc{Heap}:
+  parameter \cc{W} of \cc{School} is of type  
+  ``\mbox{\cc{?} \kk{extends} \cc{Whales}}''.
+Covariant specialization of parameters to generics 
+  is yet another another idiom for encoding conditionals.
 
-Overloading makes a third idiom for partial emulation of conditionals, as can be seen
+Overloading gives rise to a third idiom for partial emulation of conditionals, as can be seen
   in~\cref{Figure:peep}.
 
 \begin{figure}[htb]%
@@ -252,18 +261,20 @@ Overloading makes a third idiom for partial emulation of conditionals, as can be
   \javaInput[minipage,left=-2ex]{peep.listing}
 \end{figure}
 
-The figure depicts type \cc{Peep} and the overloaded versions of \cc{peep()} which can be used to
-  extract the top of the stack.
+The figure depicts type \cc{Peep} and overloaded versions of \cc{peep()} which 
+  together make it possible to extract the top of the stack.
 The first generic parameter to \cc{Peep} is the top of the stack, the second is the stack itself.
 Indeed, we see (l.11) that peeping into an empty stack, places a~\cc{?}
   in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.2).
 
 The second overloaded version of \cc{peep()} (ll.3--6) matches
- against all non-empty stacks. The return type
- of this version encodes,
- in its first parameter,
- the top of the stack.
-A use case can be seen in line~9.
+ against all non-empty stacks. 
+The return type
+ of this version encodes
+ in its first parameter
+ the top of the stack, and 
+  in its second parameter, the parameter's type.
+A use case is in line~9.
 
 Let~$τ$ be the type of the top of a given stack.
 Then, both \cc{top()} and \cc{peep()} can be used to extract~$τ$.

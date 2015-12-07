@@ -41,16 +41,15 @@ Two of the specializations are parameter-less and are
 e.g., a after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-Type \cc{JS.P} (line 15 in the figure) makes the third specialization of \cc{JS}, encodind
-type \cc{JS.P} (line 15 in \cref{Figure:stack-encoding}) makes the third specialization of \cc{JS}, encoding
+Type \cc{JS.P} (lines 15--22 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
-Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it achieves
-  its purpose by the parameters it takes and those it passes
-  to the type it extends.
+Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it fullfils
+  its duties through the type parameters it takes and the types it passes
+  to~\cc{Pʹ} the generic type it extends.
 
-\begin{wrapfigure}[12]r{30ex}
+\begin{wrapfigure}[12]r{29ex}
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
-  \javaInput[minipage,width=30ex,left=-2ex]{jump-stack-push.listing}
+  \javaInput[minipage,width=29ex,left=-2ex]{jump-stack-push.listing}
 \end{wrapfigure}
 
 Specifically, \cc{JS.P} takes
@@ -66,8 +65,8 @@ The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e
 
 The auxiliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
 By extending type \cc{JS} and passing the correct \cc{Rest} (respectively, \cc{J\_$γ$1}, \cc{J\_$γ$2})
-  parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.6)
-  (respectively \cc{jump\_$γ$1} (l.10), \cc{jump\_$γ$2} (l.11)).
+parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.7~\cref{Figure:jump})
+  (respectively \cc{jump\_$γ$1} (l.10 ibid), \cc{jump\_$γ$2} (l.11 ibid)).
 
   More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} 
     that extends \cc{Pʹ}.
@@ -88,7 +87,7 @@ The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
 \end{wrapfigure}
 
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
-\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.6~\cref{Figure:jump})
+\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.7~\cref{Figure:jump})
 
 Some use cases for the encoded jump stack data structure are in \cref{Figure:jump-stack-example}.
 The type of variable \cc{\_1} encodes a stack into which \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1} were pushed

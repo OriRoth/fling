@@ -40,7 +40,7 @@ Mention funny tricks with annotations to Java. There is \cite{Michael:Earnst} fr
 
 Mention work by \cite{Bracha} on non-standard type systems.  
 
-Mention this German (?) guy, who did suggest something like ours.  
+Mention this \cite{German:(?):guy}, who did suggest something like ours.  
 
 Anything else you can find.
 
@@ -51,7 +51,7 @@ Informally, an object that belongs to a certain type, has
 type-states, if not all methods defined in this object's class are applicable
 to the object in all states it may be in.
 
-A classical example of type-states is a file object: which can be in one of two
+A classical example of type-states is a file object which can be in one of two
 states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
 permitted when the file is in an ‟open” state. In addition, method \cc{open()}
 (respectively \cc{close()}) can only be applied if the object is in the
@@ -77,8 +77,6 @@ Type-state pose two main challenges to software engineering
       evolution of an API, the challenge is in updating the type-state information,
       and the type checking of \Java of clients.
 \end{enumerate}
-
-\cite{can:you:find:how:towrite:recipe:with:care:in:Latex:and:replace:this:citation:with:the:word:recipe}
 
 \begin{wrapfigure}[9]r{35.05ex}
 \caption{\label{Figure:box}Fluent API of a box object, defined by a DFA}
@@ -110,7 +108,7 @@ Some skill is required to make this type definition: proper design of class \cc{
 The proof makes a general recipe for handling examples of this sort:
 \begin{itemize}
   \item First, consider the language defined by the fluent API\@.
-        In the box example, this language is defined by the regular expression:
+        In the box example, this language is defined by the regular expression
         \[
           L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}\:|\:ε\big).
         \]
