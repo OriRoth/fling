@@ -1,9 +1,25 @@
+\Cref{Theorem:Gil-Levy} and its proof above also provide
+an algorithm for converting an EBNF specification of a fluent API into its
+its realization:
+\begin{quote}
+  \begin{enumerate}
+    \item Convert the specification into a plain BNF form.
+    \item Convert this BNF into a definition of a DPDA. If conversion fails,
+        then the given specification is not deterministic context free.
+    \item Convert this DPDA into a jDPDA. (Conversion is guaranteed to succeed.)
+    \item Apply the proof to generate appropriate \Java type definitions, making sure to
+        augment methods with code to maintain the fluent-call-list.
+        Parsing the fluent-call-list can done either a each method,
+        or lazily, when the product of the fluent API call chain is to
+         be used.
+  \end{enumerate}
+\end{quote}
 
 The \Java compiler is the main computational tool we use
-  in this manuscript.
+in this manuscript.
 In particular, the \Java generics mechanism is what
-  boosted our expressiveness from the trivial \emph{regular languages}
-  set, to the practical, reasonable \emph{deterministic context free languages} set.
+boosted our expressiveness from the trivial \emph{regular languages}
+set, to the practical, reasonable \emph{deterministic context free languages} set.
 
 An interesting question that was raised during this research,
   is what the runtime complexity of the \Java compiler is.
@@ -33,7 +49,7 @@ Consider an encoding of an S-expression in type~\cc{Cons}
 Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
 Denote the return type of \cc{d()} is~$τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}$.
 Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
-Since~$τ= \cc{Cons<}σ,σ\cc{>}$, we have~$|τ|≥2|\sigma|$,
+Since~$τ= \cc{Cons<}σ,σ\cc{>}$, we have~$|τ|≥2|σ|$,
   where the size of a type is measured, e.g., in number of characters in its textual representation.
 In a chain of~$n$ calls to \cc{d()}
 \begin{equation}
@@ -45,7 +61,7 @@ the size of the resulting type is~$O(2ⁿ)$.
 \begin{wrapfigure}r{43ex}%
   \begin{minipage}{43ex}
   \caption{\label{Figure:compile-empiric} Compilation time
-    (sec†{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit, javac 1.8.0\_66}%
+    (sec†{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit, \texttt{javac} 1.8.0\_66}%
     ) \emph{vs.}
       length of call chain.
 }
@@ -54,7 +70,7 @@ the size of the resulting type is~$O(2ⁿ)$.
 \end{wrapfigure}%
 
 \Cref{Figure:compile-empiric} shows on the doubly logarithmic plane that the runtime (on a Lenovo X220)
-  of the ‟javac” compiler (version 1.8.0\_66) in face of a \Java program
+of the \texttt{javac} compiler (version 1.8.0\_66) in face of a \Java program
   assembled from \cref{Figure:compiler} and \cref{Equation:n} placed as the
   single command of \cc{main()}.
 We see that this runtime is asymptotically exponential.

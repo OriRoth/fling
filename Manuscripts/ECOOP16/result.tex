@@ -80,7 +80,7 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
     Methods with parameters contribute to the user
       experience and readability of fluent APIs but their ``computational expressive power"' is the same.
       In fact, extending
-      \cref{Theorem:Gil-Levy} to support these requires three simple steps:
+      \cref{Theorem:Gil-Levy} to support these requires these conceptually simple steps 
       \begin{enumerate}
         \item Define the structure of parameters to methods with appropriate fluent API, which may or
           may not be, the same as the fluent API of the outer chain, or the fluent API of parameters to
@@ -89,7 +89,7 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
           If there are several overloaded versions of a method, consider each such version as a distinct
           character in the alphabet~$Σ$ and in the type encoding of the automaton.
         \item
-          Adding to the implementation of each method code to store the 
-          parameters store the value of its argument(s) in the call list. 
+          Add code to the implementation of each method code to store the 
+          store the value of its argument(s) in a record placed ath the end of the fluent-call-list. 
       \end{enumerate}
 \end{description}
