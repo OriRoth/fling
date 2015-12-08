@@ -20,8 +20,10 @@ LISTINGS+=jump-stack.listing
 LISTINGS+=jump-stack-push.listing 
 LISTINGS+=mammal.listing 
 LISTINGS+=peep.listing 
-LISTINGS+=proof.headers.listing 
+LISTINGS+=proof.cases.listing 
 LISTINGS+=proof.configuration.listing 
+LISTINGS+=proof.full.listing 
+LISTINGS+=proof.headers.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -67,6 +69,14 @@ proof.headers.listing: $(JDPDA)
 proof.configuration.listing: $(JDPDA)
 	awk '/begin{configuration}/{f=1;c+=1;next}/end{configuration}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
   
+proof.full.listing: $(JDPDA):
+	awk '/begin{full}/{f=1;c+=1;next}/end{full}/{f=0;next}f&& ~/begin{/ && ~/end{/{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+proof.cases.listing: $(JDPDA):
+
+jump-stack-example.listing: $(CODE_PATH)/JumpStackDemo.java
+	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
 jump-stack-example.listing: $(CODE_PATH)/JumpStackDemo.java
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 

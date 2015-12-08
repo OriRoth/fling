@@ -1,11 +1,9 @@
 package automaton;
 
-import automaton.A.C.C1;
-import automaton.A.C.E;
-import automaton.A.C.¤;
+import automaton.TEST.C.C1;
 
 //@formatter:off
-@SuppressWarnings({"rawtypes","unused"}) class A {
+@SuppressWarnings({"rawtypes","unused"}) class TEST {
   private static class SigmaStar { /* Reject */ } 
   private static class L extends SigmaStar { /**/ }
 
