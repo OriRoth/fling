@@ -82,23 +82,23 @@ Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
 The simple~$k=2$,~$ℓ=2$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
-  Incidintally,
+  Incidentally,
 \[
   L = ❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ
 \]
-which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is an nonambigous, deterministic
-BNF for~$L$; neither the BNF nor the above repesentation are material for the proof.
-},
+which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is an non-ambiguous, deterministic
+BNF for~$L$; neither the BNF nor the above representation are material for the proof.
+}
 
-\begin{figure}
-  \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+\begin{wrapfigure}r{56ex}
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the   
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}} 
-  \javaInput[left=0ex,minipage,width=\textwidth]{proof.cases.listing}
-\end{figure}
+  \javaInput[left=-2ex,minipage,width=56ex]{proof.cases.listing}
+\end{wrapfigure}
 
 \subsection{Main Types}
-Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:
+Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
+  where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
 \begin{quote}
   \javaInput[left=-2ex,minipage,width=54ex]{proof.headers.listing}
 \end{quote}
@@ -109,16 +109,16 @@ A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
   but~$2k+1$ other parameters are required:
 \begin{itemize}
-  \item \cc{Rest} a type encoding of the stack after a push,
+  \item \cc{Rest} a type encoding of the stack after a pop,
   \item~$k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack
         after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and,
   \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
-(All invocations of~\cc{C} must make sure that actual parameters are properly constrained;
+(All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
 so as to ensure that they are (the type version of) pointers into the actual stack.)
 
-In the running example,~\cc{C} is defined as
+In the running example,~\cc{C} is defined as:
 \begin{quote}
   \javaInput[left=0ex,minipage,width=63ex]{proof.configuration.listing}
 \end{quote}
@@ -126,16 +126,16 @@ This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Fig
   the empty and the error configurations.
 
 Type~\cc{C} defines~$ℓ+1$ functions (3 in the example), one for each possible input character.
-Since~\cc{C} encode an abstract configuration, return types of functions in it
+Since~\cc{C} encodes an abstract configuration, return types of functions in it
   are appropriate defaults which intentionally fail to emulate the automaton's execution.
   The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
   the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
 
-\subsection{Top of Stack Types}
+\subsection{Top-of-Stack Types}
 
 Classes \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
-In~$A$ there two of these
+In~$A$ there are two of these:
 \begin{quote}
   \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
@@ -179,31 +179,17 @@ Overall, there are six kinds of entries in a transition table:
   cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
   there is little that clients can do with this result.
   \item[\textsf{accept}]
-<<<<<<< HEAD
   The only case in which fluent call chain ending with \cc{\$()} can return
-  type~\cc{L} is when the type returned of the call just prior to \cc{.\$()} covariantly
-  changes the return type of \cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
+    type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
+    changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
   types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
   In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₁$.
-  We therefore to the body of type \cc{C$γ$1} this line
+  We therefore refer to the body of type \cc{C$γ$1} this line
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
   \end{JAVA}
-=======
-    The only case in which fluent call chain ending with \cc{\$()} can return
-      type \cc{L} is when the return type of the call just prior to \cc{.\$()} covriantely changes the return
-        type to \cc{L}.
-    Examining \cref{Table:A} we see that this happens when the top of the stack is $\gamma_1$. 
-    We therefore to the body of type \cc{C$γ$1} this line 
-    \begin{JAVA}
-@Override L $() ;
-    \end{JAVA}
-     
-    Accordingly 
-        the return type
->>>>>>> c377811cb1eabee017c0ec1a125b1c1d7e61d9da
   \item[$⊥$]
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
   the transition function returns~$⊥$.
