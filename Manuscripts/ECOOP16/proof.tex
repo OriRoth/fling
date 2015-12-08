@@ -91,7 +91,7 @@ BNF for~$L$; neither the BNF nor the above repesentation are material for the pr
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=55ex]{proof.headers.listing}
+  \javaInput[left=-2ex,minipage,width=54ex]{proof.headers.listing}
 \end{quote}
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
@@ -108,28 +108,22 @@ so as to ensure that they are (the type version of) pointers into the actual sta
 
 In the running example,~\cc{C} is defined as
 \begin{quote}
-  \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
+  \javaInput[left=0ex,minipage,width=63ex]{proof.configuration.listing}
 \end{quote}
-\lstinputlisting{proof.headers.listing}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
 
 Type~\cc{C} defines~$ℓ+1$ functions (3 in the example), one for each possible input character.
 Since~\cc{C} encode an abstract configuration, return types of functions in it
   are appropriate defaults which intentionally fail to emulate the automaton's execution.
-  The return type of \cc{\$()} is \cc{ΣΣ} (rejection)
+  The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
   the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
 
 \subsection{Top of Stack Types}
-Classes \cc{C$γ$1}, …,\cc{J$γ$}$k$
-  encode stacks whose top element is~$γ₁$,…,~$γₖ$.
-They all specialize these are
-all specializing~\cc{C}
-In~$A$ there only two of these
 
-In the running example,
-\begin{quote}
+Classes \cc{C$γ$1}, … ,\cc{J$γ${}$k$}, specializing~\cc{C},
+  encode stacks whose top element is~$γ₁$, … ,$γₖ$.
+In~$A$ there only two of these
   \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
-\end{quote}
 
 For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
