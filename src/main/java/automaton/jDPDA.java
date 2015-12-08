@@ -70,7 +70,6 @@ class A { // Encode automaton ¢$A$¢
   //end{full}
   //begin{cases}
   static void isL( L l) {/**/}
-  
   static void accepts() {
     isL(build.σ2().$());
     isL(build.σ1().σ2().$()); 
@@ -83,8 +82,10 @@ class A { // Encode automaton ¢$A$¢
     isL(build.σ2().σ2().$());
     isL(build.σ1().σ2().σ1().$());  
     isL(build.σ1().σ2().σ2().σ1().$());  
+    //end{cases}
     isL(build.σ1().σ2().σ2().σ2().σ1().$()); 
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
+    //begin{cases}
   }
   //end{cases}
 //begin{full}
