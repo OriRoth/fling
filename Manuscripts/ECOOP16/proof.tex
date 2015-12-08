@@ -159,10 +159,24 @@ Conceptually, these are encoded by selecting the correct return
 Thanks to inheritance, we need to do so only in the cases that this return type is different from the
   default.
 
-Here the cases to consider:
+Overall, there are six kinds of entries in a transition table:
 \begin{description}
-  \item[textsf{reject}]
-  \item[textsf{accept}]
+  \item[\textsf{reject}]
+    The default return type of \cc{\$()} in \cc{C} is \cc{$\Sigma\Sigma$}, which 
+    is \emph{not} a subtype of \cc{L}. Normally the result of a call chain that ends with \cc{\$()}  
+    cannot be assigned to a variable of type \cc{L}. Moreover, since \cc{$\Sigma\Sigma$} is \kk{private},
+    there is little that clients can do with this result.
+  \item[\textsf{accept}]
+    The only case in which fluent call chain ending with \cc{\$()} can return
+      type \cc{L} is when the return type of the call just prior to \cc{.\$()) covriantely changes the return
+        type to \cc{L}.
+    Examining \cref{Table:A} we see that this happens when the top of the stack is $\gamma_1$. 
+    We therefore to the body of type \cc{C$γ$1} the following line:
+    \begin{JAVA}
+    \end{JAVA}
+     
+    Accordingly 
+        the return type
   \item[$⊥$]
   \item[$\textsf{jump}(γᵢ)$]
   \item[$\textsf{push}(\alpha)$]
