@@ -1,5 +1,5 @@
 package automaton;
-
+import static automaton.A.C.*;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
