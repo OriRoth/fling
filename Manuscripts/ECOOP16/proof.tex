@@ -103,16 +103,24 @@ Essentially,~\cc{C} is a representation of the stack,
   \item $k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
-Actual arguments would be properly constrained, making sure that
-  they are (the type version of) pointers into the actual stack.
+
+(All invocations of \cc{C} must make sure that actual arguments are properly constrained; 
+so as to ensure that they are (the type version of) pointers into the actual stack.)
 In the running example,~\cc{C} is defined as
+\begin{quote}
+  \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
+\end{quote}
 \lstinputlisting{proof.headers.listing}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
 
-Classes \cc{C$γ$1},…,\cc{J$γ${}$k$} all specializing~\cc{C}
+Classes \cc{C$γ$1}, … ,\cc{J$γ${}$k$} all specializing~\cc{C}
   encode stacks whose top element is~$γ₁$,…,~$γₖ$.
+In $A$ there only two of these 
+
 In the running example,
 \begin{quote}
   \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
 \end{quote}
+
+For the sake of completeness, use cases of automaton $A$ and its full implementation are included in the appendices.

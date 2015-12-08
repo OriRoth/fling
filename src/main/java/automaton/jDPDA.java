@@ -8,23 +8,23 @@ import automaton.A.C.Cγ1;
 //begin{full}
 class A { // Encode automaton ¢$A$¢
   // begin{headers}
-  private static class ΣΣ // Encodes set ¢$\Sigma^*$¢, type of reject
+  private static class ΣΣ   // Encodes set ¢$\Sigma^*$¢, type of reject
     { /*  empty*/ } 
-  static class L extends ΣΣ //Encodes set ¢$\Sigma^* \subseteq \Sigma^*$¢, type of reject 
+  static class L extends ΣΣ //Encodes set ¢$L\subseteq \Sigma^*$¢, type of reject 
     { /* empty*/ }
   // end{headers}
 
   // Configuration of the automaton
   /// begin{configuration}
-  interface C<       // Generic parameters:
-    Rest extends C,  // The rest of the stack, for pop operations
+  interface C<      // Generic parameters:
+    Rest extends C, // The rest of the stack, for pop operations
     Jγ1 extends C,  // Type of¢$~\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
     Jγ2 extends C,  // Type of¢$~\textsf{jump}(\gamma2)$¢, may be rest, or anything in it. 
     JRγ1 extends C, // Type of¢$~\cc{Rest}.\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
     JRγ2 extends C  // Type of¢$~\cc{Rest}.\textsf{jump}(\gamma2)$¢, may be rest, or anything in it.  
   >
   {
-    ΣΣ $();        // δ transition on end of input; invalid language by default 
+    ΣΣ $();         // δ transition on end of input; invalid language by default 
     C σ1();         // δ transition on σ¢1¢; dead end by default
     C σ2();         // δ transition on σ¢2¢; dead end by default
 
@@ -32,22 +32,47 @@ class A { // Encode automaton ¢$A$¢
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
 
+  //begin{many}
      interface Cγ1< // Configuration when γ1 is the top
       Rest extends C,
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
        Rest, // In Cγ1, Jγ1 must be Rest.
-       JRγ2, 
+       JRγ2, Rest, JRγ1, JRγ2
+     >   
+     // end{many} 
+       ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
+       ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
+     // begin{many}
+     {
+     // end{many}
+        // @Override  $() ; // REJECT
+     // begin{many}
+     }
+     // end{many}
+
+  //begin{many}
+     interface Cγ2< // Configuration when γ2 is the top
+       Rest extends C,   
+       JRγ1 extends C, 
+       JRγ2 extends C
+     > extends C<
+       JRγ1, 
+       Rest, // In Cγ2, Jγ2 must be Rest. 
        Rest,
        JRγ1, 
        JRγ2
-     >  ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
-        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
-     {
-//       @Override  $() ; // REJECT
-     }
-
+    >  
+    { 
+     // end{many}
+      @Override L $() ;
+//    @Override σ1();  // REJECT
+      @Override JRγ1 σ2();
+       
+  //begin{many}
+    }
+  // end{many}
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
        Cγ1<
          Cγ1<
@@ -72,22 +97,7 @@ class A { // Encode automaton ¢$A$¢
        >σ2();
      }
      
-     interface Cγ2< // Configuration when γ2 is the top
-      Rest extends C,   
-      JRγ1 extends C, 
-      JRγ2 extends C
-     > extends C<
-     JRγ1, 
-     Rest, // In Cγ2, Jγ2 must be Rest. 
-     Rest,
-     JRγ1, 
-     JRγ2>  
-     { 
-       @Override L $() ;
-//     @Override σ1();  // REJECT
-       @Override JRγ1 σ2();
-        
-     }
+
     
   }
   //end{full}
