@@ -48,12 +48,12 @@ or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
 Of course, with no operator overloading it is impossible
 to fully emulate tokens; method names though make a good substitute for tokens, as done
 in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{Figure:DSL}).
-The questions that motivate that this research are:
+The questions that motivate this research are:
 \begin{quote}
   \begin{itemize}
     \item Given a specification of a DSL, determine whether there exists
-        a fluent API can be made for this specification?
-    \item In the cases that such a fluent API is possible,
+        a fluent API that can be made for this specification?
+    \item In the cases that such fluent API is possible,
       can it be produced automatically?
     \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual} tool
         to convert a language specification into a fluent API?
@@ -61,7 +61,7 @@ The questions that motivate that this research are:
 \end{quote}
 
 Inspired by the theory of formal languages and automata,
-  this study explores what can be done, and what can not be done, with fluent API in \Java.
+  this study explores what can be done, and what can not be done, with fluent APIs in \Java.
 
 Consider some fluent API (or DSL) specification, permitting only certain call
 chains and disallowing all others.
