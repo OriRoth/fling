@@ -1,4 +1,4 @@
-On a first sight, the proof of \cref{Theorem:Gil-Levy} could follows the techniques
+On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{Section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
 The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
 and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}.
@@ -14,7 +14,7 @@ We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
   the output is a computed from the input by an unbounded number o steps.†{%
     With the presumption that the \Java compiler halts for all inputs (a presumption that does
-    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding of all DPDAs can be proved:
+    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding for all DPDAs can be proved:
  Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
   never halts on any input.
 A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
@@ -37,47 +37,49 @@ Our proof relies on a special kind of realtime automata,
     j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
-  Initially,~$ζ=γ₁$.
+  Initially, the stack holds~$γ₁$ only.
   For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
   \begin{itemize}
-    \item At each steps a jDPDA examines~$σ∈Σ$,
-          the next input character and~$γ$ the element at the top of the stack, and
-          executes the following:
+    \item At each step a jDPDA examines~$γ$,
+	  the element at the top of the stack, 
+	  and~$σ∈Σ$, the next input character,
+	  and executes the following:
           \begin{quote}
             \begin{enumerate}
               \item consume~$σ$
               \item pop~$γ$
               \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
-              \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetitively
+              \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
                     pops stack elements up-to and including the first occurrence of~$γ$.
             \end{enumerate}
           \end{quote}
-    \item If the next character is~$\$$, then the automaton may reject or accept,
+    \item If the next character is~$\$$, then the automaton may reject or accept (but not do nothing else),
           depending on the value of~$γ$.
   \end{itemize}
-  In addition, the automator rejects if~$δ(γ,σ) =⊥$, or if it encounters
+  In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
   an empty stack (either at the beginning of a step or on course
-  of a \textsf{jump operation}.
+  of a \textsf{jump operation}).
 \end{Definition}
 
-\begin{wraptable}r{29ex}
+\begin{wraptable}r{33ex}
   \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂❵$,~$Γ=❴γ₁,γ₂❵$}
   \begin{tabular}{c|ll}
              & \hfill~$γ₁$ & \hfill~$γ₂$⏎
     \midrule
-~$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $\hfill ⊥$⏎
+$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $\hfill ⊥$⏎
 $σ₂$ & $\textsf{push}(γ₂,γ₂)$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
   \end{tabular}
 \end{wraptable}
 
-As it turns out, every DCFG language is recognized by some jDPDA, and conversely, every language accepted by a jDPDA
-  is DCFG~\cite{Courcelle:77}.
+As it turns out, every DCFL is recognized by some jDPDA, and conversely, 
+  every language accepted by a jDPDA
+  is a DCFL~\cite{Courcelle:77}.
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
 Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
-The simple~$k=2$,~$ℓ=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+The simple~$k=2$,~$ℓ=2$ jDPDA~$A$, defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
   Incidintally,
@@ -170,6 +172,7 @@ Overall, there are six kinds of entries in a transition table:
   cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
   there is little that clients can do with this result.
   \item[\textsf{accept}]
+<<<<<<< HEAD
   The only case in which fluent call chain ending with \cc{\$()} can return
   type~\cc{L} is when the type returned of the call just prior to \cc{.\$()} covariantly
   changes the return type of \cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
@@ -181,6 +184,19 @@ Overall, there are six kinds of entries in a transition table:
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
   \end{JAVA}
+=======
+    The only case in which fluent call chain ending with \cc{\$()} can return
+      type \cc{L} is when the return type of the call just prior to \cc{.\$()} covriantely changes the return
+        type to \cc{L}.
+    Examining \cref{Table:A} we see that this happens when the top of the stack is $\gamma_1$. 
+    We therefore to the body of type \cc{C$γ$1} this line 
+    \begin{JAVA}
+@Override L $() ;
+    \end{JAVA}
+     
+    Accordingly 
+        the return type
+>>>>>>> c377811cb1eabee017c0ec1a125b1c1d7e61d9da
   \item[$⊥$]
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
   the transition function returns~$⊥$.
