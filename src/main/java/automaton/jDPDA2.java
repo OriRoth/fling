@@ -1,12 +1,14 @@
 package automaton;
 
-import automaton.A2.C.*;
+import automaton.A2.C.Cσ1;
+import automaton.A2.C.E;
+import automaton.A2.C.¤;
 
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) class A2 {
   private static class ΣΣ { /* Reject */ } 
-  private static class L extends ΣΣ { /**/ }
+  static class L extends ΣΣ { /**/ }
 
   // Configuration of the automaton
   interface C< // Generic parameters:
