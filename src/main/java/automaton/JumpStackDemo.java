@@ -10,6 +10,11 @@ import automaton.Domain.Γʹ.Γ.γ2;
 //@formatter:off
 class JumpStackDemo {
   ;
+  interface X extends JS.E{} 
+  X x = null;
+  void f() {
+   P<γ2, JS.P<γ2, E, ¤, E>, E, P<γ2, E, ¤, E>> a = x.γ2().γ2();
+ }
   // jump-stack-example.listing
   public static void jump_stack_use_cases(){
     P<

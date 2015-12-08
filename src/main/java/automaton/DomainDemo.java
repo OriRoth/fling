@@ -81,7 +81,7 @@ public class DomainDemo {
     <Top extends  Γ,Second extends  Γ, Rest extends Stack<?> >  // Three generic parameters
     Peep2<Top,Second, P<Top,P<Second,Rest>>>                  // Function return type
     double_peep_problem_with_type_erasure(P<Top,P<Second,Rest>> _)   { return null; }     // Function parameters and body
-  
+
   // jump-stack-example.listing
   public static void jump_stack_use_case(){
     JS.P<

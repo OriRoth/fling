@@ -1,119 +1,82 @@
 package automaton;
 
-import automaton.A.JS.E;
-import automaton.A.JS.P;
-import automaton.A.JS.¤;
-import automaton.A.Γʹ.Γ;
-import automaton.A.Γʹ.Γ.γ1;
-import automaton.A.Γʹ.Γ.γ2;
+import automaton.A.C.Cγ1;
+import automaton.A.C.Cγ2;
+import automaton.A.C.E;
+import automaton.Domain.JS;
+import automaton.Domain.JS.P;
+import automaton.Domain.JS.¤;
+import automaton.Domain.Γʹ.Γ.γ1;
+import automaton.Domain.Γʹ.Γ.γ2;
 
+//@formatter:off
 class A {
-  interface Γʹ {
-    // @Formatter:off
-    interface Γ extends Γʹ {
-      interface γ1 extends Γ {
-      }
+  private static class Lʹ { /* Reject */ } 
+  private static class L extends Lʹ { /**/ }
 
-      interface γ2 extends Γ {
-      }
-    }
-
-    interface ¤ extends Γʹ {
-    }
-    // @Formatter:on
+  private interface Pγ2γ2_σ1< 
+    Rest extends C<?, ?, ?>, 
+    J_γ1 extends C<?, ?, ?>, 
+    J_γ2 extends C<?, ?, ?>
+   > {
   }
 
-  private interface Pʹ<Top extends Γ, Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>, Me extends JS<?, ?, ?>>
-      extends JS<Rest, J_γ1, J_γ2> {
-    @Override public Top top();
-    @Override P<γ1, Me, Me, J_γ2> γ1();
-    @Override P<γ2, Me, J_γ2, Me> γ2();
-  }
+  // Configuration of the automaton
+  interface C< // Generic parameters:
+    Rest extends C<?, ?, ?>,  // The rest of the stack, for pop operations
+    J_γ1 extends C<?, ?, ?>,  // Type of jump(γ1), may be rest, or anything in it. 
+    J_γ2 extends C<?, ?, ?>>  // Type of jump(γ2), may be rest, or anything in it. 
+  {
+    C<?, ?, ?> σ1();          // delta transition on σ1
+    C<?, ?, ?> σ2();          // delta transition on σ2
+    Lʹ $();                   // delta transition on end of input 
 
-  private interface Push_γ2_σ1<Me extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>> {
-    P<γ2, Me, J_γ2, Me> σ2();
-  }
-
-  public interface JS<Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>> {
-    Γʹ top();
-    Rest pop();
-    JS<?, ?, ?> γ1();
-    JS<?, ?, ?> γ2();
-    J_γ1 jump_γ1();
-    J_γ2 jump_γ2();
-    JS<?, ?, ?> σ1();
-    JS<?, ?, ?> σ2();
-
-    interface ¤ extends JS<¤, ¤, ¤> {
-      @Override public Γʹ.¤ top();
-      @Override public ¤ pop();
-      @Override public ¤ γ1();
-      @Override public ¤ γ2();
+    interface ¤ extends C<¤, ¤, ¤> { // Error configuration.
+      @Override public ¤ σ1();
+      @Override public ¤ σ2();
     }
 
-    public interface E extends JS<¤, ¤, ¤> {
-      @Override public Γʹ.¤ top();
-      @Override public ¤ pop();
-      @Override public P<γ1, E, E, ¤> γ1();
-      @Override public P<γ2, E, ¤, E> γ2();
+    public interface E extends C<¤, ¤, ¤> { /* Empty configuration */ }
+
+    interface Cγ1< // Parameters:
+      Rest extends C<?, ?, ?>, 
+      J_γ1 extends C<?, ?, ?>, 
+      J_γ2 extends C<?, ?, ?>> 
+    extends C<Rest,J_γ1, J_γ2>  { 
+   default Rest pop() {
+     return null; 
+   }
+   <A extends C<X,Y,Z>, X extends C<?,?,?>, Y, Z> int f()
+      @Override Cγ2<Rest, J_γ1, J_γ2> σ1();
+      @Override L $();        // Accept
     }
 
-    public static final E empty = null;
-
-    public interface P<Top extends Γ, Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>>
-        extends Pʹ<Top, Rest, J_γ1, J_γ2, P<Top, Rest, J_γ1, J_γ2>> {
-    }
-  //@formatter:off
-    interface Pγ1< // Parameters:
-      Rest extends JS<?, ?, ?>, 
-      J_γ1 extends JS<?, ?, ?>, 
-      J_γ2 extends JS<?, ?, ?>
-    >  extends // Super types
-      Push_γ2_σ1<Rest,J_γ2>
-    {
-    }
-
-    interface Pγ2<Rest extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>> extends P<γ1, Rest, J_γ1, J_γ2> {
-      JS<?, ?, ?> σ1();
-      JS<?, ?, ?> σ2();
+    interface Cγ2<Rest extends C<?, ?, ?>, J_γ1 extends C<?, ?, ?>, J_γ2 extends C<?, ?, ?>> extends C<Rest, J_γ1, J_γ2> {
+      C<?, ?, ?> σ1();
+      C<?, ?, ?> σ2();
     }
   }
 
-  static C<?, E> pjs(E _) {
-    return null;
-  }
-  static <T extends Γ, R extends JS<?, ?, ?>, J_γ1 extends JS<?, ?, ?>, J_γ2 extends JS<?, ?, ?>> C<T, P<T, R, J_γ1, J_γ1>> pjs(
-      P<T, R, J_γ1, J_γ2> _) {
-    return null;
-  }
-
-  interface C<T extends Γʹ, R extends JS<?, ?, ?>> {
-    C<?, ?> σ1();
-    C<?, ?> σ2();
-    C<?, ?> $();
-  }
-
-  interface Cγ1<Current extends JS<?, ?, ?>> extends C<γ1, Current> {
-    C<γ2, ?> σ1();
-    C<?, ?> σ2();
-  }
-
-  interface Cγ2<Current extends JS<?, ?, ?>> extends C<γ2, Current> {
-    C<?, ?> σ1();
-    C<?, ?> σ2();
-  }
-
-  static C<γ1, P<γ1, E, E, ¤>> build = null;
+  static Cγ1<E, E, E> build = null;
 
   static void use_cases() {
-    A.build.σ1();
+    Cγ2<E, E, E> σ1 = A.build.σ1();
   }
-  static void pjsing_into_a_stack_use_cases() {
-    P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, P<γ1, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>> _1 = JS.empty
-        .γ2().γ1().γ2().γ1().γ2();
-    C<γ2, P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ2, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, E, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>, P<γ1, P<γ2, E, ¤, E>, P<γ2, E, ¤, E>, E>>> _2 = pjs(
-        _1);
-    E _3 = JS.empty;
-    C<?, E> _4 = pjs(_3);
+
+
+
+    JS.P<
+      γ1,                                                      // Top   
+      JS.P<γ1,JS.P<γ2,JS.E,¤,JS.E>,JS.P<γ2,JS.E,¤,JS.E>,JS.E>,// Rest 
+      JS.P<γ1,JS.P<γ2,JS.E,¤,JS.E>,JS.P<γ2,JS.E,¤,JS.E>,JS.E>,// jump(γ1) 
+      JS.E                                                    // jump(γ2)                      
+    > _1 = JS.empty.γ2().γ1().γ1();
+    JS.E _2 = _1.jump_γ2();
+    JS.P<
+      γ1,                      // Top
+      JS.P<γ2,JS.E,¤,JS.E>,    // Rest
+      JS.P<γ2,JS.E,¤,JS.E>     // jump(γ1)
+      ,JS.E                    // jump(γ2)
+    > _3 = _1.jump_γ1();
   }
 }
