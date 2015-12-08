@@ -1,6 +1,8 @@
 package automaton;
 
 import automaton.TEST.C.C1;
+import automaton.TEST.C.E;
+import automaton.TEST.C.¤;
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) class TEST {
