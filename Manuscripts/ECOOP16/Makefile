@@ -21,6 +21,7 @@ LISTINGS+=jump-stack-push.listing
 LISTINGS+=mammal.listing 
 LISTINGS+=peep.listing 
 LISTINGS+=proof.cases.listing 
+LISTINGS+=proof.many.listing 
 LISTINGS+=proof.configuration.listing 
 LISTINGS+=proof.full.listing 
 LISTINGS+=proof.headers.listing 
@@ -62,6 +63,8 @@ DOMAIN = $(CODE_PATH)/Domain.java
 DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  
 JDPDA = $(CODE_PATH)/jDPDA.java
 
+proof.many.listing: $(JDPDA)
+	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
 proof.headers.listing: $(JDPDA)
 	awk '/begin{headers}/{f=1;c+=1;next}/end{headers}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
