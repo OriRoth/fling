@@ -1,16 +1,14 @@
 package automaton;
 
-import automaton.A2.C.Cγ1;
-import automaton.A2.C.E;
-import automaton.A2.C.¤;
+import automaton.A.C.Cγ1;
 
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
-class A2 {
+class A { // Encode automaton ¢$A$¢
   // begin{headers}
-  private static class ΣΣ { /* Reject */ } 
+  private static class ΣΣ // Set ¢$\Sigma^*$¢ { /* Reject */ } 
   static class L extends ΣΣ { /* Accept */ }
   // end{headers}
 
