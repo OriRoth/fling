@@ -19,8 +19,9 @@
 % \texttt{\small \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}}}
 
 \author{Anonymized for the submission}
-
 \begin{document}
+\let\INPUT=\input
+\def\input#1{}
 
 \maketitle
 \begin{abstract}
@@ -73,7 +74,7 @@ Finally, issues that might be raised in converting
 
 \section{Proof of \Cref{Theorem:Gil-Levy}}
 \label{Section:proof}
-\input{proof}
+\INPUT{proof}
 
 \section{Discussion and Future Work}
 \label{Section:zz}

@@ -38,75 +38,82 @@ Our proof relies on a special kind of realtime automata,
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially,~$ζ=γ₁$.
-  At each steps a jDPDA examines~$σ∈Σ$,
-  the next input character and~$γ$ the element at the top of the stack, and
-  executes the following:
-  \begin{quote}
-    \begin{enumerate}
-      \item consume~$σ$
-      \item pop~$γ$
-      \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
-      \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetitively
-            pops stack elements up-to and including the first occurrence of~$γ$.
-    \end{enumerate}
-  \end{quote}
-  The automaton accepts by reaching the end of the input with an empty stack.
-  It rejects if~$δ(γ,σ) =⊥$, or if it encounters
+  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
+  \begin{itemize}
+    \item At each steps a jDPDA examines~$σ∈Σ$,
+          the next input character and~$γ$ the element at the top of the stack, and
+          executes the following:
+          \begin{quote}
+            \begin{enumerate}
+              \item consume~$σ$
+              \item pop~$γ$
+              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
+              \item if~$δ(γ,σ)=\textsf{jump}(γ)$,~$γ∈Γ$, then the automaton repetitively
+                    pops stack elements up-to and including the first occurrence of~$γ$.
+            \end{enumerate}
+          \end{quote}
+    \item If the next character is~$\$$, then the automaton may reject or accept,
+          depending on the value of~$γ$.
+  \end{itemize}
+  In addition, the automator rejects if~$δ(γ,σ) =⊥$, or if it encounters
   an empty stack (either at the beginning of a step or on course
-  of a \textsf{jump operations}.
+  of a \textsf{jump operation}.
 \end{Definition}
 
-As it turns out, every DCF language is recognized by some jDPDA~\cite{Courcelle:77}.
+\begin{wraptable}r{29ex}
+  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂❵$,~$Γ=❴γ₁,γ₂❵$}
+  \begin{tabular}{c|ll}
+             & \hfill~$γ₁$ & \hfill~$γ₂$⏎
+    \midrule
+$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $⊥$⏎
+$σ₂$ & $\textsf{push}(γ₂,γ₂)$ & $\textsf{jump}(γ₁)$⏎
+$\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
+  \end{tabular}
+\end{wraptable}
+
+As it turns out, every DCFG language is recognized by some jDPDA, and conversely, every language accepted by a jDPDA
+  is DCFG~\cite{Courcelle:77}.
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
-Towards this end, we use the above type encoding of the jump-stack data structure.
-In particular let instantiations of generic type \cc{JS} (\cref{Figure:jump}) encode the configuration of a jDPDA and
-assume that % text is missing XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
-\subsection{Encoding states of pushdown automaton with \Java generics}
-The generalized transition function
-  takes~$k+2$ arguments: a state~$q∈Q$, an input character~$σ∈Σ$
-    and~$k$ elements drawn from~$Γ$.
-To capture the full behavior of the automaton, the transition function
-  must be able to pass along, in one way or another, the full contents of the stack.
+The simple~$|Γ|=2$,~$|Σ|=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+Let~$L$ be the language~$L$ recognized by~$A$.%
+†{
+  Incidintally,
+\[
+  L = ❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ
+\]
+which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is an nonambigous, deterministic
+BNF for~$L$; neither the BNF nor the above repesentation are material for the proof.
+}
 
-Since the scheme described above can only be applied for binary functions,
-  we shall pack together the state~$q$, the stack, and the~$k$ top most
-  elements of it into a single type.
-The next input character,~$σ∈Σ$, the remaining argument of function~$δ$,
-  is encoded as a method.
+\subsection{Preparation}
+Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:
+\begin{JAVA}
+\end{JAVA}
+Let~$k =|Σ|$.
+A configuration is encoded by a generic type~\cc{C}.
+Essentially,~\cc{C} is a representation of the stack,
+  but~$2k+1$ other parameters are required:
+\begin{itemize}
+  \item \cc{Rest} a type encoding of the stack after a push
+  \item \cc{J$γ$1},…,\cc{J$γ${}$k$},
+    type encoding of the stack
+    after~$\textsf{jump}{γ₁}$,…,$\textsf{jump}{γₖ}$,
+  \item \cc{JR$γ$1}…\cc{JR$γ${}$k$},
+    type encoding of \cc{Rest}
+    after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}{γₖ}$,
+\end{itemize}
+Actual arguments would be properly constrained, making sure that
+  they are (the type version of) pointers into the actual stack.
+In the running example,~\cc{C} is defined as
+\begin{JAVA}
+\end{JAVA}
+This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
+  the empty and the error configurations.
 
-The type part of the encoding is obtained by instantiating a generic type as follows:
-Let~\cc{Q} be the abstract class that represents~$Q$, and let~\cc{q} be the concrete class that
-  implements~\cc{Q} for an automaton state~$q∈Q$.
-Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
-  to class~$Q$ and to every class~\cc{q} that implements it.
-Yet another such parameter is added for representing stack contents.
-
-Consider the case~$k=2$.
-\begin{figure}
-  \begin{JAVA}
-abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢>
-  \end{JAVA}
-\end{figure}
-
-\begin{figure}
-  \caption{\label{Figure:SDPDA:hierarchy}%
-    Type hierarchy of the type encoding of a simple SDPDA.
-  }
-  \begin{adjustbox}{}
-    \input ../Figures/automaton.tikz
-  \end{adjustbox}
-\end{figure}
-
-\begin{figure}
-  \caption{\label{Figure:SDPDA:example}%
-    A type encoding of a simple pushdown automaton.
-  }
-  \javaInput[minipage,width=\linewidth]{spda.listing}
-\end{figure}
-\begin{Definition}
-  \label{Definition:realtime}
-  \slshape
-We say a DPDA supplies the \emph{realtime condition} if
-  for all~$q∈Q$,~$γ∈Γ$ :~$δ(q,γ,ε)=⊥$ (i.e., undefined).
-\end{Definition}
+Classes \cc{C$γ$1},…,\cc{J$γ${}$k$} all specializing~\cc{C}
+  encode stacks whose top element is~$γ₁$,…,~$γₖ$.
+In the running example,
+\begin{JAVA}
+\end{JAVA}
