@@ -145,13 +145,13 @@ This excerpt shows interdependency in the actual parameters to the type~\cc{C}, 
 Selection of the parameters enforces the intended constraints of each of these.
 Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
 In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest}, 
-  thus, another parameter is redundant.
+  and so, another parameter is redundant.
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
 in general ‟Top of Stack" types take~$k+1$ parameters:
 \cc{Rest} and the results of~$\cc{Rest.}\textsf{jump}(γᵢ)$,~$i=1,…,k$.
 It is the duty of the generated code to instantiate these types
-  only with parameters \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
+  only with parameters \cc{Rest},\cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
   these implicit demands.
 
 Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
@@ -165,10 +165,10 @@ If the top is~$γⱼ$, then for all~$j≠i~$ \[
 \subsection{Transitions}
 It remains to show the type encoding of~$δ$,
   the transition function.
-Overall, there are a total of~$k(ℓ+1)$
+Overall, there are a total of~$k\cdot(ℓ+1)$
   entries in a transition table such as \cref{Table:A}.
 Conceptually, these are encoded by selecting the correct return
-  type of functions \cc{$σ$()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
+  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
 Thanks to inheritance, we need to do so only in the cases that this return type is different from the
   default.
 
@@ -186,8 +186,8 @@ Overall, there are six kinds of entries in a transition table:
   types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
-  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₁$.
-  We therefore refer to the body of type \cc{C$γ$1} this line
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ_2$.
+  We therefore add to the body of type \cc{C$γ$2} the line
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
   \end{JAVA}
@@ -195,10 +195,10 @@ Overall, there are six kinds of entries in a transition table:
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
   the transition function returns~$⊥$.
   In~$A$ this occurs when the top of the stack is~$γ₂$ and a~$σ₁$ character is read.
-  To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type\cc{C$γ$1};
-  the inherited return type (l.17 \cref{Figure:A} is a raw~\cc{C}.
-  Subsequent calls in the chain will all receive and return a raw~\cc{C}.
-  (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ functions in~\cc{C} return a raw~\cc{C}.)
+  To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
+  the inherited return type (l.17 \cref{Figure:A}) is the raw~\cc{C}.
+  Subsequent calls in the chain will all receive and return a raw~\cc{C}
+  (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ are functions in~\cc{C} that return a raw~\cc{C}).
   Therefore, the final \cc{\$()} will reject.
   \par
   Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
@@ -206,17 +206,16 @@ Overall, there are six kinds of entries in a transition table:
   In our type encoding these are handled by the special
   types~\cc{E} and~\cc{¤} (ll.19--20 ibid), both extending~\cc{C} without
   overriding any of its methods. Again, remaining part of the call chain will stick to
-  raw~\cc{C}s up until the final \cc{\$()} call rejecting the input.
+  raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
   \item[$\textsf{jump}(γᵢ)$]
-  The design generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
-  operations particularly simple. All that is
-  required is to covariantly change the return the
-  type of the appropriate \cc{$σ${}$j$} function
-  to the appropriate \cc{JR$i$} parameter
+  The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
+    operations particularly simple. 
+  All that is required is to covariantly change the return type of the 
+    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$\gammai$} or~\cc{Rest} parameter
   (recall that a jump occurs after popping the current element from the stack, so
-  we refer to \cc{JR} type parameters rather than~\cc{J}'s.)
+  we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
-  In \cref{Table:A} we find that~$δ(γ₂,σ₂ =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
+  In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
   in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
   \item[$\textsf{push}(α)$]
 \end{description}
