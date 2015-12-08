@@ -10,7 +10,7 @@ class A { // Encode automaton ¢$A$¢
   // begin{headers}
   private static class ΣΣ   // Encodes set ¢$\Sigma^*$¢, type of reject
     { /*  empty*/ } 
-  static class L extends ΣΣ //Encodes set ¢$L\subseteq \Sigma^*$¢, type of reject 
+  static class L extends ΣΣ //Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
     { /* empty*/ }
   // end{headers}
 

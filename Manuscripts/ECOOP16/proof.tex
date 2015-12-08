@@ -65,7 +65,7 @@ Our proof relies on a special kind of realtime automata,
   \begin{tabular}{c|ll}
              & \hfill~$γ₁$ & \hfill~$γ₂$⏎
     \midrule
-$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $⊥$⏎
+~$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $\hfill ⊥$⏎
 $σ₂$ & $\textsf{push}(γ₂,γ₂)$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
   \end{tabular}
@@ -76,7 +76,8 @@ As it turns out, every DCFG language is recognized by some jDPDA, and conversely
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
-The simple~$|Γ|=2$,~$|Σ|=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
+The simple~$k=2$,~$\ell=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
   Incidintally,
@@ -87,25 +88,24 @@ which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that
 BNF for~$L$; neither the BNF nor the above repesentation are material for the proof.
 }
 
-\subsection{Preparation}
+\subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:
 \begin{quote}
-  \javaInput[left=0ex,minipage,width=39ex]{proof.headers.listing}
+  \javaInput[left=0ex,minipage,width=59ex]{proof.headers.listing}
 \end{quote}
-Let~$k =|Σ|$.
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
   but~$2k+1$ other parameters are required:
 \begin{itemize}
-  \item \cc{Rest} a type encoding of the stack after a push, 
-  \item $k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack 
-        after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and, 
-  \item $k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
+  \item \cc{Rest} a type encoding of the stack after a push,
+  \item~$k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack
+        after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and,
+  \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
-
-(All invocations of \cc{C} must make sure that actual arguments are properly constrained; 
+(All invocations of~\cc{C} must make sure that actual arguments are properly constrained;
 so as to ensure that they are (the type version of) pointers into the actual stack.)
+
 In the running example,~\cc{C} is defined as
 \begin{quote}
   \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
@@ -114,13 +114,22 @@ In the running example,~\cc{C} is defined as
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
 
-Classes \cc{C$γ$1}, … ,\cc{J$γ${}$k$} all specializing~\cc{C}
+Type~\cc{C} defines~$ℓ+1$ functions (3 in the example), one for each possible input character.
+Since~\cc{C} encode an abstract configuration, return types of functions in it
+  are appropriate defaults which intentionally fail to emulate the automaton's execution.
+  The return type of \cc{\$()} is \cc{ΣΣ} (rejection)
+  the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
+
+\subsection{Top of Stack Types}
+Classes \cc{C$γ$1}, …,\cc{J$γ$}$k$
   encode stacks whose top element is~$γ₁$,…,~$γₖ$.
-In $A$ there only two of these 
+They all specialize these are
+all specializing~\cc{C}
+In~$A$ there only two of these
 
 In the running example,
 \begin{quote}
   \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
 \end{quote}
 
-For the sake of completeness, use cases of automaton $A$ and its full implementation are included in the appendices.
+For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
