@@ -16,18 +16,18 @@ import automaton.A2.C.¤;
   /// begin{configuration}
   interface C<       // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
-    Jγ1 extends C,  // Type of jump(γ1), may be rest, or anything in it. 
-    Jγ2 extends C,  // Type of jump(γ2), may be rest, or anything in it. 
-    JRγ1 extends C, // Type of¢~\cc{Rest}¢.jump(γ1), may be rest, or anything in it. 
-    JRγ2 extends C  // Type of¢~\cc{Rest}¢.jump(γ2), may be rest, or anything in it.  
+    Jγ1 extends C,  // Type of jump(γ¢1¢), may be rest, or anything in it. 
+    Jγ2 extends C,  // Type of jump(γ¢2¢), may be rest, or anything in it. 
+    JRγ1 extends C, // Type of¢~\cc{Rest}¢.jump(γ¢1¢), may be rest, or anything in it. 
+    JRγ2 extends C  // Type of¢~\cc{Rest}¢.jump(γ¢2¢), may be rest, or anything in it.  
   >
   {
-    ΣΣ $();        // delta transition on end of input; invalid language by default 
-    C σ1();         // delta transition on σ1; dead end by default
-    C σ2();         // delta transition on σ2; dead end by default
+    ΣΣ $();        // δ transition on end of input; invalid language by default 
+    C σ1();         // δ transition on σ¢1¢; dead end by default
+    C σ2();         // δ transition on σ¢2¢; dead end by default
 
     public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
-    interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
+    interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
 
      interface Cγ1< // Configuration when γ1 is the top
