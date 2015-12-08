@@ -39,7 +39,6 @@ class A { // Encode automaton ¢$A$¢
      // begin{many}
      {
      // end{many}
-        // @Override  $(); // REJECT
      // begin{many}
      }
      // end{many}
@@ -52,7 +51,6 @@ class A { // Encode automaton ¢$A$¢
     { 
      // end{many}
       @Override L $();
-//    @Override ¢$\sigma1$¢();  // REJECT
       @Override JRγ1 σ2();
   //begin{many}
     }
@@ -65,7 +63,7 @@ class A { // Encode automaton ¢$A$¢
       Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2> σ1();
     }
     interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-      // Sidekick of ¢$\delta(\gamma_1,\sigma_2) = \textsf{push}(\gamma_2,\gamma_2)$¢
+      // Sidekick of ¢$\delta(\gamma_1,\sigma_2)=\textsf{push}(\gamma_2,\gamma_2)$¢
       Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
     }
   }

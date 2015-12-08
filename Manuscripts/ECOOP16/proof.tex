@@ -133,12 +133,12 @@ In~$A$ there are two of these:
 \begin{quote}
   \javaInput[left=-4ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
-This excerpt shows interdependency in the actual parameters to the type~\cc{C}, e.g., 
+This excerpt shows interdependency in the actual parameters to the type~\cc{C}, e.g.,
   the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
     independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
 Selection of the parameters enforces the intended constraints of each of these.
 Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
-In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest}, 
+In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest},
   and so, another parameter is redundant.
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
@@ -165,7 +165,7 @@ The code also defines the \kk{static} variable \cc{build}, the stating point
 of all fluent API call chains to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
   the stating configuration of the automaton is a stack whose top is~$γ₁$,
   its rest is empty (\cc{E}).
-Any of the two jumps possible on this rest results with, \cc{¤},
+Any of the two jumps possible on this rest results with,~\cc{¤},
   an undefined stack.
 Examples of accepting and rejecting call chains starting at \cc{A.build}
   can be seen in \cref{Figure:chain}.
@@ -173,7 +173,7 @@ Examples of accepting and rejecting call chains starting at \cc{A.build}
 \subsection{Transitions}
 It remains to show the type encoding of~$δ$,
   the transition function.
-Overall, there are a total of~$k\cdot(ℓ+1)$
+Overall, there are a total of~$k·(ℓ+1)$
   entries in a transition table such as \cref{Table:A}.
 Conceptually, these are encoded by selecting the correct return
   type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
@@ -194,7 +194,7 @@ Overall, there are six kinds of entries in a transition table:
   types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
-  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ_2$.
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₂$.
   We therefore add to the body of type \cc{C$γ$2} the line
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
@@ -217,9 +217,9 @@ Overall, there are six kinds of entries in a transition table:
   raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
   \item[$\textsf{jump}(γᵢ)$]
   The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
-    operations particularly simple. 
-  All that is required is to covariantly change the return type of the 
-    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$\gamma{}i$} or~\cc{Rest} parameter
+    operations particularly simple.
+  All that is required is to covariantly change the return type of the
+    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
   (recall that a jump occurs after popping the current element from the stack, so
   we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
@@ -244,12 +244,21 @@ Overall, there are six kinds of entries in a transition table:
       parameters are sub-expressions that recur in the desired
       result.
     \par
-    Cases in point are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and 
-    $δ(γ₁,σ₂) = \textsf{push}(γ₂,γ_2)$ of \cref{Table:A}.
+    Cases in point
+      are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
+    The corresponding sidekick types,  
+    (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1σ2\_Push\_$γ$2$γ2$})
+    can be found in lines 42--48 of \cref{Figure:A}.
+      The first of these defines the correct return type
+      of \cc{$σ$()}, the second of \cc{$σ$2}.
+    Examine now the definition of type \cc{C$\gamma$1} in the figure, 
+      and in particular lines 23--27 which define the list of types it extends.  
+    Notice that it extends these two sidekicks, inheriting from the covariant
+    override of $\sigma1$ and $\sigma2()$.
 
 \end{description}
 
 \begin{figure}
   \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
-  \javaInput[left=0ex,minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
+  \javaInput[left=-2ex,minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
 \end{figure}
