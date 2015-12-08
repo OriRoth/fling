@@ -171,8 +171,9 @@ Overall, there are six kinds of entries in a transition table:
       type \cc{L} is when the return type of the call just prior to \cc{.\$()) covriantely changes the return
         type to \cc{L}.
     Examining \cref{Table:A} we see that this happens when the top of the stack is $\gamma_1$. 
-    We therefore to the body of type \cc{C$γ$1} the following line:
+    We therefore to the body of type \cc{C$γ$1} this line 
     \begin{JAVA}
+@Override L $() ;
     \end{JAVA}
      
     Accordingly 

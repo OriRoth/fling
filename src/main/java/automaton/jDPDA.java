@@ -39,7 +39,7 @@ class A { // Encode automaton ¢$A$¢
      // begin{many}
      {
      // end{many}
-        // @Override  $() ; // REJECT
+        // @Override  $(); // REJECT
      // begin{many}
      }
      // end{many}
@@ -51,7 +51,7 @@ class A { // Encode automaton ¢$A$¢
        C<Rest,  JRγ1, Rest, JRγ1, JRγ2>  
     { 
      // end{many}
-      @Override L $() ;
+      @Override L $();
 //    @Override ¢$\sigma1$¢();  // REJECT
       @Override JRγ1 σ2();
        
