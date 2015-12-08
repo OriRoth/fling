@@ -58,8 +58,8 @@ class A { // Encode automaton ¢$A$¢
        JRγ1 extends C, 
        JRγ2 extends C
      > extends C<
-       JRγ1, 
        Rest,  
+       JRγ1, 
        Rest,  // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢.
        JRγ1, 
        JRγ2
