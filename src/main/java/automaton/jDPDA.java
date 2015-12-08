@@ -78,6 +78,10 @@ class A { // Encode automaton ¢$A$¢
   //begin{many}
     }
   // end{many}
+  
+  //begin{many}
+  static Cγ1<E,¤,¤> build = null;
+  // end{many}
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
        Cγ1<
          Cγ1<
@@ -124,7 +128,6 @@ class A { // Encode automaton ¢$A$¢
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
   //end{cases}
-static Cγ1<E,¤,¤> build = null;
 //begin{full}
 //begin{configuration}
 }
