@@ -35,17 +35,11 @@ class A { // Encode automaton ¢$A$¢
   // end{configuration}
 
   //begin{many}
-     interface Cγ1< // Configuration when ¢$\gamma1$¢ is the top
-      Rest extends C,
-      JRγ1 extends C, 
-      JRγ2 extends C
-     > extends C<
-       Rest,        
-       Rest,        // ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
-       JRγ2,        
-       JRγ1,
-       JRγ2
-     >   
+     interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
+       Rest extends C, JRγ1 extends C, JRγ2 extends C
+     > extends 
+       // ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
+       C<Rest, Rest, JRγ2, JRγ1, JRγ2>   
      // end{many} 
        ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
@@ -58,17 +52,12 @@ class A { // Encode automaton ¢$A$¢
      // end{many}
 
   //begin{many}
-     interface Cγ2< // Configuration when ¢$\gamma2$¢ is the top
-       Rest extends C,   
-       JRγ1 extends C, 
-       JRγ2 extends C
-     > extends C<
-       Rest,  
-       JRγ1, 
-       Rest,        // ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
-       JRγ1, 
-       JRγ2
-    >  
+  
+     interface Cγ2< // Configuration when ¢$\gamma2$¢ is at top
+       Rest extends C, JRγ1 extends C, JRγ2 extends C
+     > extends 
+       // ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
+       C<Rest,  JRγ1, Rest, JRγ1, JRγ2>  
     { 
      // end{many}
       @Override L $() ;
@@ -80,7 +69,8 @@ class A { // Encode automaton ¢$A$¢
   // end{many}
   
   //begin{many}
-  static Cγ1<E,¤,¤> build = null;
+  
+    static Cγ1<E,¤,¤> build = null;
   // end{many}
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
        Cγ1<

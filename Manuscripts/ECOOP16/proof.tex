@@ -77,7 +77,7 @@ The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a 
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
 Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
-The simple~$k=2$,~$\ell=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+The simple~$k=2$,~$ℓ=2$) jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
   Incidintally,
@@ -103,7 +103,7 @@ Essentially,~\cc{C} is a representation of the stack,
   \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
-(All invocations of~\cc{C} must make sure that actual arguments are properly constrained;
+(All invocations of~\cc{C} must make sure that actual parameters are properly constrained;
 so as to ensure that they are (the type version of) pointers into the actual stack.)
 
 In the running example,~\cc{C} is defined as
@@ -125,7 +125,26 @@ Classes \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there two of these
 \begin{quote}
-  \javaInput[left=0ex,minipage,width=69ex]{proof.many.listing}
-\begin{quote}
+  \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
+\end{quote}
+This excerpt shows how interdependency in the actual parameters to the type~\cc{C}, e.g.,
+  the instantiation of~\cc{C} in \cc{C$γ$1) employs only three
+    independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
+Selection of the parameters enforces the intended constraints of each of these.
+Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
+In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest}.
+
+In $A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
+in general ``Top of Stack" types take~$k+1$ parameters:
+\cc{Rest} and the results of $\cc{Rest.}\textsf{jump}{γᵢ$,~$i=1,…, k$.
+  These are sufficient for instantiating the base type~\cc{C}, since 
+  the remaining~$\textsf{jump}(γᵢ)$ parameters of\cc{C}
+  are known when the top of the stack is known.
+If the top is~$γⱼ$, then for all~$j≠i~$ \[
+  \textsf{jump}(γ_j) =
+  \cc{Rest.}\textsf{jump}(γ_j)
+\] whereas $\textsf{jump}(γᵢ) = \cc{Rest}$.
+
+
 
 For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
