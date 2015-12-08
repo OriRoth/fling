@@ -155,16 +155,17 @@ It remains to show the type encoding of~$δ$,
 Overall, there are a total of~$k(ℓ+1)$
   entries in a transition table such as \cref{Table:A}.
 Conceptually, these are encoded by selecting the correct return
-  type of functions \cc{$σ$()}, … ,\cc{$σ${}$k$}()} and \cc{\$()} in each of the ``Top of Stack'' types. 
-Thanks to inheritance, we need to do so only in the cases that this return type is different from the 
+  type of functions \cc{$σ$()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
+Thanks to inheritance, we need to do so only in the cases that this return type is different from the
   default.
 
 Here the cases to consider:
 \begin{description}
   \item[textsf{reject}]
   \item[textsf{accept}]
-  \item[$\bot$]
-  \item[jump
+  \item[$⊥$]
+  \item[$\textsf{jump}(γᵢ)$]
+  \item[$\textsf{push}(\alpha)$]
 \end{description}
 
 For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
