@@ -1,6 +1,8 @@
 package automaton;
 
-import automaton.A.C.*;
+import automaton.A.C.Cγ1;
+import automaton.A.C.E;
+import automaton.A.C.¤;
 
 
 //@formatter:off
@@ -9,15 +11,9 @@ import automaton.A.C.*;
 class A { // Encode automaton ¢$A$¢
   // begin{headers}
   private static class ΣΣ   // Encodes set ¢$\Sigma^*$¢, type of reject
-<<<<<<< HEAD
     { /*  empty*/ } 
-  static class L extends ΣΣ //Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
+  static class L extends ΣΣ // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
     { /* empty*/ }
-=======
-    { /*empty*/ } 
-  static class L extends ΣΣ //Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /*empty*/ }
->>>>>>> dbb8754d035cc4aad6aafe92d9050732e0916fd2
   // end{headers}
 
   // Configuration of the automaton
