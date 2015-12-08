@@ -128,23 +128,43 @@ In~$A$ there two of these
   \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
 This excerpt shows how interdependency in the actual parameters to the type~\cc{C}, e.g.,
-  the instantiation of~\cc{C} in \cc{C$γ$1) employs only three
+  the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
     independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
 Selection of the parameters enforces the intended constraints of each of these.
 Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
 In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest}.
 
-In $A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
-in general ``Top of Stack" types take~$k+1$ parameters:
-\cc{Rest} and the results of $\cc{Rest.}\textsf{jump}{γᵢ$,~$i=1,…, k$.
-  These are sufficient for instantiating the base type~\cc{C}, since 
+In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
+in general ‟Top of Stack" types take~$k+1$ parameters:
+\cc{Rest} and the results of~$\cc{Rest.}\textsf{jump}(γᵢ)$,~$i=1,…,k$.
+It is the duty of the generated code to instantiates these types
+  only with parameters \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
+  these implicit demands.
+
+Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
   the remaining~$\textsf{jump}(γᵢ)$ parameters of\cc{C}
   are known when the top of the stack is known.
 If the top is~$γⱼ$, then for all~$j≠i~$ \[
-  \textsf{jump}(γ_j) =
-  \cc{Rest.}\textsf{jump}(γ_j)
-\] whereas $\textsf{jump}(γᵢ) = \cc{Rest}$.
+  \textsf{jump}(γⱼ) =
+  \cc{Rest.}\textsf{jump}(γⱼ)
+\] whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$.
 
+\subsection{Transitions}
+It remains to show the type encoding of~$δ$,
+  the transition function.
+Overall, there are a total of~$k(ℓ+1)$
+  entries in a transition table such as \cref{Table:A}.
+Conceptually, these are encoded by selecting the correct return
+  type of functions \cc{$σ$()}, … ,\cc{$σ${}$k$}()} and \cc{\$()} in each of the ``Top of Stack'' types. 
+Thanks to inheritance, we need to do so only in the cases that this return type is different from the 
+  default.
 
+Here the cases to consider:
+\begin{description}
+  \item[textsf{reject}]
+  \item[textsf{accept}]
+  \item[$\bot$]
+  \item[jump
+\end{description}
 
 For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
