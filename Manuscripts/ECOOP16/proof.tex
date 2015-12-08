@@ -89,31 +89,30 @@ BNF for~$L$; neither the BNF nor the above repesentation are material for the pr
 
 \subsection{Preparation}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:
-\begin{JAVA}
-\end{JAVA}
+\begin{quote}
+  \javaInput[left=0ex,minipage,width=39ex]{proof.headers.listing}
+\end{quote}
 Let~$k =|Σ|$.
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
   but~$2k+1$ other parameters are required:
 \begin{itemize}
-  \item \cc{Rest} a type encoding of the stack after a push
-  \item \cc{J$γ$1},…,\cc{J$γ${}$k$},
-    type encoding of the stack
-    after~$\textsf{jump}{γ₁}$,…,$\textsf{jump}{γₖ}$,
-  \item \cc{JR$γ$1}…\cc{JR$γ${}$k$},
-    type encoding of \cc{Rest}
-    after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}{γₖ}$,
+  \item \cc{Rest} a type encoding of the stack after a push, 
+  \item $k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack 
+        after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and, 
+  \item $k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
+    after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
 Actual arguments would be properly constrained, making sure that
   they are (the type version of) pointers into the actual stack.
 In the running example,~\cc{C} is defined as
-\begin{JAVA}
-\end{JAVA}
+\lstinputlisting{proof.headers.listing}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
 
 Classes \cc{C$γ$1},…,\cc{J$γ${}$k$} all specializing~\cc{C}
   encode stacks whose top element is~$γ₁$,…,~$γₖ$.
 In the running example,
-\begin{JAVA}
-\end{JAVA}
+\begin{quote}
+  \javaInput[left=0ex,minipage,width=69ex]{proof.configuration.listing}
+\end{quote}

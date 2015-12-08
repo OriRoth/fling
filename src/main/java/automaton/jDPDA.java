@@ -7,10 +7,13 @@ import automaton.A2.C.¤;
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) class A2 {
+  // begin{headers}
   private static class ΣΣ { /* Reject */ } 
-  static class L extends ΣΣ { /**/ }
+  static class L extends ΣΣ { /* Accept */ }
+  // end{headers}
 
   // Configuration of the automaton
+  /// begin{configuration}
   interface C< // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
     Jγ1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
@@ -25,6 +28,7 @@ import automaton.A2.C.¤;
 
     public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
+  // end{configuration}
 
      interface Cγ1< // Configuration when γ1 is the top
       Rest extends C,
@@ -103,4 +107,6 @@ import automaton.A2.C.¤;
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
 static Cγ1<E,¤,¤> build = null;
+//begin{configuration}
 }
+//end{configuration}

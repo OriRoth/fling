@@ -9,20 +9,22 @@ LISTINGS=
 LISTINGS+=abc.listing 
 LISTINGS+=binary-function-example.listing 
 LISTINGS+=binary-function.listing 
+LISTINGS+=compiler.listing
 LISTINGS+=gamma-example.listing 
 LISTINGS+=gamma.listing 
 LISTINGS+=id.listing
-LISTINGS+=jump-stack.listing 
 LISTINGS+=jump-stack-currency.listing 
 LISTINGS+=jump-stack-E.listing 
+LISTINGS+=jump-stack-example.listing
+LISTINGS+=jump-stack.listing 
 LISTINGS+=jump-stack-push.listing 
 LISTINGS+=mammal.listing 
 LISTINGS+=peep.listing 
+LISTINGS+=proof.headers.listing 
+LISTINGS+=proof.configuration.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
-LISTINGS+=jump-stack-example.listing
-LISTINGS+=compiler.listing
 
 .PHONY: latex view bibtex graphs all bibtex clean 
 
@@ -56,6 +58,14 @@ CODE_PATH = ../../src/main/java/automaton
 
 DOMAIN = $(CODE_PATH)/Domain.java 
 DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  
+JDPDA = $(CODE_PATH)/jDPDA.java
+
+
+proof.headers.listing: $(JDPDA)
+	awk '/begin{headers}/{f=1;c+=1;next}/end{headers}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+  
+proof.configuration.listing: $(JDPDA)
+	awk '/begin{configuration}/{f=1;c+=1;next}/end{configuration}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
   
 jump-stack-example.listing: $(CODE_PATH)/JumpStackDemo.java
 	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
