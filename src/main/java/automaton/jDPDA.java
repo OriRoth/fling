@@ -8,8 +8,10 @@ import automaton.A.C.Cγ1;
 //begin{full}
 class A { // Encode automaton ¢$A$¢
   // begin{headers}
-  private static class ΣΣ // Set ¢$\Sigma^*$¢ { /* Reject */ } 
-  static class L extends ΣΣ { /* Accept */ }
+  private static class ΣΣ // Encodes set ¢$\Sigma^*$¢, type of reject
+    { /*  empty*/ } 
+  static class L extends ΣΣ //Encodes set ¢$\Sigma^* \subseteq \Sigma^*$¢, type of reject 
+    { /* empty*/ }
   // end{headers}
 
   // Configuration of the automaton
