@@ -35,7 +35,7 @@ class A { // Encode automaton ¢$A$¢
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
-       Rest, // In ¢$C\gamma1$¢, ¢$J\gamma1$¢ must be Rest.
+       Rest,        // In ¢$C\gamma1$¢, ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
        JRγ2, 
        Rest,
        JRγ1, 
@@ -76,13 +76,13 @@ class A { // Encode automaton ¢$A$¢
       JRγ2 extends C
      > extends C<
      JRγ1, 
-     Rest, // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be Rest. 
+     Rest,          // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
      Rest,
      JRγ1, 
      JRγ2>  
      { 
        @Override L $() ;
-//     @Override σ1();  // REJECT
+//     @Override ¢$\gamma1$¢();  // REJECT
        @Override JRγ1 σ2();
         
      }
