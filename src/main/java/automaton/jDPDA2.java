@@ -1,6 +1,6 @@
 package automaton;
 
-import automaton.A2.C.Cσ1;
+import automaton.A2.C.Cγ1;
 import automaton.A2.C.E;
 import automaton.A2.C.¤;
 
