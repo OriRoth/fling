@@ -18,10 +18,10 @@ class A { // Encode automaton ¢$A$¢
   /// begin{configuration}
   interface C<       // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
-    Jγ1 extends C,  // Type of jump(γ¢1¢), may be rest, or anything in it. 
-    Jγ2 extends C,  // Type of jump(γ¢2¢), may be rest, or anything in it. 
-    JRγ1 extends C, // Type of¢~\cc{Rest}¢.jump(γ¢1¢), may be rest, or anything in it. 
-    JRγ2 extends C  // Type of¢~\cc{Rest}¢.jump(γ¢2¢), may be rest, or anything in it.  
+    Jγ1 extends C,  // Type of¢$~\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
+    Jγ2 extends C,  // Type of¢$~\textsf{jump}(\gamma2)$¢, may be rest, or anything in it. 
+    JRγ1 extends C, // Type of¢$~\cc{Rest}.\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
+    JRγ2 extends C  // Type of¢$~\cc{Rest}.\textsf{jump}(\gamma2)$¢, may be rest, or anything in it.  
   >
   {
     ΣΣ $();        // δ transition on end of input; invalid language by default 
