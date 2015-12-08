@@ -11,10 +11,10 @@ import automaton.A2.C.*;
   // Configuration of the automaton
   interface C< // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
-    Jσ1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
-    Jσ2 extends C,    // Type of jump(2), may be self, rest, or anything in it. 
-    JRσ1 extends C,   // Type of pop().jump(1), may be rest, or anything in it. 
-    JRσ2 extends C    // Type of pop().jump(2), may be rest, or anything in it.  
+    Jγ1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
+    Jγ2 extends C,    // Type of jump(2), may be self, rest, or anything in it. 
+    JRγ1 extends C,   // Type of pop().jump(1), may be rest, or anything in it. 
+    JRγ2 extends C    // Type of pop().jump(2), may be rest, or anything in it.  
   >
   {
     ΣΣ $();                  // delta transition on end of input; invalid language by default 
@@ -24,60 +24,60 @@ import automaton.A2.C.*;
     public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
 
-     interface Cσ1< // Configuration when γ1 is the top
+     interface Cγ1< // Configuration when γ1 is the top
       Rest extends C,
-      JRσ1 extends C, 
-      JRσ2 extends C
+      JRγ1 extends C, 
+      JRγ2 extends C
      > extends C<
-       Rest, // In Cσ1, Jσ1 must be Rest.
-       JRσ2, 
+       Rest, // In Cγ1, Jγ1 must be Rest.
+       JRγ2, 
        Rest,
-       JRσ1, 
-       JRσ2
-     >  ,γ1σ1_Push_γ1γ1<Rest,JRσ1,JRσ2>
-        ,γ1σ2_Push_γ2γ2<Rest,JRσ1,JRσ2>
+       JRγ1, 
+       JRγ2
+     >  ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
+        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
      {
 //       @Override  $() ; // REJECT
      }
 
-     interface γ1σ1_Push_γ1γ1<Rest extends C,JRσ1 extends C,JRσ2 extends C>{
-       Cσ1<
-         Cσ1<
+     interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+       Cγ1<
+         Cγ1<
            Rest,
-           JRσ1,
-           JRσ2
+           JRγ1,
+           JRγ2
          >,
          Rest,
-         JRσ2
+         JRγ2
        > σ1();
      }
 
-     interface γ1σ2_Push_γ2γ2<Rest extends C,JRσ1 extends C,JRσ2 extends C>{
-       Cσ2<  
-         Cσ2<
+     interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+       Cγ2<  
+         Cγ2<
            Rest,
-           JRσ1,
-           JRσ2
+           JRγ1,
+           JRγ2
          >,
-         JRσ1,
+         JRγ1,
          Rest
        >σ2();
      }
      
-     interface Cσ2< // Configuration when γ2 is the top
+     interface Cγ2< // Configuration when γ2 is the top
       Rest extends C,   
-      JRσ1 extends C, 
-      JRσ2 extends C
+      JRγ1 extends C, 
+      JRγ2 extends C
      > extends C<
-     JRσ1, 
-     Rest, // In Cσ2, Jσ2 must be Rest. 
+     JRγ1, 
+     Rest, // In Cγ2, Jγ2 must be Rest. 
      Rest,
-     JRσ1, 
-     JRσ2>  
+     JRγ1, 
+     JRγ2>  
      { 
        @Override L $() ;
 //     @Override σ1();  // REJECT
-       @Override JRσ1 σ2();
+       @Override JRγ1 σ2();
         
      }
     
@@ -100,5 +100,5 @@ import automaton.A2.C.*;
     isL(build.σ1().σ2().σ2().σ2().σ1().$()); 
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
-static Cσ1<E,¤,¤> build = null;
+static Cγ1<E,¤,¤> build = null;
 }
