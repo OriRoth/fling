@@ -38,8 +38,11 @@ class A { // Encode automaton ¢$A$¢
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
-       Rest,        // In ¢$C\gamma1$¢, ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
-       JRγ2, Rest, JRγ1, JRγ2
+       Rest,        
+       Rest,        // ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
+       JRγ2,        
+       JRγ1,
+       JRγ2
      >   
      // end{many} 
        ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
@@ -59,8 +62,8 @@ class A { // Encode automaton ¢$A$¢
        JRγ2 extends C
      > extends C<
        Rest,  
-       JRγ1, // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢.
-       Rest,  
+       JRγ1, 
+       Rest, // ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
        JRγ1, 
        JRγ2
     >  
