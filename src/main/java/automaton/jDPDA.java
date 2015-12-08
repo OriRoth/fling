@@ -30,12 +30,12 @@ class A { // Encode automaton ¢$A$¢
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
 
-     interface Cγ1< // Configuration when γ1 is the top
+     interface Cγ1< // Configuration when ¢$\gamma1$¢ is the top
       Rest extends C,
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
-       Rest, // In Cγ1, Jγ1 must be Rest.
+       Rest, // In ¢$C\gamma1$¢, ¢$J\gamma1$¢ must be Rest.
        JRγ2, 
        Rest,
        JRγ1, 
@@ -70,13 +70,13 @@ class A { // Encode automaton ¢$A$¢
        >σ2();
      }
      
-     interface Cγ2< // Configuration when γ2 is the top
+     interface Cγ2< // Configuration when ¢$\gamma2$¢ is the top
       Rest extends C,   
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
      JRγ1, 
-     Rest, // In Cγ2, Jγ2 must be Rest. 
+     Rest, // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be Rest. 
      Rest,
      JRγ1, 
      JRγ2>  
