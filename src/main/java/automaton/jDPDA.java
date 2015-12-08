@@ -7,6 +7,7 @@ import automaton.A2.C.¤;
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
+//begin{full}
 class A2 {
   // begin{headers}
   private static class ΣΣ { /* Reject */ } 
@@ -89,7 +90,8 @@ class A2 {
      }
     
   }
-  
+  //end{full}
+  //begin{cases}
   static void isL( L l) {/**/}
   
   static void accepts() {
@@ -107,6 +109,7 @@ class A2 {
     isL(build.σ1().σ2().σ2().σ2().σ1().$()); 
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
+  //end{cases}
 static Cγ1<E,¤,¤> build = null;
 //begin{full}
 //begin{configuration}
