@@ -1,10 +1,5 @@
 package automaton;
 
-import automaton.A.C.Cγ1;
-import automaton.A.C.E;
-import automaton.A.C.¤;
-
-
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
@@ -29,11 +24,9 @@ class A { // Encode automaton ¢$A$¢
     ΣΣ $();        // δ transition on end of input; invalid language by default 
     C σ1();         // δ transition on σ¢1¢; dead end by default
     C σ2();         // δ transition on σ¢2¢; dead end by default
-
     public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
-
   //begin{many}
      interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
        Rest extends C, JRγ1 extends C, JRγ2 extends C
@@ -50,9 +43,7 @@ class A { // Encode automaton ¢$A$¢
      // begin{many}
      }
      // end{many}
-
   //begin{many}
-  
      interface Cγ2< // Configuration when ¢$\gamma2$¢ is at top
        Rest extends C, JRγ1 extends C, JRγ2 extends C
      > extends 
@@ -67,36 +58,23 @@ class A { // Encode automaton ¢$A$¢
   //begin{many}
     }
   // end{many}
-  
   //begin{many}
-  
     static Cγ1<E,¤,¤> build = null;
   // end{many}
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
        Cγ1<
-         Cγ1<
-           Rest,
-           JRγ1,
-           JRγ2
-         >,
+         Cγ1<Rest, JRγ1, JRγ2 >,
          Rest,
          JRγ2
        > σ1();
      }
-
      interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
        Cγ2<  
-         Cγ2<
-           Rest,
-           JRγ1,
-           JRγ2
-         >,
+         Cγ2<Rest, JRγ1, JRγ2 >,
          JRγ1,
          Rest
        >σ2();
      }
-     
-    
   }
   //end{full}
   //begin{cases}
