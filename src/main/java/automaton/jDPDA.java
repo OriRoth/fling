@@ -1,6 +1,6 @@
 package automaton;
 
-import automaton.A.C.Cγ1;
+import automaton.A.C.*;
 
 
 //@formatter:off
