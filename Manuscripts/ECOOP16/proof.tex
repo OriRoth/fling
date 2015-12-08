@@ -41,9 +41,9 @@ Our proof relies on a special kind of realtime automata,
   For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
   \begin{itemize}
     \item At each step a jDPDA examines~$γ$,
-	  the element at the top of the stack, 
-	  and~$σ∈Σ$, the next input character,
-	  and executes the following:
+    the element at the top of the stack,
+    and~$σ∈Σ$, the next input character,
+    and executes the following:
           \begin{quote}
             \begin{enumerate}
               \item consume~$σ$
@@ -72,7 +72,7 @@ $\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
   \end{tabular}
 \end{wraptable}
 
-As it turns out, every DCFL is recognized by some jDPDA, and conversely, 
+As it turns out, every DCFL is recognized by some jDPDA, and conversely,
   every language accepted by a jDPDA
   is a DCFL~\cite{Courcelle:77}.
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
@@ -84,17 +84,12 @@ Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
   Incidentally,
 \[
-  L = ❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ
+L = \left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
 \]
 which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is an non-ambiguous, deterministic
 BNF for~$L$; neither the BNF nor the above representation are material for the proof.
 }
 
-\begin{wrapfigure}r{56ex}
-  \caption{\label{Figure:chain} Accepting and non-accepting call chains with the   
-  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}} 
-  \javaInput[left=-2ex,minipage,width=56ex]{proof.cases.listing}
-\end{wrapfigure}
 
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
@@ -104,6 +99,7 @@ Generation of a type encoding for a jDPDA starts with two empty types for sets~$
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
+
 
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
@@ -137,7 +133,7 @@ Classes \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
+  \javaInput[left=-4ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
 This excerpt shows interdependency in the actual parameters to the type~\cc{C}, e.g., 
   the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
@@ -154,6 +150,11 @@ It is the duty of the generated code to instantiate these types
   only with parameters \cc{Rest},\cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
   these implicit demands.
 
+\begin{wrapfigure}[14]r{43ex}
+  \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  \javaInput[left=-2ex,minipage,width=43ex]{proof.cases.listing}
+\end{wrapfigure}
 Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
   the remaining~$\textsf{jump}(γᵢ)$ parameters of~\cc{C}
   are known when the top of the stack is known.
@@ -161,6 +162,15 @@ If the top is~$γⱼ$, then for all~$j≠i~$ \[
   \textsf{jump}(γⱼ) =
   \cc{Rest.}\textsf{jump}(γⱼ)
 \] whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$.
+
+The code also defines the \kk{static} variable \cc{build}, the stating point
+of all fluent API call chains to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
+  the stating configuration of the automaton is a stack whose top is $\gamma_1$, 
+  its rest is empty (\cc{E}).
+Any of the two jumps possible on this rest results with, \cc{\currency},
+  an undefined stack.
+Examples of accepting and rejecting call chains starting at \cc{A.build}
+  can be seen in \cref{Figure:chain}.
 
 \subsection{Transitions}
 It remains to show the type encoding of~$δ$,
