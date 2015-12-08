@@ -30,52 +30,47 @@ import automaton.A.C.¤;
     }
 
      interface C1< // Configuration when gamma1 is the top
-      Rest extends C,
-      J2 extends C,  
+      Rest extends C, 
       JR1 extends C, 
       JR2 extends C
      > extends C<
        Rest, // In C1, J1 must be Rest.
-       J2, 
+       JR2, 
        Rest,
        JR1, 
        JR2
-     >  , sigma1gamma1_Push_gamma1gamma1gamma2<C1<Rest,J2,JR1,JR2>,Rest,J2,JR1,JR2>
+     >  , sigma1gamma1_Push_gamma1gamma1gamma2<C1<Rest,JR1,JR2>,Rest,JR1,JR2>
      {
       @Override L $() ;
       @Override ¤ σ2();
      }
 
-     interface sigma1gamma1_Push_gamma1gamma1gamma2<Me extends C1<Rest,J2,JR1,JR2>,Rest extends C,J2 extends C ,JR1 extends C,JR2 extends C>{
+     interface sigma1gamma1_Push_gamma1gamma1gamma2<Me extends C1<Rest,JR1,JR2>,Rest extends C ,JR1 extends C,JR2 extends C>{
        C2<
          C1<
            Me,
-           J2,
            Rest,
            JR2
          >,
-         Me,
          Me,
          JR2
        >σ1();       
      }
 
      interface C2< // Configuration when gamma2 is the top
-      Rest extends C,
-      J1 extends C,   
+      Rest extends C,   
       JR1 extends C, 
       JR2 extends C
      > extends C<
-     J1, 
+     JR1, 
      Rest, // In C2, J2 must be Rest. 
      Rest,
      JR1, 
      JR2>  
      { 
-      @Override J1 σ1();
+      @Override JR1 σ1();
       @Override C2<
       Rest,
-      J1,
       JR1,
       JR2
       > σ2();
@@ -101,5 +96,5 @@ import automaton.A.C.¤;
     isL(build.σ2().σ1().$());
     isL(build.σ2().σ2().$());
   }
-static C1<E,¤,¤,¤> build = null;
+static C1<E,¤,¤> build = null;
 }
