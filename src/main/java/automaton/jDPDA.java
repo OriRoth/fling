@@ -15,17 +15,17 @@ class A2 {
 
   // Configuration of the automaton
   /// begin{configuration}
-  interface C< // Generic parameters:
+  interface C<       // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
-    Jγ1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
-    Jγ2 extends C,    // Type of jump(2), may be self, rest, or anything in it. 
-    JRγ1 extends C,   // Type of pop().jump(1), may be rest, or anything in it. 
-    JRγ2 extends C    // Type of pop().jump(2), may be rest, or anything in it.  
+    Jγ1 extends C,  // Type of jump(γ1), may be rest, or anything in it. 
+    Jγ2 extends C,  // Type of jump(γ2), may be rest, or anything in it. 
+    JRγ1 extends C, // Type of¢~\cc{Rest}¢.jump(γ1), may be rest, or anything in it. 
+    JRγ2 extends C  // Type of¢~\cc{Rest}¢.jump(γ2), may be rest, or anything in it.  
   >
   {
-    ΣΣ $();                  // delta transition on end of input; invalid language by default 
-    C σ1();          // delta transition on σ1; dead end by default
-    C σ2();          // delta transition on σ2; dead end by default
+    ΣΣ $();        // delta transition on end of input; invalid language by default 
+    C σ1();         // delta transition on σ1; dead end by default
+    C σ2();         // delta transition on σ2; dead end by default
 
     public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
