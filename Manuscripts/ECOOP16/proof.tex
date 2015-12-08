@@ -1,4 +1,4 @@
-On a first sight, the proof of \cref{Theorem:Gil-Levy} could follows the techniques
+On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{Section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
 The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
 and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}.
@@ -14,7 +14,7 @@ We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
   the output is a computed from the input by an unbounded number o steps.†{%
     With the presumption that the \Java compiler halts for all inputs (a presumption that does
-    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding of all DPDAs can be proved:
+    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding for all DPDAs can be proved:
  Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
   never halts on any input.
 A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
@@ -37,11 +37,12 @@ Our proof relies on a special kind of realtime automata,
     j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
-  Initially,~$ζ=γ₁$.
+  Initially, the stack holds~$γ₁$ only.
   For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
   \begin{itemize}
-    \item At each steps a jDPDA examines~$σ∈Σ$,
-          the next input character and~$γ$ the element at the top of the stack, and
+    \item At each steps a jDPDA examines~$γ$ 
+	  the element at the top of the stack, 
+	  and~$σ∈Σ$, the next input character and
           executes the following:
           \begin{quote}
             \begin{enumerate}
@@ -52,12 +53,12 @@ Our proof relies on a special kind of realtime automata,
                     pops stack elements up-to and including the first occurrence of~$γ$.
             \end{enumerate}
           \end{quote}
-    \item If the next character is~$\$$, then the automaton may reject or accept,
+    \item If the next character is~$\$$, then the automaton may reject or accept (but nothing else),
           depending on the value of~$γ$.
   \end{itemize}
-  In addition, the automator rejects if~$δ(γ,σ) =⊥$, or if it encounters
+  In addition, the automaton rejects if~$δ(γ,σ) =⊥$, or if it encounters
   an empty stack (either at the beginning of a step or on course
-  of a \textsf{jump operation}.
+  of a \textsf{jump operation}).
 \end{Definition}
 
 \begin{wraptable}r{29ex}
