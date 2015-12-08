@@ -1,6 +1,6 @@
 package automaton;
 
-import automaton.A.C.Cγ1;
+import automaton.A.C.*;
 
 
 //@formatter:off
@@ -32,12 +32,17 @@ class A { // Encode automaton ¢$A$¢
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
 
+<<<<<<< HEAD
   //begin{many}
      interface Cγ1< // Configuration when γ1 is the top
+=======
+     interface Cγ1< // Configuration when ¢$\gamma1$¢ is the top
+>>>>>>> 61156b0aaf871c8df1f8fb5f3fbbe012ce9641b2
       Rest extends C,
       JRγ1 extends C, 
       JRγ2 extends C
      > extends C<
+<<<<<<< HEAD
        Rest, // In Cγ1, Jγ1 must be Rest.
        JRγ2, Rest, JRγ1, JRγ2
      >   
@@ -45,6 +50,15 @@ class A { // Encode automaton ¢$A$¢
        ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
      // begin{many}
+=======
+       Rest,        // In ¢$C\gamma1$¢, ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
+       JRγ2, 
+       Rest,
+       JRγ1, 
+       JRγ2
+     >  ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
+        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
+>>>>>>> 61156b0aaf871c8df1f8fb5f3fbbe012ce9641b2
      {
      // end{many}
         // @Override  $() ; // REJECT
@@ -97,7 +111,26 @@ class A { // Encode automaton ¢$A$¢
        >σ2();
      }
      
+<<<<<<< HEAD
 
+=======
+     interface Cγ2< // Configuration when ¢$\gamma2$¢ is the top
+      Rest extends C,   
+      JRγ1 extends C, 
+      JRγ2 extends C
+     > extends C<
+     JRγ1, 
+     Rest,          // In ¢$C\gamma2$¢, ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
+     Rest,
+     JRγ1, 
+     JRγ2>  
+     { 
+       @Override L $() ;
+//     @Override ¢$\gamma1$¢();  // REJECT
+       @Override JRγ1 σ2();
+        
+     }
+>>>>>>> 61156b0aaf871c8df1f8fb5f3fbbe012ce9641b2
     
   }
   //end{full}
