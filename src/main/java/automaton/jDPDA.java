@@ -1,79 +1,85 @@
 package automaton;
 
-import automaton.A.C.C1;
-import automaton.A.C.E;
-import automaton.A.C.¤;
+import automaton.A2.C.Cγ1;
+import automaton.A2.C.E;
+import automaton.A2.C.¤;
+
 
 //@formatter:off
-@SuppressWarnings({"rawtypes","unused"}) class A {
-  private static class SigmaStar { /* Reject */ } 
-  private static class L extends SigmaStar { /**/ }
+@SuppressWarnings({"rawtypes","unused"}) class A2 {
+  private static class ΣΣ { /* Reject */ } 
+  static class L extends ΣΣ { /**/ }
 
   // Configuration of the automaton
   interface C< // Generic parameters:
     Rest extends C,  // The rest of the stack, for pop operations
-    J1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
-    J2 extends C,    // Type of jump(2), may be self, rest, or anything in it. 
-    JR1 extends C,   // Type of pop().jump(1), may be rest, or anything in it. 
-    JR2 extends C    // Type of pop().jump(2), may be rest, or anything in it.  
+    Jγ1 extends C,     // Type of jump(1), may be self, rest, or anything in it. 
+    Jγ2 extends C,    // Type of jump(2), may be self, rest, or anything in it. 
+    JRγ1 extends C,   // Type of pop().jump(1), may be rest, or anything in it. 
+    JRγ2 extends C    // Type of pop().jump(2), may be rest, or anything in it.  
   >
   {
-    SigmaStar $();                  // delta transition on end of input; invalid language by default 
+    ΣΣ $();                  // delta transition on end of input; invalid language by default 
     C σ1();          // delta transition on σ1; dead end by default
     C σ2();          // delta transition on σ2; dead end by default
 
-    interface U<X extends U<?>> extends C{/**/}
-    public interface E extends U<¤> { /* Empty configuration */ }
-    interface ¤ extends U<¤> { // Error configuration.
-      @Override public ¤ σ1();
-      @Override public ¤ σ2();
-    }
+    public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
+    interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
 
-     interface C1< // Configuration when gamma1 is the top
-      Rest extends C, 
-      JR1 extends C, 
-      JR2 extends C
+     interface Cγ1< // Configuration when γ1 is the top
+      Rest extends C,
+      JRγ1 extends C, 
+      JRγ2 extends C
      > extends C<
-       Rest, // In C1, J1 must be Rest.
-       JR2, 
+       Rest, // In Cγ1, Jγ1 must be Rest.
+       JRγ2, 
        Rest,
-       JR1, 
-       JR2
-     >  , sigma1gamma1_Push_gamma1gamma1gamma2<C1<Rest,JR1,JR2>,Rest,JR1,JR2>
+       JRγ1, 
+       JRγ2
+     >  ,γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
+        ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
      {
-      @Override L $() ;
-      @Override ¤ σ2();
+//       @Override  $() ; // REJECT
      }
 
-     interface sigma1gamma1_Push_gamma1gamma1gamma2<Me extends C1<Rest,JR1,JR2>,Rest extends C ,JR1 extends C,JR2 extends C>{
-       C2<
-         C1<
-           Me,
+     interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+       Cγ1<
+         Cγ1<
            Rest,
-           JR2
+           JRγ1,
+           JRγ2
          >,
-         Me,
-         JR2
-       >σ1();       
+         Rest,
+         JRγ2
+       > σ1();
      }
 
-     interface C2< // Configuration when gamma2 is the top
+     interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+       Cγ2<  
+         Cγ2<
+           Rest,
+           JRγ1,
+           JRγ2
+         >,
+         JRγ1,
+         Rest
+       >σ2();
+     }
+     
+     interface Cγ2< // Configuration when γ2 is the top
       Rest extends C,   
-      JR1 extends C, 
-      JR2 extends C
+      JRγ1 extends C, 
+      JRγ2 extends C
      > extends C<
-     JR1, 
-     Rest, // In C2, J2 must be Rest. 
+     JRγ1, 
+     Rest, // In Cγ2, Jγ2 must be Rest. 
      Rest,
-     JR1, 
-     JR2>  
+     JRγ1, 
+     JRγ2>  
      { 
-      @Override JR1 σ1();
-      @Override C2<
-      Rest,
-      JR1,
-      JR2
-      > σ2();
+       @Override L $() ;
+//     @Override σ1();  // REJECT
+       @Override JRγ1 σ2();
         
      }
     
@@ -82,19 +88,19 @@ import automaton.A.C.¤;
   static void isL( L l) {/**/}
   
   static void accepts() {
-    isL(build.$()); //works
-    isL(build.σ1().σ1().$()); // works 
-    isL(build.σ1().σ2().σ1().$()); // works 
-    isL(build.σ1().σ2().σ2().σ1().$()); // works 
-    isL(build.σ1().σ2().σ2().σ2().σ1().$()); // works
-    isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$()); // works 
-  }
-  static void rejects() {
-    isL(build.σ1().$()); 
     isL(build.σ2().$());
     isL(build.σ1().σ2().$()); 
+    isL(build.σ1().σ1().σ2().σ2().σ1().σ2().$()); 
+  }
+  static void rejects() {
+    isL(build.$()); 
+    isL(build.σ1().$()); 
     isL(build.σ2().σ1().$());
     isL(build.σ2().σ2().$());
+    isL(build.σ1().σ2().σ1().$());  
+    isL(build.σ1().σ2().σ2().σ1().$());  
+    isL(build.σ1().σ2().σ2().σ2().σ1().$()); 
+    isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
-static C1<E,¤,¤> build = null;
+static Cγ1<E,¤,¤> build = null;
 }
