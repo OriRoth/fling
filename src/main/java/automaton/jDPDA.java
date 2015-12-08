@@ -6,7 +6,8 @@ import automaton.A2.C.¤;
 
 
 //@formatter:off
-@SuppressWarnings({"rawtypes","unused"}) class A2 {
+@SuppressWarnings({"rawtypes","unused"}) 
+class A2 {
   // begin{headers}
   private static class ΣΣ { /* Reject */ } 
   static class L extends ΣΣ { /* Accept */ }
@@ -107,6 +108,8 @@ import automaton.A2.C.¤;
     isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
   }
 static Cγ1<E,¤,¤> build = null;
+//begin{full}
 //begin{configuration}
 }
 //end{configuration}
+//end{full}
