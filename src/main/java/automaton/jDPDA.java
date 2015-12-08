@@ -61,11 +61,11 @@ class A { // Encode automaton ¢$A$¢
     static Cγ1<E,¤,¤> build = null;
   // end{many}
     interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-      // Sidekick of ¢$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$¢
+      // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1)$¢
       Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2> σ1();
     }
     interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-      // Sidekick of ¢$δ(γ₁,σ₂) = \textsf{push}(γ₂,γ₁)$ ¢
+      // Sidekick of ¢$\delta(\gamma_1,\sigma_2) = \textsf{push}(\gamma_2,\gamma_2)$¢
       Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
     }
   }
