@@ -79,7 +79,7 @@ The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a 
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
 Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
-The simple~$k=2$,~$ℓ=2$ jDPDA~$A$, defined in \cref{Table:A} will serve as our running example.
+The simple~$k=2$,~$ℓ=2$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{
   Incidintally,
@@ -88,7 +88,14 @@ Let~$L$ be the language~$L$ recognized by~$A$.%
 \]
 which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is an nonambigous, deterministic
 BNF for~$L$; neither the BNF nor the above repesentation are material for the proof.
-}
+},
+
+\begin{figure}
+  \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  \caption{\label{Figure:chain} Accepting and non-accepting call chains with the   
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}} 
+  \javaInput[left=0ex,minipage,width=\textwidth]{proof.cases.listing}
+\end{figure}
 
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$:

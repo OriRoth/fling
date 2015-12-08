@@ -1,5 +1,5 @@
 package automaton;
-import static automaton.A.C.*;
+import static automaton.A.C.build;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
@@ -54,7 +54,6 @@ class A { // Encode automaton ¢$A$¢
       @Override L $();
 //    @Override ¢$\sigma1$¢();  // REJECT
       @Override JRγ1 σ2();
-       
   //begin{many}
     }
   // end{many}
@@ -62,18 +61,10 @@ class A { // Encode automaton ¢$A$¢
     static Cγ1<E,¤,¤> build = null;
   // end{many}
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-       Cγ1<
-         Cγ1<Rest, JRγ1, JRγ2 >,
-         Rest,
-         JRγ2
-       > σ1();
+       Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2> σ1();
      }
      interface γ1σ2_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-       Cγ2<  
-         Cγ2<Rest, JRγ1, JRγ2 >,
-         JRγ1,
-         Rest
-       >σ2();
+       Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
      }
   }
   //end{full}
