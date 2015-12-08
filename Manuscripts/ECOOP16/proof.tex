@@ -53,7 +53,7 @@ Our proof relies on a special kind of realtime automata,
                     pops stack elements up-to and including the first occurrence of~$γ$.
             \end{enumerate}
           \end{quote}
-    \item If the next character is~$\$$, then the automaton may reject or accept (but nothing else),
+    \item If the next character is~$\$$, then the automaton may reject or accept (but not do nothing else),
           depending on the value of~$γ$.
   \end{itemize}
   In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
@@ -96,6 +96,9 @@ Generation of a type encoding for a jDPDA starts with two empty types for sets~$
 \begin{quote}
   \javaInput[left=-2ex,minipage,width=54ex]{proof.headers.listing}
 \end{quote}
+(The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
+  excerpts as necessary.)
+
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
   but~$2k+1$ other parameters are required:
@@ -165,11 +168,24 @@ Thanks to inheritance, we need to do so only in the cases that this return type 
 Overall, there are six kinds of entries in a transition table:
 \begin{description}
   \item[\textsf{reject}]
-    The default return type of \cc{\$()} in \cc{C} is \cc{$\Sigma\Sigma$}, which 
-    is \emph{not} a subtype of \cc{L}. Normally the result of a call chain that ends with \cc{\$()}  
-    cannot be assigned to a variable of type \cc{L}. Moreover, since \cc{$\Sigma\Sigma$} is \kk{private},
-    there is little that clients can do with this result.
+  The default return type of \cc{\$()} in~\cc{C} is \cc{$ΣΣ$}, which
+  is \emph{not} a subtype of~\cc{L}. Normally the result of a call chain that ends with \cc{\$()}
+  cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
+  there is little that clients can do with this result.
   \item[\textsf{accept}]
+<<<<<<< HEAD
+  The only case in which fluent call chain ending with \cc{\$()} can return
+  type~\cc{L} is when the type returned of the call just prior to \cc{.\$()} covariantly
+  changes the return type of \cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
+  types of fluent API call chains are determined statically.}
+  \par
+  Recall that a jDPDA can only accept after its input is exhausted.
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₁$.
+  We therefore to the body of type \cc{C$γ$1} this line
+  \begin{JAVA}
+@Override L ¢\gobble$¢$();
+  \end{JAVA}
+=======
     The only case in which fluent call chain ending with \cc{\$()} can return
       type \cc{L} is when the return type of the call just prior to \cc{.\$()} covariantly changes the return
         type to \cc{L}.
@@ -181,9 +197,38 @@ Overall, there are six kinds of entries in a transition table:
      
     Accordingly 
         the return type
+>>>>>>> c377811cb1eabee017c0ec1a125b1c1d7e61d9da
   \item[$⊥$]
+  When a prefix of the input is sufficient to conclude it must be rejected however it continues
+  the transition function returns~$⊥$.
+  In~$A$ this occurs when the top of the stack is~$γ₂$ and a~$σ₁$ character is read.
+  To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type\cc{C$γ$1};
+  the inherited return type (l.17 \cref{Figure:A} is a raw~\cc{C}.
+  Subsequent calls in the chain will all receive and return a raw~\cc{C}.
+  (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ functions in~\cc{C} return a raw~\cc{C}.)
+  Therefore, the final \cc{\$()} will reject.
+  \par
+  Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
+  a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
+  In our type encoding these are handled by the special
+  types~\cc{E} and~\cc{¤} (ll.19--20 ibid), both extending~\cc{C} without
+  overriding any of its methods. Again, remaining part of the call chain will stick to
+  raw~\cc{C}s up until the final \cc{\$()} call rejecting the input.
   \item[$\textsf{jump}(γᵢ)$]
-  \item[$\textsf{push}(\alpha)$]
+  The design generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
+  operations particularly simple. All that is
+  required is to covariantly change the return the
+  type of the appropriate \cc{$σ${}$j$} function
+  to the appropriate \cc{JR$i$} parameter
+  (recall that a jump occurs after popping the current element from the stack, so
+  we refer to \cc{JR} type parameters rather than~\cc{J}'s.)
+  \par
+  In \cref{Table:A} we find that~$δ(γ₂,σ₂ =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
+  in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
+  \item[$\textsf{push}(α)$]
 \end{description}
 
-For the sake of completeness, use cases of automaton~$A$ and its full implementation are included in the appendices.
+\begin{figure}
+  \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  \javaInput[left=0ex,minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
+\end{figure}
