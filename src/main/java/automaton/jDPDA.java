@@ -19,7 +19,7 @@ class A2 {
     Rest extends C,  // The rest of the stack, for pop operations
     Jγ1 extends C,  // Type of jump(γ¢1¢), may be rest, or anything in it. 
     Jγ2 extends C,  // Type of jump(γ¢2¢), may be rest, or anything in it. 
-    JRγ1 extends C, // Type of¢~\cc{Rest}¢.jump(γ¢1¢), may be rest, or anything in it. 
+    JRγ1 extends C, // Type of¢$~\cc{Rest}.\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
     JRγ2 extends C  // Type of¢~\cc{Rest}¢.jump(γ¢2¢), may be rest, or anything in it.  
   >
   {
