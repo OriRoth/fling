@@ -4,10 +4,12 @@ The purpose of this study is to explore the ``Fluent API''s trend in
 
 Our main result is: for every deterministic pushdown automaton,
   there exists a set of \Java type definitions, such that,
-  the automaton accepts a string if and only if the corresponding 
+  the automaton accepts a string if and only if a corresponding 
   call chain representing the string, type-checks.
 
-A handy toolkit for type-encoding such Fluent APIs is introduced.
-We also provide a lower-bound to the theoretical expressiveness of the \Java compiler,
+In addition, we introduce a handy toolkit for type-encoding Fluent APIs,
+and provide a lower-bound to the theoretical expressiveness of the \Java compiler,
   while showing an example for which the compiler runs in exponential time.
   
+The proposed type-encoding is unfeasible due to the compiler's difficult to 
+  handle 

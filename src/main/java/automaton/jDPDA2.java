@@ -21,12 +21,8 @@ import automaton.A2.C.*;
     C σ1();          // delta transition on σ1; dead end by default
     C σ2();          // delta transition on σ2; dead end by default
 
-    interface U<X extends U<?>> extends C{/**/}
-    public interface E extends U<¤> { /* Empty configuration */ }
-    interface ¤ extends U<¤> { // Error configuration.
-      @Override public ¤ σ1();
-      @Override public ¤ σ2();
-    }
+    public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
+    interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */  }
 
      interface Cσ1< // Configuration when γ1 is the top
       Rest extends C,
@@ -42,7 +38,6 @@ import automaton.A2.C.*;
         ,γ1σ2_Push_γ2γ2<Rest,JRσ1,JRσ2>
      {
 //       @Override  $() ; // REJECT
-
      }
 
      interface γ1σ1_Push_γ1γ1<Rest extends C,JRσ1 extends C,JRσ2 extends C>{
