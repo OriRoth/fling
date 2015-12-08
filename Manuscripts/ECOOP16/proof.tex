@@ -90,7 +90,6 @@ which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that
 BNF for~$L$; neither the BNF nor the above representation are material for the proof.
 }
 
-
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
   where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
@@ -99,7 +98,6 @@ Generation of a type encoding for a jDPDA starts with two empty types for sets~$
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
-
 
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
@@ -165,9 +163,9 @@ If the top is~$γⱼ$, then for all~$j≠i~$ \[
 
 The code also defines the \kk{static} variable \cc{build}, the stating point
 of all fluent API call chains to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
-  the stating configuration of the automaton is a stack whose top is $\gamma_1$, 
+  the stating configuration of the automaton is a stack whose top is~$γ₁$,
   its rest is empty (\cc{E}).
-Any of the two jumps possible on this rest results with, \cc{\currency},
+Any of the two jumps possible on this rest results with, \cc{¤},
   an undefined stack.
 Examples of accepting and rejecting call chains starting at \cc{A.build}
   can be seen in \cref{Figure:chain}.
@@ -228,6 +226,27 @@ Overall, there are six kinds of entries in a transition table:
   In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
   in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
   \item[$\textsf{push}(α)$]
+    Push operations are the most complex, since they involve a pop of the top stack element,
+      and pushing any number, including zero, of new elements.
+    The challenge is constructing, from the current parameters of the type,
+      the correct five-parameter instantiation of~\cc{C}.
+    Each of these five is also an instantiation of~\cc{C} which may require more such
+      parameters.
+    Even though the number of ingredients is small, the resulting type expressions
+      tend to be excessively long and unreadable.
+
+    The predicament is ameliorated a bit by the idea,
+      demonstrated above with auxiliary type~\cc{Pʹ}
+      (\cref{Figure:jump-stack-push}),
+    of delegating the task of a creating complex type to an auxiliary
+      generic type.
+    The task of this sidekick is simplified if some of its generic
+      parameters are sub-expressions that recur in the desired
+      result.
+    \par
+    Cases in point are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and 
+    $δ(γ₁,σ₂) = \textsf{push}(γ₂,γ₁)$ of \cref{Table:A}.
+
 \end{description}
 
 \begin{figure}
