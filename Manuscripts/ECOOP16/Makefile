@@ -150,6 +150,9 @@ lacheck:
 spelling:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then aspell check $$f;fi; done
 
+dup:
+	for f in *.tex ; do if [ $$f != 00.tex ]; then dup $$f;fi; done
+
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
 JUNKFILES+=$(wildcard *.backup )
