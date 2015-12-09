@@ -156,6 +156,7 @@ It has long been known
     compilation of~$Cₘ$ terminates if and only if
       Turing-machine~$m$ halts.
   Furthermore, program~$Cₘ$ can be effectively generated from~$m$.
+
 For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
 \end{Proposition}
 
@@ -175,21 +176,21 @@ Specialization, conditionals, \kk{typedef}s and other features of \CC templates,
   symbolic derivation~\cite{Gil:Gutterman:98}
   and a full blown template library~\cite{Abrahams:Gurtovoy:04}.
 
-Garcia et al.~\cite{X:Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} compared 
+Garcia et al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} compared 
   the expressive power of generics in half a dozen major programming languages. 
-  In several ways, the \Java approach~\cite{Bracha:Odersky:Stoutamire:Wadler:98r}
+  In several ways, the \Java approach~\cite{Bracha:Odersky:Stoutamire:Wadler:98}
   did not rank as well as others.
 
 Not surprisingly, work on meta-programming using \Java generics, 
   research concentrating on other means for enriching the language,
   most importantly annotations~\cite{Papi:08}.
 
-The work on SugarJ~\cite{Sugar:J} is only one of many others attempts 
+The work on SugarJ~\cite{Erdweg:2011} is only one of many others attempts 
   to achieve the embedded DSL effect of fluent APIs by language extensions.
 
 Suggestions for semi-automatic generation can be found in the work of Bodden~\cite{Bodden:14} and
   on numerous locations in the web. 
 None of these materialized into an algorithm or analysis of complexity.
 However, there is a software artifact (fluflu\urlref{https://github.com/verhas/fluflu})
-  that automatically converts generates a fluent API that obeys the transitions 
+  that automatically generates a fluent API that obeys the transitions 
     of a given finite automaton.
