@@ -4,21 +4,21 @@ This brings good news to library designers laboring
   at making their API, slick, accessible, and more
   robust to mistakes of clients: 
 If your API can be phrased in terms of a ``decent''
-  BNF, do not loose hope; the task may be Herculian, but it is (most likely) possible. 
+  BNF, do not loose hope; the task may be Herculean, but it is (most likely) possible. 
 
-Other pracitioners may appreciate the toolbox of type encodings offered here 
+Other practitioners may appreciate the toolbox of type encodings offered here 
   gaining better understanding of the computational expressiveness of
   \Java generics and type hierarchy, and, a better tool
   for designing, experimenting with and perfecting fluent APIs.
 
 However, once possibility was demonstrated theoretically, the next \emph{research} 
     challenge is in an actual fluent API compiler compiler based on lighter weight
-  parsing alogrithms.
+  parsing algorithms.
 Precisely, the challenge 
   is in developing a parsing (or at least recognition) 
   algorithm which is not only efficient but also falls within the limited computing power of the \Java types. 
 
-On the theoretical fornt, one may ask whether 
+On the theoretical front, one may ask whether 
   this result is the best:
 Can the \Java type system be coerced to recognize
   general (that is, nondeterministic) context-free languages?
@@ -26,26 +26,10 @@ Can the \Java type system be coerced to recognize
 To the best of our knowledge, 
   the complexity of the \Java type checker has never been analyzed. 
 In light of the empirical finding in \cref{Section:applicability},
-  research in this direction 
-  may be seemed  
-  
-  
-Formal proof of correctness with proper induction hypothesis.
+  research in this direction may be worthwhile. 
+
+Yet another direction is formalizing the proof supplied here. 
 
 
 
-\subsection{Further Research}
-Note the upcoming \textsf{Fajita}?
 
-The algorithm for generating the pushdown automaton is unfortunately impractical.
-It is indeed polynomial time and space,
-  yet a consumer of formidable resources.
-
-The above discussion, formalism and conjecture may seem at first sight too abstract
-  and of little practical value.
-Re-positioning perspective may shed a different light:~\cref{Theorem:Gutterman} is important not only because it tells us
-  that the question of termination of a \CC compiler is as difficult
-  the halting problem~\cite{Turing:1936}, but also because it
-  justifies the high resource investment in
-  template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
-  ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:Stoutamire:Wadler:98,X:Garcia:Jarvi:Lumsdaine:Siek:Willcock:03}.
