@@ -91,34 +91,25 @@ As it turns out, objects with type states are quite frequent: a recent study~\ci
   \end{tabular}
 \end{figure}
 
-Type states are but one kind of a langauge  
+In a sense, type states define the ``language'' of the protocol of an object. 
+The protocol of the type-state \cc{Box} class defined in \cref{Figure:box} is 
+  admits the chain \cc{\kk{new} Box().open().close()} but not the 
+  the chain \cc{\kk{new} Box().open().open()}.
 
-
-
-To make the proof concrete, consider this example of fluent API definition:
-An instance of class \cc{Box}
-may receive two method invocations: \cc{open()} and \cc{close()},
-and can be in either ‟open” or ‟closed” state,
-Initially the instance is ‟closed”.
-Its behavior henceforth is defined by \cref{Figure:box}.
-
-To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, more generally
-  blue, or accepting states in the figure, type-check.
-Conversely, with this type definition, compile time type error should occur in \cc{\kk{new} Box.close()},
-  and, more generally, in the red state.
-
-Some skill is required to make this type definition: proper design of class \cc{Box}, perhaps with
-  some auxiliary classes extending it, an appropriate method definition here and there, etc.
-As mentioned above, 
-\endinput
-
-The proof makes a general recipe for handling examples of this sort:
-\begin{itemize}
-  \item First, consider the language defined by the fluent API\@.
-        In the box example, this language is defined by the regular expression
+As mentioned above, tools such as fluflu realize
+  type-state based their finite automaton description.
+Our approach is a bit more expressive: examine the language $L$ defined by the type-state, 
+  e.g., in the box example,  
         \[
           L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}\:|\:ε\big).
         \]
+If $L$ is deterministic context-free, a fluent API can be made for it. 
+The proof makes a general recipe for handling examples of this sort:
+\endinput
+
+\begin{itemize}
+  \item First, consider the language defined by the fluent API\@.
+        In the box example, this language is defined by the regular expression
   \item Second, check whether this language is deterministic context-free.
         If it is, the fluent API can be realized, and,
         there is an algorithm to produce the respective type definition.
