@@ -15,8 +15,8 @@ its realization:
          be used.
   \end{enumerate}
 \end{quote}
-Although possible in theory, a practical tool that does all these 
-  does not seem feasible. 
+Although possible, a practical tool that uses the proof directly 
+  is a challenge. 
 Part of the problem is the complexity of the 
   algorithms used, some of which, e.g., the DPDA and jDPDA equivalance have never been 
   implemented.
@@ -27,55 +27,21 @@ Also, for a fluent API to be elegant and useful,
   it should support method with parameters whose parameters are also defined by a  fluent API:
 these two APIs may mutually recursive and even the same. 
 Support of these features through four or so algorithmic abstractions 
-  is likely to be a formidable engineering task.
-
-Yet another challenge is control of the compiler's  
-  runtime.
-
-The \Java compiler is the main computational tool we use
-in this manuscript.
-In particular, the \Java generics mechanism is what
-boosted our expressiveness from the trivial \emph{regular languages}
-set, to the practical, reasonable \emph{deterministic context-free languages} set.
-
-Formal proof of correctness with proper induction hypothesis.
-
-An interesting question that was raised during this research,
-  is what the runtime complexity of the \Java compiler is.
-The reason this question is interesting, is its implication
-  on the computational expressiveness of type-encoding.
-
-For example, if we recognized that the \Java parser spends
-  linear time on its input, we could say that it's not
-  likely that we can type-encode nondeterministic CFG\@.
-The reason is the fact that the best known algorithms
-  today for parsing general nondeterministic CFG,
-  run in super quadratic time.
-And it is highly unlikely that the type-checker of \Java incidentally
-  found an algorithm that is practically perfect in big-O notation.
-
-As we explored this venue, we discovered that the type-checker of
-  \Java actually runs in exponential time.
-
-Consider an encoding of an S-expression in type~\cc{Cons}
-  defined in~\cref{Figure:compiler}.
+  may turn out to be a decent engineering task.
 
 \begin{wrapfigure}[6]r{27ex}
   \caption{\label{Figure:compiler} Encoding of an binary type tree}
   \javaInput[minipage,width=27ex,left=-2ex]{compiler.listing}
 \end{wrapfigure}
+Yet another challenge is controling the compiler's  
+  runtime.
+Learning that linear time parsers and lexical analyzers are possible, 
+  and being accustomed to seeing these in practice, one 
+  may expect the compiler would run in linear, or at least polynomial time. 
+As it turns out, this time is exponential in the worst case (at least for \texttt{javac}).
+An encoding of an S-expression in type~\cc{Cons} (\cref{Figure:compiler}) 
+  is a not terribly complex such worst case.
 
-Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
-Denote the return type of \cc{d()} is~$τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}$.
-Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
-Since~$τ= \cc{Cons<}σ,σ\cc{>}$, we have~$|τ|≥2|σ|$,
-  where the size of a type is measured, e.g., in number of characters in its textual representation.
-In a chain of~$n$ calls to \cc{d()}
-\begin{equation}
-  \label{Equation:n}
-  \cc{(Cons<?,?>(null)).}\overbrace{\cc{d().}⋯\cc{.d()}}^{\text{$n$ times}}\cc{;}
-\end{equation}
-the size of the resulting type is~$O(2ⁿ)$.
 
 \begin{wrapfigure}r{43ex}%
   \begin{minipage}{43ex}
@@ -87,23 +53,34 @@ the size of the resulting type is~$O(2ⁿ)$.
   \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
 \end{minipage}
 \end{wrapfigure}%
+Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
+Denote the return type of \cc{d()} by \[
+  τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}.
+\]
+Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
+Now, since~$τ= \cc{Cons<}σ,σ\cc{>}$, we have~$|τ|≥2|σ|$,
+  where the size of a type is measured, e.g., in number of characters in its textual representation.
+Therefore, in a chain of~$n$ calls to \cc{d()}
+\begin{equation}
+  \label{Equation:n}
+  \cc{(Cons<?,?>(null)).}\overbrace{\cc{d().}⋯\cc{.d()}}^{\text{$n$ times}}\cc{;}
+\end{equation}
+the size of the resulting type is~$O(2ⁿ)$.
 
-\Cref{Figure:compile-empiric} shows on the doubly logarithmic plane that the runtime (on a Lenovo X220)
+
+\Cref{Figure:compile-empiric} shows, on the doubly logarithmic plane, the runtime (on a Lenovo X220)
 of the \texttt{javac} compiler (version 1.8.0\_66) in face of a \Java program
   assembled from \cref{Figure:compiler} and \cref{Equation:n} placed as the
   single command of \cc{main()}.
-We see that this runtime is asymptotically exponential.
+Exponetial growth is demonstrated by the righthand side of the plot,
+  in which curve converges on a straight line.
 (In fact, a variation of the construction may lead to even super-exponential growth rate of the size of types.)
 
-We believe that this exponential growth is due to a design decision of the compiler.
+We believe that this exponential growth is due to a design flaw in the compiler.
 Had the compiler used a representation of types that allows sharing of,
-The footprint of exponentially sized types created by can be made linear
-  with appropriate sharing of constituent types.
-The above discussion, formalism and conjecture may seem at first sight too abstract
-  and of little practical value.
-Re-positioning perspective may shed a different light:~\cref{Theorem:Gutterman} is important not only because it tells us
-  that the question of termination of a \CC compiler is as difficult
-  the halting problem~\cite{Turing:1936}, but also because it
-  justifies the high resource investment in
-  template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
-  ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:Stoutamire:Wadler:98,X:Garcia:Jarvi:Lumsdaine:Siek:Willcock:03}.
+  of expression types, compilation time would be linear. 
+
+Still, with current compiler technology, the type encoding scheme demonstated in \cref{Figure:A}
+ might not be scaleable.
+
+
