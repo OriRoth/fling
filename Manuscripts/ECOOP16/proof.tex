@@ -133,7 +133,7 @@ In~$A$ there are two of these:
 \begin{quote}
   \javaInput[left=-4ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
-This excerpt shows interdependency in the actual parameters to the type~\cc{C}, e.g.,
+This excerpt shows inter-dependency in the actual parameters to the type~\cc{C}, e.g.,
   the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
     independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
 Selection of the parameters enforces the intended constraints of each of these.
@@ -189,8 +189,8 @@ Overall, there are six kinds of entries in a transition table:
   there is little that clients can do with this result.
   \item[\textsf{accept}]
   The only case in which fluent call chain ending with \cc{\$()} can return
-    type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
-    changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
+  type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
+  changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
   types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
@@ -217,45 +217,51 @@ Overall, there are six kinds of entries in a transition table:
   raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
   \item[$\textsf{jump}(γᵢ)$]
   The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
-    operations particularly simple.
+  operations particularly simple.
   All that is required is to covariantly change the return type of the
-    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
+  appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
   (recall that a jump occurs after popping the current element from the stack, so
   we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
   In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
   in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
   \item[$\textsf{push}(α)$]
-    Push operations are the most complex, since they involve a pop of the top stack element,
-      and pushing any number, including zero, of new elements.
-    Constructing the correct five-parameter instantiation of~\cc{C},
-    from the current parameters of the type, is the challenge.
-    Each of these five is also an instantiation of~\cc{C} which may require more such
-      parameters.
-    Even though the number of ingredients is small, the resulting type expressions
-      tend to be excessively long and unreadable.
-
-    The predicament is ameliorated a bit by the idea,
-      demonstrated above with auxiliary type~\cc{Pʹ}
-      (\cref{Figure:jump-stack-push}),
-    of delegating the task of a creating complex type to an auxiliary
-      generic type.
-    The task of this sidekick is simplified if some of its generic
-      parameters are sub-expressions that recur in the desired
-      result.
-    \par
-    Cases in point
-      are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
-    The corresponding sidekick types,  
-    (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1σ2\_Push\_$γ$2$γ2$})
-    can be found in lines 42--48 of \cref{Figure:A}.
-      The first of these defines the correct return type
-      of \cc{$σ$()}, the second of \cc{$σ$2}.
-    Examine now the definition of type \cc{C$\gamma$1} in the figure, 
-      and in particular lines 23--27 which define the list of types it extends.  
-    Notice that it extends these two sidekicks, inheriting from the covariant
-    override of $\sigma1$ and $\sigma2()$.
-
+  Push operations are the most complex, since they involve a pop of the top stack element,
+  and pushing any number, including zero, of new elements.
+  Constructing the correct five-parameter instantiation of~\cc{C},
+  from the current parameters of the type, is the challenge.
+  Each of these five is also an instantiation of~\cc{C} which may require more such
+  parameters.
+  Even though the number of ingredients is small, the resulting type expressions
+  tend to be excessively long and unreadable.
+  \par
+  The predicament is ameliorated a bit by the idea,
+  demonstrated above with auxiliary type~\cc{Pʹ}
+  (\cref{Figure:jump-stack-push}),
+  of delegating the task of a creating complex type to an auxiliary
+  generic type.
+  The task of this sidekick is simplified if some of its generic
+  parameters are sub-expressions that recur in the desired
+  result.
+  \par
+  Cases in point
+  are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
+  The corresponding sidekick types,
+  (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1$σ$2\_Push\_$γ$2$γ2$})
+  can be found in lines 42--48 of \cref{Figure:A}.
+  The first of these defines the correct return type
+  of \cc{$σ$()}, the second of \cc{$σ$2}.
+  Examine now the definition of type \cc{C$γ$1} in the figure,
+  and in particular lines 23--27 which define the list of types it extends.
+  Notice that it extends these two sidekicks, inheriting from the covariant
+  override of \cc{$σ$1()} and \cc{$σ$2()}.
+  \par
+  More generally, economy of expression may require that for each case
+    of~$δ(γ,σ)=\textsf{push}(α)$ in the transition table,
+    one creates a sidekick type which
+      overrides the appropriate \cc{$σ$()} function.
+  The appropriate \cc{C$γ$} type then inherits the definition
+    definition from the sidekick.
 \end{description}
 
 \begin{figure}
