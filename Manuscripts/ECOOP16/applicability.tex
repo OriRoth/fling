@@ -36,7 +36,7 @@ Support of these features through four or so algorithmic abstractions
   \begin{tabular}{@{}c@{}c@{}}
     \hspace{3ex}\parbox[c]{44ex}{\javaInput[minipage,width=40ex,left=-2ex]{compiler.listing}} &
     \hspace{0ex} \parbox[c]{44ex}{\gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}}⏎
-      \textbf{(a)} Encoding of an binary type tree 
+      \textbf{(a)} Encoding of a binary type tree 
     & 
       \textbf{(b)} Compilation time 
       (sec†{\scriptsize{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit, \texttt{javac} 1.8.0\_66}})%
@@ -54,7 +54,7 @@ Learning that linear time parsers and lexical analyzers are possible,
   and being accustomed to seeing these in practice, one 
   may expect the compiler would run in linear, or at least polynomial time. 
 As it turns out, this time is exponential in the worst case (at least for \texttt{javac}).
-An encoding of an S-expression in type~\cc{Cons} (\cref{Figure:compiler}(a)) 
+An encoding of a S-expression in type~\cc{Cons} (\cref{Figure:compiler}(a)) 
   is a not terribly complex such worst case.
   
 Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
