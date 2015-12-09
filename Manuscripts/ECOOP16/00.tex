@@ -52,11 +52,17 @@ Towards the proof in \cref{Section:proof}, \cref{Section:toolkit}
   shows idioms and techniques for encoding computation with    
   the \Java type-checker.
 \Cref{Section:jump} makes use of these for encoding 
-  ``jump-stack'', a non-trivial data-structure.
-Finally, issues that might be raised in converting 
-  this work into a practical tool are discussed in \cref{Section:zz},
-    which sketches also directions for further research.
+  ``jump-stack'', a non-trivial data-structure,
+  which is used, with suitable modifications in the proof. 
 
+In \cref{Section:applicability}, we discuss the challenges in
+  translating the proof into a compiler-compiler for fluent APIs.
+In particular, this section demonstrates our claim (that may be
+  surprising to some) that the standard \Java compiler may spend
+  an exponential time on compiling rather simple programs.
+\cref{Section:zz} concludes.
+
+  
 \section{Background I/II: Method Chaining \emph{vs.} Fluent API}
 \label{Section:fluent}
 \input{fluent}
@@ -85,7 +91,7 @@ Finally, issues that might be raised in converting
 \label{Section:proof}
 \input{proof}
 
-\section{Notes on Applicability}
+\section{Notes on Practical Applicability}
 \label{Section:applicability}
 \input{applicability}
 
