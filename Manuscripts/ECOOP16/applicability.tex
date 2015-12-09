@@ -29,30 +29,32 @@ these two APIs may mutually recursive and even the same.
 Support of these features through four or so algorithmic abstractions 
   may turn out to be a decent engineering task.
 
-\begin{wrapfigure}[6]r{27ex}
-  \caption{\label{Figure:compiler} Encoding of an binary type tree}
-  \javaInput[minipage,width=27ex,left=-2ex]{compiler.listing}
-\end{wrapfigure}
+\begin{figure}[H]
+  \caption{ \label{Figure:compiler} Exponential compilation time for a simple \Java program.
+  }
+  \begin{tabular}{@{}c@{}c@{}}
+    \hspace{3ex}\parbox[c]{44ex}{\javaInput[minipage,width=40ex,left=-2ex]{compiler.listing}} &
+    \hspace{0ex} \parbox[c]{44ex}{\gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}}⏎
+      \textbf{(a)} Encoding of an binary type tree 
+    & 
+      \textbf{(b)} Compilation time 
+      (sec†{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit, \texttt{javac} 1.8.0\_66})%
+    \\ &
+     \emph{vs.}
+      length of call chain.
+  \end{tabular}
+\end{figure}
+
+
 Yet another challenge is controling the compiler's  
   runtime.
 Learning that linear time parsers and lexical analyzers are possible, 
   and being accustomed to seeing these in practice, one 
   may expect the compiler would run in linear, or at least polynomial time. 
 As it turns out, this time is exponential in the worst case (at least for \texttt{javac}).
-An encoding of an S-expression in type~\cc{Cons} (\cref{Figure:compiler}) 
+An encoding of an S-expression in type~\cc{Cons} (\cref{Figure:compiler}(a)) 
   is a not terribly complex such worst case.
-
-
-\begin{wrapfigure}r{43ex}%
-  \begin{minipage}{43ex}
-  \caption{\label{Figure:compile-empiric} Compilation time
-    (sec†{measured on an Intel i5-2520M CPU @ 2.50GHz~$⨉$4, 3.7GB memory, Ubuntu 15.04 64-bit, \texttt{javac} 1.8.0\_66}%
-    ) \emph{vs.}
-      length of call chain.
-}
-  \gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}
-\end{minipage}
-\end{wrapfigure}%
+  
 Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
 Denote the return type of \cc{d()} by \[
   τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}.
@@ -68,7 +70,7 @@ Therefore, in a chain of~$n$ calls to \cc{d()}
 the size of the resulting type is~$O(2ⁿ)$.
 
 
-\Cref{Figure:compile-empiric} shows, on the doubly logarithmic plane, the runtime (on a Lenovo X220)
+\Cref{Figure:compiler}(b) shows, on the doubly logarithmic plane, the runtime (on a Lenovo X220)
 of the \texttt{javac} compiler (version 1.8.0\_66) in face of a \Java program
   assembled from \cref{Figure:compiler} and \cref{Equation:n} placed as the
   single command of \cc{main()}.
