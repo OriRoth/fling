@@ -138,26 +138,27 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end.
 
-\begin{wrapfigure}[9]{r}{29ex}
+\begin{wrapfigure}[8]{r}{31ex}
   \caption{\label{Figure:id}%
   Covariant return type of function \cc{id()}
   with \Java generics.
   }
-  \javaInput[left=-2ex,minipage,width=29ex]{id.listing}
+  \javaInput[left=-2ex,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
 
 \Cref{Figure:id} shows a genericity based recipe for
   a function whose return type
-  is the same as the receiver type.
+  is the same as the receiver's type.
   This recipe is applied in the figure to classes~\cc{A},~\cc{B}, and~\cc{C}.
   In each of these classes, the return type of \cc{id} is,
   without overriding, (at least) the class itself.
 
-It is also possible to encode with \Java types unbounded
-  data structure as demonstrated in \cref{Figure:stack-use-cases} featuring
-  a use case of a stack of \emph{unbounded} depth.
+It is also possible to encode, with \Java generic types,
+  unbounded data structures, 
+  as demonstrated in \cref{Figure:stack-use-cases},
+  featuring a use case of a stack of an \emph{unbounded} depth.
 
-\begin{figure}[!htp]
+\begin{figure}[htp]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
