@@ -100,18 +100,21 @@ Type-state pose two main challenges to software engineering
       and the type checking of \Java of clients.
 \end{enumerate}
 
-\begin{wrapfigure}[9]r{35.05ex}
- \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
- & \cc{open()} & \cc{close()}⏎ \hline
- ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
- ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
- \end{tabular}
-\end{wrapfigure}
-
-\begin{wrapfigure}[9]r{35.05ex}
-\caption{\label{Figure:box}Fluent API of a box object, defined by a DFA}
-  \input ../Figures/open-close-example.tikz
-\end{wrapfigure}
+\begin{figure}[H]
+  \caption{\label{Figure:box}Fluent API of a box object, defined by a DFA and a table}
+  \begin{tabular}{cc}
+    \hspace{7ex}\parbox[c]{40ex}{
+      \begin{tabular}[align=center]{m{7ex} | m{9ex} @{}| m{9ex}}
+        & \cc{open()} & \cc{close()}⏎ \hline
+        ‟closed”\ & \color{blue}{\emph{become ‟open”}} & \color{red}{\emph{runtime error}}⏎\hline
+        ‟open” & \color{red}{\emph{runtime error}} & \color{blue}{\emph{become ‟closed”}}⏎
+      \end{tabular}
+    } &
+    \hspace{-1ex}\parbox[c]{40ex}{\input ../Figures/open-close-example.tikz}
+    ⏎⏎
+    \hspace{0ex}\textbf{(a)} Definition by table & \hspace{-2ex}\textbf{(b)} Definition by DFA
+  \end{tabular}
+\end{figure}
 
 To make the proof concrete, consider this example of fluent API definition:
 An instance of class \cc{Box}
