@@ -144,3 +144,52 @@ Other concrete contributions made by this work include
   \item a collection of generic programming techniques, developed towards this algorithm.
   \item a demonstration that the runtime of Oracle's \texttt{javac} compiler may be exponential in the program size.
 \end{itemize}
+
+\subsection{Related Work}
+
+For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
+  \kk{template}s in \CC are Turing complete in the following precise sense:
+
+\begin{Theorem}
+  \label{Theorem:Gutterman}
+  For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
+    compilation of~$Cₘ$ of terminates if and only if
+      Turing-machine~$m$ halts.
+  Furthermore, program~$Cₘ$ can be effectively generated from~$m$.
+\end{Theorem}
+
+Intuitively, the proof relies on the fact that \kk{template}s
+  feature recursive invocation and conditionals (in the form of
+  ‟\emph{template specialization}”).
+
+The above discussion, formalism and conjecture may seem at first sight too abstract
+  and of little practical value.
+Re-positioning perspective may shed a different light:~\cref{Theorem:Gutterman} is important not only because it tells us
+  that the question of termination of a \CC compiler is as difficult
+  the halting problem~\cite{Turing:1936}, but also because it
+  justifies the high resource investment in
+  template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
+  ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:Stoutamire:Wadler:98,X:Garcia:Jarvi:Lumsdaine:Siek:Willcock:03}.
+  
+In the same fashion, it is mundane to make the judgment that
+  \Java's generics are not Turing-complete: all recursive calls
+  in these are unconditional.
+In a sense, this article shall give a lower bound on the
+  expressive power of \Java generics in terms of the Chomsky hierarchy~\cite{Chomsky:1963}.
+This objective is more precisely expressed in the following conjecture.
+
+Boost is a cool c++ templating library!\cite{Abrahams:Gurtovoy:04} I think. 
+This how you can calculate the derivative of a function with \CC compiler! \cite{Gil:Gutterman:98}
+
+Mention funny tricks with annotations to Java. There is \cite{Papi:08} from 
+  Washington State university. He fought for more support for annotations 
+  and built a system for implementing non
+Expression templates is a \CC technique for passing expressions as function arguments. \cite{Veldhuizen:95}
+
+Mention work by \cite{Bracha} on non-standard type systems.  
+
+There has already been a similar \Java implementation for regular expressions
+  \urlref{https://github.com/verhas/fluflu}.
+
+Eric Bodden wrote an article about fluent APIs, static and dynamic analysis, and type-state~\cite{Bodden:14}
+
