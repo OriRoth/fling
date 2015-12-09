@@ -193,7 +193,7 @@ A recurring building block occurs in this type:
             \item non-generic type~\cc{E}, \emph{short for ‟Empty”}, which encodes the empty
               stack. Note that \cc{E} can only occur at the deepest~\cc{P}, encoding a stack 
               with one element, in which the rest is empty. 
-          \end{enumerate}
+          \end{enumerate} %
   \end{enumerate}
 Incidentally, \kk{static} field \cc{Stack.empty} is of type~\cc{E}.
 
@@ -237,7 +237,7 @@ In fact, this recursive generic type technique can used to encode S-expressions:
 A standard technique of template programming in \CC is to encode conditionals with template specialization.
 Since \Java forbids specialization of generics, in lieu we use covariant overloading of function
   return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
-  return type of of \cc{top()} in \cref{Figure:stack-encoding}).
+  return type of \cc{top()} in \cref{Figure:stack-encoding}).
 
 \begin{wrapfigure}[6]r{36ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
@@ -252,7 +252,7 @@ This type is specialized as \cc{School} extends \cc{Heap}:
   parameter \cc{W} of \cc{School} is of type  
   ``\mbox{\cc{?} \kk{extends} \cc{Whales}}''.
 Covariant specialization of parameters to generics 
-  is yet another another idiom for encoding conditionals.
+  is yet another idiom for encoding conditionals.
 
 Overloading gives rise to a third idiom for partial emulation of conditionals, as can be seen
   in~\cref{Figure:peep}.

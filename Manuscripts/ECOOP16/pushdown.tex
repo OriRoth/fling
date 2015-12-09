@@ -11,7 +11,7 @@ Keep~$Σ$ implicit henceforth.
 A \emph{\textbf Nondeterministic \textbf Pushdown \textbf Automaton} (NPDA) is a device for language recognition,
   made of a nondeterministic finite automaton
   and a stack of unbounded depth of (stack) \emph{elements}.
-An NPDA begins execution with a single copy of the initial element on the stack.
+A NPDA begins execution with a single copy of the initial element on the stack.
 In each step, the NPDA
   examines the next input token,
   the state of the automaton,
@@ -24,7 +24,7 @@ It then pops the top element from the stack, and nondeterministically chooses wh
 Nondeterminism effectively means
   that any combination of these actions may be selected.
 
-The language recognized by an NPDA is the set of strings that it accepts,
+The language recognized by a NPDA is the set of strings that it accepts,
   either by reaching an accepting state or by encountering an empty stack.
 
 A \emph{\textbf Context-\textbf Free \textbf Grammar}(CFG) is a formal description of a language.
@@ -40,7 +40,7 @@ CFG languages make a proper superset of regular languages, and a proper subset o
   ‟context-sensitive” languages~\cite{Hopcroft:79}.
 
 The expressive power of NPDAs and BNFs is the same:
-  For every language defined by a BNF, there exists an NPDA that recognizes it.
+  For every language defined by a BNF, there exists a NPDA that recognizes it.
 Conversely, there is a BNF definition for any language recognized by some NPDA.
 
 NPDAs run in exponential deterministic time.
