@@ -1,15 +1,14 @@
-The purpose of this study is to explore the ``Fluent API''s trend in
-  terms of formal languages, specifically, what can and can not be done 
-  in \Java.
-
-Our main result is: for every deterministic pushdown automaton,
-  there exists a set of \Java type definitions, such that,
-  the automaton accepts a string if and only if a corresponding 
-  call chain representing the string, type-checks.
-
-In addition, we introduce a handy toolkit for type-encoding Fluent APIs,
-and provide a lower-bound to the theoretical expressiveness of the \Java compiler.
-  
-Due to the compiler's runtime on certain generic types,
-  the proposed type-encoding is unfeasible for real applications.
-Using those types, we show an example for which the compiler runs in exponential time.
+This paper is a theoretical study of practical problem:
+  the automatic generation of Java Fluent APIs from their specification.
+We explain why the problem's core lies with 
+  the expressive power of Java generics.
+The main result is that this is possible whenever 
+  the specification is an instance of the set of deterministic context-free languages,
+  which contains most ``practical'' languages.
+Other contributions include a collection of techniques and idioms o
+  the limited meta-programming possible with Java generics, 
+  and an empirical measurement demonstrating that the runtime of
+  the ``javac'' compiler of Java the may be exponential in
+  the program's length, even for programs composed of 
+  a handful of lines and which do not rely on overly 
+  complex use of generics.
