@@ -238,7 +238,7 @@ Overall, there are six kinds of entries in a transition table:
   The predicament is ameliorated a bit by the idea,
   demonstrated above with auxiliary type~\cc{Pʹ}
   (\cref{Figure:jump-stack-push}),
-  of delegating the task of a creating complex type to an auxiliary
+  of delegating the task of creating a complex type to an auxiliary
   generic type.
   The task of this sidekick is simplified if some of its generic
   parameters are sub-expressions that recur in the desired
@@ -248,20 +248,20 @@ Overall, there are six kinds of entries in a transition table:
   are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
   The corresponding sidekick types,
   (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1$σ$2\_Push\_$γ$2$γ2$})
-  can be found in lines 42--48 of \cref{Figure:A}.
+  can be found in lines 40--48 of \cref{Figure:A}.
   The first of these defines the correct return type
   of \cc{$σ$()}, the second of \cc{$σ$2}.
   Examine now the definition of type \cc{C$γ$1} in the figure,
   and in particular lines 23--27 which define the list of types it extends.
-  Notice that it extends these two sidekicks, inheriting from the covariant
-  override of \cc{$σ$1()} and \cc{$σ$2()}.
+  Notice that it extends these two sidekicks, inheriting the covariant
+  overrides of \cc{$σ$1()} and \cc{$σ$2()}.
   \par
   More generally, economy of expression may require that for each case
     of~$δ(γ,σ)=\textsf{push}(α)$ in the transition table,
     one creates a sidekick type which
       overrides the appropriate \cc{$σ$()} function.
   The appropriate \cc{C$γ$} type then inherits the definition
-    definition from the sidekick.
+    from the sidekick.
 \end{description}
 
 \begin{figure}
