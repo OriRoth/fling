@@ -75,13 +75,13 @@ $\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
 As it turns out, every DCFG language is recognized by some jDPDA, and conversely,
   every language accepted by a jDPDA
   is a DCFG language~\cite{Courcelle:77}.
-The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA.
+The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
 Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
 The simple~$k=2$,~$ℓ=2$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
-†{
+†{%
   Incidentally,
 \[
 L = \left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
