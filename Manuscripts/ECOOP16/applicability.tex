@@ -1,14 +1,3 @@
-\subsection{Conclusion}
-The main contribution of this work is the proof that 
-  most useful grammars have a fluent API.
-This brings good news to library designers laboring
-  at making their API, slick, accessible, and more
-  robust to mistakes of clients: 
-If your API can be phrased in terms of a ``decent''
-  BNF, do not loose hope; the task may be Herculian, but it is (most likely) possible. 
-
-
-\subsection{Applicability}
 \Cref{Theorem:Gil-Levy} and its proof above provide
   a concrete algorithm for converting an EBNF specification of a fluent API into
 its realization:
@@ -118,26 +107,3 @@ Re-positioning perspective may shed a different light:~\cref{Theorem:Gutterman} 
   justifies the high resource investment in
   template programming~\cite{Musser:Stepanov:1989,Dehnert:Stepanov:2000
   ,Backhouse:Jansson:1999, Austern:1998,Bracha:Odersky:Stoutamire:Wadler:98,X:Garcia:Jarvi:Lumsdaine:Siek:Willcock:03}.
-
-In the fashion,~\Cref{Theorem:Gil-Levy} has important
-  implications to the emerging trend of employing fluent APIs
-  to make complex software systems more accessible.
-The theoretical part of this work dwells on the proof of~\cref{Theorem:Gil-Levy}.
-
-Accordingly, the contribution of this work is double folded:
-  gaining better understanding of the computational expressiveness of
-  \Java generics and type hierarchy, and, a better tool
-  for designing, experimenting with and perfecting fluent APIs.
-
-One may ask whether our theoretical result is the
-  best possible:
-It is possible to implement a fluent API for general
-  (that is, nondeterministic) context-free languages?
-  We give reason why this possibility is unlikely.
-
-\subsection{Further Research}
-Note the upcoming \textsf{Fajita}?
-
-The algorithm for generating the pushdown automaton is unfortunately impractical.
-It is indeed polynomial time and space,
-  yet a consumer of formidable resources.
