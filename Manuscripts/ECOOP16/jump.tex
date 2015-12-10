@@ -1,17 +1,14 @@
-We continue on our journey to encode DPDA in \Java.
-In this section we encode the tricky ‟jump” action defined in~\cref{Definition:JDPDA}.
-
-A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
-  except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations
-  (which means ‟repetitively \emph{pop} elements from the stack up 
-  to and including the first occurrence of~$γ$”).
-
 \begin{wrapfigure}[18]{r}{42ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \lstset{style=numbered}
   \javaInput[minipage,left=-2ex]{jump-stack.listing}
 \end{wrapfigure}
+
+A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
+  except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations
+  (which means ‟repetitively \emph{pop} elements from the stack up 
+  to and including the first occurrence of~$γ$”).
 
 \Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},  
   of a jump-stack whose elements are drawn from type~\cc{$Γ$}

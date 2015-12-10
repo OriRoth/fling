@@ -42,7 +42,7 @@ Other examples of fluent APIs in \Java are abundant:
 
 \subsection{A Type Perspective on Fluent APIs}
 \Cref{Figure:DSL}(B) suggests that jOOQ imitates SQL,
-but is it possible at all to produce a fluent API
+but, is it possible at all to produce a fluent API
 for the entire SQL language,
 or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
 Of course, with no operator overloading it is impossible
@@ -55,18 +55,18 @@ The questions that motivate this research are:
         a fluent API that can be made for this specification?
     \item In the cases that such fluent API is possible,
       can it be produced automatically?
-    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual} tool
+    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual} 
         to convert a language specification into a fluent API?
 \end{itemize}
 \end{quote}
 
 Inspired by the theory of formal languages and automata,
-  this study explores what can be done, and what can not be done, with fluent APIs in \Java.
+  this study explores what can be done with fluent APIs in \Java.
 
 Consider some fluent API (or DSL) specification, permitting only certain call
 chains and disallowing all others.
 Now, think of the formal language that defines the set of these permissible chains.
-The main contribution of this paper is a proof (with its implicit algorithm) that
+We prove that (with its implicit algorithm) that
 there is always \Java type definition that \emph{realizes} this fluent definition, provided that this
 language is \emph{deterministic context-free}, where
 \begin{itemize}
@@ -86,12 +86,12 @@ language is \emph{deterministic context-free}, where
 A problem related to that of recognizing a formal language,
 is that of parsing, i.e., creating, for input which is within the language,
   a parse tree according to the language's grammar.
-In the fluent APIs domain, the distinction between recognition and parsing is
-  the distinction between compile time and runtime.
+In the domain of fluent APIs, the distinction between recognition and parsing is
+  in fact the distinction between compile time and runtime.
 Before a program is run, the compiler checks whether the fluent API call is legal,
   and code completion tools will only suggest legal extensions of a current call chain.
 
-In contrast, the parse tree is created at runtime.
+In contrast, a parse tree can only be created at runtime.
 Some fluent API definitions create the parse-tree
   iteratively, where each method invocations in the call chain adding
   more components to this tree.
@@ -155,9 +155,7 @@ It has long been known
   For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
     compilation of~$Cₘ$ terminates if and only if
       Turing-machine~$m$ halts.
-  Furthermore, program~$Cₘ$ can be effectively generated from~$m$.
-
-For example, it is known (see e.g.,~\cite{Gutterman:2003}) that
+      Furthermore, program~$Cₘ$ can be effectively generated from~$m$~\cite{Gutterman:2003}.
 \end{Proposition}
 
 Intuitively, this is due to the fact that templates in \CC
@@ -166,8 +164,8 @@ Intuitively, this is due to the fact that templates in \CC
 
 In the same fashion, it should be mundane to make the judgment that
   \Java's generics are not Turing-complete since they offer no conditionals. 
-Still, even though there are of the time complexity of the type systems in functional
-  languages, we failed to similar claims for \Java.
+Still, even though there are time complexity results regarding type systems in functional
+  languages, we failed to find similar claims for \Java.
 
 Specialization, conditionals, \kk{typedef}s and other features of \CC templates,
   gave rise to many advancements in template/generic/generative programming 
@@ -185,7 +183,7 @@ Not surprisingly, work on meta-programming using \Java generics,
   research concentrating on other means for enriching the language,
   most importantly annotations~\cite{Papi:08}.
 
-The work on SugarJ~\cite{Erdweg:2011} is only one of many others attempts 
+The work on SugarJ~\cite{Erdweg:2011} is only one of many other attempts 
   to achieve the embedded DSL effect of fluent APIs by language extensions.
 
 Suggestions for semi-automatic generation can be found in the work of Bodden~\cite{Bodden:14} and
