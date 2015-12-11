@@ -4,40 +4,37 @@ import static automaton.A.C.build;
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
 class Prefix_A { // Encode automaton ¢$A$¢
-  // begin{headers}
-  static class L // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /* empty*/ }
-  // end{headers}
-
   // Configuration of the automaton
-  
-    public interface E { /* Empty configuration */ }
-    interface ¤ { /* Error configuration. */ }
+  //begin{configuration}
+  static class L { /*Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept*/ } 
+  public interface E { /* Empty stack configuration */ }
+  interface ¤ { /* Error configuration. */ }
+  //end{configuration}
   //begin{many}
-     interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
-       Rest , JRγ1 , JRγ2 
-     > extends 
-       // ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
-     // end{many} 
-       γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
-       ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
-     // begin{many}
-     {
-     // end{many}
-     // begin{many}
-     }
-     // end{many}
-     //begin{many}
-     interface Cγ2< // Configuration when ¢$\gamma2$¢ is at top
-       Rest , JRγ1 , JRγ2 
-     > 
-       // ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
-    { 
-     // end{many}
-      L $();
-      JRγ1 σ2();
+  interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
+    Rest , JRγ1 , JRγ2 
+  > extends 
+  // ¢$J\gamma1$¢ must be ¢$\textsf{Rest}$¢.
+  //end{many} 
+    γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
+    ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
+  // begin{many}
+  {
+  // end{many}
+  // begin{many}
+  }
+  // end{many}
   //begin{many}
-    }
+  interface Cγ2< // Configuration when ¢$\gamma2$¢ is at top
+    Rest , JRγ1 , JRγ2 
+  > 
+    // ¢$J\gamma2$¢ must be ¢$\textsf{Rest}$¢. 
+  { 
+  // end{many}
+    L $();
+    JRγ1 σ2();
+  //begin{many}
+  }
   // end{many}
   //begin{many}
     static Cγ1<E,¤,¤> build = null;
@@ -58,16 +55,10 @@ class Prefix_A { // Encode automaton ¢$A$¢
     build.σ1().σ1().σ2().σ2().σ1().σ2().$(); 
   }
   static void rejects() {
-    build.$(); 
-    build.σ1().$(); 
-    build.σ2().σ1().$();
-    build.σ2().σ2().$();
-    build.σ1().σ2().σ1().$();  
-    build.σ1().σ2().σ2().σ1().$();  
-    //end{cases}
-    build.σ1().σ2().σ2().σ2().σ1().$(); 
-    build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$();  
-    //begin{cases}
+    build.σ2().σ1();
+    build.σ2().σ2().σ1();
+    build.σ1().σ2().σ1();
+    build.σ1().σ2().σ2().σ1();
   }
   //end{cases}
 //begin{full}

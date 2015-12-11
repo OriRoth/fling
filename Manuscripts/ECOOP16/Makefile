@@ -25,6 +25,7 @@ LISTINGS+=proof.many.listing
 LISTINGS+=proof.configuration.listing 
 LISTINGS+=proof.full.listing 
 LISTINGS+=proof.headers.listing 
+LISTINGS+=prefix-proof.configuration.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -62,7 +63,11 @@ CODE_PATH = ../../src/main/java/automaton
 DOMAIN = $(CODE_PATH)/Domain.java 
 DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  
 JDPDA = $(CODE_PATH)/jDPDA.java
+PREFIX_JDPDA = $(CODE_PATH)/prefix_jDPDA.java
 
+prefix-proof.configuration.listing: $(PREFIX_JDPDA)
+	awk '/begin{configuration}/{f=1;c+=1;next}/end{configuration}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+  
 proof.many.listing: $(JDPDA)
 	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 

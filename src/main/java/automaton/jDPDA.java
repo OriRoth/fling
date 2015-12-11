@@ -24,7 +24,7 @@ class A { // Encode automaton ¢$A$¢
     ΣΣ $();        // δ transition on end of input; invalid language by default 
     C σ1();         // δ transition on σ¢1¢; dead end by default
     C σ2();         // δ transition on σ¢2¢; dead end by default
-    public interface E extends C<¤,¤,¤,¤,¤> { /* Empty configuration */ }
+    public interface E extends C<¤,¤,¤,¤,¤> { /* Empty stack configuration */ }
     interface ¤ extends C<¤,¤,¤,¤,¤> { /* Error configuration. */ }
   // end{configuration}
   //begin{many}
