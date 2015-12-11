@@ -1,0 +1,22 @@
+\begin{theorem}\label{Theorem:Gil-Levy:2}
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
+    other types such that the \Java command
+  \begin{equation}
+    \label{Equation:result}
+    \cc{A.build~$\textsf{java}(α)$;}
+  \end{equation}
+  type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
+  that~$αβ∈L$.
+  Furthermore, program~$J_A$ can be effectively generated from~$A$.
+\end{theorem}
+
+The value of~\cref{Theorem:Gil-Levy} is the following:
+  a call chain type-checks if and only if it is a prefix
+  of some legal sequence.
+Alternatively, a call chain won't type-check if there is no
+  continuation that leads to a legal word in~$L$.
+
+The proof will resemble the proof of~\cref{Theorem:Gil-Levy}.
+  We will provide a similar implementation for a jump-stack (see\cref{Definition:JDPDA}),
+  that will not compile under illegal prefixes.
