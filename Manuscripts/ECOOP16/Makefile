@@ -26,6 +26,7 @@ LISTINGS+=proof.configuration.listing
 LISTINGS+=proof.full.listing 
 LISTINGS+=proof.headers.listing 
 LISTINGS+=prefix-proof.configuration.listing 
+LISTINGS+=prefix-proof.many.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -67,6 +68,9 @@ PREFIX_JDPDA = $(CODE_PATH)/prefix_jDPDA.java
 
 prefix-proof.configuration.listing: $(PREFIX_JDPDA)
 	awk '/begin{configuration}/{f=1;c+=1;next}/end{configuration}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+prefix-proof.many.listing: $(PREFIX_JDPDA)
+	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
   
 proof.many.listing: $(JDPDA)
 	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
