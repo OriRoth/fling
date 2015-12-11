@@ -55,7 +55,7 @@ The questions that motivate this research are:
         a fluent API that can be made for this specification?
     \item In the cases that such fluent API is possible,
       can it be produced automatically?
-    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual} 
+    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual}
         to convert a language specification into a fluent API?
 \end{itemize}
 \end{quote}
@@ -66,7 +66,7 @@ Inspired by the theory of formal languages and automata,
 Consider some fluent API (or DSL) specification, permitting only certain call
 chains and disallowing all others.
 Now, think of the formal language that defines the set of these permissible chains.
-We prove that there is always \Java type definition that 
+We prove that there is always \Java type definition that
   \emph{realizes} this fluent definition, provided that this
   language is \emph{deterministic context-free}, where
 \begin{itemize}
@@ -110,20 +110,20 @@ The answers we provide for the three questions above is:
     language, then a fluent API exists for the language, but we do not know
     whether such a fluent API exists for more general languages.
   \par
-  Recall that there are universal cubic time parsing 
+  Recall that there are universal cubic time parsing
   algorithms~\cite{Cocke:1969,Earley:1970,Younger:1967} which can parse (and recognize) any
   context-free language. What we do not know is whether algorithms of this sort
   can be encoded within the framework of the \Java type system.
   \item
   There exists an algorithm to generate a fluent API that realize any
-  deterministic context-free languages.  Moreover, this fluent API can create
-  at runtime, a parse tree for the given language.  This parse tree can then be
+  deterministic context-free languages. Moreover, this fluent API can create
+  at runtime, a parse tree for the given language. This parse tree can then be
   supplied as input to the library that implements the language's semantic.
   \item
   Unfortunately, a general purpose compiler-compiler
   is not yet feasible with the current algorithm.
   \begin{itemize}
-    \item One difficulty is usual in the fields of formal languages: 
+    \item One difficulty is usual in the fields of formal languages:
       The algorithm is complicated and relies on
       modules implementing complicated theoretical results, which, to the best of our
       knowledge, have never been implemented.
@@ -160,35 +160,35 @@ It has long been known
 
 Intuitively, this is due to the fact that templates in \CC
   feature both recursive invocation and conditionals (in the form of
-  ‟\emph{template specialization}”).  
+  ‟\emph{template specialization}”).
 
 In the same fashion, it should be mundane to make the judgment that
-  \Java's generics are not Turing-complete since they offer no conditionals. 
+  \Java's generics are not Turing-complete since they offer no conditionals.
 Still, even though there are time complexity results regarding type systems in functional
   languages, we failed to find similar claims for \Java.
 
 Specialization, conditionals, \kk{typedef}s and other features of \CC templates,
-  gave rise to many advancements in template/generic/generative programming 
+  gave rise to many advancements in template/generic/generative programming
   in the language~\cite{Austern:1998,Musser:Stepanov:1989,Backhouse:Jansson:1999,Dehnert:Stepanov:2000},
   including e.g., applications in numeric libraries~\cite{Veldhuizen:95},
   symbolic derivation~\cite{Gil:Gutterman:98}
   and a full blown template library~\cite{Abrahams:Gurtovoy:04}.
 
-Garcia et al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} compared 
-  the expressive power of generics in half a dozen major programming languages. 
+Garcia et al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} compared
+  the expressive power of generics in half a dozen major programming languages.
   In several ways, the \Java approach~\cite{Bracha:Odersky:Stoutamire:Wadler:98}
   did not rank as well as others.
 
-Not surprisingly, work on meta-programming using \Java generics, 
+Not surprisingly, work on meta-programming using \Java generics,
   research concentrating on other means for enriching the language,
   most importantly annotations~\cite{Papi:08}.
 
-The work on SugarJ~\cite{Erdweg:2011} is only one of many other attempts 
+The work on SugarJ~\cite{Erdweg:2011} is only one of many other attempts
   to achieve the embedded DSL effect of fluent APIs by language extensions.
 
 Suggestions for semi-automatic generation can be found in the work of Bodden~\cite{Bodden:14} and
-  on numerous locations in the web. 
+  on numerous locations in the web.
 None of these materialized into an algorithm or analysis of complexity.
 However, there is a software artifact (fluflu\urlref{https://github.com/verhas/fluflu})
-  that automatically generates a fluent API that obeys the transitions 
+  that automatically generates a fluent API that obeys the transitions
     of a given finite automaton.
