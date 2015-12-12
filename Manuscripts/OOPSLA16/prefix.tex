@@ -1,0 +1,66 @@
+\begin{theorem}\label{Theorem:Gil-Levy:2}
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
+    other types such that the \Java command
+  \begin{equation}
+    \label{Equation:result}
+    \cc{A.build~$\textsf{java}(α)$;}
+  \end{equation}
+  type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
+  that~$αβ∈L$.
+  Furthermore, program~$J_A$ can be effectively generated from~$A$.
+\end{theorem}
+
+Informally, a call chain type-checks if and only if it is a prefix
+  of some legal sequence.
+Alternatively, a call chain won't type-check if there is no
+  continuation that leads to a legal string in~$L$.
+
+The proof resembles~\cref{Theorem:Gil-Levy}'s proof.
+We provide a similar implementation for a jump-stack (see\cref{Definition:JDPDA}),
+  that will not compile under illegal prefixes.
+
+The main difference between the two theorems is:
+  in~\cref{Theorem:Gil-Levy} we allowed illegal call chains to compile,
+  but not return the required~\cc{L} type, while in~\cref{Theorem:Gil-Levy:2}
+  the illegal chain won't compile at all.
+  
+We will use the same running example, defined in~\cref{Table:A}.
+
+Since the code suggested by the proof highly resembles the previously
+  suggested code, we will describe the differences.
+  
+\subsection{Main Types}
+The main types here are a subset of the previously defined main types.
+
+\begin{quote}
+  \javaInput[left=-2ex,minipage,width=54ex]{prefix-proof.configuration.listing}
+\end{quote}
+
+First, \kk{class} \cc{$\Sigma\Sigma$} is removed. 
+A call chain that doesn't represent a valid prefix won't compile, 
+  thus, there is no need for an error return type such as \cc{$\Sigma\Sigma$}.
+Second, \kk{interface} \cc{C} is removed. 
+Without it, the configuration types won't have the 
+  methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} from the supertype.
+These inherited methods, is what differentiates the previous proof from the current.
+
+\subsection{Top-of-Stack Types}
+Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
+  with \cc{$γ$1}, … ,\cc{$γ${}$k$} as their top,
+  this time, the methods are defined ad-hock, in each type.
+In A there are two such types:
+
+\begin{quote}
+  \javaInput[left=-2ex,minipage,width=45ex]{prefix-proof.many.listing}
+\end{quote}
+
+\subsection{Transitions}
+In the proof of~\cref{Theorem:Gil-Levy} we defined class~\cc{C} to have 
+  default return values for each of the methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()},
+  that cannot be continued in a fashion that makes sense (i.e., cannot return a type~\cc{L}).
+  
+The different handling with the entries of the transition table is as following:
+\begin{description}
+ \item 
+\end{description}

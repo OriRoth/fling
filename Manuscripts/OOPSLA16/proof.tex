@@ -1,208 +1,270 @@
-We now turn to the proof of \cref{Theorem:Gil-Levy}, which will be showing a type encoding for the DPDA that recognizes a certain DCFG language.
-The proof is by reduction to type encoding of SDPDAs, which are simpler version of deterministic pushdown automata.
+On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
+  sketched in \cref{Section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
+The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
+and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}.
 
-\subsection{Reduction}
-The difficulty in type-encoding of general DPDAs is that of~$ε$-moves:
-A DPDA is allowed to make a transition into a different state,
-  pop one or more stack elements, and then, pop, push or even both pop and push, any number of stack elements,
-  all without consuming a single input symbol.
+The techniques however fail with~$ε$-transitions,
+  which allow the automaton to move between an unbounded number of
+  configurations and maneuver the stack in a non-trivial manner,
+  without making any progress on the input.
+The fault in the scheme lies with compile time computation being carried out
+  by the~$\textsf{java}(σ)()$ functions, each converting
+  their receiver type to the type of the receiver of the next call in the chain.
+We are not aware of a \Java type encoding which makes
+  it possible to convert an input type into an output type, where
+  the output is a computed from the input by an unbounded number o steps.†{%
+    With the presumption that the \Java compiler halts for all inputs (a presumption that does
+    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding for all DPDAs can be proved:
+ Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
+  never halts on any input.
+A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
+}
 
-In contrast, our type encoding relies on the encoding of an input string~$α∈Σ^*$, one symbol at a time, as a sequence of method calls.
-A step of computation occurs in the domain of \Java types only at method calls. There are no-provisions for encoding~$ε$-moves, however determistic
-  they are.
-The following definition is of a deterministic pushdown automata without such moves.
+The literature speaks of finite-delay DPDAs, in which the number
+  of consecutive~$ε$-transitions is uniformly bounded and even of
+  realtime DPDAs in which this bound is 0, i.e., no~$ε$-transitions.
+Our proof relies on a special kind of realtime automata,
+  described by Courcelle~\cite{Courcelle:77}.
 
-\begin{Definition}
-  \label{Definition:SDPDA}
+\begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
+  \label{Definition:JDPDA}
   \slshape
-  A \emph{\textbf Simplified \textbf Deterministic \textbf Pushdown \textbf Automaton} (SDPDA) of order~$k$ is
-    a quintuple~$⟨Γ,Q,q₀,A,δ⟩$,
-  where~$Γ$,~$Q$,~$q₀∈Q$,~$A⊆Q$ are precisely as in \cref{Definition:DPDA}.
-  The signature of function~$δ$, the \emph{generalized partial transition function}
-  of an SDPDA of order~$k$, is however~$δ: Q⨉\left(Γ∪❴\vdash❵\right)ᵏ⨉Σ↛Q⨉Γ^*$.
-  \par
-  An SDPDA begins as a DPDA. At each step it examines~$σ∈Σ$,
-    the next input symbol,~$q∈Q$, the current state,
-    and~$γ₁,⋯,γₖ∈Γ$, the~$k$ top most stack elements,
-  \par
-  If the stack is empty, or~$q∈A$, the automaton stops in accepting.
-  If the transition function is undefined, i.e.,~$δ(q,γ₁,…,γₖ,σ)=⊥$ the automaton
-    stops in rejection.
-  Otherwise, and since there are no~$ε$-moves, there are~$q'∈Q$ and~$ζ∈Γ^*$
-    such that~$δ(q,γ₁,…,γₖ,σ)=(q',ζ)$.
-  The automaton then pops~$γ₁$ through~$γₖ$, pushes the sequence~$ζ$, and
-    moves to state~$q'$.
+  A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
+  (jDPDA, for short) is a triplet~$⟨Γ,γ₁,δ⟩$
+  where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
+  and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
+  \[
+    j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
+  \]
+  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
+  Initially, the stack holds~$γ₁$ only.
+  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
+  \begin{itemize}
+    \item At each step a jDPDA examines~$γ$,
+    the element at the top of the stack,
+    and~$σ∈Σ$, the next input character,
+    and executes the following:
+          \begin{quote}
+            \begin{enumerate}
+              \item consume~$σ$
+              \item pop~$γ$
+              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
+              \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
+                    pops stack elements up-to and including the first occurrence of~$γ$.
+            \end{enumerate}
+          \end{quote}
+    \item If the next character is~$\$$, then the automaton may reject or accept (but not do nothing else),
+          depending on the value of~$γ$.
+  \end{itemize}
+  In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
+  an empty stack (either at the beginning of a step or on course
+  of a \textsf{jump operation}).
 \end{Definition}
 
-We say that
-a \emph{configuration}~$(q,γ)$,~$q∈Q$,~$γ∈Γ$,
-  is an \emph{$ε$-configuration} if~$δ(q,γ,ε)=(q',ζ)$ for
-    some~$q'∈Q$ and a sequence of stack elements~$ζ$,
-Recall that by definition of DPDAs,~$δ(q,γ,σ)=⊥$ for
-  all~$σ∈Σ$, i.e., there is precisely one transition
-  leading out of an~$ε$-configuration.
+\begin{wraptable}r{33ex}
+  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂❵$,~$Γ=❴γ₁,γ₂❵$}
+  \begin{tabular}{c|ll}
+             & \hfill~$γ₁$ & \hfill~$γ₂$⏎
+    \midrule
+$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $\hfill ⊥$⏎
+$σ₂$ & $\textsf{push}(γ₂,γ₂)$ & $\textsf{jump}(γ₁)$⏎
+$\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
+  \end{tabular}
+\end{wraptable}
 
-Our objective is to remove all~$ε$-configurations,
-  replacing these with the non-$ε$ configuration that
-  they (eventually) lead to.
-This is easy to do when~$|ζ|≥1$, in which
-  case the top of the stack is known to be~$γ'$,~$γ'$ being the first
-    element of~$ζ$; the configuration at the end of transition
-    would be then be~$(q',γ')$, which in its turn may, or may not be,
-    an~$ε$-configuration.
+As it turns out, every DCFG language is recognized by some jDPDA, and conversely,
+  every language accepted by a jDPDA
+  is a DCFG language~\cite{Courcelle:77}.
+The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
+Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
-However, if~$ζ=ε$, we do not know which element resides at the top
-  of the stack.
-The transition from the current configuration can thus lead to \emph{multiple} configurations,
-  depending on the actual element left at the top of the stack after popping~$γ$.
-The definition of a configuration thus must be changed to include the \emph{two} top
-  most stack elements.
-But, even this would fail if the next configuration is also an~$ε$-configuration that pushes no elements.
+Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
+The simple~$k=2$,~$ℓ=2$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+Let~$L$ be the language~$L$ recognized by~$A$.%
+†{%
+  Incidentally,
+\[
+L = \left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
+\]
+which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is a non-ambiguous, deterministic
+BNF for~$L$; neither the BNF nor the above representation are material for the proof.
+}
 
-To be able to compute the closure of~$ε$-configuration, we shall
-  therefore include with the configuration the~$k$ top most stack elements,
-  where~$k$ is defined to be large enough so that
-  the top of the stack must never be guessed while going
-  through~$ε$-configurations.
+\subsection{Main Types}
+Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
+  where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
+\begin{quote}
+  \javaInput[left=-2ex,minipage,width=54ex]{proof.headers.listing}
+\end{quote}
+(The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
+  excerpts as necessary.)
 
-To compute~$k$ we need to compute the largest possible overdraft
-  from the stack along a series of transitions through~$ε$-configuration.
-To do so, define the following directed weighted graph:
-Nodes in this graph are the~$|Q|·|Γ|$ distinct configurations
-  of the form~$(q,γ)$,~$q∈Q$,~$γ∈Γ$.
-Let a node~$(q,γ)$ be an~$ε$-configuration for which~$δ(q,γ,ε)=(q',ζ)$.
-Then, there is an edge from~$(q,γ)$ to all~$|Γ|$ nodes of the form~$(q',γ')$,~$γ'∈Γ$, i.e.,
-  to all possible ‟guesses” of the stack element beneath~$γ$.
-Each such edge takes the weight~$1-|ζ|$ to denote the fact
-  that the total ‟charge” to the stack is~$1-|ζ|$:
-    one stack element (specifically~$γ$) is popped,
-    while~$|ζ|$ (which could also be zero), are pushed.
-The value of $k$ is simply the heaviest path in this graph. 
-
-In the former graph, cycles might occour.
-Sadly, we cannot solve those cycles, since arbitrary number of symbols might be removed from the 
-  stack, and therefore, the required~$\epsilon$-closure cannot be computed.
-As shown by someone~\cite{i:need:to::find:it}, DPDAs with no $\epsilon$-moves are less expressive than a normal DPDAs,
-  and therefore, not all DPDA can be computed.
-  
-Now, we shall describe the transition function of an SDPDA in the terms of a DPDA (assuming the former graph is DAG).
-Let~$M=⟨Q,Γ,q₀,A,δ⟩$ be a DPDA, our goal is to describe~$S_m=⟨Q_m,Γ,q_{0m},A_m,δ_m⟩$ 
-  of order k, the corresponding SDPDA.
-Notice that the stack elements are the same in both.
-The other components of $S_m$ are constructed as follows:
+A configuration is encoded by a generic type~\cc{C}.
+Essentially,~\cc{C} is a representation of the stack,
+  but~$2k+1$ other parameters are required:
 \begin{itemize}
- \item $Q_m$ is the set~$Q⨉\left(Γ∪❴\vdash❵\right)ᵏ$ 
- \item $q_{0m}$ is the state $(q₀,\vdash^{k-1}\gamma)$ where~$\gamma$ is the stack start element of~$Γ$.
- \item $A_m$ is the set~$❴(q,ζ)\in Q_m | q \in A❵$
- \item for $\delta(q,\gamma,\sigma) = (q',\zeta)$
- \begin{itemize}
-  \item if $\sigma\neq\epsilon$ than for all $(q,\zeta'\gamma')$ such that $\zeta'\gamma \in \Gamma^k$
-    we define $\delta_m(q,\zeta'\gamma,\sigma)=(q',\zeta'\zeta)$
-  \item if $\sigma = \epsilon$ then~$\delta_m(q,\zeta,\epsilon)=(q',\zeta')$ when~$(q',\zeta')$ 
-    is the~$\epsilon$-closure on~$(q,\zeta)$.
-    The~$\epsilon$-closure of~$(q,\zeta)$ is the series of consecutive $\epsilon$-transitions from $\delta$
-    that end with a single ``input consuming'' transition. 
-    This computation is possible due to the definition of~$k$, that assures us, that during this ``static''
-    computition on~$\delta$, we will at all times know the top of the stack, and therefore, this computition
-    is viable.
- \end{itemize}
-
+  \item \cc{Rest} a type encoding of the stack after a pop,
+  \item~$k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack
+        after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and,
+  \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
+    after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
+All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
+so as to ensure that they are (the type version of) pointers into the actual stack.
 
-\subsection{Type Encoding}
-\begin{Theorem}
-  \label{Theorem:SDPDA}
-  For every SDPDA~$a$ there exists a set~$J_a$ of \Java type definitions, such that
-  the command \[
-    \cc{A _ = M.build $\textsf{java}(α)$.\$()};
-  \]
-  compiles against~$Jₘ$ if an only if~$α$ is the language recognized by~$M$.
-\end{Theorem}
+In the running example,~\cc{C} is defined as:
+\begin{quote}
+  \javaInput[left=0ex,minipage,width=63ex]{proof.configuration.listing}
+\end{quote}
+This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
+  the empty and the error configurations.
 
-The remainder of this section is dedicated to the proof of \cref{Theorem:SDPDA}.
-In particular, we describe how~$J_M$ is constructed from the
-  specification of~$M$.
+Type~\cc{C} defines~$ℓ+1$ functions (3 in the example), one for each possible input character.
+Since~\cc{C} encodes an abstract configuration, return types of functions in it
+  are appropriate defaults which intentionally fail to emulate the automaton's execution.
+  The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
+  the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
 
-We will use the following notation for
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
+\subsection{Top-of-Stack Types}
 
-\begin{figure}[H]
-\begin{JAVA}
-class Stack<Head extends ¢$Γ$¢, Rest extends Stack<?,?> > {¢¢
-  Head head;
-  Rest rest;
-  Stack(Head head, Rest rest) {¢¢ this.head = head; this.rest = rest;}
-  Rest pop() {¢¢ return rest; };
-}
-\end{JAVA}
-For each state~$ξ∈Q$, we generate a \Java class~$ξ$,
-\begin{JAVA}
-class ¢$ξ$¢ <T extends S> extends S<T> {¢¢
-  ¢$ξ$¢(T t) {¢¢ super(t); }
-  // ¢…¢
-}
-\end{JAVA}
-\end{figure}
-In addition, we define a special class~$\vdash$ to designate the empty stack.
-\begin{JAVA}
-class ¢$\vdash$¢ extends Stack<¢$Γ$¢, ¢$\vdash$¢> {¢¢
-  ¢$\vdash$ ¢() {¢¢ super(null); }
-  ¢$\vdash$ ¢pop() {¢¢ throw new RunTimeException(); }
-}
-\end{JAVA}
-The stack contents~$⊥ξ₁ξ₁ξ₂ξ₁$,
-where~$ξ₁,ξ₂∈Q$ are stack elements,
-is represented by the following type
-\begin{JAVA}
-  ¢$ξ₁$¢ < ¢$ξ₂$¢ < ¢$ξ₁$¢ < ¢$⊥$ > > >
-\end{JAVA}
-This is a general concept for implementing an unbounded stack with \Java's type system,
-that will be extended in the future.
+Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
+  encode stacks whose top element is~$γ₁$, … ,$γₖ$.
+In~$A$ there are two of these:
+\begin{quote}
+  \javaInput[left=-4ex,minipage,width=45ex]{proof.many.listing}
+\end{quote}
+This excerpt shows inter-dependency in the actual parameters to the type~\cc{C}, e.g.,
+  the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
+    independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
+Selection of the parameters enforces the intended constraints of each of these.
+Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
+In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest},
+  and so, another parameter is redundant.
 
-\subsection{Encoding states of pushdown automaton with \Java generics}
-The generalized transition function \cref{Equation:generalized:transition}
-  takes~$k+2$ arguments: a state~$q∈Q$, an input symbol~$σ∈Σ$
-    and~$k$ stack elements drawn from~$Γ$.
-To capture the full behavior of the automaton, the transition function
-  must be able to pass along, in one way or another, the full contents of the stack.
+In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
+in general ‟Top of Stack" types take~$k+1$ parameters:
+\cc{Rest} and the results of~$\cc{Rest.}\textsf{jump}(γᵢ)$,~$i=1,…,k$.
+It is the duty of the generated code to instantiate these types
+  only with parameters \cc{Rest},\cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
+  these implicit demands.
 
-Since the scheme described above can only be applied for binary functions,
-  we shall pack together the state~$q$, the stack, and the~$k$ top most
-  elements of it into a single type.
-The next input symbol,~$σ∈Σ$, the remaining argument of function~$δ$,
-  is encoded as a method.
+\begin{wrapfigure}[14]r{43ex}
+  \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  \javaInput[left=-2ex,minipage,width=43ex]{proof.cases.listing}
+\end{wrapfigure}
+Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
+  the remaining~$\textsf{jump}(γᵢ)$ parameters of~\cc{C}
+  are known when the top of the stack is known.
+If the top is~$γⱼ$, then for all~$j≠i~$ \[
+  \textsf{jump}(γⱼ) =
+  \cc{Rest.}\textsf{jump}(γⱼ)
+\] whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$.
 
-The type part of the encoding is obtained by instantiating a generic type as follows:
-Let~\cc{Q} be the abstract class that represents~$Q$, and let~\cc{q} be the concrete class that
-  implements~\cc{Q} for an automaton state~$q∈Q$.
-Then, to accommodate the extra~$k$ parameters of~$δ$, we add~$k$ generic parameters
-  to class~$Q$ and to every class~\cc{q} that implements it.
-Yet another such parameter is added for representing stack contents.
+The code also defines the \kk{static} variable \cc{build}, the stating point
+of all fluent API call chains to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
+  the stating configuration of the automaton is a stack whose top is~$γ₁$,
+  its rest is empty (\cc{E}).
+Any of the two jumps possible on this rest results with,~\cc{¤},
+  an undefined stack.
+Examples of accepting and rejecting call chains starting at \cc{A.build}
+  can be seen in \cref{Figure:chain}.
 
-Consider the case~$k=2$.
-\begin{figure}
+\subsection{Transitions}
+It remains to show the type encoding of~$δ$,
+  the transition function.
+Overall, there are a total of~$k·(ℓ+1)$
+  entries in a transition table such as \cref{Table:A}.
+Conceptually, these are encoded by selecting the correct return
+  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
+Thanks to inheritance, we need to do so only in the cases that this return type is different from the
+  default.
+
+Overall, there are six kinds of entries in a transition table:
+\begin{description}
+  \item[\textsf{reject}]
+  The default return type of \cc{\$()} in~\cc{C} is \cc{$ΣΣ$}, which
+  is \emph{not} a subtype of~\cc{L}. Normally the result of a call chain that ends with \cc{\$()}
+  cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
+  there is little that clients can do with this result.
+  \item[\textsf{accept}]
+  The only case in which fluent call chain ending with \cc{\$()} can return
+  type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
+  changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
+  types of fluent API call chains are determined statically.}
+  \par
+  Recall that a jDPDA can only accept after its input is exhausted.
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₂$.
+  We therefore add to the body of type \cc{C$γ$2} the line
   \begin{JAVA}
-abstract class Q<S, ¢$γ₁$¢, ¢$γ₂$¢
+@Override L ¢\gobble$¢$();
   \end{JAVA}
-\end{figure}
+  \item[$⊥$]
+  When a prefix of the input is sufficient to conclude it must be rejected however it continues
+  the transition function returns~$⊥$.
+  In~$A$ this occurs when the top of the stack is~$γ₂$ and a~$σ₁$ character is read.
+  To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
+  the inherited return type (l.17 \cref{Figure:A}) is the raw~\cc{C}.
+  Subsequent calls in the chain will all receive and return a raw~\cc{C}
+  (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ are functions in~\cc{C} that return a raw~\cc{C}).
+  Therefore, the final \cc{\$()} will reject.
+  \par
+  Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
+  a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
+  In our type encoding these are handled by the special
+  types~\cc{E} and~\cc{¤} (ll.19--20 ibid), both extending~\cc{C} without
+  overriding any of its methods. Again, remaining part of the call chain will stick to
+  raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
+  \item[$\textsf{jump}(γᵢ)$]
+  The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
+  operations particularly simple.
+  All that is required is to covariantly change the return type of the
+  appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
+  (recall that a jump occurs after popping the current element from the stack, so
+  we refer to \cc{JR} type parameters rather than~\cc{J}'s).
+  \par
+  In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
+  in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
+  \item[$\textsf{push}(α)$]
+  Push operations are the most complex, since they involve a pop of the top stack element,
+  and pushing any number, including zero, of new elements.
+  The challenge is in constructing the correct five-parameter instantiation of~\cc{C},
+  from the current parameters of the type.
+  Each of these five is also an instantiation of~\cc{C} which may require more such
+  parameters.
+  Even though the number of ingredients is small, the resulting type expressions
+  tend to be excessively long and unreadable.
+  \par
+  The predicament is ameliorated a bit by the idea,
+  demonstrated above with auxiliary type~\cc{Pʹ}
+  (\cref{Figure:jump-stack-push}),
+  of delegating the task of creating a complex type to an auxiliary
+  generic type.
+  The task of this sidekick is simplified if some of its generic
+  parameters are sub-expressions that recur in the desired
+  result.
+  \par
+  Cases in point
+  are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
+  The corresponding sidekick types,
+  (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1$σ$2\_Push\_$γ$2$γ2$})
+  can be found in lines 40--48 of \cref{Figure:A}.
+  The first of these defines the correct return type
+  of \cc{$σ$()}, the second of \cc{$σ$2}.
+  Examine now the definition of type \cc{C$γ$1} in the figure,
+  and in particular lines 23--27 which define the list of types it extends.
+  Notice that it extends these two sidekicks, inheriting the covariant
+  overrides of \cc{$σ$1()} and \cc{$σ$2()}.
+  \par
+  More generally, economy of expression may require that for each case
+    of~$δ(γ,σ)=\textsf{push}(α)$ in the transition table,
+    one creates a sidekick type which
+      overrides the appropriate \cc{$σ$()} function.
+  The appropriate \cc{C$γ$} type then inherits the definition
+    from the sidekick.
+\end{description}
 
-\begin{figure}
-  \caption{\label{Figure:SDPDA:hierarchy}%
-    Type hierarchy of the type encoding of a simple SDPDA.
-  }
-  \begin{adjustbox}{}
-    \input ../Figures/automaton.tikz
-  \end{adjustbox}
+\begin{figure}[htbp]
+  \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  \javaInput[left=-2ex,minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
 \end{figure}
-
-\begin{figure}
-  \caption{\label{Figure:SDPDA:example}%
-    A type encoding of a simple pushdown automaton.
-  }
-  \javaInput[minipage,width=\linewidth]{spda.listing}
-\end{figure}
-As might be expected, this type is obtained
-The
-The
-
-To encode this function within

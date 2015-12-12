@@ -2,6 +2,7 @@
 
 \passOptions{algorithm}{plain}
 \passOptions{amsmath}{fleqn} 
+%\passOptions{gnuplottex}{subfolder} 
 \passOptions{cleveref}{capitalize,nameinlink} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
@@ -12,11 +13,13 @@
 \usepackage{amsmath}
 \usepackage{amssymb} %load more math symbols
 \usepackage{amsthm}
+\usepackage{anyfontsize} % fixes font warnings
 \usepackage{booktabs}
 \usepackage{cite}
 \usepackage{code}
 \usepackage{float}
 \usepackage{fontspec}
+\usepackage{gnuplottex}
 \usepackage{graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{listingsutf8}
@@ -29,7 +32,9 @@
 \usepackage{wrapfig}
 \usepackage[terse]{yogi-lang}
 \usepackage{yogi-unicode}
+
 \renewcommand\languageShape[1]{\textrm{#1}}
+\lstset{language=Java,style=code}
 
 \usetikzlibrary{graphdrawing}
 \usetikzlibrary{graphs} 
@@ -39,6 +44,10 @@
 \usegdlibrary{trees}
 
 \renewcommand{\algorithmicforall}{\textbf{For each}}
+
+\makeatletter
+\newcommand\gobble[1]{\@gobble{#1}}
+\makeatother
 
 \floatstyle{ruled}
 \restylefloat{figure}
@@ -53,6 +62,7 @@
 \newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
 
 \newtheorem{Theorem}{Theorem}
+\newtheorem{Proposition}{Proposition}
 \newtheorem{Definition}{Definition}
 \newtheorem{Conjecture}{Conjecture}
 \numberwithin{equation}{section}
@@ -84,9 +94,8 @@
 
 \newcommand \urlref [1] {\footnote{\url{#1}}}
 
-\def \Self {\textsf{Fajita}\xspace}
 \def\nthscript#1{\textsuperscript{\textit{#1}}}
-\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},listing file=#2,#1}}
+\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
 \newenvironment{Grammar}
 {%
