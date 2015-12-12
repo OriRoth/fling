@@ -2,9 +2,9 @@ package automaton;
 import static automaton.Prefix_A.A.build;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
+class Prefix_A { 
 //begin{full}
-class Prefix_A { // Encode automaton ¢$A$¢
-  static class A{
+  static class A{ // Encode automaton ¢$A$¢
   // Configuration of the automaton
   //begin{configuration}
   static class L { /*Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept*/ } 
@@ -34,17 +34,17 @@ class Prefix_A { // Encode automaton ¢$A$¢
     JRγ1 σ2();
   }
   //end{many}
-  //begin{many}
-    static Cγ1<E,¤,¤> build = null;
-  //end{many}
-    interface γ1σ1_Push_γ1γ1<Rest ,JRγ1 ,JRγ2 >{
-      // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1)$¢
-      Cγ1<Cγ1<Rest, JRγ1, JRγ2>, Rest, JRγ2> σ1();
-    }
-    interface γ1σ2_Push_γ2γ2<Rest ,JRγ1 ,JRγ2 >{
-      // Sidekick of ¢$\delta(\gamma_1,\sigma_2)=\textsf{push}(\gamma_2,\gamma_2)$¢
-      Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
-    }
+//begin{many}
+  static Cγ1<E,¤,¤> build = null;
+//end{many}
+  interface γ1σ1_Push_γ1γ1<Rest ,JRγ1 ,JRγ2 >{
+    // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1)$¢
+    Cγ1<Cγ1<Rest, JRγ1, JRγ2>, Rest, JRγ2> σ1();
+  }
+  interface γ1σ2_Push_γ2γ2<Rest ,JRγ1 ,JRγ2 >{
+    // Sidekick of ¢$\delta(\gamma_1,\sigma_2)=\textsf{push}(\gamma_2,\gamma_2)$¢
+    Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
+  }
   //end{full}
   //begin{cases}
   static void accepts() {

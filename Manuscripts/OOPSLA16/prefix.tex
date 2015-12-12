@@ -76,18 +76,27 @@ Note the major difference from~\cref{Theorem:Gil-Levy} ; there is no need to
   prefixes does not type-check.
   
 \subsection{Transitions}
-The transition table is encoded slightly different due to the changes we expressed.
-The new encoding is as follows:
+Due to the changes we expressed, the transition table is encoded slightly different.
+
+Encoding of the legal operations \textsf{accept}, $\textsf{jump}(γᵢ)$ and $\textsf{push}(\zeta)$
+  remains as in~\cref{Theorem:Gil-Levy}, since we want the same behavior for legal call chains.
+The minor differences are in the illegal operations \textsf{reject} and $\bot$:
+
 \begin{description}
  \item[\textsf{reject}] Since we add the methods ad-hock to each type, the reject entry means 
-   that the corresponding type, won't have a~\cc{\$()} method, i.e., type~\cc{C$\gamma$1}
+   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$\gamma$1}
    doesn't have a method~\cc{\$()}.
- \item[\textsf{accept] The corresponding type, will have a~\cc{\$()} method with return type~\cc{L}
  \item[$\bot$] We encounter $\bot$ on the transition function when some input character~\cc{$\sigma$} 
    is not allowed for the top of the stack element $\gamma$. In that case, the corresponding type \cc{C$\gamma$} 
-   must not have a method for~\cc{$\sigma$}, this way, invoking the methods will cause type error.
+   \emph{must not} have a method for~\cc{$\sigma$}, this way, invoking the methods will cause type error.
    In \cref{Table:A} $\bot$ occurs when the top of the stack is $\gamma{}2$ and the input character is $\sigma{}1$,
    thus, no method \cc{$\sigma$1} is introduced in type~\cc{C$\gamma{}$2}.
- \item[$\textsf{jump}(γᵢ)$]
-  
 \end{description}
+
+The use of sidekicks is still allowed, and recommended to improve code readability.
+
+\begin{figure}[htbp]
+  \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A}) 
+    that doesn't all illegal prefixes}
+  \javaInput[left=-2ex,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+\end{figure}

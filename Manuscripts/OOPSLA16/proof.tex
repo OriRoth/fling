@@ -225,12 +225,12 @@ Overall, there are six kinds of entries in a transition table:
   \par
   In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
   in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
-  \item[$\textsf{push}(α)$]
+  \item[$\textsf{push}(\zeta)$]
   Push operations are the most complex, since they involve a pop of the top stack element,
   and pushing any number, including zero, of new elements.
-  The challenge is in constructing the correct five-parameter instantiation of~\cc{C},
+  The challenge is in constructing the correct $k+1$-parameter instantiation of~\cc{C},
   from the current parameters of the type.
-  Each of these five is also an instantiation of~\cc{C} which may require more such
+  Each of these $k+1$ is also an instantiation of~\cc{C} which may require more such
   parameters.
   Even though the number of ingredients is small, the resulting type expressions
   tend to be excessively long and unreadable.
@@ -257,7 +257,7 @@ Overall, there are six kinds of entries in a transition table:
   overrides of \cc{$σ$1()} and \cc{$σ$2()}.
   \par
   More generally, economy of expression may require that for each case
-    of~$δ(γ,σ)=\textsf{push}(α)$ in the transition table,
+    of~$δ(γ,σ)=\textsf{push}(\zeta)$ in the transition table,
     one creates a sidekick type which
       overrides the appropriate \cc{$σ$()} function.
   The appropriate \cc{C$γ$} type then inherits the definition

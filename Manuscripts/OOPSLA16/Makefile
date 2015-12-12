@@ -67,6 +67,9 @@ DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java
 JDPDA = $(CODE_PATH)/jDPDA.java
 PREFIX_JDPDA = $(CODE_PATH)/prefix_jDPDA.java
 
+prefix-proof.full.listing: $(PREFIX_JDPDA)
+	awk '/begin{full}/{f=1;c+=1;next}/end{full}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
 prefix-proof.configuration.listing: $(PREFIX_JDPDA)
 	awk '/begin{configuration}/{f=1;c+=1;next}/end{configuration}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
