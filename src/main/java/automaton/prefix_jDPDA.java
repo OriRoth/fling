@@ -1,9 +1,10 @@
 package automaton;
-import static automaton.A.C.build;
+import static automaton.Prefix_A.A.build;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
 class Prefix_A { // Encode automaton ¢$A$¢
+  static class A{
   // Configuration of the automaton
   //begin{configuration}
   static class L { /*Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept*/ } 
@@ -13,8 +14,9 @@ class Prefix_A { // Encode automaton ¢$A$¢
   //begin{many}
   interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
     Rest , JRγ1 , JRγ2 
-  > extends 
+  > 
   //end{many} 
+  extends 
     γ1σ1_Push_γ1γ1<Rest,JRγ1,JRγ2>
     ,γ1σ2_Push_γ2γ2<Rest,JRγ1,JRγ2>
   //begin{many}
@@ -46,17 +48,18 @@ class Prefix_A { // Encode automaton ¢$A$¢
   //end{full}
   //begin{cases}
   static void accepts() {
-    build.σ2().$();
-    build.σ1().σ2().$(); 
-    build.σ1().σ1().σ2().σ2().σ1().σ2().$(); 
+    A.build.σ2().$();
+    A.build.σ1().σ2().$(); 
+    A.build.σ1().σ1().σ2().σ2().σ1().σ2().$(); 
   }
   static void rejects() {
-    build.σ2().σ1();
-    build.σ2().σ2().σ1();
-    build.σ1().σ2().σ1();
-    build.σ1().σ2().σ2().σ1();
+    A.build.σ2().σ1();
+    A.build.σ2().σ2().σ1();
+    A.build.σ1().σ2().σ1();
+    A.build.σ1().σ2().σ2().σ1();
   }
   //end{cases}
+  }
 //begin{full}
 }
 //end{full}

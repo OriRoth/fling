@@ -27,6 +27,7 @@ LISTINGS+=proof.full.listing
 LISTINGS+=proof.headers.listing 
 LISTINGS+=prefix-proof.configuration.listing 
 LISTINGS+=prefix-proof.many.listing 
+LISTINGS+=prefix-proof.cases.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -71,6 +72,9 @@ prefix-proof.configuration.listing: $(PREFIX_JDPDA)
 
 prefix-proof.many.listing: $(PREFIX_JDPDA)
 	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+prefix-proof.cases.listing: $(PREFIX_JDPDA)
+	awk '/begin{cases}/{f=1;c+=1;next}/end{cases}/{f=0;next}f&& $$0!~/begin{/ && $$0!~/end{/{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
   
 proof.many.listing: $(JDPDA)
 	awk '/begin{many}/{f=1;c+=1;next}/end{many}/{f=0;next}f{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 

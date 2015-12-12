@@ -1,5 +1,9 @@
 package automaton;
-import static automaton.A.C.build;
+import static automaton.A.build;
+
+import automaton.A.C.Cγ1;
+import automaton.A.C.E;
+import automaton.A.C.¤;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
@@ -55,9 +59,6 @@ class A { // Encode automaton ¢$A$¢
   //begin{many}
     }
   // end{many}
-  //begin{many}
-    static Cγ1<E,¤,¤> build = null;
-  // end{many}
     interface γ1σ1_Push_γ1γ1<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
       // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1)$¢
       Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2> σ1();
@@ -67,24 +68,27 @@ class A { // Encode automaton ¢$A$¢
       Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ2();
     }
   }
+  //begin{many}
+  static Cγ1<E,¤,¤> build = null;
+  // end{many}
   //end{full}
   //begin{cases}
   static void isL( L l) {/**/}
   static void accepts() {
-    isL(build.σ2().$());
-    isL(build.σ1().σ2().$()); 
-    isL(build.σ1().σ1().σ2().σ2().σ1().σ2().$()); 
+    isL(A.build.σ2().$());
+    isL(A.build.σ1().σ2().$()); 
+    isL(A.build.σ1().σ1().σ2().σ2().σ1().σ2().$()); 
   }
   static void rejects() {
-    isL(build.$()); 
-    isL(build.σ1().$()); 
-    isL(build.σ2().σ1().$());
-    isL(build.σ2().σ2().$());
-    isL(build.σ1().σ2().σ1().$());  
-    isL(build.σ1().σ2().σ2().σ1().$());  
+    isL(A.build.$()); 
+    isL(A.build.σ1().$()); 
+    isL(A.build.σ2().σ1().$());
+    isL(A.build.σ2().σ2().$());
+    isL(A.build.σ1().σ2().σ1().$());  
+    isL(A.build.σ1().σ2().σ2().σ1().$());  
     //end{cases}
-    isL(build.σ1().σ2().σ2().σ2().σ1().$()); 
-    isL(build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
+    isL(A.build.σ1().σ2().σ2().σ2().σ1().$()); 
+    isL(A.build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
     //begin{cases}
   }
   //end{cases}
