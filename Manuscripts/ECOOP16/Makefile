@@ -28,6 +28,7 @@ LISTINGS+=proof.headers.listing
 LISTINGS+=prefix-proof.configuration.listing 
 LISTINGS+=prefix-proof.many.listing 
 LISTINGS+=prefix-proof.cases.listing 
+LISTINGS+=prefix-proof.full.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
