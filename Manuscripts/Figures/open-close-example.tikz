@@ -7,7 +7,7 @@
 \node[state-style,text width=4ex] (error) [above right=of closed,red] {runtime error};
 
 
-\path[->,distance = 2ex,above] 
+\path[->,distance = 2ex,above,thick] 
 
 				(closed) edge[below] node {\cc{open()}} (opened)
 				(opened) edge[bend left,below] node {\cc{close()}} (closed)
