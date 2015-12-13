@@ -17,7 +17,7 @@ Alternatively, a call chain won't type-check if there is no
   continuation that leads to a legal string in~$L$.
 
 The proof resembles~\cref{Theorem:Gil-Levy}'s proof.
-We provide a similar implementation for a jump-stack (see\cref{Definition:JDPDA}),
+We provide a similar implementation for a jump-stack (see \cref{Definition:JDPDA}),
   that will not compile under illegal prefixes.
 
 The main difference between the two theorems is:
@@ -25,11 +25,11 @@ The main difference between the two theorems is:
   but not return the required~\cc{L} type, while in~\cref{Theorem:Gil-Levy:2}
   the illegal chain won't compile at all.
   
-We will use the same running example, defined in~\cref{Table:A}.
-
 Since the code suggested by the proof highly resembles the previously
   suggested code, we will describe the differences.
   
+We will use the same running example, defined by~\cref{Table:A}.
+
 \subsection{Main Types}
 The main types here are a subset of the previously defined main types.
 
@@ -37,7 +37,7 @@ The main types here are a subset of the previously defined main types.
   \javaInput[left=-2ex,minipage,width=54ex]{prefix-proof.configuration.listing}
 \end{quote}
 
-First, \kk{class} \cc{$\Sigma\Sigma$} is removed. 
+First, type \cc{$\Sigma\Sigma$} is removed. 
 A call chain that doesn't represent a valid prefix won't compile, 
   thus, there is no need for an error return type such as \cc{$\Sigma\Sigma$}.
 Second, \kk{interface} \cc{C} is removed. 
@@ -55,12 +55,48 @@ In A there are two such types:
   \javaInput[left=-2ex,minipage,width=45ex]{prefix-proof.many.listing}
 \end{quote}
 
-\subsection{Transitions}
-In the proof of~\cref{Theorem:Gil-Levy} we defined class~\cc{C} to have 
-  default return values for each of the methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()},
-  that cannot be continued in a fashion that makes sense (i.e., cannot return a type~\cc{L}).
+Note, that the type parameters of the former types hasn't changed,
+  since the model we are trying to implement, hasn't changed.
+  These~$k+1$ parameters still suffice for our cause.
+
+\begin{wrapfigure}[14]r{45ex}
+  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}), such that 
+  illegal prefixes won't compile}
+  \javaInput[left=-2ex,minipage,width=45ex]{prefix-proof.cases.listing}
+\end{wrapfigure}
+
+In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method 
+  correctly type-checks (i.e., in $L$), while the chains in~\cc{rejects()} 
+  do not type-check (i.e., these prefixes has no continuation that leads to a legal word in $L$), 
+  where the last method invocation generates an \textsf{the method ... is undefined for the type ...}
+  error message.
+Note the major difference from~\cref{Theorem:Gil-Levy} ; there is no need to
+  use an auxiliary function \cc{isL()} as in~\cref{Figure:chain} since now illegal
+  prefixes does not type-check.
   
-The different handling with the entries of the transition table is as following:
+\subsection{Transitions}
+Due to the changes we expressed, the transition table is encoded slightly different.
+
+Encoding of the legal operations \textsf{accept}, $\textsf{jump}(γᵢ)$ and $\textsf{push}(\zeta)$
+  remains as in~\cref{Theorem:Gil-Levy}, since we want the same behavior for legal call chains.
+The minor differences are in the illegal operations \textsf{reject} and $\bot$:
+
 \begin{description}
- \item 
+ \item[\textsf{reject}] Since we add the methods ad-hock to each type, the reject entry means 
+   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$\gamma$1}
+   doesn't have a method~\cc{\$()}.
+ \item[$\bot$] We encounter $\bot$ on the transition function when some input character~\cc{$\sigma$} 
+   is not allowed for the top of the stack element $\gamma$. In that case, the corresponding type \cc{C$\gamma$} 
+   \emph{must not} have a method for~\cc{$\sigma$}, this way, invoking the methods will cause type error.
+   In \cref{Table:A} $\bot$ occurs when the top of the stack is $\gamma{}2$ and the input character is $\sigma{}1$,
+   thus, no method \cc{$\sigma$1} is introduced in type~\cc{C$\gamma{}$2}.
 \end{description}
+
+The use of sidekicks is still allowed, and recommended to improve code readability.
+
+\begin{figure}[htbp]
+  \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A}) 
+    that doesn't all illegal prefixes}
+  \javaInput[left=-2ex,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+\end{figure}
