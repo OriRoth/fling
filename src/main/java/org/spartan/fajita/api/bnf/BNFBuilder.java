@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.spartan.fajita.api.bnf.BNFBuilder.OrDeriver;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -98,13 +99,14 @@ public class BNFBuilder {
       return new InitialDeriver(newRuleLHS);
     }
     @SuppressWarnings("synthetic-access") public BNF finish() {
-      addRuleToBNF();
       return BNFBuilder.this.finish();
     }
     /**
      * Adds a rule to the BnfBuilder host.
      */
-    protected abstract void addRuleToBNF();
+    protected void addRuleToBNF(){
+      addRule(lhs, symbols);
+    }
   }
 
   /**
@@ -119,53 +121,58 @@ public class BNFBuilder {
     InitialDeriver(final NonTerminal lhs) {
       this.lhs = lhs;
     }
-    public NormalDeriver to(final Terminal term, Class<?>... type) {
-      return new NormalDeriver(lhs, new Verb(term.name(),type));
+    public AndDeriver to(final Terminal term, Class<?>... type) {
+      return new AndDeriver(lhs, new Verb(term.name(),type));
     }
-    public NormalDeriver to(final NonTerminal nt) {
-      return new NormalDeriver(lhs, nt);
+    public AndDeriver to(final NonTerminal nt) {
+      return new AndDeriver(lhs, nt);
     }
-    FirstDerive toNone() {
+    public OrDeriver toNone() {
       addRule(lhs, Collections.emptyList());
-      return new FirstDerive();
+      return new OrDeriver(lhs);
     }
   }
 
+  public class OrDeriver extends Deriver{
+    OrDeriver(final NonTerminal lhs) {
+      super(lhs);
+    }    
+    public AndDeriver or(final Terminal term, Class<?>... type) {
+      return new AndDeriver(lhs, new Verb(term.name(),type));
+    }
+    public AndDeriver or(final NonTerminal nt) {
+      return new AndDeriver(lhs, nt);
+    }
+    public OrDeriver orNone() {
+      return derive(lhs).toNone();
+    }
+  }
   /**
    * Currently deriving a normal rule
    * 
    * @author Tomer
    *
    */
-  public final class NormalDeriver extends Deriver {
-    NormalDeriver(final NonTerminal lhs, final Symbol child) {
-      super(lhs, child);
+  public final class AndDeriver extends OrDeriver {
+    AndDeriver(final NonTerminal lhs, final NonTerminal child) {
+      super(lhs);
+      symbols.add(child);
     }
-    public NormalDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
-      super(lhs, new Verb(child.name(),type));
+    public AndDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
+      super(lhs);
+      symbols.add(new Verb(child.name(),type));
     }
-//    public InitialDeriver or() {
-//      return derive(lhs);
-//    }
-    public NormalDeriver or(final Terminal term, Class<?>... type) {
-      return new NormalDeriver(lhs, new Verb(term.name(),type));
-    }
-    public NormalDeriver or(final NonTerminal nt) {
-      return new NormalDeriver(lhs, nt);
-    }
-    public FirstDerive orNone() {
-      return derive(lhs).toNone();
-    }
-    public NormalDeriver and(final NonTerminal nt) {
+    public AndDeriver and(final NonTerminal nt) {
       symbols.add(nt);
       return this;
     }
-    public NormalDeriver and(final Terminal term,Class<?> ...type) {
+    public AndDeriver and(final Terminal term,Class<?> ...type) {
       symbols.add(new Verb(term.name(),type));
       return this;
     }
-    @Override protected void addRuleToBNF() {
-      addRule(lhs, symbols);
+    @Override public BNF finish() {
+      addRuleToBNF();
+      return super.finish();
     }
   }
 

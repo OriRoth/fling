@@ -37,8 +37,8 @@ import com.squareup.javapoet.JavaFile;
 
 public class Main {
   public static void main(final String[] args) {
-//     apiGenerator();
-     expressionBuilder();
+     apiGenerator();
+//     expressionBuilder();
   }
   static void apiGenerator() {
     final BNF bnf = BalancedParenthesis.buildBNF();
