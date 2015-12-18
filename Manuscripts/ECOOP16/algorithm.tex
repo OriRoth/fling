@@ -6,13 +6,19 @@ LR parser performs as usual except for:
 	  
 	\item On a shift op:
 	if we shift on a~$item \in \textsf{Kernel}$
-	  then eveything as usual.
-	else,~$item \in \textsf{Closure(Kernel)}$
+	  then everything as usual.
+	Else,~$item \in \textsf{Closure(Kernel)}$
 	    if the lookahead of this item will be consumed by a kernel item:
 	      a new Jump symbol will be inserted on the stack.
-	    else:
+	    Else:
 	      the lookahead will cause a reduction of one of the kernel items,
 	      in that case, the previous Jump symbol is still relevant.
 	\item[Jump Invariant] For each ID~$(q,w,\gamma \zeta)$, if the corresponding lookahead $\ell$ will supply
 	  ~$\textsf{Jump}(\ell)= \text{the state after all consecutive reductions}$
 \end{itemize}
+
+\begin{Definition}[JLR parser- Jump LR(1) Parser]
+	Let P be a LR(1) parser, then there exists a jump-DPDA J,
+	such that for every string~$\alpha \in \Sigma ^ *$
+	P accepts~$\alpha$ if and only if J accepts~$\alpha$ 
+\end{Definition}
