@@ -16,9 +16,13 @@ LR parser performs as usual except for:
 	\item[Jump Invariant] For each ID~$(q,w,\gamma \zeta)$, if the corresponding lookahead $\ell$ will supply
 	  ~$\textsf{Jump}(\ell)= \text{the state after all consecutive reductions}$
 \end{itemize}
-
+Definition of an LR parser is somewhat tricky as it is defined with terms of 
+  CFGs and PDAs altogether.
 \begin{Definition}[JLR parser- Jump LR(1) Parser]
 	Let P be a LR(1) parser, then there exists a jump-DPDA J,
 	such that for every string~$\alpha \in \Sigma ^ *$
 	P accepts~$\alpha$ if and only if J accepts~$\alpha$ 
 \end{Definition}
+
+
+
