@@ -11,10 +11,13 @@ An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nontermin
     defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
   \end{description}
 \end{description}
-Every state~$q∈Q~$ is a set of~\emph{LR items}.
-  An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
+An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
   i.e.,~$A→α·β$ is a LR item if~$A∈Ξ$,~$A→αβ∈R$,
   the dot index in this example is~$|α|$.
+Every state~$q∈Q$ is a set of~\emph{LR items},
+  where every such item is in the~$Kernel_{q}$ set,
+  or in the~$NonKernel_{q}$ set.
+Every state~$q$ is the unification of~$Kernel_{q}$ and~$NonKernel_{q}$.
 The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
 and then repetitively executes the following:
 Examine~$q∈Q$, the state at the top of the stack.
@@ -33,18 +36,19 @@ the parser pushes a state,~$q”$,
 defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
 i.e.,~$q”=η(q',ξ)$.
 
-The specifics of parser generation lies beyond our interest here.
+The specifics of parser generation and specifically
+  calculating the sets~$Kernel_{q}$,$NonKernel_{q}$ lies beyond our interest here.
 We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
-LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$\epsilon$-moves 
-  fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need 
+LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
+  fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need
   to convert it to the encode-able jump-DPDA\@.
 
-A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that 
+A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that
   is based on a jump-DPDA except for a DPDA\@.
 The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
-  
+
 \begin{Theorem}
   \label{Theorem:JLR}
   Let P be a LR parser, then there exists a jump-DPDA J,
@@ -52,14 +56,13 @@ The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
   P accepts~$α$ if and only if J accepts~$α$
 \end{Theorem}
 
-For a LR parser~$\langle Q , \delta_{LR} , η_{LR} \rangle$ defined over a grammar~$\langle \Xi , \xi , R \rangle$
-A JLR is like the jump-DPDA~$A=⟨Γ,q_0,δ⟩$ defined in~\cref{Definition:JDPDA},
-  where~$\Gamma = Q \cup \Sigma $ are the stack elements,~$q_0 \in Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(\Sigma)$ is defined as follows:
+For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨ \Xi,ξ, R⟩$
+A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
+  where~$Γ= Q∪Σ~$ are the stack elements,~$q₀∈Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ)$ is defined as follows:
   \begin{itemize}
-   \item $\delta(q_i,\sigma)= j(\sigma)$ if~$\eta_{LR}(q_i,\sigma)=Reduce(r)$
-   \item $\delta(q_i,\sigma)= some \Gamma^*$ if~$\eta_{LR}(q_i,\sigma)=Shift(q_j)$
+   \item~$δ(qᵢ,σ)= j(σ)$ if~$ημ_{LR}(qᵢ,σ)=Reduce(r)$
+   \item~$δ(qᵢ,σ)= someΓ^*$ if~$ημ_{LR}(qᵢ,σ)=Shift(qⱼ)$
   \end{itemize}
-
 
 JLR parser performs as a LR parser except for:
 \begin{itemize}
