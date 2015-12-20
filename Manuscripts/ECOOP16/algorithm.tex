@@ -1,4 +1,4 @@
-An LR($1$) parser for a grammar~$G=(Ξ,ξ,P)$ (Nonterminals set, initial start symbol,production rules set respectively)
+An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nonterminals set, initial start element,production rules set respectively)
   has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -11,9 +11,9 @@ An LR($1$) parser for a grammar~$G=(Ξ,ξ,P)$ (Nonterminals set, initial start s
     defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
   \end{description}
 \end{description}
-Every state~$q∈Q~$ is a set of~\emph{LR($1$) items}.
-  An \emph{LR($1$) item} is a rule~$r∈P$ and a dot index in the right-hand side of the rule,
-  i.e.,~$A→α·β$ is a LR($1$) item if~$A∈Ξ$,~$A→αβ∈P$,
+Every state~$q∈Q~$ is a set of~\emph{LR items}.
+  An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
+  i.e.,~$A→α·β$ is a LR item if~$A∈Ξ$,~$A→αβ∈R$,
   the dot index in this example is~$|α|$.
 The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
 and then repetitively executes the following:
@@ -34,33 +34,32 @@ defined by applying the transition function to~$ξ$, the left-hand side of the r
 i.e.,~$q”=η(q',ξ)$.
 
 The specifics of parser generation lies beyond our interest here.
-We do mention however that the same LR($1$) parser can serve parsing table drawn using weaker LR parser generators,
+We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$\epsilon$-moves 
   fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need 
   to convert it to the encode-able jump-DPDA\@.
 
-A \emph{JLR parser}, or \emph{Jump LR($1$) Parser} is a LR($1$) parser, that 
+A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that 
   is based on a jump-DPDA except for a DPDA\@.
 The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
   
 \begin{Theorem}
   \label{Theorem:JLR}
-  Let P be a LR(1) parser, then there exists a jump-DPDA J,
+  Let P be a LR parser, then there exists a jump-DPDA J,
   such that for every string~$α∈Σ^*$
   P accepts~$α$ if and only if J accepts~$α$
 \end{Theorem}
 
-The JLR is a jump-DPDA as~\cref{Defition:JDPDA} except that,
-  it has multiple states, as a normal DPDA\@.
-The elaborated model is obviously at least as expressive as the defined 
-  JLR (since we can always use only a single state), but will help us in defining
-  the LR-emulating jump-DPDA.
-  
-A JLR is a jump-DPDA~$A=⟨Q,Γ,γ₁,δ⟩$ where~$⟨Γ,γ₁⟩$ are defined 
-  as in~\cref{Definition:JDPDA},~$Q$ is the states set, and~$\delta$ 
-  is a partial function~$δ:Q⨉Γ⨉Σ↛Γ^*∪j(Γ)$
+For a LR parser~$\langle Q , \delta_{LR} , η_{LR} \rangle$ defined over a grammar~$\langle \Xi , \xi , R \rangle$
+A JLR is like the jump-DPDA~$A=⟨Γ,q_0,δ⟩$ defined in~\cref{Definition:JDPDA},
+  where~$\Gamma = Q \cup \Sigma $ are the stack elements,~$q_0 \in Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(\Sigma)$ is defined as follows:
+  \begin{itemize}
+   \item $\delta(q_i,\sigma)= j(\sigma)$ if~$\eta_{LR}(q_i,\sigma)=Reduce(r)$
+   \item $\delta(q_i,\sigma)= some \Gamma^*$ if~$\eta_{LR}(q_i,\sigma)=Shift(q_j)$
+  \end{itemize}
+
 
 JLR parser performs as a LR parser except for:
 \begin{itemize}
