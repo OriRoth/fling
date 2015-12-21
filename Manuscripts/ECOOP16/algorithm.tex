@@ -1,0 +1,80 @@
+An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nonterminals set, initial start element,production rules set respectively)
+  has three components:
+\begin{description}
+  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
+  \item[A stack] which may contain any member of~$Q$.
+  \item[Specification of state transition] with the aid of two tables:
+  \begin{description}
+    \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+    between the states of the automaton.
+    \item[Action table] which
+    defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
+  \end{description}
+\end{description}
+Every state~$q∈Q~$ is a set of~\emph{LR items}.
+  An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
+  i.e.,~$A→α·β$ is a LR item if~$A∈Ξ$,~$A→αβ∈R$,
+  the dot index in this example is~$|α|$.
+The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
+and then repetitively executes the following:
+Examine~$q∈Q$, the state at the top of the stack.
+If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
+
+Let~$σ∈Σ$ be the next input symbol.
+If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+
+If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$
+into the stack and consumes~$σ$.
+If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
+then the parser does not consume~$σ$.
+Instead it makes~$|β|$ pop operations.
+Let~$q'$ be the state at the top of the stack after these pops, then
+the parser pushes a state,~$q”$,
+defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
+i.e.,~$q”=η(q',ξ)$.
+
+The specifics of parser generation lies beyond our interest here.
+We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
+including SLR and LALR\@.
+
+LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$\epsilon$-moves 
+  fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need 
+  to convert it to the encode-able jump-DPDA\@.
+
+A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that 
+  is based on a jump-DPDA except for a DPDA\@.
+The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
+  
+\begin{Theorem}
+  \label{Theorem:JLR}
+  Let P be a LR parser, then there exists a jump-DPDA J,
+  such that for every string~$α∈Σ^*$
+  P accepts~$α$ if and only if J accepts~$α$
+\end{Theorem}
+
+For a LR parser~$\langle Q , \delta_{LR} , η_{LR} \rangle$ defined over a grammar~$\langle \Xi , \xi , R \rangle$
+A JLR is like the jump-DPDA~$A=⟨Γ,q_0,δ⟩$ defined in~\cref{Definition:JDPDA},
+  where~$\Gamma = Q \cup \Sigma $ are the stack elements,~$q_0 \in Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(\Sigma)$ is defined as follows:
+  \begin{itemize}
+   \item $\delta(q_i,\sigma)= j(\sigma)$ if~$\eta_{LR}(q_i,\sigma)=Reduce(r)$
+   \item $\delta(q_i,\sigma)= some \Gamma^*$ if~$\eta_{LR}(q_i,\sigma)=Shift(q_j)$
+  \end{itemize}
+
+
+JLR parser performs as a LR parser except for:
+\begin{itemize}
+  \item When we \textsf{reduce()} a jump operation is performed.
+    The jump will be for the corresponding look-ahead symbol.
+
+  \item On a shift op:
+  if we shift on a~$item∈\textsf{Kernel}$
+    then everything as usual.
+  Else,~$item∈\textsf{Closure(Kernel)}$
+      if the look-ahead of this item will be consumed by a kernel item:
+        a new Jump symbol will be inserted on the stack.
+      Else:
+        the look-ahead will cause a reduction of one of the kernel items,
+        in that case, the previous Jump symbol is still relevant.
+  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will supply
+~$\textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}$
+\end{itemize}
