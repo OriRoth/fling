@@ -37,7 +37,7 @@ defined by applying the transition function to~$ξ$, the left-hand side of the r
 i.e.,~$q”=η(q',ξ)$.
 
 The specifics of parser generation and specifically
-  calculating the sets~$Kernel_{q}$,$NonKernel_{q}$ lies beyond our interest here.
+  calculating the sets~$Kernel_{q}$ and $NonKernel_{q}$, lies beyond our interest here.
 We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
@@ -60,8 +60,8 @@ For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩
 A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
   where~$Γ= Q∪Σ~$ are the stack elements,~$q₀∈Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ)$ is defined as follows:
   \begin{itemize}
-   \item~$δ(qᵢ,σ)= j(σ)$ if~$ημ_{LR}(qᵢ,σ)=Reduce(r)$
-   \item~$δ(qᵢ,σ)= someΓ^*$ if~$ημ_{LR}(qᵢ,σ)=Shift(qⱼ)$
+   \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)$
+   \item~$δ(qᵢ,σ)= someΓ^*$ if~$η_{LR}(qᵢ,σ)=Shift(qⱼ)$
   \end{itemize}
 
 JLR parser performs as a LR parser except for:
