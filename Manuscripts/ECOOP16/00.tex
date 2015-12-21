@@ -13,28 +13,33 @@ Formal Language Recognition with the Java Type Checker
 \documentclass[a4paper,USenglish]{lipics}
 \usepackage{\jobname}
 
-%\author{Tome Levy⏎
-% Department of Computer Science⏎
-% Technion---Israel Institute of Technology⏎
-% \texttt{\small \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}}}
+\author{Joseph (Yossi) Gil \& Tomer Levy
+%  Department of Computer Science⏎
+%  Technion---Israel Institute of Technology⏎
+%  \texttt{\small
+%%    \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}
+%    \qquad
+%    \href{mailto:yogi@campus.technion.ac.il}{yogi@campus.technion.ac.il}
+%  }
+}
 
-\author{Anonymized for the submission}
+%\author{Anonymized for the submission}
 \begin{document}
 
 \maketitle
 \hfill
-  \parbox{40ex}{%
-    \begin{flushright}
-    \scriptsize\itshape ``\protect \Java   generics are 100\protect\% pure syntactic sugar,
-    and do not support meta-programming''%
-\footnote{%
-      stackoverflow
-      \tiny
-       \url{http://programmers.stackexchange.com/questions/95777/generic-programming-how-often-is-it-used-in-industry}
-    }
-    \end{flushright}
-  }
+\parbox{40ex}{%
+  \begin{flushright}
+    \scriptsize\itshape ``\Java   generics are 100\% pure syntactic sugar,
+    and do not support meta-programming''\footnotemark
+  \end{flushright}
+}
 \newline
+
+\footnotetext{Found on stackoverflow:
+  \tiny
+      \url{http://programmers.stackexchange.com/questions/95777/generic-programming-how-often-is-it-used-in-industry}
+    }
 
 \begin{abstract}
   \input{abstract}
@@ -101,8 +106,8 @@ In particular, this section demonstrates our claim (that may be
 \label{Section:zz}
 \input{zz}
 
-%\textbf{Acknowledgment.}
-%Inspiring correspondence with Gilad Bracha is gratefully acknowledged. 
+\textbf{Acknowledgment.}
+Inspiring correspondence with Gilad Bracha is gratefully acknowledged. 
 
 \bibliographystyle{abbrv}\small
 \bibliography{author-names,other-shorthands,%
