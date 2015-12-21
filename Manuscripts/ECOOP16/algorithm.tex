@@ -67,17 +67,19 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
 JLR parser performs as a LR parser except for:
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
-    The jump will be for the corresponding lookahead symbol.
+    The jump will be for the corresponding look-ahead symbol.
 
   \item On a shift op:
   if we shift on a~$item∈\textsf{Kernel}$
     then everything as usual.
   Else,~$item∈\textsf{Closure(Kernel)}$
-      if the lookahead of this item will be consumed by a kernel item:
+      if the look-ahead of this item will be consumed by a kernel item:
         a new Jump symbol will be inserted on the stack.
       Else:
-        the lookahead will cause a reduction of one of the kernel items,
+        the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
-  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding lookahead~$ℓ$ will supply
-~$\textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}$
+  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will 
+    supply~\[
+      \textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}.
+    \]
 \end{itemize}

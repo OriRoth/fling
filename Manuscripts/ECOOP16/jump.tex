@@ -1,4 +1,5 @@
 \begin{wrapfigure}[18]{r}{42ex}
+  \intextsep=0pt
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \lstset{style=numbered}
@@ -45,6 +46,7 @@ Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; i
   to~\cc{Pʹ} the generic type it extends.
 
 \begin{wrapfigure}[12]r{29ex}
+  \intextsep=0pt
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=29ex,left=-2ex]{jump-stack-push.listing}
 \end{wrapfigure}
@@ -79,6 +81,7 @@ The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ₁)$.
 
 \begin{wrapfigure}[12]r{42ex}
+  \intextsep=0pt
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}

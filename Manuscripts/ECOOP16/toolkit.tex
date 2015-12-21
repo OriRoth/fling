@@ -63,7 +63,7 @@ Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
   \item An~\kk{abstract} class encodes a set (alternatively, one can use \kk{interface}s).
     Abstract classes that extend it encode
       subsets, while~\kk{final} classes encode set members.
-  \item The interest of frugal management of namespaces is served
+  \item The interest of frugal management of name-spaces is served
     by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of~$Y$.
   \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command
@@ -115,7 +115,10 @@ A \Java type encoding of this definition of function~$f$
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
 Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
-  error because~$f(r₂, s₂)=⊥$.
+error because 
+\[
+    f(r₂, s₂)=⊥.
+\]
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
@@ -139,6 +142,7 @@ The encoding of sets of unbounded size require means for creating an unbounded
 Genericity can be employed to serve this end.
 
 \begin{wrapfigure}[8]{r}{31ex}
+  \intextsep=0pt
   \caption{\label{Figure:id}%
   Covariant return type of function \cc{id()}
   with \Java generics.
