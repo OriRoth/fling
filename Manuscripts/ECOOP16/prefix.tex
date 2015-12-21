@@ -34,7 +34,7 @@ We will use the same running example, defined by~\cref{Table:A}.
 The main types here are a subset of the previously defined main types.
 
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=54ex]{prefix-proof.configuration.listing}
+  \javaInput[,minipage,width=54ex]{prefix-proof.configuration.listing}
 \end{quote}
 
 First, type \cc{$ΣΣ$} is removed.
@@ -52,7 +52,7 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
 In A there are two such types:
 
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=45ex]{prefix-proof.many.listing}
+  \javaInput[,minipage,width=45ex]{prefix-proof.many.listing}
 \end{quote}
 
 Note, that the type parameters of the former types hasn't changed,
@@ -64,7 +64,7 @@ Note, that the type parameters of the former types hasn't changed,
   \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}), such that
   illegal prefixes won't compile}
-  \javaInput[left=-2ex,minipage,width=45ex]{prefix-proof.cases.listing}
+  \javaInput[,minipage,width=45ex]{prefix-proof.cases.listing}
 \end{wrapfigure}
 
 In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method
@@ -99,5 +99,5 @@ The use of sidekicks is still allowed, and recommended to improve code readabili
 \begin{figure}[htbp]
   \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})
     that doesn't all illegal prefixes}
-  \javaInput[left=-2ex,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+  \javaInput[,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
 \end{figure}

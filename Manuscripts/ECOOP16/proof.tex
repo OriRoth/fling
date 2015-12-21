@@ -94,7 +94,7 @@ BNF for~$L$; neither the BNF nor the above representation are material for the p
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
   where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=54ex]{proof.headers.listing}
+  \javaInput[,minipage,width=54ex]{proof.headers.listing}
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
@@ -114,7 +114,7 @@ so as to ensure that they are (the type version of) pointers into the actual sta
 
 In the running example,~\cc{C} is defined as:
 \begin{quote}
-  \javaInput[left=0ex,minipage,width=67ex]{proof.configuration.listing}
+  \javaInput[,minipage,width=67ex]{proof.configuration.listing}
 \end{quote}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
@@ -131,7 +131,7 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
+  \javaInput[,minipage,width=45ex]{proof.many.listing}
 \end{quote}
 This excerpt shows inter-dependency in the actual parameters to the type~\cc{C}, e.g.,
   the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
@@ -152,7 +152,7 @@ It is the duty of the generated code to instantiate these types
   \intextsep=0pt
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
-  \javaInput[left=-2ex,minipage,width=45ex]{proof.cases.listing}
+  \javaInput[,minipage,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
 Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
   the remaining~$\textsf{jump}(γᵢ)$ parameters of~\cc{C}
@@ -267,5 +267,5 @@ Overall, there are six kinds of entries in a transition table:
 
 \begin{figure}[htbp]
   \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
-  \javaInput[left=-43ex,minipage,listing options={numbers=left,numbersep=5pt},width=\textwidth]{proof.full.listing}
+  \javaInput[minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
 \end{figure}
