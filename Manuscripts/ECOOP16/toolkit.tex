@@ -115,7 +115,10 @@ A \Java type encoding of this definition of function~$f$
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
 Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
-  error because~$f(r₂, s₂)=⊥$.
+error because 
+\[
+    f(r₂, s₂)=⊥.
+\]
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
