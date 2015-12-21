@@ -75,6 +75,8 @@ JLR parser performs as a LR parser except for:
       Else:
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
-  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will supply
-~$\textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}$
+  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will 
+    supply~\[
+      \textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}.
+    \]
 \end{itemize}

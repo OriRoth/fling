@@ -114,7 +114,7 @@ so as to ensure that they are (the type version of) pointers into the actual sta
 
 In the running example,~\cc{C} is defined as:
 \begin{quote}
-  \javaInput[left=0ex,minipage,width=63ex]{proof.configuration.listing}
+  \javaInput[left=0ex,minipage,width=67ex]{proof.configuration.listing}
 \end{quote}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
@@ -131,7 +131,7 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[left=-4ex,minipage,width=45ex]{proof.many.listing}
+  \javaInput[left=-2ex,minipage,width=45ex]{proof.many.listing}
 \end{quote}
 This excerpt shows inter-dependency in the actual parameters to the type~\cc{C}, e.g.,
   the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
@@ -149,6 +149,7 @@ It is the duty of the generated code to instantiate these types
   these implicit demands.
 
 \begin{wrapfigure}[14]r{45ex}
+  \intextsep=0pt
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
   \javaInput[left=-2ex,minipage,width=45ex]{proof.cases.listing}
