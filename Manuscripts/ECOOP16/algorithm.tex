@@ -61,10 +61,14 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
   where~$Γ= Q∪Σ~$ are the stack elements,~$q₀∈Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ)$ is defined as follows:
   \begin{itemize}
    \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)$
-   \item~$δ(qᵢ,σ)= someΓ^*$ if~$η_{LR}(qᵢ,σ)=Shift(qⱼ)$
+   \item~$δ(qᵢ,σ)= \text{some }Γ^*\text{ if }η_{LR}(qᵢ,σ)=Shift(qⱼ)$
   \end{itemize}
 
+
+\subsection{Informally}
+
 JLR parser performs as a LR parser except for:
+
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
     The jump will be for the corresponding look-ahead symbol.
@@ -82,4 +86,21 @@ JLR parser performs as a LR parser except for:
     supply~\[
       \textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}.
     \]
+  \item[Parsing] can always be added to this model, because when we get to a item~$A\rightarrow\alpha\cdot\B,a$, and we shift on
+    one of the items~$B\rightarrow\cdot\beta,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
+    if we shift on another item~$A\rightarrow\cdot\gamma,a/b$?)
 \end{itemize}
+\paragraph{Problem 1} if we shift on more than one items, with different lookaheads, and put multiple terminals on the stack,
+  who should we put first? the ones that are not first are the problem; if we jump to them, we still got other terminals on the top of the stack,
+  out invariant says we always want the top of the stack to be a state element.
+  
+\paragraph{Solution 1} if save on the stack a single element for the ``multiple shifting items'' which will be of type:~$\mathcal{P}(\Sigma)$
+  and we transform the jump operation on~$\sigma\in\Sigma$to be ``Remove elements from the stack until a~$\chi\in\mathcal{P}(\Sigma)$,~$\sigma\in\chi$
+  is popped.
+  
+\paragraph{Problem 2} When we~$\mathsf{Jump}(\sigma)$ , we consume~$\sigma$, and remove from stack as expected,
+  the problem is, the corresponding lookaheads symbol should be ''consumed`` and the shift on $\sigma$ need to happen again.
+  
+\paragraph{Solution 2} Instead of pushing subsets of~$\Sigma$ we push partial mappings~$Σ↛Q^*$ (where~$\Gamma=Q\cup(Σ↛Q^*)$)
+  jumping is still defined on symbols~$\sigma\in\Sigma$, and when the jump is performed we pop from the stack until we popped
+  some~$f\in(Σ↛Q^*)$ for which~$f(\sigma)\neq\bot$, and then push~$f(\sigma)$ back onto the stack.
