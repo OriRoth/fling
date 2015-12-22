@@ -3,7 +3,7 @@
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \lstset{style=numbered}
-  \javaInput[minipage,left=-2ex]{jump-stack.listing}
+  \javaInput[minipage,]{jump-stack.listing}
 \end{wrapfigure}
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
@@ -48,7 +48,7 @@ Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; i
 \begin{wrapfigure}[12]r{29ex}
   \intextsep=0pt
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
-  \javaInput[minipage,width=29ex,left=-2ex]{jump-stack-push.listing}
+  \javaInput[minipage,width=29ex,]{jump-stack-push.listing}
 \end{wrapfigure}
 
 Specifically, \cc{JS.P} takes
@@ -83,7 +83,7 @@ The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
 \begin{wrapfigure}[12]r{42ex}
   \intextsep=0pt
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
-  \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
+  \javaInput[minipage,width=42ex,]{jump-stack-example.listing}
 \end{wrapfigure}
 
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,

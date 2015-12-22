@@ -27,12 +27,12 @@ We argue that~$g$ can
     &
     \hspace{-1ex}
     \parbox[c]{0.64\linewidth}{%
-      \javaInput[left=0ex]{gamma.listing}
+      \javaInput[]{gamma.listing}
     }%
     &
     \hspace{-18ex}
     \parbox[c]{0.84\linewidth}{%
-      \javaInput[left=0ex,toprule=3pt,leftrule=3pt,bottomrule=3pt]{gamma-example.listing}
+      \javaInput[,toprule=3pt,leftrule=3pt,bottomrule=3pt]{gamma-example.listing}
     }%
 ⏎
 \textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
@@ -100,7 +100,7 @@ A \Java type encoding of this definition of function~$f$
   \begin{tabular}{cc}
     \hspace{-3.5ex}
     \parbox[c]{0.57\linewidth}{%
-    \javaInput[left=0ex]{binary-function.listing}
+    \javaInput[]{binary-function.listing}
     }
       &
     \hspace{-16ex}
@@ -147,7 +147,7 @@ Genericity can be employed to serve this end.
   Covariant return type of function \cc{id()}
   with \Java generics.
   }
-  \javaInput[left=-2ex,minipage,width=31ex]{id.listing}
+  \javaInput[,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
 
 \Cref{Figure:id} shows a genericity based recipe for
@@ -167,7 +167,7 @@ It is also possible to encode with \Java generic types
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
-  \javaInput[minipage,left=-2ex,listing style=numbered]{stack-use-cases.listing}
+  \javaInput[minipage,,listing style=numbered]{stack-use-cases.listing}
 \end{figure}
 
 In line 3 of the figure, a stack with five elements is created:
@@ -213,7 +213,7 @@ gives the implementation of these types.
     \parbox[c]{0.3\linewidth}{%
       \input ../Figures/stack-classification.tikz
     } &
-    \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage,left=-2ex]{stack.listing}}⏎
+    \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage,]{stack.listing}}⏎
     \textbf{(a)} type hierarchy &
     \hspace{-3ex} \parbox[t]{63ex}{%
     \textbf{(b)} implementation (except
@@ -245,7 +245,7 @@ Since \Java forbids specialization of generics, in lieu we use covariant overloa
 
 \begin{wrapfigure}[6]r{36ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
-  \javaInput[minipage,left=-2ex]{mammal.listing}
+  \javaInput[minipage,]{mammal.listing}
 \end{wrapfigure}
 
 \cref{Figure:generic} shows that a similar covariant change is possible 
@@ -265,7 +265,7 @@ Overloading gives rise to a third idiom for partial emulation of conditionals, a
   \caption{Peeping into the stack}%
   \label{Figure:peep}%
   \lstset{style=numbered}
-  \javaInput[minipage,left=-2ex]{peep.listing}
+  \javaInput[minipage,]{peep.listing}
 \end{figure}
 
 The figure depicts type \cc{Peep} and overloaded versions of \cc{peep()} which 
