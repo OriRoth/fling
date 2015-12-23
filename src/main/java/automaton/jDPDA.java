@@ -9,87 +9,86 @@ import automaton.A.C.¤;
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}
 class A { // Encode automaton ¢$A$¢
-  // begin{headers}
+  //begin{headers}
   private static class ΣΣ   // Encodes set ¢$\Sigma^*$¢, type of reject
     { /*  empty*/ } 
   static class L extends ΣΣ // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
     { /* empty*/ }
-  // end{headers}
-
+  //end{headers}
   // Configuration of the automaton
-  /// begin{configuration}
+  //begin{configuration}
   interface C<      // Generic parameters:
-    Rest extends C, // The rest of the stack, for pop operations 
-    JRγ1 extends C, // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma1)$¢, may be rest, or anything in it. 
-    JRγ2 extends C  // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma2)$¢, may be rest, or anything in it.  
+    Rest extends C, // The rest of the stack, for pop or ¢$\textsf{jump}(\gamma)$¢ operations
+    JRγ1 extends C, // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_1)$¢, may be rest, or anything in it. 
+    JRγ2 extends C  // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_2)$¢, may be rest, or anything in it.  
   >
   {
     ΣΣ $();        // δ transition on end of input; invalid language by default 
-    C a();         // δ transition on ¢a¢; dead end by default
-    C b();         // δ transition on ¢b¢; dead end by default
-    C c();         // δ transition on ¢c¢; dead end by default
+    C σ1();         // δ transition on ¢$\sigma_1$¢; dead end by default
+    C σ2();         // δ transition on ¢$\sigma_2$¢; dead end by default
+    C σ3();         // δ transition on ¢$\sigma_3$¢; dead end by default
     public interface E extends C<¤,¤,¤> { /* Empty stack configuration */ }
     interface ¤ extends C<¤,¤,¤> { /* Error configuration. */ }
-  // end{configuration}
-  //begin{many}
-     interface Cγ1< // Configuration when ¢$\gamma1$¢ is at top
-       Rest extends C, JRγ1 extends C, JRγ2 extends C
-     > extends 
-       C<Rest, JRγ1, JRγ2>   
-     // end{many} 
-       ,γ1a_Push_γ1γ1γ2<Rest,JRγ1,JRγ2>
-     // begin{many}
-     {
-     // end{many}
-       @Override L $();
-     // begin{many}
-     }
-     // end{many}
-  //begin{many}
-     interface Cγ2< // Configuration when ¢$\gamma2$¢ is at top
-       Rest extends C, JRγ1 extends C, JRγ2 extends C
-     > extends 
-       C<Rest, JRγ1, JRγ2>
-     // end{many}
-       ,γ2a_Push_γ2γ2<Rest,JRγ1,JRγ2>
-     // begin{many}
-    { 
-     // end{many}
-       @Override Rest b();
-       @Override JRγ1 c();
-  //begin{many}
+    //end{configuration}
+    //begin{many}
+    interface Cγ1< // Configuration when ¢$\gamma_1$¢ is at top
+      Rest extends C, JRγ1 extends C, JRγ2 extends C
+    > extends 
+      C<Rest, JRγ1, JRγ2>   
+    //end{many} 
+      ,γ1a_Push_γ1γ1γ2<Rest,JRγ1,JRγ2>
+    //begin{many}
+    {
+    //end{many}
+      @Override L $();
+    //begin{many}
     }
-  // end{many}
+    //end{many}
+    //begin{many}
+    interface Cγ2< // Configuration when ¢$\gamma_2$¢ is at top
+      Rest extends C, JRγ1 extends C, JRγ2 extends C
+    > extends 
+      C<Rest, JRγ1, JRγ2>
+    //end{many}
+      ,γ2a_Push_γ2γ2<Rest,JRγ1,JRγ2>
+    //begin{many}
+    { 
+    //end{many}
+      @Override Rest σ2();
+      @Override JRγ1 σ3();
+    //begin{many}
+    }
+    //end{many}
     interface γ1a_Push_γ1γ1γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-      // Sidekick of ¢$\delta(\gamma_1,a)=\textsf{push}(\gamma_1,\gamma_1,\gamma_2)$¢
-      Cγ2<Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2>,Cγ1<Rest, JRγ1, JRγ2 >,JRγ2> a();
+      // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1,\gamma_2)$¢
+      Cγ2<Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2>,Cγ1<Rest, JRγ1, JRγ2 >,JRγ2> σ1();
     }
     interface γ2a_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
-      // Sidekick of ¢$\delta(\gamma_2,a)=\textsf{push}(\gamma_2,\gamma_2)$¢
-      Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> a();
+      // Sidekick of ¢$\delta(\gamma_2,\sigma_1)=\textsf{push}(\gamma_2,\gamma_2)$¢
+      Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ1();
     }
   }
   //begin{many}
   static Cγ1<E,¤,¤> build = null;
-  // end{many}
+  //end{many}
   //end{full}
   //begin{cases}
-  static void isL( L l) {/**/}
+  static void isL(L l) {/**/}
   static void accepts() {
     isL(A.build.$());
-    isL(A.build.a().c().$());
-    isL(A.build.a().b().$()); 
-    isL(A.build.a().a().b().c().a().b().$()); 
+    isL(A.build.σ1().σ3().$());
+    isL(A.build.σ1().σ2().$()); 
+    isL(A.build.σ1().σ1().σ2().σ3().σ1().σ2().$()); 
   }
   static void rejects() {
-    isL(A.build.a().$()); 
-    isL(A.build.b().a().$());
-    isL(A.build.b().b().$());
-    isL(A.build.a().b().a().$());  
-    isL(A.build.a().b().b().a().$());  
+    isL(A.build.σ1().$()); 
+    isL(A.build.σ2().σ1().$());
+    isL(A.build.σ2().σ2().$());
+    isL(A.build.σ1().σ2().σ1().$());  
+    isL(A.build.σ1().σ2().σ2().σ1().$());  
     //end{cases}
-    isL(A.build.a().b().b().b().a().$()); 
-    isL(A.build.a().b().b().b().b().b().b().b().b().a().$());  
+    isL(A.build.σ1().σ2().σ2().σ2().σ1().$()); 
+    isL(A.build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
     //begin{cases}
   }
   //end{cases}

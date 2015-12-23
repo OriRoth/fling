@@ -61,15 +61,15 @@ Our proof relies on a special kind of realtime automata,
   of a \textsf{jump operation}).
 \end{Definition}
 
-\begin{wraptable}r{33ex}
-  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴a,b,c❵$,~$Γ=❴γ₁,γ₂❵$} where~$γ₁$ is the initial element
+\begin{wraptable}r{36ex}
+  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
   \begin{tabular}{c|ll}
-	& \hfill~$γ₁$ 			& \hfill~$γ₂$⏎
+  & \hfill~$γ₁$ & \hfill~$γ₂$⏎
     \midrule
-$a$ 	& $\textsf{push}(γ₁,γ₁,γ₂)$ 	& $\textsf{push}(γ₂,γ₂)$⏎
-$b$ 	& \hfill$\bot$ 			& $\textsf{push}(\epsilon)$⏎
-$c$ 	& \hfill$\bot$ 			& $\textsf{jump}(γ₁)$⏎
-$\$$ 	& $\textsf{accept}$ 		& $\textsf{reject}$ ⏎
+$σ₁$ & $\textsf{push}(γ₁,γ₁,γ₂)$ & $\textsf{push}(γ₂,γ₂)$⏎
+$σ₂$ & \hfill$⊥$ & $\textsf{push}(ε)$⏎
+$σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
+$\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
   \end{tabular}
 \end{wraptable}
 
@@ -79,50 +79,58 @@ As it turns out, every DCFG language is recognized by some jDPDA, and conversely
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
-Henceforth, let~$k =|\Gamma|$,~$ℓ=|Σ|$.
+Henceforth, let~$k =|Γ|$,~$ℓ=|Σ|$.
 The simple~$k=2$,~$ℓ=3$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{%
   Incidentally,
 \[
-L = {\sigma_{2}}\cup\left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r-1} \; | \; r>0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
+L = \left❴ \left(σ₁^{n₁}σ₂^{m₁}σ₃|σ₁^{n₁}σ₂^{n₁}\right) \left(σ₁^{n₂}σ₂^{m₂}σ₃|σ₁^{n₂}σ₂^{n₂}\right) ⋯ \left(σ₁^{n_r}σ₂^{m_r}σ₃|σ₁^{n_r}σ₂^{n_r}\right) \; | \; r≥0∧∀r', 1≤r'≤r⇒n_{r'}>m_{r'}\right❵
 \]
-which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is a non-ambiguous, deterministic
-BNF for~$L$; neither the BNF nor the above representation are material for the proof.
+which is clearly not-regular; the equivalent BNF for~$L$ is:~$S→W S \; | \;ε\; ; W→D \; | \; A Dσ₃ \; ; \; D→σ₁Dσ₂ \;|\;σ₁σ₂ \; ; \; A→Aσ₁\;|\;σ₁$.
+Neither the BNF nor the representation are material for the proof.
 }
 
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
   where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
 \begin{quote}
-  \javaInput[,minipage,width=54ex]{proof.headers.listing}
+  \javaInput[minipage,width=55ex]{proof.headers.listing}
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
 
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
-  but~$2k+1$ other parameters are required:
+  but~$k+1$ other parameters are required:
 \begin{itemize}
-  \item \cc{Rest} a type encoding of the stack after a pop,
-  \item~$k$ types, named \cc{J$γ$1}, … ,\cc{J$γ${}$k$}, encoding the stack
-        after~$\textsf{jump}(γ₁)$, … ,$\textsf{jump}(γₖ)$, and,
+  \item \cc{Rest} a type encoding of the stack after a pop, and,
   \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
-    after~$\textsf{jump}{γ₁}$,…~$\textsf{jump}(γₖ)$.
+    after~$\textsf{jump}(γ₁)$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
+
+Note that these~$k+1$ parameters are sufficient for describing a configuration,
+  i.e., if the top is~$γⱼ$, then for all~$j≠i~$ 
+\[
+  \textsf{jump}(γⱼ) =  \cc{Rest.}\textsf{jump}(γⱼ)
+\] 
+whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$ (which is also required by a pop operation).
+
 All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
-so as to ensure that they are (the type version of) pointers into the actual stack.
+  so as to ensure that they are (the type version of) pointers into the actual stack,
+  not a trivial task, as will be seen shortly.
 
 In the running example,~\cc{C} is defined as:
 \begin{quote}
-  \javaInput[,minipage,width=67ex]{proof.configuration.listing}
+  \javaInput[minipage,width=63ex,left=-2ex]{proof.configuration.listing}
 \end{quote}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
 
-Type~\cc{C} defines~$ℓ+1$ functions (3 in the example), one for each possible input character.
+Type~\cc{C} defines~$ℓ+1$ functions (4 in the example), one for each possible input character,
+  and one for the end marker defined as \$.
 Since~\cc{C} encodes an abstract configuration, return types of functions in it
-  are appropriate defaults which intentionally fail to emulate the automaton's execution.
+  are the appropriate defaults which intentionally fail to emulate the automaton's execution.
   The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
   the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
 
@@ -132,41 +140,25 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[,minipage,width=45ex]{proof.many.listing}
+  \javaInput[minipage,width=45ex,left=-2ex]{proof.many.listing}
 \end{quote}
-This excerpt shows inter-dependency in the actual parameters to the type~\cc{C}, e.g.,
-  the instantiation of~\cc{C} in \cc{C$γ$1} employs only three
-    independent types: \cc{Rest}, \cc{J$γ$1}, and \cc{J$γ$2}.
-Selection of the parameters enforces the intended constraints of each of these.
-Think, for example, on a stack obtained by pushing \cc{$γ$1} on \cc{Rest}.
-In such a stack, the result of~$\textsf{jump}(γ₁)$ must be \cc{Rest},
-  and so, another parameter is redundant.
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
-in general ‟Top of Stack" types take~$k+1$ parameters:
-\cc{Rest} and the results of~$\cc{Rest.}\textsf{jump}(γᵢ)$,~$i=1,…,k$.
-It is the duty of the generated code to instantiate these types
-  only with parameters \cc{Rest},\cc{JR$γ$1}, … ,\cc{JR$γ${}$k$} that satisfy
-  these implicit demands.
+in general ‟Top of Stack" types take the aforementioned ~$k+1$ parameters.
 
 \begin{wrapfigure}[14]r{45ex}
-  \intextsep=0pt
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
-  \javaInput[,minipage,width=45ex]{proof.cases.listing}
+  \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
-Note that these~$k+1$ parameters are sufficient for instantiating the base type~\cc{C}, since
-  the remaining~$\textsf{jump}(γᵢ)$ parameters of~\cc{C}
-  are known when the top of the stack is known.
-If the top is~$γⱼ$, then for all~$j≠i~$ \[
-  \textsf{jump}(γⱼ) =
-  \cc{Rest.}\textsf{jump}(γⱼ)
-\] whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$.
 
-The code also defines the \kk{static} variable \cc{build}, the starting point
-of all fluent API call chains to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
+The method signatures of these types are generated using the mentioned parameters.
+The generating of methods will be discussed next.
+
+The code defines the \kk{static} variable \cc{build}, the starting point
+of all fluent API call chains, to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
   the starting configuration of the automaton is a stack whose top is~$γ₁$,
-  its rest is empty (\cc{E}).
+  and its \cc{Rest} parameter is empty (\cc{E}).
 Any of the two jumps possible on this rest results with,~\cc{¤},
   an undefined stack.
 Examples of accepting and rejecting call chains starting at \cc{A.build}
@@ -178,7 +170,7 @@ It remains to show the type encoding of~$δ$,
 Overall, there are a total of~$k·(ℓ+1)$
   entries in a transition table such as \cref{Table:A}.
 Conceptually, these are encoded by selecting the correct return
-  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the ‟Top of Stack” types.
+  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the $k$ ‟Top of Stack” types.
 Thanks to inheritance, we need to do so only in the cases that this return type is different from the
   default.
 
@@ -191,62 +183,62 @@ Overall, there are six kinds of entries in a transition table:
   there is little that clients can do with this result.
   \item[\textsf{accept}]
   The only case in which fluent call chain ending with \cc{\$()} can return
-  type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
-  changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
-  types of fluent API call chains are determined statically.}
+    type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
+    changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
+    types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
-  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₂$.
-  We therefore add to the body of type \cc{C$γ$2} the line
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ_1$.
+  We therefore add to the body of type \cc{C$γ$1} the line
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
   \end{JAVA}
   \item[$⊥$]
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
-  the transition function returns~$⊥$.
-  In~$A$ this occurs when the top of the stack is~$γ₂$ and a~$σ₁$ character is read.
+    the transition function returns~$⊥$.
+  In~$A$ this occurs when the top of the stack is~$γ_1$ and one of~$σ₁$ or~$σ_2$ is read.
   To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
-  the inherited return type (l.17 \cref{Figure:A}) is the raw~\cc{C}.
+    the inherited return type (l.15 \cref{Figure:A}) is the raw~\cc{C}.
   Subsequent calls in the chain will all receive and return a raw~\cc{C}
-  (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ are functions in~\cc{C} that return a raw~\cc{C}).
+    (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ are functions in~\cc{C} that return a raw~\cc{C}).
   Therefore, the final \cc{\$()} will reject.
   \par
   Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
-  a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
+    a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
   In our type encoding these are handled by the special
-  types~\cc{E} and~\cc{¤} (ll.19--20 ibid), both extending~\cc{C} without
-  overriding any of its methods. Again, remaining part of the call chain will stick to
-  raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
+    types~\cc{E} and~\cc{¤} (ll.17--18 ibid), both extending~\cc{C} without
+    overriding any of its methods. Again, remaining part of the call chain will stick to
+    raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
   \item[$\textsf{jump}(γᵢ)$]
   The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
-  operations particularly simple.
+    operations particularly simple.
   All that is required is to covariantly change the return type of the
-  appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
-  (recall that a jump occurs after popping the current element from the stack, so
-  we refer to \cc{JR} type parameters rather than~\cc{J}'s).
+    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
+    (recall that a jump occurs after popping the current element from the stack, so
+    we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
-  In \cref{Table:A} we find that~$δ(γ₂,σ₂) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
-  in \cc{C$γ$2} (l.39) is \cc{JR$γ$1}.
-  \item[$\textsf{push}(\zeta)$]
+  In \cref{Table:A} we find that~$δ(γ₂,σ_3) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
+  in \cc{C$γ$2} (l.34) is \cc{JR$γ$1}.
+  \item[$\textsf{push}(ζ)$]
   Push operations are the most complex, since they involve a pop of the top stack element,
-  and pushing any number, including zero, of new elements.
-  The challenge is in constructing the correct $k+1$-parameter instantiation of~\cc{C},
-  from the current parameters of the type.
-  Each of these $k+1$ is also an instantiation of~\cc{C} which may require more such
-  parameters.
+    and pushing any number, including zero, of new elements.
+  The challenge is in constructing the correct~$k+1$-parameter instantiation of~\cc{C},
+    from the current parameters of the type.
+  Each of these~$k+1$ is also an instantiation of~\cc{C} which may require more such
+    parameters.
   Even though the number of ingredients is small, the resulting type expressions
-  tend to be excessively long and unreadable.
+    tend to be excessively long and unreadable.
   \par
   The predicament is ameliorated a bit by the idea,
-  demonstrated above with auxiliary type~\cc{Pʹ}
-  (\cref{Figure:jump-stack-push}),
-  of delegating the task of creating a complex type to an auxiliary
-  generic type.
+    demonstrated above with auxiliary type~\cc{Pʹ}
+    (\cref{Figure:jump-stack-push}),
+    of delegating the task of creating a complex type to an auxiliary
+    generic type.
   The task of this sidekick is simplified if some of its generic
   parameters are sub-expressions that recur in the desired
   result.
   \par
-  Cases in point
+  Cases in point % TOMER HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESXXXXXXXXXXXXXXXXXXXXXXXXX<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>
   are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
   The corresponding sidekick types,
   (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1$σ$2\_Push\_$γ$2$γ2$})
@@ -259,7 +251,7 @@ Overall, there are six kinds of entries in a transition table:
   overrides of \cc{$σ$1()} and \cc{$σ$2()}.
   \par
   More generally, economy of expression may require that for each case
-    of~$δ(γ,σ)=\textsf{push}(\zeta)$ in the transition table,
+    of~$δ(γ,σ)=\textsf{push}(ζ)$ in the transition table,
     one creates a sidekick type which
       overrides the appropriate \cc{$σ$()} function.
   The appropriate \cc{C$γ$} type then inherits the definition

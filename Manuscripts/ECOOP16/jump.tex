@@ -38,9 +38,8 @@ e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
 \begin{wrapfigure}[12]r{29ex}
-  \intextsep=0pt
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
-  \javaInput[minipage,width=29ex,]{jump-stack-push.listing}
+  \javaInput[minipage,width=29ex,left=-2ex]{jump-stack-push.listing}
 \end{wrapfigure}
 
 Type \cc{JS.P} (lines 15--22 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
@@ -80,9 +79,8 @@ The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ₁)$.
 
 \begin{wrapfigure}[12]r{42ex}
-  \intextsep=0pt
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
-  \javaInput[minipage,width=42ex,]{jump-stack-example.listing}
+  \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
 
 Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
