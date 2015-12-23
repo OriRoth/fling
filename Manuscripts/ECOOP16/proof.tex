@@ -62,13 +62,14 @@ Our proof relies on a special kind of realtime automata,
 \end{Definition}
 
 \begin{wraptable}r{33ex}
-  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂❵$,~$Γ=❴γ₁,γ₂❵$} where~$\gamma_1$ is the initial element
+  \caption{\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴a,b,c❵$,~$Γ=❴γ₁,γ₂❵$} where~$γ₁$ is the initial element
   \begin{tabular}{c|ll}
-             & \hfill~$γ₁$ & \hfill~$γ₂$⏎
+	& \hfill~$γ₁$ 			& \hfill~$γ₂$⏎
     \midrule
-$σ₁$ & $\textsf{push}(γ₁,γ₁)$ & $\hfill ⊥$⏎
-$σ₂$ & $\textsf{push}(γ₂,γ₂)$ & $\textsf{jump}(γ₁)$⏎
-$\$$ & $\textsf{reject}$ & $\textsf{accept}$⏎
+$a$ 	& $\textsf{push}(γ₁,γ₁,γ₂)$ 	& $\textsf{push}(γ₂,γ₂)$⏎
+$b$ 	& \hfill$\bot$ 			& $\textsf{push}(\epsilon)$⏎
+$c$ 	& \hfill$\bot$ 			& $\textsf{jump}(γ₁)$⏎
+$\$$ 	& $\textsf{accept}$ 		& $\textsf{reject}$ ⏎
   \end{tabular}
 \end{wraptable}
 
@@ -78,13 +79,13 @@ As it turns out, every DCFG language is recognized by some jDPDA, and conversely
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
 Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
 
-Henceforth, let~$k =|Σ|$,~$ℓ=|Σ|$.
-The simple~$k=2$,~$ℓ=2$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
+Henceforth, let~$k =|\Gamma|$,~$ℓ=|Σ|$.
+The simple~$k=2$,~$ℓ=3$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
 Let~$L$ be the language~$L$ recognized by~$A$.%
 †{%
   Incidentally,
 \[
-L = \left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r} \; | \; r≥0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
+L = {\sigma_{2}}\cup\left❴ σ₁^{n₁}σ₂^{2m₁} σ₁^{n₂}σ₂^{2m₂} ⋯ σ₁^{n_r}σ₂^{2m_r-1} \; | \; r>0∧∀r', 1≤r'≤r⇒\sum_{i=1}^{r'} nᵢ≥\sum_{i=1}^{r'} mᵢ\right❵
 \]
 which is clearly not-regular; the equivalence of DCFG and jDPDAs means also that there is a non-ambiguous, deterministic
 BNF for~$L$; neither the BNF nor the above representation are material for the proof.
