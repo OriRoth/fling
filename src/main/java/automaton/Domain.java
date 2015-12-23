@@ -85,10 +85,10 @@ public class Domain {
   private interface Pʹ<
   // ¢$2+k+1$¢ generic arguments: 
     Top extends Γ,   
-    Rest extends JS<?,?,?>, 
-    J_γ1 extends JS<?,?,?>, 
-    J_γ2 extends JS<?,?,?>,
-    Me extends JS<?,?,?>
+    Rest extends JS, 
+    J_γ1 extends JS, 
+    J_γ2 extends JS,
+    Me extends JS
   > extends JS<Rest, J_γ1, J_γ2> {
      @Override public Top top();
      @Override P<γ1, Me, Me, J_γ2> γ1();
@@ -96,14 +96,15 @@ public class Domain {
   }
 
   public interface JS<  // ¢$1+k$¢ generic parameters
-      Rest extends JS<?,?,?>, 
-      J_γ1 extends JS<?,?,?>, 
-      J_γ2 extends JS<?,?,?> 
+    //As a convention, we use JS with its raw type when no parameters are introduced 
+      Rest extends JS, 
+      J_γ1 extends JS, 
+      J_γ2 extends JS 
   > {
     Γʹ top();
     Rest pop();
-    JS<?,?,?> γ1();
-    JS<?,?,?> γ2();
+    JS γ1();
+    JS γ2();
     J_γ1 jump_γ1();
     J_γ2 jump_γ2();
     interface ¤ extends JS<¤, ¤, ¤> {
@@ -121,9 +122,9 @@ public class Domain {
     public static final E empty = null;
     public interface P<// ¢$2+k$¢ generic arguments:
         Top extends Γ, 
-        Rest extends JS<?,?,?>,    
-        J_γ1 extends JS<?,?,?>, 
-        J_γ2 extends JS<?,?,?>
+        Rest extends JS,    
+        J_γ1 extends JS, 
+        J_γ2 extends JS
     > extends Pʹ<Top, Rest, J_γ1, J_γ2, 
           P<Top, Rest, J_γ1, J_γ2>
     > { /**/ }

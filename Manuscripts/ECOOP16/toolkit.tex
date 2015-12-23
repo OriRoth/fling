@@ -181,12 +181,17 @@ In the figure these are either class~\cc{$γ$1}
 or class \cc{$γ$2} (both defined in \cref{Figure:unary-function}).
 A call to function \cc{$γ$}$i$ pushes the type \cc{$γ$}$i$
   into the stack, for~$i=1,$.
-The expression⏎
-  \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
+The expression
+\[
+  \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}
+\]
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 This expression's type is that of variable~\cc{\_1}, i.e.,⏎
-\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
+\[
+ \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}
+\]
+
 A recurring building block occurs in this type: 
   generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
@@ -243,7 +248,7 @@ Since \Java forbids specialization of generics, in lieu we use covariant overloa
   return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
   return type of \cc{top()} in \cref{Figure:stack-encoding}).
 
-\begin{wrapfigure}[6]r{36ex}
+\begin{wrapfigure}[6]r{38ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
   \javaInput[minipage,]{mammal.listing}
 \end{wrapfigure}

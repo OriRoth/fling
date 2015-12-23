@@ -1,9 +1,7 @@
-\begin{wrapfigure}[18]{r}{42ex}
-  \intextsep=0pt
+\begin{wrapfigure}[19]{r}{44ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
-  \lstset{style=numbered}
-  \javaInput[minipage,]{jump-stack.listing}
+  \javaInput[minipage,listing style=numbered]{jump-stack.listing}
 \end{wrapfigure}
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
@@ -39,17 +37,17 @@ Two of the specializations are parameter-less and are
 e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-Type \cc{JS.P} (lines 15--22 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
-  a stack with one or more elements.
-Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it fulfills
-  its duties through the type parameters it takes and the types it passes
-  to~\cc{Pʹ} the generic type it extends.
-
 \begin{wrapfigure}[12]r{29ex}
   \intextsep=0pt
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=29ex,]{jump-stack-push.listing}
 \end{wrapfigure}
+
+Type \cc{JS.P} (lines 15--22 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
+  a stack with one or more elements.
+Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it fulfills
+  its duties through the type parameters it takes and the types it passes
+  to~\cc{Pʹ} the generic type it extends.
 
 Specifically, \cc{JS.P} takes
 the same \cc{Top} and \cc{Rest} parameters (ll.16--17) as type \cc{Stack.P}:
@@ -67,8 +65,9 @@ By extending type \cc{JS} and passing the correct \cc{Rest} (respectively, \cc{J
 parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.7~\cref{Figure:jump})
   (respectively \cc{jump\_$γ$1} (l.10 ibid), \cc{jump\_$γ$2} (l.11 ibid)).
 
-  More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} 
-    that extends \cc{Pʹ}.
+
+More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} 
+  that extends \cc{Pʹ}.
 Type \cc{Me} also captures the actual parameters \emph{included} to \cc{JP.P},
   which makes it possible to write the return type of \cc{$γ$1()} and \cc{$γ$2()} more succinctly.
 Let, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$ be the return type of \cc{$γ$1()}.
