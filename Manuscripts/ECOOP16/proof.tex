@@ -110,10 +110,10 @@ Essentially,~\cc{C} is a representation of the stack,
 \end{itemize}
 
 Note that these~$k+1$ parameters are sufficient for describing a configuration,
-  i.e., if the top is~$γⱼ$, then for all~$j≠i~$ 
+  i.e., if the top is~$γⱼ$, then for all~$j≠i~$
 \[
-  \textsf{jump}(γⱼ) =  \cc{Rest.}\textsf{jump}(γⱼ)
-\] 
+  \textsf{jump}(γⱼ) = \cc{Rest.}\textsf{jump}(γⱼ)
+\]
 whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$ (which is also required by a pop operation).
 
 All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
@@ -144,7 +144,7 @@ In~$A$ there are two of these:
 \end{quote}
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
-in general ‟Top of Stack" types take the aforementioned ~$k+1$ parameters.
+in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
 \begin{wrapfigure}[14]r{45ex}
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
@@ -170,17 +170,19 @@ It remains to show the type encoding of~$δ$,
 Overall, there are a total of~$k·(ℓ+1)$
   entries in a transition table such as \cref{Table:A}.
 Conceptually, these are encoded by selecting the correct return
-  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the $k$ ‟Top of Stack” types.
+  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each of the~$k$ ‟Top of Stack” types.
 Thanks to inheritance, we need to do so only in the cases that this return type is different from the
   default.
 
 Overall, there are six kinds of entries in a transition table:
 \begin{description}
+
   \item[\textsf{reject}]
   The default return type of \cc{\$()} in~\cc{C} is \cc{$ΣΣ$}, which
   is \emph{not} a subtype of~\cc{L}. Normally the result of a call chain that ends with \cc{\$()}
   cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
   there is little that clients can do with this result.
+
   \item[\textsf{accept}]
   The only case in which fluent call chain ending with \cc{\$()} can return
     type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
@@ -188,15 +190,16 @@ Overall, there are six kinds of entries in a transition table:
     types of fluent API call chains are determined statically.}
   \par
   Recall that a jDPDA can only accept after its input is exhausted.
-  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ_1$.
+  In \cref{Table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₁$.
   We therefore add to the body of type \cc{C$γ$1} the line
   \begin{JAVA}
 @Override L ¢\gobble$¢$();
   \end{JAVA}
+
   \item[$⊥$]
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
     the transition function returns~$⊥$.
-  In~$A$ this occurs when the top of the stack is~$γ_1$ and one of~$σ₁$ or~$σ_2$ is read.
+  In~$A$ this occurs when the top of the stack is~$γ₁$ and one of~$σ₁$ or~$σ₂$ is read.
   To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
     the inherited return type (l.15 \cref{Figure:A}) is the raw~\cc{C}.
   Subsequent calls in the chain will all receive and return a raw~\cc{C}
@@ -209,6 +212,7 @@ Overall, there are six kinds of entries in a transition table:
     types~\cc{E} and~\cc{¤} (ll.17--18 ibid), both extending~\cc{C} without
     overriding any of its methods. Again, remaining part of the call chain will stick to
     raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
+
   \item[$\textsf{jump}(γᵢ)$]
   The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
     operations particularly simple.
@@ -217,8 +221,9 @@ Overall, there are six kinds of entries in a transition table:
     (recall that a jump occurs after popping the current element from the stack, so
     we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
-  In \cref{Table:A} we find that~$δ(γ₂,σ_3) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
+  In \cref{Table:A} we find that~$δ(γ₂,σ₃) =\textsf{jump}(γ₁)$. Accordingly, the type of \cc{$σ$2()}
   in \cc{C$γ$2} (l.34) is \cc{JR$γ$1}.
+
   \item[$\textsf{push}(ζ)$]
   Push operations are the most complex, since they involve a pop of the top stack element,
     and pushing any number, including zero, of new elements.
@@ -238,17 +243,18 @@ Overall, there are six kinds of entries in a transition table:
   parameters are sub-expressions that recur in the desired
   result.
   \par
-  Cases in point % TOMER HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESXXXXXXXXXXXXXXXXXXXXXXXXX<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>
-  are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁)$, and~$δ(γ₁,σ₂)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
+  Cases in point
+    are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁,γ₂)$, and~$δ(γ₂,σ₁)=\textsf{push}(γ₂,γ₂)$ of \cref{Table:A}.
   The corresponding sidekick types,
-  (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1} and \cc{$γ$1$σ$2\_Push\_$γ$2$γ2$})
-  can be found in lines 40--48 of \cref{Figure:A}.
-  The first of these defines the correct return type
-  of \cc{$σ$()}, the second of \cc{$σ$2}.
-  Examine now the definition of type \cc{C$γ$1} in the figure,
-  and in particular lines 23--27 which define the list of types it extends.
-  Notice that it extends these two sidekicks, inheriting the covariant
-  overrides of \cc{$σ$1()} and \cc{$σ$2()}.
+    (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1$γ$2} and \cc{$γ$2$σ$1\_Push\_$γ$2$γ$2})
+    can be found in lines 36--43 of \cref{Figure:A}.
+  The first of these define the correct return type
+    of \cc{$σ$1()} in case \cc{$γ$1} is the top element,
+    the second of \cc{$σ$2}, in case \cc{$γ$2} is the top element.
+  Examine now the definition of types \cc{C$γ$1},\cc{C$γ$2} in the figure,
+    and in particular lines 21--23 and 29--31 which define the list of types they extend.
+  Notice that each extends one of the sidekicks, inheriting the covariant
+    overrides of \cc{$σ$1()}.
   \par
   More generally, economy of expression may require that for each case
     of~$δ(γ,σ)=\textsf{push}(ζ)$ in the transition table,

@@ -36,7 +36,7 @@ class A { // Encode automaton ¢$A$¢
     > extends 
       C<Rest, JRγ1, JRγ2>   
     //end{many} 
-      ,γ1a_Push_γ1γ1γ2<Rest,JRγ1,JRγ2>
+      ,γ1σ1_Push_γ1γ1γ2<Rest,JRγ1,JRγ2,Cγ1<Rest, JRγ1, JRγ2>>
     //begin{many}
     {
     //end{many}
@@ -50,7 +50,7 @@ class A { // Encode automaton ¢$A$¢
     > extends 
       C<Rest, JRγ1, JRγ2>
     //end{many}
-      ,γ2a_Push_γ2γ2<Rest,JRγ1,JRγ2>
+      ,γ2σ1_Push_γ2γ2<Rest,JRγ1,JRγ2>
     //begin{many}
     { 
     //end{many}
@@ -59,11 +59,11 @@ class A { // Encode automaton ¢$A$¢
     //begin{many}
     }
     //end{many}
-    interface γ1a_Push_γ1γ1γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+    interface γ1σ1_Push_γ1γ1γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C,P extends Cγ1<Rest, JRγ1, JRγ2 >>{
       // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1,\gamma_2)$¢
-      Cγ2<Cγ1<Cγ1<Rest, JRγ1, JRγ2 >, Rest, JRγ2>,Cγ1<Rest, JRγ1, JRγ2 >,JRγ2> σ1();
+      Cγ2<Cγ1<P, Rest, JRγ2>,P,JRγ2> σ1();
     }
-    interface γ2a_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
+    interface γ2σ1_Push_γ2γ2<Rest extends C,JRγ1 extends C,JRγ2 extends C>{
       // Sidekick of ¢$\delta(\gamma_2,\sigma_1)=\textsf{push}(\gamma_2,\gamma_2)$¢
       Cγ2<Cγ2<Rest, JRγ1, JRγ2>, JRγ1, Rest> σ1();
     }
