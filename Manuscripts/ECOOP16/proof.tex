@@ -81,13 +81,20 @@ Towards this end, we employ the type-encoding techniques developed above, and, i
 
 Henceforth, let~$k =|Γ|$,~$ℓ=|Σ|$.
 The simple~$k=2$,~$ℓ=3$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
-Let~$L$ be the language~$L$ recognized by~$A$.%
+Let~$L$ be the language recognized by~$A$.%
 †{%
   Incidentally,
 \[
-L = \left❴ \left(σ₁^{n₁}σ₂^{m₁}σ₃|σ₁^{n₁}σ₂^{n₁}\right) \left(σ₁^{n₂}σ₂^{m₂}σ₃|σ₁^{n₂}σ₂^{n₂}\right) ⋯ \left(σ₁^{n_r}σ₂^{m_r}σ₃|σ₁^{n_r}σ₂^{n_r}\right) \; | \; r≥0∧∀r', 1≤r'≤r⇒n_{r'}>m_{r'}\right❵
+  L = \left❴ w^* \; | \; w=\left(σ₁^{n}σ₂^{m}σ₃|σ₁^{n}σ₂^{n}\right) \; , \; n>m\right❵
 \]
-which is clearly not-regular; the equivalent BNF for~$L$ is:~$S→W S \; | \;ε\; ; W→D \; | \; A Dσ₃ \; ; \; D→σ₁Dσ₂ \;|\;σ₁σ₂ \; ; \; A→Aσ₁\;|\;σ₁$.
+which is clearly not-regular; the equivalent BNF for~$L$ is:
+\[
+  S→W S		\,| \, ε	\; ; \; 
+  W→D		\,| \, A Dσ₃ 	\; ; \;
+  D→σ₁Dσ₂	\,| \, σ₁σ₂ 	\; ; \;
+  A→Aσ₁		\,| \, σ₁ 	
+\]
+
 Neither the BNF nor the representation are material for the proof.
 }
 
@@ -114,7 +121,8 @@ Note that these~$k+1$ parameters are sufficient for describing a configuration,
 \[
   \textsf{jump}(γⱼ) = \cc{Rest.}\textsf{jump}(γⱼ)
 \]
-whereas~$\textsf{jump}(γᵢ) = \cc{Rest}$ (which is also required by a pop operation).
+In the special case of~$\textsf{jump}(γᵢ)$ the returned typed is still~$\cc{Rest}$, % TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+this is due to the fact that before(which is also required by a pop operation). % TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
   so as to ensure that they are (the type version of) pointers into the actual stack,
@@ -128,7 +136,7 @@ This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Fig
   the empty and the error configurations.
 
 Type~\cc{C} defines~$ℓ+1$ functions (4 in the example), one for each possible input character,
-  and one for the end marker defined as \$.
+  and one for the end-of-file character defined as \$.
 Since~\cc{C} encodes an abstract configuration, return types of functions in it
   are the appropriate defaults which intentionally fail to emulate the automaton's execution.
   The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
@@ -148,7 +156,8 @@ in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
 \begin{wrapfigure}[14]r{45ex}
   \caption{\label{Figure:chain} Accepting and non-accepting call chains with the
-  type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
   \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
 
@@ -199,7 +208,7 @@ Overall, there are six kinds of entries in a transition table:
   \item[$⊥$]
   When a prefix of the input is sufficient to conclude it must be rejected however it continues
     the transition function returns~$⊥$.
-  In~$A$ this occurs when the top of the stack is~$γ₁$ and one of~$σ₁$ or~$σ₂$ is read.
+  In~$A$ this occurs when the top of the stack is~$γ₁$ and one of~$σ_2$ or~$σ_3$ is read.
   To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
     the inherited return type (l.15 \cref{Figure:A}) is the raw~\cc{C}.
   Subsequent calls in the chain will all receive and return a raw~\cc{C}
@@ -209,7 +218,7 @@ Overall, there are six kinds of entries in a transition table:
   Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
     a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
   In our type encoding these are handled by the special
-    types~\cc{E} and~\cc{¤} (ll.17--18 ibid), both extending~\cc{C} without
+    types~\cc{E} and~\cc{¤} (ll.17--18 ibid), both extend~\cc{C} without
     overriding any of its methods. Again, remaining part of the call chain will stick to
     raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
 
