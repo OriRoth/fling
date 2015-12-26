@@ -3,11 +3,11 @@ into a call to a uniquely named function (with respect to~$σ$).
 Let~$\textsf{java}(α)$, be the function
   that translates a string~$α∈Σ^*$ into a fluent API call chain.
   If~$α=σ₁⋯σₙ∈Σ^*$, then \[
-  \textsf{java}(α)=\cc{.}\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}.
+  \textsf{java}(α)=\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}
 \]
 For example, when~$Σ=❴a,b,c❵$ let~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
 With these, \[
-    \textsf{java}(caba) = \cc{.c().a().b().a()}
+    \textsf{java}(caba) = \cc{c().a().b().a()}
   \]
 
 \begin{theorem}\label{Theorem:Gil-Levy}
@@ -16,7 +16,7 @@ With these, \[
     other types such that the \Java command
   \begin{equation}
     \label{Equation:result}
-    \cc{L~$ℓ$ = A.build~$\textsf{java}(α)$}\cc{.\$();}
+    \cc{L~$ℓ$ = A.build.$\textsf{java}(α)$}\cc{.\$();}
   \end{equation}
   type checks against~$J_A$ if an only if~$α∈L$.
   Furthermore, program~$J_A$ can be effectively generated from~$A$.

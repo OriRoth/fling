@@ -1,13 +1,13 @@
 \begin{theorem}\label{Theorem:Gil-Levy:2}
-  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Let~$A$ be a jDPDA recognizing a language~$L⊆Σ^*$.
   Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
     other types such that the \Java command
   \begin{equation}
     \label{Equation:prefix:result}
-    \cc{A.build~$\textsf{java}(α)$;}
+    \cc{C c = A.build.$\textsf{java}(α)$;}
   \end{equation}
   type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
-  that~$αβ∈L$.
+  that~$αβ∈L$ and type \cc{C} is the configuration of~$A$ after reading~$α$.
   Furthermore, program~$J_A$ can be effectively generated from~$A$.
 \end{theorem}
 
