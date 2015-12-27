@@ -1,6 +1,7 @@
 MAIN=00
 LOCALTEXMF= ../../../yogitex//
 LATEX=lualatex -file-line-error
+LANG_TOOL=~/Downloads/LanguageTool-3.1/languagetool-commandline.jar
 
 export TEXINPUTS=:$(LOCALTEXMF)
 export BIBINPUTS=:$(LOCALTEXMF)
@@ -169,6 +170,9 @@ spelling:
 
 dup:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then dup $$f;fi; done
+
+lang:
+	for f in *.tex ; do if [ $$f != 00.tex ]; then java -jar $(LANG_TOOL) -d WHITESPACE_RULE,EN_UNPAIRED_BRACKETS,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_QUOTES $$f ;fi; done
 
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
