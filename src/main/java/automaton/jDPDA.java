@@ -70,7 +70,7 @@ class A { // Encode automaton ¢$A$¢
     }
   }
   //begin{many}
-  static Cγ1<E,¤,¤> build = null;
+    static Cγ1<E,¤,¤> build = null;
   //end{many}
   //end{full}
   //begin{cases}

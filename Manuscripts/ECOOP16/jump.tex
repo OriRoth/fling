@@ -6,24 +6,24 @@
 
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
   except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations
-  (which means ‟repetitively \emph{pop} elements from the stack up 
+  (which means ‟repetitively \emph{pop} elements from the stack up
   to and including the first occurrence of~$γ$”).
 
-\Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},  
+\Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},
   of a jump-stack whose elements are drawn from type~\cc{$Γ$}
 (\cref{Figure:unary-function}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
 
-Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)), \cc{JS} takes 
-  a \cc{Rest} parameter encoding the type of a jump-stack after popping. % or jumping on top element TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.
+Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)), \cc{JS} takes
+  a \cc{Rest} parameter encoding the type of a jump-stack after popping.
 In addition \cc{JS} takes~$k=|Γ|$ type parameters, one for each~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
   operation.
 In the figure, there are two such parameters: \cc{J\_$γ$1}, and
   \cc{J\_$γ$2}.
 
-Functions defined in \cc{JS} include not only the standard stack operations: \cc{top},
-\cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$),
-but also~$k$ functions encoding $\textsf{jump}(\gamma)$, $\gamma \in \Gamma$.
+Functions defined in \cc{JS} include not only the standard stack operations: \cc{top()},
+\cc{pop()}, \cc{$γ1$()} and~\cc{$γ2$()} (encoding a push of~$γᵢ$,~$i=1,2$, in general, there are~$k$),
+but also~$k$ functions encoding~$\textsf{jump}(γ)$,~$γ∈Γ$.
 In our case, these are \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   which encode~$\textsf{jump}(γᵢ)$
   thanks to their return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
@@ -37,21 +37,21 @@ Two of the specializations are parameter-less and are
 e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-\begin{wrapfigure}[12]r{29ex}
+\begin{wrapfigure}[11]r{31ex}
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
-  \javaInput[minipage,width=29ex,left=-2ex]{jump-stack-push.listing}
+  \javaInput[minipage,width=31ex,listing style=numbered]{jump-stack-push.listing}
 \end{wrapfigure}
 
-Type \cc{JS.P} (lines 15--22 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
+Type \cc{JS.P} (lines 16--23 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
 Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it fulfills
   its duties through the type parameters it takes and the types it passes
   to~\cc{Pʹ} the generic type it extends.
 
 Specifically, \cc{JS.P} takes
-the same \cc{Top} and \cc{Rest} parameters (ll.16--17) as type \cc{Stack.P}:
+the same \cc{Top} and \cc{Rest} parameters (ll.17--18) as type \cc{Stack.P}:
   as well as~$k$ additional parameters:
-  \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.18--19)
+  \cc{J\_$γ$1} and \cc{J\_$γ$2} (ll.19--20)
 which are the types encoding the jump-stack
   after the execution~$\textsf{jump}(γᵢ)$,~$i=1,2$.
 Type \cc{JP.P} passes these four parameters
@@ -61,30 +61,27 @@ The fifth parameter to \cc{Pʹ} (l.22) is the current incarnation of~\cc{P}, i.e
 
 The auxiliary (and \kk{private}) type \cc{Pʹ} itself is depicted in \cref{Figure:jump-stack-push}.
 By extending type \cc{JS} and passing the correct \cc{Rest} (respectively, \cc{J\_$γ$1}, \cc{J\_$γ$2})
-parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.7~\cref{Figure:jump})
-  (respectively \cc{jump\_$γ$1} (l.10 ibid), \cc{jump\_$γ$2} (l.11 ibid)).
+parameter to it, \cc{Pʹ} inherits correct declaration of function \cc{pop()} (l.8~\cref{Figure:jump})
+  (respectively \cc{jump\_$γ$1} (l.11 ibid), \cc{jump\_$γ$2} (l.12 ibid)).
 
-
-More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P} 
+More importantly, the \cc{Me} type parameter to \cc{Pʹ} represents type \cc{JP.P}
   that extends \cc{Pʹ}.
 Type \cc{Me} also captures the actual parameters \emph{included} to \cc{JP.P},
   which makes it possible to write the return type of \cc{$γ$1()} and \cc{$γ$2()} more succinctly.
 Let, e.g.,~$τ=\cc{P<γ1, Me, Me, J\_γ2>}$ be the return type of \cc{$γ$1()}.
-The first two parameters to $\tau$ say that pushing~\cc{$γ$1},
-  results in a compound jump-stack, whose top element is \cc{$γ$1}, 
+The first two parameters to~$τ$ say that pushing~\cc{$γ$1},
+  results in a compound jump-stack, whose top element is \cc{$γ$1},
   and where the rest of the jump-stack is the current type.
 The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
   of a~$\textsf{jump}(γ₁)$ is the type of the receiver.
 The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
-  change the result of~$\textsf{jump}(γ₁)$.
+  change the result of~$\textsf{jump}(γ_2)$.
 
 \begin{wrapfigure}[12]r{42ex}
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
 
-Extending type \cc{JS} and passing the correct \cc{Rest} parameter to it,
-\cc{JS.Pʹ} inherits a correct declaration of function \cc{pop()} (l.7~\cref{Figure:jump})
 
 Some use cases for the encoded jump-stack data structure are in \cref{Figure:jump-stack-example}.
 The type of variable \cc{\_1} encodes a stack into which \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1} were pushed

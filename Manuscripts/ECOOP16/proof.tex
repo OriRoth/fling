@@ -12,13 +12,14 @@ The fault in the scheme lies with compile time computation being carried out
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
-  the output is computed from the input by an unbounded number of steps.†{%
-    With the presumption that the \Java compiler halts for all inputs (a presumption that does
-    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding for all DPDAs can be proved:
- Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
-  never halts on any input.
-A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
-}
+  the output is computed from the input by an unbounded number of steps.
+  †{With the presumption that the \Java compiler halts for all inputs (a presumption that does
+    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java 
+    type encoding for all DPDAs can be proved:
+    Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
+    never halts on any input.
+    A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
+  }
 
 The literature speaks of finite-delay DPDAs, in which the number
   of consecutive~$ε$-transitions is uniformly bounded and even of
@@ -47,13 +48,12 @@ Our proof relies on a special kind of realtime automata,
           \begin{quote}
             \begin{enumerate}
               \item consume~$σ$
-              \item pop~$γ$ % move this item into the next item. TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
+              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pops~$γ$, and pushes~$ζ$ into the stack.
               \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
                     pops stack elements up-to and including the first occurrence of~$γ$.
             \end{enumerate}
           \end{quote}
-    \item If the next character is~$\$$, then the automaton may reject or accept (but not do nothing else),
+    \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),
           depending on the value of~$γ$.
   \end{itemize}
   In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
@@ -84,7 +84,7 @@ Let~$L$ be the language recognized by~$A$.%
 †{%
   Incidentally,
 \[
-  L = \left❴ w^* \; | \; w=\left(σ₁^{n}σ₂^{m}σ₃|σ₁^{n}σ₂^{n}\right) \; , \; n>m\right❵
+  L = \left❴ w^* \; | \; w=\left(σ₁^{n}σ₂^{m}σ₃|σ₁^{n}σ₂^{n}\right) \; , \; n>m,n>1\right❵
 \]
 which is clearly not-regular; the equivalent BNF for~$L$ is:
 \[
@@ -101,17 +101,17 @@ Neither the BNF nor the representation are material for the proof.
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
   where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
 \begin{quote}
-  \javaInput[minipage,width=55ex]{proof.headers.listing}
+  \javaInput[minipage,width=53ex,left=-2ex]{proof.headers.listing}
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
 
 A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
-  but~$k+1$ other parameters are required:
+  but~$k+1$ type parameters are required:
 \begin{itemize}
-  \item \cc{Rest}, a type encoding of the stack after a pop, and,
-  \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
+  \item \cc{Rest}, a type encoding of the stack after a pop (or \textsf{jump} with the top element), and,
+  \item $k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}(γ₁)$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
 
@@ -120,16 +120,17 @@ Note that these~$k+1$ parameters are sufficient for describing a configuration,
 \[
   \textsf{jump}(γⱼ) = \cc{Rest.}\textsf{jump}(γⱼ)
 \]
-In the special case of~$\textsf{jump}(γᵢ)$ the returned typed is still~$\cc{Rest}$, % this is still true TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-this is due to the fact that before(which is also required by a pop operation). % this needs rephrase TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+In the special case of~$\textsf{jump}(γᵢ)$ the returned type is still~$\cc{Rest}$,
+  this is due to the fact that before a \textsf{jump} operation,
+  we do not pop an element from the stack.
 
 All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
-  so as to ensure that they are (the type version of) pointers into the actual stack,
+  to ensure that they are (the type version of) pointers into the actual stack,
   not a trivial task, as will be seen shortly.
 
 In the running example,~\cc{C} is defined as:
 \begin{quote}
-  \javaInput[minipage,width=63ex,left=-2ex]{proof.configuration.listing}
+  \javaInput[minipage,width=61ex,left=-2ex]{proof.configuration.listing}
 \end{quote}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
@@ -147,7 +148,7 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[minipage,width=45ex,left=-2ex]{proof.many.listing}
+  \javaInput[minipage,width=42ex,left=-4ex]{proof.many.listing}
 \end{quote}
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
@@ -206,13 +207,13 @@ Overall, there are six kinds of entries in a transition table:
   \end{JAVA}
 
   \item[$⊥$]
-  When a prefix of the input is sufficient to conclude it must be rejected however it continues
+  When a prefix of the input is sufficient to conclude it must be rejected however it continues,
     the transition function returns~$⊥$.
   In~$A$ this occurs when the top of the stack is~$γ₁$ and one of~$σ_2$ or~$σ_3$ is read.
   To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
     the inherited return type (l.15 \cref{Figure:A}) is the raw~\cc{C}.
   Subsequent calls in the chain will all receive and return a raw~\cc{C}
-    (Recall that all \cc{$σ${}$i$()}~$i=1,…,ℓ$ are functions in~\cc{C} that return a raw~\cc{C}).
+    (Recall that all \cc{$σ${}$i$()},~$i=1,…,ℓ$, are functions in~\cc{C} that return a raw~\cc{C}).
   Therefore, the final \cc{\$()} will reject.
   \par
   Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
@@ -275,7 +276,7 @@ Overall, there are six kinds of entries in a transition table:
 
 \begin{figure}[htbp]
   \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
-  \javaInput[minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
+  \javaInput[minipage,listing style=numbered,width=1.08\columnwidth]{proof.full.listing}
 \end{figure}
 
 \paragraph*{Conclusion} The proof of~\Cref{Theorem:Gil-Levy} is an algorithm, taking as input some jDPDA,

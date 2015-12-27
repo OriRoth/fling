@@ -1,14 +1,20 @@
 \begin{theorem}\label{Theorem:Gil-Levy:2}
-  Let~$A$ be a jDPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A},~\cc{C} and
     other types such that the \Java command
   \begin{equation}
     \label{Equation:prefix:result}
     \cc{C c = A.build.$\textsf{java}(α)$;}
   \end{equation}
-  type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
-  that~$αβ∈L$ and type \cc{C} is the configuration of~$A$ after reading~$α$.
-  Furthermore, program~$J_A$ can be effectively generated from~$A$.
+    type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
+    that~$αβ∈L$ and type \cc{C} is the configuration of~$A$ after reading~$α$.
+  Furthermore, for any such~$β$,~\cref{Theorem:Gil-Levy} applies such that the
+  \Java command
+  \begin{equation}
+    \cc{L~$ℓ$ = A.build.$\textsf{java}(αβ)$}\cc{.\$();}
+  \end{equation}
+    always type-checks.
+  Finally, the program~$J_A$ can be effectively generated from~$A$.
 \end{theorem}
 
 Informally, a call chain type-checks if and only if it is a prefix
@@ -17,7 +23,8 @@ Alternatively, a call chain won't type-check if there is no
   continuation that leads to a legal string in~$L$.
 
 The proof resembles~\cref{Theorem:Gil-Levy}'s proof.
-We provide a similar implementation for a jump-stack,
+We provide a similar implementation for a jump-stack
+  †{recall that the two formal constructs are of the same expressiveness},
   that will not compile under illegal prefixes.
 
 The main difference between the two theorems is:
@@ -26,7 +33,7 @@ The main difference between the two theorems is:
   the illegal chain won't compile at all.
 
 Since the code suggested by the proof highly resembles the previously
-  suggested code, we will describe the differences.
+  suggested code, mainly the differences will be discussed.
 
 We will use the same running example, defined by~\cref{Table:A}.
 
@@ -34,7 +41,7 @@ We will use the same running example, defined by~\cref{Table:A}.
 The main types here are a subset of the previously defined main types.
 
 \begin{quote}
-  \javaInput[,minipage,width=54ex]{prefix-proof.configuration.listing}
+  \javaInput[minipage,width=45ex,left=-2ex]{prefix-proof.configuration.listing}
 \end{quote}
 
 First, type \cc{$ΣΣ$} is removed.
@@ -44,6 +51,7 @@ Second, \kk{interface}~\cc{C} is removed.
 Without it, the configuration types won't have the
   methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} from the supertype.
 These inherited methods, is what differentiates the previous proof from the current.
+Classes \cc{¤} and \cc{E} are defined similarly, except now they don't extend any type.
 
 \subsection{Top-of-Stack Types}
 Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
@@ -53,31 +61,31 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
 In~$A$ there are two such types:
 
 \begin{quote}
-  \javaInput[,minipage,width=55ex]{prefix-proof.many.listing}
+  \javaInput[minipage,width=51ex,left=-2ex]{prefix-proof.many.listing}
 \end{quote}
 
-\begin{wrapfigure}[13]r{45ex}
-  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
-  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
-  All lines in \cc{accepts} type-check, and all lines in \cc{rejects} 
-  cause type errors}
-  \javaInput[,minipage,width=45ex]{prefix-proof.cases.listing}
-\end{wrapfigure}
 
 Note, that the type parameters of the former types hasn't changed,
   since the model we are trying to implement, hasn't changed.
   These~$k+1$ parameters still suffice for our cause.
 
+\begin{wrapfigure}[13]r{42ex}
+  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
+  cause type errors}
+  \javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
+\end{wrapfigure}
 
 In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method
   correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
   do not type-check (i.e., these prefixes have no continuation that can lead to a legal word in~$L$),
-  where the last method invocation generates an 
+  where the last method invocation generates an
 \begin{quote}
-  ``\textsf{method \ldots\@ is undefined for the type \ldots}''
+  ‟\textsf{method~…~is undefined for the type~…~}”
 \end{quote}
   error message.
-  
+
 The main difference between~\cref{Figure:prefix-chain} and~\cref{Figure:chain} is that there is no need to
   use an auxiliary function \cc{isL()} as in~\cref{Figure:prefix-chain} since now illegal
   prefixes do not type-check.
@@ -96,7 +104,7 @@ The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
  \item[$⊥$] We encounter~$⊥$ on the transition function when some input character~\cc{$σ$}
    is not allowed for the top of the stack element~$γ$. In that case, the corresponding type \cc{C$γ$}
    \emph{must not} have a method for~\cc{$σ$}, this way, invoking the methods will result in type error.
-   In \cref{Table:A} a~$⊥$ may occur when the top of the stack is~$γ_1$ and the input character is~$σ_2$,
+   In \cref{Table:A} a~$⊥$ may occur when the top of the stack is~$γ₁$ and the input character is~$σ₂$,
    thus, no method \cc{$σ$2} is introduced in type~\cc{C$γ$1}.
 \end{description}
 
@@ -105,13 +113,12 @@ The use of sidekicks is still allowed and recommended to improve readability of 
 \begin{figure}[htbp]
   \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})
     that allow a partial call chain, if and only if, there exists a legal continuation, that
-    leads to a word in $L$ (the language of~$A$}
-  \javaInput[,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+    leads to a word in~$L$ (the language of~$A$}
+  \javaInput[minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
 \end{figure}
 
 \paragraph*{Conclusion}
 In this section, a proof, similar to the one in~\cref{Section:proof} is provided.
-An algorithm was introduced, to not only emulate the running of some jDPDA~$A$, 
-  but also to ``halt it'' in the earliest time possible, i.e., only if there is
+An algorithm was introduced, to not only emulate the running of some jDPDA~$A$,
+  but also to ‟halt it” in the earliest time possible, i.e., only if there is
   no legal call chain from this point to result in a legal word in the language of~$A$.
-  
