@@ -12,7 +12,7 @@ The fault in the scheme lies with compile time computation being carried out
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
-  the output is a computed from the input by an unbounded number o steps.†{%
+  the output is computed from the input by an unbounded number of steps.†{%
     With the presumption that the \Java compiler halts for all inputs (a presumption that does
     not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java type encoding for all DPDAs can be proved:
  Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
@@ -47,7 +47,7 @@ Our proof relies on a special kind of realtime automata,
           \begin{quote}
             \begin{enumerate}
               \item consume~$σ$
-              \item pop~$γ$
+              \item pop~$γ$ % move this into the next item. TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pushes~$ζ$ into the stack.
               \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
                     pops stack elements up-to and including the first occurrence of~$γ$.
@@ -57,8 +57,7 @@ Our proof relies on a special kind of realtime automata,
           depending on the value of~$γ$.
   \end{itemize}
   In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
-  an empty stack (either at the beginning of a step or on course
-  of a \textsf{jump operation}).
+  an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
 
 \begin{wraptable}r{36ex}
@@ -74,10 +73,10 @@ $\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
 \end{wraptable}
 
 As it turns out, every DCFG language is recognized by some jDPDA, and conversely,
-  every language accepted by a jDPDA
-  is a DCFG language~\cite{Courcelle:77}.
+  every language accepted by a jDPDA is a DCFG language~\cite{Courcelle:77}.
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
-Towards this end, we employ the type-encoding techniques developed above, and, in particular, the jump-stack data structure (\cref{Figure:jump}).
+Towards this end, we employ the type-encoding techniques developed above, and, 
+  in particular, the jump-stack data structure (\cref{Figure:jump}).
 
 Henceforth, let~$k =|Γ|$,~$ℓ=|Σ|$.
 The simple~$k=2$,~$ℓ=3$ jDPDA~$A$ defined in \cref{Table:A} will serve as our running example.
@@ -111,7 +110,7 @@ A configuration is encoded by a generic type~\cc{C}.
 Essentially,~\cc{C} is a representation of the stack,
   but~$k+1$ other parameters are required:
 \begin{itemize}
-  \item \cc{Rest} a type encoding of the stack after a pop, and,
+  \item \cc{Rest}, a type encoding of the stack after a pop, and,
   \item~$k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
     after~$\textsf{jump}(γ₁)$,…~$\textsf{jump}(γₖ)$.
 \end{itemize}
@@ -121,8 +120,8 @@ Note that these~$k+1$ parameters are sufficient for describing a configuration,
 \[
   \textsf{jump}(γⱼ) = \cc{Rest.}\textsf{jump}(γⱼ)
 \]
-In the special case of~$\textsf{jump}(γᵢ)$ the returned typed is still~$\cc{Rest}$, % TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-this is due to the fact that before(which is also required by a pop operation). % TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+In the special case of~$\textsf{jump}(γᵢ)$ the returned typed is still~$\cc{Rest}$, % this is still true TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+this is due to the fact that before(which is also required by a pop operation). % this needs rephrase TOMER XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
   so as to ensure that they are (the type version of) pointers into the actual stack,
@@ -228,7 +227,7 @@ Overall, there are six kinds of entries in a transition table:
     operations particularly simple.
   All that is required is to covariantly change the return type of the
     appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
-    (recall that a jump occurs after popping the current element from the stack, so
+    (recall that a jump occurs after popping the current element from the stack, so % or is it now TOMER XXXXXXXXXXXXXXXXXX
     we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
   In \cref{Table:A} we find that~$δ(γ₂,σ₃) =\textsf{jump}(γ₁)$. 
@@ -278,3 +277,11 @@ Overall, there are six kinds of entries in a transition table:
   \caption{\label{Figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})}
   \javaInput[minipage,listing style=numbered,width=\textwidth]{proof.full.listing}
 \end{figure}
+
+To conclude, the proof of~\Cref{Theorem:Gil-Levy} is an algorithm, taking as input some jDPDA,
+  and returning as output a set of \Java type definitions.
+The returned types, allow a call chain~$\textsf{java}(\alpha)$,
+  such that the type of the returned object represents the 
+  configuration of the input automaton after reading~$\alpha$.
+If the automaton rejects after~$\alpha$, then the returned type is the illegal ~$\Sigma\Sigma$, 
+  and if the automaton accpets, the type shall be~$L$.

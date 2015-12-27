@@ -1,6 +1,7 @@
 package automaton;
 import static automaton.A.build;
 
+import automaton.A.L;
 import automaton.A.C.Cγ1;
 import automaton.A.C.Cγ2;
 import automaton.A.C.E;
@@ -81,11 +82,10 @@ class A { // Encode automaton ¢$A$¢
     isL(A.build.σ1().σ1().σ2().σ3().σ1().σ2().$()); 
   }
   static void rejects() {
-    isL(A.build.σ1().$()); 
+    isL(A.build.σ1().$());
     isL(A.build.σ2().σ1().$());
-    isL(A.build.σ2().σ2().$());
-    isL(A.build.σ1().σ2().σ1().$());  
-    isL(A.build.σ1().σ2().σ2().σ1().$());  
+    isL(A.build.σ1().σ2().σ3().$());
+    isL(A.build.σ1().σ1().σ2().σ3().σ1().$());  
     //end{cases}
     isL(A.build.σ1().σ2().σ2().σ2().σ1().$()); 
     isL(A.build.σ1().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ2().σ1().$());  
