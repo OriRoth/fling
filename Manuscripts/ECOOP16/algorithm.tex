@@ -96,10 +96,10 @@ JLR parser performs as a LR parser except for:
   
 \paragraph{Solution 1} if save on the stack a single element for the ``multiple shifting items'' which will be of type:~$\mathcal{P}(\Sigma)$
   and we transform the jump operation on~$\sigma\in\Sigma$to be ``Remove elements from the stack until a~$\chi\in\mathcal{P}(\Sigma)$,~$\sigma\in\chi$
-  is popped.
+  is popped''.
   
 \paragraph{Problem 2} When we~$\mathsf{Jump}(\sigma)$ , we consume~$\sigma$, and remove from stack as expected,
-  the problem is, the corresponding lookaheads symbol should be ''consumed`` and the shift on $\sigma$ need to happen again.
+the problem is, the corresponding lookaheads symbol should be ``consumed'' and the shift on $\sigma$ need to happen again.
   
 \paragraph{Solution 2} Instead of pushing subsets of~$\Sigma$ we push partial mappings~$Σ↛Q^*$ (where~$\Gamma=Q\cup(Σ↛Q^*)$)
   jumping is still defined on symbols~$\sigma\in\Sigma$, and when the jump is performed we pop from the stack until we popped

@@ -72,12 +72,12 @@ There is large body of research on \emph{type-states}
 Informally, an object that belongs to a certain type, has
 type-states, if not all methods defined in this object's class are applicable
 to the object in all states it may be in.
-As it turns out, objects with type states are quite frequent: a recent study~\cite{Beckman:2011} estimates
+As it turns out, objects with type states are quite frequent: a recent study~\cite{Beckman:11} estimates
   that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
 
 In a sense, type states define the ``language'' of the protocol of an object. 
 The protocol of the type-state \cc{Box} class defined in \cref{Figure:box} 
-  admits the chain \cc{\kk{new} Box().open().close()} but not the 
+  admits the chain \cc{\kk{new} Box().open().close()} but not
   the chain \cc{\kk{new} Box().open().open()}.
 
 \begin{figure}[H]

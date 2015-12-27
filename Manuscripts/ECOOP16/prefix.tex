@@ -17,7 +17,7 @@ Alternatively, a call chain won't type-check if there is no
   continuation that leads to a legal string in~$L$.
 
 The proof resembles~\cref{Theorem:Gil-Levy}'s proof.
-We provide a similar implementation for a jump-stack (see \cref{Definition:JDPDA}),
+We provide a similar implementation for a jump-stack,
   that will not compile under illegal prefixes.
 
 The main difference between the two theorems is:
@@ -47,34 +47,40 @@ These inherited methods, is what differentiates the previous proof from the curr
 
 \subsection{Top-of-Stack Types}
 Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
-  with \cc{$γ$1}, … ,\cc{$γ${}$k$} as their top,
-  this time, the methods are defined ad-hock, in each type.
-In A there are two such types:
+  with \cc{$γ$1}, … ,\cc{$γ${}$k$} as their top element,
+  this time, the methods are defined ad-hock, in each type
+  (they are not added in this figure as they are added with the use of sidekicks).
+In~$A$ there are two such types:
 
 \begin{quote}
-  \javaInput[,minipage,width=45ex]{prefix-proof.many.listing}
+  \javaInput[,minipage,width=55ex]{prefix-proof.many.listing}
 \end{quote}
+
+\begin{wrapfigure}[13]r{45ex}
+  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts} type-check, and all lines in \cc{rejects} 
+  cause type errors}
+  \javaInput[,minipage,width=45ex]{prefix-proof.cases.listing}
+\end{wrapfigure}
 
 Note, that the type parameters of the former types hasn't changed,
   since the model we are trying to implement, hasn't changed.
   These~$k+1$ parameters still suffice for our cause.
 
-\begin{wrapfigure}[14]r{45ex}
-  \intextsep=0pt
-  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
-  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}), such that
-  illegal prefixes won't compile}
-  \javaInput[,minipage,width=45ex]{prefix-proof.cases.listing}
-\end{wrapfigure}
 
 In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method
   correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
-  do not type-check (i.e., these prefixes has no continuation that leads to a legal word in~$L$),
-  where the last method invocation generates an \textsf{the method ... is undefined for the type ...}
+  do not type-check (i.e., these prefixes have no continuation that can lead to a legal word in~$L$),
+  where the last method invocation generates an 
+\begin{quote}
+  ``\textsf{method \ldots\@ is undefined for the type \ldots}''
+\end{quote}
   error message.
-Note the major difference from~\cref{Theorem:Gil-Levy} ; there is no need to
-  use an auxiliary function \cc{isL()} as in~\cref{Figure:chain} since now illegal
-  prefixes does not type-check.
+  
+The main difference between~\cref{Figure:prefix-chain} and~\cref{Figure:chain} is that there is no need to
+  use an auxiliary function \cc{isL()} as in~\cref{Figure:prefix-chain} since now illegal
+  prefixes do not type-check.
 
 \subsection{Transitions}
 Due to the changes we expressed, the transition table is encoded slightly different.
@@ -85,19 +91,27 @@ The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
 
 \begin{description}
  \item[\textsf{reject}] Since we add the methods ad-hock to each type, the reject entry means
-   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$γ$1}
+   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$γ$2}
    doesn't have a method~\cc{\$()}.
  \item[$⊥$] We encounter~$⊥$ on the transition function when some input character~\cc{$σ$}
    is not allowed for the top of the stack element~$γ$. In that case, the corresponding type \cc{C$γ$}
-   \emph{must not} have a method for~\cc{$σ$}, this way, invoking the methods will cause type error.
-   In \cref{Table:A}~$⊥$ occurs when the top of the stack is~$γ{}2$ and the input character is~$σ{}1$,
-   thus, no method \cc{$σ$1} is introduced in type~\cc{C$γ{}$2}.
+   \emph{must not} have a method for~\cc{$σ$}, this way, invoking the methods will result in type error.
+   In \cref{Table:A} a~$⊥$ may occur when the top of the stack is~$γ_1$ and the input character is~$σ_2$,
+   thus, no method \cc{$σ$2} is introduced in type~\cc{C$γ$1}.
 \end{description}
 
-The use of sidekicks is still allowed, and recommended to improve code readability.
+The use of sidekicks is still allowed and recommended to improve readability of code.
 
 \begin{figure}[htbp]
   \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})
-    that doesn't all illegal prefixes}
+    that allow a partial call chain, if and only if, there exists a legal continuation, that
+    leads to a word in $L$ (the language of~$A$}
   \javaInput[,minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
 \end{figure}
+
+\paragraph*{Conclusion}
+In this section, a proof, similar to the one in~\cref{Section:proof} is provided.
+An algorithm was introduced, to not only emulate the running of some jDPDA~$A$, 
+  but also to ``halt it'' in the earliest time possible, i.e., only if there is
+  no legal call chain from this point to result in a legal word in the language of~$A$.
+  
