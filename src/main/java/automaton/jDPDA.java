@@ -12,9 +12,9 @@ import automaton.A.C.¤;
 class A { // Encode automaton ¢$A$¢
   //begin{headers}
   private static class ΣΣ   // Encodes set ¢$\Sigma^*$¢, type of reject
-    { /*  empty*/ } 
+    { /* empty */  } 
   static class L extends ΣΣ // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /* empty*/ }
+    { /* empty */  }
   //end{headers}
   // Configuration of the automaton
   //begin{configuration}

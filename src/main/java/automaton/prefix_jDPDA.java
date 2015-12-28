@@ -15,7 +15,7 @@ class Prefix_A {
 static class A { // Encode automaton ¢$A$¢
   //begin{configuration}
   static class L // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /* empty*/ }
+    { /* empty */  }
   public interface E { /* Empty stack configuration */ }
   interface ¤ { /* Error configuration. */ }
   //end{configuration}

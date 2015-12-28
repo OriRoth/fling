@@ -37,7 +37,7 @@ defined by applying the transition function to~$ξ$, the left-hand side of the r
 i.e.,~$q”=η(q',ξ)$.
 
 The specifics of parser generation and specifically
-  calculating the sets~$Kernel_{q}$ and $NonKernel_{q}$, lies beyond our interest here.
+  calculating the sets~$Kernel_{q}$ and~$NonKernel_{q}$, lies beyond our interest here.
 We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
@@ -64,7 +64,6 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
    \item~$δ(qᵢ,σ)= \text{some }Γ^*\text{ if }η_{LR}(qᵢ,σ)=Shift(qⱼ)$
   \end{itemize}
 
-
 \subsection{Informally}
 
 JLR parser performs as a LR parser except for:
@@ -82,25 +81,38 @@ JLR parser performs as a LR parser except for:
       Else:
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
-  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will 
-    supply~\[
+  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will
+    supply\[
       \textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}.
     \]
-  \item[Parsing] can always be added to this model, because when we get to a item~$A\rightarrow\alpha\cdot\B,a$, and we shift on
-    one of the items~$B\rightarrow\cdot\beta,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
-    if we shift on another item~$A\rightarrow\cdot\gamma,a/b$?)
+  \item[Parsing] can always be added to this model, because when we get to a item~$A→α·B,a$, and we shift on
+    one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
+    if we shift on another item~$A→·γ,a/b$?)
 \end{itemize}
 \paragraph{Problem 1} if we shift on more than one items, with different lookaheads, and put multiple terminals on the stack,
   who should we put first? the ones that are not first are the problem; if we jump to them, we still got other terminals on the top of the stack,
   out invariant says we always want the top of the stack to be a state element.
-  
-\paragraph{Solution 1} if save on the stack a single element for the ``multiple shifting items'' which will be of type:~$\mathcal{P}(\Sigma)$
-  and we transform the jump operation on~$\sigma\in\Sigma$to be ``Remove elements from the stack until a~$\chi\in\mathcal{P}(\Sigma)$,~$\sigma\in\chi$
-  is popped''.
-  
-\paragraph{Problem 2} When we~$\mathsf{Jump}(\sigma)$ , we consume~$\sigma$, and remove from stack as expected,
-the problem is, the corresponding lookaheads symbol should be ``consumed'' and the shift on $\sigma$ need to happen again.
-  
-\paragraph{Solution 2} Instead of pushing subsets of~$\Sigma$ we push partial mappings~$Σ↛Q^*$ (where~$\Gamma=Q\cup(Σ↛Q^*)$)
-  jumping is still defined on symbols~$\sigma\in\Sigma$, and when the jump is performed we pop from the stack until we popped
-  some~$f\in(Σ↛Q^*)$ for which~$f(\sigma)\neq\bot$, and then push~$f(\sigma)$ back onto the stack.
+
+\paragraph{Solution 1} if save on the stack a single element for the ‟multiple shifting items” which will be of type:~$\mathcal{P}(Σ)$
+  and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements from the stack until a~$χ∈\mathcal{P}(Σ)$,~$σ\inχ$
+  is popped”.
+
+\paragraph{Problem 2} When we~$\mathsf{Jump}(σ)$ , we consume~$σ$, and remove from stack as expected,
+the problem is, the corresponding lookaheads symbol should be ‟consumed” and the shift on~$σ$ need to happen again.
+
+\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q^*$ (where~$Γ=Q∪(Σ_{\$}↛Q^*)$)
+  jumping is still defined on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack until we popped
+  some~$f∈(Σ↛Q^*)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
+
+We also start with a double element on the stack,~$\$q0$
+\begin{equation}
+\label{Equation:fjDPDA-example}
+  \begin{array}{*3c}
+  δ( q₀ , a ) & = & q₀ ❴ b→q₂ q₃ , c→q₂ q₄ ❵ q₅⏎
+  δ(q₅, a) & = & q₅ q₅⏎
+  δ( q₅ , b ) & = & \mathsf{jump(b)}⏎
+  δ( q₅ , c ) & = & \mathsf{jump(c)}⏎
+  δ( q₃ , \$ ) & = & \mathsf{jump(\$)}⏎
+  δ( q₄ , \$ ) & = & \mathsf{jump(\$)}
+  \end{array}
+\end{equation}
