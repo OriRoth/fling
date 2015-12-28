@@ -1,7 +1,12 @@
 package automaton;
 
-// < Rest , Jump(a) , Jump(b) , Jump(c) , Jump($) >
-// < Rest, JRa , JRb , JRc  >
+/** JLR parser for the grammar :
+ * S -> B
+ * B -> Ab | Ac
+ * A -> aA | a
+ * 
+ * that generates the language : L = a^+(b|c)
+ */
 @SuppressWarnings({ "rawtypes", "unused" }) class fjDPDA {
   static class A {
     static class L {

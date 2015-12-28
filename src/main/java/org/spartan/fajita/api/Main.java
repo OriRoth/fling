@@ -42,7 +42,7 @@ public class Main {
   }
   static void apiGenerator() {
     final BNF bnf = BalancedParenthesis.buildBNF();
-//    lrAutomatonVisualisation(new LRParser(bnf));
+    lrAutomatonVisualisation(new LRParser(bnf));
     JavaFile fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
   }

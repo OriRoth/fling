@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples.balancedParenthesis;
 
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.NT.BALANCED;
+import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.NT.B;
 import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.lp;
 import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.rp;
 
@@ -21,16 +21,14 @@ public class BalancedParenthesis {
   }
 
   static enum NT implements NonTerminal {
-    BALANCED;
+    B;
   }
 
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .start(BALANCED) //
-        .derive(BALANCED).to(lp).and(BALANCED).and(rp) //
-        /*        */.or(lp).and(BALANCED).and(rp).and(BALANCED) //
-        /*        */.or(lp).and(rp).and(BALANCED)//
-        /*        */.or(lp).and(rp) //
+        .start(B) //
+        .derive(B).to(B).and(lp).and(B).and(rp) //
+        /*        */.orNone()
         .finish();
     return bnf;
   }

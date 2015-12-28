@@ -46,7 +46,7 @@ LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},
   to convert it to the encode-able jump-DPDA\@.
 
 A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that
-  is based on a jump-DPDA except for a DPDA\@.
+  is based on a variation of the jump-DPDA\@.
 The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
 \begin{Theorem}
@@ -58,20 +58,22 @@ The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
-  where~$Γ= Q∪Σ~$ are the stack elements,~$q₀∈Q$ is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ)$ is defined as follows:
+  where~$Γ= Q∪(Σ_\$↛Γ^*)$ are the stack elements,~$q₀∈Q$
+  is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
-   \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)$
-   \item~$δ(qᵢ,σ)= \text{some }Γ^*\text{ if }η_{LR}(qᵢ,σ)=Shift(qⱼ)$
+   \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r≠A→ε$
+   \item~$δ(qᵢ,σ)= \textsf{Some push}$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r=A→ε$
+   \item~$δ(qᵢ,σ)= qⱼ$ if~$η_{LR}(qᵢ,σ)=Shift(qⱼ)$ and we shift on a kernel item.
   \end{itemize}
 
 \subsection{Informally}
 
-JLR parser performs as a LR parser except for:
+For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
+A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
     The jump will be for the corresponding look-ahead symbol.
-
   \item On a shift op:
   if we shift on a~$item∈\textsf{Kernel}$
     then everything as usual.
@@ -81,10 +83,14 @@ JLR parser performs as a LR parser except for:
       Else:
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
-  \item[Jump Invariant] For each ID~$(q,w,γζ)$, if the corresponding look-ahead~$ℓ$ will
-    supply\[
-      \textsf{Jump}(ℓ)= \text{the state after all consecutive reductions}.
-    \]
+  \item[Even computation Invariant]
+    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*\$~$ (we denote~$wᵢ$ to be~$σᵢ…σₖ \$$).
+    if when~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
+    then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
+    and \textsf{clean} is a function that removes all~$c \notin Q$ from the input string.
+  \item[Jump invariant]
+    when jumping on a lookahead symbol~$a∈Σ_\$~$ during the computation of~$J$,
+    all consecutive reductions performed on~$L$ from the parallel configuration, are ‟done” by the \textsf{jump} operation.
   \item[Parsing] can always be added to this model, because when we get to a item~$A→α·B,a$, and we shift on
     one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
     if we shift on another item~$A→·γ,a/b$?)
