@@ -7,7 +7,7 @@ package automaton;
  * 
  * that generates the language : L = a^+(b|c)
  */
-@SuppressWarnings({ "rawtypes", "unused" }) class fjDPDA {
+class fjDPDA {
   static class A {
     static class L {
       /* empty */ }
