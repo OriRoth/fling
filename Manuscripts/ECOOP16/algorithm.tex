@@ -58,14 +58,36 @@ The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
-  where~$Γ= Q∪(Σ_\$↛Γ^*)$ are the stack elements,~$q₀∈Q$
+  where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
   is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
-   \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r≠A→ε$
-   \item~$δ(qᵢ,σ)= \textsf{Some push}$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r=A→ε$
-   \item~$δ(qᵢ,σ)= qⱼ$ if~$η_{LR}(qᵢ,σ)=Shift(qⱼ)$ and we shift on a kernel item.
-  \end{itemize}
+   \item~$δ(q,σ)= j(σ)$ if~$η_{LR}(q,σ)=Reduce(A→ \alpha )∧ \alpha ≠ε$
 
+   % Automization based on the second example (Balanced parenthesis)
+
+   % Green rule , only on kernel items
+   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$\textsf{Kernel}_q$ items
+   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Reduce(A \rightarrow ε)$
+     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+     and we advanced only on~$\textsf{Kernel}_q$ items
+
+  % Red rule , only on non-kernel items
+
+   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
+     items, then
+    \[
+      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+    \]
+
+   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A \rightarrowε)$
+     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+     and we advanced only on~$I⊆\textsf{NonKernel}_q$
+     items, then
+     \[
+      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+     \]
+
+  \end{itemize}
 \subsection{Informally}
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
@@ -103,22 +125,17 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
   and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements from the stack until a~$χ∈\mathcal{P}(Σ)$,~$σ\inχ$
   is popped”.
 
-\paragraph{Problem 2} When we~$\mathsf{Jump}(σ)$ , we consume~$σ$, and remove from stack as expected,
+\paragraph{Problem 2} When we~$\textsf{Jump}(σ)$ , we consume~$σ$, and remove from stack as expected,
 the problem is, the corresponding lookaheads symbol should be ‟consumed” and the shift on~$σ$ need to happen again.
 
-\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q^*$ (where~$Γ=Q∪(Σ_{\$}↛Q^*)$)
+\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q$ (where~$Γ=Q∪(Σ_{\$}↛Q)$)
   jumping is still defined on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack until we popped
-  some~$f∈(Σ↛Q^*)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
+  some~$f∈(Σ↛Q)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
 
+\paragraph{Problem 3} When we have a state \textsf{Base} that has two items~$A₁->α₁·β₁,a$ and~$A₂->α₂·β₂,a$ we can't decide which function to put,
+  the mapping of~$a$ might be for the consecutive transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
+
+\paragraph{Solution 3} yet to be unknown.
+
+\paragraph{Misc.}
 We also start with a double element on the stack,~$\$q0$
-\begin{equation}
-\label{Equation:fjDPDA-example}
-  \begin{array}{*3c}
-  δ( q₀ , a ) & = & q₀ ❴ b→q₂ q₃ , c→q₂ q₄ ❵ q₅⏎
-  δ(q₅, a) & = & q₅ q₅⏎
-  δ( q₅ , b ) & = & \mathsf{jump(b)}⏎
-  δ( q₅ , c ) & = & \mathsf{jump(c)}⏎
-  δ( q₃ , \$ ) & = & \mathsf{jump(\$)}⏎
-  δ( q₄ , \$ ) & = & \mathsf{jump(\$)}
-  \end{array}
-\end{equation}
