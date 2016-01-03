@@ -142,9 +142,17 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
   the mapping of~$a$ might be for the consecutive
   transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
 
+<<<<<<< HEAD
 \paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$\Sigma_\$→¬Q$
   to~$\Sigma_\$⨉Ξ→¬Q$. The reason resides on the identity of the input nonterminal.
   When we build the JLR's transition function, we need to decide to which state we move
+=======
+\paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$\Sigma_\$ \rightarrow \neg Q$
+  to~$\Sigma_\$ \times \Xi \rightarrow \neg Q$. The reason resides on the identity of the input nonterminal.
+  When we build the JLR's transition function, and want to add a function element to the stack, we choose for some~$\sigma \in \Sigma$
+  a transition to be performed after a goto, to a certain state~$q \in Q $, problem is, there might be more than one such transition
+  for that~$\sigma$, i.e., when for some~$q,q',q'' \in Q$, and~$A,B \in \Xi$ ,~$q.goto(A).shift(a)=q'$,~$q.goto(B).shift(a)=q''$.
+>>>>>>> 5fa1b9fafff40e6168946ded74af69ebfaa93dad
 
 \paragraph{Problem 4} We add a function element on the stack for lookahead~$a∈Σ$
   when when we have an item that will consume~$a$ after some reduction,
