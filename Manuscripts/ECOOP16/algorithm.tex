@@ -58,14 +58,36 @@ The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
-  where~$Γ= Q∪(Σ_\$↛Γ^*)$ are the stack elements,~$q₀∈Q$
+  where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
   is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
-   \item~$δ(qᵢ,σ)= j(σ)$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r≠A→ε$
-   \item~$δ(qᵢ,σ)= \textsf{Some push}$ if~$η_{LR}(qᵢ,σ)=Reduce(r)∧r=A→ε$
-   \item~$δ(qᵢ,σ)= qⱼ$ if~$η_{LR}(qᵢ,σ)=Shift(qⱼ)$ and we shift on a kernel item.
-  \end{itemize}
+   \item~$δ(q,σ)= j(σ)$ if~$η_{LR}(q,σ)=Reduce(A→α)∧α≠ε$
 
+   % Automization based on the second example (Balanced parenthesis)
+
+   % Green rule , only on kernel items
+   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$\textsf{Kernel}_q$ items
+   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
+     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+     and we advanced only on~$\textsf{Kernel}_q$ items
+
+  % Red rule , only on non-kernel items
+
+   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
+     items, then
+    \[
+      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+    \]
+
+   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
+     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+     and we advanced only on~$I⊆\textsf{NonKernel}_q$
+     items, then
+     \[
+      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+     \]
+
+  \end{itemize}
 \subsection{Informally}
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
@@ -95,30 +117,45 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
     one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
     if we shift on another item~$A→·γ,a/b$?)
 \end{itemize}
-\paragraph{Problem 1} if we shift on more than one items, with different lookaheads, and put multiple terminals on the stack,
-  who should we put first? the ones that are not first are the problem; if we jump to them, we still got other terminals on the top of the stack,
-  out invariant says we always want the top of the stack to be a state element.
+\paragraph{Problem 1} if we shift on more than one items, with different lookaheads,
+  and put multiple terminals on the stack, who should we put first? the ones that are
+  not first are the problem; if we jump to them, we still got other terminals on the
+  top of the stack, out invariant says we always want the top of the stack to be a
+  state element.
 
-\paragraph{Solution 1} if save on the stack a single element for the ‟multiple shifting items” which will be of type:~$\mathcal{P}(Σ)$
-  and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements from the stack until a~$χ∈\mathcal{P}(Σ)$,~$σ\inχ$
-  is popped”.
+\paragraph{Solution 1} if save on the stack a single element for the
+  ‟multiple shifting items” which will be of type:~$\mathcal{P}(Σ)$
+  and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements
+  from the stack until a~$χ∈\mathcal{P}(Σ)$,~$σ∈χ$ is popped”.
 
-\paragraph{Problem 2} When we~$\mathsf{Jump}(σ)$ , we consume~$σ$, and remove from stack as expected,
-the problem is, the corresponding lookaheads symbol should be ‟consumed” and the shift on~$σ$ need to happen again.
+\paragraph{Problem 2} When we~$\textsf{Jump}(σ)$ , we consume~$σ$, and remove
+  from stack as expected, the problem is, the corresponding lookaheads symbol
+  should be ‟consumed” and the shift on~$σ$ need to happen again.
 
-\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q^*$ (where~$Γ=Q ∪ (Σ_{\$}↛Q^*)$)
-  jumping is still defined on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack until we popped
-  some~$f∈(Σ↛Q^*)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
+\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial
+  mappings~$Σ_{\$}↛Q$ (where~$Γ=Q∪(Σ_{\$}↛Q)$) jumping is still defined
+  on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack
+  until we popped some~$f∈(Σ↛Q)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
 
+\paragraph{Problem 3} When we have a state \textsf{Base} that has
+  two items~$A₁→α₁·β₁,a$ and~$A₂→α₂·β₂,a$ we can't decide which function to put,
+  the mapping of~$a$ might be for the consecutive
+  transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
+
+\paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$\Sigma_\$→¬Q$
+  to~$\Sigma_\$⨉Ξ→¬Q$. The reason resides on the identity of the input nonterminal.
+  When we build the JLR's transition function, we need to decide to which state we move
+
+\paragraph{Problem 4} We add a function element on the stack for lookahead~$a∈Σ$
+  when when we have an item that will consume~$a$ after some reduction,
+  i.e., an item of type~$ A→·B aα, c$ for some~$A,B∈Ξ$ and~$c∈σ$,
+  and we don't add an item when we have a rule that will reduce
+  upon seeing such lookahead~$a$, i.e.,~$A→α·B , a$
+  ( not quite sure that these examples are as general as possible. should verify ).
+  What happens if both appear in the same state?
+
+\paragraph{Solution 4} I believe that in \emph{every} such situation,
+  we would see a Shift/Reduce conflict, at some state reachable from the discussed state.
+
+\paragraph{Misc.}
 We also start with a double element on the stack,~$\$q0$
-\begin{equation}
-\label{Equation:fjDPDA-example}
-  \begin{array}{*3c}
-  δ( q₀ , a ) & = & q₀ ❴ b→q₂ q₃ , c→q₂ q₄ ❵ q₅⏎
-  δ(q₅, a) & = & q₅ q₅⏎
-  δ( q₅ , b ) & = & \mathsf{jump(b)}⏎
-  δ( q₅ , c ) & = & \mathsf{jump(c)}⏎
-  δ( q₃ , \$ ) & = & \mathsf{jump(\$)}⏎
-  δ( q₄ , \$ ) & = & \mathsf{jump(\$)}
-  \end{array}
-\end{equation}

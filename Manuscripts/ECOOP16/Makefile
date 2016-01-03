@@ -172,7 +172,7 @@ dup:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then dup $$f;fi; done
 
 lang:
-	for f in *.tex ; do if [ $$f != 00.tex ]; then java -jar $(LANG_TOOL) -d WHITESPACE_RULE,EN_UNPAIRED_BRACKETS,COMMA_PARENTHESIS_WHITESPACE,CURRENCY,EN_QUOTES $$f ;fi; done
+	for f in *.tex ; do if [ $$f != 00.tex ]; then detex $$f > $$f.detexed | java -jar ~/Downloads/LanguageTool-3.1/languagetool-commandline.jar -d WHITESPACE_RULE $$f.detexed ; rm -f $$f.detexed ;fi; done
 
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
@@ -198,6 +198,7 @@ JUNKFILES+=$(wildcard .*swo )
 JUNKFILES+=$(wildcard .*swp )
 JUNKFILES+=$(wildcard *.synctex.gz )
 JUNKFILES+=$(wildcard *.vtc)
+JUNKFILES+=$(wildcard *.detexed )
 
 clean: $(JUNKFILES) 
 	- [ -z '$^' ]        || mv -f $^ /tmp
