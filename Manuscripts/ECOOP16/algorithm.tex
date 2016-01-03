@@ -43,21 +43,21 @@ including SLR and LALR\@.
 
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
   fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need
-  to convert it to the encode-able jump-DPDA\@.
+  to convert it to the encode-able jDPDA\@.
 
 A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that
-  is based on a variation of the jump-DPDA\@.
+  is based on a variation of the jDPDA\@.
 The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
 \begin{Theorem}
   \label{Theorem:JLR}
-  Let P be a LR parser, then there exists a jump-DPDA J,
-  such that for every string~$α∈Σ^*$
-  P accepts~$α$ if and only if J accepts~$α$
+  Let~$P$ be an LR parser, then there exists a jDPDA~$J$,
+  such that for every string~$α∈Σ^*$, parser~$P$ accepts~$α$
+    if and only if~$J$ accepts~$α$
 \end{Theorem}
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
   where~$Γ= Q∪(Σ_\$↛Γ^*)$ are the stack elements,~$q₀∈Q$
   is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
@@ -69,7 +69,7 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
 \subsection{Informally}
 
 For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
@@ -84,7 +84,7 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
   \item[Even computation Invariant]
-    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*\$~$ (we denote~$wᵢ$ to be~$σᵢ…σₖ \$$).
+    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*\$~$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ \$$).
     if when~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
     then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
     and \textsf{clean} is a function that removes all~$c \notin Q$ from the input string.
@@ -106,7 +106,7 @@ A JLR is like the jump-DPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDP
 \paragraph{Problem 2} When we~$\mathsf{Jump}(σ)$ , we consume~$σ$, and remove from stack as expected,
 the problem is, the corresponding lookaheads symbol should be ‟consumed” and the shift on~$σ$ need to happen again.
 
-\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q^*$ (where~$Γ=Q∪(Σ_{\$}↛Q^*)$)
+\paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial mappings~$Σ_{\$}↛Q^*$ (where~$Γ=Q ∪ (Σ_{\$}↛Q^*)$)
   jumping is still defined on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack until we popped
   some~$f∈(Σ↛Q^*)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
 
