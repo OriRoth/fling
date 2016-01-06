@@ -50,7 +50,7 @@ Our proof relies on a special kind of realtime automata,
               \item consume~$σ$
               \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pops~$γ$, and pushes~$ζ$ into the stack.
               \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
-                    pops stack elements up-to and including the first occurrence of~$γ$.
+                    pops stack elements up-to and including the first occurrence of~$γ'$.
             \end{enumerate}
           \end{quote}
     \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),

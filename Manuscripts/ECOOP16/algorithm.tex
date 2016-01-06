@@ -161,3 +161,57 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 
 \paragraph{Misc.}
 We also start with a double element on the stack,~$\$q0$
+
+\[
+S → B
+\]
+\[
+B → B \;\mathsf{lp} \;B \; \mathsf{rp}  \;\;| \;\; ε
+\]
+
+
+\begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
+  \label{Definition:JDPDA}
+  \slshape
+  A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
+  (jDPDA, for short) is a triplet~$⟨Γ,γ₁,δ⟩$
+  where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
+  and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
+  \[
+    j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
+  \]
+  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
+  Initially, the stack holds~$γ₁$ only.
+  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
+  \begin{itemize}
+    \item At each step a jDPDA examines~$γ$,
+    the element at the top of the stack,
+    and~$σ∈Σ$, the next input character,
+    and executes the following:
+          \begin{quote}
+            \begin{enumerate}
+              \item consume~$σ$
+              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pops~$γ$, and pushes~$ζ$ into the stack.
+              \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
+                    pops stack elements up-to and including the first occurrence of~$γ'$.
+            \end{enumerate}
+          \end{quote}
+    \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),
+          depending on the value of~$γ$.
+  \end{itemize}
+  In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
+  an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
+\end{Definition}
+\begin{equation}
+  \begin{array}{*1c}
+  δ(q₀,lp) = q₀ \, q_2 \, \textsf{lp} \, q₂ \\
+  δ(q₂,lp) = q₂ \, q_4 \, \textsf{lp} \, q_5 \, \textsf{rp} \, \, q₄  \\
+  δ(q₂,rp) = q₂ \, q₅\\
+  δ(q₄,lp) = q₄ \, q₄ \, \textsf{lp} \, q₇ \, \textsf{rp} \, q₄\\
+  δ(q₄,rp) = q₄ \, q₇\\
+  δ(q₅,\$)  = jump(\$)\\
+  δ(q₅,lp) = jump(lp)\\
+  δ(q₇,lp) = jump(lp)\\
+  δ(q₇,rp) = jump(rp)\\
+  \end{array}
+\end{equation}

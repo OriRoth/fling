@@ -1,5 +1,6 @@
 package automaton;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -105,13 +106,50 @@ abstract class Example3{
   interface P<L,R>{}
   interface Left<L,R,RR> extends P<P<L,R>,RR> {}
   interface Right<L,R,LL> extends P<LL,P<L,R>> {}
-  interface X<A,B,C> extends Left<A,B,C>,Right<A,B,C>{}
   
+  abstract <A> A unify(A a1,A a2);
   
   abstract <L,R,X extends P<P<L,L>,R>,Y extends P<L,P<R,R>>> X foo(X a,Y y);
-  void bar(){
+  <L,R> void bar(){
+    
     P<P<Integer,Integer>,String> _1 = foo(null,null);
-    P<P<P<Integer, >, P<Object, Object>>, Object> _2 = foo(null,foo(null,null));
-    P<P<P<Object, Object>, P<Object, Object>>, Object> _3 = foo(null,foo(null,null));
+    
+    P<P<P<Object, Object>, P<Object, Object>>, Object> _2 = foo(null,foo(null,null));
+    
+    P<P<P<Integer,Integer>, P<Integer,Integer>>, String> _3 = foo(null,foo(null,null));
+    
+    P<P<P<L,L>, P<L,L>>, R> _4 = foo(null,foo(null,null));
+    
   }
-}*/
+  
+  abstract <A> A makeBoundedTypeVar(A a);
+  abstract <A> A makeUnboundedTypeVar();
+  
+  abstract <A> A f(A a, A a2);
+  abstract <A,B> P<A,B> g(A a,B b);
+  
+  class Sub1 extends Super{} class Sub2 extends Super{} class Super{}
+  <L,R> void wikipedia(){
+    
+     String _1 = unify(makeUnboundedTypeVar(),""); // inferred
+     
+     P<? extends Object, ? extends Object> _2 = unify(g("",5),g(null,null)); // inferred
+     
+     AbstractList<Object> _3 = unify(makeBoundedTypeVar(new Stack<>()),makeBoundedTypeVar(new ArrayList<>())); // inferred
+     
+     String _4 = unify(makeBoundedTypeVar(makeUnboundedTypeVar()),makeUnboundedTypeVar()); //manual
+     
+     P<String, Integer> _5 = unify(makeBoundedTypeVar(g("",5)),makeUnboundedTypeVar()); // inferred
+     
+     String choose = unify(f(makeUnboundedTypeVar(),null),f(null,""));
+  }
+}
+
+
+
+
+
+
+
+
+
