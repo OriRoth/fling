@@ -138,9 +138,11 @@ public class BNFBuilder {
       super(lhs);
     }    
     public AndDeriver or(final Terminal term, Class<?>... type) {
+      addRule(lhs, symbols);
       return new AndDeriver(lhs, new Verb(term.name(),type));
     }
     public AndDeriver or(final NonTerminal nt) {
+      addRule(lhs, symbols);
       return new AndDeriver(lhs, nt);
     }
     public OrDeriver orNone() {

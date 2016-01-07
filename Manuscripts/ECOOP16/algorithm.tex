@@ -162,14 +162,6 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 \paragraph{Misc.}
 We also start with a double element on the stack,~$\$q0$
 
-\[
-S → B
-\]
-\[
-B → B \;\mathsf{lp} \;B \; \mathsf{rp}  \;\;| \;\; ε
-\]
-
-
 \begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
   \label{Definition:JDPDA}
   \slshape
@@ -202,16 +194,26 @@ B → B \;\mathsf{lp} \;B \; \mathsf{rp}  \;\;| \;\; ε
   In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
   an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
+
+\[
+S → B
+\]
+\[
+B → A \; b \;\; | \;\; A \; c
+\]
+\[	
+A → a \; A \;\; | \;\; a
+\]
+
 \begin{equation}
   \begin{array}{*1c}
-  δ(q₀,lp) = q₀ \, q_2 \, \textsf{lp} \, q₂ \\
-  δ(q₂,lp) = q₂ \, q_4 \, \textsf{lp} \, q_5 \, \textsf{rp} \, \, q₄  \\
-  δ(q₂,rp) = q₂ \, q₅\\
-  δ(q₄,lp) = q₄ \, q₄ \, \textsf{lp} \, q₇ \, \textsf{rp} \, q₄\\
-  δ(q₄,rp) = q₄ \, q₇\\
-  δ(q₅,\$)  = jump(\$)\\
-  δ(q₅,lp) = jump(lp)\\
-  δ(q₇,lp) = jump(lp)\\
+  δ(q₀,lp) = q_0 \, q_3 \, b \, q_4 \, c \, q_5 \\
+  δ(q₅,a) = q_5 \, q_5 \\
+  δ(q₅,b) = jump(b)\\
+  δ(q₅,c) = jump(c)\\
+  δ(q_3,\$)  = jump(q_0)\\
+  δ(q_4,\$)  = jump(q_0)\\
+  
   δ(q₇,rp) = jump(rp)\\
   \end{array}
 \end{equation}

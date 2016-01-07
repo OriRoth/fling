@@ -21,13 +21,14 @@ import org.spartan.fajita.api.ast.AbstractNode;
 import org.spartan.fajita.api.ast.Atomic;
 import org.spartan.fajita.api.ast.Compound;
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
+import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.examples.automatonCycles.AutomatonCycles;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.examples.bootstrap.BNFBootstrap;
 import org.spartan.fajita.api.generators.ApiGenerator;
 import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.LRParser;
@@ -41,7 +42,8 @@ public class Main {
 //     expressionBuilder();
   }
   static void apiGenerator() {
-    final BNF bnf = BalancedParenthesis.buildBNF();
+//    final BNF bnf = BalancedParenthesis.buildBNF();
+    BNF bnf = testBNF();
     lrAutomatonVisualisation(new LRParser(bnf));
     JavaFile fluentAPI = ApiGenerator.generate(bnf);
     System.out.println(fluentAPI.toString());
@@ -127,5 +129,22 @@ public class Main {
     Map cellAttr = new HashMap();
     cellAttr.put(cell, attr);
     model.edit(cellAttr, null, null, null);
+  }
+  
+  enum Term implements Terminal{
+    a,b,c
+  }
+  enum NT implements NonTerminal{
+    S,A,B
+  }
+  static BNF testBNF(){
+    return new BNFBuilder(Term.class, NT.class) //
+        .start(NT.S) //
+        .derive(NT.S).to(NT.B) //
+        .derive(NT.B).to(NT.A).and(Term.b) //
+          .or(NT.A).and(Term.c)
+        .derive(NT.A).to(Term.a).and(NT.A).or(Term.a)
+        .finish();
+        
   }
 }

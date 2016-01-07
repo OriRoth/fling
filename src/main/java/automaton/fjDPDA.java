@@ -7,12 +7,12 @@ package automaton;
  * 
  * that generates the language : L = a^+(b|c)
  * 
- * δ( q₀ , a ) = q₀ ❴ b→q₂ q₃ , c→q₂ q₄ ❵ q₅
+ * δ(q₀,a) = q₀ ❴ b→q₂ q₃ , c→q₂ q₄ ❵ q₅
  * δ(q₅,a) = q₅ q₅
  * δ(q₅,b) = jump(b)
  * δ(q₅,c) = jump(c)
- * δ(q₃,$) = jump($)
- * δ(q₄,$) = jump($)
+ * δ(q₃,$) = jump(q₀)
+ * δ(q₄,$) = jump(q₀)
  */
 class fjDPDA {
   static class A {
