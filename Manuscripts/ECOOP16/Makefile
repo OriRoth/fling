@@ -199,6 +199,7 @@ JUNKFILES+=$(wildcard .*swp )
 JUNKFILES+=$(wildcard *.synctex.gz )
 JUNKFILES+=$(wildcard *.vtc)
 JUNKFILES+=$(wildcard *.detexed )
+JUNKFILES+=$(wildcard *.class )
 
 clean: $(JUNKFILES) 
 	- [ -z '$^' ]        || mv -f $^ /tmp
