@@ -163,15 +163,15 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 The JLR is a shift-jump machine.
 
 \subparagraph*{Item definition}
-An JLR item is the tuple~$⟨i, lr ⟩∈Ξ∪❴S'❵$
+An JLR item is the tuple~$⟨i, addr ⟩∈ℝ~$
   where~$i$ is a classic LR(1) item
-  and~$lr$ is the \emph{last reduction} of the item, i.e.,
-  if~$ lr = A~$, then when we reduce on this (instance of the)
-  rule, the last reduction on the consecutive reduction
-  list will be of type~$A \rightarrowα$.
-We denote this triplet as~$[A \rightarrowα\cdotβ, b , B]$
-  where~$A \rightarrowα\cdotβ, b$ is the
-  LR(1) notation, and~$B$ is the left-hand side of the last reduction.
+  and~$addr$ is the stack address of the \emph{last reduction} of the item, i.e.,
+  when we reduce on this (instance of the) rule,
+  the penultimate pop on the consecutive reduction
+  list will reveal~$addr$, and the popping of the last
+  will conclude the reductions.
+We denote this triplet as~$[A \rightarrowα\cdotβ, b , Addr(addr)]$
+  where~$A \rightarrowα\cdotβ, b$ is the LR(1) notation.
 
 \subparagraph*{State definition}
 A state, is a set of JLR items, the set is defined as the
@@ -184,29 +184,62 @@ The method is basically the same as LR automaton construction,
   with the modified items.
 
 \begin{algorithm}
-  \caption{\label{Algorithm:closure}
-    \textsf{Closure} (\textsf{K})}
+  \caption{\label{Algorithm:Closure}
+    $Closure(K)$ -- Generates the closure of an initial \textsf{Kernel} items set~$K$}
   \begin{algorithmic}
-    \REQUIRE \textsf {K} is a set of kernel items
-    \ENSURE $\textsf{Clo} = \textsf{K}∪\textsf{NK}$
-    \STATE $\textsf{Clo} \, := \, \textsf{K}$
+    \REQUIRE $K$ is a set of kernel items
+    \ENSURE $Clo = K ∪ NK$
+    \STATE $Clo \, := \, K$
     \REPEAT
-      \FOR{each item~$\left[ A \rightarrowα·Bβ\, , \, a \, , \, C \right]∈\textsf{Clo}$}
-  \FOR{each production~$B \rightarrowγ∈G'$}
-    \FOR{each terminal~$t∈\textsf{First}(β)$}
-      \STATE~$\textsf{Clo} := \textsf{Clo}∪❴ \left[ B→·γ, t , B \right] ❵$
-    \ENDFOR
-    \IF{$\textsf{Nullable(\beta)}$}
-      \STATE~$\textsf{Clo} := \textsf{Clo}∪❴ \left[ B→·γ, a , C \right] ❵$
-    \ENDIF
-  \ENDFOR
+      \FOR{each item~$ [ A→α·Bβ\, , \, a \, , \, Addr(i) ] ∈ Clo$}
+	\FOR{each production~$B→γ ∈ G'$}
+	  \FOR{each terminal~$t ∈ FIRST(β)$}
+	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, t , Addr(fresh()) ] ❵$
+	  \ENDFOR
+	  \IF{$NULLABLE(β)$}
+	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, a , Addr(i) ] ❵$
+	  \ENDIF
+	\ENDFOR
       \ENDFOR
-    \UNTIL{no more changes in \textsf{C}}
+    \UNTIL{no more items are added to~$Clo$}
+    \RETURN $Clo$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{\label{Algorithm:Goto}
+    $GOTO(I,X)$ -- Generates an item set for an adjacent state}
+  \begin{algorithmic}
+    \REQUIRE $I$ is a set of JLR items and~$X$ is a grammar symbol
+    \ENSURE $J$ is the set of items of some adjacent state.
+    \STATE $J \, := \, \emptyset $
+    \FOR{each item~$ [ A→α·Xβ\, , \, a \, , \, Addr(i) ] ∈ I $}
+      \STATE $ J := J \cup \{ [ A \rightarrow \alpha X \cdot \beta \, , \, a \, , \, Addr(i) ] \}$
+    \ENDFOR
+    \RETURN $Closure(J)$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{\label{Algorithm:States}
+    $ITEMS(G')$ -- Generates the states set of the augmented grammar~$G'$}
+  \begin{algorithmic}
+    \REQUIRE $G'$ is an augmented grammar
+    \ENSURE $Set$ is the set of JLR states
+    \STATE $Set \, := \, ❴[S'→·S , \$ , Addr(0)]❵$
+    \REPEAT
+      \FOR{each set of items~$I ∈ Set$}
+	\FOR{each grammar symbol~$ X ∈Σ_\$∪\Xi'~$}
+	  \IF{$GOTO(I,X)$ is not empty and not in~$Set$}
+	    \STATE $ Set := Set ∪ GOTO(I,X)$
+	  \ENDIF
+	\ENDFOR
+      \ENDFOR
+    \UNTIL{no more states are added \textsf{Set}}
   \end{algorithmic}
 \end{algorithm}
 
 \paragraph{Misc.}
-We also start with a double element on the stack,~$\$q0$
 
 \begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
   \label{Definition:JDPDA}
