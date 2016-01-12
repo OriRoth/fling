@@ -30,9 +30,9 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.generators.ApiGenerator;
-import org.spartan.fajita.api.parser.AcceptState;
-import org.spartan.fajita.api.parser.LRParser;
-import org.spartan.fajita.api.parser.State;
+import org.spartan.fajita.api.parser.old.AcceptState;
+import org.spartan.fajita.api.parser.old.LRParser;
+import org.spartan.fajita.api.parser.old.State;
 
 import com.squareup.javapoet.JavaFile;
 

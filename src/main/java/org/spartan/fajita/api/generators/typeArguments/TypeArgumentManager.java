@@ -32,12 +32,12 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.ActionTable.Action;
-import org.spartan.fajita.api.parser.ActionTable.Reduce;
-import org.spartan.fajita.api.parser.ActionTable.Shift;
-import org.spartan.fajita.api.parser.Item;
-import org.spartan.fajita.api.parser.LRParser;
-import org.spartan.fajita.api.parser.State;
+import org.spartan.fajita.api.parser.old.Item;
+import org.spartan.fajita.api.parser.old.LRParser;
+import org.spartan.fajita.api.parser.old.State;
+import org.spartan.fajita.api.parser.old.ActionTable.Action;
+import org.spartan.fajita.api.parser.old.ActionTable.Reduce;
+import org.spartan.fajita.api.parser.old.ActionTable.Shift;
 
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;

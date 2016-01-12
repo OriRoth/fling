@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.LRParser;
+import org.spartan.fajita.api.parser.old.LRParser;
 
 public class FirstSetTest {
   private enum Term implements Terminal {

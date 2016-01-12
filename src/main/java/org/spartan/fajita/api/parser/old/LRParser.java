@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser;
+package org.spartan.fajita.api.parser.old;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,10 +17,10 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.ActionTable.Accept;
-import org.spartan.fajita.api.parser.ActionTable.Action;
-import org.spartan.fajita.api.parser.ActionTable.Reduce;
-import org.spartan.fajita.api.parser.ActionTable.Shift;
+import org.spartan.fajita.api.parser.old.ActionTable.Accept;
+import org.spartan.fajita.api.parser.old.ActionTable.Action;
+import org.spartan.fajita.api.parser.old.ActionTable.Reduce;
+import org.spartan.fajita.api.parser.old.ActionTable.Shift;
 
 /**
  * Algorithms in this class are taken from
@@ -35,13 +35,13 @@ public class LRParser {
   private final ActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
-  private final Map<NonTerminal, Set<Verb>> followSets;
+//  private final Map<NonTerminal, Set<Verb>> followSets;
 
   public LRParser(final BNF bnf) {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    followSets = calculateFollowSets();
+//    followSets = calculateFollowSets();
     states = new ArrayList<>();
     generateStatesSet();
     actionTable = new ActionTable(getStates());
@@ -76,29 +76,29 @@ public class LRParser {
     } while (moreChanges);
     return $;
   }
-  private Map<NonTerminal, Set<Verb>> calculateFollowSets() {
-    Map<NonTerminal, Set<Verb>> $ = new HashMap<>();
-    // initialization
-    for (NonTerminal nt : bnf.getNonTerminals())
-      $.put(nt, new HashSet<>());
-    $.get(SpecialSymbols.augmentedStartSymbol).add(SpecialSymbols.$);
-    // iterative step
-    boolean moreChanges;
-    do {
-      moreChanges = false;
-      for (DerivationRule dRule : bnf.getRules())
-        for (int i = 0; i < dRule.getChildren().size(); i++) {
-          if (!dRule.getChildren().get(i).isNonTerminal())
-            continue;
-          Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
-          Set<Verb> ntFollowSet = $.get(dRule.getChildren().get(i));
-          moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
-          if (isNullable(subExpression))
-            moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
-        }
-    } while (moreChanges);
-    return $;
-  }
+//  private Map<NonTerminal, Set<Verb>> calculateFollowSets() {
+//    Map<NonTerminal, Set<Verb>> $ = new HashMap<>();
+//    // initialization
+//    for (NonTerminal nt : bnf.getNonTerminals())
+//      $.put(nt, new HashSet<>());
+//    $.get(SpecialSymbols.augmentedStartSymbol).add(SpecialSymbols.$);
+//    // iterative step
+//    boolean moreChanges;
+//    do {
+//      moreChanges = false;
+//      for (DerivationRule dRule : bnf.getRules())
+//        for (int i = 0; i < dRule.getChildren().size(); i++) {
+//          if (!dRule.getChildren().get(i).isNonTerminal())
+//            continue;
+//          Symbol subExpression[] = subExpressionBuilder(dRule.getChildren(), i + 1);
+//          Set<Verb> ntFollowSet = $.get(dRule.getChildren().get(i));
+//          moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
+//          if (isNullable(subExpression))
+//            moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
+//        }
+//    } while (moreChanges);
+//    return $;
+//  }
   public static Symbol[] subExpressionBuilder(final List<Symbol> expression, final int index, final Symbol... symbols) {
     Symbol[] $ = new Symbol[expression.size() - index + symbols.length];
     for (int i = 0; i < expression.size() - index; i++)
@@ -120,9 +120,9 @@ public class LRParser {
     }
     return $;
   }
-  public Set<Verb> followSetOf(final NonTerminal nt) {
-    return followSets.get(nt);
-  }
+//  public Set<Verb> followSetOf(final NonTerminal nt) {
+//    return followSets.get(nt);
+//  }
   private void fillParsingTable() {
     for (State state : getStates())
       for (Item item : state.getItems())

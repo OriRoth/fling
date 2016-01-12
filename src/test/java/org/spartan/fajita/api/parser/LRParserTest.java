@@ -9,10 +9,12 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.ActionTable.Reduce;
-import org.spartan.fajita.api.parser.ActionTable.ReduceReduceConflictException;
-import org.spartan.fajita.api.parser.ActionTable.Shift;
-import org.spartan.fajita.api.parser.ActionTable.ShiftReduceConflictException;
+import org.spartan.fajita.api.parser.old.LRParser;
+import org.spartan.fajita.api.parser.old.State;
+import org.spartan.fajita.api.parser.old.ActionTable.Reduce;
+import org.spartan.fajita.api.parser.old.ActionTable.ReduceReduceConflictException;
+import org.spartan.fajita.api.parser.old.ActionTable.Shift;
+import org.spartan.fajita.api.parser.old.ActionTable.ShiftReduceConflictException;
 
 public class LRParserTest {
   private enum Term implements Terminal {

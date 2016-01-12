@@ -14,7 +14,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.parser.LRParser;
+import org.spartan.fajita.api.parser.old.LRParser;
 
 public class Hamcrest {
   public static void expressionBuilder() {

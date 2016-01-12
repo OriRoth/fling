@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser;
+package org.spartan.fajita.api.parser.old;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;

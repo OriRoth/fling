@@ -28,8 +28,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.ASTViewer;
 import org.spartan.fajita.api.generators.GeneratorsUtils.Classname;
 import org.spartan.fajita.api.generators.typeArguments.TypeArgumentManager;
-import org.spartan.fajita.api.parser.LRParser;
-import org.spartan.fajita.api.parser.State;
+import org.spartan.fajita.api.parser.old.LRParser;
+import org.spartan.fajita.api.parser.old.State;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;

@@ -13,7 +13,7 @@ import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q1;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q2;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3Q3;
-import org.spartan.fajita.api.parser.LRParser;
+import org.spartan.fajita.api.parser.old.LRParser;
 
 public class DC2 {
   @SuppressWarnings("unused") public static void expressionBuilder() {

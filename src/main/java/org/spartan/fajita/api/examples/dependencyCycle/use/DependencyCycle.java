@@ -18,7 +18,7 @@ import org.spartan.fajita.api.examples.dependencyCycle.States.Q3;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q4;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5Q4Q5;
-import org.spartan.fajita.api.parser.LRParser;
+import org.spartan.fajita.api.parser.old.LRParser;
 
 public class DependencyCycle {
   @SuppressWarnings({ "hiding", "unused" }) public static void expressionBuilder() {
