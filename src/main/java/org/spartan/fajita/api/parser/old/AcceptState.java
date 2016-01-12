@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 import org.spartan.fajita.api.bnf.BNF;
 
-public final class AcceptState extends State {
-  protected AcceptState(final BNF bnf) {
+public final class AcceptState<I extends Item> extends State<I>{
+  public AcceptState(final BNF bnf) {
     super(new HashSet<>(), bnf, -1);
   }
   @Override public String toString() {

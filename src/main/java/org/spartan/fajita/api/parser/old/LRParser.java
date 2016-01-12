@@ -31,7 +31,7 @@ import org.spartan.fajita.api.parser.old.ActionTable.Shift;
  */
 public class LRParser {
   public final BNF bnf;
-  private final List<State> states;
+  private final List<State<Item>> states;
   private final ActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
@@ -124,7 +124,7 @@ public class LRParser {
 //    return followSets.get(nt);
 //  }
   private void fillParsingTable() {
-    for (State state : getStates())
+    for (State<Item> state : getStates())
       for (Item item : state.getItems())
         if (item.readyToReduce())
           if (item.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && item.lookahead.equals(SpecialSymbols.$))
@@ -134,24 +134,24 @@ public class LRParser {
         else if (item.rule.getChildren().get(item.dotIndex).isVerb())
           addShiftAction(state, item);
   }
-  private void addAcceptAction(final State state) {
+  private void addAcceptAction(final State<Item> state) {
     actionTable.set(state, SpecialSymbols.$, new Accept());
   }
-  private void addShiftAction(final State state, final Item item) {
+  private void addShiftAction(final State<Item> state, final Item item) {
     Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-    State shift = state.goTo(nextTerminal);
+    State<Item> shift = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(shift));
   }
-  private void addReduceAction(final State state, final Item item) {
+  private void addReduceAction(final State<Item> state, final Item item) {
     actionTable.set(state, item.lookahead, new Reduce(item));
   }
-  private State generateInitialState() {
+  private State<Item> generateInitialState() {
     Set<Item> initialItems = bnf.getRules().stream() //
         .filter(r -> r.lhs.equals(SpecialSymbols.augmentedStartSymbol))//
         .map(r -> new Item(r, SpecialSymbols.$, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
-    return new State(closure, bnf, 0);
+    return new State<>(closure, bnf, 0);
   }
   private Set<Item> calculateClosure(final Set<Item> initialItems) {
     Set<Item> items = new HashSet<>(initialItems);
@@ -171,17 +171,17 @@ public class LRParser {
     return items;
   }
   private void generateStatesSet() {
-    State initialState = generateInitialState();
+    State<Item> initialState = generateInitialState();
     List<Symbol> symbols = new ArrayList<>(legalSymbols());
     states.add(initialState);
-    Stack<State> statesToCheck = new Stack<>();
+    Stack<State<Item>> statesToCheck = new Stack<>();
     statesToCheck.push(initialState);
     while (!statesToCheck.isEmpty()) {
-      State state = statesToCheck.pop();
+      State<Item> state = statesToCheck.pop();
       for (Symbol lookahead : symbols) {
         if (!state.isLegalTransition(lookahead))
           continue;
-        State newState = generateNextState(state, lookahead);
+        State<Item> newState = generateNextState(state, lookahead);
         int stateIndex = states.indexOf(newState);
         if (stateIndex == -1) {
           if (newState.getClass() != AcceptState.class) {
@@ -194,18 +194,18 @@ public class LRParser {
       }
     }
   }
-  private State generateNextState(final State state, final Symbol lookahead) {
+  private State<Item> generateNextState(final State<Item> state, final Symbol lookahead) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState(bnf);
+        return new AcceptState<>(bnf);
     Set<Item> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
-    return new State(closure, bnf, getStates().size());
+    return new State<>(closure, bnf, getStates().size());
   }
-  public Action actionTable(final State state, final Verb lookahead) {
+  public Action actionTable(final State<Item> state, final Verb lookahead) {
     return actionTable.get(state.index, lookahead);
   }
   private Set<Symbol> legalSymbols() {
@@ -218,12 +218,12 @@ public class LRParser {
   }
   @Override public String toString() {
     String $ = "States:" + System.lineSeparator();
-    for (State state : states)
+    for (State<Item> state : states)
       $ += state.extentedToString() + System.lineSeparator();
     $ += actionTable.toString();
     return $;
   }
-  public List<State> getStates() {
+  public List<State<Item>> getStates() {
     return states;
   }
 }

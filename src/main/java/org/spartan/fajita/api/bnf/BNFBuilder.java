@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.api.bnf.BNFBuilder.OrDeriver;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -56,7 +55,8 @@ public class BNFBuilder {
   }
   @SuppressWarnings("unchecked") void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
     DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
-    verbs.addAll((Collection<? extends Verb>) symbols.stream().filter(symbol -> symbol.getClass()==Verb.class).collect(Collectors.toList()));
+    verbs.addAll((Collection<? extends Verb>) symbols.stream().filter(symbol -> symbol.getClass() == Verb.class)
+        .collect(Collectors.toList()));
     checkNewRule(r);
     getRules().add(r);
   }
@@ -95,7 +95,8 @@ public class BNFBuilder {
       this.symbols = new ArrayList<>(Arrays.asList(symbols));
     }
     public InitialDeriver derive(final NonTerminal newRuleLHS) {
-      addRuleToBNF();
+      if (!symbols.isEmpty())
+        addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
     @SuppressWarnings("synthetic-access") public BNF finish() {
@@ -104,7 +105,7 @@ public class BNFBuilder {
     /**
      * Adds a rule to the BnfBuilder host.
      */
-    protected void addRuleToBNF(){
+    protected void addRuleToBNF() {
       addRule(lhs, symbols);
     }
   }
@@ -122,7 +123,7 @@ public class BNFBuilder {
       this.lhs = lhs;
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
-      return new AndDeriver(lhs, new Verb(term.name(),type));
+      return new AndDeriver(lhs, new Verb(term.name(), type));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);
@@ -133,13 +134,13 @@ public class BNFBuilder {
     }
   }
 
-  public class OrDeriver extends Deriver{
+  public class OrDeriver extends Deriver {
     OrDeriver(final NonTerminal lhs) {
       super(lhs);
-    }    
+    }
     public AndDeriver or(final Terminal term, Class<?>... type) {
       addRule(lhs, symbols);
-      return new AndDeriver(lhs, new Verb(term.name(),type));
+      return new AndDeriver(lhs, new Verb(term.name(), type));
     }
     public AndDeriver or(final NonTerminal nt) {
       addRule(lhs, symbols);
@@ -149,6 +150,7 @@ public class BNFBuilder {
       return derive(lhs).toNone();
     }
   }
+
   /**
    * Currently deriving a normal rule
    * 
@@ -162,14 +164,14 @@ public class BNFBuilder {
     }
     public AndDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
       super(lhs);
-      symbols.add(new Verb(child.name(),type));
+      symbols.add(new Verb(child.name(), type));
     }
     public AndDeriver and(final NonTerminal nt) {
       symbols.add(nt);
       return this;
     }
-    public AndDeriver and(final Terminal term,Class<?> ...type) {
-      symbols.add(new Verb(term.name(),type));
+    public AndDeriver and(final Terminal term, Class<?>... type) {
+      symbols.add(new Verb(term.name(), type));
       return this;
     }
     @Override public BNF finish() {

@@ -193,8 +193,9 @@ The method is basically the same as LR automaton construction,
     \REPEAT
       \FOR{each item~$ [ A→α·Bβ\, , \, a \, , \, Addr(i) ] ∈ Clo$}
 	\FOR{each production~$B→γ ∈ G'$}
+	  \STATE $newAddr \leftarrow fresh()$
 	  \FOR{each terminal~$t ∈ FIRST(β)$}
-	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, t , Addr(fresh()) ] ❵$
+	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, t , Addr(newAddr) ] ❵$
 	  \ENDFOR
 	  \IF{$NULLABLE(β)$}
 	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, a , Addr(i) ] ❵$

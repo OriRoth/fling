@@ -39,10 +39,10 @@ public class Item {
     return readyToReduce() && lookahead.equals(term);
   }
   @Override public int hashCode() {
-    return rule.hashCode() * Integer.hashCode(dotIndex);
+    return rule.hashCode() + Integer.hashCode(dotIndex);
   }
   @Override public boolean equals(final Object obj) {
-    if (obj.getClass() != Item.class)
+    if (obj.getClass() != getClass())
       return false;
     Item i = (Item) obj;
     return dotIndex == i.dotIndex && rule.equals(i.rule) && lookahead.equals(i.lookahead);

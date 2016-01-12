@@ -13,21 +13,21 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class State {
-  private final Set<Item> items;
+public class State<I extends Item> {
+  private final Set<I> items;
   private final BNF bnf;
-  private final Map<Symbol, State> transitions;
+  private final Map<Symbol, State<I>> transitions;
   public final int index;
   public final String name;
 
-  State(final Set<Item> items, final BNF bnf, final int stateIndex) {
+  public State(final Set<I> items, final BNF bnf, final int stateIndex) {
     this.items = items;
     index = stateIndex;
     this.bnf = bnf;
     transitions = new HashMap<>();
     name = "Q" + stateIndex;
   }
-  void addGotoTransition(final Symbol symbol, final State newState) {
+  public void addGotoTransition(final Symbol symbol, final State<I> newState) {
     transitions.put(symbol, newState);
   }
   public boolean isLegalTransition(final Symbol lookahead) {
@@ -51,10 +51,10 @@ public class State {
     Set<SimpleEntry<DerivationRule, Integer>> noLookaheads = getItems().stream()
         .map(item -> new SimpleEntry<>(item.rule, item.dotIndex)).distinct().collect(Collectors.toSet());
     for (SimpleEntry<DerivationRule, Integer> item : noLookaheads) {
-      List<Item> matching = getItems().stream()
+      List<I> matching = getItems().stream()
           .filter(i -> i.rule.equals(item.getKey()) && i.dotIndex == item.getValue().intValue()).collect(Collectors.toList());
       for (int i = 0; i < matching.size(); i++) {
-        Item match = matching.get(i);
+        I match = matching.get(i);
         if (i == 0)
           $ += "[" + match.toString();
         else
@@ -66,7 +66,7 @@ public class State {
   }
   public String compactToString() {
     String $ = "{";
-    for (Item item : getItems().stream()
+    for (I item : getItems().stream()
         .filter(item -> (item.dotIndex != 0 || SpecialSymbols.augmentedStartSymbol == item.rule.lhs)).collect(Collectors.toList()))
       $ += item.toString() + ",";
     return $ + "}";
@@ -74,7 +74,7 @@ public class State {
   @Override public boolean equals(final Object obj) {
     if (obj.getClass() != State.class)
       return false;
-    State s = (State) obj;
+    @SuppressWarnings("unchecked") State<I> s = (State<I>) obj;
     return bnf.equals(s.bnf) && s.getItems().equals(getItems());
   }
   /**
@@ -83,13 +83,13 @@ public class State {
    * @return the index of the next state or -1 if the transition does not exist.
    * 
    */
-  public State goTo(final Symbol lookahead) {
+  public State<I> goTo(final Symbol lookahead) {
     return transitions.getOrDefault(lookahead, null);
   }
   @Override public int hashCode() {
     return getItems().hashCode() + bnf.hashCode();
   }
-  public Set<Item> getItems() {
+  public Set<I> getItems() {
     return items;
   }
   

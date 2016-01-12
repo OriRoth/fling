@@ -44,9 +44,9 @@ public class ActionTable {
   }
 
   public static class Shift extends Action {
-    public final State state;
+    public final State<Item> state;
 
-    public Shift(final State state) {
+    public Shift(final State<Item> state) {
       this.state = state;
     }
     @Override public String toString() {
@@ -84,10 +84,10 @@ public class ActionTable {
 
   public class ReduceReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
-    private final State state;
+    private final State<Item> state;
     private final Symbol lookahead;
 
-    public ReduceReduceConflictException(final State state, final Symbol lookahead) {
+    public ReduceReduceConflictException(final State<Item> state, final Symbol lookahead) {
       this.lookahead = lookahead;
       this.state = state;
     }
@@ -98,10 +98,10 @@ public class ActionTable {
 
   public class ShiftReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
-    private final State state;
+    private final State<Item> state;
     private final Symbol lookahead;
 
-    public ShiftReduceConflictException(final State state, final Symbol lookahead) {
+    public ShiftReduceConflictException(final State<Item> state, final Symbol lookahead) {
       this.state = state;
       this.lookahead = lookahead;
     }
@@ -112,16 +112,16 @@ public class ActionTable {
 
   private final Map<Terminal, Action>[] table;
 
-  @SuppressWarnings("unchecked") public ActionTable(final List<State> states) {
+  @SuppressWarnings("unchecked") public ActionTable(final List<State<Item>> states) {
     table = new HashMap[states.size()];
     for (int i = 0; i < states.size(); i++)
       table[i] = new HashMap<>();
   }
-  void set(final State state, final Terminal lookahead, final Action act) {
+  void set(final State<Item> state, final Terminal lookahead, final Action act) {
     checkForConflicts(state, lookahead, act);
     table[state.index].put(lookahead, act);
   }
-  private void checkForConflicts(final State state, final Symbol lookahead, final Action act) {
+  private void checkForConflicts(final State<Item> state, final Symbol lookahead, final Action act) {
     Action previous = table[state.index].get(lookahead);
     if (previous == null || previous.equals(act))
       return;
