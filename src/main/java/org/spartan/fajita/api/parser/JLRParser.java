@@ -191,7 +191,7 @@ public class JLRParser {
   @Override public String toString() {
     String $ = "States:" + System.lineSeparator();
     for (State<JItem> state : states)
-      $ += state.extentedToString() + System.lineSeparator();
+      $ += state.extendedToString() + System.lineSeparator();
     // $ += actionTable.toString();
     return $;
   }

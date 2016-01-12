@@ -12,6 +12,7 @@ import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.parser.stack.JItem;
 
 public class State<I extends Item> {
   private final Set<I> items;
@@ -43,10 +44,10 @@ public class State<I extends Item> {
     return transitions.keySet();
   }
   @Override public String toString() {
-    return name + ":" + System.lineSeparator() + extentedToString();
+    return name + ":" + System.lineSeparator() + extendedToString();
     // return name;
   }
-  @SuppressWarnings("boxing") public String extentedToString() {
+  @SuppressWarnings("boxing") public String extendedToString() {
     String $ = "";
     Set<SimpleEntry<DerivationRule, Integer>> noLookaheads = getItems().stream()
         .map(item -> new SimpleEntry<>(item.rule, item.dotIndex)).distinct().collect(Collectors.toSet());
@@ -58,7 +59,7 @@ public class State<I extends Item> {
         if (i == 0)
           $ += "[" + match.toString();
         else
-          $ += "/" + match.lookahead.toString();
+          $ += "/" + match.lookahead.toString() + (match.getClass() == JItem.class ? ",Addr("+ ((JItem)match).address+")" : "");
       }
       $ += "]" + System.lineSeparator();
     }
