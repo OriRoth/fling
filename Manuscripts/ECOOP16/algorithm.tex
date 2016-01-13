@@ -159,77 +159,90 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 \paragraph{Solution 4} I believe that in \emph{every} such situation,
   we would see a Shift/Reduce conflict, at some state reachable from the discussed state.
 
-\paragraph*{JLR construction}
-The JLR is a shift-jump machine.
+\section{JLR parsing}
+The JLR parser, is a shift-jump machine,
+  based on the previously discussed jDPDA.
+It was fabricated with great inspiration from the classical 
+  LR(1) parser, with changes regarding the automaton's
+  \textit{realtime} nature.
 
-\subparagraph*{Item definition}
-A JLR item is the tuple~$⟨i,addr⟩∈ℝ~$
-  where~$i$ is a classic LR(1) item
-  and~$addr$ is the stack address of the \emph{last reduction} of the item, i.e.,
-  when we reduce on this (instance of the) rule,
-  the penultimate pop on the consecutive reduction
-  list will reveal~$addr$, and the popping of the last
-  will conclude the reductions.
-We denote this triplet as~$[A→α·β, b , Addr(addr)]$
-  where~$A→α·β, b$ is the LR(1) notation.
+The cornerstone of LR parsing are the LR items,
+  which construct the LR automaton's states, and
+  characterize the shift and reduce operations.
+The following definition, of JLR items, tries to
+  enclose the required changes to those items to handle
+  jump operations.
+A JLR item, is a tuple~$⟨i,addr⟩$ where~$i$ is an
+  LR item, and~$addr$ is a special stack element,
+  to which the parser will jump, in case this item will
+  be reduced.
+This jump is designed to emulate the LR's 
+  reduce operation, considering the unbounded list of consecutive 
+  reductions that might occur. 
+We denote such items as~$[A→α·β, b , addr]$
+  where~$A→α·β, b$ is the original LR notation, and~$addr$
+  is the jump address†{
+  Addresses will be denoted by integers for conciseness and brevity}.
 
-\subparagraph*{State definition}
-A state, is a set of JLR items, the set is defined as the
-  union of two, less frequently used subsets:
-  kernel items and non-kernel items, denoted
-  as \textsf{K} and \textsf{NK}.
+A set of JLR items is said to be a JLR state.
 
-\subparagraph*{States generation algorithm}
-The method is basically the same as LR automaton construction,
-  with the modified items.
-
-  \begin{algorithm}[p]
+\subsection{States generation algorithm}
+The method for constructing a shift-jump automaton
+  is basically the same as the LR automaton construction,
+  with small modification to update the addresses of JLR items.
+Like the original algorithms, we divide the work to three
+  sub-routines~$Closure(I)$,~$Goto(I,X)$ and~$Items(G')$,
+  where the first slightly differs from the original function by handling the addresses 
+  of freshly added items, and the other two remain as in the original LR state construction.
+For the convenience of the reader, the algorithms are depicted
+  in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto} and~\cref{Algorithm:Items} accordingly.
+\begin{algorithm}[p]
   \caption{\label{Algorithm:Closure}
-  function~$Closure(K)$ -- Generates the closure of an initial \textsf{Kernel} items set~$K$}
+  function~$Closure(I)$ -- Generates the closure of an initial items set~$I$}
   \begin{algorithmic}
-    \REQUIRE~$K$ is a set of kernel items
-    \ENSURE~$Clo = K ∪ NK$
-    \STATE~$Clo := K$,~$Stack :=∅$
-    \STATE push all items in~$K$ to~$Stack$
+    \REQUIRE~$I$ is a set of JLR items
+    \ENSURE~$J$ is the closure of~$I$
+    \STATE~$J := I$,~$Stack :=∅$
+    \STATE push all items in~$I$ to~$Stack$
     \WHILE{$Stack$ is not empty}
-      \STATE~$ [ A→α·Bβ \, , \, a \, , \, Addr(i) ]←pop(Stack)$
+      \STATE~$ [ A→α·Bβ \, , \, a \, , \, Addr ]←pop(Stack)$
       \IF{$NULLABLE(β)$}
-        \STATE~$Clo := Clo ∪ ❴ [ B→·γ, a , Addr(i) ] ❵$
-        \STATE~$Stack.push(❴ [ B→·γ, a , Addr(i) ] ❵)$
+        \STATE~$J := J ∪ ❴ [ B→·γ, a , Addr ] ❵$
+        \STATE~$Stack.push(❴ [ B→·γ, a , Addr ] ❵)$
       \ENDIF
       \STATE~$newAddr←fresh()$
       \FOR{each production~$B→γ ∈ G'$}
         \FOR{each terminal~$t ∈ FIRST(β)$}
-          \STATE~$Clo := Clo ∪ ❴ [ B→·γ, t , Addr(newAddr) ] ❵$
-          \STATE~$Stack.push(❴ [ B→·γ, t , Addr(newAddr) ] ❵)$
+          \STATE~$J := J ∪ ❴ [ B→·γ, t , newAddr ] ❵$
+          \STATE~$Stack.push(❴ [ B→·γ, t , newAddr ] ❵)$
         \ENDFOR
       \ENDFOR
     \ENDWHILE
-    \RETURN~$Clo$
+    \RETURN~$J$
   \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[p]
   \caption{\label{Algorithm:Goto}
-  function~$GOTO(I,X)$ -- Generates an item set for an adjacent state}
+  function~$Goto(I,X)$ -- Generates an item set for an adjacent state}
   \begin{algorithmic}
     \REQUIRE~$I$ is a set of JLR items and~$X$ is a grammar symbol
     \ENSURE~$J$ is the set of items of some adjacent state.
     \STATE~$J \, := \,∅$
-    \FOR{each item~$ [ A→α·Xβ\, , \, a \, , \, Addr(i) ] ∈ I$}
-      \STATE~$ J := J∪❴ [ A→αX·β\, , \, a \, , \, Addr(i) ] ❵$
+    \FOR{each item~$ [ A→α·Xβ\, , \, a \, , \, Addr ] ∈ I$}
+      \STATE~$ J := J∪❴ [ A→αX·β\, , \, a \, , \, Addr ] ❵$
     \ENDFOR
     \RETURN~$Closure(J)$
   \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[p]
-  \caption{\label{Algorithm:States}
-  function~$ITEMS(G')$ -- Generates the states set of the augmented grammar~$G'$}
+  \caption{\label{Algorithm:Items}
+  function~$Items(G')$ -- Generates the states set of the augmented grammar~$G'$}
   \begin{algorithmic}
     \REQUIRE~$G'$ is an augmented grammar
     \ENSURE~$Set$ is the set of JLR states
-    \STATE~$Set \, := \, ❴[S'→·S , \$ , Addr(0)]❵$
+    \STATE~$Set \, := \, ❴[S'→·S , \$ , Addr0]❵$
     \REPEAT
       \FOR{each set of items~$I ∈ Set$}
   \FOR{each grammar symbol~$ X ∈Σ_\$ ∪Ξ'$}
@@ -242,77 +255,31 @@ The method is basically the same as LR automaton construction,
   \end{algorithmic}
 \end{algorithm}
 
-\subparagraph*{Structure of the JLR parsing table}
- %From the previous set of states, we can now
-  %complete our shift-jump machine by constructing
-  %the corresponding parsing table.
+\subsection{Structure of the JLR parsing table and behavior of actions}
 The structure of the JLR parsing table
-  resembles the LR(1) action table,
-  defined by function~$\textsf{ACTION[q,(a,n)]}$
-  where~$q∈Q$, and~$(a,n)∈(Σ_\$,ℕ)$
-The result of \textsf{ACTION}$[q,(a,n)]$ can have one of
+  resembles the LR(1) action table;
+  it's defined by a function~$\textsf{ACTION}[q,a]$
+  where~$q∈Q$, and~$a∈Σ_\$$, being next state and 
+  the lookahead symbol accordingly.
+The result of~$\textsf{ACTION}[q,a]$ can have one of
   three forms:
 \begin{itemize}
-  \item[$s(p)$] - A simple shift action, pushing the input state onto the top of the stack
-    (In fact, the old top of the stack can be removed, as it will not be used anymore)
-  \item[$s(f,p)$] - A double shift operation, where~$f∈Σ_\$↛Q$ is pushed first, and~$p$ is then
-    pushed as the new top of the stack (Again, last element doesn't have to be saved)
-  \item[$j(n)$] - A jump operation
+
+  \item[$s(p)$] - A simple shift action.
+    The parser pushes~$p$ onto the top of the stack (In fact,
+    unlike the LR parser, the old top of the stack can be removed,
+    as it will not be used anymore).
+
+  \item[$s(f,p)$] - A double shift operation.
+    The parser pushes~$f∈ℕ↛Q$ first, and~$p$ is
+    then pushed as the new top of the stack
+    (Again, last element doesn't have to be saved).
+
+  \item[$j(n)$] - A jump operation to the address numbered as~$n$.
+    The parser pops elements from the stack until some
+    function~$f$ is popped, such that~$f(n)$ is defined,
+    and yields some~$q$.~$q$ is then pushed onto the stack.
+
 \end{itemize}
+
 \paragraph{Misc.}
-
-\begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
-  \label{Definition:JDPDA}
-  \slshape
-  A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
-  (jDPDA, for short) is a triplet~$⟨Γ,γ₁,δ⟩$
-  where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
-  and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
-  \[
-    j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
-  \]
-  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
-  Initially, the stack holds~$γ₁$ only.
-  For technical reasons, assume that the input terminates with~$\$∉Σ$, a special end-of-file character.
-  \begin{itemize}
-    \item At each step a jDPDA examines~$γ$,
-    the element at the top of the stack,
-    and~$σ∈Σ$, the next input character,
-    and executes the following:
-          \begin{quote}
-            \begin{enumerate}
-              \item consume~$σ$
-              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pops~$γ$, and pushes~$ζ$ into the stack.
-              \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
-                    pops stack elements up-to and including the first occurrence of~$γ'$.
-            \end{enumerate}
-          \end{quote}
-    \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),
-          depending on the value of~$γ$.
-  \end{itemize}
-  In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
-  an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
-\end{Definition}
-
-\[
-S → B
-\]
-\[
-B → A \; b \;\; | \;\; A \; c
-\]
-\[
-A → a \; A \;\; | \;\; a
-\]
-
-\begin{equation}
-  \begin{array}{*1c}
-  δ(q₀,lp) = q₀ \, q₃ \, b \, q₄ \, c \, q₅⏎
-  δ(q₅,a) = q₅ \, q₅⏎
-  δ(q₅,b) = jump(b)⏎
-  δ(q₅,c) = jump(c)⏎
-  δ(q₃,\$) = jump(q₀)⏎
-  δ(q₄,\$) = jump(q₀)⏎
-
-  δ(q₇,rp) = jump(rp)⏎
-  \end{array}
-\end{equation}
