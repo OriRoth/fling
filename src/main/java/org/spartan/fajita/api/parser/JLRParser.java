@@ -114,9 +114,8 @@ public class JLRParser {
   // actionTable.set(state, item.lookahead, new Reduce(item));
   // }
   private State<JItem> generateInitialState() {
-    Set<JItem> initialItems = bnf.getRules().stream() //
-        .filter(r -> r.lhs.equals(SpecialSymbols.augmentedStartSymbol))//
-        .map(r -> new JItem(r, SpecialSymbols.$, 0, addressesNumber++)) //
+    Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
+        .stream().map(r -> new JItem(r, SpecialSymbols.$, 0, addressesNumber++)) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, 0);
@@ -132,13 +131,18 @@ public class JLRParser {
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
       final Symbol[] stringAfterDot = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
           item.rule.getChildren().size());
-      int newAddr = addressesNumber++;
-      for (DerivationRule dRule : bnf.getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList())) {
-        for (Verb t : firstSetOf(stringAfterDot))
+      int newAddr = addressesNumber;
+      boolean newAddrUsed = false;
+      for (DerivationRule dRule : bnf.getRulesOf(nt)) {
+        for (Verb t : firstSetOf(stringAfterDot)) {
           todo.add(new JItem(dRule, t, 0, newAddr));
+          newAddrUsed = true;
+        }
         if (isNullable(stringAfterDot))
           todo.add(new JItem(dRule, item.lookahead, 0, item.address));
       }
+      if (newAddrUsed)
+        addressesNumber++;
     } while (!todo.isEmpty());
     return $;
   }

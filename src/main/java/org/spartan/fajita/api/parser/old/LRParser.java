@@ -146,9 +146,8 @@ public class LRParser {
     actionTable.set(state, item.lookahead, new Reduce(item));
   }
   private State<Item> generateInitialState() {
-    Set<Item> initialItems = bnf.getRules().stream() //
-        .filter(r -> r.lhs.equals(SpecialSymbols.augmentedStartSymbol))//
-        .map(r -> new Item(r, SpecialSymbols.$, 0)) //
+    Set<Item> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
+        .stream().map(r -> new Item(r, SpecialSymbols.$, 0)) //
         .collect(Collectors.toSet());
     Set<Item> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, 0);
@@ -163,7 +162,7 @@ public class LRParser {
           .sorted((i1, i2) -> i1.toString().compareTo(i2.toString())).distinct().collect(Collectors.toList());
       for (Item item : dotBeforeNT) {
         NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
-        for (DerivationRule dRule : bnf.getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList()))
+        for (DerivationRule dRule : bnf.getRulesOf(nt))
           for (Verb t : firstSetOf(LRParser.subExpressionBuilder(item.rule.getChildren(), item.dotIndex + 1, item.lookahead)))
             moreChanges |= items.add(new Item(dRule, t, 0));
       }
@@ -219,7 +218,7 @@ public class LRParser {
   @Override public String toString() {
     String $ = "States:" + System.lineSeparator();
     for (State<Item> state : states)
-      $ += state.extentedToString() + System.lineSeparator();
+      $ += state.extendedToString() + System.lineSeparator();
     $ += actionTable.toString();
     return $;
   }

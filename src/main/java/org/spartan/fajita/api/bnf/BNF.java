@@ -2,6 +2,7 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -37,6 +38,9 @@ public final class BNF {
   }
   public List<DerivationRule> getRules() {
     return derivationRules;
+  }
+  public List<DerivationRule> getRulesOf(NonTerminal nt) {
+    return getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
 
   public static class ClassEllipsis {

@@ -12,7 +12,7 @@ An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nontermin
   \end{description}
 \end{description}
 An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
-  i.e.,~$A→α·β$ is a LR item if~$A∈Ξ$,~$A→αβ∈R$,
+  i.e.,~$A→α·β$ is an LR item if~$A∈Ξ$,~$A→αβ∈R$,
   the dot index in this example is~$|α|$.
 Every state~$q∈Q$ is a set of~\emph{LR items},
   where every such item is in the~$Kernel_{q}$ set,
@@ -42,10 +42,10 @@ We do mention however that the same LR parser can serve parsing table drawn usin
 including SLR and LALR\@.
 
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
-  fails the emulation of a DPDA, thus, in order to type-encode a LR parser, we first need
+  fails the emulation of a DPDA, thus, in order to type-encode an LR parser, we first need
   to convert it to the encode-able jDPDA\@.
 
-A \emph{JLR parser}, or \emph{Jump LR Parser} is a LR parser, that
+A \emph{JLR parser}, or \emph{Jump LR Parser} is an LR parser, that
   is based on a variation of the jDPDA\@.
 The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
 
@@ -56,10 +56,10 @@ The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
     if and only if~$J$ accepts~$α$
 \end{Theorem}
 
-For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
+For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
-  where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
-  is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
+  where~$Γ= Q∪(Σ_💲↛Q)$ are the stack elements,~$q₀∈Q$
+  is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_💲)$ is defined as follows:
   \begin{itemize}
    \item~$δ(q,σ)= j(σ)$ if~$η_{LR}(q,σ)=Reduce(A→α)∧α≠ε$
 
@@ -76,7 +76,7 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
    \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
     \[
-      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
     \]
 
    \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
@@ -84,13 +84,13 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
      and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
      \[
-      f = ❴σ' \mapsto q' \; | \;∃i∈I . lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
      \]
 
   \end{itemize}
 \subsection{Informally}
 
-For a LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
+For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 
 \begin{itemize}
@@ -106,14 +106,14 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
   \item[Even computation Invariant]
-    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*\$~$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ \$$).
+    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ 💲∈Σ^*＄~$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
     if when~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
     then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
-    and \textsf{clean} is a function that removes all~$c \notin Q$ from the input string.
+    and \textsf{clean} is a function that removes all~$c∉Q$ from the input string.
   \item[Jump invariant]
-    when jumping on a lookahead symbol~$a∈Σ_\$~$ during the computation of~$J$,
+    when jumping on a lookahead symbol~$a∈Σ_💲~$ during the computation of~$J$,
     all consecutive reductions performed on~$L$ from the parallel configuration, are ‟done” by the \textsf{jump} operation.
-  \item[Parsing] can always be added to this model, because when we get to a item~$A→α·B,a$, and we shift on
+  \item[Parsing] can always be added to this model, because when we get to an item~$A→α·B,a$, and we shift on
     one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
     if we shift on another item~$A→·γ,a/b$?)
 \end{itemize}
@@ -124,17 +124,17 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
   state element.
 
 \paragraph{Solution 1} if save on the stack a single element for the
-  ‟multiple shifting items” which will be of type:~$\mathcal{P}(Σ)$
+  ‟multiple shifting items” which will be of type:~$𝓟(Σ)$
   and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements
-  from the stack until a~$χ∈\mathcal{P}(Σ)$,~$σ∈χ$ is popped”.
+  from the stack until a~$χ∈𝓟(Σ)$,~$σ∈χ$ is popped”.
 
 \paragraph{Problem 2} When we~$\textsf{Jump}(σ)$ , we consume~$σ$, and remove
   from stack as expected, the problem is, the corresponding lookaheads symbol
   should be ‟consumed” and the shift on~$σ$ need to happen again.
 
 \paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial
-  mappings~$Σ_{\$}↛Q$ (where~$Γ=Q∪(Σ_{\$}↛Q)$) jumping is still defined
-  on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack
+  mappings~$Σ_{💲}↛Q$ (where~$Γ=Q∪(Σ_{＄}↛Q)$) jumping is still defined
+  on symbols~$σ∈Σ_{💲}$, and when the jump is performed we pop from the stack
   until we popped some~$f∈(Σ↛Q)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
 
 \paragraph{Problem 3} When we have a state \textsf{Base} that has
@@ -142,18 +142,18 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
   the mapping of~$a$ might be for the consecutive
   transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
 
-\paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$Σ_\$→↛Q$
-  to~$Σ_\$Ξ↛Q$. The reason resides on the identity of the input nonterminal.
+\paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$Σ_💲↛Q$
+  to~$Σ_💲⨉Ξ↛Q$. The reason resides on the identity of the input nonterminal.
   When we build the JLR's transition function, and want to add a function element to the stack, we choose for some~$σ∈Σ$
   a transition to be performed after a goto, to a certain state~$q∈Q$, problem is, there might be more than one such transition
   for that~$σ$, i.e., when for some~$q,q',q”∈Q$, and~$A,B∈Ξ$ ,~$q.goto(A).shift(a)=q'$,~$q.goto(B).shift(a)=q”$.
 
 \paragraph{Problem 4} We add a function element on the stack for lookahead~$a∈Σ$
-  when when we have an item that will consume~$a$ after some reduction,
-  i.e., an item of type~$ A→·B aα, c$ for some~$A,B∈Ξ$ and~$c∈σ$,
+  when we have an item that will consume~$a$ after some reduction,
+  i.e., an item of type~$A→·Baα,c$ for some~$A,B∈Ξ$ and~$c∈σ$,
   and we don't add an item when we have a rule that will reduce
   upon seeing such lookahead~$a$, i.e.,~$A→α·B , a$
-  ( not quite sure that these examples are as general as possible. should verify ).
+  ( not quite sure that these examples are as general as possible. I should verify it).
   What happens if both appear in the same state?
 
 \paragraph{Solution 4} I believe that in \emph{every} such situation,
@@ -163,15 +163,15 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 The JLR is a shift-jump machine.
 
 \subparagraph*{Item definition}
-An JLR item is the tuple~$⟨i, addr ⟩∈ℝ~$
+A JLR item is the tuple~$⟨i,addr⟩∈ℝ~$
   where~$i$ is a classic LR(1) item
   and~$addr$ is the stack address of the \emph{last reduction} of the item, i.e.,
   when we reduce on this (instance of the) rule,
   the penultimate pop on the consecutive reduction
   list will reveal~$addr$, and the popping of the last
   will conclude the reductions.
-We denote this triplet as~$[A \rightarrowα\cdotβ, b , Addr(addr)]$
-  where~$A \rightarrowα\cdotβ, b$ is the LR(1) notation.
+We denote this triplet as~$[A→α·β, b , Addr(addr)]$
+  where~$A→α·β, b$ is the LR(1) notation.
 
 \subparagraph*{State definition}
 A state, is a set of JLR items, the set is defined as the
@@ -179,67 +179,89 @@ A state, is a set of JLR items, the set is defined as the
   kernel items and non-kernel items, denoted
   as \textsf{K} and \textsf{NK}.
 
-\subparagraph*{Automaton construction algorithm}
+\subparagraph*{States generation algorithm}
 The method is basically the same as LR automaton construction,
   with the modified items.
 
-\begin{algorithm}
+  \begin{algorithm}[p]
   \caption{\label{Algorithm:Closure}
-    $Closure(K)$ -- Generates the closure of an initial \textsf{Kernel} items set~$K$}
+  function~$Closure(K)$ -- Generates the closure of an initial \textsf{Kernel} items set~$K$}
   \begin{algorithmic}
-    \REQUIRE $K$ is a set of kernel items
-    \ENSURE $Clo = K ∪ NK$
-    \STATE $Clo \, := \, K$
-    \REPEAT
-      \FOR{each item~$ [ A→α·Bβ\, , \, a \, , \, Addr(i) ] ∈ Clo$}
-	\FOR{each production~$B→γ ∈ G'$}
-	  \STATE $newAddr \leftarrow fresh()$
-	  \FOR{each terminal~$t ∈ FIRST(β)$}
-	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, t , Addr(newAddr) ] ❵$
-	  \ENDFOR
-	  \IF{$NULLABLE(β)$}
-	    \STATE $Clo := Clo ∪ ❴ [ B→·γ, a , Addr(i) ] ❵$
-	  \ENDIF
-	\ENDFOR
+    \REQUIRE~$K$ is a set of kernel items
+    \ENSURE~$Clo = K ∪ NK$
+    \STATE~$Clo := K$,~$Stack :=∅$
+    \STATE push all items in~$K$ to~$Stack$
+    \WHILE{$Stack$ is not empty}
+      \STATE~$ [ A→α·Bβ \, , \, a \, , \, Addr(i) ]←pop(Stack)$
+      \IF{$NULLABLE(β)$}
+        \STATE~$Clo := Clo ∪ ❴ [ B→·γ, a , Addr(i) ] ❵$
+        \STATE~$Stack.push(❴ [ B→·γ, a , Addr(i) ] ❵)$
+      \ENDIF
+      \STATE~$newAddr←fresh()$
+      \FOR{each production~$B→γ ∈ G'$}
+        \FOR{each terminal~$t ∈ FIRST(β)$}
+          \STATE~$Clo := Clo ∪ ❴ [ B→·γ, t , Addr(newAddr) ] ❵$
+          \STATE~$Stack.push(❴ [ B→·γ, t , Addr(newAddr) ] ❵)$
+        \ENDFOR
       \ENDFOR
-    \UNTIL{no more items are added to~$Clo$}
-    \RETURN $Clo$
+    \ENDWHILE
+    \RETURN~$Clo$
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[p]
   \caption{\label{Algorithm:Goto}
-    $GOTO(I,X)$ -- Generates an item set for an adjacent state}
+  function~$GOTO(I,X)$ -- Generates an item set for an adjacent state}
   \begin{algorithmic}
-    \REQUIRE $I$ is a set of JLR items and~$X$ is a grammar symbol
-    \ENSURE $J$ is the set of items of some adjacent state.
-    \STATE $J \, := \, \emptyset $
-    \FOR{each item~$ [ A→α·Xβ\, , \, a \, , \, Addr(i) ] ∈ I $}
-      \STATE $ J := J \cup \{ [ A \rightarrow \alpha X \cdot \beta \, , \, a \, , \, Addr(i) ] \}$
+    \REQUIRE~$I$ is a set of JLR items and~$X$ is a grammar symbol
+    \ENSURE~$J$ is the set of items of some adjacent state.
+    \STATE~$J \, := \,∅$
+    \FOR{each item~$ [ A→α·Xβ\, , \, a \, , \, Addr(i) ] ∈ I$}
+      \STATE~$ J := J∪❴ [ A→αX·β\, , \, a \, , \, Addr(i) ] ❵$
     \ENDFOR
-    \RETURN $Closure(J)$
+    \RETURN~$Closure(J)$
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[p]
   \caption{\label{Algorithm:States}
-    $ITEMS(G')$ -- Generates the states set of the augmented grammar~$G'$}
+  function~$ITEMS(G')$ -- Generates the states set of the augmented grammar~$G'$}
   \begin{algorithmic}
-    \REQUIRE $G'$ is an augmented grammar
-    \ENSURE $Set$ is the set of JLR states
-    \STATE $Set \, := \, ❴[S'→·S , \$ , Addr(0)]❵$
+    \REQUIRE~$G'$ is an augmented grammar
+    \ENSURE~$Set$ is the set of JLR states
+    \STATE~$Set \, := \, ❴[S'→·S , 💲 , Addr(0)]❵$
     \REPEAT
       \FOR{each set of items~$I ∈ Set$}
-	\FOR{each grammar symbol~$ X ∈Σ_\$∪\Xi'~$}
-	  \IF{$GOTO(I,X)$ is not empty and not in~$Set$}
-	    \STATE $ Set := Set ∪ GOTO(I,X)$
-	  \ENDIF
-	\ENDFOR
+  \FOR{each grammar symbol~$ X ∈Σ_💲 ∪Ξ'$}
+    \IF{$GOTO(I,X)$ is not empty and not in~$Set$}
+      \STATE~$ Set := Set ∪ GOTO(I,X)$
+    \ENDIF
+  \ENDFOR
       \ENDFOR
     \UNTIL{no more states are added \textsf{Set}}
   \end{algorithmic}
 \end{algorithm}
 
+\subparagraph*{JLR parsing tables}
+From the previous set of states, we can now
+  complete our shift-jump machine by constructing
+  the corresponding parsing table.
+The parsing table resembles to the LR(1)
+  parsing tables, and is defined with
+  the following mapping:
+\[
+  Q \times \Sigma_\$ \times \mathbb{N} \nrightarrow { s( F , Q ) , s ( Q ) , j ( \mathbb{N} ) }
+\]
+ where in the rows we put the different states in~$Q$,
+ and in the columns we put the lookahead and jump information~$ \Sigma_\$ \times \mathbb{N}$.
+The resulted action is one of:
+\begin{itemize}
+  \item[$s(p)$] - A simple shift action, pushing the input state onto the top of the stack
+    (In fact, the old top of the stack can be removed, as it will not be used anymore)
+  \item[$s(f,p)$] - A double shift operation, where~$f$ is pushed first, and~$p$ is then
+    pushed as the new top of the stack (Again, last element doesn't have to be saved)
+  \item[$j(n)$] - A jump operation
+\end{itemize}
 \paragraph{Misc.}
 
 \begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
@@ -254,7 +276,7 @@ The method is basically the same as LR automaton construction,
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially, the stack holds~$γ₁$ only.
-  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
+  For technical reasons, assume that the input terminates with~$💲∉Σ$, a special end-of-file character.
   \begin{itemize}
     \item At each step a jDPDA examines~$γ$,
     the element at the top of the stack,
@@ -268,7 +290,7 @@ The method is basically the same as LR automaton construction,
                     pops stack elements up-to and including the first occurrence of~$γ'$.
             \end{enumerate}
           \end{quote}
-    \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),
+    \item If the next character is~$💲$, the automaton may reject or accept (but nothing else),
           depending on the value of~$γ$.
   \end{itemize}
   In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
@@ -291,8 +313,8 @@ A → a \; A \;\; | \;\; a
   δ(q₅,a) = q₅ \, q₅⏎
   δ(q₅,b) = jump(b)⏎
   δ(q₅,c) = jump(c)⏎
-  δ(q₃,\$) = jump(q₀)⏎
-  δ(q₄,\$) = jump(q₀)⏎
+  δ(q₃,💲) = jump(q₀)⏎
+  δ(q₄,💲) = jump(q₀)⏎
 
   δ(q₇,rp) = jump(rp)⏎
   \end{array}
