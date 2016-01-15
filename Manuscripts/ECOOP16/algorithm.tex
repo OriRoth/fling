@@ -165,21 +165,27 @@ In order to build the action table, we need the set of states generated
 \begin{algorithm}[h]
   \begin{algorithmic}
     \caption{\label{Algorithm:Table}
-      Construction of JLR~$\table ACTION[q,a] table$}
+      Construction of JLR~$\table ACTION[q,a]$ table}
     \INPUT{A set of states~$Q$}
     \OUTPUT{The action table~$\table ACTION[q,a]$}
     \FOR{$q∈Q$}
-    \IF{$[A→α·aβ, b , \StackLabel]∈q∧\function Goto(q,a)=p$}
-      \STATE{$\table ACTION[q,a]=s(p)$}
-    \ENDIF
-    \IF{$[A→α·, a, \StackLabel]∈q∧\function Goto(q,a)=p$}
-      \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-    \ENDIF
-    \IF{$[A→α·, a , \StackLabel]∈q∧\function Goto(q,a)=p$}
-      \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-    \ENDIF
-
+      \FOR{$a∈Σ$}
+        \IF{$[A→α·, a, \StackLabel]∈q$}
+          \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
+        \ENDIF
+        \IF{$[A\rightarrowα·, \$ , \StackLabel]$}
+          \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
+        \ENDIF
+        \STATE{$f = ❴ ❵$}
+        \FOR{$[A→·γ, a, \StackLabel] \in q ∧A≠S'$}
+          \STATE{$f = f∪❴ \StackLabel↦\function Goto(\function Goto(q, A), a) ❵$}
+        \ENDFOR
+        \IF{$[A→α·β, b, \StackLabel]∈q∧ a∈\function First(β)$}
+        \STATE{$\table ACTION[q,a]=s(f,\function Goto(q,a))$}
+        \ENDIF
+      \ENDFOR
     \ENDFOR
+    \RETURN{\table ACTION[]}
   \end{algorithmic}
 \end{algorithm}
 
