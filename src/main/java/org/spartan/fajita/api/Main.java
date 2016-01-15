@@ -42,8 +42,8 @@ public class Main {
 //     expressionBuilder();
   }
   static void apiGenerator() {
-//    final BNF bnf = BalancedParenthesis.buildBNF();
-    BNF bnf = testBNF();
+    final BNF bnf = BalancedParenthesis.buildBNF();
+//    BNF bnf = testBNF();
     lrAutomatonVisualisation(new JLRParser(bnf));
 //    JavaFile fluentAPI = ApiGenerator.generate(bnf);
 //    System.out.println(fluentAPI.toString());

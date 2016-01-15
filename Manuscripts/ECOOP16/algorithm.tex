@@ -1,5 +1,6 @@
 \newcommand\StackLabel{\ensuremath{\textrm{label}}}
 \def\function#1(#2){\ensuremath{\textsf{#1}(#2)}}
+\def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
 
 The JLR recognizer is a shift-jump machine
   based on the jDPDA automaton.
@@ -45,17 +46,17 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
 \renewcommand{\algorithmicensure}{\textbf{Output}}
 
 \begin{algorithm}[p]
-    \newcommand\Stack{\ensuremath{S}}
+    \newcommand\Queue{\ensuremath{Q}}
   \caption{\label{Algorithm:Closure}
   Function~$\function Closure(I)$: compute the closure of items set~$I$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
     \OUTPUT{the closure of~$I$}
-    \STATE{$\Stack←∅$ \COMMENT{A stack used for intermediate computations}}
+    \STATE{$\Queue←∅$ \COMMENT{A queue used for intermediate computations}}
     \STATE{$J←∅~$ \COMMENT{Initial approximation of returned value}}
-    \FOR{$i∈I$} \STATE{\function push(S, i)} \ENDFOR
-    \WHILE{$\Stack ≠ ∅$}
-    \LET{$i$}{$\function pop(\Stack)$} \COMMENT{Next item to process}
+    \FOR{$i∈I$} \STATE{\function enqueue(\Queue, i)} \ENDFOR
+    \WHILE{$\Queue ≠ ∅$}
+    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next item to process}
     \STATE{$J←J ∪ ❴i❵$}
     \IF[The dot is not before a nonterminal]{$i≠[A→α·Bβ, a,\StackLabel]$}
       \STATE{continue}
@@ -64,10 +65,10 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \LET{$\StackLabel'$}{$\function newLabel()$}
       \FOR{each production~$B→γ ∈ G'$}
         \IF{$\function Nullable(β)$}
-        \STATE{$\function push(S, [ B→·γ, a , \StackLabel] )$}
+        \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
         \ENDIF
         \FOR{$t ∈ \function First(β)$}
-        \STATE{$\function push(S, [ B→·γ, t , \StackLabel'] )$}
+        \STATE{$\function enqueue(\Queue, [ B→·γ, t , \StackLabel'] )$}
         \ENDFOR
       \ENDFOR
     \ENDWHILE
@@ -132,16 +133,15 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   output of the LR's~$\function Items(G')$, such that~$∀i∈q∃j∈p \, . \, j = \function clean(i)$
 \end{proof}
 
-\subsection{Structure of the JLR parsing table and behavior of actions}
-The structure of the JLR parsing table
+\subsection{Structure of the JLR action table and behavior of actions}
+The structure of the JLR action table
   resembles the LR(1) action table;
-  it's defined by a function~$\textsf{ACTION}[q,a]$
+  it's defined by a function~$\table ACTION[q,a]$
   where~$q∈Q$, and~$a∈Σ_\$$, being next state and
   the lookahead symbol accordingly.
-The result of~$\textsf{ACTION}[q,a]$ can have one of
+The result of~$\table ACTION[q,a]$ can have one of
   three forms:
-  \begin{description}
-
+\begin{description}
   \item[$s(p)$] A simple shift action.
     The recognizer pushes~$p$ onto the top of the stack (In fact,
     unlike the LR recognizer, the old top of the stack can be removed,
@@ -157,6 +157,31 @@ The result of~$\textsf{ACTION}[q,a]$ can have one of
     function~$f$ is popped, such that~$f(n)$ is defined,
     and yields some~$q$.~$q$ is then pushed onto the stack.
 \end{description}
+
+In order to build the action table, we need the set of states generated
+  by~\cref{Algorithm:Items}.
+\cref{Algorithm:Table} gives the rules to building the action table.
+
+\begin{algorithm}[h]
+  \begin{algorithmic}
+    \caption{\label{Algorithm:Table}
+      Construction of JLR~$\table ACTION[q,a] table$}
+    \INPUT{A set of states~$Q$}
+    \OUTPUT{The action table~$\table ACTION[q,a]$}
+    \FOR{$q∈Q$}
+    \IF{$[A→α·aβ, b , \StackLabel]∈q∧\function Goto(q,a)=p$}
+      \STATE{$\table ACTION[q,a]=s(p)$}
+    \ENDIF
+    \IF{$[A→α·, a, \StackLabel]∈q∧\function Goto(q,a)=p$}
+      \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
+    \ENDIF
+    \IF{$[A→α·, a , \StackLabel]∈q∧\function Goto(q,a)=p$}
+      \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
+    \ENDIF
+
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
 
 \endinput
 
