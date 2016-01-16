@@ -169,12 +169,12 @@ In order to build the action table, we need the set of states generated
     \INPUT{A set of states~$Q$}
     \OUTPUT{The action table~$\table ACTION[q,a]$}
     \FOR{$q∈Q$}
+      \IF{$[A\rightarrowα·, \$ , \StackLabel]$}
+        \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
+      \ENDIF
       \FOR{$a∈Σ$}
         \IF{$[A→α·, a, \StackLabel]∈q$}
           \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-        \ENDIF
-        \IF{$[A\rightarrowα·, \$ , \StackLabel]$}
-          \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
         \ENDIF
         \STATE{$f = ❴ ❵$}
         \FOR{$[A→·γ, a, \StackLabel] \in q ∧A≠S'$}
@@ -188,6 +188,11 @@ In order to build the action table, we need the set of states generated
     \RETURN{\table ACTION[]}
   \end{algorithmic}
 \end{algorithm}
+\begin{itemize}
+  \item When appending to~$f_{a}$ is it possible to map some~$\StackLabel$ twice? (If so, it is a conflict)
+  \item 
+\end{itemize}
+
 
 \endinput
 

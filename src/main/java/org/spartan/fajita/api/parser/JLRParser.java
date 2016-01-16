@@ -1,5 +1,6 @@
 package org.spartan.fajita.api.parser;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +18,10 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.parser.JActionTable.Action;
+import org.spartan.fajita.api.parser.JActionTable.Jump;
+import org.spartan.fajita.api.parser.JActionTable.Accept;
+import org.spartan.fajita.api.parser.JActionTable.Shift;
 import org.spartan.fajita.api.parser.old.AcceptState;
 import org.spartan.fajita.api.parser.old.State;
 import org.spartan.fajita.api.parser.stack.JItem;
@@ -25,7 +30,7 @@ public class JLRParser {
   public final BNF bnf;
   private final List<State<JItem>> states;
   private int addressesNumber;
-  // private final ActionTable actionTable;
+  private final JActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
 
@@ -37,8 +42,8 @@ public class JLRParser {
     baseFirstSets = calculateSymbolFirstSet();
     states = new ArrayList<>();
     generateStatesSet();
-    // actionTable = new ActionTable(getStates());
-    // fillParsingTable();
+    actionTable = new JActionTable(getStates());
+    fillParsingTable();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -90,29 +95,26 @@ public class JLRParser {
     }
     return $;
   }
-  // private void fillParsingTable() {
-  // for (State state : getStates())
-  // for (JItem item : state.getItems())
-  // if (item.readyToReduce())
-  // if (item.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) &&
-  // item.lookahead.equals(SpecialSymbols.$))
-  // addAcceptAction(state);
-  // else
-  // addReduceAction(state, item);
-  // else if (item.rule.getChildren().get(item.dotIndex).isVerb())
-  // addShiftAction(state, item);
-  // }
-  // private void addAcceptAction(final State state) {
-  // actionTable.set(state, SpecialSymbols.$, new Accept());
-  // }
-  // private void addShiftAction(final State state, final JItem item) {
-  // Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-  // State shift = state.goTo(nextTerminal);
-  // actionTable.set(state, nextTerminal, new Shift(shift));
-  // }
-  // private void addReduceAction(final State state, final JItem item) {
-  // actionTable.set(state, item.lookahead, new Reduce(item));
-  // }
+  private void fillParsingTable() {
+    for (State<JItem> state : getStates()){
+      if(state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
+        addAcceptAction(state);
+      for(Verb v : bnf.getVerbs()){
+        
+      }
+    }
+  }
+  private void addAcceptAction(final State<JItem> state) {
+    actionTable.set(state, SpecialSymbols.$, new Accept());
+  }
+  private void addShiftAction(final State<JItem> state, final JItem item) {
+    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
+    State<JItem> shift = state.goTo(nextTerminal);
+    actionTable.set(state, nextTerminal, new Shift(shift));
+  }
+  private void addJumpAction(final State<JItem> state, final JItem item) {
+    actionTable.set(state, item.lookahead, new Jump(item));
+  }
   private State<JItem> generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
         .stream().map(r -> new JItem(r, SpecialSymbols.$, 0, addressesNumber++)) //
