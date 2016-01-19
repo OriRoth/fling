@@ -168,20 +168,20 @@ In order to build the action table, we need the set of states generated
       Construction of JLR~$\table ACTION[q,a]$ table}
     \INPUT{A set of states~$Q$}
     \OUTPUT{The action table~$\table ACTION[q,a]$}
-    \FOR{$q∈Q$}
-      \IF{$[A → α·, \$ , \StackLabel]$}
+    \FOR{$q∈ Q$}
+      \IF{$[A → α·, \$ , \StackLabel] \in q$}
         \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
       \ENDIF
       \FOR{$a∈Σ$}
-        \FOR{$[A → α·, a, \StackLabel]∈q$}
+        \FOR{$[A → α·, a, \StackLabel] ∈ q$}
           \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-          \COMMENT{If~$\table ACTION[q,a]≠⊥$ there is a R/R conflict}
+          \COMMENT{If~$\table ACTION[q,a]≠⊥ $ there is a R/R conflict}
         \ENDFOR
         \STATE{$f = ❴ ❵$}
-        \FOR{$[A→·γ, a, \StackLabel]∈q $}
+        \FOR{$[A→ ·γ, a, \StackLabel] ∈ q $}
           \STATE{$f = f∪❴ \StackLabel↦\function Goto(\function Goto(q, A), a) ❵$}
         \ENDFOR
-        \IF{$[A→α·β, b, \StackLabel]∈q∧ a∈\function First(β)$}
+        \IF{$[A→ α·β, b, \StackLabel]∈ q∧ a ∈ \function First(β)$}
         \STATE{$\table ACTION[q,a]=s(f,\function Goto(q,a))$}
         \ENDIF
       \ENDFOR
