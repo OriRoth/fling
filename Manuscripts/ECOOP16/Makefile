@@ -1,5 +1,5 @@
 MAIN=00
-LOCALTEXMF= ../../../yogitex//
+LOCALTEXMF= ../../../texmf//
 LATEX=lualatex -file-line-error
 LANG_TOOL=~/Downloads/LanguageTool-3.1/languagetool-commandline.jar
 
