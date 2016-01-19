@@ -173,11 +173,12 @@ In order to build the action table, we need the set of states generated
         \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
       \ENDIF
       \FOR{$a∈Σ$}
-        \IF{$[A→α·, a, \StackLabel]∈q$}
+        \FOR{$[A→α·, a, \StackLabel]∈q$}
           \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-        \ENDIF
+          \COMMENT{If~$\table ACTION[q,a]≠⊥$ there is a R/R conflict}
+        \ENDFOR
         \STATE{$f = ❴ ❵$}
-        \FOR{$[A→·γ, a, \StackLabel] \in q ∧A≠S'$}
+        \FOR{$[A→·γ, a, \StackLabel]∈q $}
           \STATE{$f = f∪❴ \StackLabel↦\function Goto(\function Goto(q, A), a) ❵$}
         \ENDFOR
         \IF{$[A→α·β, b, \StackLabel]∈q∧ a∈\function First(β)$}
@@ -189,10 +190,9 @@ In order to build the action table, we need the set of states generated
   \end{algorithmic}
 \end{algorithm}
 \begin{itemize}
-  \item When appending to~$f_{a}$ is it possible to map some~$\StackLabel$ twice? (If so, it is a conflict)
-  \item 
+  \item When appending to~$f_{a}$ is it possible to have multiple mapping to some label? (it is a conflict)
+  \item
 \end{itemize}
-
 
 \endinput
 

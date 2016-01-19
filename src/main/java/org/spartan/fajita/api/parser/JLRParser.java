@@ -97,10 +97,13 @@ public class JLRParser {
   }
   private void fillParsingTable() {
     for (State<JItem> state : getStates()){
-      if(state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
+      final Set<JItem> items = state.getItems();
+      if(items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
         addAcceptAction(state);
       for(Verb v : bnf.getVerbs()){
-        
+       if(items.stream().anyMatch(i-> i.readyToReduce() && !i.lookahead.equals(SpecialSymbols.$)))
+        addJumpAction(state, item); 
+       
       }
     }
   }
