@@ -56,21 +56,24 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \STATE{$J←∅~$ \COMMENT{Initial approximation of returned value}}
     \FOR{$i∈I$} \STATE{\function enqueue(\Queue, i)} \ENDFOR
     \WHILE{$\Queue ≠ ∅$}
-    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next item to process}
-    \STATE{$J←J ∪ ❴i❵$}
-    \IF[The dot is not before a nonterminal]{$i≠[A→α·Bβ, a,\StackLabel]$}
-      \STATE{continue}
-    \ENDIF
-  \STATE{\textbf{Let}~$[A→α·Bβ, a, \StackLabel]←i$}
-    \LET{$\StackLabel'$}{$\function newLabel()$}
+	  \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next item to process}
+      \STATE{$J←J ∪ ❴i❵$}
+      \IF[The dot is not before a nonterminal]{$i≠[A→α·Bβ, a,\StackLabel]$}
+        \STATE{continue}
+      \ENDIF
+      \STATE{\textbf{Let}~$[A→α·Bβ, a, \StackLabel]←i$}
+      \LET{$\StackLabel'$}{$\function newLabel()$}
       \FOR{each production~$B→γ ∈ G'$}
         \IF{$\function Nullable(β)$}
-        \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
+          \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
         \ENDIF
         \FOR{$t ∈ \function First(β)$}
-        \STATE{$\function enqueue(\Queue, [ B→·γ, t , \StackLabel'] )$}
+          \STATE{$\function enqueue(\Queue, [ B→·γ, t , \StackLabel'] )$}
         \ENDFOR
       \ENDFOR
+      \IF{$\function Nullable(B)$}
+        \STATE{$\function enqueue(\Queue, [A→αB·β, a, \StackLabel] )$}
+      \ENDIF
     \ENDWHILE
     \RETURN{$J$}
   \end{algorithmic}
