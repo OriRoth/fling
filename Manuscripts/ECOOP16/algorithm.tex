@@ -35,7 +35,7 @@ The method for constructing a shift-jump automaton
 Like the original algorithms, we divide the work to three
   sub-routines~$\function Closure(I)$,~$\function Goto(I,X)$ and~$\function Items(G')$,
   where the first slightly differs from the original function by handling the
-  addresses of freshly added items as well as nullable symbols, 
+  addresses of freshly added items as well as nullable symbols,
   and the other two remain as in the original LR state construction.
 The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   and~\cref{Algorithm:Items} accordingly.
@@ -121,20 +121,20 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
 
 Notes on the algorithms
 \begin{itemize}
-  \item \cref{Algorithm:Closure} work very similarly to the original LR parsing closure algorithms
-    the first difference is the address field in each of the items, and the second is the special
-    care to epsilon rules, i.e., lines 17--18. Each JLR state contains all items that would be generated
-    on an equivalent LR parser state.
+  \item Each JLR state contains all items that would be generated
+    on an equivalent LR parser state
+    (intuition: without lines 17--18 in \cref{Algorithm:Closure}
+    the algorithms differ only in the address field).
 \end{itemize}
 
 \subsection{Structure of the JLR action table and behavior of actions}
 The structure of the JLR action table
   resembles the LR(1) action table;
-  it's defined by a function~$\table ACTION[q,a]$
-  where~$q∈Q$, and~$a∈Σ_\$$, being the next state and
+  it is defined by a function~$\table ACTION[q,a]$
+  where~$q∈Q$, and~$a∈Σ_\$$, being the current state and
   the lookahead symbol accordingly.
 The result of~$\table ACTION[q,a]$ can have one of
-  two forms:
+  three forms:
 \begin{description}
   \item[$\textsf{accept}$] The recognizer accepts on input.
 
@@ -149,17 +149,21 @@ The result of~$\table ACTION[q,a]$ can have one of
     is defined, and yields~$q$.~$q$ is then pushed onto the stack.
 \end{description}
 
-In order to build the action table, we need the set of states generated
-  by~\cref{Algorithm:Items}.
-\cref{Algorithm:Table} gives the rules to building the action table.
+As the last step before constructing the action table, we
+  define a function~$\textsf{JS}: Q⨉Σ→(ℕ↛Q)$ (jump set).
+$\function JS(q,a)$ returns a function~$f$ that maps labels
+  to states.
+In a way, it reminds the~$Goto$ table used in LR parsing, since
+  that function will be used when a jump operation will occur.
 
 \begin{algorithm}[h]
   \begin{algorithmic}
-    \caption{\label{Algorithm:Table}
-      Construction of JLR~$\table ACTION[q,a]$ table}
-    \INPUT{A set of states~$Q$}
-    \OUTPUT{The action table~$\table ACTION[q,a]$}
-    \FOR{$q∈ Q$}
+    \caption{\label{Algorithm:JS}
+      Definition of the function~$f$ for action~$s(f,p)$}
+    \INPUT{current state~$q$}
+    \INPUT{lookahead symbol~$a$}
+    \OUTPUT{a mapping between labels and states, that will be used during recognition process}
+    \FOR{$q∈Q$}
       \IF{$[A → α·, \$ , \StackLabel]∈q$}
         \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
       \ENDIF
@@ -181,12 +185,16 @@ In order to build the action table, we need the set of states generated
   \end{algorithmic}
 \end{algorithm}
 
+In order to build the action table, we need the set of states generated
+  by~\cref{Algorithm:Items}.
+
 \endinput
 
 \paragraph{Misc.}
 
 \subsection{The LR($1$) parser}
-An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nonterminals set, initial start element,production rules set respectively)
+An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
+  (Nonterminals set, initial start element, production rules set respectively)
   has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
