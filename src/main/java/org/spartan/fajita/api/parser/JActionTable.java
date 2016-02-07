@@ -78,7 +78,7 @@ public class JActionTable {
   public static class Jump extends Action {
     public int address;
     public Jump(JItem item) {
-      this.address = item.address;
+      this.address = item.label;
     }
     @Override public String toString() {
       return "j"+address;

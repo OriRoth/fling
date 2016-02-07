@@ -162,7 +162,8 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
       Definition of the function~$f$ for action~$s(f,p)$}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$a$}
-    \OUTPUT{a mapping between labels and states, that will be used during recognition process}
+    \OUTPUT{a mapping between labels and states}
+    \STATE{$f←❴❵}
     \FOR{$q∈Q$}
       \IF{$[A → α·, \$ , \StackLabel]∈q$}
         \STATE{$\table ACTION[q,\$]=\textrm{accept}$}

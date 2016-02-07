@@ -6,15 +6,15 @@ import org.spartan.fajita.api.parser.old.Item;
 
 public class JItem extends Item {
 
-  public final int address;
+  public final int label;
 
   public JItem(DerivationRule rule, Verb lookahead, int dotIndex , int address) {
     super(rule, lookahead, dotIndex);
-    this.address = address;
+    this.label = address;
   }
   
   @Override public String toString() {
-    return super.toString() + ", Addr("+address+")";
+    return super.toString() + ", L"+label+"";
   }
 
   @Override public int hashCode() {
@@ -28,7 +28,7 @@ public class JItem extends Item {
   @Override public JItem advance() {
     if (dotIndex == rule.getChildren().size())
       throw new IllegalStateException("cannot advance a ready to reduce item");
-    return new JItem(rule, lookahead, dotIndex + 1,address);
+    return new JItem(rule, lookahead, dotIndex + 1,label);
   }
   
 }
