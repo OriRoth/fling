@@ -63,13 +63,12 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
         \STATE{continue}
       \ENDIF
       \STATE{\textbf{Let}~$[A→α·Bβ, a, \StackLabel]←i$}
-      \LET{$\StackLabel'$}{$\function newLabel()$}
       \FOR{each production~$B→γ ∈ G'$,$γ≠ε$}
         \IF{$\function Nullable(β)$}
           \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
         \ENDIF
         \FOR{$t ∈ \function First(β)$}
-          \STATE{$\function enqueue(\Queue, [ B→·γ, t , \StackLabel'] )$}
+          \STATE{$\function enqueue(\Queue, [ B→·γ, t , \function newLabel()] )$}
         \ENDFOR
       \ENDFOR
       \IF{$\function Nullable(B)$}
@@ -159,30 +158,21 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
 \begin{algorithm}[h]
   \begin{algorithmic}
     \caption{\label{Algorithm:JS}
-      Definition of the function~$f$ for action~$s(f,p)$}
+     Defining a single label to a tuple~$Ξ⨉Σ~$}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$a$}
     \OUTPUT{a mapping between labels and states}
-    \STATE{$f←❴❵}
-    \FOR{$q∈Q$}
-      \IF{$[A → α·, \$ , \StackLabel]∈q$}
-        \STATE{$\table ACTION[q,\$]=\textrm{accept}$}
+    \STATE{$f←❴❵$}
+    \FOR{$[ A→α·Bβ, b,ℓ]∈q$}
+      \IF{$a∈\function First(β)$}
+        \FOR{$ c∈\function First(β)$}
+          \IF{$ f(B,c)=⊥$}
+            \STATE{$ f(B,c) = fresh()$}
+          \ENDIF
+        \ENDFOR
       \ENDIF
-      \FOR{$a∈Σ$}
-        \FOR{$[A → α·, a, \StackLabel] ∈ q$}
-          \STATE{$\table ACTION[q,a]=j(\StackLabel)$}
-          \COMMENT{If~$\table ACTION[q,a]≠⊥~$ there is a R/R conflict}
-        \ENDFOR
-        \STATE{$f = ❴ ❵$}
-        \FOR{$[A→ ·γ, a, \StackLabel] ∈ q~$}
-          \STATE{$f = f∪❴ \StackLabel↦\function Goto(\function Goto(q, A), a) ❵$}
-        \ENDFOR
-        \IF{$[A→ α·β, b, \StackLabel]∈ q∧ a ∈ \function First(β)$}
-        \STATE{$\table ACTION[q,a]=s(f,\function Goto(q,a))$}
-        \ENDIF
-      \ENDFOR
     \ENDFOR
-    \RETURN{\table ACTION[]}
+    \RETURN{$f$}
   \end{algorithmic}
 \end{algorithm}
 
