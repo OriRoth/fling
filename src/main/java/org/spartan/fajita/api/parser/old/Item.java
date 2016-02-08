@@ -58,7 +58,7 @@ public class Item {
     }
     if (expression.size() == dotIndex)
       sb.append(". ");
-    sb.append(", " + lookahead.toString());
+    sb.append("," + lookahead.toString());
     return sb.toString();
   }
 }

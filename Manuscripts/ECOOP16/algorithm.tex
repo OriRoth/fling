@@ -1,4 +1,191 @@
-An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$ (Nonterminals set, initial start element,production rules set respectively)
+\newcommand\StackLabel{\ensuremath{\textrm{label}}}
+\def\function#1(#2){\ensuremath{\textsf{#1}(#2)}}
+\def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
+
+The JLR recognizer is a shift-jump machine
+  based on the jDPDA automaton.
+It was invented with inspiration from the classical
+  LR(1) parser, with changes regarding the automaton's
+  \emph{realtime} nature.
+
+The core of LR parsing are the LR items,
+  which construct the LR automaton's states, and
+  characterize the shift and reduce operations.
+The following definition of JLR items,
+  encloses the changes required to those items to handle
+  jump operations.
+A JLR item is a tuple~$⟨i,\StackLabel⟩$ where~$i$ is an
+  LR item, and~$\StackLabel$ is a special stack element,
+  to which the recognizer will jump, in case this item will
+  be reduced.
+This jump is designed to emulate the LR's
+  reduce operation, considering the unbounded list of consecutive
+  reductions that might occur.
+We denote such items as~$[A→α·β, b , \StackLabel]$
+  where~$A→α·β, b$ is the original LR notation, and~$\StackLabel$
+  is the jump address.
+
+A set of JLR items is said to be a JLR state.
+
+\subsection{States generation algorithm}
+The method for constructing a shift-jump automaton
+  is basically the same as the LR automaton construction,
+  with small modification to update the addresses of JLR items
+  and modifications regarding nullable symbols.
+Like the original algorithms, we divide the work to three
+  sub-routines~$\function Closure(I)$,~$\function Goto(I,X)$ and~$\function Items(G')$,
+  where the first slightly differs from the original function by handling the
+  addresses of freshly added items as well as nullable symbols,
+  and the other two remain as in the original LR state construction.
+The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
+  and~\cref{Algorithm:Items} accordingly.
+
+\newcommand\INPUT\REQUIRE
+\newcommand\OUTPUT\ENSURE
+\renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
+\renewcommand{\algorithmicrequire}{\textbf{Input}}
+\renewcommand{\algorithmicensure}{\textbf{Output}}
+
+\begin{algorithm}[p]
+    \newcommand\Queue{\ensuremath{Q}}
+  \caption{\label{Algorithm:Closure}
+  Function~$\function Closure(I)$: compute the closure of items set~$I$}
+  \begin{algorithmic}[1]
+    \INPUT{a set of JLR items~$I$}
+    \OUTPUT{the closure of~$I$}
+    \STATE{$\Queue←∅$ \COMMENT{A queue used for intermediate computations}}
+    \STATE{$J←∅~$ \COMMENT{Initial approximation of returned value}}
+    \FOR{$i∈I$} \STATE{\function enqueue(\Queue, i)} \ENDFOR
+    \WHILE{$\Queue ≠ ∅$}
+    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next item to process}
+      \STATE{$J←J ∪ ❴i❵$}
+      \IF[The dot is not before a nonterminal]{$i≠[A→α·Bβ, a,\StackLabel]$}
+        \STATE{continue}
+      \ENDIF
+      \STATE{\textbf{Let}~$[A→α·Bβ, a, \StackLabel]←i$}
+      \FOR{each production~$B→γ ∈ G'$,$γ≠ε$}
+        \IF{$\function Nullable(β)$}
+          \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
+        \ENDIF
+        \FOR{$t ∈ \function First(β)$}
+          \STATE{$\function enqueue(\Queue, [ B→·γ, t , \function newLabel()] )$}
+        \ENDFOR
+      \ENDFOR
+      \IF{$\function Nullable(B)$}
+        \STATE{$\function enqueue(\Queue, [A→αB·β, a, \StackLabel] )$}
+      \ENDIF
+    \ENDWHILE
+    \RETURN{$J$}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[p]
+  \caption{\label{Algorithm:Goto}
+  Function~$\function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
+  \begin{algorithmic}
+    \INPUT{a set of JLR items~$I$}
+    \INPUT{a grammar symbol~$X$}
+    \OUTPUT{the successive item set}
+    \STATE{$J←∅$} \COMMENT{Initially, there are not items}
+    \FOR{$i∈I$}
+      \LET{$[A→α·Xβ,a,\StackLabel]$}{$i$}\COMMENT{Break item~$i$ into components}
+      \LET{$i'$}{$[A→αX·β,a,\StackLabel]$}\COMMENT{Advance the dot}
+      \STATE{$J←J ∪ ❴i'❵~$}
+    \ENDFOR
+    \RETURN{$\function Closure(J)$}
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[p]
+  \caption{\label{Algorithm:Items}
+  Function~$\function Items(G')$: generate set of states for
+      augmented grammar~$G'$}
+  \begin{algorithmic}
+    \INPUT{An augmented grammar~$G'$}
+    \OUTPUT{the set of JLR states induced by~$G'$}
+    \STATE{$R ← ❴[S'→·S, \$, \function newLabel()]❵$}
+    \COMMENT{Work list and return value}
+    \REPEAT[Processing the work list]
+    \FOR[Deal with items in set~$I$]{$I ∈ R$}
+  \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ'$}
+    \IF{$\function Goto(I,X)$ is not empty and not in~$R$}
+    \STATE{$R←R ∪ \function Goto(I,X)$}
+    \ENDIF
+  \ENDFOR
+      \ENDFOR
+    \UNTIL{Set~$R$ is unchanged}
+    \RETURN{$R$}
+  \end{algorithmic}
+\end{algorithm}
+
+Notes on the algorithms
+\begin{itemize}
+  \item Each JLR state contains all items that would be generated
+    on an equivalent LR parser state
+    (intuition: without lines 17--18 in \cref{Algorithm:Closure}
+    the algorithms differ only in the address field).
+\end{itemize}
+
+\subsection{Structure of the JLR action table and behavior of actions}
+The structure of the JLR action table
+  resembles the LR(1) action table;
+  it is defined by a function~$\table ACTION[q,a]$
+  where~$q∈Q$, and~$a∈Σ_\$$, being the current state and
+  the lookahead symbol accordingly.
+The result of~$\table ACTION[q,a]$ can have one of
+  three forms:
+\begin{description}
+  \item[$\textsf{accept}$] The recognizer accepts on input.
+
+  \item[$s(f,p)$] A shift operation.
+  The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
+    in that order.
+
+  \item[$j(n)$] A jump operation. The recognizer jumps
+    to the address numbered as~$n$,
+    Specifically, The recognizer pops elements from the
+    stack until some function~$f$ is popped, such that~$f(n)$
+    is defined, and yields~$q$.~$q$ is then pushed onto the stack.
+\end{description}
+
+As the last step before constructing the action table, we
+  define a function~$\textsf{JS}: Q⨉Σ→(ℕ↛Q)$ (jump set).
+$\function JS(q,a)$ returns a function~$f$ that maps labels
+  to states.
+In a way, it reminds the~$Goto$ table used in LR parsing, since
+  that function will be used when a jump operation will occur.
+
+\begin{algorithm}[h]
+  \begin{algorithmic}
+    \caption{\label{Algorithm:JS}
+     Defining a single label to a tuple~$Ξ⨉Σ~$}
+    \INPUT{current state~$q$}
+    \INPUT{lookahead symbol~$a$}
+    \OUTPUT{a mapping between labels and states}
+    \STATE{$f←❴❵$}
+    \FOR{$[ A→α·Bβ, b,ℓ]∈q$}
+      \IF{$a∈\function First(β)$}
+        \FOR{$ c∈\function First(β)$}
+          \IF{$ f(B,c)=⊥$}
+            \STATE{$ f(B,c) = fresh()$}
+          \ENDIF
+        \ENDFOR
+      \ENDIF
+    \ENDFOR
+    \RETURN{$f$}
+  \end{algorithmic}
+\end{algorithm}
+
+In order to build the action table, we need the set of states generated
+  by~\cref{Algorithm:Items}.
+
+\endinput
+
+\paragraph{Misc.}
+
+\subsection{The LR($1$) parser}
+An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
+  (Nonterminals set, initial start element, production rules set respectively)
   has three components:
 \begin{description}
   \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
@@ -41,6 +228,7 @@ The specifics of parser generation and specifically
 We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
+\subsection{Between LR and JLR - A direct approach}
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
   fails the emulation of a DPDA, thus, in order to type-encode an LR parser, we first need
   to convert it to the encode-able jDPDA\@.
@@ -158,154 +346,3 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 
 \paragraph{Solution 4} I believe that in \emph{every} such situation,
   we would see a Shift/Reduce conflict, at some state reachable from the discussed state.
-
-\section{The JLR Recognizer}
-The JLR recognizer is a shift-jump machine
-  based on the previously discussed jDPDA.
-It was fabricated with great inspiration from the classical
-  LR(1) recognizer, with changes regarding the automaton's
-  \emph{realtime} nature.
-
-The cornerstone of LR parsing are the LR items,
-  which construct the LR automaton's states, and
-  characterize the shift and reduce operations.
-The following definition, of JLR items, tries to
-  enclose the required changes to those items to handle
-  jump operations.
-A JLR item, is a tuple~$⟨i,addr⟩$ where~$i$ is an
-  LR item, and~$addr$ is a special stack element,
-  to which the recognizer will jump, in case this item will
-  be reduced.
-This jump is designed to emulate the LR's
-  reduce operation, considering the unbounded list of consecutive
-  reductions that might occur.
-We denote such items as~$[A→α·β, b , addr]$
-  where~$A→α·β, b$ is the original LR notation, and~$addr$
-  is the jump address†{
-  Addresses will be denoted by integers for conciseness and brevity}.
-
-A set of JLR items is said to be a JLR state.
-
-\subsection{States generation algorithm}
-The method for constructing a shift-jump automaton
-  is basically the same as the LR automaton construction,
-  with small modification to update the addresses of JLR items.
-Like the original algorithms, we divide the work to three
-  sub-routines~$Closure(I)$,~$Goto(I,X)$ and~$Items(G')$,
-  where the first slightly differs from the original function by handling the
-  addresses of freshly added items, and the other two remain as in the original
-  LR state construction.
-For the convenience of the reader, the algorithms are depicted
-  in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto} and~\cref{Algorithm:Items}
-  accordingly.
-\renewcommand{\algorithmicrequire}{\textbf{Input}}
-\renewcommand{\algorithmicensure}{\textbf{Output}}
-\newcommand\Address{\ensuremath{\textrm{Addr}}}
-\renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
-
-\def\function#1(#2){\ensuremath{\textsf{#1}(#2)}}
-\newcommand\INPUT\REQUIRE
-\newcommand\OUTPUT\ENSURE
-
-\begin{algorithm}[p]
-  \newcommand\Stack{\ensuremath{S}}
-  \caption{\label{Algorithm:Closure}
-  Function~$\function Closure(I)$: compute the closure of items set~$I$}
-  \begin{algorithmic}
-    \INPUT{a set of JLR items~$I$}
-    \OUTPUT{the closure of~$I$}
-    \STATE{$\Stack←∅$ \COMMENT{A stack used for intermediate computations}}
-    \STATE{$J←I$ \COMMENT{Initial approximation of returned value}}
-    \FOR{$i∈I$} \STATE{\function push(S, i)} \ENDFOR
-    \WHILE{$\Stack ≠ ∅$}
-    \LET{$i$}{$\function pop(\Stack)$} \COMMENT{Next item to process}
-    \STATE{$J←J ∪ ❴i❵$}
-  \STATE{\textbf{Let}~$[A→α·Bβ, a, \Address]←i$}
-    \LET{$\Address'$}{\function fresh()}
-      \FOR{each production~$B→γ ∈ G'$}
-        \IF{$\function NULLABLE(β)$}
-        \STATE{$\function push(S, [ B→·γ, a , \Address] )$}
-        \ENDIF
-        \FOR{$t ∈ \function FIRST(β)$}
-        \STATE{$\function push(S, [ B→·γ, t , \Address'] )$}
-        \ENDFOR
-      \ENDFOR
-    \ENDWHILE
-    \RETURN{$J$}
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[p]
-  \caption{\label{Algorithm:Goto}
-  Function~$\function Goto(I,X)$: generate an item set for an adjacent state}
-  \begin{algorithmic}
-    \INPUT{a set of JLR items~$I$}
-    \INPUT{a grammar symbol~$X$}
-    \OUTPUT{the set of items of some adjacent state.}
-    \STATE{$J←∅$} \COMMENT{Initially, there are not items}
-    \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,\Address]$}{$i$}\COMMENT{Break item $i$ into components}
-      \LET{$i'$}{$[A→αX·β,a,\Address]$}\COMMENT{Advance the dot}
-      \STATE{$J←J ∪ ❴i'❵~$}
-    \ENDFOR
-    \RETURN{$\function Closure(J)$}
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[p]
-  \caption{\label{Algorithm:Items}
-  Function~$\function Items(G')$: generate set of states for
-      augmented grammar~$G'$}
-  \begin{algorithmic}
-    \INPUT{An augmented grammar~$G'$}
-    \OUTPUT{the set of JLR states induced by~$G'$}
-    \STATE{$R ← ❴[S'→·S, \$, \function fresh()]❵$}
-    \COMMENT{Work list and return value}
-    \REPEAT[Processing the work list]
-      \FOR{each set of items~$I ∈ R$}
-  \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ'$}
-    \IF{$\function GOTO(I,X)$ is not empty and not in~$R$}
-    \STATE{$R←R ∪ \function GOTO(I,X)$}
-    \ENDIF
-  \ENDFOR
-      \ENDFOR
-    \UNTIL{Set~$R$ is unchanged}
-    \RETURN{$R$}
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{Lemma}
-  \label{Lemma:equivalence}
-  The set of states generated by \cref{Algorithm:Items} is the same as that …
-\end{Lemma}
-
-\begin{proof}
-\end{proof}
-
-\subsection{Structure of the JLR parsing table and behavior of actions}
-The structure of the JLR parsing table
-  resembles the LR(1) action table;
-  it's defined by a function~$\textsf{ACTION}[q,a]$
-  where~$q∈Q$, and~$a∈Σ_\$$, being next state and
-  the lookahead symbol accordingly.
-The result of~$\textsf{ACTION}[q,a]$ can have one of
-  three forms:
-  \begin{description}
-
-  \item[$s(p)$] A simple shift action.
-    The recognizer pushes~$p$ onto the top of the stack (In fact,
-    unlike the LR recognizer, the old top of the stack can be removed,
-    as it will not be used anymore).
-
-  \item[$s(f,p)$] A double shift operation.
-    The recognizer pushes~$f∈ℕ↛Q$ first, and~$p$ is
-    then pushed as the new top of the stack
-    (Again, last element doesn't have to be saved).
-
-  \item[$j(n)$] A jump operation to the address numbered as~$n$.
-    The recognizer pops elements from the stack until some
-    function~$f$ is popped, such that~$f(n)$ is defined,
-    and yields some~$q$.~$q$ is then pushed onto the stack.
-\end{description}
-
-\paragraph{Misc.}

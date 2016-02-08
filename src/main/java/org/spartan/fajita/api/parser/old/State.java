@@ -59,7 +59,7 @@ public class State<I extends Item> {
         if (i == 0)
           $ += "[" + match.toString();
         else
-          $ += "/" + match.lookahead.toString() + (match.getClass() == JItem.class ? ",Addr("+ ((JItem)match).address+")" : "");
+          $ += "/" + match.lookahead.toString() + (match.getClass() == JItem.class ? ",L"+ ((JItem)match).label+"" : "");
       }
       $ += "]" + System.lineSeparator();
     }

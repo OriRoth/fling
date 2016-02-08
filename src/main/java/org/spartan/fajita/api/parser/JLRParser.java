@@ -1,12 +1,15 @@
 package org.spartan.fajita.api.parser;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -17,6 +20,9 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.parser.JActionTable.Accept;
+import org.spartan.fajita.api.parser.JActionTable.Jump;
+import org.spartan.fajita.api.parser.JActionTable.Shift;
 import org.spartan.fajita.api.parser.old.AcceptState;
 import org.spartan.fajita.api.parser.old.State;
 import org.spartan.fajita.api.parser.stack.JItem;
@@ -24,21 +30,21 @@ import org.spartan.fajita.api.parser.stack.JItem;
 public class JLRParser {
   public final BNF bnf;
   private final List<State<JItem>> states;
-  private int addressesNumber;
-  // private final ActionTable actionTable;
+  private int labelsCount;
+  private final JActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
 
   //
   public JLRParser(final BNF bnf) {
     this.bnf = bnf;
-    addressesNumber = 0;
+    labelsCount = 0;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
     states = new ArrayList<>();
     generateStatesSet();
-    // actionTable = new ActionTable(getStates());
-    // fillParsingTable();
+    actionTable = new JActionTable(getStates());
+    fillParsingTable();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -90,59 +96,59 @@ public class JLRParser {
     }
     return $;
   }
-  // private void fillParsingTable() {
-  // for (State state : getStates())
-  // for (JItem item : state.getItems())
-  // if (item.readyToReduce())
-  // if (item.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) &&
-  // item.lookahead.equals(SpecialSymbols.$))
-  // addAcceptAction(state);
-  // else
-  // addReduceAction(state, item);
-  // else if (item.rule.getChildren().get(item.dotIndex).isVerb())
-  // addShiftAction(state, item);
-  // }
-  // private void addAcceptAction(final State state) {
-  // actionTable.set(state, SpecialSymbols.$, new Accept());
-  // }
-  // private void addShiftAction(final State state, final JItem item) {
-  // Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-  // State shift = state.goTo(nextTerminal);
-  // actionTable.set(state, nextTerminal, new Shift(shift));
-  // }
-  // private void addReduceAction(final State state, final JItem item) {
-  // actionTable.set(state, item.lookahead, new Reduce(item));
-  // }
+  private void fillParsingTable() {
+//    for (State<JItem> state : getStates()){
+//      final Set<JItem> items = state.getItems();
+//      if(items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
+//        addAcceptAction(state);
+//      for(Verb v : bnf.getVerbs()){
+//       if(items.stream().anyMatch(i-> i.readyToReduce() && !i.lookahead.equals(SpecialSymbols.$)))
+//        addJumpAction(state, item); 
+//       
+//      }
+//    }
+  }
+  private void addAcceptAction(final State<JItem> state) {
+    actionTable.set(state, SpecialSymbols.$, new Accept());
+  }
+  private void addShiftAction(final State<JItem> state, final JItem item) {
+    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
+    State<JItem> shift = state.goTo(nextTerminal);
+    actionTable.set(state, nextTerminal, new Shift(shift));
+  }
+  private void addJumpAction(final State<JItem> state, final JItem item) {
+    actionTable.set(state, item.lookahead, new Jump(item));
+  }
   private State<JItem> generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
-        .stream().map(r -> new JItem(r, SpecialSymbols.$, 0, addressesNumber++)) //
+        .stream().map(r -> new JItem(r, SpecialSymbols.$, 0, labelsCount++)) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, 0);
   }
   private Set<JItem> calculateClosure(final Set<JItem> initialItems) {
     HashSet<JItem> $ = new HashSet<>();
-    Stack<JItem> todo = new Stack<>();
+    Queue<JItem> todo = new LinkedList<>();
     todo.addAll(initialItems);
     do {
-      JItem item = todo.pop();
-      if (!$.add(item) || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
+      JItem item = todo.remove();
+      if (!$.add(item) || item.readyToReduce() 
+          || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
         continue;
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
       final Symbol[] stringAfterDot = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
           item.rule.getChildren().size());
-      int newAddr = addressesNumber;
-      boolean newAddrUsed = false;
       for (DerivationRule dRule : bnf.getRulesOf(nt)) {
-        for (Verb t : firstSetOf(stringAfterDot)) {
-          todo.add(new JItem(dRule, t, 0, newAddr));
-          newAddrUsed = true;
-        }
+        if (dRule.getChildren().size() == 0 ) // epsilon rule
+          continue;
         if (isNullable(stringAfterDot))
-          todo.add(new JItem(dRule, item.lookahead, 0, item.address));
+          todo.add(new JItem(dRule, item.lookahead, 0, item.label));
+        for (Verb t : firstSetOf(stringAfterDot)) {
+      todo.add(new JItem(dRule, t, 0, labelsCount++));
+        }
       }
-      if (newAddrUsed)
-        addressesNumber++;
+      if (isNullable(nt))
+        todo.add(new JItem(item.rule, item.lookahead, item.dotIndex+1, item.label));
     } while (!todo.isEmpty());
     return $;
   }
