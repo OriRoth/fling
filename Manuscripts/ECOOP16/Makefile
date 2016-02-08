@@ -1,10 +1,7 @@
 MAIN=00
-LOCALTEXMF= ../../../yogitex//
 LATEX=lualatex -file-line-error
 LANG_TOOL=~/Downloads/LanguageTool-3.1/languagetool-commandline.jar
 
-export TEXINPUTS=:$(LOCALTEXMF)
-export BIBINPUTS=:$(LOCALTEXMF)
 
 LISTINGS=
 LISTINGS+=abc.listing 

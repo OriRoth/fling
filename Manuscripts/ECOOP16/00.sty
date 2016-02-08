@@ -2,7 +2,7 @@
 
 \passOptions{algorithm}{plain}
 \passOptions{amsmath}{fleqn} 
-%\passOptions{gnuplottex}{subfolder} 
+\passOptions{gnuplottex}{subfolder} 
 \passOptions{cleveref}{capitalize,nameinlink} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
@@ -13,6 +13,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb} %load more math symbols
 \usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{anyfontsize} % fixes font warnings
 \usepackage{booktabs}
 \usepackage{cite}
@@ -26,12 +28,9 @@
 \usepackage{nth}
 \usepackage{pifont}
 \usepackage{syntax}
-\usepackage[terse]{yogi_algorithm}
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
-\usepackage{yogi-lang}
-\usepackage{yogi-unicode}
 
 \lstset{language=Java,style=code}
 
@@ -75,23 +74,6 @@
 \def\figurename{Fig.}
 \def\figureautorefname{\figurename}
 \def\tablename{Table}
-
-\crefname{conjecture}{Conjecture}{conjectures}
-\Crefname{conjecture}{Conjecture}{Conjectures}
-\crefname{definition}{Def.}{defs.}
-\Crefname{definition}{Def.}{Defs.}
-\crefname{figure}{Fig.}{figs.}
-\Crefname{figure}{Fig.}{Figs.}
-\crefname{table}{Table}{tables}
-\Crefname{table}{Table}{Tables}
-\crefname{section}{Sect.}{sects.}
-\Crefname{section}{Sect.}{Sects.}
-\crefname{equation}{eq.}{eqs.}
-\Crefname{equation}{Eq.}{Eqs.}
-\crefname{theorem}{Thm.}{thms.}
-\Crefname{theorem}{Thm.}{Thms.}
-\crefname{algorithm}{Alg.}{algs.}
-\Crefname{algorithm}{Alg.}{Algs.}
 
 
 \intextsep=6pt
