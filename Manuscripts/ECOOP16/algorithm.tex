@@ -1,4 +1,3 @@
-\newcommand\StackLabel{\ensuremath{\textrm{label}}}
 \def\function#1(#2){\ensuremath{\textsf{#1}(#2)}}
 \def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
 
@@ -14,15 +13,15 @@ The core of LR parsing are the LR items,
 The following definition of JLR items,
   encloses the changes required to those items to handle
   jump operations.
-A JLR item is a tuple~$⟨i,\StackLabel⟩$ where~$i$ is an
-  LR item, and~$\StackLabel$ is a special stack element,
+A JLR item is a tuple~$⟨i,ℓ⟩$ where~$i$ is an
+  LR item, and~$ℓ$ is a special stack element,
   to which the recognizer will jump, in case this item will
   be reduced.
 This jump is designed to emulate the LR's
   reduce operation, considering the unbounded list of consecutive
   reductions that might occur.
-We denote such items as~$[A→α·β, b , \StackLabel]$
-  where~$A→α·β, b$ is the original LR notation, and~$\StackLabel$
+We denote such items as~$[A→α·β, b ,ℓ]$
+  where~$A→α·β, b$ is the original LR notation, and~$ℓ$
   is the jump address.
 
 A set of JLR items is said to be a JLR state.
@@ -52,27 +51,28 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   Function~$\function Closure(I)$: compute the closure of items set~$I$}
   \begin{algorithmic}[1]
     \INPUT{a set of JLR items~$I$}
-    \OUTPUT{the closure of~$I$}
-    \STATE{$\Queue←∅$ \COMMENT{A queue used for intermediate computations}}
-    \STATE{$J←∅~$ \COMMENT{Initial approximation of returned value}}
+    \OUTPUT{$J$, the set of JLR items obtained by a closure of~$I$}
+    \STATE{$\Queue←I$ \COMMENT{A queue used as work-list}}
+    \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
     \FOR{$i∈I$} \STATE{\function enqueue(\Queue, i)} \ENDFOR
-    \WHILE{$\Queue ≠ ∅$}
-    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next item to process}
+    \WHILE[More work to do]{$\Queue ≠ ∅$}
+    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
       \STATE{$J←J ∪ ❴i❵$}
-      \IF[The dot is not before a nonterminal]{$i≠[A→α·Bβ, a,\StackLabel]$}
-        \STATE{continue}
+      \STATE{\textbf{Let}~$[A→α·β, a,ℓ]←i$}
+      \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
+      \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
+      \STATE{\textbf{continue}}
       \ENDIF
-      \STATE{\textbf{Let}~$[A→α·Bβ, a, \StackLabel]←i$}
-      \FOR{each production~$B→γ ∈ G'$,$γ≠ε$}
-        \IF{$\function Nullable(β)$}
-          \STATE{$\function enqueue(\Queue, [ B→·γ, a , \StackLabel] )$}
+      \FOR[Add to closure whatever~$Bβ$ may derive]{$B→γ∈G'$,$γ≠ε$}
+      \IF[Add to closure item representing~$B\overset*⇒ε$]{$\function Nullable(β)$}
+          \STATE{$\function enqueue(\Queue,[B→·γ,a,ℓ])$}
         \ENDIF
-        \FOR{$t ∈ \function First(β)$}
-          \STATE{$\function enqueue(\Queue, [ B→·γ, t , \function newLabel()] )$}
+        \FOR[Add to closure item representing derivation~$B\overset*⇒t⋯$]{$t∈\function First(β)$}
+          \STATE{$\function enqueue(\Queue, [B→·γ,t,\function newLabel()])$}
         \ENDFOR
       \ENDFOR
-      \IF{$\function Nullable(B)$}
-        \STATE{$\function enqueue(\Queue, [A→αB·β, a, \StackLabel] )$}
+      \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
+        \STATE{$\function enqueue(\Queue,[A→αB·β,a,ℓ])$}
       \ENDIF
     \ENDWHILE
     \RETURN{$J$}
@@ -88,8 +88,8 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \OUTPUT{the successive item set}
     \STATE{$J←∅$} \COMMENT{Initially, there are not items}
     \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,\StackLabel]$}{$i$}\COMMENT{Break item~$i$ into components}
-      \LET{$i'$}{$[A→αX·β,a,\StackLabel]$}\COMMENT{Advance the dot}
+      \LET{$[A→α·Xβ,a,ℓ]$}{$i$}\COMMENT{Break item~$i$ into components}
+      \LET{$i'$}{$[A→αX·β,a,ℓ]$}\COMMENT{Advance the dot}
       \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
     \RETURN{$\function Closure(J)$}

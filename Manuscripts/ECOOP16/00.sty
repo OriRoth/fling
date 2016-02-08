@@ -1,20 +1,20 @@
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
-\passOptions{algorithm}{plain}
+% Vim: +,/^ *$/-1!sort -u 
 \passOptions{amsmath}{fleqn} 
-\passOptions{gnuplottex}{subfolder} 
 \passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{gnuplottex}{subfolder} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table} 
+\passOptions{yogi-algorithm}{terse}
 
+% Vim: +,/^ *$/-1!sort -u 
 \usepackage{adjustbox}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amssymb} %load more math symbols
 \usepackage{amsthm}
-\usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{anyfontsize} % fixes font warnings
 \usepackage{booktabs}
 \usepackage{cite}
@@ -31,6 +31,10 @@
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
+
+% Vim: +,/^ *$/-1!sort -u 
+\usepackage{yogi-algorithm}
+\usepackage{yogi-unicode}
 
 \lstset{language=Java,style=code}
 
@@ -57,6 +61,7 @@
 \adjustboxset{center}
 \newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
+
 \newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
 \newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
 
@@ -99,4 +104,3 @@
 {
   \end{equation*}
 }
-
