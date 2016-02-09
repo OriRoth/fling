@@ -17,7 +17,7 @@
 \usepackage{nth}
 \usepackage{pifont}
 \usepackage{syntax}
-\usepackage[terse]{yogi_algorithm}
+\usepackage[terse]{yogi-algorithm}
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
