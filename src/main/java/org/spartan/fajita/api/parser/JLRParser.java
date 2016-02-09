@@ -1,6 +1,5 @@
 package org.spartan.fajita.api.parser;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -97,16 +96,18 @@ public class JLRParser {
     return $;
   }
   private void fillParsingTable() {
-//    for (State<JItem> state : getStates()){
-//      final Set<JItem> items = state.getItems();
-//      if(items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
-//        addAcceptAction(state);
-//      for(Verb v : bnf.getVerbs()){
-//       if(items.stream().anyMatch(i-> i.readyToReduce() && !i.lookahead.equals(SpecialSymbols.$)))
-//        addJumpAction(state, item); 
-//       
-//      }
-//    }
+    // for (State<JItem> state : getStates()){
+    // final Set<JItem> items = state.getItems();
+    // if(items.stream().anyMatch(i -> i.readyToReduce() &&
+    // i.lookahead.equals(SpecialSymbols.$)))
+    // addAcceptAction(state);
+    // for(Verb v : bnf.getVerbs()){
+    // if(items.stream().anyMatch(i-> i.readyToReduce() &&
+    // !i.lookahead.equals(SpecialSymbols.$)))
+    // addJumpAction(state, item);
+    //
+    // }
+    // }
   }
   private void addAcceptAction(final State<JItem> state) {
     actionTable.set(state, SpecialSymbols.$, new Accept());
@@ -128,27 +129,25 @@ public class JLRParser {
   }
   private Set<JItem> calculateClosure(final Set<JItem> initialItems) {
     HashSet<JItem> $ = new HashSet<>();
-    Queue<JItem> todo = new LinkedList<>();
-    todo.addAll(initialItems);
+    Queue<JItem> todo = new LinkedList<>(initialItems);
     do {
       JItem item = todo.remove();
-      if (!$.add(item) || item.readyToReduce() 
-          || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
+      if (!$.add(item) || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
         continue;
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
-      final Symbol[] stringAfterDot = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
+      final Symbol[] strAfterNT = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
           item.rule.getChildren().size());
       for (DerivationRule dRule : bnf.getRulesOf(nt)) {
-        if (dRule.getChildren().size() == 0 ) // epsilon rule
+        if (dRule.getChildren().size() == 0) // epsilon rule
           continue;
-        if (isNullable(stringAfterDot))
+        if (isNullable(strAfterNT))
           todo.add(new JItem(dRule, item.lookahead, 0, item.label));
-        for (Verb t : firstSetOf(stringAfterDot)) {
-      todo.add(new JItem(dRule, t, 0, labelsCount++));
+        for (Verb t : firstSetOf(strAfterNT)) {
+          todo.add(new JItem(dRule, t, 0, labelsCount++));
         }
       }
       if (isNullable(nt))
-        todo.add(new JItem(item.rule, item.lookahead, item.dotIndex+1, item.label));
+        todo.add(new JItem(item.rule, item.lookahead, item.dotIndex + 1, item.label));
     } while (!todo.isEmpty());
     return $;
   }
@@ -182,7 +181,7 @@ public class JLRParser {
         return new AcceptState<>(bnf);
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
-        .map(item -> (JItem) item.advance()) //
+        .map(item -> item.advance()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, getStates().size());
