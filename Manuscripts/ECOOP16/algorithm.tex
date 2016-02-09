@@ -158,17 +158,13 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
 \begin{algorithm}[h]
   \begin{algorithmic}
     \caption{\label{Algorithm:JS}
-     Defining a single label to a tuple~$Ξ⨉Σ~$}
+      auxiliary function for action table}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$a$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-    \FOR{$[ A→α·a \beta, b,ℓ]∈q$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
-      \FOR{$ c∈\function First(β)$}
-        \IF{$ f(B,c)=⊥$}
-          \STATE{$ f(B,c) = fresh()$}
-        \ENDIF
-      \ENDFOR
+    \FOR{$[ A→α·aβ, b,ℓ]∈\function Kernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
+      \STATE{$ f(\ell) = \function Goto(\function Goto(q,A),b)$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
