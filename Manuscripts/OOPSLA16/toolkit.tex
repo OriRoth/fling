@@ -27,12 +27,12 @@ We argue that~$g$ can
     &
     \hspace{-1ex}
     \parbox[c]{0.64\linewidth}{%
-      \javaInput[left=0ex]{gamma.listing}
+      \javaInput[]{gamma.listing}
     }%
     &
     \hspace{-18ex}
     \parbox[c]{0.84\linewidth}{%
-      \javaInput[left=0ex,toprule=3pt,leftrule=3pt,bottomrule=3pt]{gamma-example.listing}
+      \javaInput[,toprule=3pt,leftrule=3pt,bottomrule=3pt]{gamma-example.listing}
     }%
 ⏎
 \textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
@@ -63,7 +63,7 @@ Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
   \item An~\kk{abstract} class encodes a set (alternatively, one can use \kk{interface}s).
     Abstract classes that extend it encode
       subsets, while~\kk{final} classes encode set members.
-  \item The interest of frugal management of namespaces is served
+  \item The interest of frugal management of name-spaces is served
     by the agreement that if a class~\cc{$X$}~\kk{extends} another class~\cc{$Y$}, then~\cc{$X$} is also defined
     as a~\kk{static} member class of~$Y$.
   \item Body of functions is limited to a single~\kk{return}~\kk{null}\cc{;} command
@@ -100,7 +100,7 @@ A \Java type encoding of this definition of function~$f$
   \begin{tabular}{cc}
     \hspace{-3.5ex}
     \parbox[c]{0.57\linewidth}{%
-    \javaInput[left=0ex]{binary-function.listing}
+    \javaInput[]{binary-function.listing}
     }
       &
     \hspace{-16ex}
@@ -115,7 +115,10 @@ A \Java type encoding of this definition of function~$f$
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
 Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
-  error because~$f(r₂, s₂)=⊥$.
+error because 
+\[
+    f(r₂, s₂)=⊥.
+\]
 
 Class~\cc{f} in the implementation sub-figure serves as
   the starting point of the little fluent API defined here.
@@ -139,11 +142,12 @@ The encoding of sets of unbounded size require means for creating an unbounded
 Genericity can be employed to serve this end.
 
 \begin{wrapfigure}[8]{r}{31ex}
+  \intextsep=0pt
   \caption{\label{Figure:id}%
   Covariant return type of function \cc{id()}
   with \Java generics.
   }
-  \javaInput[left=-2ex,minipage,width=31ex]{id.listing}
+  \javaInput[,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
 
 \Cref{Figure:id} shows a genericity based recipe for
@@ -163,7 +167,7 @@ It is also possible to encode with \Java generic types
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
-  \javaInput[minipage,left=-2ex,listing style=numbered]{stack-use-cases.listing}
+  \javaInput[minipage,,listing style=numbered]{stack-use-cases.listing}
 \end{figure}
 
 In line 3 of the figure, a stack with five elements is created:
@@ -177,12 +181,17 @@ In the figure these are either class~\cc{$γ$1}
 or class \cc{$γ$2} (both defined in \cref{Figure:unary-function}).
 A call to function \cc{$γ$}$i$ pushes the type \cc{$γ$}$i$
   into the stack, for~$i=1,$.
-The expression⏎
-  \mbox{\qquad\qquad} \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}⏎
+The expression
+\[
+  \cc{Stack.empty.$γ$1().$γ$1().$γ$2().$γ$1().$γ$1()}
+\]
 represents the sequence of pushing the value~$γ₁$ into an
 empty stack, followed by~$γ₁$,~$γ₂$,~$γ₁$, and, finally,~$γ₁$.
 This expression's type is that of variable~\cc{\_1}, i.e.,⏎
-\mbox{\qquad\qquad} \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}.⏎
+\[
+ \cc{P<$γ$1,P<$γ$1,P<$γ$2,P<$γ$1,P<$γ$1,E>>>>>}
+\]
+
 A recurring building block occurs in this type: 
   generic type~\cc{P}, \emph{short for ‟Push”}, which takes two parameters:
   \begin{enumerate}
@@ -209,7 +218,7 @@ gives the implementation of these types.
     \parbox[c]{0.3\linewidth}{%
       \input ../Figures/stack-classification.tikz
     } &
-    \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage,left=-2ex]{stack.listing}}⏎
+    \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage,]{stack.listing}}⏎
     \textbf{(a)} type hierarchy &
     \hspace{-3ex} \parbox[t]{63ex}{%
     \textbf{(b)} implementation (except
@@ -239,9 +248,9 @@ Since \Java forbids specialization of generics, in lieu we use covariant overloa
   return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
   return type of \cc{top()} in \cref{Figure:stack-encoding}).
 
-\begin{wrapfigure}[6]r{36ex}
+\begin{wrapfigure}[6]r{38ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
-  \javaInput[minipage,left=-2ex]{mammal.listing}
+  \javaInput[minipage,]{mammal.listing}
 \end{wrapfigure}
 
 \cref{Figure:generic} shows that a similar covariant change is possible 
@@ -261,7 +270,7 @@ Overloading gives rise to a third idiom for partial emulation of conditionals, a
   \caption{Peeping into the stack}%
   \label{Figure:peep}%
   \lstset{style=numbered}
-  \javaInput[minipage,left=-2ex]{peep.listing}
+  \javaInput[minipage,]{peep.listing}
 \end{figure}
 
 The figure depicts type \cc{Peep} and overloaded versions of \cc{peep()} which 

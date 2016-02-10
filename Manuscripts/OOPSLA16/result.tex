@@ -3,11 +3,11 @@ into a call to a uniquely named function (with respect to~$σ$).
 Let~$\textsf{java}(α)$, be the function
   that translates a string~$α∈Σ^*$ into a fluent API call chain.
   If~$α=σ₁⋯σₙ∈Σ^*$, then \[
-  \textsf{java}(α)=\cc{.}\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}.
+  \textsf{java}(α)=\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}
 \]
 For example, when~$Σ=❴a,b,c❵$ let~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
 With these, \[
-    \textsf{java}(caba) = \cc{.c().a().b().a()}
+    \textsf{java}(caba) = \cc{c().a().b().a()}
   \]
 
 \begin{theorem}\label{Theorem:Gil-Levy}
@@ -16,7 +16,7 @@ With these, \[
     other types such that the \Java command
   \begin{equation}
     \label{Equation:result}
-    \cc{L~$ℓ$ = A.build~$\textsf{java}(α)$}\cc{.\$();}
+    \cc{L~$ℓ$ = A.build.$\textsf{java}(α)$}\cc{.\$();}
   \end{equation}
   type checks against~$J_A$ if an only if~$α∈L$.
   Furthermore, program~$J_A$ can be effectively generated from~$A$.
@@ -52,7 +52,7 @@ There are several, mostly minor, differences between the structure of the \Java 
 in \cref{Equation:result}
 and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
 \begin{description}
-  \item[Prefix, i.e., the stating \cc{A.build} variable.]
+  \item[Prefix, i.e., the starting \cc{A.build} variable.]
   All variables and functions of \Java are defined within a class.
   Therefore, a call chain must start with an object (\cc{A.build} in \cref{Equation:result})
   or, in case of \cc{static} methods, with the name of a class.
@@ -60,15 +60,15 @@ and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
   with appropriate \cc{import} statements.
   \par
   If so desired, the same can be done by our type encoding scheme: define all
-  methods in type~$τ(c₀)$ as \cc{staic} and \cc{import static} these.
+  methods in type~$τ(c₀)$ as \cc{static} and \cc{import static} these.
   \item[Suffix, i.e., the terminal \cc{.\$()} call.]
   In order to know whether~$α∈L$ the automaton recognizing~$L$ must
   know when~$α$ is terminated.
   \par
   With a bit of engineering, this suffix can also be eliminated.
   One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
-  an accepting configuration, as subypte of~\cc{L}.
-  \item[Parametrized methods.]
+  an accepting configuration, as subtype of~\cc{L}.
+  \item[Parameterized methods.]
   Fluent API frameworks support call chains with phrases such as:
   \begin{itemize}
     \item ‟\lstinline{.when(header(foo).isEqualTo("bar")).}”,
