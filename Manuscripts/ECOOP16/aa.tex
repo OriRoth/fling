@@ -66,7 +66,7 @@ Inspired by the theory of formal languages and automata,
 Consider some fluent API (or DSL) specification, permitting only certain call
 chains and disallowing all others.
 Now, think of the formal language that defines the set of these permissible chains.
-We prove that there is always \Java type definition that
+We prove that there is always a \Java type definition that
   \emph{realizes} this fluent definition, provided that this
   language is \emph{deterministic context-free}, where
 \begin{itemize}
@@ -115,10 +115,10 @@ The answers we provide for the three questions above are:
   context-free language. What we do not know is whether algorithms of this sort
   can be encoded within the framework of the \Java type system.
   \item
-  There exists an algorithm to generate a fluent API that realize any
+  There exists an algorithm to generate a fluent API that realizes any
   deterministic context-free languages. Moreover, this fluent API can create
   at runtime, a parse tree for the given language. This parse tree can then be
-  supplied as input to the library that implements the language's semantic.
+  supplied as input to the library that implements the language's semantics.
   \item
   Unfortunately, a general purpose compiler-compiler
   is not yet feasible with the current algorithm.

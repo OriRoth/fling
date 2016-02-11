@@ -57,7 +57,7 @@ public class DomainDemo {
   peep(P<Top, Rest> _) { return null; }    // Function parameters and body
   public static void peeping_into_a_stack_use_cases() {
     P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>> _1 = Stack.empty.γ2().γ1().γ2().γ1().γ2();
-    Peep<γ2, P<γ2, P<γ1, P<Γʹ.Γ.γ2, P<γ1, P<γ2, Stack.E>>>>>> _2 = peep(_1);
+    Peep<γ2, P<γ2, P<γ1, P<γ2, P<γ1, P<γ2, E>>>>>> _2 = peep(_1);
     E _3 = Stack.empty;
     Peep<?, E> _4 = peep(_3);
   }
@@ -94,8 +94,8 @@ public class DomainDemo {
     JS.P<
       γ1,                      // Top
       JS.P<γ2,JS.E,¤,JS.E>,    // Rest
-      JS.P<γ2,JS.E,¤,JS.E>     // jump(γ1)
-      ,JS.E                    // jump(γ2)
+      JS.P<γ2,JS.E,¤,JS.E>,    // jump(γ1)
+      JS.E                    // jump(γ2)
     > _3 = _1.jump_γ1();
   }
 }

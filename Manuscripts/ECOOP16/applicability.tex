@@ -59,7 +59,8 @@ An encoding of a S-expression in type~\cc{Cons} (\cref{Figure:compiler}(a))
   is a not terribly complex such worst case.
   
 Type \cc{Cons} takes two type parameters, \cc{Car} and \cc{Cdr} (denoting left and right branches).
-Denote the return type of \cc{d()} by \[
+Denote the return type of \cc{d()} by 
+\[
   τ= \cc{Cons< Cons<Car, Cdr>, Cons<Car, Cdr> >}.
 \]
 Let~$σ$ denote the type of the \kk{this} implicit parameter to~\cc{d}.
@@ -73,17 +74,17 @@ Therefore, in a chain of~$n$ calls to \cc{d()}
 the size of the resulting type is~$O(2ⁿ)$.
 
 
-\Cref{Figure:compiler}(b) shows, on the doubly logarithmic plane, the runtime (on a Lenovo X220)
-of the \texttt{javac} compiler (version 1.8.0\_66) in face of a \Java program
-  assembled from \cref{Figure:compiler} and \cref{Equation:n} placed as the
-  single command of \cc{main()}.
-Exponential growth is demonstrated by the right-hand side of the plot,
-  in which curve converges on a straight line.
-(In fact, a variation of the construction may lead to even super-exponential growth rate of the size of types.)
+\Cref{Figure:compiler}(b) shows, on the doubly logarithmic plane, the runtime
+(on a Lenovo X220) of the \texttt{javac} compiler (version 1.8.0\_66) in face
+of a \Java program assembled from \cref{Figure:compiler} and \cref{Equation:n}
+placed as the single command of \cc{main()}.  Exponential growth is
+demonstrated by the right-hand side of the plot, in which curve converges on a
+straight line.  (In fact, a variation of the construction may lead to even
+super-exponential growth rate of the size of types.)
 
-We believe that this exponential growth is due to a design flaw in the compiler.
-Had the compiler used a representation of types that allows sharing of,
-  of expression types, compilation time would be linear. 
+We believe that this exponential growth is due to a design flaw in the
+compiler.  Had the compiler used a representation of types that allows sharing
+of expression types, compilation time would be linear. 
 
-Still, with current compiler technology, the type encoding scheme demonstrated in \cref{Figure:A}
- might not be scalable.
+Still, with current compiler technology, the type encoding scheme demonstrated
+in \cref{Figure:A} might not be scalable.

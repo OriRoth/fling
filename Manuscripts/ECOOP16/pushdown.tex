@@ -47,10 +47,10 @@ NPDAs run in exponential deterministic time.
   which are deterministic linear time and space.
 Such parsers employ a stack and a finite automaton structure,
   to parse the input.
- More general, LR($k$) parsers,~$k>1$, can be defined. These make their
+ More generally, LR($k$) parsers,~$k>1$, can be defined. These make their
  decisions based on the next~$k$ input character, rather than just the first of these.
  General LR($k$) parsers are rarely used, since they offer essentially
- the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}},
+ the same expressive power†{they recognize the same set of languages~\cite{Knuth:65}.},
  at a greater toll on resources (e.g., size of the automaton).
 In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
  of ‟\emph{\textbf Deterministic \textbf Pushdown \textbf Automaton}” (DPDA),
@@ -73,12 +73,12 @@ In fact, the expressive power of LR($k$),~$k\ge1$ parsers, is that
   \begin{enumerate}
     \item If~$q∈A$ and the input is exhausted, the automaton accepts the input and stops.
     \item Suppose that~$δ(q,γ,ε)≠⊥$ (in this case, the definition of a DPDA
-          requires that~$δ(q,γ,a')=⊥$ for all~$σ'∈Σ$), and let~$δ(q,γ,ε)=(q',ζ)$.
+          requires that~$δ(q,γ,σ')=⊥$ for all~$σ'∈Σ$), and let~$δ(q,γ,ε)=(q',ζ)$.
           Then the automaton pops~$γ$ and pushes the string of stack
           elements~$ζ∈Γ^*$ into the stack.
-    \item If~$δ(q,γ,a)=(q',ζ)$, then the same happens, but the automaton also
+    \item If~$δ(q,γ,σ)=(q',ζ)$, then the same happens, but the automaton also
           irrevocably consumes the token~$σ$.
-    \item If~$δ(q,γ,ε)=δ(q,γ,a)=⊥$ the automaton rejects the input and stops.
+    \item If~$δ(q,γ,ε)=δ(q,γ,σ)=⊥$ the automaton rejects the input and stops.
   \end{enumerate}
   \end{quote}
 \end{Definition}
