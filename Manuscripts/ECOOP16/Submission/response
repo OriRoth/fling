@@ -1,5 +1,5 @@
 No matter which way we turn the meticulous reviews, we are compelled to admit:
-The reviews hit the nail right on the head.  The current version of the paper
+The reviews hit the nail right on the head. The current version of the paper
 simply did not do a good job in presenting the motivation and the context of
 this work.
 
@@ -11,7 +11,7 @@ these.  This research begun with the naive, first look impression that the
 problem is easy, and it is only a matter of skilled engineering work to
 automate the process.  Deep into this work, we discovered how recalcitrant the
 problem is.  We were repeatedly mislead to believe that the engineering task
-could be solved by an employing a slightly heavier artillery of generic
+could be solved by employing a slightly heavier artillery of generic
 programming.  A literature survey shows that the same failure was experienced
 by others. There are several systems [citations] for generating fluent APIs,
 but none of them solves the problem completely.
@@ -28,7 +28,7 @@ work on developing concrete, efficient algorithms for recognizing and parsing
 with Java generics, based on the deeper understanding we gained from the
 theoretical results.
 
-Current results are mixed: We can showing that parsing is impossible while
+Current results are mixed: We can show that parsing is impossible while
 relying solely on generic programming, but can be implemented in a manner
 mentioned in the current paper after recognition.  On the other hand, we are on
 the verge of a recognition algorithm which is the amalgam of Knuth's classical
