@@ -52,30 +52,28 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   \begin{algorithmic}[1]
     \INPUT{a set of JLR items~$I$}
     \OUTPUT{$J$, the set of JLR items obtained by a closure of~$I$}
-    \STATE{$\Queue←I$ \COMMENT{a queue used for breadth-first search}}
-    \STATE{$J←∅$ \COMMENT{initial approximation of returned value}}
-    \WHILE[more work to do]{$\Queue ≠ ∅$}
-    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{consider next JLR $i$}
-    \STATE{$J←J ∪ ❴i❵$} \COMMENT{add $i$ to result before visiting its derivatives} 
+    \STATE{$\Queue←I$ \COMMENT{A queue used as work-list}}
+    \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
+    \WHILE[More work to do]{$\Queue ≠ ∅$}
+    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
+      \STATE{$J←J ∪ ❴i❵$}
       \STATE{\textbf{Let}~$[A→α·β, a,ℓ]←i$}
-      \COMMENT{break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
-      \IF[dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
-        \STATE{\textbf{continue}} \COMMENT{$i$ does not have any derivatives}
+      \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
+      \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
+        \STATE{\textbf{continue}}
       \ENDIF
-      \LET{$Bδ$}{$β$}\COMMENT{break $β$ into nonterminal $B$ and sequence $δ$}
-      \IF[add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
-        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ])$}
-        \COMMENT{if $B$ is nullable, state includes item for $B \overset*⇒ε$ }
-      \ENDIF
-      \FOR[add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
-      \IF[add to closure item representing~$δ\overset*⇒ε$]{$\function Nullable(δ)$}
+      \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
+      \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
+      \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\function Nullable(δ)$}
           \STATE{$\function enqueue(\Queue,[B→·γ,a,ℓ])$}
-          \COMMENT{item for starting derivation rule $B →γ$} 
         \ENDIF
-        \FOR[add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\function First(δ)$}
+        \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\function First(δ)$}
           \STATE{$\function enqueue(\Queue, [B→·γ,t,\function newLabel()])$}
         \ENDFOR
       \ENDFOR
+      \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
+        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ])$}
+      \ENDIF
     \ENDWHILE
     \RETURN{$J$}
   \end{algorithmic}
@@ -88,10 +86,10 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \INPUT{a set of JLR items~$I$}
     \INPUT{a grammar symbol~$X$}
     \OUTPUT{the successive item set}
-    \STATE{$J←∅$} \COMMENT{initially, there are not items}
+    \STATE{$J←∅$} \COMMENT{Initially, there are not items}
     \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,ℓ]$}{$i$}\COMMENT{break item~$i$ into components}
-      \LET{$i'$}{$[A→αX·β,a,ℓ]$}\COMMENT{advance the dot}
+      \LET{$[A→α·Xβ,a,ℓ]$}{$i$}\COMMENT{Break item~$i$ into components}
+      \LET{$i'$}{$[A→αX·β,a,ℓ]$}\COMMENT{Advance the dot}
       \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
     \RETURN{$\function Closure(J)$}
@@ -106,9 +104,9 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \INPUT{An augmented grammar~$G'$}
     \OUTPUT{the set of JLR states induced by~$G'$}
     \STATE{$R ← ❴[S'→·S, \$, \function newLabel()]❵$}
-    \COMMENT{work list and return value}
-    \REPEAT[processing the work list]
-    \FOR[deal with items in set~$I$]{$I ∈ R$}
+    \COMMENT{Work list and return value}
+    \REPEAT[Processing the work list]
+    \FOR[Deal with items in set~$I$]{$I ∈ R$}
   \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ'$}
     \IF{$\function Goto(I,X)$ is not empty and not in~$R$}
     \STATE{$R←R ∪ ❴\function Goto(I,X)❵$}
@@ -157,7 +155,7 @@ $\function JS(q,a)$ returns a function~$f$ that maps labels
 In a way, it reminds the~$Goto$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
 
-\begin{algorithm}[ht]
+\begin{algorithm}[h]
   \begin{algorithmic}
     \caption{\label{Algorithm:JS}
       auxiliary function for action table}
@@ -165,17 +163,8 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
     \INPUT{lookahead symbol~$a$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-<<<<<<< HEAD
-    \FOR{$[ A→α·aβ, b,ℓ]∈q$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
-      \FOR{$ c∈\function First(β)$}
-        \IF{$ f(B,c)=⊥$}
-          \STATE{$ f(B,c) = fresh()$}
-        \ENDIF
-      \ENDFOR
-=======
     \FOR{$[ A→α·aβ, b,ℓ]∈\function Kernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
       \STATE{$ f(\ell) = \function Goto(\function Goto(q,A),b)$}
->>>>>>> c9917f63367bf2354de0c1331bfb24ea06d06160
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}

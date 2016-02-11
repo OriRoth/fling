@@ -72,8 +72,13 @@ There is large body of research on \emph{type-states}
 Informally, an object that belongs to a certain type, has
 type-states, if not all methods defined in this object's class are applicable
 to the object in all states it may be in.
-As it turns out, objects with type states are quite frequent: a recent study~\cite{Beckman:2011} estimates
+As it turns out, objects with type states are quite frequent: a recent study~\cite{Beckman:11} estimates
   that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
+
+In a sense, type states define the ``language'' of the protocol of an object. 
+The protocol of the type-state \cc{Box} class defined in \cref{Figure:box} 
+  admits the chain \cc{\kk{new} Box().open().close()} but not
+  the chain \cc{\kk{new} Box().open().open()}.
 
 \begin{figure}[H]
   \caption{\label{Figure:box}Fluent API of a box object, defined by a DFA and a table}
@@ -91,92 +96,26 @@ As it turns out, objects with type states are quite frequent: a recent study~\ci
   \end{tabular}
 \end{figure}
 
-In a sense, type states define the ``language'' of the protocol of an object. 
-The protocol of the type-state \cc{Box} class defined in \cref{Figure:box} 
-  admits the chain \cc{\kk{new} Box().open().close()} but not the 
-  the chain \cc{\kk{new} Box().open().open()}.
-
 As mentioned above, tools such as fluflu realize
-  type-state based their finite automaton description.
+  type-state based on their finite automaton description.
 Our approach is a bit more expressive: examine the language $L$ defined by the type-state, 
   e.g., in the box example,  
         \[
           L = \big(\cc{.open().close()}\big)^*\big(\cc{.open()}\:|\:ε\big).
         \]
 If $L$ is deterministic context-free, a fluent API can be made for it. 
-\endinput
-The proof makes a general recipe for handling examples of this sort:
-
-Type states are but one kind of a language  
-
-
 
 To make the proof concrete, consider this example of fluent API definition:
-An instance of class \cc{Box}
-may receive two method invocations: \cc{open()} and \cc{close()},
-and can be in either ‟open” or ‟closed” state,
+An instance of class \cc{Box} may receive two 
+  method invocations: \cc{open()} and \cc{close()}, and can be in either 
+  ‟open” or ‟closed” state.
 Initially the instance is ‟closed”.
 Its behavior henceforth is defined by \cref{Figure:box}.
 
 To realize this definition, we need a type definition by which \cc{\kk{new} Box().open().close()}, more generally
   blue, or accepting states in the figure, type-check.
-Conversely, with this type definition, compile time type error should occur in \cc{\kk{new} Box.close()},
+Conversely, with this type definition, compile time type error should occur in \cc{\kk{new} Box().close()},
   and, more generally, in the red state.
 
 Some skill is required to make this type definition: proper design of class \cc{Box}, perhaps with
   some auxiliary classes extending it, an appropriate method definition here and there, etc.
-As mentioned above, 
->>>>>>> 1fd5d74a3a1fafdcfe3866afe6efd408d5aa552f
-\endinput
-
-\begin{itemize}
-  \item First, consider the language defined by the fluent API\@.
-        In the box example, this language is defined by the regular expression
-  \item Second, check whether this language is deterministic context-free.
-        If it is, the fluent API can be realized, and,
-        there is an algorithm to produce the respective type definition.
-        In the box example, since language~$L$ is specified by a regular expression,
-        it is trivially deterministic context-free.
-        \par
-        It follows from the proof that there exists a type definition
-        which realizes the box example.
-        Moreover, there is a way
-        to automatically produce this type definition.
-\end{itemize}
-
-The proof is a construction of a \Java type encoding of
-  the \emph{deterministic pushdown automaton} that recognizes
-  a given \emph{deterministic context-free language}.
-With the generated types and methods, the compilation process of
-  any chain of fluent API calls, actually runs the pushdown automaton against the
-  specific input string that the chain represents.
-When used appropriately, if this run of the automaton ends with an accepting state†{The acceptance of a PDA can also be defined by an empty stack, we will use the accepting state type of PDAs},
-  then the fluent API chain type checks correctly.
-If however this run ends in a failure, i.e., non-accepting state,
-  compile time error will occur.
-
-
-
-A classical example of type-states is a file object which can be in one of two
-states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
-permitted when the file is in an ‟open” state. In addition, method \cc{open()}
-(respectively \cc{close()}) can only be applied if the object is in the
-‟closed” (respectively, ‟open”) state.
-
-Type-state pose two main challenges to software engineering
-\begin{enumerate}
-  \item \emph{\textbf{Identification.}}
-    In the typical case, type-state
-        receive little to no mention at all in the documentation.
-    The identification problem is to find the implicit
-    type state in existing \Java: Given an implementation of a class
-    (or more generally of a software framework),
-    \emph{determine} which sequences of method calls are valid and which violate the
-    type state hidden in the \Java.
-  \item \emph{\textbf{Maintenance and Enforcement.}}
-    Having identified the type-states, the challenge is in automatically flagging out
-      illegal sequence of calls that does not conform
-      with the type-state, furthermore, with the
-      evolution of an API, the challenge is in updating the type-state information,
-      and the type checking of \Java of clients.
-\end{enumerate}

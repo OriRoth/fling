@@ -1,0 +1,190 @@
+===========================================================================
+                          ECOOP 2016 Review #35D
+---------------------------------------------------------------------------
+     Paper #35: Formal Language Recognition with the Java Type Checker
+---------------------------------------------------------------------------
+
+                      Overall merit: C. Weak paper, though I will not fight
+                                        strongly against it
+                         Confidence: X. I am an expert in this area
+                    Writing Quality: R. Needs improvement
+
+                         ===== Paper Summary =====
+
+This paper presents an approach to support fluent APIs in Java, that is,
+a typing discipline whereby the sequence of methods invoked in complex
+object construction expressions can be constrained. The expressible
+legal sequences are the languages recognizable by a jDPDA, i.e., all
+deterministic context-free languages, and they are enforced by a type
+encoding of the jDPDA corresponding to the given language. The approach
+is described based on an encoding of an example automaton in the space of
+Java types, and the corresponding general encoding technique follows by
+a generalization from there. Finally, the paper discusses how practical
+the approach is at this point.
+
+                    ===== Points For and Against =====
+
++ It represents a refreshing point of view on Java that it might be useful
+  to employ type level encodings to enforce flexible disciplines upon the
+  shape of expressions
+
++ If this approach is developed further, e.g., by means of a practical
+  code generator, then it might be useful for programmers who just want
+  to ensure that their APIs are used in ways that are intended to work.
+
+- The paper is not very readable; in particular, it very often leaves the
+  reader wondering "why do they do this?". Presumably it would be very
+  useful if the paper were to be presented in a substantially different
+  manner: Present the computations that you wish to perform using the Java
+  type system as the nicest possible stand-alone calculus. Then, when the
+  reader knows exactly what the goal is, show how the (rather messy)
+  type level encoding can achieve the same thing.
+
+- The claimed proof of theorem 1 is an informal presentation of the encoding
+  of a single example. It is not even stated precisely that a proof would
+  amount to a general technique, not a single example of an encoding. But
+  the actual techniques would probably work in the general case, so the
+  presentation could be made much more convincing if the generality were
+  maintained explicitly along the way, and the example were presented as
+  an example.
+
+- It is not obvious that the approach is practical for Java programmers.
+  The paper would benefit from making a clearer choice: It could be aimed
+  at a practical goal, that is, an actual preprocessor that would
+  manage all the complex encoding stuff for practical programmers, showing
+  that it is useful to apply these techniques for the extra checking.
+  Or it could take a more theoretical approach, considering the Java type
+  system as a mathematical framework and showing something about the
+  expressive power and its limits. Currently, the paper is neither
+  practical enough nor theoretically precise enough to be really convincing.
+
+                       ===== Detailed Comments =====
+
+- Introduction: Could you make it a bit clearer what a fluent API is? The
+current presentation makes sense after reading the page mentioned in
+footnote 2, but on its own it is not easy to determine whether any given
+API is or isn't fluent---and even the footnote document is quite vague.
+
+- page 2, typo: 'always [a] Java type definition'
+
+- End of 1.1: I suspect that you will "run an LR parser" on the fluent call
+chain by encoding the parser mechanics in type arguments of polymorphic
+methods. That sounds like a tour de force in terms of type argument
+complexity, which makes it understandable that javac may choke on the
+hypothetical compiler-compiler output (p3). That may all be fine, but it
+doesn't smell terribly practical.
+
+- p3, 'understanding .. fluent APIs': How can you claim that modeling fluent
+APIs using formal languages helps _understanding_ them? Maybe the model
+doesn't fit perfectly, in which case you may just help us misunderstand
+them to some extent. It would at least be very useful to have some
+arguments why this is a faithful and reasonably complete model, and if
+such arguments are present in the paper then they should be briefly
+introduced already here.
+
+- p4 typo: 'and [the] such'
+
+- p5, 'may be arbitrary': I suppose a main point is that they are not
+arbitrary, it's a sequence that follows rules. Presumably you can
+choose a phrase here to reinforce that point, rather than having this
+phrase which might well confuse some readers.
+
+- p6, typo: $a'$ should be $\sigma'$ in bullet point 2. Similarly for
+bullet point 3 on p7, $a$ should be $\sigma$. Finally, the $a$ in bullet
+4 should probably also have been $\sigma$.
+
+- p7, 'exists a Java definition, $J_A$..': Java definitions have not been
+modeled formally at this point, and neither has Java type checking. This
+means that the theorem is informal in the sense that crucial parts of
+the claim must be understood in their standard, informal sense. Did you
+make any attempts to model this in a self-contained manner, or do you
+really need every bit of expressive power of full-fledgeed, practical
+Java type checking?
+
+- p8 typo: 'sta[r]ting A.build variable'? 'sta[t]ic'? 'sub[yp]te' 'store the
+[store the]'
+
+- p8, 'the compile-time mechanism of Java': This phrase is extremely vague.
+
+- p9, Fig. 5.1: Why do you use nesting with \Gamma', \Gamma, and \gamma1
+and \gamma2? There is nothing in each nested class which causes the
+nesting to be required. Also, the fact that it is static nesting rather
+than inner classes is a hint that it may not be needed. [OK, a motivation
+is given later, p10 item 2, but it would be nice to have that argument
+when the thought arises that the construct is needlessly complex.]
+
+- p10, Fig. 5.2: I don't understand the motivation for having functions
+with arity different from one in the Java encoding: Whenever you have a
+function with arity k you just take the finite sets S1 .. Sk and create
+the set of tuples thereof (which is still finite), and then you have the
+arity one case again and you should be able to use the approach for that.
+Maybe you could give a concrete example to motivate why a programmer
+would be more happy with an encoding for multiple arguments rather than
+using a single argument that encodes a tuple in itself. Also, it does not
+look very practical that you wish to encode finite sets with one or more
+declarations per value; could you give a concrete example to support the
+claim that we won't want sets of size, say, hundreds of values?
+
+- p10, 'Genericity can be employed to serve this end': Sure, you can have
+`List<C>`, `List<List<C>>` etc. and hence model the natural numbers,
+and that's again enough to model any finite set. This is also the basic
+idea behind Fig. 5.4, 5.5. But it is very difficult for the reader to
+see how to interpret this, that is, how you are going to use it. So if
+you can spot a certain amount of frustration in my comments it's probably
+because I'm looking for an overall framework that these techniques can
+fit into. Couldn't you reorganize the paper such that the reader gets a
+fair chance to see where you are going? Then you wouldn't get all those
+"why do you do that?" and "isn't that completely impractical?" and "how
+big would those finite sets be?" complaints..
+
+- p12, end of Sect.5: The description of `Peep` contains some of that
+motivation that I've been waiting for. Thanks!
+
+- p14, typos: 'is [a] computed', 'number o[f] steps'
+
+- p15, 'proof .. is .. reduced to type-encoding of a given jDPDA': Please
+make this statement more precise. Obviously, it's about having a systematic
+approach that will encode any given jDPDA, not just being able to handle
+one example.
+
+- p15, typo: '$k = |\Sigma|$' --> '$k = |\Gamma|$' maybe?
+
+- p16, 'raw type C': Please give a hint why the raw type would work in a
+way that makes sense for the given context.
+
+- p16, typo: 'sta[r]ting point', and at least one more occurrence of
+'stating'.
+
+- Fig. 7.1: Checking with footnote 17, I don't understand why
+`isL(build.\sigma2().$())` would be accepted, nor why `isL(build.$())`
+would be rejected. Several others also look wrong, and in particular
+there must always be an even number of \sigma2() calls for acceptance.
+Is footnote 17 just totally wrong?!
+
+- Fig. 8.1: It is interesting that you show that javac is unable to handle
+large generic types economically by sharing the representation of identical
+subexpressions. But since you wouldn't expect anyone to write one of those
+2^10 size type expressions explicitly, you are relying crucially on
+the relevance of large generic types that never get used explicitly in
+programs (because they are the types of expressions, never the types of
+variables or parameters), and you could reasonably claim that this is a
+pathological case. "Just don't do that in Java". ;-) Or could you argue
+convincingly that there could exist meaningful Java programs where such
+large types occur during type checking, but never need to be written
+explicitly? It is not obvious to me that your jDPDA encoding would give
+rise to exponentially sized types.
+
+           ===== Questions for Authors in Response Period =====
+
+Are you mainly interested in the theoretical point of view ("it is
+possible to encode jDPDAs in the Java type system") or in the
+practical point of view ("our technique will help Java programmers
+write more correct programs")? Maybe both? If the practical point of
+view is important, can you compare your technique to an ad-hoc
+analysis (e.g., arguing that a stand-alone fluent api usage checker
+solving the same problems as your approach would be difficult to
+write, or inconvenient to use).
+
+This Paper Ought to Have an Accompanying Artifact:
+                                     1. No, does not need to
+

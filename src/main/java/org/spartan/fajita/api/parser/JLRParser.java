@@ -122,7 +122,7 @@ public class JLRParser {
   }
   private State<JItem> generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
-        .stream().map(r -> new JItem(r, SpecialSymbols.$, 0, labelsCount++)) //
+        .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, 0);
@@ -141,13 +141,13 @@ public class JLRParser {
         if (dRule.getChildren().size() == 0) // epsilon rule
           continue;
         if (isNullable(strAfterNT))
-          todo.add(new JItem(dRule, item.lookahead, 0, item.label));
+          todo.add(new JItem(dRule, item.lookahead, item.label));
         for (Verb t : firstSetOf(strAfterNT)) {
-          todo.add(new JItem(dRule, t, 0, labelsCount++));
+          todo.add(new JItem(dRule, t,labelsCount++));
         }
       }
       if (isNullable(nt))
-        todo.add(new JItem(item.rule, item.lookahead, item.dotIndex + 1, item.label));
+        todo.add(item.advance());
     } while (!todo.isEmpty());
     return $;
   }

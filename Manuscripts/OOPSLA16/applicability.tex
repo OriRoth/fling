@@ -5,14 +5,15 @@ its realization:
   \begin{enumerate}
     \item Convert the specification into a plain BNF form
     \urlref{http://lampwww.epfl.ch/teaching/archive/compilation-ssc/2000/part4/parsing/node3.html}.
-    \item Convert this BNF into a definition of a DPDA\@. If conversion fails,
-      then the given specification is not deterministic context-free.
-    \item Convert this DPDA into a jDPDA. (Conversion is guaranteed to succeed.)
+    \item Convert this BNF into a type of DPDA (using parsing algorithms e.g., LR(k), LALR\@, LL(k)). 
+        This conversion might 
+        fail~\footnote{In the LR case, we know\cite{Knuth:i:think} there exists an equivalent grammar for which the conversion will succeed}.
+    \item Convert this DPDA into a jDPDA. (Conversion is guaranteed to succeed)
     \item Apply the proof to generate appropriate \Java type definitions, making sure to
         augment methods with code to maintain the fluent-call-list.
-        Parsing the fluent-call-list can done either in each method,
+        Parsing the fluent-call-list can be done either in each method,
         or lazily, when the product of the fluent API call chain is to
-         be used.
+        be used.
   \end{enumerate}
 \end{quote}
 Although possible, a practical tool that uses the proof directly 
@@ -34,7 +35,7 @@ Support of these features through four or so algorithmic abstractions
   }
   \begin{minipage}{\textwidth}
   \begin{tabular}{@{}c@{}c@{}}
-    \hspace{3ex}\parbox[c]{44ex}{\javaInput[minipage,width=40ex,left=-2ex]{compiler.listing}} &
+    \hspace{3ex}\parbox[c]{44ex}{\javaInput[minipage,width=40ex,]{compiler.listing}} &
     \hspace{0ex} \parbox[c]{44ex}{\gnuplotloadfile[terminal=pdf,terminaloptions={crop size 2.5in,1.5in color enhanced font ",8" linewidth 1}]{../Figures/kill.gnuplot}}⏎
       \textbf{(a)} Encoding of a binary type tree 
     & 

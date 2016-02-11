@@ -1,9 +1,7 @@
 MAIN=00
-LOCALTEXMF= ../../../yogitex//
 LATEX=lualatex -file-line-error
+LANG_TOOL=~/Downloads/LanguageTool-3.1/languagetool-commandline.jar
 
-export TEXINPUTS=:$(LOCALTEXMF)
-export BIBINPUTS=:$(LOCALTEXMF)
 
 LISTINGS=
 LISTINGS+=abc.listing 
@@ -28,6 +26,7 @@ LISTINGS+=proof.headers.listing
 LISTINGS+=prefix-proof.configuration.listing 
 LISTINGS+=prefix-proof.many.listing 
 LISTINGS+=prefix-proof.cases.listing 
+LISTINGS+=prefix-proof.full.listing 
 LISTINGS+=spda.listing 
 LISTINGS+=stack.listing
 LISTINGS+=stack-use-cases.listing
@@ -169,6 +168,9 @@ spelling:
 dup:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then dup $$f;fi; done
 
+lang:
+	for f in *.tex ; do if [ $$f != 00.tex ]; then detex $$f > $$f.detexed | java -jar ~/Downloads/LanguageTool-3.1/languagetool-commandline.jar -d WHITESPACE_RULE $$f.detexed ; rm -f $$f.detexed ;fi; done
+
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )
 JUNKFILES+=$(wildcard *.backup )
@@ -193,6 +195,8 @@ JUNKFILES+=$(wildcard .*swo )
 JUNKFILES+=$(wildcard .*swp )
 JUNKFILES+=$(wildcard *.synctex.gz )
 JUNKFILES+=$(wildcard *.vtc)
+JUNKFILES+=$(wildcard *.detexed )
+JUNKFILES+=$(wildcard *.class )
 
 clean: $(JUNKFILES) 
 	- [ -z '$^' ]        || mv -f $^ /tmp

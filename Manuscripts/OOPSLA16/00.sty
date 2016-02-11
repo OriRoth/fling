@@ -1,13 +1,15 @@
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
-\passOptions{algorithm}{plain}
+% Vim: +,/^ *$/-1!sort -u 
 \passOptions{amsmath}{fleqn} 
-%\passOptions{gnuplottex}{subfolder} 
 \passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{gnuplottex}{subfolder} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table} 
+\passOptions{yogi-algorithm}{terse}
 
+% Vim: +,/^ *$/-1!sort -u 
 \usepackage{adjustbox}
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -26,14 +28,14 @@
 \usepackage{nth}
 \usepackage{pifont}
 \usepackage{syntax}
-\usepackage[terse]{yogi_algorithm}
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
-\usepackage[terse]{yogi-lang}
+
+% Vim: +,/^ *$/-1!sort -u 
+\usepackage{yogi-algorithm}
 \usepackage{yogi-unicode}
 
-\renewcommand\languageShape[1]{\textrm{#1}}
 \lstset{language=Java,style=code}
 
 \usetikzlibrary{graphdrawing}
@@ -52,19 +54,23 @@
 \floatstyle{ruled}
 \restylefloat{figure}
 \restylefloat{table}
+\restylefloat{algorithm}
 
 \adjustboxset{max width=\columnwidth}
 \adjustboxset{max height=0.8\textheight}
 \adjustboxset{center}
 \newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
+
 \newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
 \newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
 
 \newtheorem{Theorem}{Theorem}
+\newtheorem{Lemma}{Lemma}
 \newtheorem{Proposition}{Proposition}
 \newtheorem{Definition}{Definition}
 \newtheorem{Conjecture}{Conjecture}
+
 \numberwithin{equation}{section}
 \numberwithin{figure}{section}
 
@@ -74,23 +80,8 @@
 \def\figureautorefname{\figurename}
 \def\tablename{Table}
 
-\crefname{conjecture}{Conjecture}{conjectures}
-\Crefname{conjecture}{Conjecture}{Conjectures}
-\crefname{definition}{Def.}{defs.}
-\Crefname{definition}{Def.}{Defs.}
-\crefname{figure}{Fig.}{figs.}
-\Crefname{figure}{Fig.}{Figs.}
-\crefname{table}{Table}{tables}
-\Crefname{table}{Table}{Tables}
-\crefname{section}{Sect.}{sects.}
-\Crefname{section}{Sect.}{Sects.}
-\crefname{equation}{eq.}{eqs.}
-\Crefname{equation}{Eq.}{Eqs.}
-\crefname{theorem}{Thm.}{thms.}
-\Crefname{theorem}{Thm.}{Thms.}
 
-
-\intextsep=0pt
+\intextsep=6pt
 
 \newcommand \urlref [1] {\footnote{\url{#1}}}
 
@@ -113,4 +104,3 @@
 {
   \end{equation*}
 }
-
