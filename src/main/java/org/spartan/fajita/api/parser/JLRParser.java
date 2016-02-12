@@ -181,7 +181,7 @@ public class JLRParser {
         return new AcceptState<>(bnf);
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
-        .map(item -> item.advance()) //
+        .map(item -> item.advance().asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, getStates().size());

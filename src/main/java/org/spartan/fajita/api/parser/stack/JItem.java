@@ -17,7 +17,7 @@ public class JItem extends Item {
     this(rule, lookahead, 0, label,false);
   }
   @Override public String toString() {
-    return super.toString() + ", L" + label + "";
+    return super.toString() + ", L" + label + (kernel ? ",K" : "");
   }
   @Override public int hashCode() {
     return super.hashCode();
