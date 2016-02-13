@@ -103,8 +103,6 @@ public class Main {
     parser.getStates().forEach(s -> $.addVertex(s));
     parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
       State<Item> goTo = s.goTo(symb);
-      if (goTo.getClass() == AcceptState.class)
-        $.addVertex(goTo);
       $.addEdge(s, goTo);
     }));
     return $;
@@ -116,8 +114,6 @@ public class Main {
     parser.getStates().forEach(s -> $.addVertex(s));
     parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
       State<JItem> goTo = s.goTo(symb);
-      if (goTo.getClass() == AcceptState.class)
-        $.addVertex(goTo);
       $.addEdge(s, goTo);
     }));
     return $;

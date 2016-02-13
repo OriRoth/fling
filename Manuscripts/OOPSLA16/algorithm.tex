@@ -107,7 +107,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \COMMENT{Work list and return value}
     \REPEAT[Processing the work list]
     \FOR[Deal with items in set~$I$]{$I ∈ R$}
-  \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ'$}
+  \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
     \IF{$\function Goto(I,X)$ is not empty and not in~$R$}
     \STATE{$R←R ∪ ❴\function Goto(I,X)❵$}
     \ENDIF
@@ -163,8 +163,8 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
     \INPUT{lookahead symbol~$a$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-    \FOR{$[ A→α·aβ, b,ℓ]∈\function Kernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
-      \STATE{$ f(\ell) = \function Goto(\function Goto(q,A),b)$}
+    \FOR{$[ A→α·aβ, b,ℓ]∈\function NonKernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
+      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),b)$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}

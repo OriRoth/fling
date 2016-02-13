@@ -40,8 +40,7 @@ public class JLRParser {
     labelsCount = 0;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    states = new ArrayList<>();
-    generateStatesSet();
+    states = generateStatesSet();
     actionTable = new JActionTable(getStates());
     fillParsingTable();
   }
@@ -72,14 +71,6 @@ public class JLRParser {
             break;
         }
     } while (moreChanges);
-    return $;
-  }
-  public static Symbol[] subExpressionBuilder(final List<Symbol> expression, final int index, final Symbol... symbols) {
-    Symbol[] $ = new Symbol[expression.size() - index + symbols.length];
-    for (int i = 0; i < expression.size() - index; i++)
-      $[i] = expression.get(i + index);
-    for (int i = 0; i < symbols.length; i++)
-      $[expression.size() - index + i] = symbols[i];
     return $;
   }
   public boolean isNullable(final Symbol... expression) {
@@ -128,11 +119,12 @@ public class JLRParser {
     return new State<>(closure, bnf, 0);
   }
   private Set<JItem> calculateClosure(final Set<JItem> initialItems) {
-    HashSet<JItem> $ = new HashSet<>();
     Queue<JItem> todo = new LinkedList<>(initialItems);
+    HashSet<JItem> $ = new HashSet<>();
     do {
       JItem item = todo.remove();
-      if (!$.add(item) || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
+      boolean exists = $.add(item);
+      if (!exists || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
         continue;
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
       final Symbol[] strAfterNT = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
@@ -143,7 +135,7 @@ public class JLRParser {
         if (isNullable(strAfterNT))
           todo.add(new JItem(dRule, item.lookahead, item.label));
         for (Verb t : firstSetOf(strAfterNT)) {
-          todo.add(new JItem(dRule, t,labelsCount++));
+          todo.add(new JItem(dRule, t, labelsCount++));
         }
       }
       if (isNullable(nt))
@@ -151,40 +143,48 @@ public class JLRParser {
     } while (!todo.isEmpty());
     return $;
   }
-  private void generateStatesSet() {
+  private List<State<JItem>>  generateStatesSet() {
+    List<State<JItem>> $ = new ArrayList<>();
     State<JItem> initialState = generateInitialState();
-    List<Symbol> symbols = new ArrayList<>(legalSymbols());
-    states.add(initialState);
-    Stack<State<JItem>> statesToCheck = new Stack<>();
-    statesToCheck.push(initialState);
-    while (!statesToCheck.isEmpty()) {
-      State<JItem> state = statesToCheck.pop();
-      for (Symbol lookahead : symbols) {
+    Stack<State<JItem>> todo = new Stack<>();
+    todo.push(initialState);
+    while (!todo.isEmpty()) {
+      State<JItem> state = todo.pop();
+      $.add(state);
+      for (Symbol lookahead : legalSymbols()) {
         if (!state.isLegalTransition(lookahead))
           continue;
         State<JItem> newState = generateNextState(state, lookahead);
-        int stateIndex = states.indexOf(newState);
+        int stateIndex = $.indexOf(newState);
         if (stateIndex == -1) {
-          if (newState.getClass() != AcceptState.class) {
-            states.add(newState);
-            statesToCheck.add(newState);
-          }
+          todo.add(newState);
           state.addGotoTransition(lookahead, newState);
         } else
           state.addGotoTransition(lookahead, getStates().get(stateIndex));
       }
     }
+    return $;
   }
   private State<JItem> generateNextState(final State<JItem> state, final Symbol lookahead) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState<>(bnf);
+        return new AcceptState<>(bnf, getStates().size());
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance().asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new State<>(closure, bnf, getStates().size());
+  }
+  @SuppressWarnings("boxing") static Map<Integer, State<JItem>> jumpSet(State<JItem> s, Verb v) {
+    HashMap<Integer, State<JItem>> $ = new HashMap<>();
+    List<JItem> nonkernel = s.getItems().stream().filter(i -> !i.kernel).collect(Collectors.toList());
+    for (JItem i : nonkernel) {
+      if (i.readyToReduce() || !i.rule.getChildren().get(i.dotIndex).equals(v))
+        continue;
+      $.put(i.label, s.goTo(i.rule.lhs).goTo(i.lookahead));
+    }
+    return $;
   }
   // public Action actionTable(final State<JItem> state, final Verb lookahead) {
   // return actionTable.get(state.index, lookahead);
