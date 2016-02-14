@@ -56,6 +56,9 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
     \WHILE[More work to do]{$\Queue ≠ ∅$}
     \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
+      \IF[Equality w/o the label]{$i \in J$} % Should rewrite this line
+        \STATE{\textbf{continue}}
+      \ENDIF
       \STATE{$J←J ∪ ❴i❵$}
       \STATE{\textbf{Let}~$[A→α·β, a,ℓ]←i$}
       \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
@@ -109,7 +112,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \FOR[Deal with items in set~$I$]{$I ∈ R$}
   \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
     \IF{$\function Goto(I,X)$ is not empty and not in~$R$}
-    \STATE{$R←R ∪ ❴\function Goto(I,X)❵$}
+    \STATE{$R←R ∪ ❴\function Goto(I,X)❵$} % There is a tricky point here, the equality operator checks only the kernel items, since 2 different Closure(I) will generate items with different labels.
     \ENDIF
   \ENDFOR
       \ENDFOR

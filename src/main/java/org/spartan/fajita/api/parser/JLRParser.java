@@ -19,9 +19,6 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.JActionTable.Accept;
-import org.spartan.fajita.api.parser.JActionTable.Jump;
-import org.spartan.fajita.api.parser.JActionTable.Shift;
 
 public class JLRParser {
   public final BNF bnf;
@@ -38,7 +35,7 @@ public class JLRParser {
     baseFirstSets = calculateSymbolFirstSet();
     states = generateStatesSet();
     actionTable = new JActionTable(getStates());
-    fillParsingTable();
+//    fillParsingTable();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -82,7 +79,7 @@ public class JLRParser {
     }
     return $;
   }
-  private void fillParsingTable() {
+//  private void fillParsingTable() {
     // for (JState state : getStates()){
     // final Set<JItem> items = state.getItems();
     // if(items.stream().anyMatch(i -> i.readyToReduce() &&
@@ -95,18 +92,18 @@ public class JLRParser {
     //
     // }
     // }
-  }
-  private void addAcceptAction(final JState state) {
-    actionTable.set(state, SpecialSymbols.$, new Accept());
-  }
-  private void addShiftAction(final JState state, final JItem item) {
-    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-    JState shift = state.goTo(nextTerminal);
-    actionTable.set(state, nextTerminal, new Shift(shift));
-  }
-  private void addJumpAction(final JState state, final JItem item) {
-    actionTable.set(state, item.lookahead, new Jump(item));
-  }
+//  }
+//  private void addAcceptAction(final JState state) {
+//    actionTable.set(state, SpecialSymbols.$, new Accept());
+//  }
+//  private void addShiftAction(final JState state, final JItem item) {
+//    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
+//    JState shift = state.goTo(nextTerminal);
+//    actionTable.set(state, nextTerminal, new Shift(shift));
+//  }
+//  private void addJumpAction(final JState state, final JItem item) {
+//    actionTable.set(state, item.lookahead, new Jump(item));
+//  }
   private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
         .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
