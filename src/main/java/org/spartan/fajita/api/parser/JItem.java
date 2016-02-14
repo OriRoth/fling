@@ -21,7 +21,7 @@ public class JItem {
     this.kernel = isKernel;
   }
   public JItem(DerivationRule rule, Verb lookahead, int label) {
-    this(rule, lookahead, 0, label,false);
+    this(rule, lookahead, 0, label, false);
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(rule.lhs.serialize() + " ::= ");
@@ -46,25 +46,44 @@ public class JItem {
     return readyToReduce() && lookahead.equals(term);
   }
   @Override public int hashCode() {
-    return rule.hashCode() + Integer.hashCode(dotIndex);
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + dotIndex;
+    result = prime * result + ((lookahead == null) ? 0 : lookahead.hashCode());
+    result = prime * result + ((rule == null) ? 0 : rule.hashCode());
+    return result;
   }
-  @Override public boolean equals(final Object obj) {
-    if(obj == null)
+  @Override public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
       return false;
-    if (obj.getClass() != getClass())
+    if (getClass() != obj.getClass())
       return false;
-    JItem i = (JItem) obj;
-    return dotIndex == i.dotIndex && rule.equals(i.rule) && lookahead.equals(i.lookahead);
+    JItem other = (JItem) obj;
+    if (dotIndex != other.dotIndex)
+      return false;
+    if (lookahead == null) {
+      if (other.lookahead != null)
+        return false;
+    } else if (!lookahead.equals(other.lookahead))
+      return false;
+    if (rule == null) {
+      if (other.rule != null)
+        return false;
+    } else if (!rule.equals(other.rule))
+      return false;
+    return true;
   }
   public boolean readyToReduce() {
     return dotIndex == rule.getChildren().size();
   }
-   public JItem advance() {
+  public JItem advance() {
     if (dotIndex == rule.getChildren().size())
       throw new IllegalStateException("cannot advance a ready to reduce item");
     return new JItem(rule, lookahead, dotIndex + 1, label, false);
   }
-  public JItem asKernel(){
-    return new JItem(rule, lookahead,dotIndex, label, true);
+  public JItem asKernel() {
+    return new JItem(rule, lookahead, dotIndex, label, true);
   }
 }
