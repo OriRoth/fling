@@ -22,13 +22,11 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.parser.JActionTable.Accept;
 import org.spartan.fajita.api.parser.JActionTable.Jump;
 import org.spartan.fajita.api.parser.JActionTable.Shift;
-import org.spartan.fajita.api.parser.old.AcceptState;
-import org.spartan.fajita.api.parser.old.State;
 import org.spartan.fajita.api.parser.stack.JItem;
 
 public class JLRParser {
   public final BNF bnf;
-  private final List<State<JItem>> states;
+  private final List<JState> states;
   private int labelsCount;
   private final JActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
@@ -86,7 +84,7 @@ public class JLRParser {
     return $;
   }
   private void fillParsingTable() {
-    // for (State<JItem> state : getStates()){
+    // for (JState state : getStates()){
     // final Set<JItem> items = state.getItems();
     // if(items.stream().anyMatch(i -> i.readyToReduce() &&
     // i.lookahead.equals(SpecialSymbols.$)))
@@ -99,23 +97,23 @@ public class JLRParser {
     // }
     // }
   }
-  private void addAcceptAction(final State<JItem> state) {
+  private void addAcceptAction(final JState state) {
     actionTable.set(state, SpecialSymbols.$, new Accept());
   }
-  private void addShiftAction(final State<JItem> state, final JItem item) {
+  private void addShiftAction(final JState state, final JItem item) {
     Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-    State<JItem> shift = state.goTo(nextTerminal);
+    JState shift = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(shift));
   }
-  private void addJumpAction(final State<JItem> state, final JItem item) {
+  private void addJumpAction(final JState state, final JItem item) {
     actionTable.set(state, item.lookahead, new Jump(item));
   }
-  private State<JItem> generateInitialState() {
+  private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
         .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
-    return new State<>(closure, bnf, 0);
+    return new JState(closure, bnf, 0);
   }
   private Set<JItem> calculateClosure(final Set<JItem> initialItems) {
     Queue<JItem> todo = new LinkedList<>(initialItems);
@@ -142,17 +140,17 @@ public class JLRParser {
     } while (!todo.isEmpty());
     return $;
   }
-  private List<State<JItem>> generateStatesSet() {
-    State<JItem> initialState = generateInitialState();
-    List<State<JItem>> $ = new ArrayList<>(Arrays.asList(initialState));
-    Stack<State<JItem>> todo = new Stack<>();
+  private List<JState> generateStatesSet() {
+    JState initialState = generateInitialState();
+    List<JState> $ = new ArrayList<>(Arrays.asList(initialState));
+    Stack<JState> todo = new Stack<>();
     todo.push(initialState);
     while (!todo.isEmpty()) {
-      State<JItem> state = todo.pop();
+      JState state = todo.pop();
       for (Symbol lookahead : legalSymbols()) {
         if (!state.isLegalTransition(lookahead))
           continue;
-        State<JItem> nextState = generateNextState(state, lookahead,$.size());
+        JState nextState = generateNextState(state, lookahead,$.size());
         int existingIndex = $.indexOf(nextState);
         if (existingIndex == -1){ // a non existing new state
           todo.add(nextState);
@@ -165,19 +163,19 @@ public class JLRParser {
     }
     return $;
   }
-  private State<JItem> generateNextState(final State<JItem> state, final Symbol lookahead, int newIndex) {
+  private JState generateNextState(final JState state, final Symbol lookahead, int newIndex) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState<>(bnf, newIndex);
+        return new AcceptState(bnf, newIndex);
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance().asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
-    return new State<>(closure, bnf, newIndex);
+    return new JState(closure, bnf, newIndex);
   }
-  @SuppressWarnings("boxing") static Map<Integer, State<JItem>> jumpSet(State<JItem> s, Verb v) {
-    HashMap<Integer, State<JItem>> $ = new HashMap<>();
+  @SuppressWarnings("boxing") static Map<Integer, JState> jumpSet(JState s, Verb v) {
+    HashMap<Integer, JState> $ = new HashMap<>();
     List<JItem> nonkernel = s.getItems().stream().filter(i -> !i.kernel).collect(Collectors.toList());
     for (JItem i : nonkernel) {
       if (i.readyToReduce() || !i.rule.getChildren().get(i.dotIndex).equals(v))
@@ -186,7 +184,7 @@ public class JLRParser {
     }
     return $;
   }
-  // public Action actionTable(final State<JItem> state, final Verb lookahead) {
+  // public Action actionTable(final JState state, final Verb lookahead) {
   // return actionTable.get(state.index, lookahead);
   // }
   private Set<Symbol> legalSymbols() {
@@ -199,12 +197,12 @@ public class JLRParser {
   }
   @Override public String toString() {
     String $ = "States:" + System.lineSeparator();
-    for (State<JItem> state : states)
+    for (JState state : states)
       $ += state.extendedToString() + System.lineSeparator();
     // $ += actionTable.toString();
     return $;
   }
-  public List<State<JItem>> getStates() {
+  public List<JState> getStates() {
     return states;
   }
 }

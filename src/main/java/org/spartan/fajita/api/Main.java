@@ -30,11 +30,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.parser.JLRParser;
-import org.spartan.fajita.api.parser.old.AcceptState;
-import org.spartan.fajita.api.parser.old.Item;
-import org.spartan.fajita.api.parser.old.LRParser;
-import org.spartan.fajita.api.parser.old.State;
-import org.spartan.fajita.api.parser.stack.JItem;
+import org.spartan.fajita.api.parser.JState;
 
 public class Main {
   public static void main(final String[] args) {
@@ -74,11 +70,11 @@ public class Main {
     return compoundQueue.pop();
   }
 
-  private static JGraphModelAdapter<State<?>, LabeledEdge<?>> model;
+  private static JGraphModelAdapter<JState, LabeledEdge> model;
 
-  @SuppressWarnings("unused") private static void lrAutomatonVisualisation(final LRParser parser) {
-    DirectedGraph<State<Item>, LabeledEdge<Item>> graph = generateGraph(parser);
-    model = new JGraphModelAdapter(graph);
+  private static void lrAutomatonVisualisation(final JLRParser parser) {
+    DirectedGraph<JState, LabeledEdge> graph = generateGraph(parser);
+    model = new JGraphModelAdapter<>(graph);
     parser.getStates().forEach(s -> positionVertexAt(s, 100 + (s.index % 4) * 350, 100 + (s.index / 4) * 100));
     JGraph jgraph = new JGraph(model);
     JFrame frame = new JFrame();
@@ -87,43 +83,21 @@ public class Main {
     frame.setVisible(true);
   }
   
-  @SuppressWarnings("unused") private static void lrAutomatonVisualisation(final JLRParser parser) {
-    DirectedGraph<State<JItem>, LabeledEdge<JItem>> graph = generateGraph(parser);
-    model = new JGraphModelAdapter(graph);
-    parser.getStates().forEach(s -> positionVertexAt(s, 100 + (s.index % 4) * 350, 100 + (s.index / 4) * 100));
-    JGraph jgraph = new JGraph(model);
-    JFrame frame = new JFrame();
-    frame.setSize(1400, 700);
-    frame.add(jgraph);
-    frame.setVisible(true);
-  }
-  
-  private static DirectedGraph<State<Item>, LabeledEdge<Item>> generateGraph(final LRParser parser) {
-    DefaultDirectedGraph<State<Item>, LabeledEdge<Item>> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory<>());
+  private static DirectedGraph<JState, LabeledEdge> generateGraph(final JLRParser parser) {
+    DefaultDirectedGraph<JState, LabeledEdge> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory());
     parser.getStates().forEach(s -> $.addVertex(s));
     parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
-      State<Item> goTo = s.goTo(symb);
+      JState goTo = s.goTo(symb);
       $.addEdge(s, goTo);
     }));
     return $;
   }
 
-  // a perfect copy
-  private static DirectedGraph<State<JItem>, LabeledEdge<JItem>> generateGraph(final JLRParser parser) {
-    DefaultDirectedGraph<State<JItem>, LabeledEdge<JItem>> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory<>());
-    parser.getStates().forEach(s -> $.addVertex(s));
-    parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
-      State<JItem> goTo = s.goTo(symb);
-      $.addEdge(s, goTo);
-    }));
-    return $;
-  }
+  private static class LabeledEdge {
+    private final JState src;
+    private final JState dst;
 
-  private static class LabeledEdge<I extends Item> {
-    private final State<I> src;
-    private final State<I> dst;
-
-    public LabeledEdge(final State<I> src, final State<I> dst) {
+    public LabeledEdge(final JState src, final JState dst) {
       this.src = src;
       this.dst = dst;
     }
@@ -135,9 +109,9 @@ public class Main {
     }
   }
 
-  protected static class LabeledEdgeFactory<I extends Item> implements EdgeFactory<State<I>, LabeledEdge<I>> {
-    @Override public LabeledEdge<I> createEdge(final State<I> sourceVertex, final State<I> targetVertex) {
-      return new LabeledEdge<>(sourceVertex, targetVertex);
+  protected static class LabeledEdgeFactory implements EdgeFactory<JState, LabeledEdge> {
+    @Override public LabeledEdge createEdge(final JState sourceVertex, final JState targetVertex) {
+      return new LabeledEdge(sourceVertex, targetVertex);
     }
   }
 

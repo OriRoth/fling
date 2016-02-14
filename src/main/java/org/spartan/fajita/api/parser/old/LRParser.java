@@ -17,6 +17,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.parser.AcceptState;
 import org.spartan.fajita.api.parser.old.ActionTable.Accept;
 import org.spartan.fajita.api.parser.old.ActionTable.Action;
 import org.spartan.fajita.api.parser.old.ActionTable.Reduce;

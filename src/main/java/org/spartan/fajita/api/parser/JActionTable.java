@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.old.State;
 import org.spartan.fajita.api.parser.stack.JItem;
 
 public class JActionTable {
@@ -47,9 +46,9 @@ public class JActionTable {
   }
 
   public static class Shift extends Action {
-    public final State<JItem> state;
+    public final JState state;
 
-    public Shift(final State<JItem> state) {
+    public Shift(final JState state) {
       this.state = state;
     }
     @Override public String toString() {
@@ -87,10 +86,10 @@ public class JActionTable {
 
   public class ReduceReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
-    private final State<JItem> state;
+    private final JState state;
     private final Symbol lookahead;
 
-    public ReduceReduceConflictException(final State<JItem> state, final Symbol lookahead) {
+    public ReduceReduceConflictException(final JState state, final Symbol lookahead) {
       this.lookahead = lookahead;
       this.state = state;
     }
@@ -101,10 +100,10 @@ public class JActionTable {
 
   public class ShiftReduceConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
-    private final State<JItem> state;
+    private final JState state;
     private final Symbol lookahead;
 
-    public ShiftReduceConflictException(final State<JItem> state, final Symbol lookahead) {
+    public ShiftReduceConflictException(final JState state, final Symbol lookahead) {
       this.state = state;
       this.lookahead = lookahead;
     }
@@ -115,16 +114,16 @@ public class JActionTable {
 
   private final Map<Verb, Action>[] table;
 
-  @SuppressWarnings("unchecked") public JActionTable(final List<State<JItem>> states) {
+  @SuppressWarnings("unchecked") public JActionTable(final List<JState> states) {
     table = new HashMap[states.size()];
     for (int i = 0; i < states.size(); i++)
       table[i] = new HashMap<>();
   }
-  void set(final State<JItem> state, final Verb lookahead, final Action act) {
+  void set(final JState state, final Verb lookahead, final Action act) {
     checkForConflicts(state, lookahead, act);
     table[state.index].put(lookahead, act);
   }
-  private void checkForConflicts(final State<JItem> state, final Symbol lookahead, final Action act) {
+  private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
     Action previous = table[state.index].get(lookahead);
     if (previous == null || previous.equals(act))
       return;
