@@ -70,7 +70,7 @@ public class JLRParser {
     return Arrays.asList(expression).stream()
         .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
   }
-  public List<Verb> firstSetOf(final Symbol... expression) {
+  private List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
@@ -104,6 +104,9 @@ public class JLRParser {
 //  private void addJumpAction(final JState state, final JItem item) {
 //    actionTable.set(state, item.lookahead, new Jump(item));
 //  }
+  // public Action actionTable(final JState state, final Verb lookahead) {
+  // return actionTable.get(state.index, lookahead);
+  // }
   private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
         .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
@@ -170,7 +173,7 @@ public class JLRParser {
     Set<JItem> closure = calculateClosure(initialItems);
     return new JState(closure, bnf, newIndex);
   }
-  @SuppressWarnings("boxing") static Map<Integer, JState> jumpSet(JState s, Verb v) {
+  @SuppressWarnings("boxing")private static Map<Integer, JState> jumpSet(JState s, Verb v) {
     HashMap<Integer, JState> $ = new HashMap<>();
     List<JItem> nonkernel = s.getItems().stream().filter(i -> !i.kernel).collect(Collectors.toList());
     for (JItem i : nonkernel) {
@@ -180,9 +183,6 @@ public class JLRParser {
     }
     return $;
   }
-  // public Action actionTable(final JState state, final Verb lookahead) {
-  // return actionTable.get(state.index, lookahead);
-  // }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();
     Set<Symbol> symbols = new HashSet<>();
