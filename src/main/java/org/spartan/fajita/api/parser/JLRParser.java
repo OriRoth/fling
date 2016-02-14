@@ -34,7 +34,6 @@ public class JLRParser {
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
 
-  //
   public JLRParser(final BNF bnf) {
     this.bnf = bnf;
     labelsCount = 0;
@@ -143,38 +142,39 @@ public class JLRParser {
     } while (!todo.isEmpty());
     return $;
   }
-  private List<State<JItem>>  generateStatesSet() {
-    List<State<JItem>> $ = new ArrayList<>();
+  private List<State<JItem>> generateStatesSet() {
     State<JItem> initialState = generateInitialState();
+    List<State<JItem>> $ = new ArrayList<>(Arrays.asList(initialState));
     Stack<State<JItem>> todo = new Stack<>();
     todo.push(initialState);
     while (!todo.isEmpty()) {
       State<JItem> state = todo.pop();
-      $.add(state);
       for (Symbol lookahead : legalSymbols()) {
         if (!state.isLegalTransition(lookahead))
           continue;
-        State<JItem> newState = generateNextState(state, lookahead);
-        int stateIndex = $.indexOf(newState);
-        if (stateIndex == -1) {
-          todo.add(newState);
-          state.addGotoTransition(lookahead, newState);
-        } else
-          state.addGotoTransition(lookahead, getStates().get(stateIndex));
+        State<JItem> nextState = generateNextState(state, lookahead,$.size());
+        int existingIndex = $.indexOf(nextState);
+        if (existingIndex == -1){ // a non existing new state
+          todo.add(nextState);
+          $.add(nextState);
+        }
+        else                     // an already existing new state
+          nextState = $.get(existingIndex);
+        state.addGotoTransition(lookahead, nextState);
       }
     }
     return $;
   }
-  private State<JItem> generateNextState(final State<JItem> state, final Symbol lookahead) {
+  private State<JItem> generateNextState(final State<JItem> state, final Symbol lookahead, int newIndex) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState<>(bnf, getStates().size());
+        return new AcceptState<>(bnf, newIndex);
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance().asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
-    return new State<>(closure, bnf, getStates().size());
+    return new State<>(closure, bnf, newIndex);
   }
   @SuppressWarnings("boxing") static Map<Integer, State<JItem>> jumpSet(State<JItem> s, Verb v) {
     HashMap<Integer, State<JItem>> $ = new HashMap<>();

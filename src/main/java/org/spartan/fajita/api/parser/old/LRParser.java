@@ -196,7 +196,7 @@ public class LRParser {
   private State<Item> generateNextState(final State<Item> state, final Symbol lookahead) {
     if (lookahead == SpecialSymbols.$)
       if (state.getItems().stream().anyMatch(i -> i.readyToReduce() && i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol)))
-        return new AcceptState<>(bnf);
+        return new AcceptState<>(bnf,getStates().size());
     Set<Item> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
         .map(item -> item.advance()) //
