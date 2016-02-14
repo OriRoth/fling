@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
@@ -36,9 +37,8 @@ public class JState {
     return transitions.containsKey(lookahead) || getItems().stream().anyMatch(item -> item.isLegalTransition(lookahead));
   }
   public boolean isLegalReduce(final Symbol lookahead) {
-    return lookahead.isVerb() && getItems().stream().anyMatch(item -> item.isLegalReduce((Verb)lookahead));
+    return lookahead.isVerb() && getItems().stream().anyMatch(item -> item.isLegalReduce((Verb) lookahead));
   }
-  
   public Set<Symbol> allLegalTransitions() {
     return transitions.keySet();
   }
@@ -54,10 +54,11 @@ public class JState {
       List<JItem> matching = getItems().stream()
           .filter(i -> i.rule.equals(item.getKey()) && i.dotIndex == item.getValue().intValue()).collect(Collectors.toList());
       for (int i = 0; i < matching.size(); i++) {
-        JItem match = matching.get(i); if (i == 0)
+        JItem match = matching.get(i);
+        if (i == 0)
           $ += "[" + match.toString();
         else
-          $ += "/" + match.lookahead.toString() + (match.getClass() == JItem.class ? ",L"+ match.label+"" : "");
+          $ += "/" + match.lookahead.toString() + ",L" + match.label + (match.kernel ? ",K" : "");
       }
       $ += "]" + System.lineSeparator();
     }
@@ -91,8 +92,7 @@ public class JState {
   public Set<JItem> getItems() {
     return items;
   }
-  
-  public boolean isInitial(){
+  public boolean isInitial() {
     return index == 0;
   }
 }
