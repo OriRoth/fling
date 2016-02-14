@@ -75,6 +75,9 @@ public class JItem {
       return false;
     return true;
   }
+  public boolean strongEquals(JItem other) {
+    return equals(other) && label == other.label;
+  }
   public boolean readyToReduce() {
     return dotIndex == rule.getChildren().size();
   }

@@ -75,7 +75,8 @@ public class JState {
     if (obj.getClass() != JState.class)
       return false;
     JState s = (JState) obj;
-    return bnf.equals(s.bnf) && s.getItems().equals(getItems());
+    return bnf.equals(s.bnf)
+        && s.getKernelItems().stream().allMatch(ki -> getKernelItems().stream().anyMatch(ki2 -> ki.strongEquals(ki2)));
   }
   /**
    * @param lookahead
@@ -91,6 +92,9 @@ public class JState {
   }
   public Set<JItem> getItems() {
     return items;
+  }
+  private Set<JItem> getKernelItems() {
+    return items.stream().filter(i -> i.kernel).collect(Collectors.toSet());
   }
   public boolean isInitial() {
     return index == 0;
