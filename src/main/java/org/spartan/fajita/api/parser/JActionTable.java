@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.stack.JItem;
 
 public class JActionTable {
   public abstract static class Action {

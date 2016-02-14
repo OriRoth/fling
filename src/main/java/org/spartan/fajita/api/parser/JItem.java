@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser.stack;
+package org.spartan.fajita.api.parser;
 
 import java.util.List;
 

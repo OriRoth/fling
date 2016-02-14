@@ -22,7 +22,6 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.parser.JActionTable.Accept;
 import org.spartan.fajita.api.parser.JActionTable.Jump;
 import org.spartan.fajita.api.parser.JActionTable.Shift;
-import org.spartan.fajita.api.parser.stack.JItem;
 
 public class JLRParser {
   public final BNF bnf;
