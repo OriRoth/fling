@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser.stack;
+package automaton.stack;
 
 public abstract class StateStack<Tail extends IStack<?>> implements IStack<Tail> {
   public final Tail t;

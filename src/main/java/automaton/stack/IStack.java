@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser.stack;
+package automaton.stack;
 
 @SuppressWarnings("unused") public interface IStack<Tail extends IStack<?>> {
   /**/

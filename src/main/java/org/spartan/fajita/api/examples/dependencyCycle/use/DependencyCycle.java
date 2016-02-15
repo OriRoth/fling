@@ -18,7 +18,6 @@ import org.spartan.fajita.api.examples.dependencyCycle.States.Q3;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q4;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5;
 import org.spartan.fajita.api.examples.dependencyCycle.States.Q5Q4Q5;
-import org.spartan.fajita.api.parser.old.LRParser;
 
 public class DependencyCycle {
   @SuppressWarnings({ "hiding", "unused" }) public static void expressionBuilder() {
@@ -44,9 +43,6 @@ public class DependencyCycle {
         .derive(A).to(B).and(d).or(a) //
         .derive(B).to(A).and(e) //
         .finish();
-    System.out.println(bnf);
-    LRParser parser = new LRParser(bnf);
-    System.out.println(parser);
     return bnf;
   }
 }

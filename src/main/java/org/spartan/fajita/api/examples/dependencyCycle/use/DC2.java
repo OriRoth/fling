@@ -13,7 +13,6 @@ import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q1;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q2;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3;
 import org.spartan.fajita.api.examples.dependencyCycle.DC2States.Q3Q3;
-import org.spartan.fajita.api.parser.old.LRParser;
 
 public class DC2 {
   @SuppressWarnings("unused") public static void expressionBuilder() {
@@ -33,7 +32,7 @@ public class DC2 {
     A;
   }
 
-  public static LRParser buildBNF() {
+  public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         
         
@@ -41,9 +40,6 @@ public class DC2 {
         
         .derive(A).to(A).and(a).or(a) //
         .finish();
-    System.out.println(bnf);
-    LRParser parser = new LRParser(bnf);
-    System.out.println(parser);
-    return parser;
+    return bnf;
   }
 }

@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples.balancedParenthesis.states;
 
-import org.spartan.fajita.api.parser.stack.EmptyStack;
-import org.spartan.fajita.api.parser.stack.IStack;
+import automaton.stack.EmptyStack;
+import automaton.stack.IStack;
 
 @java.lang.SuppressWarnings({ "rawtypes", "unused" }) class States {
   public abstract static class BaseState<Stack extends IStack<?>, lp extends BaseState, build extends BaseState, rp extends BaseState, BALANCED extends BaseState>

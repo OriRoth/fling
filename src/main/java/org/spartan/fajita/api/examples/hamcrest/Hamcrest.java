@@ -14,7 +14,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.parser.old.LRParser;
 
 public class Hamcrest {
   public static void expressionBuilder() {
@@ -41,7 +40,7 @@ public class Hamcrest {
     // , MATCHERS;
   }
 
-  public static void buildBNF() {
+  public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(ASSERT) //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
@@ -53,8 +52,6 @@ public class Hamcrest {
         // .derive(MATCHERS).to(MATCHER)//
         // /* */.or(MATCHER).and(MATCHERS) //
         .finish();
-    System.out.println(bnf);
-    LRParser parser = new LRParser(bnf);
-    System.out.println(parser);
+    return bnf;
   }
 }
