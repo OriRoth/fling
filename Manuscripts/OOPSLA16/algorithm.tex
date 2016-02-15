@@ -182,7 +182,7 @@ The construction of the action table for each state~$q∈Q$:
   \item If~$[ A→α·,σ,ℓ]∈q~$ then~$\table
     Action[q,σ] = \function jump(ℓ)$
 
-  \item If~$[ A→α·β,σ,ℓ]∈q~$ and~$σ'∈\function First(β)$ 
+  \item If~$[ A→α·β,σ,ℓ]∈q~$ and~$σ'∈\function First(β)$
     then~$\table Action[q,σ'] = \function shift(\function JS(q,σ'),\function
     Goto(q,a))$
 
@@ -190,17 +190,21 @@ The construction of the action table for each state~$q∈Q$:
 
 \subsection{Theorems}
 \begin{Definition}[Equivalence relation]
-  An LR state~$q_{LR}$ and a JLR state~$q_{JLR}$ are said to be equivalent
-  under~$\cong$ if for each item~$i \in q_{LR}$ there exists an item~$j \in
-  q_{JLR}$ such that~$i = \function Clean(j)$. 
+  An LR state~$q$ and a JLR state~$qⱼ$ are said to be equivalent under~$≅$
+    if for each item~$i∈q$ there exists an item~$j∈ qⱼ$ such that~$i = \function
+  Clean(j)$.
 \end{Definition}
 
 \begin{Lemma}
-  Given grammar~$G$, let 
+  Given grammar~$G$, let~$P$ be the LR parser generated for~$G$, and~$Pⱼ$ be
+    the JLR recognizer generated for~$G$.
+  Then, for each~$q∈P$ there exists~$qⱼ∈Pⱼ$ such that~$q≅qⱼ$.
 \end{Lemma}
+\begin{description}
+  \item[Conclusion:] if~$G$ is not LR then~$G$ is not JLR.
+\end{description}
 
 \endinput
-
 
 \paragraph{Misc.}
 
