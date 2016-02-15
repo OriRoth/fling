@@ -74,40 +74,42 @@ public class JActionTable {
   }
 
   public static class Jump extends Action {
-    public int address;
-    public Jump(JItem item) {
-      this.address = item.label;
+    public Map<Integer, JState> jumpSet;
+    public int label;
+    public Jump(Map<Integer, JState> jumpSet, int label) {
+      this.jumpSet = jumpSet;
+      this.label = label;
     }
     @Override public String toString() {
-      return "j"+address;
+      return "j"+label;
     }
   }
 
-  public class ReduceReduceConflictException extends RuntimeException {
+  public class JumpJumpConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
     private final JState state;
     private final Symbol lookahead;
 
-    public ReduceReduceConflictException(final JState state, final Symbol lookahead) {
+    public JumpJumpConflictException(final JState state, final Symbol lookahead) {
       this.lookahead = lookahead;
       this.state = state;
     }
     @Override public String getMessage() {
-      return "R/R Conflict on state : " + state + " lookahead " + lookahead.toString();
+      return "J/J Conflict on state : " + state + " lookahead " + lookahead.toString();
     }
   }
 
-  public class ShiftReduceConflictException extends RuntimeException {
+  public class ShiftJumpConflictException extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
     private final JState state;
     private final Symbol lookahead;
 
-    public ShiftReduceConflictException(final JState state, final Symbol lookahead) {
+    public ShiftJumpConflictException(final JState state, final Symbol lookahead) {
       this.state = state;
       this.lookahead = lookahead;
     }
     @Override public String getMessage() {
-      return "S/R conflict on state " + state + " lookahead " + lookahead.toString();
+      return "S/J conflict on state " + state + " lookahead " + lookahead.toString();
     }
   }
 
@@ -128,8 +130,8 @@ public class JActionTable {
     if (previous == null || previous.equals(act))
       return;
     if (previous.getClass() == Jump.class && act.getClass() == Jump.class)
-      throw new ReduceReduceConflictException(state, lookahead);
-    throw new ShiftReduceConflictException(state, lookahead);
+      throw new JumpJumpConflictException(state, lookahead);
+    throw new ShiftJumpConflictException(state, lookahead);
   }
   public Action get(final int stateIndex, final Verb lookahead) {
     Action $ = table[stateIndex].get(lookahead);

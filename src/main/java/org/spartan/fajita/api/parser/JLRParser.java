@@ -88,9 +88,10 @@ public class JLRParser {
       final Set<JItem> items = state.getItems();
       if (items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
         addAcceptAction(state);
-      for (Verb v : bnf.getVerbs()) {
-        if (items.stream().anyMatch(i -> i.readyToReduce() && !i.lookahead.equals(SpecialSymbols.$)))
-          addJumpAction(state, item);
+      for(JItem item : items){
+        if (item.readyToReduce() && !(item.lookahead.equals(SpecialSymbols.$)))
+          addJumpAction(state,item.lookahead, item.label);
+        //TODO: Third bullet is left. implement it!!!
       }
     }
   }
@@ -102,8 +103,8 @@ public class JLRParser {
     JState shift = state.goTo(nextTerminal);
     actionTable.set(state, nextTerminal, new Shift(shift));
   }
-  private void addJumpAction(final JState state, final JItem item) {
-    actionTable.set(state, item.lookahead, new Jump(item));
+  private void addJumpAction(final JState state, final Verb lookahead,final int label) {
+    actionTable.set(state, lookahead, new Jump(jumpSet(state, lookahead),label));
   }
   public Action actionTable(final JState state, final Verb lookahead) {
     return actionTable.get(state.index, lookahead);
