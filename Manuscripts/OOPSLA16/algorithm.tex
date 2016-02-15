@@ -22,19 +22,19 @@ This jump is designed to emulate the LR's
   reductions that might occur.
 We denote such items as~$[A→α·β, b ,ℓ]$
   where~$A→α·β, b$ is the original LR notation, and~$ℓ$
-  is the jump address.
+  is the jump label.
 
 A set of JLR items is said to be a JLR state.
 
 \subsection{States generation algorithm}
 The method for constructing a shift-jump automaton
   is basically the same as the LR automaton construction,
-  with small modification to update the addresses of JLR items
+  with small modification to update the labels of JLR items
   and modifications regarding nullable symbols.
 Like the original algorithms, we divide the work to three
   sub-routines~$\function Closure(I)$,~$\function Goto(I,X)$ and~$\function Items(G')$,
   where the first slightly differs from the original function by handling the
-  addresses of freshly added items as well as nullable symbols,
+  labels of freshly added items as well as nullable symbols,
   and the other two remain as in the original LR state construction.
 The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   and~\cref{Algorithm:Items} accordingly.
@@ -56,7 +56,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
     \WHILE[More work to do]{$\Queue ≠ ∅$}
     \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
-      \IF[Equality w/o the label]{$i \in J$} % Should rewrite this line
+      \IF[Equality w/o the label]{$i∈J$} % Should rewrite this line
         \STATE{\textbf{continue}}
       \ENDIF
       \STATE{$J←J ∪ ❴i❵$}
@@ -126,7 +126,7 @@ Notes on the algorithms
   \item Each JLR state contains all items that would be generated
     on an equivalent LR parser state
     (intuition: without lines 17--18 in \cref{Algorithm:Closure}
-    the algorithms differ only in the address field).
+    the algorithms differ only in the label field).
 \end{itemize}
 
 \subsection{Structure of the JLR action table and behavior of actions}
@@ -136,26 +136,27 @@ The structure of the JLR action table
   where~$q∈Q$, and~$a∈Σ_\$$, being the current state and
   the lookahead symbol accordingly.
 The result of~$\table ACTION[q,a]$ can have one of
-  three forms:
+  four forms:
 \begin{description}
   \item[$\textsf{accept}$] The recognizer accepts on input.
 
-  \item[$s(f,p)$] A shift operation.
+  \item[$\textsf{reject}$] The recognizer rejects on input.
+
+  \item[$\function shift(f,p)$] A shift operation.
   The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
     in that order.
 
-  \item[$j(n)$] A jump operation. The recognizer jumps
-    to the address numbered as~$n$,
-    Specifically, The recognizer pops elements from the
-    stack until some function~$f$ is popped, such that~$f(n)$
+  \item[$\function jump(ℓ)$] A jump operation. The recognizer jumps
+    to label~$ℓ$, specifically, The recognizer pops elements from the
+    stack until some function~$f$ is popped, such that~$f(ℓ)$
     is defined, and yields~$q$.~$q$ is then pushed onto the stack.
 \end{description}
 
 As the last step before constructing the action table, we
-  define a function~$\textsf{JS}: Q⨉Σ→(ℕ↛Q)$ (jump set).
+  define the function~$\textsf{JS}: Q⨉Σ→(ℕ↛Q)$ (jump set).
 $\function JS(q,a)$ returns a function~$f$ that maps labels
   to states.
-In a way, it reminds the~$Goto$ table used in LR parsing, since
+  In a way, it reminds the~$\table Goto[]$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
 
 \begin{algorithm}[h]
@@ -173,10 +174,33 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
   \end{algorithmic}
 \end{algorithm}
 
-In order to build the action table, we need the set of states generated
-  by~\cref{Algorithm:Items}.
+The construction of the action table for each state~$q∈Q$:
+\begin{itemize}
+  \item If~$[ A→α·, \$ ,ℓ]∈q~$ then~$\table
+    Action[q,\$] = \textsf{accept}$
+
+  \item If~$[ A→α·,σ,ℓ]∈q~$ then~$\table
+    Action[q,σ] = \function jump(ℓ)$
+
+  \item If~$[ A→α·β,σ,ℓ]∈q~$ and~$σ'∈\function First(β)$ 
+    then~$\table Action[q,σ'] = \function shift(\function JS(q,σ'),\function
+    Goto(q,a))$
+
+\end{itemize}
+
+\subsection{Theorems}
+\begin{Definition}[Equivalence relation]
+  An LR state~$q_{LR}$ and a JLR state~$q_{JLR}$ are said to be equivalent
+  under~$\cong$ if for each item~$i \in q_{LR}$ there exists an item~$j \in
+  q_{JLR}$ such that~$i = \function Clean(j)$. 
+\end{Definition}
+
+\begin{Lemma}
+  Given grammar~$G$, let 
+\end{Lemma}
 
 \endinput
+
 
 \paragraph{Misc.}
 

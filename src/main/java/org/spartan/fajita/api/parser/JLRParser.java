@@ -19,6 +19,10 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.parser.JActionTable.Accept;
+import org.spartan.fajita.api.parser.JActionTable.Action;
+import org.spartan.fajita.api.parser.JActionTable.Jump;
+import org.spartan.fajita.api.parser.JActionTable.Shift;
 
 public class JLRParser {
   public final BNF bnf;
@@ -35,7 +39,7 @@ public class JLRParser {
     baseFirstSets = calculateSymbolFirstSet();
     states = generateStatesSet();
     actionTable = new JActionTable(getStates());
-//    fillParsingTable();
+    fillParsingTable();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -79,34 +83,31 @@ public class JLRParser {
     }
     return $;
   }
-//  private void fillParsingTable() {
-    // for (JState state : getStates()){
-    // final Set<JItem> items = state.getItems();
-    // if(items.stream().anyMatch(i -> i.readyToReduce() &&
-    // i.lookahead.equals(SpecialSymbols.$)))
-    // addAcceptAction(state);
-    // for(Verb v : bnf.getVerbs()){
-    // if(items.stream().anyMatch(i-> i.readyToReduce() &&
-    // !i.lookahead.equals(SpecialSymbols.$)))
-    // addJumpAction(state, item);
-    //
-    // }
-    // }
-//  }
-//  private void addAcceptAction(final JState state) {
-//    actionTable.set(state, SpecialSymbols.$, new Accept());
-//  }
-//  private void addShiftAction(final JState state, final JItem item) {
-//    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-//    JState shift = state.goTo(nextTerminal);
-//    actionTable.set(state, nextTerminal, new Shift(shift));
-//  }
-//  private void addJumpAction(final JState state, final JItem item) {
-//    actionTable.set(state, item.lookahead, new Jump(item));
-//  }
-  // public Action actionTable(final JState state, final Verb lookahead) {
-  // return actionTable.get(state.index, lookahead);
-  // }
+  private void fillParsingTable() {
+    for (JState state : getStates()) {
+      final Set<JItem> items = state.getItems();
+      if (items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
+        addAcceptAction(state);
+      for (Verb v : bnf.getVerbs()) {
+        if (items.stream().anyMatch(i -> i.readyToReduce() && !i.lookahead.equals(SpecialSymbols.$)))
+          addJumpAction(state, item);
+      }
+    }
+  }
+  private void addAcceptAction(final JState state) {
+    actionTable.set(state, SpecialSymbols.$, new Accept());
+  }
+  private void addShiftAction(final JState state, final JItem item) {
+    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
+    JState shift = state.goTo(nextTerminal);
+    actionTable.set(state, nextTerminal, new Shift(shift));
+  }
+  private void addJumpAction(final JState state, final JItem item) {
+    actionTable.set(state, item.lookahead, new Jump(item));
+  }
+  public Action actionTable(final JState state, final Verb lookahead) {
+    return actionTable.get(state.index, lookahead);
+  }
   private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
         .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
@@ -149,13 +150,12 @@ public class JLRParser {
       for (Symbol lookahead : legalSymbols()) {
         if (!state.isLegalTransition(lookahead))
           continue;
-        JState nextState = generateNextState(state, lookahead,$.size());
+        JState nextState = generateNextState(state, lookahead, $.size());
         int existingIndex = $.indexOf(nextState);
-        if (existingIndex == -1){ // a non existing new state
+        if (existingIndex == -1) { // a non existing new state
           todo.add(nextState);
           $.add(nextState);
-        }
-        else                     // an already existing new state
+        } else // an already existing new state
           nextState = $.get(existingIndex);
         state.addGotoTransition(lookahead, nextState);
       }
@@ -173,7 +173,7 @@ public class JLRParser {
     Set<JItem> closure = calculateClosure(initialItems);
     return new JState(closure, bnf, newIndex);
   }
-  @SuppressWarnings("boxing")private static Map<Integer, JState> jumpSet(JState s, Verb v) {
+  @SuppressWarnings("boxing") private static Map<Integer, JState> jumpSet(JState s, Verb v) {
     HashMap<Integer, JState> $ = new HashMap<>();
     List<JItem> nonkernel = s.getItems().stream().filter(i -> !i.kernel).collect(Collectors.toList());
     for (JItem i : nonkernel) {
@@ -195,7 +195,7 @@ public class JLRParser {
     String $ = "States:" + System.lineSeparator();
     for (JState state : states)
       $ += state.extendedToString() + System.lineSeparator();
-    // $ += actionTable.toString();
+    $ += actionTable.toString();
     return $;
   }
   public List<JState> getStates() {
