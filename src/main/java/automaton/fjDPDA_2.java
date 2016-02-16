@@ -1,10 +1,5 @@
 package automaton;
 
-import automaton.fjDPDA_2.A.Cq0;
-import automaton.fjDPDA_2.A.E;
-import automaton.fjDPDA_2.A.¤;
-import automaton.fjDPDA_2.A.q0lp_Push_q0_f_q2.q2_recursive_q0;
-import automaton.fjDPDA_2.A.q2lp_Push_q2_f_q4.q4_recursive_q2;
 /**
  * JLR parser for the grammar : S -> B B -> B lp B rp | ε
  * the grammar generates the language of balanced parenthesis

@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples.bootstrap;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
+import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.BNF;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Body;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Conjunctions;
 import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.Extra_Conjunction;

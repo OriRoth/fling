@@ -1,13 +1,5 @@
 package automaton;
-import static automaton.Prefix_A.A.build;
 
-import automaton.Prefix_A.A.L;
-import automaton.Prefix_A.A.Cγ1;
-import automaton.Prefix_A.A.Cγ2;
-import automaton.Prefix_A.A.E;
-import automaton.Prefix_A.A.¤;
-import automaton.Prefix_A.A.γ1σ1_Push_γ1γ1γ2;
-import automaton.Prefix_A.A.γ2σ1_Push_γ2γ2;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 class Prefix_A { 

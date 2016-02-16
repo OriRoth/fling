@@ -1,9 +1,5 @@
 package automaton;
-import static automaton.A.build;
-
-import automaton.A.L;
 import automaton.A.C.Cγ1;
-import automaton.A.C.Cγ2;
 import automaton.A.C.E;
 import automaton.A.C.¤;
 //@formatter:off

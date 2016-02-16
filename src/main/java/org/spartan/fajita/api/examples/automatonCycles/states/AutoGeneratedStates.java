@@ -1,13 +1,8 @@
 package org.spartan.fajita.api.examples.automatonCycles.states;
 
-import java.lang.Integer;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.RuntimeException;
-import java.lang.String;
-import java.lang.SuppressWarnings;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.examples.ASTViewer;

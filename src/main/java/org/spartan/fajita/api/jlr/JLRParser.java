@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.parser;
+package org.spartan.fajita.api.jlr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +19,10 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.parser.JActionTable.Accept;
-import org.spartan.fajita.api.parser.JActionTable.Action;
-import org.spartan.fajita.api.parser.JActionTable.Jump;
-import org.spartan.fajita.api.parser.JActionTable.Shift;
+import org.spartan.fajita.api.jlr.JActionTable.Accept;
+import org.spartan.fajita.api.jlr.JActionTable.Action;
+import org.spartan.fajita.api.jlr.JActionTable.Jump;
+import org.spartan.fajita.api.jlr.JActionTable.Shift;
 
 public class JLRParser {
   public final BNF bnf;

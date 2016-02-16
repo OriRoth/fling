@@ -2,8 +2,9 @@ package automaton;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
+
+import automaton.Example2.Z;
 
 //public class Prolog {
 //  static <X1,Y1, Z1, X extends P<X1, P<Y1, Z1>> > X f(X x) {return x;}

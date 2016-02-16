@@ -29,8 +29,8 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.parser.JLRParser;
-import org.spartan.fajita.api.parser.JState;
+import org.spartan.fajita.api.jlr.JLRParser;
+import org.spartan.fajita.api.jlr.JState;
 
 public class Main {
   public static void main(final String[] args) {
