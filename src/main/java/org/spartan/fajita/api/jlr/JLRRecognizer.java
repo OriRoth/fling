@@ -24,15 +24,16 @@ import org.spartan.fajita.api.jlr.JActionTable.Action;
 import org.spartan.fajita.api.jlr.JActionTable.Jump;
 import org.spartan.fajita.api.jlr.JActionTable.Shift;
 
-public class JLRParser {
+public class JLRRecognizer {
   public final BNF bnf;
   private final List<JState> states;
   private int labelsCount;
-  private final JActionTable actionTable;
+  private final JActionTable actionTable; 
+  //TODO: make private
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
 
-  public JLRParser(final BNF bnf) {
+  public JLRRecognizer(final BNF bnf) {
     this.bnf = bnf;
     labelsCount = 0;
     nullableSymbols = calculateNullableSymbols();
@@ -98,16 +99,16 @@ public class JLRParser {
     }
   }
   private void addAcceptAction(final JState state) {
-    actionTable.set(state, SpecialSymbols.$, new Accept());
+    getActionTable().set(state, SpecialSymbols.$, new Accept());
   }
   private void addShiftAction(final JState state, final Verb lookahead, Map<Integer, JState> jumpSet, JState nextState) {
-    actionTable.set(state, lookahead, new Shift(jumpSet,nextState));
+    getActionTable().set(state, lookahead, new Shift(jumpSet,nextState));
   }
   private void addJumpAction(final JState state, final Verb lookahead,final int label) {
-    actionTable.set(state, lookahead, new Jump(jumpSet(state, lookahead),label));
+    getActionTable().set(state, lookahead, new Jump(jumpSet(state, lookahead),label));
   }
   public Action actionTable(final JState state, final Verb lookahead) {
-    return actionTable.get(state.index, lookahead);
+    return getActionTable().get(state.index, lookahead);
   }
   private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
@@ -199,10 +200,13 @@ public class JLRParser {
     String $ = "States:" + System.lineSeparator();
     for (JState state : states)
       $ += state.extendedToString() + System.lineSeparator();
-    $ += actionTable.toString();
+    $ += getActionTable().toString();
     return $;
   }
   public List<JState> getStates() {
     return states;
+  }
+  public JActionTable getActionTable() {
+    return actionTable;
   }
 }

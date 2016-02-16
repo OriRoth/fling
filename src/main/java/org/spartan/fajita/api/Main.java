@@ -29,7 +29,7 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
-import org.spartan.fajita.api.jlr.JLRParser;
+import org.spartan.fajita.api.jlr.JLRRecognizer;
 import org.spartan.fajita.api.jlr.JState;
 
 public class Main {
@@ -40,7 +40,7 @@ public class Main {
   static void apiGenerator() {
 //    final BNF bnf = BalancedParenthesis.buildBNF();
     BNF bnf = testBNF();
-    lrAutomatonVisualisation(new JLRParser(bnf));
+    lrAutomatonVisualisation(new JLRRecognizer(bnf));
 //    JavaFile fluentAPI = ApiGenerator.generate(bnf);
 //    System.out.println(fluentAPI.toString());
   }
@@ -72,7 +72,7 @@ public class Main {
 
   private static JGraphModelAdapter<JState, LabeledEdge> model;
 
-  private static void lrAutomatonVisualisation(final JLRParser parser) {
+  private static void lrAutomatonVisualisation(final JLRRecognizer parser) {
     DirectedGraph<JState, LabeledEdge> graph = generateGraph(parser);
     model = new JGraphModelAdapter<>(graph);
     parser.getStates().forEach(s -> positionVertexAt(s, 100 + (s.index % 4) * 350, 100 + (s.index / 4) * 100));
@@ -83,7 +83,7 @@ public class Main {
     frame.setVisible(true);
   }
   
-  private static DirectedGraph<JState, LabeledEdge> generateGraph(final JLRParser parser) {
+  private static DirectedGraph<JState, LabeledEdge> generateGraph(final JLRRecognizer parser) {
     DefaultDirectedGraph<JState, LabeledEdge> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory());
     parser.getStates().forEach(s -> $.addVertex(s));
     parser.getStates().forEach(s -> s.allLegalTransitions().forEach(symb -> {
