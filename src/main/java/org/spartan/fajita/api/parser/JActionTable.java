@@ -45,18 +45,20 @@ public class JActionTable {
   }
 
   public static class Shift extends Action {
-    public final JState state;
+    public final JState nextState;
+    public final Map<Integer, JState> jumpSet;
 
-    public Shift(final JState state) {
-      this.state = state;
+    public Shift(Map<Integer, JState> jumpSet, final JState nextState) {
+      this.jumpSet = jumpSet;
+      this.nextState = nextState;
     }
     @Override public String toString() {
-      return "s" + state.index;
+      return "s" + nextState.index;
     }
     @Override public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + state.getItems().hashCode();
+      result = prime * result + nextState.getItems().hashCode();
       return result;
     }
     @Override public boolean equals(final Object obj) {
@@ -67,7 +69,7 @@ public class JActionTable {
       if (getClass() != obj.getClass())
         return false;
       Shift other = (Shift) obj;
-      if (state != other.state)
+      if (nextState != other.nextState)
         return false;
       return true;
     }
@@ -99,12 +101,12 @@ public class JActionTable {
     }
   }
 
-  public class ShiftJumpConflictException extends RuntimeException {
+  public class Exception extends RuntimeException {
     private static final long serialVersionUID = -2979864485863027282L;
     private final JState state;
     private final Symbol lookahead;
 
-    public ShiftJumpConflictException(final JState state, final Symbol lookahead) {
+    public Exception(final JState state, final Symbol lookahead) {
       this.state = state;
       this.lookahead = lookahead;
     }
@@ -127,11 +129,9 @@ public class JActionTable {
   private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
     //TODO: how do conflicts look like?
     Action previous = table[state.index].get(lookahead);
-    if (previous == null || previous.equals(act))
+    if (previous == null)
       return;
-    if (previous.getClass() == Jump.class && act.getClass() == Jump.class)
-      throw new JumpJumpConflictException(state, lookahead);
-    throw new ShiftJumpConflictException(state, lookahead);
+    throw new IllegalArgumentException("trying to add:Action["+state.index+","+lookahead+"]="+act+" but already assigned with "+previous);
   }
   public Action get(final int stateIndex, final Verb lookahead) {
     Action $ = table[stateIndex].get(lookahead);

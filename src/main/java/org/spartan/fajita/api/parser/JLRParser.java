@@ -91,17 +91,17 @@ public class JLRParser {
       for(JItem item : items){
         if (item.readyToReduce() && !(item.lookahead.equals(SpecialSymbols.$)))
           addJumpAction(state,item.lookahead, item.label);
-        //TODO: Third bullet is left. implement it!!!
+        for ( Verb v : firstSetOf(ruleSuffix(item, item.dotIndex))){
+          addShiftAction(state, item.lookahead,jumpSet(state, v),state.goTo(v));
+        }
       }
     }
   }
   private void addAcceptAction(final JState state) {
     actionTable.set(state, SpecialSymbols.$, new Accept());
   }
-  private void addShiftAction(final JState state, final JItem item) {
-    Verb nextTerminal = (Verb) item.rule.getChildren().get(item.dotIndex);
-    JState shift = state.goTo(nextTerminal);
-    actionTable.set(state, nextTerminal, new Shift(shift));
+  private void addShiftAction(final JState state, final Verb lookahead, Map<Integer, JState> jumpSet, JState nextState) {
+    actionTable.set(state, lookahead, new Shift(jumpSet,nextState));
   }
   private void addJumpAction(final JState state, final Verb lookahead,final int label) {
     actionTable.set(state, lookahead, new Jump(jumpSet(state, lookahead),label));
@@ -125,8 +125,7 @@ public class JLRParser {
       if (!exists || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
         continue;
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
-      final Symbol[] strAfterNT = Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), item.dotIndex + 1,
-          item.rule.getChildren().size());
+      final Symbol[] strAfterNT = ruleSuffix(item,item.dotIndex + 1);
       for (DerivationRule dRule : bnf.getRulesOf(nt)) {
         if (dRule.getChildren().size() == 0) // epsilon rule
           continue;
@@ -140,6 +139,10 @@ public class JLRParser {
         todo.add(item.advance());
     } while (!todo.isEmpty());
     return $;
+  }
+  private static Symbol[] ruleSuffix(JItem item,int index) {
+    return Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), index,
+        item.rule.getChildren().size());
   }
   private List<JState> generateStatesSet() {
     JState initialState = generateInitialState();

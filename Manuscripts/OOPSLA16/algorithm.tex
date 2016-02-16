@@ -153,22 +153,22 @@ The result of~$\table ACTION[q,a]$ can have one of
 \end{description}
 
 As the last step before constructing the action table, we
-  define the function~$\textsf{JS}: Q⨉Σ→(ℕ↛Q)$ (jump set).
-$\function JS(q,a)$ returns a function~$f$ that maps labels
+  define the function~$\textsf{JumpSet}: Q⨉Σ→(ℕ↛Q)$. 
+$\function JumpSet(q,a)$ returns a function~$f$ that maps labels
   to states.
   In a way, it reminds the~$\table Goto[]$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
 
 \begin{algorithm}[h]
   \begin{algorithmic}
-    \caption{\label{Algorithm:JS}
-      auxiliary function for action table}
+    \caption{\label{Algorithm:JumpSet}
+    Function~$\function JumpSet(q,σ)$ - auxiliary function for action table}
     \INPUT{current state~$q$}
-    \INPUT{lookahead symbol~$a$}
+    \INPUT{lookahead symbol~$σ$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-    \FOR{$[ A→α·aβ, b,ℓ]∈\function NonKernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
-      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),b)$}
+    \FOR{$[ A→α·σβ,σ' ,ℓ]∈\function NonKernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
+      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),σ')$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
@@ -183,7 +183,7 @@ The construction of the action table for each state~$q∈Q$:
     Action[q,σ] = \function jump(ℓ)$
 
   \item If~$[ A→α·β,σ,ℓ]∈q~$ and~$σ'∈\function First(β)$
-    then~$\table Action[q,σ'] = \function shift(\function JS(q,σ'),\function
+    then~$\table Action[q,σ'] = \function shift(\function JumpSet(q,σ'),\function
     Goto(q,a))$
 
 \end{itemize}
