@@ -40,7 +40,7 @@ public class Main {
   static void apiGenerator() {
 //    final BNF bnf = BalancedParenthesis.buildBNF();
     BNF bnf = testBNF();
-    lrAutomatonVisualisation(new JLRRecognizer(bnf));
+    lrAutomatonVisualisation(bnf);
 //    JavaFile fluentAPI = ApiGenerator.generate(bnf);
 //    System.out.println(fluentAPI.toString());
   }
@@ -72,7 +72,8 @@ public class Main {
 
   private static JGraphModelAdapter<JState, LabeledEdge> model;
 
-  private static void lrAutomatonVisualisation(final JLRRecognizer parser) {
+  public static void lrAutomatonVisualisation(BNF bnf) {
+    JLRRecognizer parser = new JLRRecognizer(bnf);
     DirectedGraph<JState, LabeledEdge> graph = generateGraph(parser);
     model = new JGraphModelAdapter<>(graph);
     parser.getStates().forEach(s -> positionVertexAt(s, 100 + (s.index % 4) * 350, 100 + (s.index / 4) * 100));

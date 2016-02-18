@@ -39,12 +39,14 @@ public class JLRSimulator {
     return result;
   }
   private boolean isDone() {
-    return result == null;
+    return result != null;
   }
   private Verb verbOf(final char c) {
     return verbs.stream().filter(verb -> verb.name().equals(String.valueOf(c))).findFirst().get();
   }
   private void act(char c) {
+    if ( c != '$')
+      inputHandled = inputHandled + c;
     Action entry = actionTable.get(internalState, verbOf(c));
     if (entry.isAccept())
       accept();
@@ -82,7 +84,6 @@ public class JLRSimulator {
   }
   @SuppressWarnings("boxing") public static boolean runJLR(BNF bnf, String input) {
     JLRRecognizer jlr = new JLRRecognizer(bnf);
-    System.out.println(jlr);
     JLRSimulator simulator = new JLRSimulator(jlr.getActionTable(),bnf.getVerbs());
     for (char c : (input + "$").toCharArray()) {
       simulator.act(c);

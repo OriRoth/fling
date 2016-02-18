@@ -28,8 +28,7 @@ public class JLRRecognizer {
   public final BNF bnf;
   private final List<JState> states;
   private int labelsCount;
-  private final JActionTable actionTable; 
-  //TODO: make private
+  private final JActionTable actionTable;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
 
@@ -89,11 +88,11 @@ public class JLRRecognizer {
       final Set<JItem> items = state.getItems();
       if (items.stream().anyMatch(i -> i.readyToReduce() && i.lookahead.equals(SpecialSymbols.$)))
         addAcceptAction(state);
-      for(JItem item : items){
+      for (JItem item : items) {
         if (item.readyToReduce() && !(item.lookahead.equals(SpecialSymbols.$)))
-          addJumpAction(state,item.lookahead, item.label);
-        for ( Verb v : firstSetOf(ruleSuffix(item, item.dotIndex))){
-          addShiftAction(state, item.lookahead,jumpSet(state, v),state.goTo(v));
+          addJumpAction(state, item.lookahead, item.label);
+        for (Verb v : firstSetOf(ruleSuffix(item, item.dotIndex))) {
+          addShiftAction(state, v, jumpSet(state, v), state.goTo(v));
         }
       }
     }
@@ -102,10 +101,10 @@ public class JLRRecognizer {
     getActionTable().set(state, SpecialSymbols.$, new Accept());
   }
   private void addShiftAction(final JState state, final Verb lookahead, Map<Integer, JState> jumpSet, JState nextState) {
-    getActionTable().set(state, lookahead, new Shift(jumpSet,nextState));
+    getActionTable().set(state, lookahead, new Shift(jumpSet, nextState));
   }
-  private void addJumpAction(final JState state, final Verb lookahead,final int label) {
-    getActionTable().set(state, lookahead, new Jump(jumpSet(state, lookahead),label));
+  private void addJumpAction(final JState state, final Verb lookahead, final int label) {
+    getActionTable().set(state, lookahead, new Jump(label));
   }
   public Action actionTable(final JState state, final Verb lookahead) {
     return getActionTable().get(state.index, lookahead);
@@ -126,7 +125,7 @@ public class JLRRecognizer {
       if (!exists || item.readyToReduce() || !item.rule.getChildren().get(item.dotIndex).isNonTerminal())
         continue;
       NonTerminal nt = (NonTerminal) item.rule.getChildren().get(item.dotIndex);
-      final Symbol[] strAfterNT = ruleSuffix(item,item.dotIndex + 1);
+      final Symbol[] strAfterNT = ruleSuffix(item, item.dotIndex + 1);
       for (DerivationRule dRule : bnf.getRulesOf(nt)) {
         if (dRule.getChildren().size() == 0) // epsilon rule
           continue;
@@ -141,9 +140,8 @@ public class JLRRecognizer {
     } while (!todo.isEmpty());
     return $;
   }
-  private static Symbol[] ruleSuffix(JItem item,int index) {
-    return Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), index,
-        item.rule.getChildren().size());
+  private static Symbol[] ruleSuffix(JItem item, int index) {
+    return Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), index, item.rule.getChildren().size());
   }
   private List<JState> generateStatesSet() {
     JState initialState = generateInitialState();

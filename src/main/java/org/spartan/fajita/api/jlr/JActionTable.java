@@ -76,10 +76,8 @@ public class JActionTable {
   }
 
   public static class Jump extends Action {
-    public Map<Integer, JState> jumpSet;
     public int label;
-    public Jump(Map<Integer, JState> jumpSet, int label) {
-      this.jumpSet = jumpSet;
+    public Jump(int label) {
       this.label = label;
     }
     @Override public String toString() {
@@ -129,7 +127,7 @@ public class JActionTable {
   private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
     //TODO: how do conflicts look like?
     Action previous = table[state.index].get(lookahead);
-    if (previous == null)
+    if (previous == null || previous.equals(act))
       return;
     throw new IllegalArgumentException("trying to add:Action["+state.index+","+lookahead+"]="+act+" but already assigned with "+previous);
   }
