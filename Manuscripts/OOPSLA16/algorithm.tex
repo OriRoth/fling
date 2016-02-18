@@ -60,7 +60,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
         \STATE{\textbf{continue}}
       \ENDIF
       \STATE{$J←J ∪ ❴i❵$}
-      \STATE{\textbf{Let}~$[A→α·β, a,ℓ]←i$}
+      \LET{$[A→α·β, a,ℓ,?]$}{$i$}
       \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
       \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
         \STATE{\textbf{continue}}
@@ -68,14 +68,14 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
       \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
       \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
       \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\function Nullable(δ)$}
-          \STATE{$\function enqueue(\Queue,[B→·γ,a,ℓ])$}
+          \STATE{$\function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
         \ENDIF
         \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\function First(δ)$}
-          \STATE{$\function enqueue(\Queue, [B→·γ,t,\function newLabel()])$}
+          \STATE{$\function enqueue(\Queue, [B→·γ,t,\function newLabel(),N])$}
         \ENDFOR
       \ENDFOR
       \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
-        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ])$}
+        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ,¬N])$}
       \ENDIF
     \ENDWHILE
     \RETURN{$J$}
@@ -91,8 +91,8 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \OUTPUT{the successive item set}
     \STATE{$J←∅$} \COMMENT{Initially, there are not items}
     \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,ℓ]$}{$i$}\COMMENT{Break item~$i$ into components}
-      \LET{$i'$}{$[A→αX·β,a,ℓ]$}\COMMENT{Advance the dot}
+      \LET{$[A→α·Xβ,a,ℓ,?]$}{$i$}\COMMENT{Break item~$i$ into components}
+      \LET{$i'$}{$[A→αX·β,a,ℓ,¬N]$}\COMMENT{Advance the dot}
       \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
     \RETURN{$\function Closure(J)$}
@@ -106,7 +106,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   \begin{algorithmic}
     \INPUT{An augmented grammar~$G'$}
     \OUTPUT{the set of JLR states induced by~$G'$}
-    \STATE{$R ← ❴[S'→·S, \$, \function newLabel()]❵$}
+    \STATE{$R ← ❴[S'→·S, \$, \function newLabel(),N]❵$}
     \COMMENT{Work list and return value}
     \REPEAT[Processing the work list]
     \FOR[Deal with items in set~$I$]{$I ∈ R$}
@@ -167,7 +167,7 @@ $\function JumpSet(q,a)$ returns a function~$f$ that maps labels
     \INPUT{lookahead symbol~$σ$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-    \FOR{$[ A→α·σβ,σ' ,ℓ]∈\function NonKernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
+    \FOR{$[ A→α·σβ,σ',ℓ,N]∈ q$}
       \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),σ')$}
     \ENDFOR
     \RETURN{$f$}
@@ -176,13 +176,13 @@ $\function JumpSet(q,a)$ returns a function~$f$ that maps labels
 
 The construction of the action table for each state~$q∈Q$:
 \begin{itemize}
-  \item If~$[ A→α·, \$ ,ℓ]∈q~$ then~$\table
+  \item If~$[ A→α·, \$ ,ℓ,?]∈q~$ then~$\table
     Action[q,\$] = \textsf{accept}$
 
-  \item If~$[ A→α·,σ,ℓ]∈q~$ then~$\table
+  \item If~$[ A→α·,σ,ℓ,?]∈q~$ then~$\table
     Action[q,σ] = \function jump(ℓ)$
 
-  \item If~$[ A→α·β,σ,ℓ]∈q~$ and~$σ'∈\function First(β)$
+  \item If~$[ A→α·β,σ,ℓ,?]∈q~$ and~$σ'∈\function First(β)$
     then~$\table Action[q,σ'] = \function shift(\function JumpSet(q,σ'),\function
     Goto(q,a))$
 

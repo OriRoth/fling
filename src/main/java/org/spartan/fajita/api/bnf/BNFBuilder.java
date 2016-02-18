@@ -2,13 +2,11 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -53,10 +51,9 @@ public class BNFBuilder {
       throw new IllegalArgumentException("rule " + r + " already exists");
     return this;
   }
-  @SuppressWarnings("unchecked") void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
+  void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
     DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
-    verbs.addAll((Collection<? extends Verb>) symbols.stream().filter(symbol -> symbol.getClass() == Verb.class)
-        .collect(Collectors.toList()));
+    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb)v));
     checkNewRule(r);
     getRules().add(r);
   }
@@ -64,9 +61,10 @@ public class BNFBuilder {
     validateNonterminals();
   }
   private void validateNonterminals() {
-    for (NonTerminal nonTerminal : getNonTerminals())
-      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
-        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    //TODO: re-validate
+//    for (NonTerminal nonTerminal : getNonTerminals())
+//      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
+//        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
   }
   private BNF finish() {
     validate();

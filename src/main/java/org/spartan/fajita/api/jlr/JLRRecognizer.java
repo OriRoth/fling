@@ -111,7 +111,7 @@ public class JLRRecognizer {
   }
   private JState generateInitialState() {
     Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
-        .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel()) //
+        .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel().asNew()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new JState(closure, bnf, 0);
@@ -132,7 +132,7 @@ public class JLRRecognizer {
         if (isNullable(strAfterNT))
           todo.add(new JItem(dRule, item.lookahead, item.label));
         for (Verb t : firstSetOf(strAfterNT)) {
-          todo.add(new JItem(dRule, t, labelsCount++));
+          todo.add(new JItem(dRule, t, labelsCount++).asNew());
         }
       }
       if (isNullable(nt))
@@ -178,8 +178,8 @@ public class JLRRecognizer {
   }
   @SuppressWarnings("boxing") private static Map<Integer, JState> jumpSet(JState s, Verb v) {
     HashMap<Integer, JState> $ = new HashMap<>();
-    List<JItem> nonkernel = s.getItems().stream().filter(i -> !i.kernel).collect(Collectors.toList());
-    for (JItem i : nonkernel) {
+    List<JItem> newItems = s.getItems().stream().filter(i -> (i.newLabel) && (!i.lookahead.equals(SpecialSymbols.$))).collect(Collectors.toList());
+    for (JItem i : newItems) {
       if (i.readyToReduce() || !i.rule.getChildren().get(i.dotIndex).equals(v))
         continue;
       $.put(i.label, s.goTo(i.rule.lhs).goTo(i.lookahead));

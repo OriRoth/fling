@@ -1,6 +1,5 @@
 package org.spartan.fajita.api.jlr;
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +10,46 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JActionTable {
+  private final Map<Verb, Action>[] table;
+
+  @SuppressWarnings("unchecked") public JActionTable(final List<JState> states) {
+    table = new HashMap[states.size()];
+    for (int i = 0; i < states.size(); i++) 
+      table[i] = new HashMap<>();
+  }
+  void set(final JState state, final Verb lookahead, final Action act) {
+    checkForConflicts(state, lookahead, act);
+    table[state.index].put(lookahead, act);
+  }
+  private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
+    // TODO: how do conflicts look like?
+    Action previous = table[state.index].get(lookahead);
+    if (previous == null || previous.equals(act))
+      return;
+    throw new IllegalArgumentException(
+        "trying to add:Action[" + state.index + "," + lookahead + "]=" + act + " but already assigned with " + previous);
+  }
+  public Action get(final int stateIndex, final Verb lookahead) {
+    Action $ = table[stateIndex].get(lookahead);
+    if ($ == null)
+      return new Error();
+    return $;
+  }
+  @Override public String toString() {
+    String $ = "action table:\n   |";
+    List<Verb> verbs = Arrays.asList(table).stream().flatMap(map -> map.keySet().stream()).distinct().collect(Collectors.toList());
+    for (int i = 0; i < verbs.size(); i++)
+      $ += String.format("%5.5s|", verbs.get(i).name());
+    $ += "\n";
+    for (int i = 0; i < table.length; i++) {
+      $ += String.format("%-3d|", new Integer(i));
+      for (int j = 0; j < verbs.size(); j++)
+        $ += String.format("%5.5s|", get(i, verbs.get(j)).toString());
+      $ += "\n";
+    }
+    return $;
+  }
+
   public abstract static class Action {
     public boolean isShift() {
       return getClass() == Shift.class;
@@ -77,11 +116,12 @@ public class JActionTable {
 
   public static class Jump extends Action {
     public int label;
+
     public Jump(int label) {
       this.label = label;
     }
     @Override public String toString() {
-      return "j"+label;
+      return "j" + label;
     }
   }
 
@@ -97,59 +137,19 @@ public class JActionTable {
     @Override public String getMessage() {
       return "J/J Conflict on state : " + state + " lookahead " + lookahead.toString();
     }
-  }
 
-  public class Exception extends RuntimeException {
-    private static final long serialVersionUID = -2979864485863027282L;
-    private final JState state;
-    private final Symbol lookahead;
+    public class ShiftJumpException extends RuntimeException {
+      private static final long serialVersionUID = -2979864485863027282L;
+      private final JState s;
+      private final Symbol l;
 
-    public Exception(final JState state, final Symbol lookahead) {
-      this.state = state;
-      this.lookahead = lookahead;
+      public ShiftJumpException(final JState state, final Symbol lookahead) {
+        this.s = state;
+        this.l = lookahead;
+      }
+      @Override public String getMessage() {
+        return "S/J conflict on state " + s + " lookahead " + l.toString();
+      }
     }
-    @Override public String getMessage() {
-      return "S/J conflict on state " + state + " lookahead " + lookahead.toString();
-    }
-  }
-
-  private final Map<Verb, Action>[] table;
-
-  @SuppressWarnings("unchecked") public JActionTable(final List<JState> states) {
-    table = new HashMap[states.size()];
-    for (int i = 0; i < states.size(); i++)
-      table[i] = new HashMap<>();
-  }
-  void set(final JState state, final Verb lookahead, final Action act) {
-    checkForConflicts(state, lookahead, act);
-    table[state.index].put(lookahead, act);
-  }
-  private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
-    //TODO: how do conflicts look like?
-    Action previous = table[state.index].get(lookahead);
-    if (previous == null || previous.equals(act))
-      return;
-    throw new IllegalArgumentException("trying to add:Action["+state.index+","+lookahead+"]="+act+" but already assigned with "+previous);
-  }
-  public Action get(final int stateIndex, final Verb lookahead) {
-    Action $ = table[stateIndex].get(lookahead);
-    if ($ == null)
-      return new Error();
-    return $;
-  }
-  @Override public String toString() {
-    String $ = "action table:\n   |";
-    List<Verb> verbs = Arrays.asList(table).stream().flatMap(map -> map.keySet().stream()).distinct()
-        .collect(Collectors.toList());
-    for (int i = 0; i < verbs.size(); i++)
-      $ += String.format("%5.5s|", verbs.get(i).name());
-    $ += "\n";
-    for (int i = 0; i < table.length; i++) {
-      $ += String.format("%-3d|", new Integer(i));
-      for (int j = 0; j < verbs.size(); j++)
-        $ += String.format("%5.5s|", get(i, verbs.get(j)).toString());
-      $ += "\n";
-    }
-    return $;
   }
 }

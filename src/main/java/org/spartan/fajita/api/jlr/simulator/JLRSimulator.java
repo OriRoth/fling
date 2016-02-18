@@ -5,7 +5,6 @@ import java.util.EmptyStackException;
 import java.util.Map;
 import java.util.Stack;
 
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.jlr.JActionTable;
 import org.spartan.fajita.api.jlr.JActionTable.Action;
@@ -15,7 +14,9 @@ import org.spartan.fajita.api.jlr.JLRRecognizer;
 import org.spartan.fajita.api.jlr.JState;
 
 /**
- * The simulator works only on BNFs whos alphabet is a subset of {"a","b",...,"z" ,"A",...,"Z"}
+ * The simulator works only on BNFs whos alphabet is a subset of
+ * {"a","b",...,"z" ,"A",...,"Z"}
+ * 
  * @author stlevy
  *
  */
@@ -45,8 +46,8 @@ public class JLRSimulator {
     return verbs.stream().filter(verb -> verb.name().equals(String.valueOf(c))).findFirst().get();
   }
   private void act(char c) {
-    if ( c != '$')
-      inputHandled = inputHandled + c;
+    // if (c != '$')
+    inputHandled = inputHandled + c;
     Action entry = actionTable.get(internalState, verbOf(c));
     if (entry.isAccept())
       accept();
@@ -67,8 +68,8 @@ public class JLRSimulator {
     int dst = jumpAction.label;
     Map<Integer, JState> top = stack.pop();
     try {
-      for (; !top.containsKey(dst); top = stack.pop())
-        /**/ ;
+      while (!top.containsKey(dst))
+        top = stack.pop();
     } catch (EmptyStackException e) {
       throw new InternalError("Algorithm fault, jumped to a label not on the stack.", e);
     }
@@ -82,9 +83,8 @@ public class JLRSimulator {
     System.out.println("Rejected on '" + inputHandled + "'");
     result = Boolean.FALSE;
   }
-  @SuppressWarnings("boxing") public static boolean runJLR(BNF bnf, String input) {
-    JLRRecognizer jlr = new JLRRecognizer(bnf);
-    JLRSimulator simulator = new JLRSimulator(jlr.getActionTable(),bnf.getVerbs());
+  @SuppressWarnings("boxing") public static boolean runJLR(JLRRecognizer jlr, String input) {
+    JLRSimulator simulator = new JLRSimulator(jlr.getActionTable(), jlr.bnf.getVerbs());
     for (char c : (input + "$").toCharArray()) {
       simulator.act(c);
       if (simulator.isDone())

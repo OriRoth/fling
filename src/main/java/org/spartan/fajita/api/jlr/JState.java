@@ -57,7 +57,7 @@ public class JState {
         if (i == 0)
           $ += "[" + match.toString();
         else
-          $ += "/" + match.lookahead.toString() + ",L" + match.label + (match.kernel ? ",K" : "");
+          $ += "/" + match.lookahead.toString() + "," + match.labelToString() + "," + match.isNewLabelToString();
       }
       $ += "]" + System.lineSeparator();
     }
@@ -84,7 +84,10 @@ public class JState {
    * 
    */
   public JState goTo(final Symbol lookahead) {
-    return transitions.getOrDefault(lookahead, null);
+    JState next = transitions.get(lookahead);
+    if (next == null)
+      throw new IllegalStateException("Algorithm fault. for some reason q.goto().goto() failed.");
+    return next;
   }
   @Override public int hashCode() {
     return getItems().hashCode() + bnf.hashCode();

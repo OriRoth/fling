@@ -12,16 +12,18 @@ public class JItem {
   public final Verb lookahead;
   public final int label;
   public final boolean kernel;
+  public final boolean newLabel;
 
-  private JItem(DerivationRule rule, Verb lookahead, int dotIndex, int label, boolean isKernel) {
+  private JItem(DerivationRule rule, Verb lookahead, int dotIndex, int label, boolean kernel, boolean newLabel) {
     this.lookahead = lookahead;
     this.dotIndex = dotIndex;
     this.rule = rule;
     this.label = label;
-    this.kernel = isKernel;
+    this.kernel = kernel;
+    this.newLabel = newLabel;
   }
   public JItem(DerivationRule rule, Verb lookahead, int label) {
-    this(rule, lookahead, 0, label, false);
+    this(rule, lookahead, 0, label, false, false);
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(rule.lhs.serialize() + " ::= ");
@@ -35,8 +37,14 @@ public class JItem {
     if (expression.size() == dotIndex)
       sb.append(". ");
     sb.append("," + lookahead.toString());
-    sb.append(", L" + label + (kernel ? ",K" : ""));
+    sb.append(", " + labelToString() + ", " + isNewLabelToString());
     return sb.toString();
+  }
+  String isNewLabelToString() {
+    return (newLabel ? "\u00ac" : "") + "N";
+  }
+  String labelToString() {
+    return "L" + label;
   }
   public boolean isLegalTransition(final Symbol symb) {
     return ((rule.getChildren().size() > dotIndex) //
@@ -84,9 +92,13 @@ public class JItem {
   public JItem advance() {
     if (dotIndex == rule.getChildren().size())
       throw new IllegalStateException("cannot advance a ready to reduce item");
-    return new JItem(rule, lookahead, dotIndex + 1, label, false);
+    return new JItem(rule, lookahead, dotIndex + 1, label, false, false);
   }
   public JItem asKernel() {
-    return new JItem(rule, lookahead, dotIndex, label, true);
+    return new JItem(rule, lookahead, dotIndex, label, true, newLabel);
   }
+  public JItem asNew() {
+    return new JItem(rule, lookahead, dotIndex, label, kernel , true);
+  }
+  
 }
