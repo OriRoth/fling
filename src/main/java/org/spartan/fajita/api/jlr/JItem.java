@@ -41,7 +41,7 @@ public class JItem {
     return sb.toString();
   }
   String isNewLabelToString() {
-    return (newLabel ? "\u00ac" : "") + "N";
+    return (newLabel ? "" : "\u00ac") + "N";
   }
   String labelToString() {
     return "L" + label;
@@ -89,16 +89,17 @@ public class JItem {
   public boolean readyToReduce() {
     return dotIndex == rule.getChildren().size();
   }
-  public JItem advance() {
+  public JItem advance(boolean keepNew) {
     if (dotIndex == rule.getChildren().size())
       throw new IllegalStateException("cannot advance a ready to reduce item");
+    if (keepNew)
+      return new JItem(rule, lookahead, dotIndex + 1, label, false, newLabel);
     return new JItem(rule, lookahead, dotIndex + 1, label, false, false);
   }
   public JItem asKernel() {
     return new JItem(rule, lookahead, dotIndex, label, true, newLabel);
   }
   public JItem asNew() {
-    return new JItem(rule, lookahead, dotIndex, label, kernel , true);
+    return new JItem(rule, lookahead, dotIndex, label, kernel, true);
   }
-  
 }

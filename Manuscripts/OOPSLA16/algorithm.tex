@@ -60,7 +60,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
         \STATE{\textbf{continue}}
       \ENDIF
       \STATE{$J←J ∪ ❴i❵$}
-      \LET{$[A→α·β, a,ℓ,?]$}{$i$}
+      \LET{$[A→α·β, a,ℓ,θ]$}{$i$}
       \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
       \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
         \STATE{\textbf{continue}}
@@ -75,7 +75,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
         \ENDFOR
       \ENDFOR
       \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
-        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ,¬N])$}
+        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
       \ENDIF
     \ENDWHILE
     \RETURN{$J$}

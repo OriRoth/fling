@@ -136,7 +136,7 @@ public class JLRRecognizer {
         }
       }
       if (isNullable(nt))
-        todo.add(item.advance());
+        todo.add(item.advance(true));
     } while (!todo.isEmpty());
     return $;
   }
@@ -171,7 +171,7 @@ public class JLRRecognizer {
         return new AcceptState(bnf, newIndex);
     Set<JItem> initialItems = state.getItems().stream().//
         filter(item -> item.isLegalTransition(lookahead)) //
-        .map(item -> item.advance().asKernel()) //
+        .map(item -> item.advance(false).asKernel()) //
         .collect(Collectors.toSet());
     Set<JItem> closure = calculateClosure(initialItems);
     return new JState(closure, bnf, newIndex);
