@@ -56,7 +56,7 @@ public class JLRSimulator {
     else if (entry.isShift())
       shift((Shift) entry);
     else if (entry.isJump())
-      jump((Jump) entry);
+      jump(verbOf(c),(Jump) entry);
     else
       throw new InternalError("Something went wrong, unknown action.");
   }
@@ -64,7 +64,7 @@ public class JLRSimulator {
     stack.push(shiftAction.jumpSet);
     internalState = shiftAction.nextState.index;
   }
-  @SuppressWarnings("boxing") private void jump(Jump jumpAction) {
+  @SuppressWarnings("boxing") private void jump(Verb lookahead, Jump jumpAction) {
     int dst = jumpAction.label;
     Map<Integer, JState> top = stack.pop();
     try {
@@ -73,7 +73,8 @@ public class JLRSimulator {
     } catch (EmptyStackException e) {
       throw new InternalError("Algorithm fault, jumped to a label not on the stack.", e);
     }
-    internalState = top.get(dst).index;
+    stack.push(JLRRecognizer.jumpSet(top.get(dst), lookahead));
+    internalState = top.get(dst).goTo(lookahead).index;
   }
   private void accept() {
     System.out.println("Accepted on '" + inputHandled + "'");

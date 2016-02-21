@@ -65,11 +65,17 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
   @Test public void single_b() {
     test_ab("b", true);
   }
+  @Test public void aa() {
+    test_ab("aa", true);
+  }
   @Test public void ab() {
     test_ab("ab", true);
   }
   @Test public void illegal_ba() {
     test_ab("ba", false);
+  }
+  @Test public void bb() {
+    test_ab("bb", true);
   }
   @Test public void b_sequence() {
     test_ab("bbbbbbbbbbbbbbbb", true);

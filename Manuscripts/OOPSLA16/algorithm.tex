@@ -91,8 +91,9 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
     \OUTPUT{the successive item set}
     \STATE{$J←∅$} \COMMENT{Initially, there are not items}
     \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,ℓ,?]$}{$i$}\COMMENT{Break item~$i$ into components}
-      \LET{$i'$}{$[A→αX·β,a,ℓ,¬N]$}\COMMENT{Advance the dot}
+      \LET{$[A→α·Xβ,a,ℓ,θ]$}{$i$}\COMMENT{Break item~$i$ into components}
+      \LET{$θ'$}{$θ∧X∈Ξ$}
+      \LET{$i'$}{$[A→αX·β,a,ℓ,θ']$}\COMMENT{Advance the dot}
       \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
     \RETURN{$\function Closure(J)$}
@@ -130,31 +131,9 @@ Notes on the algorithms
 \end{itemize}
 
 \subsection{Structure of the JLR action table and behavior of actions}
-The structure of the JLR action table
-  resembles the LR(1) action table;
-  it is defined by a function~$\table ACTION[q,a]$
-  where~$q∈Q$, and~$a∈Σ_\$$, being the current state and
-  the lookahead symbol accordingly.
-The result of~$\table ACTION[q,a]$ can have one of
-  four forms:
-\begin{description}
-  \item[$\textsf{accept}$] The recognizer accepts on input.
-
-  \item[$\textsf{reject}$] The recognizer rejects on input.
-
-  \item[$\function shift(f,p)$] A shift operation.
-  The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
-    in that order.
-
-  \item[$\function jump(ℓ)$] A jump operation. The recognizer jumps
-    to label~$ℓ$, specifically, The recognizer pops elements from the
-    stack until some function~$f$ is popped, such that~$f(ℓ)$
-    is defined, and yields~$q$.~$q$ is then pushed onto the stack.
-\end{description}
-
 As the last step before constructing the action table, we
   define the function~$\textsf{JumpSet}: Q⨉Σ→(ℕ↛Q)$.
-$\function JumpSet(q,a)$ returns a function~$f$ that maps labels
+$\function JumpSet(q,σ)$ returns a function~$f$ that maps labels
   to states.
   In a way, it reminds the~$\table Goto[]$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
@@ -168,21 +147,43 @@ $\function JumpSet(q,a)$ returns a function~$f$ that maps labels
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
     \FOR{$[ A→α·σβ,σ',ℓ,N]∈ q$}
-      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),σ')$}
+      \STATE{$ f(ℓ) = \function Goto(q,A)$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
 \end{algorithm}
 
+The structure of the JLR action table
+  resembles the LR(1) action table;
+  it is defined by a function~$\table ACTION[q,σ]$
+  where~$q∈Q$, and~$σ∈Σ_\$$, being the current state and
+  the lookahead symbol accordingly.
+The result of~$\table ACTION[q,σ]$ can have one of
+  four forms:
+\begin{description}
+  \item[$\textsf{accept}$] The recognizer accepts on input.
+
+  \item[$\textsf{reject}$] The recognizer rejects on input.
+
+  \item[$\function shift(f,p)$] A shift operation.
+  The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
+    in that order.
+
+  \item[$\function jump(ℓ)$] A jump operation. The recognizer jumps
+    to label~$ℓ$, specifically, the recognizer pops elements from the
+    stack until some function~$f$ is popped, such that~$f(ℓ)$
+    is defined, and yields~$q$.~$\function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\function Goto(q,σ)$.
+\end{description}
+
 The construction of the action table for each state~$q∈Q$:
 \begin{itemize}
-  \item If~$[ A→α·, \$ ,ℓ,?]∈q~$ then~$\table
+  \item If~$[ A→α·, \$ ,ℓ,θ]∈q~$ then~$\table
     Action[q,\$] = \textsf{accept}$
 
-  \item If~$[ A→α·,σ,ℓ,?]∈q~$ then~$\table
+  \item If~$[ A→α·,σ,ℓ,θ]∈q~$ then~$\table
     Action[q,σ] = \function jump(ℓ)$
 
-  \item If~$[ A→α·β,σ,ℓ,?]∈q~$ and~$σ'∈\function First(β)$
+  \item If~$[ A→α·β,σ,ℓ,θ]∈q~$ and~$σ'∈\function First(β)$
     then~$\table Action[q,σ'] = \function shift(\function JumpSet(q,σ'),\function
     Goto(q,a))$
 
