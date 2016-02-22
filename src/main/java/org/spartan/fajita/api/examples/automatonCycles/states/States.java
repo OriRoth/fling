@@ -1,11 +1,11 @@
 package org.spartan.fajita.api.examples.automatonCycles.states;
 
 import automaton.stack.EmptyStack;
-import automaton.stack.IStack;
+import automaton.stack.AbstractStack;
 
 public class States {
   @java.lang.SuppressWarnings({
-      "rawtypes" }) public abstract static class BaseState<Stack extends IStack<?>, a extends BaseState, d extends BaseState, b extends BaseState, D extends BaseState, B extends BaseState, C extends BaseState, A extends BaseState>
+      "rawtypes" }) public abstract static class BaseState<Stack extends AbstractStack<?>, a extends BaseState, d extends BaseState, b extends BaseState, D extends BaseState, B extends BaseState, C extends BaseState, A extends BaseState>
           implements IStack<Stack> {
     protected final Stack stack;
 
