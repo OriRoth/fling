@@ -1,0 +1,18 @@
+\usetikzlibrary{automata,positioning,topaths}
+\tikzstyle{state-style}=[state,on grid]
+\begin{tikzpicture}
+
+\node[state-style,accepting] (q0) {q0};
+\node[state-style,accepting] (q1) [right=1.5 of q0] {q1};
+\node[state-style,accepting] (q2) [right=1.5 of q1] {q2};
+
+
+\path[->,thick] 
+
+				(q0) edge[below,loop above,distance= 2ex] node {a} (q0)
+				(q0) edge[below] node {b} (q1)
+				(q1) edge[below,loop above,distance= 2ex] node {b} (q1)
+				(q1) edge[below] node {c} (q2)
+				(q2) edge[below,loop above,distance= 2ex] node {c} (q2);
+\draw[<-] (q0) -- node[below left] {start} (-5ex,4ex);
+\end{tikzpicture}
