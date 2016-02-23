@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples.dependencyCycle;
 
-import automaton.stack.EmptyStack;
-import automaton.stack.AbstractStack;
+import automaton.seminar.AbstractStack;
+import automaton.seminar.EmptyStack;
 
 @SuppressWarnings({ "unchecked", "rawtypes" }) public class States {
   public abstract static class BaseState<Stack extends AbstractStack<?>, d extends BaseState, a extends BaseState, e extends BaseState, A extends BaseState, B extends BaseState>

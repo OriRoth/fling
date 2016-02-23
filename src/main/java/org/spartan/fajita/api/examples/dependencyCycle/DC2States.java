@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples.dependencyCycle;
 
-import automaton.stack.EmptyStack;
-import automaton.stack.AbstractStack;
+import automaton.seminar.AbstractStack;
+import automaton.seminar.EmptyStack;
 
 public class DC2States {
   @java.lang.SuppressWarnings({

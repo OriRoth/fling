@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples.automatonCycles.states;
 
-import automaton.stack.EmptyStack;
-import automaton.stack.AbstractStack;
+import automaton.seminar.AbstractStack;
+import automaton.seminar.EmptyStack;
 
 public class States {
   @java.lang.SuppressWarnings({

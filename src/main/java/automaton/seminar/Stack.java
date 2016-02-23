@@ -1,4 +1,4 @@
-package automaton.stack;
+package automaton.seminar;
 
 interface EmptyStack extends AbstractStack<EmptyStack> {
   Stack<EmptyStack> push();
