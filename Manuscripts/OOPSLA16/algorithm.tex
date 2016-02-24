@@ -205,6 +205,17 @@ The construction of the action table for each state~$q∈Q$:
   \item[Conclusion:] if~$G$ is not LR then~$G$ is not JLR.
 \end{description}
 
+\subsection{Thoughts and wonders}
+
+During the JumpSet method, we know the destination of each legal jump,
+and we know which state~$q$ we want to push afterwards in an increasing epsilon step.
+
+We would like to ‟compress” those epsilon moves. We can!
+Our problem was that we need to push another JumpSet during the finalizing push (emulating a full shift).
+But, we can ``delay'' this operation by creating a copy of state~$q$, that knows that another JumpSet needs to be
+pushed, if we shift, we just add the additional JustSet. If we accept, we accept, reject rejects, and finally jump:
+We act like we would if the jump set was already pushed ( is that possible???? probably yes)
+
 \endinput
 
 \paragraph{Misc.}
