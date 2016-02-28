@@ -1,5 +1,83 @@
-\def\function#1(#2){\ensuremath{\textsf{#1}(#2)}}
+\def\function#1(#2){\ensuremath{\textrm{\textup{\textsf{#1}(#2)}}}}
 \def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
+
+In this section, we describe an algorithm for generating
+  a ‟JLR Recognizer" for a given context free grammar~$G$.
+The said recognizer is intended to be run on a jDPDA.
+(Recall that a jDPPA is similar to push-down automaton except that it supports 
+  ‟jump” operations on the stack, and is restricted to being ‟real time”, i.e.,
+  taking a constant number of steps in response
+  to an input symbol.
+In the next section, we shall explain how the jDPDA and
+  recognizer are implemented on top of \Java generics.
+
+In particular, we describe here the algorithms for filling
+  the transition tables of the jDPA.
+As explained above, that for given DCFG language~$𝓛$ ,
+  there exists at least one filling of the transitions table
+  that recognize~$𝓛$.
+This section however describes a concrete algorithm for
+doing so. 
+
+The presented algorithm is inspired by the classical algorithms for generating
+  LR(1) parsers~\cite{family1,family2....}.
+However, unlike these algorithms, the algorithm we present
+  produces only a recognizer; parsing and construction of an \AST
+  is left for later stages.
+Also, just like the LR(1) parser generators, generation starts from
+  one concrete CFG~$G$ for a language~$𝓛$
+  (rather than some canonical description of the language).
+As with the classical generators the performance of the algorithm
+  depends on the selection of~$G$, i.e., some grammars for the same language
+  are better than others.
+
+Before describing our main algorithm brief reminders of LR parsing and
+  LR parser generators are due.
+\subsection{LR Parsing}
+An LR(1) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
+  (Nonterminals set, initial start element, production rules set respectively)
+  has three components:
+\begin{itemize}
+  \item An \emph{An automaton} whose states are~$Q=❴q₀,…,qₙ❵$
+  \item A \emph{stack} which may contain any member of~$Q$.
+\item A \emph{specification} of state transition, 
+    which is done with of two tables:
+  \begin{description}
+    \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+    between the states of the automaton.
+    \item[Action table] which
+    defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
+  \end{description}
+\end{itemize}
+An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
+  i.e.,~$A→α·β$ is an LR item if~$A∈Ξ$,~$A→αβ∈R$,
+  the dot index in this example is~$|α|$.
+Every state~$q∈Q$ is a set of~\emph{LR items},
+  where every such item is in the~$Kernel_{q}$ set,
+  or in the~$NonKernel_{q}$ set.
+Every state~$q$ is the unification of~$Kernel_{q}$ and~$NonKernel_{q}$.
+The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
+and then repetitively executes the following:
+Examine~$q∈Q$, the state at the top of the stack.
+If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
+
+Let~$σ∈Σ$ be the next input symbol.
+If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
+
+If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$
+into the stack and consumes~$σ$.
+If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
+then the parser does not consume~$σ$.
+Instead it makes~$|β|$ pop operations.
+Let~$q'$ be the state at the top of the stack after these pops, then
+the parser pushes a state,~$q”$,
+defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
+i.e.,~$q”=η(q',ξ)$.
+
+The specifics of parser generation and specifically
+  calculating the sets~$Kernel_{q}$ and~$NonKernel_{q}$, lies beyond our interest here.
+We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
+including SLR and LALR\@.
 
 The JLR recognizer is a shift-jump machine
   based on the jDPDA automaton.
@@ -222,55 +300,9 @@ Our problem was that we need to push another JumpSet during the finalizing push 
 But, we can ‟delay” this operation by creating a copy of state~$q$, that knows that another JumpSet needs to be
 pushed, if we shift, we just add the additional JustSet. If we accept, we accept, reject rejects, and finally jump:
 We act like we would if the jump set was already pushed ( is that possible???? probably yes)
-
-\endinput
-
 \paragraph{Misc.}
 
-\subsection{The LR($1$) parser}
-An LR($1$) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
-  (Nonterminals set, initial start element, production rules set respectively)
-  has three components:
-\begin{description}
-  \item[An automaton] whose states are~$Q=❴q₀,…,qₙ❵$
-  \item[A stack] which may contain any member of~$Q$.
-  \item[Specification of state transition] with the aid of two tables:
-  \begin{description}
-    \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
-    between the states of the automaton.
-    \item[Action table] which
-    defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
-  \end{description}
-\end{description}
-An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
-  i.e.,~$A→α·β$ is an LR item if~$A∈Ξ$,~$A→αβ∈R$,
-  the dot index in this example is~$|α|$.
-Every state~$q∈Q$ is a set of~\emph{LR items},
-  where every such item is in the~$Kernel_{q}$ set,
-  or in the~$NonKernel_{q}$ set.
-Every state~$q$ is the unification of~$Kernel_{q}$ and~$NonKernel_{q}$.
-The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
-and then repetitively executes the following:
-Examine~$q∈Q$, the state at the top of the stack.
-If~$q=qₙ$ (the accepting state) and the input string is wholly consumed, then the parser stops and the input is accepted.
-
-Let~$σ∈Σ$ be the next input symbol.
-If~$δ(q,σ)=⊥$ (undefined), the parser stops in rejecting the input.
-
-If~$δ(q,σ) = \textsf{Shift}(q')$, the parser pushes state~$q'$
-into the stack and consumes~$σ$.
-If however,~$δ(q,σ) = \textsf{Reduce}(r)$,~$r=ξ→β$,
-then the parser does not consume~$σ$.
-Instead it makes~$|β|$ pop operations.
-Let~$q'$ be the state at the top of the stack after these pops, then
-the parser pushes a state,~$q”$,
-defined by applying the transition function to~$ξ$, the left-hand side of the reduced production and~$q'$,
-i.e.,~$q”=η(q',ξ)$.
-
-The specifics of parser generation and specifically
-  calculating the sets~$Kernel_{q}$ and~$NonKernel_{q}$, lies beyond our interest here.
-We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
-including SLR and LALR\@.
+\endinput
 
 \subsection{Between LR and JLR - A direct approach}
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
