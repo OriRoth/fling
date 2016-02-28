@@ -182,7 +182,7 @@ public class JLRRecognizer {
     for (JItem i : newItems) {
       if (i.readyToReduce() || !i.rule.getChildren().get(i.dotIndex).equals(v))
         continue;
-      $.put(i.label, s.goTo(i.rule.lhs));
+      $.put(i.label, s.goTo(i.rule.lhs).goTo(i.lookahead));
     }
     return $;
   }

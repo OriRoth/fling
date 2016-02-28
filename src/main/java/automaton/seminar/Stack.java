@@ -1,7 +1,7 @@
 package automaton.seminar;
 
-interface EmptyStack extends AbstractStack<EmptyStack> {
-  Stack<EmptyStack> push();
+class EmptyStack implements AbstractStack<EmptyStack> {
+  Stack<EmptyStack> push(){return null;}
 }
 @SuppressWarnings({"all"})
 interface AbstractStack<Tail extends AbstractStack<?>> {
@@ -12,12 +12,11 @@ public interface Stack<Tail extends AbstractStack<?> >
   Stack<Stack<Tail>> push();
   Tail pop();
 
-  @SuppressWarnings("cast")
   public static void main(String[] args) {
-    EmptyStack e = (EmptyStack)null;
+    EmptyStack e = new EmptyStack();
     Stack<EmptyStack> p1 = e.push();
     Stack<Stack<EmptyStack>> p2 = p1.push();
     EmptyStack pop = p2.pop().pop();
-    p2.pop().pop().pop();
+//    p2.pop().pop().pop();  // shouldn't compile
   }
 }
