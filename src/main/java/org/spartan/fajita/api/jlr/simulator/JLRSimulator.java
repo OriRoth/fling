@@ -29,6 +29,7 @@ public class JLRSimulator {
   private int internalState;
   private boolean isDelayed ; 
   private Map<Integer,JState> delayedElement;
+
   public JLRSimulator(JActionTable actionTable, Collection<Verb> verbs) {
     this.actionTable = actionTable;
     this.verbs = verbs;
