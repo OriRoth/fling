@@ -147,7 +147,7 @@ $\function JumpSet(q,σ)$ returns a function~$f$ that maps labels
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
     \FOR{$[ A→α·σβ,σ',ℓ,N]∈ q$}
-      \STATE{$ f(ℓ) = \function Goto(q,A)$}
+      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),σ')$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
@@ -173,6 +173,13 @@ The result of~$\table ACTION[q,σ]$ can have one of
     to label~$ℓ$, specifically, the recognizer pops elements from the
     stack until some function~$f$ is popped, such that~$f(ℓ)$
     is defined, and yields~$q$.~$\function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\function Goto(q,σ)$.
+
+  \item[$\function delayedShift(d,f,p)$] A delayed shift operation.
+    The recognizer pushes~$d$ onto the stack and then performs a normal~$\function shift(f,p)$ operation.
+
+   \item[$\function delayedJump(d,ℓ)$] A delayed jump operation.
+    The recognizer pushes~$d$ onto the stack and then performs a normal~$\function jump(ℓ)$ operation.
+
 \end{description}
 
 The construction of the action table for each state~$q∈Q$:
@@ -212,7 +219,7 @@ and we know which state~$q$ we want to push afterwards in an increasing epsilon 
 
 We would like to ‟compress” those epsilon moves. We can!
 Our problem was that we need to push another JumpSet during the finalizing push (emulating a full shift).
-But, we can ``delay'' this operation by creating a copy of state~$q$, that knows that another JumpSet needs to be
+But, we can ‟delay” this operation by creating a copy of state~$q$, that knows that another JumpSet needs to be
 pushed, if we shift, we just add the additional JustSet. If we accept, we accept, reject rejects, and finally jump:
 We act like we would if the jump set was already pushed ( is that possible???? probably yes)
 
