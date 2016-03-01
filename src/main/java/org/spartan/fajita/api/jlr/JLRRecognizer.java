@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFAnalyzer;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -29,59 +29,15 @@ public class JLRRecognizer {
   private final List<JState> states;
   private int labelsCount;
   private final JActionTable actionTable;
-  private final Set<NonTerminal> nullableSymbols;
-  private final Map<Symbol, Set<Verb>> baseFirstSets;
+  private final BNFAnalyzer analyzer;
 
   public JLRRecognizer(final BNF bnf) {
     this.bnf = bnf;
     labelsCount = 0;
-    nullableSymbols = calculateNullableSymbols();
-    baseFirstSets = calculateSymbolFirstSet();
+    analyzer = new BNFAnalyzer(bnf);
     states = generateStatesSet();
     actionTable = new JActionTable(getStates());
     fillParsingTable();
-  }
-  private Set<NonTerminal> calculateNullableSymbols() {
-    Set<NonTerminal> nullables = new HashSet<>();
-    boolean moreChanges;
-    do {
-      moreChanges = false;
-      for (DerivationRule rule : bnf.getRules())
-        if (rule.getChildren().stream().allMatch(child -> nullables.contains(child) || child.equals(SpecialSymbols.epsilon)))
-          moreChanges = nullables.add(rule.lhs);
-    } while (moreChanges);
-    return nullables;
-  }
-  private Map<Symbol, Set<Verb>> calculateSymbolFirstSet() {
-    Map<Symbol, Set<Verb>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.getNonTerminals())
-      $.put(nt, new LinkedHashSet<>());
-    for (Verb term : bnf.getVerbs())
-      $.put(term, new LinkedHashSet<>(Arrays.asList(term)));
-    boolean moreChanges;
-    do {
-      moreChanges = false;
-      for (DerivationRule dRule : bnf.getRules())
-        for (Symbol symbol : dRule.getChildren()) {
-          moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new HashSet<>()));
-          if (!isNullable(symbol))
-            break;
-        }
-    } while (moreChanges);
-    return $;
-  }
-  public boolean isNullable(final Symbol... expression) {
-    return Arrays.asList(expression).stream()
-        .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
-  }
-  private List<Verb> firstSetOf(final Symbol... expression) {
-    List<Verb> $ = new ArrayList<>();
-    for (Symbol symbol : expression) {
-      $.addAll(baseFirstSets.get(symbol));
-      if (!isNullable(symbol))
-        break;
-    }
-    return $;
   }
   private void fillParsingTable() {
     for (JState state : getStates()) {
@@ -91,7 +47,7 @@ public class JLRRecognizer {
       for (JItem item : items) {
         if (item.readyToReduce() && !(item.lookahead.equals(SpecialSymbols.$)))
           addJumpAction(state, item.lookahead, item.label);
-        for (Verb v : firstSetOf(ruleSuffix(item, item.dotIndex))) {
+        for (Verb v : analyzer.firstSetOf(ruleSuffix(item, item.dotIndex))) {
           addShiftAction(state, v, jumpSet(state, v), state.goTo(v));
         }
       }
@@ -129,17 +85,18 @@ public class JLRRecognizer {
       for (DerivationRule dRule : bnf.getRulesOf(nt)) {
         if (dRule.getChildren().size() == 0) // epsilon rule
           continue;
-        if (isNullable(strAfterNT))
+        if (analyzer.isNullable(strAfterNT))
           todo.add(new JItem(dRule, item.lookahead, item.label));
-        for (Verb t : firstSetOf(strAfterNT)) {
+        for (Verb t : analyzer.firstSetOf(strAfterNT)) {
           todo.add(new JItem(dRule, t, labelsCount++).asNew());
         }
       }
-      if (isNullable(nt))
+      if (analyzer.isNullable(nt))
         todo.add(item.advance(true));
     } while (!todo.isEmpty());
     return $;
   }
+  //TODO: remove this
   private static Symbol[] ruleSuffix(JItem item, int index) {
     return Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), index, item.rule.getChildren().size());
   }

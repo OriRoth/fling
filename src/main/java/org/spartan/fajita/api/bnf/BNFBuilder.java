@@ -44,6 +44,9 @@ public class BNFBuilder {
   Set<Verb> getVerbs() {
     return verbs;
   }
+  public List<NonTerminal> getStartSymbols() {
+    return startSymbols;
+  }
   private BNFBuilder checkNewRule(final DerivationRule r) {
     if (!symbolExists(r.lhs))
       throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
@@ -70,7 +73,7 @@ public class BNFBuilder {
     validate();
     nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     verbs.add(SpecialSymbols.$);
-    for (NonTerminal startSymbol : startSymbols)
+    for (NonTerminal startSymbol : getStartSymbols())
       addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
@@ -80,7 +83,7 @@ public class BNFBuilder {
   public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
     NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
     newNts[nts.length] = nt;
-    BNFBuilder.this.startSymbols.addAll(Arrays.asList(newNts));
+    BNFBuilder.this.getStartSymbols().addAll(Arrays.asList(newNts));
     return new FirstDerive();
   }
 

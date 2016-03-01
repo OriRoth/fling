@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.jll;
+package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,17 +16,17 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class JLLRecognizer {
+public class BNFAnalyzer {
   public final BNF bnf;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
-  private final Map<NonTerminal, Set<Verb>> followSets;
+//  private final Map<NonTerminal, Set<Verb>> followSets;
 
-  public JLLRecognizer(final BNF bnf) {
+  public BNFAnalyzer(final BNF bnf) {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    followSets = calculateFollowSets();
+//    followSets = calculateFollowSets();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -57,7 +57,7 @@ public class JLLRecognizer {
     } while (moreChanges);
     return $;
   }
-  private static Symbol[] ruleSuffix(DerivationRule rule, int index) {
+  public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
     return Arrays.copyOfRange(rule.getChildren().toArray(new Symbol[] {}), index, rule.getChildren().size());
   }
   private Map<NonTerminal, Set<Verb>> calculateFollowSets() {
@@ -87,8 +87,10 @@ public class JLLRecognizer {
     return Arrays.asList(expression).stream()
         .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
   }
-  private List<Verb> firstSetOf(final Symbol... expression) {
+  public List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
+    if(isNullable(expression))
+      throw new IllegalArgumentException("Not handling epsilons!!");
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))
@@ -96,7 +98,10 @@ public class JLLRecognizer {
     }
     return $;
   }
-  public Set<Verb> followSetOf(final NonTerminal nt) {
-    return followSets.get(nt);
+  public List<Verb> firstSetOf(final List<Symbol> expression){
+    return firstSetOf(expression.toArray(new Symbol[]{}));
   }
+//  public Set<Verb> followSetOf(final NonTerminal nt) {
+//    return followSets.get(nt);
+//  }
 }
