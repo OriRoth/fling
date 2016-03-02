@@ -1,0 +1,30 @@
+\renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
+\newcommand\INPUT\REQUIRE
+\newcommand\OUTPUT\ENSURE
+\def\function#1(#2){\ensuremath{\textrm{\textup{\textsf{#1}}}(#2)}}
+\def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
+
+\begin{algorithm}[p]
+  \caption{\label{Algorithm:LLClosure}
+  Function~$\function Closure(A,b)$: generates a closure of action from the original LL algorithm}
+  \begin{algorithmic}
+    \INPUT{a nonterminal~$A$}
+    \INPUT{a terminal~$b$}
+    \OUTPUT{the closure of consecutive actions}
+    \LET{$l$}{$[]$}
+    \LET{$X$}{$A$}
+    \IF{$∀X→α .  b∉\function First(α)$}
+      \RETURN{\textrm{reject}}
+    \ENDIF
+    \WHILE{$\textrm{True}$}
+      \IF{$X∈Ξ$}
+        \STATE{let~$Y₁ Y₂… Yₖ$ be~$α$ s.t.~$∃X→α∈G∧b∈\function First(α)$}
+        \STATE{$\function append(l,Yₖ,Y_{k-1},…,Y₂)$}
+        \STATE{$X=Y₁$}
+      \ELSE[$X$ must be~$b$]
+        \STATE{\textbf{break}}
+      \ENDIF
+    \ENDWHILE
+    \RETURN{$l$}
+  \end{algorithmic}
+\end{algorithm}

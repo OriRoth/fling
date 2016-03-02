@@ -1,13 +1,13 @@
-package org.spartan.fajita;
+package org.spartan.fajita.ll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.fajita.LLtest.NT.F;
-import static org.spartan.fajita.LLtest.NT.S;
-import static org.spartan.fajita.LLtest.Term.lp;
-import static org.spartan.fajita.LLtest.Term.plus;
-import static org.spartan.fajita.LLtest.Term.rp;
-import static org.spartan.fajita.LLtest.Term.x;
+import static org.spartan.fajita.ll.LLRecognizerTest.NT.F;
+import static org.spartan.fajita.ll.LLRecognizerTest.NT.S;
+import static org.spartan.fajita.ll.LLRecognizerTest.Term.lp;
+import static org.spartan.fajita.ll.LLRecognizerTest.Term.plus;
+import static org.spartan.fajita.ll.LLRecognizerTest.Term.rp;
+import static org.spartan.fajita.ll.LLRecognizerTest.Term.x;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +20,12 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.ll.LLParser;
+import org.spartan.fajita.api.ll.LLRecognizer;
+import org.spartan.fajita.api.ll.LLRecognizerGenerator;
 
-@SuppressWarnings("static-method") public class LLtest {
+@SuppressWarnings("static-method") public class LLRecognizerTest {
   private static BNF bnf;
-  private static LLParser ll;
+  private static LLRecognizer ll;
 
   public static List<Verb> mapTerminals(Terminal... terminals) {
     return Arrays.asList(terminals).stream()
@@ -45,26 +46,30 @@ import org.spartan.fajita.api.ll.LLParser;
         .derive(F).to(x) //
         .derive(S).to(F) //
         .or(lp).and(S).and(plus).and(F).and(rp).finish();
-    ll = new LLParser(bnf);
+    ll = new LLRecognizer(bnf);
+  }
+  
+  @BeforeClass public static void generationCode(){
+    System.out.println(LLRecognizerGenerator.generate(bnf));
   }
   @Test public void test1() {
     List<Verb> input = mapTerminals(lp);
-    assertFalse(ll.parse(input));
+    assertFalse(ll.recognize(input));
   }
   @Test public void test2() {
     List<Verb> input = mapTerminals(lp, rp);
-    assertFalse(ll.parse(input));
+    assertFalse(ll.recognize(input));
   }
   @Test public void test3() {
     List<Verb> input = mapTerminals(x);
-    assertTrue(ll.parse(input));
+    assertTrue(ll.recognize(input));
   }
   @Test public void test4() {
     List<Verb> input = mapTerminals(lp, x, plus, x, rp);
-    assertTrue(ll.parse(input));
+    assertTrue(ll.recognize(input));
   }
   @Test public void test5() {
     List<Verb> input = mapTerminals(lp, lp, x, plus, x, rp, plus, x, rp);
-    assertTrue(ll.parse(input));
+    assertTrue(ll.recognize(input));
   }
 }

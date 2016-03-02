@@ -71,13 +71,14 @@ public class GeneratorsUtils {
     return $.addMember("value", typeCode.build()).build();
   }
   static TypeSpec generateIStack() {
+    // public static interface IStack<Tail extends IStack>
     return TypeSpec.interfaceBuilder(BASE_STACK.typename) //
         .addModifiers(Modifier.STATIC).addTypeVariable(TypeVariableName.get("Tail", type(BASE_STACK))) //
         .addAnnotation(suppressWarningAnnot("all"))//
         .build();
   }
   static TypeSpec generateEmptyStack() {
-    // public class EmptyStack implements IStack<EmptyStack>
+    // public static class EmptyStack implements IStack<EmptyStack>
     return TypeSpec.classBuilder(Classname.EMPTY_STACK.typename) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)//
         .addAnnotation(suppressWarningAnnot("all"))//
