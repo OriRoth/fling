@@ -1,60 +1,68 @@
-\title{Formal Language Recognition with the Java Type Checker}
-
-\documentclass[a4paper,USenglish]{lipics}
+\documentclass[nonatbib,preprint,numbers]{sigplanconf}
+\authorinfo{Mr.\ U. N. Owen}{}{}
+\title{%
+\begin{flushright}
+  \scriptsize\bfseries
+  Software design is language design. \\
+    (And vice versa.) \\
+  \footnotesize\mdseries\itshape
+   a programmers' proverb
+\end{flushright}
+  \Huge \Fajita \\ 
+  \huge \itshape \textbf Fluent \textbf API for \textsc{\textbf Java} \\
+  \LARGE (\textbf Inspired by the \textbf Theory of \textbf Automata)
+}
 \usepackage{\jobname}
 
-\author{Joseph (Yossi) Gil \& Tomer Levy
-%  Department of Computer Science⏎
-%  Technion---Israel Institute of Technology⏎
-%  \texttt{\small
-%%    \href{mailto:stlevy@campus.technion.ac.il}{stlevy@campus.technion.ac.il}
-%    \qquad
-%    \href{mailto:yogi@campus.technion.ac.il}{yogi@campus.technion.ac.il}
-%  }
-}
-
 \begin{document}
-
-\section{The LL Recognizer}
-\input llrecognizer
-\end{document}
-
 \maketitle
-\hfill
-\parbox{40ex}{%
-  \begin{flushright}
-    \scriptsize\itshape ``\NonCitingUse{Java} generics are 100\% pure syntactic sugar,
-    and do not support meta-programming''\footnotemark
-  \end{flushright}
-}
-\newline
-
-\footnotetext{Found on stackoverflow:
-  \tiny
-      \url{http://programmers.stackexchange.com/questions/95777/generic-programming-how-often-is-it-used-in-industry}
-    }
 
 \begin{abstract}
   \input{abstract}
 \end{abstract}
 
+Must include in a place that would not be missed.
+\begin{itemize}
+  \item \Prolog Unification.  We investigated wildcards, intersection types and
+        (the rather limited) type inference of Java, but failed to employ these to
+        increase the expressive power of the computation model.
+        \item~$aⁿbⁿcⁿ$
+\end{itemize}
+
 \section{Introduction}
 \input{aa}
 
+\paragraph{Outline.} 
+\Cref{Section:proposal} 
+  explains how \Fajita may serve the designer of a fluent API. 
+Then, \Cref{Section:theoretical-background} discusses the 
+  the core computational theory problem that \Fajita 
+  needs to solve: recognizing and parsing of formal languages
+  within the framework of the limited abilities of \Java
+  generics.
+The language recognition algorithm that \Fajita
+  implements is the subject of \cref{Section:recognizer}.
+The main ideas behind the bootstrapping definition of \Self 
+  are revealed in \Cref{Section:bootstrapping}. 
+\Cref{Section:zz} concludes. 
+
+
+
+
 \textbf{Outline.} \small
-\Cref{Section:fluent} is a brief reminder of method chaining, 
+\Cref{Section:fluent} is a brief reminder of method chaining,
   and fluent APIs, accompanied a discussion of how this work is related to type states.
-It is followed by a similar reminder of context-free languages, pushdown automata, 
+It is followed by a similar reminder of context-free languages, pushdown automata,
   and such in \cref{Section:pushdown}.
-Based on the vocabulary established this far, 
+Based on the vocabulary established this far,
   the main result is stated in~\cref{Section:result}.
-  
-Towards the proof in \cref{Section:proof}, \cref{Section:toolkit} 
-  shows idioms and techniques for encoding computation with    
+
+Towards the proof in \cref{Section:proof}, \cref{Section:toolkit}
+  shows idioms and techniques for encoding computation with
   the \Java type-checker.
-\Cref{Section:jump} makes use of these for encoding 
-  ``jump-stack'', a non-trivial data-structure,
-  which is used, with suitable modifications, in the proof. 
+\Cref{Section:jump} makes use of these for encoding
+  ‟jump-stack”, a non-trivial data-structure,
+  which is used, with suitable modifications, in the proof.
 
 In \cref{Section:applicability}, we discuss the challenges in
   translating the proof into a compiler-compiler for fluent APIs.
@@ -68,11 +76,15 @@ In particular, this section demonstrates our claim (that may be
 \label{Section:fluent}
 \input{fluent}
 
+\section{The \Fajita Language Recognizer}
+\label{Section:recognizer}
+\input recognizer
+
 \section{Context-Free Languages and Pushdown Automata: Reminder and Terminology}
 \label{Section:pushdown}
 \input{pushdown}
 
-\section{Statement of the Main Result} 
+\section{Statement of the Main Result}
 \label{Section:result}
 \input{result}
 
@@ -101,8 +113,7 @@ In particular, this section demonstrates our claim (that may be
 \input{zz}
 
 % \textbf{Acknowledgment.}
-% Inspiring correspondence with Gilad Bracha is gratefully acknowledged. 
-
+% Inspiring correspondence with Gilad Bracha is gratefully acknowledged.
 
 \bibliographystyle{abbrv}\small
 \bibliography{author-names,other-shorthands-abbreviated,%
@@ -111,7 +122,7 @@ In particular, this section demonstrates our claim (that may be
  journals-abbreviated,journals-full,%
  yogi-book,yogi-practice,yogi-journal,yogi-tr,%
  GPCE,OOPSLA,PLDI,USENIX,ECOOP,%
- 00,yogi-confs}	
+ 00,yogi-confs}
 
 \clearpage
 \appendix
@@ -119,7 +130,6 @@ In particular, this section demonstrates our claim (that may be
 \input algorithm
 
 \end{document}
-
 
 Processing programming languages
 \begin{description}

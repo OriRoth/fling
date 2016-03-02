@@ -10,7 +10,7 @@ With these, \[
     \textsf{java}(caba) = \cc{c().a().b().a()}
   \]
 
-\begin{theorem}\label{Theorem:Gil-Levy}
+\begin{Theorem}\label{Theorem:Gil-Levy}
   Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
   Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
     other types such that the \Java command
@@ -20,7 +20,7 @@ With these, \[
   \end{equation}
   type checks against~$J_A$ if an only if~$α∈L$.
   Furthermore, program~$J_A$ can be effectively generated from~$A$.
-\end{theorem}
+\end{Theorem}
 
 \Cref{Equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{A},
   apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
