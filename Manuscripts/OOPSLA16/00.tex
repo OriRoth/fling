@@ -49,64 +49,21 @@ The main ideas behind the bootstrapping definition of \Self
 
 
 
-\textbf{Outline.} \small
-\Cref{Section:fluent} is a brief reminder of method chaining,
-  and fluent APIs, accompanied a discussion of how this work is related to type states.
-It is followed by a similar reminder of context-free languages, pushdown automata,
-  and such in \cref{Section:pushdown}.
-Based on the vocabulary established this far,
-  the main result is stated in~\cref{Section:result}.
+\section{\Fajita as a development tool}
+\label{Section:proposal}
+\input{proposal}
 
-Towards the proof in \cref{Section:proof}, \cref{Section:toolkit}
-  shows idioms and techniques for encoding computation with
-  the \Java type-checker.
-\Cref{Section:jump} makes use of these for encoding
-  ‟jump-stack”, a non-trivial data-structure,
-  which is used, with suitable modifications, in the proof.
+\section{Theoretical background}
+\label{Section:theoretical-background}
+\input background
 
-In \cref{Section:applicability}, we discuss the challenges in
-  translating the proof into a compiler-compiler for fluent APIs.
-In particular, this section demonstrates our claim (that may be
-  surprising to some) that the standard \Java compiler may spend
-  an exponential time on compiling rather simple programs.
-\cref{Section:zz} concludes with directions for further research.
-\normalsize
-
-\section{Method Chaining, Fluent APIs, and, Type States}
-\label{Section:fluent}
-\input{fluent}
-
-\section{The \Fajita Language Recognizer}
+\section{The LL Recognition algorithm}
 \label{Section:recognizer}
 \input recognizer
 
-\section{Context-Free Languages and Pushdown Automata: Reminder and Terminology}
-\label{Section:pushdown}
-\input{pushdown}
-
-\section{Statement of the Main Result}
-\label{Section:result}
-\input{result}
-
-\section{Techniques of Type Encoding}
-\label{Section:toolkit}
-\input{toolkit}
-
-\section{The Jump-Stack Data-Structure}
-\label{Section:jump}
-\input{jump}
-
-\section{Proof of \Cref{Theorem:Gil-Levy}}
-\label{Section:proof}
-\input{proof}
-
-\section{The Prefix Theorem}
-\label{Section:prefix}
-\input{prefix}
-
-\section{Notes on Practical Applicability}
-\label{Section:applicability}
-\input{applicability}
+\section{Bootstrapping \Fajita}
+\label{Section:bootstrapping}
+\input bootstrapping
 
 \section{Conclusion and Future Work}
 \label{Section:zz}

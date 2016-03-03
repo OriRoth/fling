@@ -1,23 +1,8 @@
 MAIN=00
 LATEX=lualatex -file-line-error
-LANG_TOOL=~/Downloads/LanguageTool-3.1/languagetool-commandline.jar
 
 
 LISTINGS=
-LISTINGS+=abc.listing 
-LISTINGS+=binary-function-example.listing 
-LISTINGS+=binary-function.listing 
-LISTINGS+=compiler.listing
-LISTINGS+=gamma-example.listing 
-LISTINGS+=gamma.listing 
-LISTINGS+=id.listing
-LISTINGS+=jump-stack-currency.listing 
-LISTINGS+=jump-stack-E.listing 
-LISTINGS+=jump-stack-example.listing
-LISTINGS+=jump-stack.listing 
-LISTINGS+=jump-stack-push.listing 
-LISTINGS+=mammal.listing 
-LISTINGS+=peep.listing 
 LISTINGS+=proof.cases.listing 
 LISTINGS+=proof.many.listing 
 LISTINGS+=proof.configuration.listing 
@@ -27,9 +12,6 @@ LISTINGS+=prefix-proof.configuration.listing
 LISTINGS+=prefix-proof.many.listing 
 LISTINGS+=prefix-proof.cases.listing 
 LISTINGS+=prefix-proof.full.listing 
-LISTINGS+=spda.listing 
-LISTINGS+=stack.listing
-LISTINGS+=stack-use-cases.listing
 
 .PHONY: latex view bibtex graphs all bibtex clean 
 
@@ -61,8 +43,6 @@ all:	graphs bibtex latex
 
 CODE_PATH = ../../src/main/java/automaton
 
-DOMAIN = $(CODE_PATH)/Domain.java 
-DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  
 JDPDA = $(CODE_PATH)/jDPDA.java
 PREFIX_JDPDA = $(CODE_PATH)/prefix_jDPDA.java
 
@@ -93,68 +73,6 @@ proof.full.listing: $(JDPDA)
 proof.cases.listing: $(JDPDA)
 	awk '/begin{cases}/{f=1;c+=1;next}/end{cases}/{f=0;next}f&& $$0!~/begin{/ && $$0!~/end{/{print}' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
 
-jump-stack-example.listing: $(CODE_PATH)/JumpStackDemo.java
-	awk '/^.*jump_stack.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-compiler.listing: ../Figures/Cons.java
-	awk '/^.*interface.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-jump-stack.listing: $(DOMAIN)
-	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
-		| grep -v Override  \
-    | awk 'BEGIN{RS="{[\n\t ]+}\n"; ORS="{ … }\n"}{print}' \
-		| head -n -1 \
-	  | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-jump-stack-currency.listing: $(DOMAIN)
-	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
-	| awk '/^.*interface *¤ .*$$/,/^    }.*$$/' $< | sed 's/^    //' \
-	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-jump-stack-E.listing: $(DOMAIN)
-	awk '/^.*interface *JS.*$$/,/^  }.*$$/' $<  \
-	| awk '/^.*interface *E .*$$/,/^    }.*$$/' | sed 's/^    //' \
-	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-jump-stack-push.listing: $(DOMAIN)
-	awk '/^.*private *interface *P.*$$/,/^  }.*$$/' $< | sed 's/^  //' \
-	| sed -e 's/@Override //' \
-	| ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-	
-
-stack.listing: $(DOMAIN)
-	awk '/^.*Stack *<Rest.*>> *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-stack-use-cases.listing: $(DOMAIN_DEMO)
-	awk '/^.* use.*of_stack().*$$/,/^  }.*$$/' $< | sed 's/^  //' |  ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-gamma.listing: $(DOMAIN)
-	awk '/^.*class *Γʹ *{ *$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-gamma-example.listing: $(DOMAIN_DEMO)
-	awk '/^.*function_g.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-binary-function.listing: $(DOMAIN)
-	awk '/^.*static abstract class f {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-	awk '/^.*static abstract class R {.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) >> $@ 
-
-mammal.listing: $(DOMAIN_DEMO)
-	awk '/^.*Mammals.*$$/,/^.*extends Heap.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-binary-function-example.listing:  $(DOMAIN_DEMO)
-	awk '/^.*function_f.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-spda.listing: $(DOMAIN)
-		awk '/^.*public static abstract class Q<S\s.*$$/,/^  }.*$$/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-id.listing: $(DOMAIN)
-		awk '/^.*interface ID.*$$/,/^.*class C/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-abc.listing: $(DOMAIN_DEMO)
-		awk '/^.*interface ID.*$$/,/^.*class C/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
-
-peep.listing:  $(DOMAIN_DEMO)
-		awk '/^.*Peep *<.*$$/,/^  }/' $< | sed 's/^  //' | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@
 
 warnings:	
 	 $(LATEX) -file-line-error -synctex=1 -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
@@ -167,9 +85,6 @@ spelling:
 
 dup:
 	for f in *.tex ; do if [ $$f != 00.tex ]; then dup $$f;fi; done
-
-lang:
-	for f in *.tex ; do if [ $$f != 00.tex ]; then detex $$f > $$f.detexed | java -jar ~/Downloads/LanguageTool-3.1/languagetool-commandline.jar -d WHITESPACE_RULE $$f.detexed ; rm -f $$f.detexed ;fi; done
 
 JUNKFILES=
 JUNKFILES+=$(wildcard *~ *.aux )

@@ -1,3 +1,4 @@
+% Taken from proof.tex
 On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{Section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
 The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
@@ -286,3 +287,229 @@ The returned types, allow a call chain~$\textsf{java}(\alpha)$,
   configuration of the input automaton after reading~$\alpha$.
 If the automaton rejects after~$\alpha$, then the returned type is the illegal~$\Sigma\Sigma$, 
   and if the automaton accpets, the type shall be~$L$.
+
+
+% Taken from prefix.tex
+
+\begin{Theorem}\label{Theorem:Gil-Levy:2}
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A},~\cc{C} and
+    other types such that the \Java command
+  \begin{equation}
+    \label{Equation:prefix:result}
+    \cc{C c = A.build.$\textsf{java}(α)$;}
+  \end{equation}
+    type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
+    that~$αβ∈L$ and type \cc{C} is the configuration of~$A$ after reading~$α$.
+  Furthermore, for any such~$β$,~\cref{Theorem:Gil-Levy} applies such that the
+  \Java command
+  \begin{equation}
+    \cc{L~$ℓ$ = A.build.$\textsf{java}(αβ)$}\cc{.\$();}
+  \end{equation}
+    always type-checks.
+  Finally, the program~$J_A$ can be effectively generated from~$A$.
+\end{Theorem}
+
+Informally, a call chain type-checks if and only if it is a prefix
+  of some legal sequence.
+Alternatively, a call chain won't type-check if there is no
+  continuation that leads to a legal string in~$L$.
+
+The proof resembles~\cref{Theorem:Gil-Levy}'s proof.
+We provide a similar implementation for a jump-stack
+  †{recall that the two formal constructs are of the same expressiveness},
+  that will not compile under illegal prefixes.
+
+The main difference between the two theorems is:
+  in~\cref{Theorem:Gil-Levy} we allowed illegal call chains to compile,
+  but not return the required~\cc{L} type, while in~\cref{Theorem:Gil-Levy:2}
+  the illegal chain won't compile at all.
+
+Since the code suggested by the proof highly resembles the previously
+  suggested code, mainly the differences will be discussed.
+
+We will use the same running example, defined by~\cref{Table:A}.
+
+\subsection{Main Types}
+The main types here are a subset of the previously defined main types.
+
+\begin{quote}
+  \javaInput[minipage,width=45ex,left=-2ex]{prefix-proof.configuration.listing}
+\end{quote}
+
+First, type \cc{$ΣΣ$} is removed.
+A call chain that doesn't represent a valid prefix won't compile,
+  thus, there is no need for an error return type such as \cc{$\SigmaΣ$}.
+Second, \kk{interface}~\cc{C} is removed.
+Without it, the configuration types won't have the
+  methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} from the supertype.
+These inherited methods, is what differentiates the previous proof from the current.
+Classes \cc{¤} and \cc{E} are defined similarly, except now they don't extend any type.
+
+\subsection{Top-of-Stack Types}
+Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
+  with \cc{$γ$1}, … ,\cc{$γ${}$k$} as their top element,
+  this time, the methods are defined ad-hock, in each type
+  (they are not added in this figure as they are added with the use of sidekicks).
+In~$A$ there are two such types:
+
+\begin{quote}
+  \javaInput[minipage,width=51ex,left=-2ex]{prefix-proof.many.listing}
+\end{quote}
+
+
+Note, that the type parameters of the former types hasn't changed,
+  since the model we are trying to implement, hasn't changed.
+  These~$k+1$ parameters still suffice for our cause.
+
+\begin{wrapfigure}[13]r{42ex}
+  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
+  cause type errors}
+  \javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
+\end{wrapfigure}
+
+In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method
+  correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
+  do not type-check (i.e., these prefixes have no continuation that can lead to a legal word in~$L$),
+  where the last method invocation generates an
+\begin{quote}
+  ‟\textsf{method~…~is undefined for the type~…~}”
+\end{quote}
+  error message.
+
+The main difference between~\cref{Figure:prefix-chain} and~\cref{Figure:chain} is that there is no need to
+  use an auxiliary function \cc{isL()} as in~\cref{Figure:prefix-chain} since now illegal
+  prefixes do not type-check.
+
+\subsection{Transitions}
+Due to the changes we expressed, the transition table is encoded slightly different.
+
+Encoding of the legal operations \textsf{accept},~$\textsf{jump}(γᵢ)$ and~$\textsf{push}(ζ)$
+  remains as in~\cref{Theorem:Gil-Levy}, since we want the same behavior for legal call chains.
+The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
+
+\begin{description}
+ \item[\textsf{reject}] Since we add the methods ad-hock to each type, the reject entry means
+   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$γ$2}
+   doesn't have a method~\cc{\$()}.
+ \item[$⊥$] We encounter~$⊥$ on the transition function when some input character~\cc{$σ$}
+   is not allowed for the top of the stack element~$γ$. In that case, the corresponding type \cc{C$γ$}
+   \emph{must not} have a method for~\cc{$σ$}, this way, invoking the methods will result in type error.
+   In \cref{Table:A} a~$⊥$ may occur when the top of the stack is~$γ₁$ and the input character is~$σ₂$,
+   thus, no method \cc{$σ$2} is introduced in type~\cc{C$γ$1}.
+\end{description}
+
+The use of sidekicks is still allowed and recommended to improve readability of code.
+
+\begin{figure}[htbp]
+  \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})
+    that allow a partial call chain, if and only if, there exists a legal continuation, that
+    leads to a word in~$L$ (the language of~$A$}
+  \javaInput[minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+\end{figure}
+
+\paragraph*{Conclusion}
+In this section, a proof, similar to the one in~\cref{Section:proof} is provided.
+An algorithm was introduced, to not only emulate the running of some jDPDA~$A$,
+  but also to ‟halt it” in the earliest time possible, i.e., only if there is
+  no legal call chain from this point to result in a legal word in the language of~$A$.
+
+% Taken from result.tex
+
+Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
+into a call to a uniquely named function (with respect to~$σ$).
+Let~$\textsf{java}(α)$, be the function
+  that translates a string~$α∈Σ^*$ into a fluent API call chain.
+  If~$α=σ₁⋯σₙ∈Σ^*$, then \[
+  \textsf{java}(α)=\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}
+\]
+For example, when~$Σ=❴a,b,c❵$ let~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
+With these, \[
+    \textsf{java}(caba) = \cc{c().a().b().a()}
+  \]
+
+\begin{Theorem}\label{Theorem:Gil-Levy}
+  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
+  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
+    other types such that the \Java command
+  \begin{equation}
+    \label{Equation:result}
+    \cc{L~$ℓ$ = A.build.$\textsf{java}(α)$}\cc{.\$();}
+  \end{equation}
+  type checks against~$J_A$ if an only if~$α∈L$.
+  Furthermore, program~$J_A$ can be effectively generated from~$A$.
+\end{Theorem}
+
+\Cref{Equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{A},
+  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
+  ending character~\cc{\$()} and then assign to newly declared \Java variable~\cc{$ℓ$} of type~\cc{L}.
+
+The proof of the theorem is by a scheme for encoding in \Java types
+  the pushdown automaton~$A=A(L)$ that recognizes language~$L$.
+Concretely, the scheme assigns a type~$τ(c)$
+  to each possible configuration~$c$ of~$A$.
+Also, the type of \cc{A.build} is~$τ(c₀)$, where~$c₀$ is the initial configuration of~$A$,
+
+Further, in each such type the scheme places
+  a function~$σ()$ for every~$σ∈Σ$.
+Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$cⱼ$
+  in response to an input character~$σₖ$.
+Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
+
+With this encoding the call chain in \cref{Equation:result}
+  mimics the computation of~$A$, starting at~$c₀$ and ending with
+  rejection or acceptance.
+The full proof is in \cref{Section:proof}.
+
+Since the depth of the stack is unbounded, the number of configurations of $A$ is unbounded,
+  and the scheme must generate an infinite number of types.
+Genericity makes this possible, since a generic type is
+  actually device for creating an unbounded number of types.
+
+There are several, mostly minor, differences between the structure of the \Java code
+in \cref{Equation:result}
+and the examples of fluent API we saw above, e.g., in \cref{Figure:DSL}:
+\begin{description}
+  \item[Prefix, i.e., the starting \cc{A.build} variable.]
+  All variables and functions of \Java are defined within a class.
+  Therefore, a call chain must start with an object (\cc{A.build} in \cref{Equation:result})
+  or, in case of \cc{static} methods, with the name of a class.
+  In fluent API frameworks this prefix is typically eliminated
+  with appropriate \cc{import} statements.
+  \par
+  If so desired, the same can be done by our type encoding scheme: define all
+  methods in type~$τ(c₀)$ as \cc{static} and \cc{import static} these.
+  \item[Suffix, i.e., the terminal \cc{.\$()} call.]
+  In order to know whether~$α∈L$ the automaton recognizing~$L$ must
+  know when~$α$ is terminated.
+  \par
+  With a bit of engineering, this suffix can also be eliminated.
+  One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
+  an accepting configuration, as subtype of~\cc{L}.
+  \item[Parameterized methods.]
+  Fluent API frameworks support call chains with phrases such as:
+  \begin{itemize}
+    \item ‟\lstinline{.when(header(foo).isEqualTo("bar")).}”,
+    \item ‟\lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}”, and,
+    \item ‟\lstinline{.allowing(any(Object.class)).}”.
+  \end{itemize}
+  while our encoding scheme assumes methods with no parameters.  
+  \par
+    Methods with parameters contribute to the user
+      experience and readability of fluent APIs but their ``computational expressive power"' is the same.
+      In fact, extending
+      \cref{Theorem:Gil-Levy} to support these requires these conceptually simple steps 
+      \begin{enumerate}
+        \item Define the structure of parameters to methods with appropriate fluent API, which may or
+          may not be, the same as the fluent API of the outer chain, or the fluent API of parameters to
+          other methods. Apply the theorem to each of these fluent APIs.
+        \item
+          If there are several overloaded versions of a method, consider each such version as a distinct
+          character in the alphabet~$Σ$ and in the type encoding of the automaton.
+        \item
+          Add code to the implementation of each method code to store the 
+          store the value of its argument(s) in a record placed at the end of the fluent-call-list. 
+      \end{enumerate}
+\end{description}
