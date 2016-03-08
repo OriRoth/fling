@@ -1,29 +1,39 @@
 package automaton;
 
+import automaton.ContextSensitive.End;
 import automaton.Domain.Stack;
 import automaton.Domain.Stack.E;
 import automaton.Domain.Stack.P;
 
-class ContextSensitive{
-  
-  public static interface C_$_${
-    C_L_L a();
+class ContextSensitive {
+  public static interface End {
+    void $();
   }
-  public static interface C_L_L{
-    C_a_a<C_L_a> a();
+
+  // Type Arguments : <PopLeft , PopRight , PopBoth >
+  public static interface C_$_$ {
+    C_L_L<C_$_L, C_L_$, C_$_$> a();
   }
-  public static interface C_a_a<Tail>{
-    C_a_a<C_a_a<Tail>> a();
+
+  public static interface C_$_L {
+    End c();
+  }
+
+  public static interface C_L_$ {
+  }
+
+  public static interface C_L_L<LPop, RPop, BPop> {
+    C_a_a<C_L_a,C_a_L,C_L_L<LPop,RPop,BPop>> a();
+  }
+
+  public static interface C_a_a<LPop,RPop,BPop>{
+    C_a_a<C_a_a<LPop,>,,C_a_a<LPop,RPop,BPop>> a();
     
     b();
   }
-  public static interface C_L_a{
-   C_$_a b();
+
+  public static interface C_L_a {
+    C_$_a b();
   }
-  abstract class Γ { 
-    public static final class A extends Γ {
-    }
-    public static final class L extends Γ {
-    }
-  }
+
 }
