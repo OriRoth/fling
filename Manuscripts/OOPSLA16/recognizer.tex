@@ -28,3 +28,25 @@
     \RETURN{$l$}
   \end{algorithmic}
 \end{algorithm}
+
+\begin{Definition}[JETEM]
+  JETEM is a variant of pushdown automata that maintains two
+    stacks:
+    \begin{description}
+      \item[Call stack]
+      \item[Epsilon stack]
+    \end{description}
+    At each step of the automaton, it reads a single character,
+      and determines based on the character and the current top of the call stack, what to do:
+    \begin{description}
+      \item[Epsilon] if character is not in first, but is in follow
+      \item[Call] if character is in first but not in follow
+      \item[Reject] if character is not in first nor in follow
+      \item[Accept] when input exhausted. 
+    \end{description}
+
+
+  \begin{enumerate}
+      \item 
+
+\end{Definition}
