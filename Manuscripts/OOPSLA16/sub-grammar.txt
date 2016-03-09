@@ -1,0 +1,18 @@
+Program_Definition  ->  program id Parameters ; Definitions Body.
+Body                ->  begin end.
+
+Definitions  -> Labels Constants Nested.
+
+Labels      -> | label Label_Declaration Optional_Labels . 
+Constants   -> | const Constant Optional_Constants .
+
+Label_Declaration    -> ; .
+Constant             -> ; .
+
+Optional_Labels     ->  |  Label_Declaration Optional_Labels.
+Optional_Constants  ->  |  Constant Optional_Constants.
+
+Nested -> | Procedure_Definition Nested .
+
+Procedure_Definition -> procedure id Parameters ; Definitions ( Body .
+Parameters           -> |  . 

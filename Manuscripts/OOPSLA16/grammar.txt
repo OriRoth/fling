@@ -1,4 +1,4 @@
-Program_Definition  ->  program Identifier ; Definitions Body.
+Program_Definition  ->  program Identifier Parameters ; Definitions Body.
 Identifier          ->  id.
 Body                ->  begin end.
 
@@ -24,6 +24,6 @@ Optional_Variables  ->  |  Variable Optional_Variables.
 Nested -> | Module Nested.
 Module  -> Function_Definition | Procedure_Definition.
 
-Procedure_Definition -> procedure Identifier Parameters ; Definitions Body.
+Procedure_Definition -> procedure Identifier Parameters ; Definitions ( Body.
 Function_Definition  -> function Identifier Parameters : Identifier ; Definitions Body.
 Parameters           -> | (). 
