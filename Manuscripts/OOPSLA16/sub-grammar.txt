@@ -15,4 +15,76 @@ Optional_Constants  ->  |  Constant Optional_Constants.
 Nested -> | Procedure_Definition Nested .
 
 Procedure_Definition -> procedure id Parameters ; Definitions ( Body .
-Parameters           -> |  . 
+Parameters           -> | () . 
+
+abstract class S {
+
+  protected S semi_t() { return null; }
+  protected S open_t() { return null; }
+  protected S pair_t() { return null; }
+  protected S abstract_t() { return null; }
+  protected S begin_t() { return null; }
+  protected S const_t() { return null; }
+  protected S end_t() { return null; }
+  protected S extends_t() { return null; }
+  protected S id_t() { return null; }
+  protected S label_t() { return null; }
+  protected S procedure_t() { return null; }
+  protected S program_t() { return null; }
+}
+
+// rule #1 of Program_Definition
+class Program_Definition0 extends S {}
+class Program_Definition1 extends S {}
+class Program_Definition2 extends S {}
+class Program_Definition3 extends S {}
+class Program_Definition4 extends S {}
+class Program_Definition5 extends S {}
+
+// rule #1 of Body
+class Body0 extends Body1 {}
+class Body1 extends S {}
+
+// rule #1 of Constant
+class Constant0 extends S {}
+
+// rule #1 of Constants
+class Constants0 extends S {}
+class Constants1 extends S {}
+
+// rule #1 of Definitions
+class Definitions0 extends S {}
+class Definitions1 extends S {}
+class Definitions2 extends S {}
+
+// rule #1 of Label_Declaration 
+class Label_Declaration0 extends S {}
+
+// rule #1 of Labels 
+class Labels0 extends S {}
+class Labels1 extends S {}
+class Labels2 extends S {}
+
+// rule #1 of Nested 
+class Nested0 extends S {}
+class Nested1 extends S {}
+
+// rule #1 of Optional_Constants 
+class Optional_Constants0 extends S {}
+class Optional_Constants1 extends S {}
+
+// rule #1 of Optional_Labels 
+class Optional_Labels0 extends S {}
+class Optional_Labels1 extends S {}
+
+// rule #1 of Parameters 
+class Parameters0 extends S {}
+
+// rule #1 of Procedure_Definition 
+class Procedure_Definition0 extends S {}
+class Procedure_Definition1 extends S {}
+class Procedure_Definition2 extends S {}
+class Procedure_Definition3 extends S {}
+class Procedure_Definition4 extends S {}
+class Procedure_Definition5 extends S {}
+class Procedure_Definition6 extends S {}
