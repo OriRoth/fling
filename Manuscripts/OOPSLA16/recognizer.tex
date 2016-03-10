@@ -1,3 +1,15 @@
+% Why can't we encode it as a normal DPDA?
+The implementation of the LL parser as recoginer without using
+  a jump-stack is problematic since LL grammars allow~$\epsilon$-rules.
+During the processing of the~$\epsilon$-rule, the parser pops the 
+  left-hand side of the rule and continues to process the penulitimate
+  stack element.
+It is possible to have multiple~$\epsilon$ rules processed sequencially,
+  that leads to the \textit{realtime} problem - we can only encode
+  automata that do constant amount of computation on each input character
+  process.
+
+%How does the LL parser work?
 During normal LL parsing, the configuration of the parser consists
   of three elements:
 \begin{Itemize}
@@ -9,6 +21,8 @@ During normal LL parsing, the configuration of the parser consists
   \item the rest of the input string
 \end{Itemize}
 
+
+% How can we encode it?
 The corresponding \Java fluent API ought to have equivalent features.
 The input string - since we transform each
   token to a method invocation, it is clear that the rest of the input is
@@ -23,13 +37,51 @@ Using these transformers, we can describe a state of the parser,
 This is of course necessary in order to describe all posible configurations
   in a finite number of \Java types.
 
+\begin{figure}[H]
+  \begin{Grammar}
+    \begin{aligned}
+      \<BNF>                     & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
+      \<Header>                  & ::= \<Variables> \~\<Terminals> \hfill⏎
+      {}                         & \| \<Terminals> \~\<Variables> \hfill⏎
+      \<Variables>               & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Terminals>               & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Body>                    & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
+      \<Rules>                   & ::= \<Rule> \~\<Rules>\hfill⏎
+      {}                         & \| \<Rule> \hfill⏎
+      \<Rule>                    & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
+      \<Conjunctions>            & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {}                         & \| \cc{toNone()}\hfill⏎
+      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      {}                         & \| ε\hfill⏎
+      \<Extra-Conjunction>  & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {}                         & \| \cc{orNone()} \hfill⏎
+      \<Symbol-Sequence>         & ::= ε \hfill⏎
+      {}                         & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
+      \<Symbol>                  & ::= \cc{Variable} \hfill⏎
+      {}                         & \| \<Verb>\hfill⏎
+      {}                         & \| \<Verb> \cc{,} \<Noun> \hfill⏎
+      \<Noun>                    & ::= \<Variable> \hfill⏎
+      {}                         & \| \<Existing-Class> \hfill⏎
+      \<Variable>                & ::= \cc{Variable} \hfill⏎
+      \<Footer>                  & ::= \cc{go()}\hfill⏎
+    \end{aligned}
+  \end{Grammar}
+  \caption{A BNF grammar for defining BNF grammars}
+  \label{Figure:BNF:BNF}
+\end{figure}
+
+%
 \subsection{LL states}
-A state during the parser computation is a grammar rule~$r = A→αβ$, and an
-index in it depicted by a dot($·$) in the rule i.e.,~$A→α·β$.
+A state during the parser's computation is a grammar rule~$r = A→αβ$, and an
+index in it, i.e.,~$A→α·β$.
 It means that the parser is currently processing rule~$r$, it already realized parsed string~$alpha$
   from the input, and it expect to parse the string~$β$ next.
 The number of states then, produced by \Fajita for a grammar is linear in the grammar size.
+
 \subsection{Environment}
+
 
 
 \renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
