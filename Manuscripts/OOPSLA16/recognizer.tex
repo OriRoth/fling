@@ -1,3 +1,37 @@
+During normal LL parsing, the configuration of the parser consists
+  of three elements:
+\begin{Itemize}
+  \item the current state of the parsing - which is the
+    rule being currently processed and the part of the rule we
+    haven't parsed yet.
+  \item the environment, or the parsing information we got so far -
+    which is the rest of the stack
+  \item the rest of the input string
+\end{Itemize}
+
+The corresponding \Java fluent API ought to have equivalent features.
+The input string - since we transform each
+  token to a method invocation, it is clear that the rest of the input is
+  simply the rest of the method chain.
+The current state of the parsing is transformed into a \Java type
+  (\kk{class} or \kk{interface}) ; this way we can control for each state
+  which operation can be made by determining the method of that type.
+The environment is realized by type arguments of the states' \Java types.
+
+Using these transformers, we can describe a state of the parser,
+  with different stacks using a single type.
+This is of course necessary in order to describe all posible configurations
+  in a finite number of \Java types.
+
+\subsection{LL states}
+A state during the parser computation is a grammar rule~$r = A→αβ$, and an
+index in it depicted by a dot($·$) in the rule i.e.,~$A→α·β$.
+It means that the parser is currently processing rule~$r$, it already realized parsed string~$alpha$
+  from the input, and it expect to parse the string~$β$ next.
+The number of states then, produced by \Fajita for a grammar is linear in the grammar size.
+\subsection{Environment}
+
+
 \renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
 \newcommand\INPUT\REQUIRE
 \newcommand\OUTPUT\ENSURE
@@ -13,7 +47,7 @@
     \OUTPUT{the closure of consecutive actions}
     \LET{$l$}{$[]$}
     \LET{$X$}{$A$}
-    \IF{$∀X→α .  b∉\function First(α)$}
+    \IF{$∀X→α . b∉\function First(α)$}
       \RETURN{\textrm{reject}}
     \ENDIF
     \WHILE{$\textrm{True}$}
@@ -44,11 +78,10 @@
       \item[Epsilon] if character is not in first, but is in follow
       \item[Call] if character is in first but not in follow
       \item[Reject] if character is not in first nor in follow
-      \item[Accept] when input exhausted. 
+      \item[Accept] when input exhausted.
     \end{description}
 
-
   \begin{enumerate}
-      \item 
+      \item
 
 \end{Definition}
