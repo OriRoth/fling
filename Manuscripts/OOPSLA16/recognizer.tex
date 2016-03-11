@@ -74,8 +74,12 @@ The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
   \end{enumerate}
 \end{algorithm}
 
-As seen in the figure, the DPDA pops its state from the
-  stack.
+The DPDA maintains a stack of ‟anticipated” symbol, which may
+  be of three kinds: a terminal drawn from the input alphabet~$Σ$,
+  an -end-of=file symbol~$\$$, or, 
+  or one of $Ξ$, the set of nonterminals of the underlying
+  grammar.
+
 If the state is an input terminal or the special, end-of-file,
   symbol~$\$$, then it must match
   the next terminal found in the input stream.
@@ -84,8 +88,7 @@ The parser accepts if the input is exhausted with
   no rejections.
 
 The more interesting case is that~$X$, the popped symbol
-  is a nonterminal.
-If this is the case, then the DPDA peeks into the next terminal in the input
+  is a nonterminal: the DPDA peeks into the next terminal in the input
   stream (without consuming it).
 Based on this terminal, and~$X$ the transition function~$δ$
   determines~$R$ the derivation rule to use in order to derive~$X$.
