@@ -112,49 +112,58 @@ Some of the~$δ$ function values for this grammar are
 \begin{equation}
 δ = 3 !
 \end{equation}
+
+\newsavebox{\MyBox}
+\begin{lrbox}{\MyBox}
+  \begin{tabularx}{0.4\linewidth}{c}
+    \cc{program}, \cc{begin}, \cc{end}, \\
+    \cc{label}, \cc{const}, \cc{id},    \\
+    \cc{procedure}, \cc{;}, \cc{(}, \cc{()}
+  \end{tabularx}
+        \end{lrbox}
+
 \begin{figure}
   \caption{\label{Figure:running}
-  An LL(1) grammar over the alphabet~
-  $$Σ = \left❴
-  %\begin{array}{c}
-    \cc{program}, \cc{begin}, \cc{end}, %\\
-    \cc{label}, \cc{const}, \cc{id}, %\\
-    \cc{procedure}, \cc{;}, \cc{(},%{)}
-    \cc{()} 
-  %\end{array}
-  \right❵$$
-  (inspired by the original \Pascal grammar; to serve as 
-  our running example)
-}
+    An LL(1) grammar over the alphabet
+    \[
+      Σ =
+      \left❴
+      \usebox\MyBox
+      \right❵
+      .
+    \]
+    (inspired by the original \Pascal grammar; to serve as
+    our running example)
+  }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
-      \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
-\<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
-      \<Labels> & ::=ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
-      \<Constants> & ::=ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
-      \<Label> & ::=~\cc{;} \hfill⏎
-      \<Constant> & ::=~\cc{;} \hfill⏎
-\<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
-\<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
-\<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
-      \<Parameters> & ::= ε \| \cc{()} \hfill⏎
-\end{aligned}
-\end{Grammar}
+      \<Program>       & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
+      \<Body>          & ::= \cc{begin} \cc{end}\hfill⏎
+      \<Definitions>   & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
+      \<Labels>        & ::= ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
+      \<Constants>     & ::= ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
+      \<Label>         & ::=~\cc{;} \hfill⏎
+      \<Constant>      & ::=~\cc{;} \hfill⏎
+      \<MoreLabels>    & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
+      \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
+      \<Nested>        & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
+      \<Procedure>     & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
+      \<Parameters>    & ::= ε \| \cc{()} \hfill⏎
+    \end{aligned}
+  \end{Grammar}
 \end{figure}
 If this is the case, \cref{algorithm:ll-parser}
-  pops an element out of the stack, without pushing any more elements into it
+pops an element out of the stack, without pushing any more elements into it
 Note that the fact
 The implementation of the LL parser as recoginer without using
-  a jump-stack is problematic since LL grammars allow~$ε$-rules.
+a jump-stack is problematic since LL grammars allow~$ε$-rules.
 During the processing of the~$ε$-rule, the parser pops the
-  left-hand side of the rule and continues to process the penulitimate
-  stack element.
+left-hand side of the rule and continues to process the penulitimate
+stack element.
 It is possible to have multiple~$ε$ rules processed sequencially,
-  that leads to the \textit{realtime} problem - we can only encode
-  automata that do constant amount of computation on each input character
-  process.
+that leads to the \textit{realtime} problem - we can only encode
+automata that do constant amount of computation on each input character
+process.
 
 \begin{figure}[H]
   \begin{Grammar}
