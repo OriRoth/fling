@@ -1,6 +1,3 @@
-\def\function#1(#2){\ensuremath{\textrm{\textup{\textsf{#1}(#2)}}}}
-\def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
-
 In this section, we describe an algorithm for generating
   a ‟JLR Recognizer" for a given context free grammar~$G$.
 The said recognizer is intended to be run on a jDPDA.
@@ -110,30 +107,25 @@ The method for constructing a shift-jump automaton
   with small modification to update the labels of JLR items
   and modifications regarding nullable symbols.
 Like the original algorithms, we divide the work to three
-  sub-routines~$\function Closure(I)$,~$\function Goto(I,X)$ and~$\function Items(G')$,
+  sub-routines~$\Function Closure(I)$,~$\Function Goto(I,X)$ and~$\Function Items(G')$,
   where the first slightly differs from the original function by handling the
   labels of freshly added items as well as nullable symbols,
   and the other two remain as in the original LR state construction.
 The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
   and~\cref{Algorithm:Items} accordingly.
 
-\newcommand\INPUT\REQUIRE
-\newcommand\OUTPUT\ENSURE
-\renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
-\renewcommand{\algorithmicrequire}{\textbf{Input}}
-\renewcommand{\algorithmicensure}{\textbf{Output}}
 
 \begin{algorithm}[p]
     \newcommand\Queue{\ensuremath{Q}}
   \caption{\label{Algorithm:Closure}
-  Function~$\function Closure(I)$: compute the closure of items set~$I$}
+  Function~$\Function Closure(I)$: compute the closure of items set~$I$}
   \begin{algorithmic}[1]
     \INPUT{a set of JLR items~$I$}
     \OUTPUT{$J$, the set of JLR items obtained by a closure of~$I$}
     \STATE{$\Queue←I$ \COMMENT{A queue used as work-list}}
     \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
     \WHILE[More work to do]{$\Queue ≠ ∅$}
-    \LET{$i$}{$\function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
+    \LET{$i$}{$\Function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
       \IF[Equality w/o the label]{$i∈J$} % Should rewrite this line
         \STATE{\textbf{continue}}
       \ENDIF
@@ -145,15 +137,15 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
       \ENDIF
       \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
       \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
-      \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\function Nullable(δ)$}
-          \STATE{$\function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
+      \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\Function Nullable(δ)$}
+          \STATE{$\Function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
         \ENDIF
-        \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\function First(δ)$}
-          \STATE{$\function enqueue(\Queue, [B→·γ,t,\function newLabel(),N])$}
+        \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\Function First(δ)$}
+          \STATE{$\Function enqueue(\Queue, [B→·γ,t,\Function newLabel(),N])$}
         \ENDFOR
       \ENDFOR
-      \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\function Nullable(B)$}
-        \STATE{$\function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
+      \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\Function Nullable(B)$}
+        \STATE{$\Function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
       \ENDIF
     \ENDWHILE
     \RETURN{$J$}
@@ -162,7 +154,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
 
 \begin{algorithm}[p]
   \caption{\label{Algorithm:Goto}
-  Function~$\function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
+  Function~$\Function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
     \INPUT{a grammar symbol~$X$}
@@ -174,24 +166,24 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
       \LET{$i'$}{$[A→αX·β,a,ℓ,θ']$}\COMMENT{Advance the dot}
       \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
-    \RETURN{$\function Closure(J)$}
+    \RETURN{$\Function Closure(J)$}
   \end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[p]
   \caption{\label{Algorithm:Items}
-  Function~$\function Items(G')$: generate set of states for
+  Function~$\Function Items(G')$: generate set of states for
       augmented grammar~$G'$}
   \begin{algorithmic}
     \INPUT{An augmented grammar~$G'$}
     \OUTPUT{the set of JLR states induced by~$G'$}
-    \STATE{$R ← ❴[S'→·S, \$, \function newLabel(),N]❵$}
+    \STATE{$R ← ❴[S'→·S, \$, \Function newLabel(),N]❵$}
     \COMMENT{Work list and return value}
     \REPEAT[Processing the work list]
     \FOR[Deal with items in set~$I$]{$I ∈ R$}
   \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
-    \IF{$\function Goto(I,X)$ is not empty and not in~$R$}
-    \STATE{$R←R ∪ ❴\function Goto(I,X)❵$} % There is a tricky point here, the equality operator checks only the kernel items, since 2 different Closure(I) will generate items with different labels.
+    \IF{$\Function Goto(I,X)$ is not empty and not in~$R$}
+    \STATE{$R←R ∪ ❴\Function Goto(I,X)❵$} % There is a tricky point here, the equality operator checks only the kernel items, since 2 different Closure(I) will generate items with different labels.
     \ENDIF
   \ENDFOR
       \ENDFOR
@@ -211,7 +203,7 @@ Notes on the algorithms
 \subsection{Structure of the JLR action table and behavior of actions}
 As the last step before constructing the action table, we
   define the function~$\textsf{JumpSet}: Q⨉Σ→(ℕ↛Q)$.
-$\function JumpSet(q,σ)$ returns a function~$f$ that maps labels
+$\Function JumpSet(q,σ)$ returns a function~$f$ that maps labels
   to states.
   In a way, it reminds the~$\table Goto[]$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
@@ -219,13 +211,13 @@ $\function JumpSet(q,σ)$ returns a function~$f$ that maps labels
 \begin{algorithm}[h]
   \begin{algorithmic}
     \caption{\label{Algorithm:JumpSet}
-    Function~$\function JumpSet(q,σ)$ - auxiliary function for action table}
+    Function~$\Function JumpSet(q,σ)$ - auxiliary function for action table}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$σ$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
     \FOR{$[ A→α·σβ,σ',ℓ,N]∈ q$}
-      \STATE{$ f(ℓ) = \function Goto(\function Goto(q,A),σ')$}
+      \STATE{$ f(ℓ) = \Function Goto(\Function Goto(q,A),σ')$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
@@ -243,20 +235,20 @@ The result of~$\table ACTION[q,σ]$ can have one of
 
   \item[$\textsf{reject}$] The recognizer rejects on input.
 
-  \item[$\function shift(f,p)$] A shift operation.
+  \item[$\Function shift(f,p)$] A shift operation.
   The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
     in that order.
 
-  \item[$\function jump(ℓ)$] A jump operation. The recognizer jumps
+  \item[$\Function jump(ℓ)$] A jump operation. The recognizer jumps
     to label~$ℓ$, specifically, the recognizer pops elements from the
     stack until some function~$f$ is popped, such that~$f(ℓ)$
-    is defined, and yields~$q$.~$\function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\function Goto(q,σ)$.
+    is defined, and yields~$q$.~$\Function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\Function Goto(q,σ)$.
 
-  \item[$\function delayedShift(d,f,p)$] A delayed shift operation.
-    The recognizer pushes~$d$ onto the stack and then performs a normal~$\function shift(f,p)$ operation.
+  \item[$\Function delayedShift(d,f,p)$] A delayed shift operation.
+    The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function shift(f,p)$ operation.
 
-   \item[$\function delayedJump(d,ℓ)$] A delayed jump operation.
-    The recognizer pushes~$d$ onto the stack and then performs a normal~$\function jump(ℓ)$ operation.
+   \item[$\Function delayedJump(d,ℓ)$] A delayed jump operation.
+    The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function jump(ℓ)$ operation.
 
 \end{description}
 
@@ -266,10 +258,10 @@ The construction of the action table for each state~$q∈Q$:
     Action[q,\$] = \textsf{accept}$
 
   \item If~$[ A→α·,σ,ℓ,θ]∈q~$ then~$\table
-    Action[q,σ] = \function jump(ℓ)$
+    Action[q,σ] = \Function jump(ℓ)$
 
-  \item If~$[ A→α·β,σ,ℓ,θ]∈q~$ and~$σ'∈\function First(β)$
-    then~$\table Action[q,σ'] = \function shift(\function JumpSet(q,σ'),\function
+  \item If~$[ A→α·β,σ,ℓ,θ]∈q~$ and~$σ'∈\Function First(β)$
+    then~$\table Action[q,σ'] = \Function shift(\Function JumpSet(q,σ'),\Function
     Goto(q,a))$
 
 \end{itemize}
@@ -277,7 +269,7 @@ The construction of the action table for each state~$q∈Q$:
 \subsection{Theorems}
 \begin{Definition}[Equivalence relation]
   An LR state~$q$ and a JLR state~$qⱼ$ are said to be equivalent under~$≅$
-    if for each item~$i∈q$ there exists an item~$j∈ qⱼ$ such that~$i = \function
+    if for each item~$i∈q$ there exists an item~$j∈ qⱼ$ such that~$i = \Function
   Clean(j)$.
 \end{Definition}
 
