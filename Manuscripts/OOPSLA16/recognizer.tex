@@ -28,7 +28,7 @@ The actual operation of the automaton
       \LET{$X$}{\Function pop()}
       \COMMENT{What's anticipated on input?}
       \IF[ancipated character]{$X∈Σ$}
-      \IF[not the anticipated token]{$X≠next()$}
+      \IF[not the anticipated token]{$X≠\Function next()$}
       \STATE{\textbf{Reject}}
         \ELSE
           \CONTINUE
@@ -48,9 +48,9 @@ The actual operation of the automaton
         \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{Break~$R$ into left/right}
           \STATE{\textbf{Z=X}} \COMMENT{LHS must be~$X$, by construction}
           \STATE{$\Function print(R)$}
-          \COMMENT{Rule $R$ has just been applied}
+          \COMMENT{Rule~$R$ has just been applied}
           \FOR[Push in reverse order]{$y∈Yₖ,…,Y₁$}
-            \STATE{\Function push(y)}
+            \STATE{$\Function push(y)$}
           \ENDFOR
         \FI
       \FI
@@ -87,9 +87,62 @@ Similarly, any fixed sequence of push and pop
   transition function:
   the ‟\textbf{For}" at the algorithm can be unrolled.
 
-The main difficulty lies in the special case~$k=1$,
-  i.e., that the left hand side of~$R$ is the~$ε$, the empty
-    sequence.
+The algorithm may appears to be doing a constant amount
+  of work for each input symbol.
+However, a little scrutiny falsifies any such conclusion.
+
+First, if we look at the case~$R=X→Y$,~$Y$
+  being a nonterminal then the algorithm will conduct two~$\Function push()$ operations,
+  one for~$X$ and one for~$Y$ before consuming a token from the input.
+In fact, the number of such push operations is hard to bind since function~$δ$ may
+  return the rule~$Y→Z$, and then~$Z→Z'$ etc.
+
+Second issue is the interesting case that~$k=0$.
+Should this happen, the DPDA does not push anything into the stack
+  and proceeds, in the next iteration, to consider the next symbol
+  popped from the stack.
+Again, the number of pop operations is hard to bind since the next element
+  popped from the stack could be yet another nonterminal for each function~$δ$
+  returns again a rule whose right-hand side is empty.
+
+These two issues occur frequently in grammars.
+\Cref{Figure:issue-1} shows an example based on the original
+  grammar of \Pascal \urlref{original-full-specification}.
+Some of the~$δ$ function values for this grammar are
+\begin{equation}
+δ = 3 !
+\end{equation}
+\begin{figure}
+  \caption{\label{Figure:running}
+  An LL(1) grammar over the alphabet~
+  $$Σ = \left❴
+  %\begin{array}{c}
+    \cc{program}, \cc{begin}, \cc{end}, %\\
+    \cc{label}, \cc{const}, \cc{id}, %\\
+    \cc{procedure}, \cc{;}, \cc{(},%{)}
+    \cc{()} 
+  %\end{array}
+  \right❵$$
+  (inspired by the original \Pascal grammar; to serve as 
+  our running example)
+}
+  \begin{Grammar}
+    \begin{aligned}
+      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
+      \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
+\<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
+      \<Labels> & ::=ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
+      \<Constants> & ::=ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
+      \<Label> & ::=~\cc{;} \hfill⏎
+      \<Constant> & ::=~\cc{;} \hfill⏎
+\<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
+\<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
+\<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
+      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
+      \<Parameters> & ::= ε \| \cc{()} \hfill⏎
+\end{aligned}
+\end{Grammar}
+\end{figure}
 If this is the case, \cref{algorithm:ll-parser}
   pops an element out of the stack, without pushing any more elements into it
 Note that the fact
