@@ -1,26 +1,153 @@
-% Why can't we encode it as a normal DPDA?
+Formal presentation of the algorithm that compiles an LL(1) grammar into an implementation of a
+  language recognizer with \Java generics
+  is delayed to the next section.
+
+This section gives an intuitive perspective on this algorithm:
+We will first recall the essentials of the classical LL(1) parsing algorithm.
+Then, we will explain the limitations of the computational model
+  offered by \Java generics.
+The discussion proceeds to the observation
+  that underlies our emulation of the parsing algorithm
+  within these limitations.
+Next, we revise the classical algorithm for converting
+  an LL(1) grammar into an LL(1) parser, and explain
+  how it is modified to generate a recognizer.
+
+An LL(1) parser is a DPDA allowed to peek at the next input token.
+Thus,~$δ$, its transition function, takes as parameters, the current state of
+of the automaton, as well as a peek into the next, yet to be read,
+  token.
+The actual operation of the automaton
+  is by executing in loop the basic step
+    depicted in \cref{algorithm:ll-parser}.
+
+\begin{algorithm}[p]
+  \caption{\label{algorithm:ll-parser}
+  DPDA algorithm for LL(1) parsing}
+  \begin{algorithmic}
+      \LET{$X$}{\Function pop()}
+      \COMMENT{What's anticipated on input?}
+      \IF[ancipated character]{$X∈Σ$}
+      \IF[not the anticipated token]{$X≠next()$}
+      \STATE{\textbf{Reject}}
+        \ELSE
+          \CONTINUE
+        \FI
+        \ELSIF[Anticipating end-of-file]{$X=\$$}
+        \IF[not the anticipated end-of-file]{$\$≠\Function next()$}
+          \STATE{\textsc{Reject}}
+        \ELSE
+          \STATE{\textsc{Accept}}
+        \FI
+      \ELSE[must be a nonterminal]
+      \LET{$R$}{$\Function δ(X, \Function peek())$}
+      \COMMENT{Which rule to reduce?}
+      \IF[No rule found]{$R=⊥$}
+          \STATE{\textsc{Reject}}
+        \ELSE[A rule was found]
+        \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{Break~$R$ into left/right}
+          \STATE{\textbf{Z=X}} \COMMENT{LHS must be~$X$, by construction}
+          \STATE{$\Function print(R)$}
+          \COMMENT{Rule $R$ has just been applied}
+          \FOR[Push in reverse order]{$y∈Yₖ,…,Y₁$}
+            \STATE{\Function push(y)}
+          \ENDFOR
+        \FI
+      \FI
+  \end{algorithmic}
+\end{algorithm}
+
+As seen in the figure, the DPDA pops its state from the
+  stack.
+If the state is an input token or the special, end-of-file,
+  symbol~$\$$, then it must match
+  the next token found in the input stream.
+If no match is found, then the parser rejects.
+The parser accepts if the input is exhausted with
+  no rejections.
+
+The more interesting case is that~$X$, the popped symbol
+  is a nonterminal.
+If this is the case, then the DPDA peeks into the next token in the input
+  stream (without consuming it).
+Based on this token, and~$X$ the transition function~$δ$
+  determines~$R$ the derivation rule to use in order to derive~$X$.
+The algorithm rejects if~$δ$ can offer no such rule.
+Otherwise, it pushes into the stack, in reverse order, the symbols
+  found in the right hand side of~$R$.
+
+Can \cref{Algorithm:ll-parser} be executed on the machinery
+  available with \Java generics?
+As it turns out, most operations conducted by the algorithm
+  are easy.
+The implementation of function~$δ$ can
+  be found in the toolbox.
+Similarly, any fixed sequence of push and pop
+  operations on the stack can be conducted within a \Java
+  transition function:
+  the ‟\textbf{For}" at the algorithm can be unrolled.
+
+The main difficulty lies in the special case~$k=1$,
+  i.e., that the left hand side of~$R$ is the~$ε$, the empty
+    sequence.
+If this is the case, \cref{algorithm:ll-parser}
+  pops an element out of the stack, without pushing any more elements into it
+Note that the fact
 The implementation of the LL parser as recoginer without using
-  a jump-stack is problematic since LL grammars allow~$\epsilon$-rules.
-During the processing of the~$\epsilon$-rule, the parser pops the 
+  a jump-stack is problematic since LL grammars allow~$ε$-rules.
+During the processing of the~$ε$-rule, the parser pops the
   left-hand side of the rule and continues to process the penulitimate
   stack element.
-It is possible to have multiple~$\epsilon$ rules processed sequencially,
+It is possible to have multiple~$ε$ rules processed sequencially,
   that leads to the \textit{realtime} problem - we can only encode
   automata that do constant amount of computation on each input character
   process.
 
+\begin{figure}[H]
+  \begin{Grammar}
+    \begin{aligned}
+      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
+      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
+      {} & \| \<Terminals> \~\<Variables> \hfill⏎
+      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Start> & ::= \cc{start(\<Variable>)} \hfill⏎
+      \<Rules> & ::= \<Rule> \~\<Rules>\hfill⏎
+      {} & \| \<Rule> \hfill⏎
+      \<Rule> & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
+      \<Conjunctions> & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      \<First-Conjunction> & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{toNone()}\hfill⏎
+      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      {} & \| ε\hfill⏎
+      \<Extra-Conjunction> & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{orNone()} \hfill⏎
+      \<Symbol-Sequence> & ::= ε \hfill⏎
+      {} & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
+      \<Symbol> & ::= \cc{Variable} \hfill⏎
+      {} & \| \<Verb>\hfill⏎
+      {} & \| \<Verb>~\cc{,} \<Noun> \hfill⏎
+      \<Noun> & ::= \<Variable> \hfill⏎
+      {} & \| \<Existing-Class> \hfill⏎
+      \<Variable> & ::= \cc{Variable} \hfill⏎
+      \<Footer> & ::= \cc{go()}\hfill⏎
+    \end{aligned}
+  \end{Grammar}
+  \caption{A BNF grammar for defining BNF grammars}
+  \label{Figure:BNF:BNF}
+\end{figure}
 %How does the LL parser work?
 During normal LL parsing, the configuration of the parser consists
   of three elements:
-\begin{Itemize}
+\begin{itemize}
   \item the current state of the parsing - which is the
     rule being currently processed and the part of the rule we
     haven't parsed yet.
   \item the environment, or the parsing information we got so far -
     which is the rest of the stack
   \item the rest of the input string
-\end{Itemize}
-
+\end{itemize}
 
 % How can we encode it?
 The corresponding \Java fluent API ought to have equivalent features.
@@ -37,41 +164,6 @@ Using these transformers, we can describe a state of the parser,
 This is of course necessary in order to describe all posible configurations
   in a finite number of \Java types.
 
-\begin{figure}[H]
-  \begin{Grammar}
-    \begin{aligned}
-      \<BNF>                     & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
-      \<Header>                  & ::= \<Variables> \~\<Terminals> \hfill⏎
-      {}                         & \| \<Terminals> \~\<Variables> \hfill⏎
-      \<Variables>               & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Terminals>               & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body>                    & ::= \<Start> \~\<Rules> \hfill⏎
-      \<Start>                   & ::= \cc{start(\<Variable>)} \hfill⏎
-      \<Rules>                   & ::= \<Rule> \~\<Rules>\hfill⏎
-      {}                         & \| \<Rule> \hfill⏎
-      \<Rule>                    & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions>            & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      \<First-Conjunction>       & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {}                         & \| \cc{toNone()}\hfill⏎
-      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      {}                         & \| ε\hfill⏎
-      \<Extra-Conjunction>  & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {}                         & \| \cc{orNone()} \hfill⏎
-      \<Symbol-Sequence>         & ::= ε \hfill⏎
-      {}                         & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
-      \<Symbol>                  & ::= \cc{Variable} \hfill⏎
-      {}                         & \| \<Verb>\hfill⏎
-      {}                         & \| \<Verb> \cc{,} \<Noun> \hfill⏎
-      \<Noun>                    & ::= \<Variable> \hfill⏎
-      {}                         & \| \<Existing-Class> \hfill⏎
-      \<Variable>                & ::= \cc{Variable} \hfill⏎
-      \<Footer>                  & ::= \cc{go()}\hfill⏎
-    \end{aligned}
-  \end{Grammar}
-  \caption{A BNF grammar for defining BNF grammars}
-  \label{Figure:BNF:BNF}
-\end{figure}
-
 %
 \subsection{LL states}
 A state during the parser's computation is a grammar rule~$r = A→αβ$, and an
@@ -82,36 +174,28 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
 
 \subsection{Environment}
 
-
-
-\renewcommand{\LET}[2]{\STATE{\textbf{Let} \ensuremath{\text{#1}←\text{#2}}}}
-\newcommand\INPUT\REQUIRE
-\newcommand\OUTPUT\ENSURE
-\def\function#1(#2){\ensuremath{\textrm{\textup{\textsf{#1}}}(#2)}}
-\def\table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
-
 \begin{algorithm}[p]
-  \caption{\label{Algorithm:LLClosure}
-  Function~$\function Closure(A,b)$: generates a closure of action from the original LL algorithm}
+  \caption{\label{algorithm:llclosure}
+  function~$\Function closure(a,b)$: generates a closure of action from the original ll algorithm}
   \begin{algorithmic}
-    \INPUT{a nonterminal~$A$}
+    \INPUT{a nonterminal~$a$}
     \INPUT{a terminal~$b$}
     \OUTPUT{the closure of consecutive actions}
-    \LET{$l$}{$[]$}
-    \LET{$X$}{$A$}
-    \IF{$∀X→α . b∉\function First(α)$}
+    \LET{$L$}{$[]$}
+    \LET{$x$}{$a$}
+    \IF{$∀x→α . b∉\Function first(α)$}
       \RETURN{\textrm{reject}}
-    \ENDIF
-    \WHILE{$\textrm{True}$}
-      \IF{$X∈Ξ$}
-        \STATE{let~$Y₁ Y₂… Yₖ$ be~$α$ s.t.~$∃X→α∈G∧b∈\function First(α)$}
-        \STATE{$\function append(l,Yₖ,Y_{k-1},…,Y₂)$}
-        \STATE{$X=Y₁$}
-      \ELSE[$X$ must be~$b$]
-        \STATE{\textbf{break}}
-      \ENDIF
-    \ENDWHILE
-    \RETURN{$l$}
+    \FI
+    \WHILE{$\textrm{true}$}
+      \IF{$x∈ξ$}
+        \STATE{let~$y₁ y₂… yₖ$ be~$α$ s.t.~$∃x→α∈g∧b∈\Function first(α)$}
+        \STATE{$\Function append(l,yₖ,y_{k-1},…,y₂)$}
+        \STATE{$x=y₁$}
+      \ELSE[$x$ must be~$b$]
+        \BREAK
+      \FI
+    \DONE
+    \RETURN{$L$}
   \end{algorithmic}
 \end{algorithm}
 
@@ -137,3 +221,38 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
       \item
 
 \end{Definition}
+
+\begin{figure}[H]
+  \begin{Grammar}
+    \begin{aligned}
+      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
+      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
+      {} & \| \<Terminals> \~\<Variables> \hfill⏎
+      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
+      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
+      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
+      \<Start> & ::= \cc{start(\<Variable>)} \hfill⏎
+      \<Rules> & ::= \<Rule> \~\<Rules>\hfill⏎
+      {} & \| \<Rule> \hfill⏎
+      \<Rule> & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
+      \<Conjunctions> & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      \<First-Conjunction> & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{toNone()}\hfill⏎
+      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      {} & \| ε\hfill⏎
+      \<Extra-Conjunction> & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      {} & \| \cc{orNone()} \hfill⏎
+      \<Symbol-Sequence> & ::= ε \hfill⏎
+      {} & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
+      \<Symbol> & ::= \cc{Variable} \hfill⏎
+      {} & \| \<Verb>\hfill⏎
+      {} & \| \<Verb>~\cc{,} \<Noun> \hfill⏎
+      \<Noun> & ::= \<Variable> \hfill⏎
+      {} & \| \<Existing-Class> \hfill⏎
+      \<Variable> & ::= \cc{Variable} \hfill⏎
+      \<Footer> & ::= \cc{go()}\hfill⏎
+    \end{aligned}
+  \end{Grammar}
+  \caption{A BNF grammar for defining BNF grammars}
+  \label{Figure:BNF:BNF}
+\end{figure}
