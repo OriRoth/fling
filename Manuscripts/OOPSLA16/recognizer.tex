@@ -44,19 +44,18 @@ The actual operation of the automaton
       \IF[No rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
-        \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{Break~$R$ into left/right}
-      \STATE{\textbf{assert}~$Z=X$} \COMMENT{left must be~$X$}
-          \STATE{$\Function print(R)$} \COMMENT{Rule~$R$ has just been applied}
-          \FOR[Push in reverse order]{$y∈Yₖ,…,Y₁$}
-            \STATE{$\Function push(y)$}
-          \ENDFOR
+        \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{break~$R$ into left/right}
+      \STATE{\textbf{assert}~$Z=X$} \COMMENT{$δ$ constructed to return valid~$R$ only}
+          \STATE{$\Function print(R)$} \COMMENT{rule~$R$ has just been applied}
+          \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}
+          \COMMENT[push in reverse order]
         \FI
       \FI
 \end{algorithmic}
   \vspace{0.3ex}
   \hrule
   \vspace{0.3ex}
-  \small
+  \scriptsize
   \begin{enumerate}
       \item
   Input is a stream of terminals drawn from alphabet~$Σ$, ending
