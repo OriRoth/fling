@@ -47,8 +47,8 @@ The actual operation of the automaton
         \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{break~$R$ into left/right}
       \STATE{\textbf{assert}~$Z=X$} \COMMENT{$δ$ constructed to return valid~$R$ only}
           \STATE{$\Function print(R)$} \COMMENT{rule~$R$ has just been applied}
-          \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}
-          \COMMENT[push in reverse order]
+          \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$} \COMMENT[push in reverse order]
+      \STATE{\textsc{Continue}} \COMMENT{restart, popping a new~$X$, etc.}
         \FI
       \FI
 \end{algorithmic}
@@ -76,8 +76,8 @@ The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
 
 The DPDA maintains a stack of ‟anticipated” symbol, which may
   be of three kinds: a terminal drawn from the input alphabet~$Σ$,
-  an -end-of=file symbol~$\$$, or, 
-  or one of $Ξ$, the set of nonterminals of the underlying
+  an -end-of=file symbol~$\$$, or,
+  or one of~$Ξ$, the set of nonterminals of the underlying
   grammar.
 
 If the state is an input terminal or the special, end-of-file,
@@ -109,28 +109,42 @@ Similarly, any fixed sequence of push and pop
 
 The algorithm may appears to be doing a constant amount
   of work for each input symbol.
-However, a little scrutiny falsifies any such conclusion.
+However, a little scrutiny falsifies such a conclusion.
 
-First, if we look at the case~$R=X→Y$,~$Y$
-  being a nonterminal then the algorithm will conduct two~$\Function push()$ operations,
+Firstly, in the case~$R=X→Y$,~$Y$
+  being a nonterminal, the algorithm will conduct
+  two~$\Function push(·)$ operations,
   one for~$X$ and one for~$Y$ before consuming a terminal from the input.
-In fact, the number of such push operations is hard to bind since function~$δ$ may
-  return the rule~$Y→Z$, and then~$Z→Z'$ etc.
+The number of such push operations cannot be bound a priori 
+  since~$δ$ may return next rule~$Y→Z$, and then~$Z→Z'$ etc.
 
-Second issue is the interesting case that~$k=0$.
-Should this happen, the DPDA does not push anything into the stack
-  and proceeds, in the next iteration, to consider the next symbol
+Secondly, in the case~$k=0$ the DPDA does not push 
+  anything into the stack.
+In its next iteration, it proceeds to consider the next symbol
   popped from the stack.
-Again, the number of pop operations is hard to bind since the next element
-  popped from the stack could be yet another nonterminal for each function~$δ$
-  returns again a rule whose right-hand side is empty.
+Again, the number of pop operations cannot be bound a priori 
+  since if $X'$ is the next element popped from the 
+  stack could be such that the right hand side of rule $R'$ 
+  \[
+    R' = δ(R', \Function peek())
+  \]
+   is once again empty.
 
-These two issues occur frequently in grammars.
-\Cref{Figure:issue-1} shows an example based on the original
-  grammar of \Pascal \urlref{original-full-specification}.
+These two cases are not rarities. 
+Consider the grammar depicted in \cref{Figure:issue-1}. 
+This grammar, inspired by the prototypical
+  specification of \Pascal \urlref{original-full-specification},
+  shall serve as our running example.
+The grammar preserves the ``theme''
+  of nested definitions of \Pascal, 
+  while trimming these down as much as possible.
+The other major difference is that body of
+routines must be begin with \cc{(} followed by \cc{begin}
+    rather than a single ``\cc{begin}''.
+
 Some of the~$δ$ function values for this grammar are
 \begin{equation}
-δ = 3 !
+  δ(n,t) = 3 !
 \end{equation}
 
 \newsavebox{\Alphabet}
