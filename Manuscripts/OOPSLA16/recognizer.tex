@@ -13,64 +13,82 @@ Next, we revise the classical algorithm for converting
   an LL(1) grammar into an LL(1) parser, and explain
   how it is modified to generate a recognizer.
 
-An LL(1) parser is a DPDA allowed to peek at the next input token.
-Thus,~$δ$, its transition function, takes as parameters, the current state of
-of the automaton, as well as a peek into the next, yet to be read,
-  token.
+An LL(1) parser is a DPDA allowed to peek at the next input terminal.
+Thus,~$δ$, its transition function, takes two parameters: the current state of
+of the automaton, and a peek into the terminal next to be read.
 The actual operation of the automaton
-  is by executing in loop the basic step
+  is by executing in loop the step
     depicted in \cref{algorithm:ll-parser}.
 
+\renewcommand\algorithmicdo{\textbf{\emph{}}}
+\renewcommand\algorithmicthen{\textbf{\emph{}}}
 \begin{algorithm}[p]
   \caption{\label{algorithm:ll-parser}
   DPDA algorithm for LL(1) parsing}
   \begin{algorithmic}
-      \LET{$X$}{\Function pop()}
-      \COMMENT{What's anticipated on input?}
-      \IF[ancipated character]{$X∈Σ$}
-      \IF[not the anticipated token]{$X≠\Function next()$}
-      \STATE{\textbf{Reject}}
-        \ELSE
-          \CONTINUE
+      \LET{$X$}{\Function pop()} \COMMENT{What's anticipated on input?}
+      \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
+      \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
+      \STATE{\textsc{Reject}} \COMMENT{automaton halts in error}
+      \ELSE[terminal just read was the anticipated~$X$]
+      \STATE{\textsc{Continue}} \COMMENT{restart, popping a new~$X$, etc.}
         \FI
-        \ELSIF[Anticipating end-of-file]{$X=\$$}
+      \ELSIF[anticipating end-of-file]{$X=\$$}
         \IF[not the anticipated end-of-file]{$\$≠\Function next()$}
-          \STATE{\textsc{Reject}}
-        \ELSE
-          \STATE{\textsc{Accept}}
+          \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
+          \ELSE[terminal just read was the anticipated~$X$]
+          \STATE{\textsc{Accept}}\COMMENT{All input successfully consumed}
         \FI
-      \ELSE[must be a nonterminal]
-      \LET{$R$}{$\Function δ(X, \Function peek())$}
-      \COMMENT{Which rule to reduce?}
+      \ELSE[anticipated terminal~$X$ must be a nonterminal]
+      \LET{$R$}{$\Function δ(X, \Function peek())$} \COMMENT{Which rule to reduce?}
       \IF[No rule found]{$R=⊥$}
-          \STATE{\textsc{Reject}}
+          \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
         \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{Break~$R$ into left/right}
-          \STATE{\textbf{Z=X}} \COMMENT{LHS must be~$X$, by construction}
-          \STATE{$\Function print(R)$}
-          \COMMENT{Rule~$R$ has just been applied}
+      \STATE{\textbf{assert}~$Z=X$} \COMMENT{left must be~$X$}
+          \STATE{$\Function print(R)$} \COMMENT{Rule~$R$ has just been applied}
           \FOR[Push in reverse order]{$y∈Yₖ,…,Y₁$}
             \STATE{$\Function push(y)$}
           \ENDFOR
         \FI
       \FI
-  \end{algorithmic}
+\end{algorithmic}
+  \vspace{0.3ex}
+  \hrule
+  \vspace{0.3ex}
+  \small
+  \begin{enumerate}
+      \item
+  Input is a stream of terminals drawn from alphabet~$Σ$, ending
+  with a special symbol~$\$\ni Σ$.
+      \item
+  Stack symbols are drawn from~$Σ∪❴\$❵∪Ξ$, where~$Ξ$ is
+the set of nonterminals of the grammar from which the automaton was generated.
+\item
+  Functions~$\Function pop()$ and~$\Function push(·)$
+  operate on the push-down stack; function~$\Function next()$ returns
+  and consumes the next terminal from the input stream;
+  function~$\Function peek()$ returns this terminal without consuming it.
+\item
+The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
+  into its stack.
+  \end{enumerate}
 \end{algorithm}
 
 As seen in the figure, the DPDA pops its state from the
   stack.
-If the state is an input token or the special, end-of-file,
+If the state is an input terminal or the special, end-of-file,
   symbol~$\$$, then it must match
-  the next token found in the input stream.
+  the next terminal found in the input stream.
 If no match is found, then the parser rejects.
 The parser accepts if the input is exhausted with
   no rejections.
 
 The more interesting case is that~$X$, the popped symbol
   is a nonterminal.
-If this is the case, then the DPDA peeks into the next token in the input
+If this is the case, then the DPDA peeks into the next terminal in the input
   stream (without consuming it).
-Based on this token, and~$X$ the transition function~$δ$
+Based on this terminal, and~$X$ the transition function~$δ$
   determines~$R$ the derivation rule to use in order to derive~$X$.
 The algorithm rejects if~$δ$ can offer no such rule.
 Otherwise, it pushes into the stack, in reverse order, the symbols
@@ -93,7 +111,7 @@ However, a little scrutiny falsifies any such conclusion.
 
 First, if we look at the case~$R=X→Y$,~$Y$
   being a nonterminal then the algorithm will conduct two~$\Function push()$ operations,
-  one for~$X$ and one for~$Y$ before consuming a token from the input.
+  one for~$X$ and one for~$Y$ before consuming a terminal from the input.
 In fact, the number of such push operations is hard to bind since function~$δ$ may
   return the rule~$Y→Z$, and then~$Z→Z'$ etc.
 
@@ -113,12 +131,12 @@ Some of the~$δ$ function values for this grammar are
 δ = 3 !
 \end{equation}
 
-\newsavebox{\MyBox}
-\begin{lrbox}{\MyBox}
-  \begin{tabularx}{0.4\linewidth}{c}
-    \cc{program}, \cc{begin}, \cc{end}, \\
-    \cc{label}, \cc{const}, \cc{id},    \\
-    \cc{procedure}, \cc{;}, \cc{(}, \cc{()}
+\newsavebox{\Alphabet}
+\begin{lrbox}{\Alphabet}
+  \begin{tabularx}{0.40\linewidth}{l}
+    \cc{program}, \cc{begin}, \cc{end},⏎
+    \cc{label}, \cc{const}, \cc{id},⏎
+    \cc{procedure},~\cc{;},~\cc{(}, \cc{()}
   \end{tabularx}
         \end{lrbox}
 
@@ -126,41 +144,37 @@ Some of the~$δ$ function values for this grammar are
   \caption{\label{Figure:running}
     An LL(1) grammar over the alphabet
     \[
-      Σ =
-      \left❴
-      \usebox\MyBox
-      \right❵
-      .
+      Σ = \left❴\usebox\Alphabet\right❵.
     \]
     (inspired by the original \Pascal grammar; to serve as
     our running example)
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program>       & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
-      \<Body>          & ::= \cc{begin} \cc{end}\hfill⏎
-      \<Definitions>   & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
-      \<Labels>        & ::= ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
-      \<Constants>     & ::= ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
-      \<Label>         & ::=~\cc{;} \hfill⏎
-      \<Constant>      & ::=~\cc{;} \hfill⏎
-      \<MoreLabels>    & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
+      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
+      \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
+      \<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
+      \<Labels> & ::= ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
+      \<Constants> & ::= ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
+      \<Label> & ::=\cc{;} \hfill⏎
+      \<Constant> & ::=\cc{;} \hfill⏎
+      \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
-      \<Nested>        & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure>     & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
-      \<Parameters>    & ::= ε \| \cc{()} \hfill⏎
+      \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
+      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
+      \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
 \end{figure}
 If this is the case, \cref{algorithm:ll-parser}
 pops an element out of the stack, without pushing any more elements into it
 Note that the fact
-The implementation of the LL parser as recoginer without using
+The implementation of the LL parser as recognizer without using
 a jump-stack is problematic since LL grammars allow~$ε$-rules.
 During the processing of the~$ε$-rule, the parser pops the
-left-hand side of the rule and continues to process the penulitimate
+left-hand side of the rule and continues to process the penultimate
 stack element.
-It is possible to have multiple~$ε$ rules processed sequencially,
+It is possible to have multiple~$ε$ rules processed sequentially,
 that leads to the \textit{realtime} problem - we can only encode
 automata that do constant amount of computation on each input character
 process.
@@ -214,7 +228,7 @@ During normal LL parsing, the configuration of the parser consists
 % How can we encode it?
 The corresponding \Java fluent API ought to have equivalent features.
 The input string - since we transform each
-  token to a method invocation, it is clear that the rest of the input is
+  terminal to a method invocation, it is clear that the rest of the input is
   simply the rest of the method chain.
 The current state of the parsing is transformed into a \Java type
   (\kk{class} or \kk{interface}) ; this way we can control for each state
