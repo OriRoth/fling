@@ -1,6 +1,24 @@
 %! TEX root = 00.tex
-  section: theoretical background
-reminder of ECOOP.
+\begin{enumerate}
+  \item Gutterman
+  \item Reference to emulation of DFA. We can only do
+        a constant number of moves in each iteration.
+  \item~$aⁿbⁿcⁿ$
+  \item \Prolog Unification.
+  \item We investigated wildcards, intersection types and
+        (the rather limited) type inference of 
+        Java, but failed to employ these to increase the expressive power of the computation model.
+  \item Ecoop results.
+  \item Lina reduction
+\end{enumerate}
+
+Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ, P⟩$.
+    \begin{enumerate}
+      \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) - linear grow, LR(1) - exponential blowup)
+      \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
+      \item The number of states grow to~$Q⨉Γᵏ$.
+      \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
+    \end{enumerate}
 
 % Taken from proof.tex
 On a first sight, the proof of \cref{theorem:Gil-Levy} could follow the techniques
@@ -140,12 +158,12 @@ In~$A$ there are two of these:
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
 in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
-\begin{wrapfigure}[14]r{45ex}
+\begin{figure*}
   \caption{\label{figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{table:A}).
   All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
   \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
-\end{wrapfigure}
+\end{figure*}
 
 The method signatures of these types are generated using the mentioned parameters.
 The generating of methods will be discussed next.
@@ -260,10 +278,10 @@ Overall, there are six kinds of entries in a transition table:
     from the sidekick.
 \end{description}
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
   \caption{\label{figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{table:A})}
   \javaInput[minipage,listing style=numbered,width=1.08\columnwidth]{proof.full.listing}
-\end{figure}
+\end{figure*}
 
 \paragraph*{Conclusion} The proof of~\Cref{theorem:Gil-Levy} is an algorithm, taking as input some jDPDA,
   and returning as output a set of \Java type definitions.
@@ -347,13 +365,13 @@ Note, that the type parameters of the former types hasn't changed,
   since the model we are trying to implement, hasn't changed.
   These~$k+1$ parameters still suffice for our cause.
 
-\begin{wrapfigure}[13]r{42ex}
+\begin{figure*}
   \caption{\label{figure:prefix-chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{table:A}).
   All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
   cause type errors}
   \javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
-\end{wrapfigure}
+\end{figure*}
 
 In~\cref{figure:prefix-chain}, call chains in the~\cc{accepts()} method
   correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
@@ -388,12 +406,12 @@ The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
 
 The use of sidekicks is still allowed and recommended to improve readability of code.
 
-\begin{figure}[htbp]
+\begin{figure*}
   \caption{\label{figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{table:A})
     that allow a partial call chain, if and only if, there exists a legal continuation, that
     leads to a word in~$L$ (the language of~$A$}
   \javaInput[minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
-\end{figure}
+\end{figure*}
 
 \paragraph*{Conclusion}
 In this section, a proof, similar to the one in~\cref{section:proof} is provided.

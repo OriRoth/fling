@@ -1,5 +1,6 @@
 %! TEX root = 00.tex
-The large body of research on the general topic of \emph{type-states} (see
+Fluent APIs is related to the topic of type-states.
+There is a large body of research on \emph{type-states} (see
 e.g., these review articles~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005})
 Informally, an object that belongs to a certain type (\kk{class} in the object
 oriented lingo), has type-states, if not all methods defined in this object's
@@ -39,13 +40,20 @@ An object of type \cc{Seat}†
 }
 is created in the \cc{down} state, but it can then be \cc{raise}d to the
 \cc{up} state, and then be \cc{lower}ed to the \cc{down} state.
-Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for
-two distinct purposes: \cc{urinate} and \cc{defecate}.  
+Such an object can be used by two kinds of users, \cc{male}s and \cc{female}s, for
+two distinct purposes: \cc{urinate} and \cc{defecate}.
 
-
-A fluent API enforcement of type states should signal the sequences of method
-calls made in \cref{figure:toilette:illegal} as type errors. 
-
+Thus, there are a total of six methods that might be invoked
+on an instance of \cc{Seat}:
+\begin{quote}
+  \begin{tabular}{lll}
+    \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
+    \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
+  \end{tabular}
+\end{quote}
+A fluent API design specifies the order in which such calls can be made.
+For example, a fluent API should recognize the sequences of
+  \cref{figure:toilette:legal} as being type correct.
 \begin{figure}[H]
   \begin{JAVA}
 new Seat().male().raise().urinate();
@@ -55,9 +63,8 @@ new Seat().female().urinate();
   \label{figure:toilette:legal}
 \end{figure}
 
-At the same time, this type-state enforcement a fluent API should recognize the
-sequences of \cref{figure:toilette:legal} as being 
-  type correct.
+At the same time, illegal sequences as made in
+\cref{figure:toilette:illegal} should be signaled as type errors.
 
 \begin{figure}[H]
   \begin{JAVA}
@@ -69,28 +76,53 @@ new Seat().male().raise().urinate().female().urinate();\end{JAVA}
   \label{figure:toilette:illegal}
 \end{figure}
 
-The protocol of a \cc{Seat} 
+To generate a fluent API that meets these requirements, one must observe that
+the protocol of a \cc{Seat} is defined completely by
+  the DFA depicted in \cref{figure:type-state-automaton}.
 
-Method calls in 
+\begin{figure}[H]
+  \caption{\label{figure:type-state-automaton}%
+    A deterministic finite automaton realizing the type states of
+     class \cc{Seat}.
+  }
+  \input ../Figures/toilete-dfa.tikz
+\end{figure}
+
+Having constructed the automaton, generating the classes and methods is immediate
+by following the \emph{encoding convention}:
+\begin{enumerate}
+  \item A state~$q$ in the automaton is encoded as an \kk{interface}.%
+        †{%
+          The name of this interface is arbitrary; all that it is required is that
+          names assigned to distinct states are distinct.
+          For readability sake, there is often an attempt to choose a name
+          which makes a close approximation of the name of~$q$, within
+          the limits of the language's syntax and Unicode vocabulary.
+        }
+  \item If there is an arc labeled~$ℓ$ leading from~$qᵢ$ to~$qⱼ$,
+        then \kk{interface}~$qᵢ$ defines a
+        method whose return type is \kk{interface}~$qⱼ$.%
+        †{%
+          Again, the name of this method is often selected as an approximation of the name of~$ℓ$.
+        }
+  \item The initial state~$q₀$ is made special in being the only type from
+        which a fluent API call chain can start.%
+        †{%
+          This is achieved by generating a class~$c$ with \cc{public}
+          constructor that \kk{implements} the \kk{interface} encoding type~$q₀$.
+          If no other interfaces do not have a similar~$c$, then clients can only
+          start a fluent API chain by creating an instance of~$c$, which is
+          effectively the state~$q₀$.
+        }
+\end{enumerate}
+
+So far.⏎⏎
+
 It should be clear that the type checking engine of the compiler can
 be employed to distinguish between legal and illegal sequences.
 It should also be clear that fabricating the \kk{class}es, \kk{interface}s
 and the \kk{extends} and \kk{implements} relationships between these, is
 far from being trivial.
-
-\subsection{Type State}
-The toilette seat problem may be amusing to some, but it is not contrived in
-any way.
-  To illustrate, consider the toilette seat example.
-In this example,
-  there are a total of six methods that might be invoked.
-\begin{quote}
-  \begin{tabular}{lll}
-    \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
-    \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
-  \end{tabular}
-\end{quote}
-A fluent API design specifies the order in which such calls can be made.
 
 The \emph{first} novelty in this research is that the fluent API definition is
   through a CFG, written as a BNF.

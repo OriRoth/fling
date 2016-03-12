@@ -1,29 +1,25 @@
 \usetikzlibrary{automata,positioning,topaths}
-\tikzstyle{state-style}=[state,every node={draw=black},node distance=13ex];
+\tikzstyle{state-style}=[state,every node={draw=black},node distance=13ex]
 \begin{tikzpicture}
-
-\node[state-style,initial,initial where=above left,accepting] (q0) {Down};
-\node[state-style] (q1) [above right= of q0] {$q_{1}$};
-\node[state-style] (q2) [right=of q1] {$q_{2}$};
-\node[state-style,accepting] (q3) [below right=of q2] {Up};
-\node[state-style] (q4) [below left=of q3] {$q_{4}$};
-\node[state-style] (q5) [left=of q3] {$q_{5}$};
-\node[state-style] (q6) [left=of q4] {$q_{6}$};
-
-
-\path[->,above,sloped,latex-] 
-
-(q1) edge[below] node {$\cc{female}()$} (q0)
-(q0) edge[bend left=20,] node { \begin{minipage}{11ex}$\cc{urinate}(),\newline \cc{defecate}()$\end{minipage}} (q1)
-(q1) edge[] node {$\cc{lower}()$} (q2)
-(q2) edge[] node {$\cc{female}()$} (q3)	
-(q4) edge[] node {$\cc{male}()$} (q3)
-(q3) edge[bend left,below] node {$\cc{urinate}()$} (q4)
-(q3) edge[] node {$\cc{urinate}()$} (q5)
-(q5) edge[] node {$\cc{raise}()$} (q6)
-(q6) edge node {$\cc{lower}()$} (q4)
-(q6) edge[bend left,below] node {$\cc{male}()$} (q0)
-(q0) edge[above] node {$\cc{defecate}()$} (q6)
-;
-
+  \node[state-style,initial,initial where=above left,accepting] (q0) {Down};
+  \node[state-style] (q1) [above right= of q0] {$q_{1}$};
+  \node[state-style] (q2) [right=of q1] {$q_{2}$};
+  \node[state-style,accepting] (q3) [below right=of q2] {Up};
+  \node[state-style] (q4) [below left=of q3] {$q_{4}$};
+  \node[state-style] (q5) [left=of q3] {$q_{5}$};
+  \node[state-style] (q6) [left=of q4] {$q_{6}$};
+  \path[->,above,sloped,latex-, shorten <=1pt]
+  (q1) edge[below] node {$\cc{female}()$} (q0)
+  (q0) edge[bend left=20,] node {\begin{minipage}{11ex}$\cc{urinate}()\newline \cc{defecate}()$\end{minipage}} (q1)
+  (q1) edge[] node {$\cc{lower}()$} (q2)
+  (q2) edge[] node {$\cc{female}()$} (q3)
+  (q4) edge[] node {$\cc{male}()$} (q3)
+  (q3) edge[bend left,below] node {$\cc{urinate}()$} (q4)
+  (q3) edge[] node {$\cc{urinate}()$} (q5)
+  (q5) edge[] node {$\cc{raise}()$} (q6)
+  (q6) edge node {$\cc{lower}()$} (q4)
+  (q6) edge[bend left,below] node {$\cc{male}()$} (q0)
+  (q0) edge[above] node {$\cc{defecate}()$} (q6)
+  ;
 \end{tikzpicture}
+

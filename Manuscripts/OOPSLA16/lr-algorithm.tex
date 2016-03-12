@@ -209,7 +209,7 @@ $\Function JumpSet(q,σ)$ returns a function~$f$ that maps labels
   In a way, it reminds the~$\Table Goto[]$ table used in LR parsing, since
   that function will be used when a jump operation will occur.
 
-\begin{algorithm}[h]
+\begin{algorithm}[H]
   \begin{algorithmic}
     \caption{\label{algorithm:JumpSet}
     Function~$\Function JumpSet(q,σ)$ - auxiliary function for action table}
@@ -233,13 +233,10 @@ The result of~$\Table ACTION[q,σ]$ can have one of
   four forms:
 \begin{description}
   \item[$\textsf{accept}$] The recognizer accepts on input.
-
   \item[$\textsf{reject}$] The recognizer rejects on input.
-
   \item[$\Function shift(f,p)$] A shift operation.
   The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
     in that order.
-
   \item[$\Function jump(ℓ)$] A jump operation. The recognizer jumps
     to label~$ℓ$, specifically, the recognizer pops elements from the
     stack until some function~$f$ is popped, such that~$f(ℓ)$
@@ -333,7 +330,7 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
    \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
     \[
-      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
     \]
 
    \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
@@ -341,7 +338,7 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
      and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
      \[
-      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
      \]
 
   \end{itemize}
