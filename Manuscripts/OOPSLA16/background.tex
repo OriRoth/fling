@@ -85,14 +85,18 @@ Our proof relies on a special kind of realtime automata,
 
 \begin{table}[H]
   \caption{\label{table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
-  \begin{tabular}{c|ll}
-  & \hfill~$γ₁$ & \hfill~$γ₂$⏎
-    \midrule
-$σ₁$ & $\textsf{push}(γ₁,γ₁,γ₂)$ & $\textsf{push}(γ₂,γ₂)$⏎
-$σ₂$ & \hfill$⊥$ & $\textsf{push}(ε)$⏎
-$σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
-$\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
-  \end{tabular}
+  \begin{centering}
+    \begin{tabular}{c|ll}
+      \toprule
+              & \hfill~$γ₁$                     & \hfill~$γ₂$⏎
+      \midrule
+      $σ₁$ & $\textsf{push}(γ₁,γ₁,γ₂)$ & $\textsf{push}(γ₂,γ₂)$⏎
+      $σ₂$ & \hfill$⊥$                        & $\textsf{push}(ε)$⏎
+      $σ₃$ & \hfill$⊥$                        & $\textsf{jump}(γ₁)$⏎
+      $\$$    & \hfill$\textsf{accept}$            & $\textsf{reject}$⏎
+      \bottomrule
+    \end{tabular}
+  \end{centering}
 \end{table}
 
 As it turns out, every DCFG language is recognized by some jDPDA, and
