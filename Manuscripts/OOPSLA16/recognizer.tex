@@ -1,18 +1,25 @@
 Formal presentation of the algorithm that compiles an LL(1) grammar into an implementation of a
   language recognizer with \Java generics
   is delayed to the next section.
-
 This section gives an intuitive perspective on this algorithm:
-We will first recall the essentials of the classical LL(1) parsing algorithm.
+
+We will first recall the essentials of the classical LL(1) parsing algorithm (\cref{section:essentials}).
 Then, we will explain the limitations of the computational model
-  offered by \Java generics.
+offered by \Java generics (\cref{section:limitations}).
+
 The discussion proceeds to the observation
   that underlies our emulation of the parsing algorithm
   within these limitations.
-Next, we revise the classical algorithm for converting
-  an LL(1) grammar into an LL(1) parser, and explain
-  how it is modified to generate a recognizer.
 
+Building on all these, \Cref{section:generation} can
+  make the intuitive introduction to the main algorithm.
+To this end, we revise the classical algorithm for converting
+  an LL(1) grammar into an LL(1) parser, and explain
+  how it is modified to generate a recognizer executable
+  on the computational model of \Java generics.
+
+\subsection{LL(1) Parsing}
+\label{section:essentials}
 An LL(1) parser is a DPDA allowed to peek at the next input terminal.
 Thus,~$δ$, its transition function, takes two parameters: the current state of
 of the automaton, and a peek into the terminal next to be read.
@@ -96,6 +103,8 @@ The algorithm rejects if~$δ$ can offer no such rule.
 Otherwise, it pushes into the stack, in reverse order, the symbols
   found in the right hand side of~$R$.
 
+\subsection{LL(1) Parsing with \Java Generics?}
+\label{section:limitations}
 Can \cref{Algorithm:ll-parser} be executed on the machinery
   available with \Java generics?
 As it turns out, most operations conducted by the algorithm
@@ -259,6 +268,9 @@ During normal LL parsing, the configuration of the parser consists
   \item the rest of the input string
 \end{itemize}
 
+
+\subsection{Generation of LL(1) DPDA Parsers}
+\label{section:generation}
 % How can we encode it?
 The corresponding \Java fluent API ought to have equivalent features.
 The input string - since we transform each
