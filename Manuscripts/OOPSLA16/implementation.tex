@@ -11,6 +11,8 @@ It uses the notation introduced in \cref{figure:BNF}
   to specify this same notation.
 
 \begin{figure}[H]
+  \caption{A BNF grammar for defining BNF grammars}
+  \label{figure:BNF:BNF}
   \begin{Grammar}
     \begin{aligned}
       \<BNF>                     & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
@@ -41,8 +43,6 @@ It uses the notation introduced in \cref{figure:BNF}
       \<Footer>                  & ::= \cc{go()}\hfill⏎
     \end{aligned}
   \end{Grammar}
-  \caption{A BNF grammar for defining BNF grammars}
-  \label{figure:BNF:BNF}
 \end{figure}
 % this is not a formal BNF because <Symbol> and <Variable> are not defined in the Symbols set.
 \begin{comment}
@@ -187,10 +187,11 @@ Such tokens, the building blocks of grammars, come in two flavors:
     presence (or absence). The prime example of these are identifiers.
 \end{itemize}
 
-This distinction applies also to fluent APIs:
-Methods, or verbs, are the tokens, and a fluent APIs sequence consists of
-method calls that come in two kinds: those that do not take parameters (such as \cc{toNone()} in \cref{figure:BNF:fluent}),
-and those that do (such as the call \cc{derives($·$)} in the figure).
+This distinction applies also to fluent APIs: Methods, or verbs, are the
+tokens, and a fluent APIs sequence consists of method calls that come in two
+kinds: those that do not take parameters (such as \cc{toNone()} in
+\cref{figure:BNF:fluent}), and those that do (such as the call
+\cc{derives($·$)} in the figure).
 
 \Self supports verbs with, and without, noun parameters.
 The following examples,`drawn from \cref{figure:fluent} and \cref{figure:BNF:fluent},

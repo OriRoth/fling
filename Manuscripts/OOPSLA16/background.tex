@@ -1,7 +1,7 @@
 %! TEX root = 00.tex
 \begin{enumerate}
   \item Gutterman
-  \item Reference to emulation of DFA. We can only do
+  \item Reference to emulation of DFA\@. We can only do
         a constant number of moves in each iteration.
   \item~$aⁿbⁿcⁿ$
   \item \Prolog Unification.
@@ -12,7 +12,7 @@
   \item Lina reduction
 \end{enumerate}
 
-Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ, P⟩$.
+Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ,P⟩$.
     \begin{enumerate}
       \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) - linear grow, LR(1) - exponential blowup)
       \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
@@ -31,7 +31,7 @@ The techniques however fail with~$ε$-transitions,
   configurations and maneuver the stack in a non-trivial manner,
   without making any progress on the input.
 The fault in the scheme lies with compile time computation being carried out
-  by the~$\textsf{java}(σ)()$ functions, each converting
+  by the~$\Function java(σ)()$ functions, each converting
   their receiver type to the type of the receiver of the next call in the chain.
 We are not aware of a \Java type encoding which makes
   it possible to convert an input type into an output type, where
@@ -58,7 +58,7 @@ Our proof relies on a special kind of realtime automata,
   where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
   and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
   \[
-    j(Γ) = ❴ \textit{instruction \textup{\textsf{jump}}}(γ) \; | \;γ∈Γ❵.
+    j(Γ) = ❴ \textit{instruction \Function jump(\cdot)}(γ) \; | \;γ∈Γ❵.
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially, the stack holds~$γ₁$ only.
