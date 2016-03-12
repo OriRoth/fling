@@ -88,7 +88,7 @@ all: write18 bibtex latex
 
 .PHONY: warnings
 warnings: $(call tip,warnings,present all LaTeX warnings) 
-	 $(LATEX) -interaction=batchmode -draftmoe -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
+	 $(LATEX) -draftmoe -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
 
 .PHONY: lacheck
 lacheck: $(call tip,lachek,run lacheck on all sources) 

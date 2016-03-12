@@ -1,42 +1,66 @@
 %! TEX root = 00.tex
-Fluent APIs are neat.
-Code snippets such as 
+Fluent APIs~\cite{Fowler:2005,VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are neat.
+There is elegance in self-documenting code snippets such as 
 \begin{quote}
     \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}} 
 \end{quote}
-(part of the fluent API of another thing) 
+(a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration framework),
+and, 
 \begin{quote}
     \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
 \end{quote}
-are neat.  Designing is complicated,
-involving theory of automata, type theory, language design, etc.
+(a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
+  SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
+  in the context of \CSharp).  
+However, the actual implementation of the many fluent API systems
+  jMock~\cite{Freeman:Pryce:06},
+  Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
+  EasyMock\urlref{http://easymock.org/},
+  jOOR\urlref{https://github.com/jOOQ/jOOR},
+  jRTF\urlref{https://github.com/ullenboom/jrtf},
+  etc., is traditionally not carried out 
+  in the neat manner it could possibly take.
 
-The thesis propounded by this research is that API design, and especially
-fluent API design can and should be made in terms of language design.  Software
-missionaries and preachers such as Fowler~\cite{Fowler:2005} have long claimed
-that API design resembles the design of a \textbf Domain \textbf Specific
-\textbf Language (henceforth \emph{DSL}, see,
-e.g.,~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} for review articles).
-In the words of Fowler ‟The difference between API design and DSL design is
-then rather small”~\cite{Fowler:2005}
+Concretely, we argue that all fluent API designs 
+  must define which sequences of method applications are legal
+  and which are not. 
+Also, semantics is typically one of two.
+\emph{Eager} execution semantics is 
+found e.g., in \cc{StringBuilder}\urlref{Findsomething}
+\begin{lcode}[minipage,width=44ex,box align=center]{Java}
+String time(int hours, int minutes, int seconds) {¢¢
+  final StringBuilder sb = new StringBuilder();
+  sb.append(hours);
+  sb.append(':');
+  sb.append(minutes);
+  sb.append(':');
+  sb.append(seconds);
+  return sb.toString();
+}\end{lcode}
+In this semantics, each method in the chain executes a computation,
+  whose result, is made the receiver of the next method 
+  in the chain.
 
-Another objective of this research is
-  to let the unification of the notions of DSL and (fluent) API
-  design become tighter in this sense:
-  With \Self, the design of a fluent API framework,
-    is solely in terms of the grammar for the DSL
-    that defines this fluent API\@.
-This grammar specification is then automatically translated
-  to an implementation of the fluent API that this DSL defines. 
-This translation generates the intricate type hierarchy
-  and methods of types in it in such a way
-  that only sequence of calls that conform
-  to the specification would
-  compile correctly (concretely, type-check).
+Conversely, \emph{delayed} execution semantics, occurring e.g., in jOOQ,
+  maintain a ``production line'', 
+  by which each method in the fluent call chain receives a 
+  ``action builder'' (called ``query builder'' in jOOQ and LINQ) 
+  data record from the method preceding it, adds a bit of 
+  information to this record, and passes it to the next method
+  in the chain.
+If an action builder is sufficiently defined it can 
+  produce an action record.
+And, action records, may execute 
+  when specifically requested to so.
 
+Can these observations on fluent APIs mature into
+  a tool to produce these automatically from a specification? 
+As it turns out, an answer relies on
+  in two rather theoretical topics:
+  the computational expressive power of type systems, 
+  and, ancient theory of pushdown automata (PDAs). 
 
-
-\subsection{The many trials of doing it in \Java}
+\subsection{The Many Trials of Doing it in \Java}
 
 \subsection{Tell about the computational model of \CC.}
 
@@ -65,23 +89,12 @@ Indeed, in languages such as \CC, fluent APIs
   but this capability is not available in \Java.
 
 Despite this limitation, fluent API in \Java can be rich and expressive, as demonstrated
-  in \cref{figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
 (open-source integration framework),
 and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
 
-Other examples of fluent APIs in \Java are abundant:
-  jMock~\cite{Freeman:Pryce:06},
-  Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
-  EasyMock\urlref{http://easymock.org/},
-  jOOR\urlref{https://github.com/jOOQ/jOOR},
-  jRTF\urlref{https://github.com/ullenboom/jrtf}
-  and many more.
-
 \subsection{A Type Perspective on Fluent APIs}
-\Cref{figure:DSL}(B) suggests that jOOQ imitates SQL,
-but, is it possible at all to produce a fluent API
-for the entire SQL language,
+For the entire SQL language,
 or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
 Of course, with no operator overloading it is impossible
 to fully emulate tokens; method names though make a good substitute for tokens, as done
