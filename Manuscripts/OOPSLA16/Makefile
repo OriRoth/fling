@@ -13,11 +13,11 @@ latex:
 
 include ../Programs/Makefile
 
-.PHONY: latex view bibtex graphs all bibtex clean 
-
 SOURCES=$(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 
-TARGET=$(MAIN).pdf 
+.PHONY:
+listings: $(LISTINGS)
+
 
 CODE_PATH = ../../src/main/java/automaton
 

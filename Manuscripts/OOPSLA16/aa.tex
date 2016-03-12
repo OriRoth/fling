@@ -1,12 +1,38 @@
 %! TEX root = 00.tex
-Using snippets such as \[ asdf \] (part of the fluent API of thingy) 
-and \[ asdfaasdf \] (part of the fluent API of mashmo) are neat.
-Designing is complicatd,
-involving 
-theory of automatoa
-type theory.
-language design.
-but they 
+Fluent APIs are neat.
+Code snippets such as 
+\begin{quote}
+    \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}} 
+\end{quote}
+(part of the fluent API of another thing) 
+\begin{quote}
+    \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
+\end{quote}
+are neat.  Designing is complicated,
+involving theory of automata, type theory, language design, etc.
+
+The thesis propounded by this research is that API design, and especially fluent API design
+  can and should be made in terms of language design.
+Software missionaries and preachers such as Fowler~\cite{Fowler:2005} have long claimed
+  that API design resembles the design of a \textbf Domain \textbf Specific \textbf Language
+  (henceforth \emph{DSL}, see, e.g.,~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} for review articles).
+   In the words of Fowler ‟The difference between API design and DSL design is then rather small”~\cite{Fowler:2005}
+
+Another objective of this research is
+  to let the unification of the notions of DSL and (fluent) API
+  design become tighter in this sense:
+  With \Self, the design of a fluent API framework,
+    is solely in terms of the grammar for the DSL
+    that defines this fluent API\@.
+This grammar specification is then automatically translated
+  to an implementation of the fluent API that this DSL defines. 
+This translation generates the intricate type hierarchy
+  and methods of types in it in such a way
+  that only sequence of calls that conform
+  to the specification would
+  compile correctly (concretely, type-check).
+
+
 
 \subsection{The many trials of doing it in \Java}
 
@@ -37,19 +63,10 @@ Indeed, in languages such as \CC, fluent APIs
   but this capability is not available in \Java.
 
 Despite this limitation, fluent API in \Java can be rich and expressive, as demonstrated
-  in \cref{Figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
+  in \cref{figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
 (open-source integration framework),
 and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
-
-\begin{figure}[H]
-  \caption{\label{Figure:DSL} Two examples of \Java fluent API}
-  \begin{tabular}{@{}c@{}c@{}}
-    \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}} &
-    \hspace{-3ex} \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
-    \textbf{(a)} Apache Camel & \textbf{(b)} jOOQ
-  \end{tabular}
-\end{figure}
 
 Other examples of fluent APIs in \Java are abundant:
   jMock~\cite{Freeman:Pryce:06},
@@ -60,13 +77,13 @@ Other examples of fluent APIs in \Java are abundant:
   and many more.
 
 \subsection{A Type Perspective on Fluent APIs}
-\Cref{Figure:DSL}(B) suggests that jOOQ imitates SQL,
+\Cref{figure:DSL}(B) suggests that jOOQ imitates SQL,
 but, is it possible at all to produce a fluent API
 for the entire SQL language,
 or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
 Of course, with no operator overloading it is impossible
 to fully emulate tokens; method names though make a good substitute for tokens, as done
-in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{Figure:DSL}).
+in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{figure:DSL}).
 The questions that motivate this research are:
 \begin{quote}
   \begin{itemize}
@@ -170,7 +187,7 @@ It has long been known
   that \CC templates are Turing complete in the following precise sense:
 
 \begin{Proposition}
-  \label{Theorem:Gutterman}
+  \label{theorem:Gutterman}
   For every Turing machine,~$m$, there exists a \CC program,~$Cₘ$ such that
     compilation of~$Cₘ$ terminates if and only if
       Turing-machine~$m$ halts.
@@ -272,76 +289,3 @@ allowing(any(Object.class)).method("get.*").
 This distinction make it possible to design expressive and rich fluent APIs, in which a sequence ‟chained” calls is not only readable, but also
 robust, in the sense that the sequence is type correct, only when it the sequence makes sense semantically.
 
-\subsection{The Type Safe Toilette Seat}
-
-An object of type toilette seat is created in the \cc{down} state, but it can
-then be \cc{raise}d to the \cc{up} state, and then be \cc{lower}ed to the
-\cc{down} state.†{%
-  This example is inspired by earlier work of
-  Richard Harter on the topic~\cite{Harter:05}.
-}
-Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for two distinct purposes: \cc{urinate} and \cc{defecate}.
-Now a good fluent API design is one by which the sequences of method calls in
-\cref{Figure:toilette:legal} are type correct.
-
-\begin{figure}[htbp]
-  \begin{JAVA}
-new Seat().male().raise().urinate();
-new Seat().female().urinate();\end{JAVA}
-  \caption{Legal sequences of calls in the toilette seat example}
-  \label{Figure:toilette:legal}
-\end{figure}
-
-Conversely, sequences of method calls made in \cref{Figure:toilette:illegal} 
-  should be illegal in the desired implementation of the fluent API.
-
-\begin{figure}[htbp]
-  \begin{JAVA}
-new Seat().female().raise();
-new Seat().male().raise().defecate();
-new Seat().male().male();
-new Seat().male().raise().urinate().female().urinate();\end{JAVA}
-  \caption{Illegal sequences of calls in the toilette seat example}
-  \label{Figure:toilette:illegal}
-\end{figure}
-It should be clear that the type checking engine of the compiler can
-be employed to distinguish between legal and illegal sequences.
-It should also be clear that fabricating the \kk{class}es, \kk{interface}s
-and the \kk{extends} and \kk{implements} relationships between these, is
-far from being trivial.
-
-\subsection{Type State}
-The toilette seat problem may be amusing to some, but it is not contrived in
-any way.  In fact, there is huge body of research on the general topics of
-\emph{type-states}. (See e.g., review articles such
-as~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005}) Informally, an object
-that belongs to a certain type (\kk{class} in the object oriented lingo), has
-type-states, if not all methods defined in this object's class are applicable
-to the object in all states it may be in.
-
-A classical example of type-states is a file object: which can be in one of two
-states: ‟open” or ‟closed”. Invoking a \cc{read()} method on the object is only
-permitted when the file is in an ‟open” state.  In addition, method \cc{open()}
-(respectively \cc{close()}) can only be applied if the object is in the
-‟closed” (respectively, ‟open”) state.
-
-Objects with type states such as toilette seats and files are not rarities.
-In fact, a recent study~\cite{Beckman:2011} estimates 
-  that about 7.2％ of \Java classes define protocols, that can be interpreted as type-state.
-Type-state pose two main challenges to software engineering 
-\begin{enumerate}
-  \item \emph{\textbf{Identification.}} 
-    In the typical case, type-state 
-        receive little to no mention at all in the documentation.
-    The identification problem is to find the implicit 
-    type state in existing code: Given an implementation of a class
-    (or more generally of a software framework), 
-    \emph{determine} which sequences of method calls are valid and which violate the 
-    type state hidden in the code.
-  \item \emph{\textbf{Maintenance and Enforcement.}}
-    Having identified the type-states, the challenge is in automatically flagging out 
-      illegal sequence of calls that does not conform
-      with the type-state, furthermore, with the 
-      evolution of an API, the challenge is in updating the type-state information, 
-      and the type checking of code of clients. 
-\end{enumerate}

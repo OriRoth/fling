@@ -1,5 +1,7 @@
 \documentclass[nonatbib,preprint,numbers]{sigplanconf}
+
 \authorinfo{Mr.\ U. N. Owen}{}{}
+
 \title{%
 \begin{flushright}
   \scriptsize\bfseries
@@ -26,8 +28,8 @@
 Must include in a place that would not be missed.
 \begin{itemize}
   \item \Prolog Unification. We investigated wildcards, intersection types and
-        (the rather limited) type inference of Java, but failed to employ these to
-        increase the expressive power of the computation model.
+    (the rather limited) type inference of Java, but failed to employ these to
+    increase the expressive power of the computation model.
         \item~$aⁿbⁿcⁿ$
   \item Lina's reduction size : Assume a grammar~$G=⟨Σ,Ξ, P⟩$.
     \begin{enumerate}
@@ -44,45 +46,46 @@ Must include in a place that would not be missed.
 \input{aa}
 
 \paragraph{Outline.}
-section:the toillete seat example
-section: generalization:
-  how to generate toilette with DFA.
-  generalization to pushdown.
-  examples were pushdowns become handy (probably stack, scoping in html, in hint only: nested SQL queries).
-section: theoretical background
-reminder of ECOOP.
 
-\Cref{Section:proposal}
+\Cref{section:proposal}
   explains how \Fajita may serve the designer of a fluent API.
-Then, \Cref{Section:theoretical-background} discusses the
+Then, \Cref{section:theoretical-background} discusses the
   the core computational theory problem that \Fajita
   needs to solve: recognizing and parsing of formal languages
   within the framework of the limited abilities of \Java
   generics.
 The language recognition algorithm that \Fajita
-  implements is the subject of \cref{Section:recognizer}.
+  implements is the subject of \cref{section:intuition}.
 The main ideas behind the bootstrapping definition of \Self
-  are revealed in \Cref{Section:bootstrapping}.
-\Cref{Section:zz} concludes.
+  are revealed in \Cref{section:bootstrapping}.
+\Cref{section:zz} concludes.
+
+\section{Type States and a Fluent API Example}
+\label{section:example}
+\input{example}
+
+\section{Type States with Pushdown Automata}
+\label{section:generalization}
+\input{generalization}
+
+\section{The Computational Model of \protect\Java Generics}
+\label{section:background}
+\input{background}
 
 \section{Intuition}
-\label{Section:recognizer}
-\input{recognizer}
-
-\section{\Fajita as a development tool}
-\label{Section:proposal}
-\input{proposal}
+\label{section:recognizer}
+\input{intuition}
 
 \section{Theoretical background}
-\label{Section:theoretical-background}
+\label{section:theoretical-background}
 \input background
 
 \section{Bootstrapping \Fajita}
-\label{Section:bootstrapping}
+\label{section:bootstrapping}
 \input bootstrapping
 
 \section{Conclusion and Future Work}
-\label{Section:zz}
+\label{section:zz}
 \input{zz}
 
 \bibliographystyle{abbrv}\small

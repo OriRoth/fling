@@ -23,7 +23,7 @@ To this end, we revise the classical algorithm for converting
 \label{section:essentials}
 An LL(1) parser is a DPDA allowed to peek at the next input terminal.
 Thus,~$δ$, its transition function, takes two parameters: the current state of
-of the automaton, and a peek into the terminal next to be read.
+the automaton, and a peek into the terminal next to be read.
 The actual operation of the automaton
   is by executing in loop the step
   depicted in \cref{algorithm:ll-parser}.
@@ -57,8 +57,8 @@ The actual operation of the automaton
           \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
           \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}\COMMENT{push in reverse order}
       \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
-        \FI
-      \FI
+        \FI % No rule found
+      \FI % Main
 \end{algorithmic}
   \vspace{0.3ex}
   \hrule
@@ -106,7 +106,7 @@ Otherwise, it pushes into the stack, in reverse order, the symbols
 
 \subsection{LL(1) Parsing with \Java Generics?}
 \label{section:limitations}
-Can \cref{Algorithm:ll-parser} be executed on the machinery
+Can \cref{algorithm:ll-parser} be executed on the machinery
   available with \Java generics?
 As it turns out, most operations conducted by the algorithm
   are easy.
@@ -155,7 +155,7 @@ Let~$k^*$ be the number
 
   The cases $k' > 0$ and $k^*$ are not rarities.
 For example, let us concentrate on the grammar 
-  depicted in \cref{Figure:issue-1}.
+  depicted in \cref{figure:issue-1}.
 This grammar, inspired by the prototypical
   specification of \Pascal \urlref{http://www.fit.vutbr.cz/study/courses/APR/public/ebnf.html},
   shall serve as our running example.
@@ -182,7 +182,7 @@ Some of the~$δ$ function values for this grammar are
         \end{lrbox}
 
 \begin{figure}
-  \caption{\label{Figure:running}
+  \caption{\label{figure:running}
     An LL(1) grammar over the alphabet
     \[
       Σ = \left❴\usebox\Alphabet\right❵.
@@ -211,8 +211,9 @@ Some of the~$δ$ function values for this grammar are
 
 
 If this is the case, \cref{algorithm:ll-parser}
-pops an element out of the stack, without pushing any more elements into it
-Note that the fact
+pops an element out of the stack, without pushing any more elements into it.
+Note that the fact of what?
+
 The implementation of the LL parser as recognizer without using
 a jump-stack is problematic since LL grammars allow~$ε$-rules.
 During the processing of the~$ε$-rule, the parser pops the
@@ -255,7 +256,7 @@ process.
     \end{aligned}
   \end{Grammar}
   \caption{A BNF grammar for defining BNF grammars}
-  \label{Figure:BNF:BNF}
+  \label{figure:BNF:BNF}
 \end{figure}
 %How does the LL parser work?
 During normal LL parsing, the configuration of the parser consists
@@ -306,7 +307,7 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
     \OUTPUT{the closure of consecutive actions}
     \LET{$L$}{$[]$}
     \LET{$x$}{$a$}
-    \IF{$∀x→α . b∉\Function first(α)$}
+    \IF{$∀x→α. b ∉ \Function first(α)$}
       \RETURN{\textrm{reject}}
     \FI
     \WHILE{$\textrm{true}$}
@@ -324,58 +325,3 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
 
 \endinput
 
-\begin{Definition}[JETEM]
-  JETEM is a variant of pushdown automata that maintains two
-    stacks:
-    \begin{description}
-      \item[Call stack]
-      \item[Epsilon stack]
-    \end{description}
-    At each step of the automaton, it reads a single character,
-      and determines based on the character and the current top of the call stack, what to do:
-    \begin{description}
-      \item[Epsilon] if character is not in first, but is in follow
-      \item[Call] if character is in first but not in follow
-      \item[Reject] if character is not in first nor in follow
-      \item[Accept] when input exhausted.
-    \end{description}
-
-  \begin{enumerate}
-      \item
-
-\end{Definition}
-
-\begin{figure}[H]
-  \begin{Grammar}
-    \begin{aligned}
-      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
-      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
-      {} & \| \<Terminals> \~\<Variables> \hfill⏎
-      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
-      \<Start> & ::= \cc{start(\<Variable>)} \hfill⏎
-      \<Rules> & ::= \<Rule> \~\<Rules>\hfill⏎
-      {} & \| \<Rule> \hfill⏎
-      \<Rule> & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions> & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      \<First-Conjunction> & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{toNone()}\hfill⏎
-      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      {} & \| ε\hfill⏎
-      \<Extra-Conjunction> & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{orNone()} \hfill⏎
-      \<Symbol-Sequence> & ::= ε \hfill⏎
-      {} & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
-      \<Symbol> & ::= \cc{Variable} \hfill⏎
-      {} & \| \<Verb>\hfill⏎
-      {} & \| \<Verb>~\cc{,} \<Noun> \hfill⏎
-      \<Noun> & ::= \<Variable> \hfill⏎
-      {} & \| \<Existing-Class> \hfill⏎
-      \<Variable> & ::= \cc{Variable} \hfill⏎
-      \<Footer> & ::= \cc{go()}\hfill⏎
-    \end{aligned}
-  \end{Grammar}
-  \caption{A BNF grammar for defining BNF grammars}
-  \label{Figure:BNF:BNF}
-\end{figure}

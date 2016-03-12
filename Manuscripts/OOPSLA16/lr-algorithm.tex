@@ -1,3 +1,4 @@
+%! TEX root = 00.tex
 In this section, we describe an algorithm for generating
   a ‟JLR Recognizer" for a given context free grammar~$G$.
 The said recognizer is intended to be run on a jDPDA.
@@ -38,7 +39,7 @@ An LR(1) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
   \item An \emph{An automaton} whose states are~$Q=❴q₀,…,qₙ❵$
   \item A \emph{stack} which may contain any member of~$Q$.
 \item A \emph{specification} of state transition, 
-    which is done with of two tables:
+    which is done with one of two tables:
   \begin{description}
     \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
     between the states of the automaton.
@@ -111,13 +112,13 @@ Like the original algorithms, we divide the work to three
   where the first slightly differs from the original function by handling the
   labels of freshly added items as well as nullable symbols,
   and the other two remain as in the original LR state construction.
-The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
-  and~\cref{Algorithm:Items} accordingly.
+The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
+  and~\cref{algorithm:Items} accordingly.
 
 
 \begin{algorithm}[p]
     \newcommand\Queue{\ensuremath{Q}}
-  \caption{\label{Algorithm:Closure}
+  \caption{\label{algorithm:Closure}
   Function~$\Function Closure(I)$: compute the closure of items set~$I$}
   \begin{algorithmic}[1]
     \INPUT{a set of JLR items~$I$}
@@ -137,13 +138,13 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
       \ENDIF
       \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
       \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
-      \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\Function Nullable(δ)$}
+        \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\Function Nullable(δ)$}
           \STATE{$\Function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
         \ENDIF
         \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\Function First(δ)$}
           \STATE{$\Function enqueue(\Queue, [B→·γ,t,\Function newLabel(),N])$}
-        \ENDFOR
-      \ENDFOR
+        \ENDFOR % Closure item
+      \ENDFOR % Iterate over $B$
       \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\Function Nullable(B)$}
         \STATE{$\Function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
       \ENDIF
@@ -153,7 +154,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
 \end{algorithm}
 
 \begin{algorithm}[p]
-  \caption{\label{Algorithm:Goto}
+  \caption{\label{algorithm:Goto}
   Function~$\Function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
@@ -171,7 +172,7 @@ The algorithms are depicted in~\cref{Algorithm:Closure},~\cref{Algorithm:Goto}
 \end{algorithm}
 
 \begin{algorithm}[p]
-  \caption{\label{Algorithm:Items}
+  \caption{\label{algorithm:Items}
   Function~$\Function Items(G')$: generate set of states for
       augmented grammar~$G'$}
   \begin{algorithmic}
@@ -196,7 +197,7 @@ Notes on the algorithms
 \begin{itemize}
   \item Each JLR state contains all items that would be generated
     on an equivalent LR parser state
-    (intuition: without lines 17--18 in \cref{Algorithm:Closure}
+    (intuition: without lines 17--18 in \cref{algorithm:Closure}
     the algorithms differ only in the label field).
 \end{itemize}
 
@@ -210,7 +211,7 @@ $\Function JumpSet(q,σ)$ returns a function~$f$ that maps labels
 
 \begin{algorithm}[h]
   \begin{algorithmic}
-    \caption{\label{Algorithm:JumpSet}
+    \caption{\label{algorithm:JumpSet}
     Function~$\Function JumpSet(q,σ)$ - auxiliary function for action table}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$σ$}
@@ -297,23 +298,23 @@ We act like we would if the jump set was already pushed ( is that possible???? p
 \endinput
 
 \subsection{Between LR and JLR - A direct approach}
-LR parsers are actually DPDAs\@. As we mentioned before in \cref{Section:proof},~$ε$-moves
+LR parsers are actually DPDAs\@. As we mentioned before in \cref{section:proof},~$ε$-moves
   fails the emulation of a DPDA, thus, in order to type-encode an LR parser, we first need
   to convert it to the encode-able jDPDA\@.
 
 A \emph{JLR parser}, or \emph{Jump LR Parser} is an LR parser, that
   is based on a variation of the jDPDA\@.
-The objective of the JLR parser is refined in~\cref{Theorem:JLR}.
+The objective of the JLR parser is refined in~\cref{theorem:JLR}.
 
 \begin{Theorem}
-  \label{Theorem:JLR}
+  \label{theorem:JLR}
   Let~$P$ be an LR parser, then there exists a jDPDA~$J$,
   such that for every string~$α∈Σ^*$, parser~$P$ accepts~$α$
     if and only if~$J$ accepts~$α$
 \end{Theorem}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
   where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
   is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
@@ -347,7 +348,7 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
 \subsection{Informally}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
 
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
@@ -362,8 +363,8 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{Definition:JDPDA},
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
   \item[Even computation Invariant]
-    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*＄~$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
-    if when~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
+    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w=σ₁…σₖ\$∈Σ^*$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
+    When~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
     then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
     and \textsf{clean} is a function that removes all~$c∉Q$ from the input string.
   \item[Jump invariant]
