@@ -83,7 +83,7 @@ Our proof relies on a special kind of realtime automata,
   an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
 
-\begin{wraptable}r{36ex}
+\begin{table}[H]
   \caption{\label{table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
   \begin{tabular}{c|ll}
   & \hfill~$γ₁$ & \hfill~$γ₂$⏎
@@ -93,13 +93,14 @@ $σ₂$ & \hfill$⊥$ & $\textsf{push}(ε)$⏎
 $σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
   \end{tabular}
-\end{wraptable}
+\end{table}
 
-As it turns out, every DCFG language is recognized by some jDPDA, and conversely,
-  every language accepted by a jDPDA is a DCFG language~\cite{Courcelle:77}.
-The proof of \cref{theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
-Towards this end, we employ the type-encoding techniques developed above, and, 
-  in particular, the jump-stack data structure (\cref{figure:jump}).
+As it turns out, every DCFG language is recognized by some jDPDA, and
+conversely, every language accepted by a jDPDA is a DCFG
+language~\cite{Courcelle:77}.  The proof of \cref{theorem:Gil-Levy} is
+therefore reduced to type-encoding of a given jDPDA\@.  Towards this end, we
+employ the type-encoding techniques developed above, and, in particular, the
+jump-stack data structure (\cref{figure:jump}).
 
 \subsection{Main Types}
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
