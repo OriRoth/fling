@@ -26,29 +26,29 @@ The actual operation of the automaton
   \caption{\label{algorithm:ll-parser}
   DPDA algorithm for LL(1) parsing}
   \begin{algorithmic}
-      \LET{$X$}{\Function pop()} \COMMENT{What's anticipated on input?}
+      \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
       \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
       \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
-      \STATE{\textsc{Reject}} \COMMENT{automaton halts in error}
+      \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
       \ELSE[terminal just read was the anticipated~$X$]
-      \STATE{\textsc{Continue}} \COMMENT{restart, popping a new~$X$, etc.}
+      \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI
       \ELSIF[anticipating end-of-file]{$X=\$$}
         \IF[not the anticipated end-of-file]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
           \ELSE[terminal just read was the anticipated~$X$]
-          \STATE{\textsc{Accept}}\COMMENT{All input successfully consumed}
+          \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \ELSE[anticipated terminal~$X$ must be a nonterminal]
-      \LET{$R$}{$\Function δ(X, \Function peek())$} \COMMENT{Which rule to reduce?}
-      \IF[No rule found]{$R=⊥$}
+      \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{which rule to reduce?}
+      \IF[no rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
-        \LET{$[Z→Y₁,…,Yₖ]$}{R} \COMMENT{break~$R$ into left/right}
-      \STATE{\textbf{assert}~$Z=X$} \COMMENT{$δ$ constructed to return valid~$R$ only}
-          \STATE{$\Function print(R)$} \COMMENT{rule~$R$ has just been applied}
-          \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$} \COMMENT[push in reverse order]
-      \STATE{\textsc{Continue}} \COMMENT{restart, popping a new~$X$, etc.}
+        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+      \STATE{\textbf{assert}~$Z=X$}\COMMENT{$δ$ constructed to return valid~$R$ only}
+          \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
+          \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}\COMMENT{push in reverse order}
+      \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI
       \FI
 \end{algorithmic}
@@ -107,40 +107,55 @@ Similarly, any fixed sequence of push and pop
   transition function:
   the ‟\textbf{For}" at the algorithm can be unrolled.
 
-The algorithm may appears to be doing a constant amount
+Superficially, the algorithm appears to be doing a constant amount
   of work for each input symbol.
-However, a little scrutiny falsifies such a conclusion.
+A little scrutiny falsifies such a conclusion.
 
-Firstly, in the case~$R=X→Y$,~$Y$
+In the case~$R=X→Y$,~$Y$
   being a nonterminal, the algorithm will conduct
   two~$\Function push(·)$ operations,
   one for~$X$ and one for~$Y$ before consuming a terminal from the input.
-The number of such push operations cannot be bound a priori 
-  since~$δ$ may return next rule~$Y→Z$, and then~$Z→Z'$ etc.
+Further,~$δ$ may return next the rule~$Y→Z$,
+  and then the rule~$Z→Z'$, etc.
+Let~$k'$ be the number of such~$\Function push(·)$
+  operations in a certain such incident.
 
-Secondly, in the case~$k=0$ the DPDA does not push 
+Also, in the case~$k=0$ the DPDA does not push
   anything into the stack.
-In its next iteration, it proceeds to consider the next symbol
-  popped from the stack.
-Again, the number of pop operations cannot be bound a priori 
-  since if $X'$ is the next element popped from the 
-  stack could be such that the right hand side of rule $R'$ 
+Further, in its next iteration, the DPDA conducts another
+pop,
+\[
+  X'←\Function pop(),
+\]
+instruction and proceeds to consider this new~$X'$.
+If it so happens, it could also be the case
+  that the right hand side of rule~$R'$
   \[
     R' = δ(R', \Function peek())
   \]
-   is once again empty.
+  is once again empty,
+  and then another~$\Function pop()$
+    instruction occurs
+\[
+  X'←\Function pop(),
+\]
+  etc.
+Let~$k^*$ be the number 
+  of such instructions in a certain such mishap. 
 
-These two cases are not rarities. 
-Consider the grammar depicted in \cref{Figure:issue-1}. 
+  The cases $k' > 0$ and $k^*$ are not rarities.
+For example, let us concentrate on the grammar 
+  depicted in \cref{Figure:issue-1}.
 This grammar, inspired by the prototypical
   specification of \Pascal \urlref{original-full-specification},
   shall serve as our running example.
-The grammar preserves the ``theme''
-  of nested definitions of \Pascal, 
+
+The grammar preserves the ‟theme”
+  of nested definitions of \Pascal,
   while trimming these down as much as possible.
 The other major difference is that body of
-routines must be begin with \cc{(} followed by \cc{begin}
-    rather than a single ``\cc{begin}''.
+routines must be begin with~\cc{(} followed by \cc{begin}
+    rather than a single ‟\cc{begin}”.
 
 Some of the~$δ$ function values for this grammar are
 \begin{equation}
@@ -182,6 +197,9 @@ Some of the~$δ$ function values for this grammar are
     \end{aligned}
   \end{Grammar}
 \end{figure}
+
+
+
 If this is the case, \cref{algorithm:ll-parser}
 pops an element out of the stack, without pushing any more elements into it
 Note that the fact
