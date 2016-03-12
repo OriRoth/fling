@@ -1,9 +1,6 @@
 package automaton.oopsla;
 
 public abstract class ToiletteSeat {
-  public static Q0 downSeat() {
-    return null;
-  }
   // begin{types}
   public static interface Q0 {
     Q1 female();
@@ -33,10 +30,14 @@ public abstract class ToiletteSeat {
     Q5 raise();
     Q0 defecate();
   }
+  public static class Seat implements Q0 {
+    @Override public Q1 female() { /* ... */ }
+    // ... 
+  }
   // end{types}
   // begin{usage}
   public void usage_example(){
-    ((Q0)null)
+    new Seat()  
         .female().urinate()
         .male().defecate() 
         .male().raise().urinate()      // seat is up
@@ -44,4 +45,5 @@ public abstract class ToiletteSeat {
         .$();
   }
   // end{usage}
+  
 }

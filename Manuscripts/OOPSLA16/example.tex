@@ -116,12 +116,18 @@ by following the \emph{encoding convention}:
         }
 \end{enumerate}
 
-Employing the rules above to our example we get: 
-  \javaInput[minipage,width=28ex,left=-4ex]{toilette.types.listing}
+The result of employing these rules to our toilette example is depicted at~\cref{figure:toilette-types} 
 
-We can now use the API safely, as in the following:
-  \javaInput[minipage,width=51ex,left=-4ex]{toilette.usage.listing}
+\begin{figure}
+  \caption{\label{figure:toilette-types}
+    A fluent API realizing the toilette seat object defined as a DFA
+    in~\cref{figure:type-state-automaton}} 
+  \javaInput[minipage,width=41ex,left=-4ex]{toilette.types.listing}
+\end{figure}
 
+Using the implementation in~\cref{figure:toilette-types} we achieved
+our goals regarding the legal usage examples in~\cref{figure:toilette:legal}
+  and the illegal usage examples in~\cref{figure:toilette:illegal}.
 So far.⏎⏎
 
 It should be clear that the type checking engine of the compiler can
