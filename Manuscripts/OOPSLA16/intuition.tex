@@ -210,67 +210,6 @@ Some of the~$δ$ function values for this grammar are
 
 
 
-If this is the case, \cref{algorithm:ll-parser}
-pops an element out of the stack, without pushing any more elements into it.
-Note that the fact of what?
-
-The implementation of the LL parser as recognizer without using
-a jump-stack is problematic since LL grammars allow~$ε$-rules.
-During the processing of the~$ε$-rule, the parser pops the
-left-hand side of the rule and continues to process the penultimate
-stack element.
-It is possible to have multiple~$ε$ rules processed sequentially,
-that leads to the \textit{realtime} problem - we can only encode
-automata that do constant amount of computation on each input character
-process.
-
-\begin{figure}[H]
-  \begin{Grammar}
-    \begin{aligned}
-      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
-      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
-      {} & \| \<Terminals> \~\<Variables> \hfill⏎
-      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
-      \<Start> & ::= \cc{start(\<Variable>)} \hfill⏎
-      \<Rules> & ::= \<Rule> \~\<Rules>\hfill⏎
-      {} & \| \<Rule> \hfill⏎
-      \<Rule> & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions> & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      \<First-Conjunction> & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{toNone()}\hfill⏎
-      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      {} & \| ε\hfill⏎
-      \<Extra-Conjunction> & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{orNone()} \hfill⏎
-      \<Symbol-Sequence> & ::= ε \hfill⏎
-      {} & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
-      \<Symbol> & ::= \cc{Variable} \hfill⏎
-      {} & \| \<Verb>\hfill⏎
-      {} & \| \<Verb>~\cc{,} \<Noun> \hfill⏎
-      \<Noun> & ::= \<Variable> \hfill⏎
-      {} & \| \<Existing-Class> \hfill⏎
-      \<Variable> & ::= \cc{Variable} \hfill⏎
-      \<Footer> & ::= \cc{go()}\hfill⏎
-    \end{aligned}
-  \end{Grammar}
-  \caption{A BNF grammar for defining BNF grammars}
-  \label{figure:BNF:BNF}
-\end{figure}
-%How does the LL parser work?
-During normal LL parsing, the configuration of the parser consists
-  of three elements:
-\begin{itemize}
-  \item the current state of the parsing - which is the
-    rule being currently processed and the part of the rule we
-    haven't parsed yet.
-  \item the environment, or the parsing information we got so far -
-    which is the rest of the stack
-  \item the rest of the input string
-\end{itemize}
-
-
 \subsection{Generation of LL(1) DPDA Parsers}
 \label{section:generation}
 % How can we encode it?
@@ -322,6 +261,3 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
     \RETURN{$L$}
   \end{algorithmic}
 \end{algorithm}
-
-\endinput
-
