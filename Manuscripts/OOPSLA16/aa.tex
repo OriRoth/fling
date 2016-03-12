@@ -1,9 +1,14 @@
 %! TEX root = 00.tex
-Using snippets such as \[ some example \] (part of the fluent API of a certain library) and 
-\[
-another example 
-\] 
-(part of the fluent API of another thing) are neat.  Designing is complicated,
+Fluent APIs are neat.
+Code snippets such as 
+\begin{quote}
+    \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}} 
+\end{quote}
+(part of the fluent API of another thing) 
+\begin{quote}
+    \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
+\end{quote}
+are neat.  Designing is complicated,
 involving theory of automata, type theory, language design, etc.
 
 The thesis propounded by this research is that API design, and especially fluent API design
@@ -62,15 +67,6 @@ Despite this limitation, fluent API in \Java can be rich and expressive, as demo
 (open-source integration framework),
 and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
-
-\begin{figure}[H]
-  \caption{\label{figure:DSL} Two examples of \Java fluent API}
-  \begin{tabular}{@{}c@{}c@{}}
-    \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}} &
-    \hspace{-3ex} \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
-    \textbf{(a)} Apache Camel & \textbf{(b)} jOOQ
-  \end{tabular}
-\end{figure}
 
 Other examples of fluent APIs in \Java are abundant:
   jMock~\cite{Freeman:Pryce:06},

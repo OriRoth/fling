@@ -1,3 +1,4 @@
+%! TEX root = 00.tex
 In this section, we describe an algorithm for generating
   a ‟JLR Recognizer" for a given context free grammar~$G$.
 The said recognizer is intended to be run on a jDPDA.
@@ -154,7 +155,7 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:Goto}
-  Function~$\Function Goto(I,X)$: generate successive item set for~$I$ after seeing~$X$}
+  Function~$\Function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
     \INPUT{a grammar symbol~$X$}
@@ -313,7 +314,7 @@ The objective of the JLR parser is refined in~\cref{theorem:JLR}.
 \end{Theorem}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
   where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
   is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
   \begin{itemize}
@@ -332,22 +333,22 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definition:JDPDA},
    \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
     \[
-      f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
     \]
 
-   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=\Function Reduce(A→ε)$
-     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=\Function Shift(p)$
+   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
+     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
      and we advanced only on~$I⊆\textsf{NonKernel}_q$
      items, then
      \[
-      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=\Function Shift(q')❵
+      f = ❴σ'↦q' \; | \;∃i∈I. lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
      \]
 
   \end{itemize}
 \subsection{Informally}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
-A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definition:JDPDA},
+A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
 
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
@@ -362,8 +363,8 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definition:JDPDA},
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
   \item[Even computation Invariant]
-    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w =σ₁…σₖ \$∈Σ^*＄~$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
-    if when~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
+    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w=σ₁…σₖ\$∈Σ^*$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
+    When~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
     then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
     and \textsf{clean} is a function that removes all~$c∉Q$ from the input string.
   \item[Jump invariant]
