@@ -12,7 +12,7 @@ the file is in an ‟open” state. In addition, method \cc{open()} (respectivel
 \cc{close()}) can only be applied if the object is in the ‟closed”
 (respectively, ‟open”) state.
 
-A recent study~\cite{Beckman:2011} estimates that about~$7.2％$ of \Java
+A recent study~\cite{Beckman:11} estimates that about~$7.2％$ of \Java
 classes define protocols definable in terms of type-states.
 This non-negligible prevalence raise two challenges:
 \begin{enumerate}
@@ -55,25 +55,18 @@ A fluent API design specifies the order in which such calls can be made.
 For example, a fluent API should recognize the sequences of
   \cref{figure:toilette:legal} as being type correct.
 \begin{figure}[H]
-  \begin{JAVA}
-new Seat().male().raise().urinate();
-new Seat().female().urinate();
-  \end{JAVA}
-  \caption{Legal sequences of calls in the toilette seat example}
-  \label{figure:toilette:legal}
+  \caption{\label{figure:toilette:legal}
+    Legal sequences of calls in the toilette seat example}
+  \javaInput[minipage,width=35ex,left=-6ex]{toilette.legal.listing}
 \end{figure}
 
 At the same time, illegal sequences as made in
 \cref{figure:toilette:illegal} should be signaled as type errors.
 
 \begin{figure}[H]
-  \begin{JAVA}
-new Seat().female().raise();
-new Seat().male().raise().defecate();
-new Seat().male().male();
-new Seat().male().raise().urinate().female().urinate();\end{JAVA}
-  \caption{Illegal sequences of calls in the toilette seat example}
-  \label{figure:toilette:illegal}
+ \caption{\label{figure:toilette:illegal}
+   Illegal sequences of calls in the toilette seat example}
+  \javaInput[minipage,width=53ex,left=-6ex]{toilette.illegal.listing}
 \end{figure}
 
 To generate a fluent API that meets these requirements, one must observe that

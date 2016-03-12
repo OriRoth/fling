@@ -524,3 +524,11 @@ and the examples of fluent API we saw above, e.g., in \cref{figure:DSL}:
           store the value of its argument(s) in a record placed at the end of the fluent-call-list. 
       \end{enumerate}
 \end{description}
+=======
+\begin{enumerate}
+  \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) - linear grow, LR(1) - exponential blowup)
+  \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
+  \item The number of states grow to~$Q⨉Γᵏ$.
+  \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
+\end{enumerate}
+>>>>>>> 1832e4463687f81f73293ed44209fb0eb33834b6

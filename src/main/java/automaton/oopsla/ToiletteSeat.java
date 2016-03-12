@@ -35,14 +35,18 @@ public abstract class ToiletteSeat {
     // ... 
   }
   // end{types}
-  // begin{usage}
   public void usage_example(){
-    new Seat()  
-        .female().urinate()
-        .male().defecate() 
-        .male().raise().urinate()      // seat is up
-        .female().lower().defecate()   // seat is down
-        .$();
+    // begin{legal}
+    new Seat().male().raise().urinate();
+    new Seat().female().urinate();
+    // end{legal}
+    // begin{illegal}
+    new Seat().female().raise();
+    new Seat().male().raise().defecate();
+    new Seat().male().male();
+    new Seat().male().raise().urinate().female().urinate();
+    // end{illegal}
+     
   }
   // end{usage}
   
