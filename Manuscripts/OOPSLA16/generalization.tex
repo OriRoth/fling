@@ -1,57 +1,6 @@
 %! TEX root = 00.tex
 Section: generalization:
-  how to generate toilette with DFA\@.
+  how to generate toilette with DFA\@.% already written in intuition
   Generalization to pushdown.
   Examples were pushdown automata become essential are: probably stack, scoping in html,
     in hint only: nested SQL queries.
-\begin{Definition}[JETEM]
-  JETEM is a variant of pushdown automata that maintains two
-    stacks:
-    \begin{description}
-      \item[Call stack]
-      \item[Epsilon stack]
-    \end{description}
-    At each step of the automaton, it reads a single character,
-      and determines based on the character and the current top of the call stack, what to do:
-    \begin{description}
-      \item[Epsilon] if character is not in first, but is in follow
-      \item[Call] if character is in first but not in follow
-      \item[Reject] if character is not in first nor in follow
-      \item[Accept] when input exhausted.
-    \end{description}
-\end{Definition}
-
-\begin{figure}[H]
-  \begin{Grammar}
-    \begin{aligned}
-      \<BNF> & ::= \<Header>\~\<Body>\~\<Footer> \hfill⏎
-      \<Header> & ::= \<Variables> \~\<Terminals> \hfill⏎
-      {} & \| \<Terminals> \~\<Variables> \hfill⏎
-      \<Variables> & ::= \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
-      \<Terminals> & ::= \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body> & ::= \<Start> \~\<Rules> \hfill⏎
-      \<Start> & ::= \cc{start(\<Variable>)} \hfill⏎
-      \<Rules> & ::= \<Rule> \~\<Rules>\hfill⏎
-      {} & \| \<Rule> \hfill⏎
-      \<Rule> & ::= \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions> & ::= \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      \<First-Conjunction> & ::= \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{toNone()}\hfill⏎
-      \<Extra-Conjunctions> & ::= \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      {} & \| ε\hfill⏎
-      \<Extra-Conjunction> & ::= \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
-      {} & \| \cc{orNone()} \hfill⏎
-      \<Symbol-Sequence> & ::= ε \hfill⏎
-      {} & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
-      \<Symbol> & ::= \cc{Variable} \hfill⏎
-      {} & \| \<Verb>\hfill⏎
-      {} & \| \<Verb>~\cc{,} \<Noun> \hfill⏎
-      \<Noun> & ::= \<Variable> \hfill⏎
-      {} & \| \<Existing-Class> \hfill⏎
-      \<Variable> & ::= \cc{Variable} \hfill⏎
-      \<Footer> & ::= \cc{go()}\hfill⏎
-    \end{aligned}
-  \end{Grammar}
-  \caption{A BNF grammar for defining BNF grammars}
-  \label{figure:BNF:BNF}
-\end{figure}

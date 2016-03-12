@@ -30,17 +30,16 @@
 
 \paragraph{Outline.}
 
-\Cref{section:proposal}
+\Cref{section:example}
   explains how \Fajita may serve the designer of a fluent API\@.
-Then, \Cref{section:theoretical-background} discusses 
+  %something is not consistent with the order of the sections
+Then, \Cref{section:background} discusses 
   the core computational theory problem that \Fajita
   needs to solve: recognizing and parsing of formal languages
   within the framework of the limited abilities of \Java
   generics.
 The language recognition algorithm that \Fajita
   implements is the subject of \cref{section:intuition}.
-The main ideas behind the bootstrapping definition of \Self
-  are revealed in \Cref{section:bootstrapping}.
 \Cref{section:zz} concludes.
 
 \section{Type States and a Fluent API Example}
@@ -56,12 +55,8 @@ The main ideas behind the bootstrapping definition of \Self
 \input{background}
 
 \section{Intuition}
-\label{section:recognizer}
+\label{section:intuition}
 \input{intuition}
-
-\section{Theoretical background}
-\label{section:theoretical-background}
-\input background
 
 \section{Algorithm background}
 \label{section:algorithm}
