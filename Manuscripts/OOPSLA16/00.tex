@@ -16,9 +16,7 @@
 \usepackage{\jobname}
 
 \begin{document}
-\section{Intuition}
-\input recognizer
-\end{document}
+
 
 \maketitle
 
@@ -38,6 +36,16 @@ Must include in a place that would not be missed.
 \input{aa}
 
 \paragraph{Outline.} 
+section:the toillete seat example
+section: generalization:
+  how to generate toilette with DFA.
+  generalization to pushdown.
+  examples were pushdowns become handy (probably stack, scoping in html, in hint only: nested SQL queries).
+section: theoretical background
+reminder of ECOOP.
+
+
+
 \Cref{Section:proposal} 
   explains how \Fajita may serve the designer of a fluent API. 
 Then, \Cref{Section:theoretical-background} discusses the 
@@ -52,7 +60,9 @@ The main ideas behind the bootstrapping definition of \Self
 \Cref{Section:zz} concludes. 
 
 
-
+\section{Intuition}
+\label{Section:recognizer}
+\input{recognizer}
 
 \section{\Fajita as a development tool}
 \label{Section:proposal}
@@ -61,10 +71,6 @@ The main ideas behind the bootstrapping definition of \Self
 \section{Theoretical background}
 \label{Section:theoretical-background}
 \input background
-
-\section{The LL Recognition algorithm}
-\label{Section:recognizer}
-\input recognizer
 
 \section{Bootstrapping \Fajita}
 \label{Section:bootstrapping}

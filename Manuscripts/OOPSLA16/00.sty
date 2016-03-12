@@ -1,52 +1,63 @@
+
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
 % Vim: +,/^ *$/-1!sort -u 
+\passOptions{algorithm}{plain}
 \passOptions{amsmath}{fleqn} 
 \passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{geometry} {margin=0.75in}
 \passOptions{gnuplottex}{subfolder} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table} 
-\passOptions{yogi-algorithm}{terse}
-\passOptions{yogi-lang}{terse}
+
 
 % Vim: +,/^ *$/-1!sort -u 
-\usepackage{adjustbox}
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{amssymb} %load more math symbols
-\usepackage{amsthm}
+\usepackage{adjustbox}   % Easy size adjustment of tables and figures.
+\usepackage{amsfonts}    % AMS fonts
+\usepackage{amsmath}     % AMS Mathematics
+\usepackage{amssymb}     % Load more math symbols
+\usepackage{amsthm}      % AMS theorems
 \usepackage{anyfontsize} % fixes font warnings
-\usepackage{booktabs}
-\usepackage{cite}
+\usepackage{booktabs}    % Typography of tables
+\usepackage{cite}        % Sort citations
 \usepackage{code}
 \usepackage{float}
 \usepackage{fontspec}
+\usepackage{geometry}
 \usepackage{gnuplottex}
 \usepackage{graphicx}
-\usepackage{tabularx}
 \usepackage{hyperref,cleveref}
+\usepackage{lipsum}
+\usepackage{listings}
 \usepackage{listingsutf8}
 \usepackage{nth}
 \usepackage{pifont}
 \usepackage{syntax}
+\usepackage{tabularx}
 \usepackage{tikz}
 \usepackage{wasysym}
 \usepackage{wrapfig}
 
 % Vim: +,/^ *$/-1!sort -u 
+\passOptions{yogi-algorithm}{terse}
+\passOptions{yogi-lang}{terse}
+
+% Vim: +,/^ *$/-1!sort -u 
 \usepackage{yogi-algorithm}
-\usepackage{yogi-unicode}
 \usepackage{yogi-lang}
+\usepackage{yogi-unicode}
 
 \lstset{language=Java,style=code}
 
+% Vim: +,/^ *$/-1!sort -u 
 \usetikzlibrary{graphdrawing}
 \usetikzlibrary{graphs} 
 \usetikzlibrary{shapes} 
 
-\usegdlibrary{circular}
-\usegdlibrary{trees}
+% Vim: +,/^ *$/-1!sort -u 
+% \usegdlibrary{circular}
+% \usegdlibrary{trees}
 
 \renewcommand{\algorithmicforall}{\textbf{For each}}
 
@@ -70,27 +81,55 @@
 \newcommand \AST {AST}
 \def \Fajita {\textsc{Fajita}\xspace}
 
+% Vim: +,/^ *$/-1!sort -u 
 \newtheorem{Theorem}{Theorem}
 \newtheorem{Lemma}{Lemma}
 \newtheorem{Proposition}{Proposition}
 \newtheorem{Definition}{Definition}
 \newtheorem{Conjecture}{Conjecture}
 
+% Vim: +,/^ *$/-1!sort -u 
 \numberwithin{equation}{section}
 \numberwithin{figure}{section}
+\numberwithin{algorithm}{section}
 
+% Vim: +,/^ *$/-1!sort -u 
 \def\sectionautorefname{Sect.}
 \def\subsectionautorefname{Sect.}
 \def\figurename{Fig.}
 \def\figureautorefname{\figurename}
 \def\tablename{Table}
+\def\sectionautorefname{Sect.}
+\def\subsectionautorefname{Sect.}
+\def\tablename{Table}
+\def\figurename{Fig.}
 
+% How should entities be names in references
+% Vim: +,/^ *$/-1!sort -u 
+\crefname{algorithm}{Alg.\@}{algs.\@}
+\Crefname{algorithm}{Alg.\@}{Algs.\@}
+\crefname{conjecture}{Conj.\@}{conjs.\@}
+\Crefname{conjecture}{Conj.\@}{Conjs.\@}
+\crefname{definition}{Def.\@}{defs.\@}
+\Crefname{definition}{Def.\@}{Defs.\@}
+\crefname{equation}{eq.\@}{eqs.\@}
+\Crefname{equation}{Eq.\@}{Eqs.\@}
+\crefname{figure}{Fig.\@}{figs.\@}
+\Crefname{figure}{Fig.\@}{Figs.\@}
+\crefname{section}{Sect.\@}{sects.\@}
+\Crefname{section}{Sect.\@}{Sects.\@}
+\crefname{table}{Table}{tables.}
+\crefname{table}{Table}{tables}
+\Crefname{table}{Table}{Tables}
+\crefname{theorem}{Thm.\@}{thms.\@}
+\Crefname{theorem}{Thm.\@}{Thms.\@}
+
+
+\newcommand \urlref [1] {\footnote{\url{#1}}}
+\def\nthscript#1{\textsuperscript{\textit{#1}}}
 
 \intextsep=6pt
 
-\newcommand \urlref [1] {\footnote{\url{#1}}}
-
-\def\nthscript#1{\textsuperscript{\textit{#1}}}
 \newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
 \newenvironment{Grammar}
