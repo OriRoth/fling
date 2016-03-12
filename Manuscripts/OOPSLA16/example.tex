@@ -1,0 +1,208 @@
+%! TEX root = 00.tex
+The large body of research on the general topic of \emph{type-states} (see
+e.g., these review articles~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005})
+Informally, an object that belongs to a certain type (\kk{class} in the object
+oriented lingo), has type-states, if not all methods defined in this object's
+class are applicable to the object in all states it may be in.
+
+File object is the classical example: It can be in one of two states: ‟open” or
+‟closed”. Invoking a \cc{read()} method on the object is only permitted when
+the file is in an ‟open” state. In addition, method \cc{open()} (respectively
+\cc{close()}) can only be applied if the object is in the ‟closed”
+(respectively, ‟open”) state.
+
+A recent study~\cite{Beckman:2011} estimates that about~$7.2％$ of \Java
+classes define protocols definable in terms of type-states.
+This non-negligible prevalence raise two challenges:
+\begin{enumerate}
+  \item \emph{\textbf{Identification.}} Frequently, type-state receive little
+    or no mention at all in the documentation. The challenge is in identifying
+    the implicit type state in existing code.
+    \par
+    Specifically, given an implementation of a class (or more generally of a
+    software framework), \emph{determine} which sequences of method calls are
+    valid and which violate the type state requirement presumed by the
+    implementation. \item \emph{\textbf{Maintenance and Enforcement.}} Having
+    identified the type-states, the challenge is in automatically flagging out
+    illegal sequence of calls that does not conform with the type-state.
+    \par
+    Part of this challenge is maintenance of these automatic flagging
+    mechanisms as the type-state specification of the API evolves.
+\end{enumerate}
+
+\subsection{A Type State Example}
+
+An object of type \cc{Seat}†
+{%
+  example inspired by earlier work of Richard Harter on the
+  topic~\cite{Harter:05}.
+}
+is created in the \cc{down} state, but it can then be \cc{raise}d to the
+\cc{up} state, and then be \cc{lower}ed to the \cc{down} state.
+Such an object be used by two kinds of users, \cc{male}s and \cc{female}s, for
+two distinct purposes: \cc{urinate} and \cc{defecate}.  
+
+
+A fluent API enforcement of type states should signal the sequences of method
+calls made in \cref{figure:toilette:illegal} as type errors. 
+
+\begin{figure}[H]
+  \begin{JAVA}
+new Seat().male().raise().urinate();
+new Seat().female().urinate();
+  \end{JAVA}
+  \caption{Legal sequences of calls in the toilette seat example}
+  \label{figure:toilette:legal}
+\end{figure}
+
+At the same time, this type-state enforcement a fluent API should recognize the
+sequences of \cref{figure:toilette:legal} as being 
+  type correct.
+
+\begin{figure}[H]
+  \begin{JAVA}
+new Seat().female().raise();
+new Seat().male().raise().defecate();
+new Seat().male().male();
+new Seat().male().raise().urinate().female().urinate();\end{JAVA}
+  \caption{Illegal sequences of calls in the toilette seat example}
+  \label{figure:toilette:illegal}
+\end{figure}
+
+The protocol of a \cc{Seat} 
+
+Method calls in 
+It should be clear that the type checking engine of the compiler can
+be employed to distinguish between legal and illegal sequences.
+It should also be clear that fabricating the \kk{class}es, \kk{interface}s
+and the \kk{extends} and \kk{implements} relationships between these, is
+far from being trivial.
+
+\subsection{Type State}
+The toilette seat problem may be amusing to some, but it is not contrived in
+any way.
+  To illustrate, consider the toilette seat example.
+In this example,
+  there are a total of six methods that might be invoked.
+\begin{quote}
+  \begin{tabular}{lll}
+    \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
+    \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
+  \end{tabular}
+\end{quote}
+A fluent API design specifies the order in which such calls can be made.
+
+The \emph{first} novelty in this research is that the fluent API definition is
+  through a CFG, written as a BNF.
+\cref{figure:BNF} is such a specification for the toilette seat problem.
+
+\begin{figure}[H]
+  \begin{Grammar}
+    \begin{aligned}
+      \<Visitors> & ::= \<Down-Visitors> \hfill⏎
+      \<Down-Visitors> & ::= \<Down-Visitor> \~\<Down-Visitors> \hfill⏎
+      {} & \| \<Raising-Visitor> \~\<Up-Visitors> \hfill⏎
+      {} & \| ε \hfill⏎
+      \<Up-Visitors> & ::= \<Up-Visitor> \~\<Up-Visitors> \hfill⏎
+      {} & \| \<Lowering-Visitor> \~\<Down-Visitors> \hfill⏎
+      {} & \| ε \hfill⏎
+      \<Up-Visitor> & ::= \cc{male()} \~\cc{urinate()} \hfill⏎
+      \<Down-Visitor> & ::= \cc{female()} \~\<Action> \hfill⏎
+                          & \| \cc{male()} \cc{defecate()} \hfill⏎
+      \<Raising-Visitor> & ::= \cc{male()} \~\cc{raise()} \~\cc{urinate()} \hfill⏎
+      \<Lowering-Visitor> & ::= \cc{female()} \~\cc{lower()} \~\<Action> \hfill⏎
+                          & \| \cc{male()} \~\cc{lower()} \cc{defecate()} \hfill⏎
+      \<Activity> & ::= \cc{urinate()} \hfill⏎
+                          & \| \cc{defecate()} \hfill⏎
+    \end{aligned}
+  \end{Grammar}
+  \caption{A BNF grammar for the toilette seat problem}
+  \label{figure:BNF}
+\end{figure}
+
+\Self takes this grammar specification as input, and in response
+  generates the corresponding
+  \Java type hierarchy.
+
+\subsection{Verbs and Nouns}
+A second novelty of \Self is that the specification of a BNF such as in
+  \cref{figure:BNF} can be also made with a \Java fluent API\@.
+To do so, it is first necessary to
+  define the set of \emph{grammar terminals}
+  \begin{code}{JAVA}
+enum ToiletteTerminals implements Terminal {¢¢
+  male, female,
+  urinate, defecate,
+  lower, raise;
+}
+\end{code}
+As common in fluent APIs we shall refer to these
+as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns.
+  An excuse might be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
+Verbs are translated by \Self into methods.
+
+We are also required to define the set of \emph{grammar variables}
+\begin{code}{Java}
+enum ToiletteVariables implements Variable {¢¢
+  Visitors, Down_Visitors, Up_Visitors,
+  Up_Visitor, Down_Visitor,
+  Lowering_Visitor, Raising_Visitor,
+  Activity
+};
+\end{code}
+  We shall use the term ‟\emph{noun}” as synonymous to ‟variable”.
+
+\subsection{Words and Grammar}
+The terms ‟symbol” and ‟word” refer to an entity which is either
+  a verb or a noun.
+
+Once the verbs and the nouns are set, the grammar can be defined,
+  using a fluent API generated by \Self itself as shown
+  in \cref{figure:fluent}.
+
+\begin{figure}[H]
+  \begin{JAVA}[style=numbered]
+new BNF()
+  ¢¢.with(ToiletteTerminals.class)
+  ¢¢.with(ToiletteSymbols.class)
+  ¢¢.start(Visitors)
+  ¢¢.derive(Visitors).to(Down_Visitors)
+  ¢¢.derive(Down_Visitors)
+    ¢¢.to(Down_Visitor).and(Down_Visitors)
+    ¢¢.or(Raising_Visitor).and(Up_Visitors)
+    ¢¢.orNone()
+  ¢¢.derive(Up_Visitors)
+    ¢¢.to(Up_Visitor).and(Up_Visitors)
+    ¢¢.or(Lowering_Visitor).and(Down_Visitors)
+    ¢¢.orNone()
+  ¢¢.derive(Up_Visitor).to(male).and(urinate)
+  ¢¢.derive(Down_Visitor)
+    ¢¢.to(female).and(Action)
+    ¢¢.or(male).and(defecate)
+  ¢¢.derive(Raising_Visitor).to(male).and(raise).and(urinate)
+  ¢¢.derive(Lowering_Visitor)
+    ¢¢.to(female).and(lower).and(Action)
+    ¢¢.or(male).and(lower).and(defecate)
+  ¢¢.derive(Activity)
+    ¢¢.to(urinate)
+    ¢¢.or(defecate)
+  ¢¢.go();
+  \end{JAVA}
+  \caption{A BNF grammar for the toilette seat problem}
+  \label{figure:fluent}
+\end{figure}
+
+The call to function \cc{go()} (last line in \cref{figure:fluent}) instructs
+  \Self to generate the code for the fluent API specified by the
+  subsequent part of the expression.
+Roughly speaking, nouns are translated to classes while verbs are translated to methods which
+  take no parameters.
+Two exceptions apply:
+\begin{enumerate}
+  \item
+    Library classes such as \cc{String} and \cc{Integer}, just as user-defined
+    classes such as \cc{Invoice} may be used as nouns.
+    \Self generate class definitions only for classes whose name is declared
+    in an \kk{enum} which is passed to \cc{with} verb in the BNF declaration.
+  \item Verbs may take noun parameters, as explained below.
+\end{enumerate}
