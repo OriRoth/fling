@@ -127,8 +127,8 @@ In the case~$R=X→Y$,~$Y$
   operation for~$Y$ before consuming a terminal from the input.
 Further,~$δ$ may return next the rule~$Y→Z$,
   and then the rule~$Z→Z'$, etc.
-Let~$k'$ be the number of such substitution
-  in a certain such incident.
+Let~$k'$ be the number of such substitutions
+  occurring while reading a single input token.
 
 Also, in the case~$R=X→ε$ the DPDA does not push
   anything into the stack.
@@ -244,10 +244,68 @@ The full~$\Function First(·)$ and~$\Function Follow(·)$ analysis
   \end{tabular}
 \end{table}
 
-Some of the~$k^*,k'$ function values for this grammar are
-\begin{equation}
-  δ(n,t) = 3
-\end{equation}
+\subsubsection{Examples for~$k'$ for the grammar in~\cref{figure:running}}
+Consider a state of the parser, in which~$\nonterminal{Definitions}$ is on 
+  the top of the top of the stack, and the next token on the input string 
+  is \cc{label}.
+Until that token is consumed, the parser will:
+  \begin{enumerate}
+    \item pop~$\nonterminal{Definitions}$ from the stack, and push the
+      nonterminals $\nonterminal{Labels}$,~$\nonterminal{Constants}$, and~$\nonterminal{Nested}$
+      in reversed order.
+    \item pop~$\nonterminal{Labels}$ and push the
+      symbols~$\cc{label}$,~$\nonterminal{Label}$, and
+      $\nonterminal{MoreLabels}$ in reversed order.
+    \item match the top of the stack~\cc{label} with the input symbol~\cc{label}
+      and consume it.
+  \end{enumerate}
+Since we first substituted~$\nonterminal{Definitions}$, then~$\nonterminal{Labels}$
+  and only then consumed the input symbol,~$k'=2$.
+
+The problem is that every such operation is 
+  an~$ε$-move of the parser's DPDA, and as was shown in~\cref{ECOOP-PAPER}
+  it causes problems when we want to employ \Java's compiler to ``run'' our
+  automaton.
+
+Another case is when encountering~$\nonterminal{Nested}$ on the top of the stack
+  and \cc{procedure} in the input string.
+  $k'=2$ again, where at first the non-$ε$ rule of~$\nonterminal{Nested}$ will
+  be pushed, then the non-$ε$ rule of~$\nonterminal{Procedure}$ will be
+  pushed, and only then will the terminal~\cc{procedure} will match,
+  and be consumed from the input string.
+
+\subsubsection{Examples for~$\k^*$ for the grammar in~\cref{figure:running}}
+Consider a state in which the parser is in, where the
+  only rule of~$\nonterminal{Program}$ is being processed,~$\nonterminal{Definitions}$
+  was just replaced on the stack by it's only rule, and~$\nonterminal{Body}$ is below.
+Assume also, that the first terminal in the input string is \cc{begin}.
+
+Until the next input token will be consumed, the following will happen:
+  \begin{enumerate}
+    \item consulting with~$δ$,~$\nonterminal{Labels}$'s~$ε$-rule will
+      be chosen, thus,~$\nonterminal{Labels}$ will be popped from the stack.
+    \item then the same will happen with~$\nonterminal{Constants}$ and~$\nonterminal{Nested}$.
+    \item only after seeing nonterminal~$\nonterminal{Body}$ shall the right rule will be
+      pushed, and the token matched.
+  \end{enumerate}
+In this case,~$k^*=3$ because we had to pop three nonterminals and ‟replace” them with
+  their matching rules, that are all~$ε$-rules before we got to a nonterminal
+  that will derive to something other then~$ε$.
+
+In the last example~$k^*$ was determined by the size of~$\nonterminal{Definitions}$, but that
+  doesn't have to be the case all the time.
+For example, if in our grammar, in~$\nonterminal{Program}$'s rule,
+  nonterminal~$\nonterminal{Parameters}$ would follow~$\nonterminal{Definitions}$,
+  then in the last example, after popping~$\nonterminal{Labels}$,~$\nonterminal{Constants}$
+  and~$\nonterminal{Nested}$, nonterminal~$\nonterminal{Parameters}$ would also be popped
+  for similar reasons, and~$k^*$ would have been~$4$ in this case.
+
+Again, the problem relies with the multiple pops that occur without reading the input.
+
+  
+
+endiput
+% OLD
 
 \subsection{Generation of LL(1) DPDA Parsers}
 \label{section:generation}

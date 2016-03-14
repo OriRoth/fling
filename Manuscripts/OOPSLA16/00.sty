@@ -64,30 +64,30 @@
 \newcommand\gobble[1]{\@gobble{#1}}
 \makeatother
 
+\floatstyle{plaintop}
 \floatstyle{ruled}
-\restylefloat{figure}
 \restylefloat{algorithm}
-\floatstyle{plain}
+\restylefloat{figure}
 \restylefloat{table}
 
 
 \adjustboxset{max width=\columnwidth}
-\adjustboxset{max height=0.8\textheight}
 \adjustboxset{center}
-\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
+\adjustboxset{max height=0.8\textheight}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
+\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
 
 \newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
-\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
-\newcommand \AST {AST}
 \def \Fajita {\textsc{Fajita}\xspace}
+\newcommand \AST {AST}
+\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
 
 % Vim: +,/^ *$/-1!sort -u 
 \newtheorem{Theorem}{Theorem}
+\newtheorem{Conjecture}{Conjecture}
+\newtheorem{Definition}{Definition}
 \newtheorem{Lemma}{Lemma}
 \newtheorem{Proposition}{Proposition}
-\newtheorem{Definition}{Definition}
-\newtheorem{Conjecture}{Conjecture}
 
 % Vim: +,/^ *$/-1!sort -u 
 \numberwithin{equation}{section}
@@ -96,14 +96,11 @@
 
 % Vim: +,/^ *$/-1!sort -u 
 \def\sectionautorefname{Sect.}
-\def\subsectionautorefname{Sect.}
-\def\figurename{Fig.}
-\def\figureautorefname{\figurename}
 \def\tablename{Table}
+\def\figureautorefname{\figurename}
+\def\figurename{Fig.}
 \def\sectionautorefname{Sect.}
 \def\subsectionautorefname{Sect.}
-\def\tablename{Table}
-\def\figurename{Fig.}
 
 % How should entities be names in references
 % Vim: +,/^ *$/-1!sort -u 
