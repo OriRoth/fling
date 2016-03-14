@@ -217,30 +217,32 @@ $\Function Follow(\nonterminal{Definitions})$ on the other hand, contains only
 \cc{begin} since~\nonterminal{Definitions} is always followed by~\nonterminal{Body},
   and~$\Function First(\nonterminal{Body})$ contains only \cc{begin}.
 
-The full~$\Function First(·)$ and~$\Function Follow(·)$ analysis
-  of our grammar example(\cref{figure:running}) is depicted
-  at~\cref{table:running-first-follow}
+The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
+  our running example (\cref{figure:running}) are listed in~\cref{table:running-first-follow}.
 
 \begin{table}[H]
+  \def\<#1>{\textcolor{black}{\text{$\langle\nonterminal{#1}\rangle$}}}
   \caption{\label{table:running-first-follow}
-    The~$\Function First(·)$ and~$\Function Follow(·)$ analysis of
+    Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of 
     the grammar in~\cref{figure:running}}
-  \begin{tabular}{@{}@{}l|l|l@{}@{}}
+    \begin{tabular}{@{}@{}*3l@{}@{}}
+      \toprule
     Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
-      \hline
-    Program & \cc{program} & $∅$⏎
-    Labels & \cc{label} & \cc{const}, \cc{procedure}, \cc{begin}⏎
-    Constants & \cc{constant} & \cc{procedure}, \cc{begin}⏎
-    Label & \cc{;} & \cc{;}, \cc{const}, \cc{procedure}, \cc{begin}⏎
-    MoreLabels & \cc{;} & \cc{const}, \cc{procedure}, \cc{begin}⏎
-    Constant & \cc{;} & \cc{;}, \cc{procedure}, \cc{begin}⏎
-    MoreConstants & \cc{;} & \cc{procedure}, \cc{begin}⏎
-    Nested & \cc{procedure} & \cc{begin}⏎
-    Procedure & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
-    Definitions & \cc{label}, \cc{const} & \cc{begin}⏎
-      &,\cc{procedure} &⏎
-    Body & \cc{begin} & \cc{procedure}, \cc{begin}⏎
-    Parameters & \cc{()} & \cc{;}⏎
+      \midrule
+    \<Program> & \cc{program} & $∅$⏎
+    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \cc{begin}⏎
+    \<Constants> & \cc{constant} & \cc{procedure}, \cc{begin}⏎
+    \<Label> & \cc{;} & \cc{;}, \cc{const}, \cc{procedure}, \cc{begin}⏎
+    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \cc{begin}⏎
+    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \cc{begin}⏎
+    \<MoreConstants> & \cc{;} & \cc{procedure}, \cc{begin}⏎
+    \<Nested> & \cc{procedure} & \cc{begin}⏎
+    \<Procedure> & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
+    \<Definitions> & \cc{label}, \cc{const} & \cc{begin}⏎
+      &\cc{procedure} &⏎
+    \<Body> & \cc{begin} & \cc{procedure}, \cc{begin}⏎
+    \<Parameters> & \cc{()} & \cc{;}⏎
+      \bottomrule
   \end{tabular}
 \end{table}
 
