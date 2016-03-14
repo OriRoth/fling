@@ -12,6 +12,7 @@ and,
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
   in the context of \CSharp).  
+
 However, the actual implementation of the many fluent API systems
   jMock~\cite{Freeman:Pryce:06},
   Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
@@ -27,6 +28,7 @@ Concretely, we argue that all fluent API designs
 Also, semantics is typically one of two.
 \emph{Eager} execution semantics is 
 found e.g., in \cc{StringBuilder}\urlref{Findsomething}
+
 \begin{lcode}[minipage,width=44ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   final StringBuilder sb = new StringBuilder();
@@ -37,6 +39,7 @@ String time(int hours, int minutes, int seconds) {¢¢
   sb.append(seconds);
   return sb.toString();
 }\end{lcode}
+
 In this semantics, each method in the chain executes a computation,
   whose result, is made the receiver of the next method 
   in the chain.
