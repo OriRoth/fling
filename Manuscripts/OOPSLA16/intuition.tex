@@ -21,7 +21,7 @@ To this end, we revise the classical algorithm for converting
 
 \subsection{LL(1) Parsing}
 \label{section:essentials}
-An LL(1) parser is a DPDA allowed to peek at the next input terminal.
+An LL(1) parser is a DPDA allowed to peek at the next input symbol.
 Thus,~$δ$, its transition function, takes two parameters: the current state of
 the automaton, and a peek into the terminal next to be read.
 The actual operation of the automaton
@@ -32,7 +32,7 @@ The actual operation of the automaton
 \renewcommand\algorithmicthen{\textbf{\emph{}}}
 \begin{algorithm}[p]
   \caption{\label{algorithm:ll-parser}
-  DPDA algorithm for LL(1) parsing}
+  DPDA algorithm for an LL(1) parsing step}
   \begin{algorithmic}
       \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
       \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
@@ -41,8 +41,8 @@ The actual operation of the automaton
       \ELSE[terminal just read was the anticipated~$X$]
       \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI
-      \ELSIF[anticipating end-of-file]{$X=\$$}
-        \IF[not the anticipated end-of-file]{$\$≠\Function next()$}
+      \ELSIF[anticipating end-of-input]{$X=\$$}
+        \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
           \ELSE[terminal just read was the anticipated~$X$]
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
@@ -66,7 +66,7 @@ The actual operation of the automaton
   \scriptsize
   \begin{enumerate}
       \item
-  Input is a stream of terminals drawn from alphabet~$Σ$, ending
+  Input is a string of terminals drawn from alphabet~$Σ$, ending
   with a special symbol~$\$\ni Σ$.
       \item
   Stack symbols are drawn from~$Σ∪❴\$❵∪Ξ$, where~$Ξ$ is
@@ -74,7 +74,7 @@ the set of nonterminals of the grammar from which the automaton was generated.
 \item
   Functions~$\Function pop()$ and~$\Function push(·)$
   operate on the push-down stack; function~$\Function next()$ returns
-  and consumes the next terminal from the input stream;
+  and consumes the next terminal from the input string;
   function~$\Function peek()$ returns this terminal without consuming it.
 \item
 The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
@@ -82,22 +82,22 @@ The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
   \end{enumerate}
 \end{algorithm}
 
-The DPDA maintains a stack of ‟anticipated” symbol, which may
+The DPDA maintains a stack of ‟anticipated” symbols, which may
   be of three kinds: a terminal drawn from the input alphabet~$Σ$,
-  an -end-of=file symbol~$\$$, or,
-  or one of~$Ξ$, the set of nonterminals of the underlying
-  grammar.
+  an end-of-input symbol~$\$$, or one of~$Ξ$, the set of
+  nonterminals of the underlying grammar.
 
-If the state is an input terminal or the special, end-of-file,
-  symbol~$\$$, then it must match
-  the next terminal found in the input stream.
-If no match is found, then the parser rejects.
+If the top of the stack is an input symbol or the special,
+ end-of-input symbol~$\$$, then it must match the next terminal
+ in the input string, the matched terminal is then consumed from
+ the input string.
+If there is no match, the parser rejects.
 The parser accepts if the input is exhausted with
-  no rejections.
+  no rejections (i.e.,~$\$$ was matched).
 
 The more interesting case is that~$X$, the popped symbol
   is a nonterminal: the DPDA peeks into the next terminal in the input
-  stream (without consuming it).
+  string (without consuming it).
 Based on this terminal, and~$X$ the transition function~$δ$
   determines~$R$ the derivation rule to use in order to derive~$X$.
 The algorithm rejects if~$δ$ can offer no such rule.
@@ -111,7 +111,7 @@ Can \cref{algorithm:ll-parser} be executed on the machinery
 As it turns out, most operations conducted by the algorithm
   are easy.
 The implementation of function~$δ$ can
-  be found in the toolbox.
+  be found in the toolbox\cref{what-toolbox}.
 Similarly, any fixed sequence of push and pop
   operations on the stack can be conducted within a \Java
   transition function:
@@ -123,14 +123,14 @@ A little scrutiny falsifies such a conclusion.
 
 In the case~$R=X→Y$,~$Y$
   being a nonterminal, the algorithm will conduct
-  two~$\Function push(·)$ operations,
-  one for~$X$ and one for~$Y$ before consuming a terminal from the input.
+  a~$\Function pop(·)$ to remove~$X$ and a~$\Function push(·)$
+  operation for~$Y$ before consuming a terminal from the input.
 Further,~$δ$ may return next the rule~$Y→Z$,
   and then the rule~$Z→Z'$, etc.
-Let~$k'$ be the number of such~$\Function push(·)$
-  operations in a certain such incident.
+Let~$k'$ be the number of such substitution
+  in a certain such incident.
 
-Also, in the case~$k=0$ the DPDA does not push
+Also, in the case~$R=X→ε$ the DPDA does not push
   anything into the stack.
 Further, in its next iteration, the DPDA conducts another
 pop,
@@ -141,36 +141,24 @@ instruction and proceeds to consider this new~$X'$.
 If it so happens, it could also be the case
   that the right hand side of rule~$R'$
   \[
-    R' = δ(R', \Function peek())
+    R' = δ(X', \Function peek())
   \]
   is once again empty,
   and then another~$\Function pop()$
     instruction occurs
 \[
-  X'←\Function pop(),
+  X”←\Function pop(),
 \]
   etc.
-Let~$k^*$ be the number 
-  of such instructions in a certain such mishap. 
+Let~$k^*$ be the number
+  of such instructions in a certain such mishap.
 
-  The cases $k' > 0$ and $k^*$ are not rarities.
-For example, let us concentrate on the grammar 
-  depicted in \cref{figure:issue-1}.
+  The cases~$k' > 0$ and~$k^*$ are not rarities.
+For example, let us concentrate on the grammar
+  depicted in \cref{figure:running}.
 This grammar, inspired by the prototypical
   specification of \Pascal \urlref{http://www.fit.vutbr.cz/study/courses/APR/public/ebnf.html},
   shall serve as our running example.
-
-The grammar preserves the ‟theme”
-  of nested definitions of \Pascal,
-  while trimming these down as much as possible.
-The other major difference is that body of
-routines must begin with~\cc{(} followed by \cc{begin}
-    rather than a single ‟\cc{begin}”.
-
-Some of the~$δ$ function values for this grammar are
-\begin{equation}
-  δ(n,t) = 3 
-\end{equation}
 
 \newsavebox{\Alphabet}
 \begin{lrbox}{\Alphabet}
@@ -181,7 +169,7 @@ Some of the~$δ$ function values for this grammar are
   \end{tabularx}
 \end{lrbox}
 
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:running}
     An LL(1) grammar over the alphabet
     \[
@@ -202,13 +190,64 @@ Some of the~$δ$ function values for this grammar are
       \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
       \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
+      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions> \<Body> \hfill⏎
       \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
 \end{figure}
 
+The grammar preserves the ‟theme”
+  of nested definitions of \Pascal,
+  while trimming these down as much as possible.
 
+In order to demonstrate the problems with~$k'$ and~$k^*$ we first
+  supply the~$\Function First(·)$, and~$\Function Follow(·)$
+  sets of our example grammar.
+The~$\Function First(·)$ set of nonterminal~$A$ is the set of all
+  terminals that might appear at the beginning of a string derived by~$A$.
+The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
+  terminals that might appear immediately after a string that was
+  derived from~$A$.
+
+For example, the nonterminal \nonterminal{Definitions} can be derived to a string
+  beginning with \cc{label} (if there are defined labels), or \cc{const}
+  (if there are no labels defined), or \cc{procedure} (if there are no
+  labels or constants defined).
+$\Function Follow(\nonterminal{Definitions})$ on the other hand, contains only
+\cc{begin} since~\nonterminal{Definitions} is always followed by~\nonterminal{Body},
+  and~$\Function First(\nonterminal{Body})$ contains only \cc{begin}.
+
+The full~$\Function First(·)$ and~$\Function Follow(·)$ analysis
+  of our grammar example(\cref{figure:running}) is depicted
+  at~\cref{table:running-first-follow}
+
+\begin{table}[H]
+  \caption{\label{table:running-first-follow}
+    The~$\Function First(·)$ and~$\Function Follow(·)$ analysis of
+    the grammar in~\cref{figure:running}}
+  \begin{tabular}{@{}@{}l|l|l@{}@{}}
+    Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
+      \hline
+    Program & \cc{program} & $∅$⏎
+    Labels & \cc{label} & \cc{const}, \cc{procedure}, \cc{begin}⏎
+    Constants & \cc{constant} & \cc{procedure}, \cc{begin}⏎
+    Label & \cc{;} & \cc{;}, \cc{const}, \cc{procedure}, \cc{begin}⏎
+    MoreLabels & \cc{;} & \cc{const}, \cc{procedure}, \cc{begin}⏎
+    Constant & \cc{;} & \cc{;}, \cc{procedure}, \cc{begin}⏎
+    MoreConstants & \cc{;} & \cc{procedure}, \cc{begin}⏎
+    Nested & \cc{procedure} & \cc{begin}⏎
+    Procedure & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
+    Definitions & \cc{label}, \cc{const} & \cc{begin}⏎
+      &,\cc{procedure} &⏎
+    Body & \cc{begin} & \cc{procedure}, \cc{begin}⏎
+    Parameters & \cc{()} & \cc{;}⏎
+  \end{tabular}
+\end{table}
+
+Some of the~$k^*,k'$ function values for this grammar are
+\begin{equation}
+  δ(n,t) = 3
+\end{equation}
 
 \subsection{Generation of LL(1) DPDA Parsers}
 \label{section:generation}

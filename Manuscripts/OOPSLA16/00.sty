@@ -133,6 +133,8 @@
 
 \newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
+\def\nonterminal#1{\ensuremath{\text{\mdseries\rmfamily\textit{#1}}}}
+
 \newenvironment{Grammar}
 {%
   \scriptsize
@@ -140,7 +142,7 @@
   \def\~{\text{~}}
   \def\|{\~\~\textcolor{red}{\mathbf|\~\~}}
   \def\Derives{\textcolor{red}{ \mathbf{\rightarrow} }\xspace}
-  \def\<##1>{\textcolor{black}{\text{$\langle\text{\mdseries\rmfamily\/\textit{##1}}\rangle$}}}
+  \def\<##1>{\textcolor{black}{\text{$\langle\nonterminal{##1}\rangle$}}}
   \let\oldCc=\cc
   \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
   \let\oldKk=\kk

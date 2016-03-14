@@ -21,7 +21,12 @@ Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ,P⟩$.
       \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
     \end{enumerate}
 
+
+
+% From that point on, the text is copied from the ecoop
 \endinput
+
+
 
 % Taken from proof.tex
 On a first sight, the proof of \cref{theorem:Gil-Levy} could follow the techniques
@@ -65,7 +70,7 @@ Our proof relies on a special kind of realtime automata,
   \]
   A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
   Initially, the stack holds~$γ₁$ only.
-  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-file character.
+  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-input character.
   \begin{itemize}
     \item At each step a jDPDA examines~$γ$,
     the element at the top of the stack,
@@ -148,7 +153,7 @@ This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{fig
   the empty and the error configurations.
 
 Type~\cc{C} defines~$ℓ+1$ functions (4 in the example), one for each possible input character,
-  and one for the end-of-file character defined as \$.
+  and one for the end-of-input character defined as \$.
 Since~\cc{C} encodes an abstract configuration, return types of functions in it
   are the appropriate defaults which intentionally fail to emulate the automaton's execution.
   The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
@@ -524,11 +529,3 @@ and the examples of fluent API we saw above, e.g., in \cref{figure:DSL}:
           store the value of its argument(s) in a record placed at the end of the fluent-call-list. 
       \end{enumerate}
 \end{description}
-=======
-\begin{enumerate}
-  \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) - linear grow, LR(1) - exponential blowup)
-  \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
-  \item The number of states grow to~$Q⨉Γᵏ$.
-  \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
-\end{enumerate}
->>>>>>> 1832e4463687f81f73293ed44209fb0eb33834b6

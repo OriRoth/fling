@@ -1,8 +1,0 @@
-\usetikzlibrary{datavisualization}
-\usetikzlibrary{datavisualization.formats.functions}
-
-\begin{tikzpicture}[baseline]
-\datavisualization [scientific axes,visualize as line/.list={a}, ]
-data [set=a,read from file=kill.csv] ;
-data group[set=a]{function=exp};
-\end{tikzpicture}
