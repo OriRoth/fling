@@ -174,7 +174,7 @@ For example, let us concentrate on the grammar
   depicted in \cref{figure:running}.
 This grammar, inspired by the prototypical
   specification of \Pascal \urlref{http://www.fit.vutbr.cz/study/courses/APR/public/ebnf.html},
-  shall serve as our running example.
+  shall serve as running example.
 
 \newsavebox{\Alphabet}
 \begin{lrbox}{\Alphabet}
@@ -321,16 +321,16 @@ The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
     Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
     the grammar in~\cref{figure:running}}
     \rowcolors{2}{}{olive!20}
-    \begin{tabular}{@{}@{}*3l@{}@{}}
+    \begin{tabular}{@{}@{}*2l>{}p{19ex}@{}}
       \toprule
     Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
       \midrule
     \<Program> & \cc{program} & $∅$⏎
-    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \cc{begin}⏎
+    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
     \<Constants> & \cc{constant} & \cc{procedure}, \cc{begin}⏎
-    \<Label> & \cc{;} & \cc{;}, \cc{const}, \cc{procedure}, \cc{begin}⏎
-    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \cc{begin}⏎
-    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \cc{begin}⏎
+    \<Label> & \cc{;} & \cc{;}, \cc{const}, \newline \cc{procedure}, \newline \cc{begin}⏎
+    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
+    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \newline \cc{begin}⏎
     \<MoreConstants> & \cc{;} & \cc{procedure}, \cc{begin}⏎
     \<Nested> & \cc{procedure} & \cc{begin}⏎
     \<Procedure> & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
