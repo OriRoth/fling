@@ -329,7 +329,7 @@ The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
     Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
     the grammar in~\cref{figure:running}}
     \rowcolors{2}{}{olive!20}
-    \begin{tabular}{@{}@{}*2l>{}p{19ex}@{}}
+    \begin{tabular}{@{}@{}m{17ex}m{15ex}@{}m{19ex}@{}@{}}
       \toprule
     Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
       \midrule
@@ -342,8 +342,7 @@ The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
     \<MoreConstants> & \cc{;} & \cc{procedure}, \cc{begin}⏎
     \<Nested> & \cc{procedure} & \cc{begin}⏎
     \<Procedure> & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
-    \<Definitions> & \cc{label}, \cc{const} & \cc{begin}⏎
-      &\cc{procedure} &⏎
+    \<Definitions> & \cc{label}, \cc{const}, \cc{procedure}& \cc{begin}⏎
     \<Body> & \cc{begin} & \cc{procedure}, \cc{begin}⏎
     \<Parameters> & \cc{()} & \cc{;}⏎
       \bottomrule
