@@ -155,7 +155,7 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:Goto}
-  Function~$\Function Goto(I,X)$: generate an successive item set for~$I$ after seeing~$X$}
+  Function~$\Function Goto(I,X)$: generate the item set of successive to~$I$ after seeing~$X$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
     \INPUT{a grammar symbol~$X$}
@@ -185,8 +185,8 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
   \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
     \IF{$\Function Goto(I,X)$ is not empty and not in~$R$}
     \STATE{$R←R ∪ ❴\Function Goto(I,X)❵$} % There is a tricky point here, the equality operator checks only the kernel items, since 2 different Closure(I) will generate items with different labels.
-    \ENDIF
-  \ENDFOR
+    \ENDIF % Grammar symbol
+    \ENDFOR % For items
       \ENDFOR
     \UNTIL{Set~$R$ is unchanged}
     \RETURN{$R$}
