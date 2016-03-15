@@ -7,7 +7,7 @@
   \item~$aⁿbⁿcⁿ$
   \item \Prolog Unification.
   \item We investigated wildcards, intersection types and
-        (the rather limited) type inference of 
+        (the rather limited) type inference of
         Java, but failed to employ these to increase the expressive power of the computation model.
   \item Ecoop results.
   \item Lina reduction
@@ -21,511 +21,52 @@ Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ,P⟩$.
       \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
     \end{enumerate}
 
+\subsection{Toolkit summary}
+This toolkit presents how can one use the \Java compiler's
+  type checker to do compile time computations, mostly know as
+  ‟meta-programming”.
 
+\subsubsection*{Unary functions}
+The first example presented in the toolkit is for encoding a
+  basic unary function~$g:A→A$ for any finite set~$A$.
 
-% From that point on, the text is copied from the ecoop
-\endinput
-
-
-
-% Taken from proof.tex
-On a first sight, the proof of \cref{theorem:Gil-Levy} could follow the techniques
-  sketched in \cref{section:toolkit} to type encode a DPDA (\cref{definition:DPDA}).
-The partial transition function~$δ$ may be type encoded as in \cref{figure:simple-binary},
-and the stack data structure of a DPDA can be encoded as in \cref{figure:stack-encoding}.
-
-The techniques however fail with~$ε$-transitions,
-  which allow the automaton to move between an unbounded number of
-  configurations and maneuver the stack in a non-trivial manner,
-  without making any progress on the input.
-The fault in the scheme lies with compile time computation being carried out
-  by the~$\Function java(σ)()$ functions, each converting
-  their receiver type to the type of the receiver of the next call in the chain.
-We are not aware of a \Java type encoding which makes
-  it possible to convert an input type into an output type, where
-  the output is computed from the input by an unbounded number of steps.
-  †{With the presumption that the \Java compiler halts for all inputs (a presumption that does
-    not hold for e.g., \CC, and was never proved for \Java), the claim that there is no \Java 
-    type encoding for all DPDAs can be proved:
-    Employing~$ε$-transitions, it is easy to construct an automaton~$A^∞$ that
-    never halts on any input.
-    A type encoding of~$A^∞$ creates programs that send the compiler in an infinite loop.
-  }
-
-The literature speaks of finite-delay DPDAs, in which the number
-  of consecutive~$ε$-transitions is uniformly bounded and even of
-  realtime DPDAs in which this bound is 0, i.e., no~$ε$-transitions.
-Our proof relies on a special kind of realtime automata,
-  described by Courcelle~\cite{Courcelle:77}.
-
-\begin{Definition}[Simple-Jump Single-State Realtime Deterministic Pushdown Automaton]
-  \label{definition:JDPDA}
-  \slshape
-  A \textit{simple-jump, single-state, realtime deterministic pushdown automaton}
-  (jDPDA, for short) is a triplet~$⟨Γ,γ₁,δ⟩$
-  where~$Γ$ is a set of stack elements,~$γ₁∈Γ$ is the initial stack element,
-  and~$δ$ is the \emph{partial transition function},~$δ:Γ⨉Σ↛Γ^*∪j(Γ)$,
-  \[
-    j(Γ) = ❴ \textit{instruction \Function jump(\cdot)}(γ) \; | \;γ∈Γ❵.
-  \]
-  A configuration of a jDPDA is some~$c∈Γ^*$ representing the stack contents.
-  Initially, the stack holds~$γ₁$ only.
-  For technical reasons, assume that the input terminates with~$\$ \not∈Σ$, a special end-of-input character.
-  \begin{itemize}
-    \item At each step a jDPDA examines~$γ$,
-    the element at the top of the stack,
-    and~$σ∈Σ$, the next input character,
-    and executes the following:
-          \begin{quote}
-            \begin{enumerate}
-              \item consume~$σ$
-              \item if~$δ(γ,σ)=ζ$,~$ζ∈Γ^*$, the automaton pops~$γ$, and pushes~$ζ$ into the stack.
-              \item if~$δ(γ,σ)=\textsf{jump}(γ')$,~$γ'∈Γ$, then the automaton repetitively
-                    pops stack elements up-to and including the first occurrence of~$γ'$.
-            \end{enumerate}
-          \end{quote}
-    \item If the next character is~$\$$, the automaton may reject or accept (but nothing else),
-          depending on the value of~$γ$.
-  \end{itemize}
-  In addition, the automaton rejects if~$δ(γ,σ) =⊥$ (i.e., undefined), or if it encounters
-  an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
-\end{Definition}
-
-\begin{table}[H]
-  \caption{\label{table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
-  \begin{centering}
-    \begin{tabular}{c|ll}
-      \toprule
-              & \hfill~$γ₁$                     & \hfill~$γ₂$⏎
-      \midrule
-      $σ₁$ & $\textsf{push}(γ₁,γ₁,γ₂)$ & $\textsf{push}(γ₂,γ₂)$⏎
-      $σ₂$ & \hfill$⊥$                        & $\textsf{push}(ε)$⏎
-      $σ₃$ & \hfill$⊥$                        & $\textsf{jump}(γ₁)$⏎
-      $\$$    & \hfill$\textsf{accept}$            & $\textsf{reject}$⏎
-      \bottomrule
-    \end{tabular}
-  \end{centering}
-\end{table}
-
-As it turns out, every DCFG language is recognized by some jDPDA, and
-conversely, every language accepted by a jDPDA is a DCFG
-language~\cite{Courcelle:77}.  The proof of \cref{theorem:Gil-Levy} is
-therefore reduced to type-encoding of a given jDPDA\@.  Towards this end, we
-employ the type-encoding techniques developed above, and, in particular, the
-jump-stack data structure (\cref{figure:jump}).
-
-\subsection{Main Types}
-Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
-  where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
-\begin{quote}
-  %\javaInput[minipage,width=53ex,left=-2ex]{proof.headers.listing}
-\end{quote}
-(The full type encoding is in \cref{figure:A} below; to streamline the reading, we bring
-  excerpts as necessary.)
-
-A configuration is encoded by a generic type~\cc{C}.
-Essentially,~\cc{C} is a representation of the stack,
-  but~$k+1$ type parameters are required:
-\begin{itemize}
-  \item \cc{Rest}, a type encoding of the stack after a pop (or \textsf{jump} with the top element), and,
-  \item $k$ types, named \cc{JR$γ$1}, … ,\cc{JR$γ${}$k$}, encoding the type of \cc{Rest}
-    after~$\textsf{jump}(γ₁)$,…~$\textsf{jump}(γₖ)$.
-\end{itemize}
-
-Note that these~$k+1$ parameters are sufficient for describing a configuration,
-  i.e., if the top is~$γⱼ$, then for all~$j≠i~$
+It was shown how can a fluent API be simply generated
+  to ensure that for any~$a,b∈A$,
 \[
-  \textsf{jump}(γⱼ) = \cc{Rest.}\textsf{jump}(γⱼ)
+  \cc{a tmp = \kk{new} b().g();}
 \]
-In the special case of~$\textsf{jump}(γᵢ)$ the returned type is still~$\cc{Rest}$,
-  this is due to the fact that before a \textsf{jump} operation,
-  we do not pop an element from the stack.
+will type check if and only if~$g(b)=a$.
 
-All instantiations of~\cc{C} must make sure that actual parameters are properly constrained,
-  to ensure that they are (the type version of) pointers into the actual stack,
-  not a trivial task, as will be seen shortly.
+It was also shown that it could be made with generation
+  a number of classes linearly proportionate to~$|A|$.
 
-In the running example,~\cc{C} is defined as:
-\begin{quote}
-  %\javaInput[minipage,width=61ex,left=-2ex]{proof.configuration.listing}
-\end{quote}
-This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{figure:jump})
-  the empty and the error configurations.
+\subsection*{Partial Binary functions}
+The next example elaborated the previous, and showed
+  how can a partial binary function~$f:R⨉S↛T$
+  can be encoded for any finite sets~$R,S,T$.
 
-Type~\cc{C} defines~$ℓ+1$ functions (4 in the example), one for each possible input character,
-  and one for the end-of-input character defined as \$.
-Since~\cc{C} encodes an abstract configuration, return types of functions in it
-  are the appropriate defaults which intentionally fail to emulate the automaton's execution.
-  The return type of \cc{\$()} is \cc{ΣΣ} (rejection);
-  the transition functions \cc{$σ$1()}, … \cc{$σ${}$ℓ$()}, return the raw type~\cc{C}.
-
-\subsection{Top-of-Stack Types}
-
-Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
-  encode stacks whose top element is~$γ₁$, … ,$γₖ$.
-In~$A$ there are two of these:
-\begin{quote}
-  %\javaInput[minipage,width=42ex,left=-4ex]{proof.many.listing}
-\end{quote}
-
-In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
-in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
-
-\begin{figure*}
-  \caption{\label{figure:chain} Accepting and non-accepting call chains with the
-  type encoding of jDPDA~$A$ (as defined in \cref{table:A}).
-  All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
-  %\javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
-\end{figure*}
-
-The method signatures of these types are generated using the mentioned parameters.
-The generating of methods will be discussed next.
-
-The code defines the \kk{static} variable \cc{build}, the starting point
-of all fluent API call chains, to be of type \cc{C$γ$1<E,¤,¤>}, i.e.,
-  the starting configuration of the automaton is a stack whose top is~$γ₁$,
-  and its \cc{Rest} parameter is empty (\cc{E}).
-Any of the two jumps possible on this rest results with,~\cc{¤},
-  an undefined stack.
-Examples of accepting and rejecting call chains starting at \cc{A.build}
-  can be seen in \cref{figure:chain}.
-
-\subsection{Transitions}
-It remains to show the type encoding of~$δ$,
-  the transition function.
-Overall, there are a total of~$k·(ℓ+1)$
-  entries in a transition table such as \cref{table:A}.
-Conceptually, these are encoded by selecting the correct return
-  type of functions \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} in each
-  of the~$k$ ‟Top of Stack” types.
-Thanks to inheritance, we need to do so only in the cases that this
-  return type is different from the default.
-
-Overall, there are six kinds of entries in a transition table:
-\begin{description}
-
-  \item[\textsf{reject}]
-  The default return type of \cc{\$()} in~\cc{C} is \cc{$ΣΣ$}, which
-  is \emph{not} a subtype of~\cc{L}. Normally the result of a call chain that ends with \cc{\$()}
-  cannot be assigned to a variable of type~\cc{L}. Moreover, since \cc{$ΣΣ$} is \kk{private},
-  there is little that clients can do with this result.
-
-  \item[\textsf{accept}]
-  The only case in which fluent call chain ending with \cc{\$()} can return
-    type~\cc{L} is when the type returned of the call just prior to~\cc{.\$()} covariantly
-    changes the return type of~\cc{\$()} to~\cc{L}.†{This is not to be confused with dynamic binding;
-    types of fluent API call chains are determined statically.}
-  \par
-  Recall that a jDPDA can only accept after its input is exhausted.
-  In \cref{table:A} we see that \textsf{accept} occurs when the top of the stack is~$γ₁$.
-  We therefore add to the body of type \cc{C$γ$1} the line
-  \begin{JAVA}
-@Override L ¢\gobble$¢$();
-  \end{JAVA}
-
-  \item[$⊥$]
-  When a prefix of the input is sufficient to conclude it must be rejected however it continues,
-    the transition function returns~$⊥$.
-  In~$A$ this occurs when the top of the stack is~$γ₁$ and one of~$σ_2$ or~$σ_3$ is read.
-  To type encode~$δ(γ₁,σ₂) =⊥$, one must \emph{not} override \cc{$σ$2()} in type~\cc{C$γ$1};
-    the inherited return type (l.15 \cref{figure:A}) is the raw~\cc{C}.
-  Subsequent calls in the chain will all receive and return a raw~\cc{C}
-    (Recall that all \cc{$σ${}$i$()},~$i=1,…,ℓ$, are functions in~\cc{C} that return a raw~\cc{C}).
-  Therefore, the final \cc{\$()} will reject.
-  \par
-  Two other situations in which a jDPDA rejects but not demonstrated in~$A$ are:
-    a \textsf{jump} that encounters an empty stack, and reading a character from when the stack is empty.
-  In our type encoding these are handled by the special
-    types~\cc{E} and~\cc{¤} (ll.17--18 ibid), both extend~\cc{C} without
-    overriding any of its methods. Again, remaining part of the call chain will stick to
-    raw~\cc{C}s up until the final \cc{\$()} call rejects the input.
-
-  \item[$\textsf{jump}(γᵢ)$]
-  The design of the generic parameters makes the implementation of~$\textsf{jump}(γᵢ)$
-    operations particularly simple.
-  All that is required is to covariantly change the return type of the
-    appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
-    (recall that a jump occurs after popping the current element from the stack, so % or is it now TOMER XXXXXXXXXXXXXXXXXX
-    we refer to \cc{JR} type parameters rather than~\cc{J}'s).
-  \par
-  In \cref{table:A} we find that~$δ(γ₂,σ₃) =\textsf{jump}(γ₁)$. 
-  Accordingly, the type of \cc{$σ$2()} in \cc{C$γ$2} (l.34) is \cc{JR$γ$1}.
-
-  \item[$\textsf{push}(ζ)$]
-  Push operations are the most complex, since they involve a pop of the top stack element,
-    and pushing any number, including zero, of new elements.
-  The challenge is in constructing the correct~$k+1$-parameter instantiation of~\cc{C},
-    from the current parameters of the type.
-  Each of these~$k+1$ is also an instantiation of~\cc{C} which may require more such
-    parameters.
-  Even though the number of ingredients is small, the resulting type expressions
-    tend to be excessively long and unreadable.
-  \par
-  The predicament is ameliorated a bit by the idea,
-    demonstrated above with auxiliary type~\cc{Pʹ}
-    (\cref{figure:jump-stack-push}),
-    of delegating the task of creating a complex type to an auxiliary
-    generic type.
-  The task of this sidekick is simplified if some of its generic
-  parameters are sub-expressions that recur in the desired
-  result.
-  \par
-  Cases in point
-    are~$δ(γ₁,σ₁)=\textsf{push}(γ₁,γ₁,γ₂)$, and~$δ(γ₂,σ₁)=\textsf{push}(γ₂,γ₂)$ of \cref{table:A}.
-  The corresponding sidekick types,
-    (\cc{$γ$1$σ$1\_Push\_$γ$1$γ$1$γ$2} and \cc{$γ$2$σ$1\_Push\_$γ$2$γ$2})
-    can be found in lines 36--43 of \cref{figure:A}.
-  The first of these define the correct return type
-    of \cc{$σ$1()} in case \cc{$γ$1} is the top element,
-    the second of \cc{$σ$2}, in case \cc{$γ$2} is the top element.
-  Examine now the definition of types \cc{C$γ$1},\cc{C$γ$2} in the figure,
-    and in particular lines 21--23 and 29--31 which define the list of types they extend.
-  Notice that each extends one of the sidekicks, inheriting the covariant
-    overrides of \cc{$σ$1()}.
-  \par
-  More generally, economy of expression may require that for each case
-    of~$δ(γ,σ)=\textsf{push}(ζ)$ in the transition table,
-    one creates a sidekick type which overrides the appropriate \cc{$σ$()}
-    function.
-  The appropriate \cc{C$γ$} type then inherits the definition
-    from the sidekick.
-\end{description}
-
-\begin{figure*}[htbp]
-  \caption{\label{figure:A}Type encoding of jDPDA~$A$ (as defined in \cref{table:A})}
-  %\javaInput[minipage,listing style=numbered,width=1.08\columnwidth]{proof.full.listing}
-\end{figure*}
-
-\paragraph*{Conclusion} The proof of~\Cref{theorem:Gil-Levy} is an algorithm, taking as input some jDPDA,
-  and returning as output a set of \Java type definitions.
-The returned types, allow a call chain~$\textsf{java}(\alpha)$,
-  such that the type of the returned object represents the 
-  configuration of the input automaton after reading~$\alpha$.
-If the automaton rejects after~$\alpha$, then the returned type is the illegal~$\Sigma\Sigma$, 
-  and if the automaton accpets, the type shall be~$L$.
-
-
-% Taken from prefix.tex
-
-\begin{Theorem}\label{theorem:Gil-Levy:2}
-  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A},~\cc{C} and
-    other types such that the \Java command
-  \begin{equation}
-    \label{equation:prefix:result}
-    \cc{C c = A.build.$\textsf{java}(α)$;}
-  \end{equation}
-    type checks against~$J_A$ if an only if there exists~$β∈Σ^*$ such
-    that~$αβ∈L$ and type \cc{C} is the configuration of~$A$ after reading~$α$.
-  Furthermore, for any such~$β$,~\cref{theorem:Gil-Levy} applies such that the
-  \Java command
-  \begin{equation}
-    \cc{L~$ℓ$ = A.build.$\textsf{java}(αβ)$}\cc{.\$();}
-  \end{equation}
-    always type-checks.
-  Finally, the program~$J_A$ can be effectively generated from~$A$.
-\end{Theorem}
-
-Informally, a call chain type-checks if and only if it is a prefix
-  of some legal sequence.
-Alternatively, a call chain won't type-check if there is no
-  continuation that leads to a legal string in~$L$.
-
-The proof resembles~\cref{theorem:Gil-Levy}'s proof.
-We provide a similar implementation for a jump-stack
-  †{recall that the two formal constructs are of the same expressiveness},
-  that will not compile under illegal prefixes.
-
-The main difference between the two theorems is:
-  in~\cref{theorem:Gil-Levy} we allowed illegal call chains to compile,
-  but not return the required~\cc{L} type, while in~\cref{theorem:Gil-Levy:2}
-  the illegal chain won't compile at all.
-
-Since the code suggested by the proof highly resembles the previously
-  suggested code, mainly the differences will be discussed.
-
-We will use the same running example, defined by~\cref{table:A}.
-
-\subsection{Main Types}
-The main types here are a subset of the previously defined main types.
-
-\begin{quote}
-  %\javaInput[minipage,width=45ex,left=-2ex]{prefix-proof.configuration.listing}
-\end{quote}
-
-First, type \cc{$ΣΣ$} is removed.
-A call chain that doesn't represent a valid prefix won't compile,
-  thus, there is no need for an error return type such as \cc{$\SigmaΣ$}.
-Second, \kk{interface}~\cc{C} is removed.
-Without it, the configuration types won't have the
-  methods \cc{$σ$1()}, … ,\cc{$σ${}$k$()} and \cc{\$()} from the supertype.
-These inherited methods, is what differentiates the previous proof from the current.
-Classes \cc{¤} and \cc{E} are defined similarly, except now they don't extend any type.
-
-\subsection{Top-of-Stack Types}
-Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
-  with \cc{$γ$1}, … ,\cc{$γ${}$k$} as their top element,
-  this time, the methods are defined ad-hock, in each type
-  (they are not added in this figure as they are added with the use of sidekicks).
-In~$A$ there are two such types:
-
-\begin{quote}
-  %\javaInput[minipage,width=51ex,left=-2ex]{prefix-proof.many.listing}
-\end{quote}
-
-
-Note, that the type parameters of the former types hasn't changed,
-  since the model we are trying to implement, hasn't changed.
-  These~$k+1$ parameters still suffice for our cause.
-
-\begin{figure*}
-  \caption{\label{figure:prefix-chain} Accepting and non-accepting call chains with the
-  type encoding of jDPDA~$A$ (as defined in \cref{table:A}).
-  All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
-  cause type errors}
-  %\javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
-\end{figure*}
-
-In~\cref{figure:prefix-chain}, call chains in the~\cc{accepts()} method
-  correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
-  do not type-check (i.e., these prefixes have no continuation that can lead to a legal word in~$L$),
-  where the last method invocation generates an
-\begin{quote}
-  ‟\textsf{method~…~is undefined for the type~…~}”
-\end{quote}
-  error message.
-
-The main difference between~\cref{figure:prefix-chain} and~\cref{figure:chain} is that there is no need to
-  use an auxiliary function \cc{isL()} as in~\cref{figure:prefix-chain} since now illegal
-  prefixes do not type-check.
-
-\subsection{Transitions}
-Due to the changes we expressed, the transition table is encoded slightly different.
-
-Encoding of the legal operations \textsf{accept},~$\textsf{jump}(γᵢ)$ and~$\textsf{push}(ζ)$
-  remains as in~\cref{theorem:Gil-Levy}, since we want the same behavior for legal call chains.
-The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
-
-\begin{description}
- \item[\textsf{reject}] Since we add the methods ad-hock to each type, the reject entry means
-   that the corresponding type, \emph{won't} have a~\cc{\$()} method, i.e., type~\cc{C$γ$2}
-   doesn't have a method~\cc{\$()}.
- \item[$⊥$] We encounter~$⊥$ on the transition function when some input character~\cc{$σ$}
-   is not allowed for the top of the stack element~$γ$. In that case, the corresponding type \cc{C$γ$}
-   \emph{must not} have a method for~\cc{$σ$}, this way, invoking the methods will result in type error.
-   In \cref{table:A} a~$⊥$ may occur when the top of the stack is~$γ₁$ and the input character is~$σ₂$,
-   thus, no method \cc{$σ$2} is introduced in type~\cc{C$γ$1}.
-\end{description}
-
-The use of sidekicks is still allowed and recommended to improve readability of code.
-
-\begin{figure*}
-  \caption{\label{figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{table:A})
-    that allow a partial call chain, if and only if, there exists a legal continuation, that
-    leads to a word in~$L$ (the language of~$A$}
-  %\javaInput[minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
-\end{figure*}
-
-\paragraph*{Conclusion}
-In this section, a proof, similar to the one in~\cref{section:proof} is provided.
-An algorithm was introduced, to not only emulate the running of some jDPDA~$A$,
-  but also to ‟halt it” in the earliest time possible, i.e., only if there is
-  no legal call chain from this point to result in a legal word in the language of~$A$.
-
-% Taken from result.tex
-
-Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
-into a call to a uniquely named function (with respect to~$σ$).
-Let~$\textsf{java}(α)$, be the function
-  that translates a string~$α∈Σ^*$ into a fluent API call chain.
-  If~$α=σ₁⋯σₙ∈Σ^*$, then \[
-  \textsf{java}(α)=\textsf{java}(σ₁)\cc{().}⋯\cc{.}\textsf{java}(σₙ)\cc{()}
+It is shown that for any~$r∈R , s∈S , t∈T$
+  the statement
+\[
+  \cc{t tmp = f.r().s();}
 \]
-For example, when~$Σ=❴a,b,c❵$ let~$\textsf{java}(a)=\cc{a}$,~$\textsf{java}(b)=\cc{b}$, and,~$\textsf{java}(c)=\cc{c}$.
-With these, \[
-    \textsf{java}(caba) = \cc{c().a().b().a()}
-  \]
+  will type check if and only if~$f(r,s)=t$.
 
-\begin{Theorem}\label{theorem:Gil-Levy}
-  Let~$A$ be a DPDA recognizing a language~$L⊆Σ^*$.
-  Then, there exists a \Java type definition,~$J_A$ for types~\cc{L},~\cc{A} and
-    other types such that the \Java command
-  \begin{equation}
-    \label{equation:result}
-    \cc{L~$ℓ$ = A.build.$\textsf{java}(α)$}\cc{.\$();}
-  \end{equation}
-  type checks against~$J_A$ if an only if~$α∈L$.
-  Furthermore, program~$J_A$ can be effectively generated from~$A$.
-\end{Theorem}
+Again, the number of generated types and their sizes (number of methods)
+  is linearly proportionate to~$|R|+|S|+|T|$.
 
-\Cref{equation:result} reads: starting from the \kk{static} field \cc{build} of \kk{class}~\cc{A},
-  apply the sequence of call chain~$\textsf{java}(α)$, terminate with a call to the
-  ending character~\cc{\$()} and then assign to newly declared \Java variable~\cc{$ℓ$} of type~\cc{L}.
-
-The proof of the theorem is by a scheme for encoding in \Java types
-  the pushdown automaton~$A=A(L)$ that recognizes language~$L$.
-Concretely, the scheme assigns a type~$τ(c)$
-  to each possible configuration~$c$ of~$A$.
-Also, the type of \cc{A.build} is~$τ(c₀)$, where~$c₀$ is the initial configuration of~$A$,
-
-Further, in each such type the scheme places
-  a function~$σ()$ for every~$σ∈Σ$.
-Suppose that~$A$ takes a transition from configuration~$cᵢ$ to configuration~$cⱼ$
-  in response to an input character~$σₖ$.
-Then, the return type of function \cc{$σₖ$()} in type~$τ(cᵢ)$ is type~$τ(cⱼ)$.
-
-With this encoding the call chain in \cref{equation:result}
-  mimics the computation of~$A$, starting at~$c₀$ and ending with
-  rejection or acceptance.
-The full proof is in \cref{section:proof}.
-
-Since the depth of the stack is unbounded, the number of configurations of $A$ is unbounded,
-  and the scheme must generate an infinite number of types.
-Genericity makes this possible, since a generic type is
-  actually device for creating an unbounded number of types.
-
-There are several, mostly minor, differences between the structure of the \Java code
-in \cref{equation:result}
-and the examples of fluent API we saw above, e.g., in \cref{figure:DSL}:
-\begin{description}
-  \item[Prefix, i.e., the starting \cc{A.build} variable.]
-  All variables and functions of \Java are defined within a class.
-  Therefore, a call chain must start with an object (\cc{A.build} in \cref{equation:result})
-  or, in case of \cc{static} methods, with the name of a class.
-  In fluent API frameworks this prefix is typically eliminated
-  with appropriate \cc{import} statements.
-  \par
-  If so desired, the same can be done by our type encoding scheme: define all
-  methods in type~$τ(c₀)$ as \cc{static} and \cc{import static} these.
-  \item[Suffix, i.e., the terminal \cc{.\$()} call.]
-  In order to know whether~$α∈L$ the automaton recognizing~$L$ must
-  know when~$α$ is terminated.
-  \par
-  With a bit of engineering, this suffix can also be eliminated.
-  One way of doing so is by defining type~\cc{L} as an \kk{interface}, and by making all types~$τ(c)$,~$c$ is
-  an accepting configuration, as subtype of~\cc{L}.
-  \item[Parameterized methods.]
-  Fluent API frameworks support call chains with phrases such as:
-  \begin{itemize}
-    \item ‟\lstinline{.when(header(foo).isEqualTo("bar")).}”,
-    \item ‟\lstinline{.and(BOOK.PUBLISHED.gt(date("2008-01-01"))).}”, and,
-    \item ‟\lstinline{.allowing(any(Object.class)).}”.
-  \end{itemize}
-  while our encoding scheme assumes methods with no parameters.  
-  \par
-    Methods with parameters contribute to the user
-      experience and readability of fluent APIs but their ``computational expressive power"' is the same.
-      In fact, extending
-      \cref{theorem:Gil-Levy} to support these requires these conceptually simple steps 
-      \begin{enumerate}
-        \item Define the structure of parameters to methods with appropriate fluent API, which may or
-          may not be, the same as the fluent API of the outer chain, or the fluent API of parameters to
-          other methods. Apply the theorem to each of these fluent APIs.
-        \item
-          If there are several overloaded versions of a method, consider each such version as a distinct
-          character in the alphabet~$Σ$ and in the type encoding of the automaton.
-        \item
-          Add code to the implementation of each method code to store the 
-          store the value of its argument(s) in a record placed at the end of the fluent-call-list. 
-      \end{enumerate}
-\end{description}
+\subsubsection*{Compile Time Stack data Structure}
+Advancing toward more complicated and infinite structures,
+  a compile-time stack was introduced, to meet this end,
+  \Java Generics was employed.
+It was shown, that for any finite set~$Γ$ of stack symbol
+  a set of \Java types could be automatically generated,
+  implementing operations~\textbf{pop$()$},and~\textbf{push$γ()$}
+  for any~$γ∈Γ$.
+For any set of such operations~\cc{op$₁$…op$ₖ$} the sequence of calls\[
+  \cc{Stack.empty.op$₁()$….op$ₖ()$;}
+\]
+will type check if and only if the stack was not pushed more
+  than it was popped for any prefix.
+An~\textbf{top()} operation was also showed, that returns the type
+  of the current top of the stack.
