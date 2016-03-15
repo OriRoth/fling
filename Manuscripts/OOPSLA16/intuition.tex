@@ -306,7 +306,7 @@ Again, the problem relies with the multiple pops that occur without reading the 
 
   
 
-endiput
+\endinput
 % OLD
 
 \subsection{Generation of LL(1) DPDA Parsers}
@@ -345,7 +345,7 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
     \OUTPUT{the closure of consecutive actions}
     \LET{$L$}{$[]$}
     \LET{$x$}{$a$}
-    \IF{$∀x→α. b ∉ \Function first(α)$}
+    \IF{$∀x→α {}.{} b ∉ \Function first(α)$}
       \RETURN{\textrm{reject}}
     \FI
     \WHILE{$\textrm{true}$}
