@@ -1,20 +1,20 @@
-Program_Definition  ->  program id Parameters ; Definitions Body.
+Program  ->  program id Parameters ; Definitions Body.
 Body                ->  begin end.
 
 Definitions  -> Labels Constants Nested.
 
-Labels      -> | label Label_Declaration Optional_Labels . 
-Constants   -> | const Constant Optional_Constants .
+Labels      -> | label Label MoreLabels . 
+Constants   -> | const Constant MoreConstants .
 
-Label_Declaration    -> ; .
-Constant             -> ; .
+Label    -> ; .
+Constant -> ; .
 
-Optional_Labels     ->  |  Label_Declaration Optional_Labels.
-Optional_Constants  ->  |  Constant Optional_Constants.
+MoreLabels     ->  |  Label MoreLabels.
+MoreConstants  ->  |  Constant MoreConstants.
 
-Nested -> | Procedure_Definition Nested .
+Nested -> | Procedure Nested .
 
-Procedure_Definition -> procedure id Parameters ; Definitions ( Body .
+Procedure -> procedure id Parameters ; Definitions Body .
 Parameters           -> | () . 
 
 abstract class S {
@@ -33,13 +33,13 @@ abstract class S {
   protected S program_t() { return null; }
 }
 
-// rule #1 of Program_Definition
-class Program_Definition0 extends S {}
-class Program_Definition1 extends S {}
-class Program_Definition2 extends S {}
-class Program_Definition3 extends S {}
-class Program_Definition4 extends S {}
-class Program_Definition5 extends S {}
+// rule #1 of Program
+class Program0 extends S {}
+class Program1 extends S {}
+class Program2 extends S {}
+class Program3 extends S {}
+class Program4 extends S {}
+class Program5 extends S {}
 
 // rule #1 of Body
 class Body0 extends Body1 {}
@@ -55,10 +55,10 @@ class Constants1 extends S {}
 // rule #1 of Definitions
 class Definitions0 extends S {}
 class Definitions1 extends S {}
-class Definitions2 extends S {}
+MoreConstants Definitions2 extends S {}
 
-// rule #1 of Label_Declaration 
-class Label_Declaration0 extends S {}
+// rule #1 of Label 
+class Label0 extends S {}
 
 // rule #1 of Labels 
 class Labels0 extends S {}
@@ -69,22 +69,21 @@ class Labels2 extends S {}
 class Nested0 extends S {}
 class Nested1 extends S {}
 
-// rule #1 of Optional_Constants 
-class Optional_Constants0 extends S {}
-class Optional_Constants1 extends S {}
+// rule #1 of MoreConstants 
+class MoreConstants0 extends S {}
+class MoreConstants1 extends S {}
 
-// rule #1 of Optional_Labels 
-class Optional_Labels0 extends S {}
-class Optional_Labels1 extends S {}
+// rule #1 of MoreLabels 
+class MoreLabels0 extends S {}
+class MoreLabels1 extends S {}
 
 // rule #1 of Parameters 
 class Parameters0 extends S {}
 
-// rule #1 of Procedure_Definition 
-class Procedure_Definition0 extends S {}
-class Procedure_Definition1 extends S {}
-class Procedure_Definition2 extends S {}
-class Procedure_Definition3 extends S {}
-class Procedure_Definition4 extends S {}
-class Procedure_Definition5 extends S {}
-class Procedure_Definition6 extends S {}
+// rule #1 of Procedure 
+class Procedure0 extends S {}
+class Procedure1 extends S {}
+class Procedure2 extends S {}
+class Procedure3 extends S {}
+class Procedure4 extends S {}
+class Procedure5 extends S {}

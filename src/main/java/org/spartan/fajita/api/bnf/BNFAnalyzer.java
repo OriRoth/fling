@@ -2,6 +2,7 @@ package org.spartan.fajita.api.bnf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -20,13 +20,13 @@ public class BNFAnalyzer {
   public final BNF bnf;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
-//  private final Map<NonTerminal, Set<Verb>> followSets;
+  // private final Map<NonTerminal, Set<Verb>> followSets;
 
   public BNFAnalyzer(final BNF bnf) {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-//    followSets = calculateFollowSets();
+    // followSets = calculateFollowSets();
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -89,7 +89,7 @@ public class BNFAnalyzer {
   }
   public List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
-    if(isNullable(expression))
+    if (isNullable(expression))
       throw new IllegalArgumentException("Not handling epsilons!!");
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
@@ -98,10 +98,28 @@ public class BNFAnalyzer {
     }
     return $;
   }
-  public List<Verb> firstSetOf(final List<Symbol> expression){
-    return firstSetOf(expression.toArray(new Symbol[]{}));
+  public List<Verb> firstSetOf(final List<Symbol> expression) {
+    return firstSetOf(expression.toArray(new Symbol[] {}));
   }
-//  public Set<Verb> followSetOf(final NonTerminal nt) {
-//    return followSets.get(nt);
-//  }
+  // public Set<Verb> followSetOf(final NonTerminal nt) {
+  // return followSets.get(nt);
+  // }
+  public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
+    List<Symbol> $ = new ArrayList<>();
+    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getChildren()).contains(v)))
+      return null;
+    NonTerminal current = nt;
+    while (true) {
+      DerivationRule prediction = bnf.getRulesOf(current).stream() //
+          .filter(d -> firstSetOf(d.getChildren()).contains(v)) //
+          .findAny().get();
+      final List<Symbol> rhs = prediction.getChildren();
+      Collections.reverse(rhs);
+      Symbol first = rhs.remove(rhs.size() - 1);
+      $.addAll(rhs);
+      if (first.isVerb())
+        return $;
+      current = (NonTerminal) first;
+    }
+  }
 }

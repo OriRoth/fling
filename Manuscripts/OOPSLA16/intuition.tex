@@ -21,7 +21,7 @@ To this end, we revise the classical algorithm for converting
 
 \subsection{LL(1) Parsing}
 \label{section:essentials}
-An LL(1) parser is a DPDA allowed to peek at the next input terminal.
+An LL(1) parser is a DPDA allowed to peek at the next input symbol.
 Thus,~$δ$, its transition function, takes two parameters: the current state of
 the automaton, and a peek into the terminal next to be read.
 The actual operation of the automaton
@@ -32,7 +32,7 @@ The actual operation of the automaton
 \renewcommand\algorithmicthen{\textbf{\emph{}}}
 \begin{algorithm}[p]
   \caption{\label{algorithm:ll-parser}
-  DPDA algorithm for LL(1) parsing}
+  DPDA algorithm for an LL(1) parsing step}
   \begin{algorithmic}
       \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
       \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
@@ -41,8 +41,8 @@ The actual operation of the automaton
       \ELSE[terminal just read was the anticipated~$X$]
       \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI
-      \ELSIF[anticipating end-of-file]{$X=\$$}
-        \IF[not the anticipated end-of-file]{$\$≠\Function next()$}
+      \ELSIF[anticipating end-of-input]{$X=\$$}
+        \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
           \ELSE[terminal just read was the anticipated~$X$]
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
@@ -66,15 +66,15 @@ The actual operation of the automaton
   \scriptsize
   \begin{enumerate}
       \item
-  Input is a stream of terminals drawn from alphabet~$Σ$, ending
-  with a special symbol~$\$\ni Σ$.
+  Input is a string of terminals drawn from alphabet~$Σ$, ending
+  with a special symbol~$\$∉Σ$.
       \item
   Stack symbols are drawn from~$Σ∪❴\$❵∪Ξ$, where~$Ξ$ is
 the set of nonterminals of the grammar from which the automaton was generated.
 \item
   Functions~$\Function pop()$ and~$\Function push(·)$
   operate on the push-down stack; function~$\Function next()$ returns
-  and consumes the next terminal from the input stream;
+  and consumes the next terminal from the input string;
   function~$\Function peek()$ returns this terminal without consuming it.
 \item
 The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
@@ -82,22 +82,22 @@ The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
   \end{enumerate}
 \end{algorithm}
 
-The DPDA maintains a stack of ‟anticipated” symbol, which may
+The DPDA maintains a stack of ‟anticipated” symbols, which may
   be of three kinds: a terminal drawn from the input alphabet~$Σ$,
-  an -end-of=file symbol~$\$$, or,
-  or one of~$Ξ$, the set of nonterminals of the underlying
-  grammar.
+  an end-of-input symbol~$\$$, or one of~$Ξ$, the set of
+  nonterminals of the underlying grammar.
 
-If the state is an input terminal or the special, end-of-file,
-  symbol~$\$$, then it must match
-  the next terminal found in the input stream.
-If no match is found, then the parser rejects.
+If the top of the stack is an input symbol or the special,
+ end-of-input symbol~$\$$, then it must match the next terminal
+ in the input string, the matched terminal is then consumed from
+ the input string.
+If there is no match, the parser rejects.
 The parser accepts if the input is exhausted with
-  no rejections.
+  no rejections (i.e.,~$\$$ was matched).
 
 The more interesting case is that~$X$, the popped symbol
   is a nonterminal: the DPDA peeks into the next terminal in the input
-  stream (without consuming it).
+  string (without consuming it).
 Based on this terminal, and~$X$ the transition function~$δ$
   determines~$R$ the derivation rule to use in order to derive~$X$.
 The algorithm rejects if~$δ$ can offer no such rule.
@@ -111,7 +111,7 @@ Can \cref{algorithm:ll-parser} be executed on the machinery
 As it turns out, most operations conducted by the algorithm
   are easy.
 The implementation of function~$δ$ can
-  be found in the toolbox.
+  be found in the toolbox\cref{what-toolbox}.
 Similarly, any fixed sequence of push and pop
   operations on the stack can be conducted within a \Java
   transition function:
@@ -123,14 +123,23 @@ A little scrutiny falsifies such a conclusion.
 
 In the case~$R=X→Y$,~$Y$
   being a nonterminal, the algorithm will conduct
-  two~$\Function push(·)$ operations,
-  one for~$X$ and one for~$Y$ before consuming a terminal from the input.
+  a~$\Function pop(·)$ to remove~$X$ and a~$\Function push(·)$
+  operation for~$Y$ before consuming a terminal from the input.
 Further,~$δ$ may return next the rule~$Y→Z$,
   and then the rule~$Z→Z'$, etc.
-Let~$k'$ be the number of such~$\Function push(·)$
-  operations in a certain such incident.
+Let~$k'$ be the number of such substitutions
+  occurring while reading a single input token.
 
-Also, in the case~$k=0$ the DPDA does not push
+\begin{Definition}[$k'$ - subtitution factor]
+  Let~$X$ be a nonterminal at the top of the stack
+    and~$t$ be the next input symbol.
+  Then~$k'$ is the number of consecutive substitutions
+  the parser will perform (replacing the nonterminal with
+  one of it's \emph{non-$ε$ rules}) until~$t$ will be consumed
+  from the input.
+\end{Definition}
+
+Also, in the case~$R=X→ε$ the DPDA does not push
   anything into the stack.
 Further, in its next iteration, the DPDA conducts another
 pop,
@@ -141,47 +150,42 @@ instruction and proceeds to consider this new~$X'$.
 If it so happens, it could also be the case
   that the right hand side of rule~$R'$
   \[
-    R' = δ(R', \Function peek())
+    R' = δ(X', \Function peek())
   \]
   is once again empty,
   and then another~$\Function pop()$
     instruction occurs
 \[
-  X'←\Function pop(),
+  X”←\Function pop(),
 \]
   etc.
-Let~$k^*$ be the number 
-  of such instructions in a certain such mishap. 
+Let~$k^*$ be the number
+  of such instructions in a certain such mishap.
 
-  The cases $k' > 0$ and $k^*$ are not rarities.
-For example, let us concentrate on the grammar 
-  depicted in \cref{figure:issue-1}.
+\begin{Definition}[$k^*$ - pop factor]
+  Let~$X$ be a nonterminal at the top of the stack
+    and~$t$ be the next input symbol.
+  Then~$k^*$ is the number of consecutive substitutions
+  the parser will perform \emph{of only~$ε$ rules}
+  until~$t$ will be consumed from the input. \end{Definition}
+
+The cases~$k' > 0$ and~$k^*$ are not rarities.
+For example, let us concentrate on the grammar
+  depicted in \cref{figure:running}.
 This grammar, inspired by the prototypical
   specification of \Pascal \urlref{http://www.fit.vutbr.cz/study/courses/APR/public/ebnf.html},
-  shall serve as our running example.
-
-The grammar preserves the ‟theme”
-  of nested definitions of \Pascal,
-  while trimming these down as much as possible.
-The other major difference is that body of
-routines must begin with~\cc{(} followed by \cc{begin}
-    rather than a single ‟\cc{begin}”.
-
-Some of the~$δ$ function values for this grammar are
-\begin{equation}
-  δ(n,t) = 3 
-\end{equation}
+  shall serve as running example.
 
 \newsavebox{\Alphabet}
 \begin{lrbox}{\Alphabet}
   \begin{tabularx}{0.40\linewidth}{l}
     \cc{program}, \cc{begin}, \cc{end},⏎
     \cc{label}, \cc{const}, \cc{id},⏎
-    \cc{procedure},~\cc{;},~\cc{(}, \cc{()}
+    \cc{procedure},~\cc{;}, \cc{()}
   \end{tabularx}
 \end{lrbox}
 
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:running}
     An LL(1) grammar over the alphabet
     \[
@@ -202,40 +206,208 @@ Some of the~$δ$ function values for this grammar are
       \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
       \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions>~\cc{(} \<Body> \hfill⏎
+      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions> \<Body> \hfill⏎
       \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
 \end{figure}
 
+The grammar preserves the ‟theme”
+  of nested definitions of \Pascal,
+  while trimming these down as much as possible.
+Some legal sequences generated by this grammar are:
+\[
+\begin{array}{*1l}
+  \cc{program id ; begin end}⏎
+  \cc{program id () ; begin end}⏎
+  \cc{program id () ; label ; begin end}⏎
+  \cc{program id () ; label ; ; const ; begin end}
+\end{array}
+\]
+In order to demonstrate the problems with~$k'$ and~$k^*$ we first
+  supply the~$\Function First(·)$, and~$\Function Follow(·)$
+  sets of our example grammar.
+The~$\Function First(·)$ set of nonterminal~$A$ is the set of all
+  terminals that might appear at the beginning of a string derived by~$A$
+  (algorithm for computing~$\Function First(·)$ is presented in \cref{algorithm:first}).
+The~$\Function First(·)$ set is extended for strings too,~$\Function First(α)$
+  contains all terminals that can begin a string derived from~$α$
+  (Appropriate algorithm can be found at~\cref{algorithm:first-string}).
 
+The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
+  terminals that might appear immediately after a string that was
+  derived from~$A$ (Appropriate algorithm can be found
+  at~\cref{algorithm:follow}).
 
-\subsection{Generation of LL(1) DPDA Parsers}
-\label{section:generation}
-% How can we encode it?
-The corresponding \Java fluent API ought to have equivalent features.
-The input string - since we transform each
-  terminal to a method invocation, it is clear that the rest of the input is
-  simply the rest of the method chain.
-The current state of the parsing is transformed into a \Java type
-  (\kk{class} or \kk{interface}) ; this way we can control for each state
-  which operation can be made by determining the method of that type.
-The environment is realized by type arguments of the states' \Java types.
+\begin{algorithm}[p]
+  \caption{\label{algorithm:first}
+  An algorithm for computing the~$\Function First(·)$ set for each grammar symbol}
+  \begin{algorithmic}
+    \INPUT{alphabet~$Σ$}
+    \INPUT{Nonterminals set~$Ξ$}
+    \INPUT{Productions set~$P$}
+    \OUTPUT{The~$\Function First(·)$ set for each grammar symbol}
+    \STATE{$\Function First(X)=∅$ for each~$X∈Σ∪Ξ$}
+    \COMMENT{initialize sets}
+    \REPEAT[until no~$\Function First(·)$ set have changed]
+      \LET{$X$}{$\Function get(Σ∪Ξ)$} \COMMENT{for some grammar symbol~$X$}
+      \IF[$X$ is a terminal]{$X∈Σ$}
+        \STATE{$\Function First(X) = ❴ X ❵$}\COMMENT{$\Function First(X)$ is the terminal itself}
+      \FI
+      \IF[$X$ is a nonterminal]{$X∈Ξ$}
+        \FOR[for every~$X$-production]{$X::=Y₁…Yₖ∈P$}
+          \FOR[for each symbol in the RHS]{$i∈❴1…k❵$}
+            \IF[if the prefix is nullable]{$\Function Nullable(Y₁…Y_{i-1})$}
+              \STATE{$\Function First(X) = \Function First(X)∪\Function First(Yᵢ)$}
+              \COMMENT{add~$\Function First(Yᵢ)$}
+            \ENDIF
+          \ENDFOR
+        \ENDFOR
+      \FI
+    \UNTIL{No changes in any~$\Function First(·)$ set}
+  \end{algorithmic}
+\end{algorithm}
 
-Using these transformers, we can describe a state of the parser,
-  with different stacks using a single type.
-This is of course necessary in order to describe all posible configurations
-  in a finite number of \Java types.
+\begin{algorithm}[p]
+  \caption{\label{algorithm:first-string}
+  An algorithm for computing~$\Function First(α)$ for some string of symbols~$α$.
+  This algorithm relies on results from~\cref{algorithm:first}}
+  \begin{algorithmic}
+    \LET{$Y₁…Yₖ$}{$α$}\COMMENT{break~$α$ into its symbols}
+    \FOR[for each symbol in the string]{$i∈❴1…k❵$}
+      \IF[if the prefix is nullable]{$\Function Nullable(Y₁…Y_{i-1})$}
+        \STATE{$\Function First(α) = \Function First(α)∪\Function First(Yᵢ)$}
+        \COMMENT{add~$\Function First(Yᵢ)$}
+      \ENDIF
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
 
-%
-\subsection{LL states}
-A state during the parser's computation is a grammar rule~$r = A→αβ$, and an
-index in it, i.e.,~$A→α·β$.
-It means that the parser is currently processing rule~$r$, it already realized parsed string~$alpha$
-  from the input, and it expect to parse the string~$β$ next.
-The number of states then, produced by \Fajita for a grammar is linear in the grammar size.
+\begin{algorithm}[p]
+  \caption{\label{algorithm:follow}
+  An algorithm for computing the~$\Function Follow(·)$ set for each nonterminal}
+  \begin{algorithmic}
+    \INPUT{alphabet~$Σ$}
+    \INPUT{Nonterminals set~$Ξ$}
+    \INPUT{Productions set~$P$}
+    \INPUT{$\$∉Σ$ the end-of-input symbol}
+    \INPUT{$S∈Ξ$ the start symbol}
+    \OUTPUT{The~$\Function Follow(·)$ set for each nonterminal}
+    \STATE{$\Function Follow(S)=❴ \$ ❵~$}
+    \COMMENT{initialize the start symbol}
+    \REPEAT[until no~$\Function Follow(·)$ set have changed]
+      \FOR[for each grammar rule]{$A::=Y₁…Yₖ←\Function get(P)$}
+        \FOR[for each symbol in the RHS]{$i∈❴1…k❵$}
+          \IF[compute only for nonterminals]{$Yᵢ∉Ξ$}
+            \CONTINUE
+          \ENDIF
+          \STATE{$\Function Follow(Yᵢ) = \Function Follow(Yᵢ)∪\Function First(Y_{i+1}…Yₖ)$}
+          \IF[if the suffix is nullable]{$\Function Nullable(Y_{i+1}…Yₖ)$}
+            \STATE{$\Function Follow(Yᵢ) = \Function Follow(Yᵢ)∪\Function First(A)$}
+            \COMMENT{add~$\Function Follow(A)$}
+          \ENDIF
+        \ENDFOR
+      \ENDFOR
+    \UNTIL{No changes in any~$\Function First(·)$ set}
+  \end{algorithmic}
+\end{algorithm}
 
-\subsection{Environment}
+For example, the nonterminal \nonterminal{Definitions} can be derived to a string
+  beginning with \cc{label} (if there are defined labels), or \cc{const}
+  (if there are no labels defined), or \cc{procedure} (if there are no
+  labels or constants defined).
+$\Function Follow(\nonterminal{Definitions})$ on the other hand, contains only
+\cc{begin} since~\nonterminal{Definitions} is always followed by~\nonterminal{Body},
+  and~$\Function First(\nonterminal{Body})$ contains only \cc{begin}.
+
+The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
+  our running example (\cref{figure:running}) are listed in~\cref{table:running-first-follow}.
+
+\begin{table}[H]
+  \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}}}
+  \caption{\label{table:running-first-follow}
+    Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
+    the grammar in~\cref{figure:running}}
+    \rowcolors{2}{}{olive!20}
+    \begin{tabular}{m{16ex}m{14ex}m{19ex}}
+      \toprule
+    Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
+      \midrule
+    \<Program> & \cc{program} & $∅$⏎
+    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
+    \<Constants> & \cc{constant} & \cc{procedure}, \cc{begin}⏎
+    \<Label> & \cc{;} & \cc{;}, \cc{const}, \newline \cc{procedure}, \newline \cc{begin}⏎
+    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
+    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \newline \cc{begin}⏎
+    \<MoreConstants> & \cc{;} & \cc{procedure}, \cc{begin}⏎
+    \<Nested> & \cc{procedure} & \cc{begin}⏎
+    \<Procedure> & \cc{procedure} & \cc{procedure}, \cc{begin}⏎
+    \<Definitions> & \cc{label}, \cc{const}, \cc{procedure}& \cc{begin}⏎
+    \<Body> & \cc{begin} & \cc{procedure}, \cc{begin}⏎
+    \<Parameters> & \cc{()} & \cc{;}⏎
+      \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Examples for~$k'$ for the grammar in~\cref{figure:running}}
+Consider a state of the parser, in which~$\nonterminal{Definitions}$ is on
+  the top of the top of the stack, and the next token on the input string
+  is \cc{label}.
+Until that token is consumed, the parser will:
+  \begin{enumerate}
+    \item pop~$\nonterminal{Definitions}$ from the stack, and push the
+      nonterminals~$\nonterminal{Labels}$,~$\nonterminal{Constants}$, and~$\nonterminal{Nested}$
+      in reversed order.
+    \item pop~$\nonterminal{Labels}$ and push the
+      symbols~$\cc{label}$,~$\nonterminal{Label}$, and
+$\nonterminal{MoreLabels}$ in reversed order.
+    \item match the top of the stack~\cc{label} with the input symbol~\cc{label}
+      and consume it.
+  \end{enumerate}
+Since we first substituted~$\nonterminal{Definitions}$, then~$\nonterminal{Labels}$
+  and only then consumed the input symbol,~$k'=2$.
+
+The problem is that every such operation is
+  an~$ε$-move of the parser's DPDA, and as was shown in~\cref{ECOOP-PAPER}
+  it causes problems when we want to employ \Java's compiler to ‟run” our
+  automaton.
+
+Another case is when encountering~$\nonterminal{Nested}$ on the top of the stack
+  and \cc{procedure} in the input string.
+$k'=2$ again, where at first the non-$ε$ rule of~$\nonterminal{Nested}$ will
+  be pushed, then the non-$ε$ rule of~$\nonterminal{Procedure}$ will be
+  pushed, and only then will the terminal~\cc{procedure} will match,
+  and be consumed from the input string.
+
+\subsubsection{Examples for~$\k^*$ for the grammar in~\cref{figure:running}}
+Consider a state in which the parser is in, where the
+  only rule of~$\nonterminal{Program}$ is being processed,~$\nonterminal{Definitions}$
+  was just replaced on the stack by it's only rule, and~$\nonterminal{Body}$ is below.
+Assume also, that the first terminal in the input string is \cc{begin}.
+
+Until the next input token will be consumed, the following will happen:
+  \begin{enumerate}
+    \item consulting with~$δ$,~$\nonterminal{Labels}$'s~$ε$-rule will
+      be chosen, thus,~$\nonterminal{Labels}$ will be popped from the stack.
+    \item then the same will happen with~$\nonterminal{Constants}$ and~$\nonterminal{Nested}$.
+    \item only after seeing nonterminal~$\nonterminal{Body}$ shall the right rule will be
+      pushed, and the token matched.
+  \end{enumerate}
+In this case,~$k^*=3$ because we had to pop three nonterminals and ‟replace” them with
+  their matching rules, that are all~$ε$-rules before we got to a nonterminal
+  that will derive to something other then~$ε$.
+
+In the last example~$k^*$ was determined by the size of~$\nonterminal{Definitions}$, but that
+  doesn't have to be the case all the time.
+For example, if in our grammar, in~$\nonterminal{Program}$'s rule,
+  nonterminal~$\nonterminal{Parameters}$ would follow~$\nonterminal{Definitions}$,
+  then in the last example, after popping~$\nonterminal{Labels}$,~$\nonterminal{Constants}$
+  and~$\nonterminal{Nested}$, nonterminal~$\nonterminal{Parameters}$ would also be popped
+  for similar reasons, and~$k^*$ would have been~$4$ in this case.
+
+Again, the problem relies with the multiple pops that occur without reading the input.
+
+\endinput
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:llclosure}
@@ -246,7 +418,7 @@ The number of states then, produced by \Fajita for a grammar is linear in the gr
     \OUTPUT{the closure of consecutive actions}
     \LET{$L$}{$[]$}
     \LET{$x$}{$a$}
-    \IF{$∀x→α. b ∉ \Function first(α)$}
+    \IF{$∀x→α {}.{} b ∉ \Function first(α)$}
       \RETURN{\textrm{reject}}
     \FI
     \WHILE{$\textrm{true}$}

@@ -1,7 +1,5 @@
 package org.spartan.fajita.api.ll;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +7,6 @@ import java.util.Stack;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFAnalyzer;
-import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -36,7 +33,7 @@ public class LLRecognizer {
     for (NonTerminal nt : bnf.getNonTerminals()) {
       Map<Verb, List<Symbol>> innerMap = new HashMap<>();
       for (Verb v : bnf.getVerbs()) {
-        List<Symbol> closure = closure(nt, v);
+        List<Symbol> closure = analyzer.llClosure(nt, v);
         if (closure != null)
           innerMap.put(v, closure);
       }
@@ -44,24 +41,7 @@ public class LLRecognizer {
     }
     return $;
   }
-  private List<Symbol> closure(final NonTerminal nt, final Verb v) {
-    List<Symbol> $ = new ArrayList<>();
-    if (bnf.getRulesOf(nt).stream().noneMatch(d -> analyzer.firstSetOf(d.getChildren()).contains(v)))
-      return null;
-    NonTerminal current = nt;
-    while (true) {
-      DerivationRule prediction = bnf.getRulesOf(current).stream() //
-          .filter(d -> analyzer.firstSetOf(d.getChildren()).contains(v)) //
-          .findAny().get();
-      final List<Symbol> rhs = prediction.getChildren();
-      Collections.reverse(rhs);
-      Symbol first = rhs.remove(rhs.size() - 1);
-      $.addAll(rhs);
-      if (first.isVerb())
-        return $;
-      current = (NonTerminal)first;
-    }
-  }
+
   public boolean recognize(List<Verb> input) {
     Stack<Symbol> stack = new Stack<>();
     stack.push(SpecialSymbols.$);
