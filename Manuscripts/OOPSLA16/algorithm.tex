@@ -14,8 +14,8 @@
     \LET{$h$}{$\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
     \WHILE[$h$ is always a nonterminal in the loop]{$h∉Σ$}
       \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←\Function get(P)$}
-        \IF[the next rule to append]{$b∈\Function First(Y₀'…Yₖ')$}
-          \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add to closure}
+        \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
+          \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
           \BREAK \COMMENT{since were in LL(1), can't be other}
         \ENDIF
       \ENDFOR

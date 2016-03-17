@@ -302,7 +302,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
             \CONTINUE
           \ENDIF
             \STATE{$\Function Follow(Yᵢ) \, ∪= \Function First(A)$}
-            \COMMENT{add~$\Function Follow(A)$ to~$\Function Follow(Yᵢ)$}
+            \COMMENT{add~$\Function First(A)$ to~$\Function Follow(Yᵢ)$}
         \ENDFOR
       \ENDFOR
     \UNTIL{No changes in any~$\Function First(·)$ set}
@@ -418,28 +418,36 @@ Again, the problem relies with the multiple pops that occur without reading the 
 
 \subsection{LL(1) parser generator}
 \label{section:generation}
-The LL(1) parser is based on the parser's prediction table, with
-  for a given top of of the stack nonterminal and input symbol,
-  provides the next rule to be parsed.
+The LL(1) parser is based on a prediction table.
+For a given nonterminal as the top of the stack, and an input symbol,
+  the prediction table provides the next rule to be parsed.
 The parser generator basically fills this table, leaving the
-  rest to the parsing algorithm (depicted in~\cref{figure:ll-parser}
+  rest to the parsing algorithm (depicted in~\cref{algorithm:ll-parser}
   and discussed in~\cref{section:essentials}).
   The prediction table construction is depicted in~\cref{algorithm:generation}
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:generation}
   An algorithm for filling the prediction table~$\Function predict(A,b)$ for some
-  grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,
-  where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
+    grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,
+    where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
   \begin{algorithmic}
     \FOR[for each grammar rule]{$r∈\Function get(P)$}
       \LET{$A ::=α$}{$r$}\COMMENT{break~$r$ into its RHS ＆ LHS}
       \FOR[for each terminal in~$\Function First(α)$]{$t∈\Function First(α)$}
-        \IF[there is a conflict]{$\Function predict(A,t)≠⊥$}
-        \STATE{\textsc{ERROR}}\COMMENT{grammar is not LL(1)}
+        \IF[is there a conflict?]{$\Function predict(A,t)≠⊥$}
+          \STATE{\textsc{Error}}\COMMENT{grammar is not LL(1)}
         \FI
-        \STATE{$\Function predict(A,t) = r$}
+        \STATE{$\Function predict(A,t) = r$} \COMMENT{set prediction to rule~$r$}
       \ENDFOR
+      \IF[$α$ might derive to~$ε$]{$\Function Nullable(α)$}
+        \FOR[for each terminal in~$\Function Follow(A)$]{$t∈\Function Follow(A)$}
+          \IF[is there a conflict?]{$\Function predict(A,t)≠⊥$}
+            \STATE{\textsc{Error}}\COMMENT{grammar is not LL(1)}
+          \FI
+          \STATE{$\Function predict(A,t) = r$} \COMMENT{set prediction to rule~$r$}
+        \ENDFOR
+      \FI
     \ENDFOR
   \end{algorithmic}
 \end{algorithm}
