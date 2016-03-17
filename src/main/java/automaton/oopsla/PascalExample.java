@@ -51,9 +51,7 @@ public class PascalExample {
   }
 
   public static abstract class Program_Definition2 extends S {
-    // This is simplified, probably we should return Parameters1
     @Override public abstract Parameters1<Program_Definition4> pair_t();
-    // Parameters is derived to epsilon and semi_t is consumed
     @Override public abstract Program_Definition4 semi_t();
   }
 

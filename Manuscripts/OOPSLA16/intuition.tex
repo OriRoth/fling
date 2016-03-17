@@ -1,7 +1,7 @@
 %! TEX root = 00.tex
 Formal presentation of the algorithm that compiles an LL(1) grammar into an implementation of a
   language recognizer with \Java generics
-  is delayed to the next section.
+  is delayed to~\cref{section:algorithm}. 
 This section gives an intuitive perspective on this algorithm:
 
 We will first recall the essentials of the classical LL(1) parsing algorithm (\cref{section:essentials}).
@@ -48,15 +48,15 @@ The actual operation of the automaton
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \ELSE[anticipated terminal~$X$ must be a nonterminal]
-      \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{which rule to reduce?}
-      \IF[no rule found]{$R=⊥$}
+        \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{which rule to reduce?}
+        \IF[no rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
-        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
-      \STATE{\textbf{assert}~$Z=X$}\COMMENT{$δ$ constructed to return valid~$R$ only}
+          \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+          \STATE{\textbf{assert}~$Z=X$}\COMMENT{$δ$ constructed to return valid~$R$ only}
           \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
           \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}\COMMENT{push in reverse order}
-      \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
+          \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI % No rule found
       \FI % Main
 \end{algorithmic}
@@ -167,7 +167,8 @@ Let~$k^*$ be the number
     and~$t$ be the next input symbol.
   Then~$k^*$ is the number of consecutive substitutions
   the parser will perform \emph{of only~$ε$ rules}
-  until~$t$ will be consumed from the input. \end{Definition}
+  until~$t$ will be consumed from the input.
+\end{Definition}
 
 The cases~$k' > 0$ and~$k^*$ are not rarities.
 For example, let us concentrate on the grammar
@@ -247,24 +248,24 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   An algorithm for computing~$\Function First(X)$ for each grammar symbol~$X$
     in the input grammar~$G =⟨Σ,Ξ,P⟩$}
     \begin{algorithmic}
-    \STATE{$\Function First(X)=∅$ for each~$X∈Σ∪Ξ$}
-    \COMMENT{initialize sets}
-    \REPEAT[until no~$\Function First(·)$ set have changed]
-      \LET{$X$}{$\Function get(Σ∪Ξ)$} \COMMENT{for some grammar symbol~$X$}
-      \IF[$X$ is a terminal]{$X∈Σ$}
-        \STATE{$\Function First(X) = ❴ X ❵$}\COMMENT{$\Function First(X)$ is the terminal itself}
-      \FI
-      \IF[$X$ is a nonterminal]{$X∈Ξ$}
-        \FOR[for every~$X$-production]{$X::=Y₀…Yₖ∈P$}
-          \FOR[for each symbol in the RHS]{$i∈❴0…k❵$}
-            \IF[if the prefix is nullable]{$\Function Nullable(Y₀…Y_{i-1})$}
-              \STATE{$\Function First(X) \; ∪ = \Function First(Yᵢ)$}
-              \COMMENT{add~$\Function First(Yᵢ)$ to~$X$}
-            \ENDIF
-          \ENDFOR
+    \FOR[initialize~$\Function First(·)$ for all nonterminals]{$A∈Ξ$}
+      \STATE{$\Function First(A)=∅$}
+    \ENDFOR
+    \FOR[initialize~$\Function First(·)$ for all terminals]{$t∈Σ$}
+      \STATE{$\Function First(t)=❴t❵$}
+    \ENDFOR
+    \WHILE{No changes in any~$\Function First(·)$ set}
+      \FOR[for every production]{$X::=Y₀…Yₖ∈P$}
+        \STATE{$\Function First(X) \; ∪\! = \Function First(Y₀)$}
+        \COMMENT{add~$\Function First(Y₀)$ to~$\Function First(X)$}
+        \FOR[for each symbol in the RHS]{$i∈❴0…k❵$}
+          \IF[if the prefix is nullable]{$\Function Nullable(Y₀…Y_{i-1})$}
+          \STATE{$\Function First(X) \; ∪\! = \Function First(Yᵢ)$}
+            \COMMENT{add~$\Function First(Yᵢ)$ to~$\Function First(X)$}
+          \ENDIF
         \ENDFOR
-      \FI
-    \UNTIL{No changes in any~$\Function First(·)$ set}
+      \ENDFOR
+    \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
 
@@ -273,11 +274,13 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   An algorithm for computing~$\Function First(α)$ for some string of symbols~$α$.
   This algorithm relies on results from~\cref{algorithm:first}}
   \begin{algorithmic}
-    \LET{$Y₁…Yₖ$}{$α$}\COMMENT{break~$α$ into its symbols}
+    \LET{$Y₀…Yₖ$}{$α$}\COMMENT{break~$α$ into its symbols}
+    \STATE{$\Function First(α) \; ∪\! = \Function First(Y₀)$}
+    \COMMENT{initialize~$\Function First(α)$ with~$\Function First(Y₀)$}
     \FOR[for each symbol in the string]{$i∈❴1…k❵$}
-      \IF[if the prefix is nullable]{$\Function Nullable(Y₁…Y_{i-1})$}
-        \STATE{$\Function First(α) \; ∪= \Function First(Yᵢ)$}
-        \COMMENT{add~$\Function First(Yᵢ)$ to~$\Function First(X)$}
+      \IF[if the prefix is nullable]{$\Function Nullable(Y₀…Y_{i-1})$}
+        \STATE{$\Function First(α) \; ∪ \! = \Function First(Yᵢ)$}
+        \COMMENT{add~$\Function First(Yᵢ)$ to~$\Function First(α)$}
       \ENDIF
     \ENDFOR
   \end{algorithmic}
@@ -291,21 +294,20 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   \begin{algorithmic}
     \STATE{$\Function Follow(S)=❴ \$ ❵~$}
     \COMMENT{initialize the start symbol}
-    \REPEAT[until no~$\Function Follow(·)$ set have changed]
-      \FOR[for each grammar rule]{$A::=Y₀…Yₖ∈\Function get(P)$}
+    \WHILE{No changes in any~$\Function Follow(·)$ set}
+      \FOR[for each grammar rule]{$A::=Y₀…Yₖ∈P$}
         \FOR[for each symbol in the RHS]{$i∈❴0…k❵$}
           \IF[compute only for nonterminals]{$Yᵢ∉Ξ$}
             \CONTINUE
           \ENDIF
-          \STATE{$\Function Follow(Yᵢ) \; ∪= \Function First(Y_{i+1}…Yₖ)$}
-          \IF[if suffix not nullable]{not~$\Function Nullable(Y_{i+1}…Yₖ)$}
-            \CONTINUE
+          \STATE{$\Function Follow(Yᵢ) \; ∪ \! = \Function First(Y_{i+1}…Yₖ)$}
+          \IF[if the suffix is nullable]{$\Function Nullable(Y_{i+1}…Yₖ)$}
+            \STATE{$\Function Follow(Yᵢ) \, ∪ \! = \Function First(A)$}
+            \COMMENT{add~$\Function First(A)$}
           \ENDIF
-            \STATE{$\Function Follow(Yᵢ) \, ∪= \Function First(A)$}
-            \COMMENT{add~$\Function First(A)$ to~$\Function Follow(Yᵢ)$}
         \ENDFOR
       \ENDFOR
-    \UNTIL{No changes in any~$\Function First(·)$ set}
+    \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
 
@@ -432,7 +434,7 @@ The parser generator basically fills this table, leaving the
     grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,
     where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
   \begin{algorithmic}
-    \FOR[for each grammar rule]{$r∈\Function get(P)$}
+    \FOR[for each grammar rule]{$r∈P$}
       \LET{$A ::=α$}{$r$}\COMMENT{break~$r$ into its RHS ＆ LHS}
       \FOR[for each terminal in~$\Function First(α)$]{$t∈\Function First(α)$}
         \IF[is there a conflict?]{$\Function predict(A,t)≠⊥$}
