@@ -26,12 +26,12 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
   where~$α$ was already parsed, then the top of the stack symbol
   will be denoted by~$\<A> ::=α·β$.
 
-  The SLL begins by pushing the grammar start symbol's rule†{
+  The SLL begins by pushing the grammar start symbol's rule~†{
     Of course, the grammar's start symbol might have more than one rule,
     but since the grammar is LL, each rule have a
-    distinct~$\Function First(\cdot)$ set, thus by peeking into the
+    distinct~$\Function First(·)$ set, thus by peeking into the
     first input symbol we can choose a start rule.}
-  with a dot before the first symbol, and perform in loop the 
+  with a dot before the first symbol, and perform in loop the
   step depicted
   in~\cref{algorithm:sll-parser}.
 
@@ -40,7 +40,7 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
   SLL's parsing algorithm step}
   \begin{algorithmic}
     \LET{$X ::=α·Yβ$}{\Function pop()}\COMMENT{what's the anticipated input?}
-    \IF[rule is parsed]{$|Yβ|=0$}
+    \IF[if rule is already parsed]{$|Yβ|=0$}
       \IF{$X ::=αYβ$ is a start rule}
         \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
@@ -48,11 +48,9 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \FI
-      \CONTINUE
+      \CONTINUE \COMMENT{pop the rule, continue to the next}
     \FI
     \STATE{$\Function push(X::=αY·β)$}\COMMENT{push next}
-    % STOPPED HEREEEEEEEEEEEEEEEEEEEEEEEEE
-
     \IF[$Y$ is a terminal]{$Y∈Σ$}
       \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
         \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
@@ -66,9 +64,35 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
       \ELSE[A rule was found]
         \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
         \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
-        \STATE{$\Function push(Z ::= Y₁,…,Yₖ)$}\COMMENT{push the next rule}
+        \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
         \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
       \FI % No rule found
-    \FI % Y is terminal or nonterminal
+    \FI % Y is a terminal or a nonterminal
   \end{algorithmic}
 \end{algorithm}
+
+The SLL maintains a stack of derivation rules that are being parsed
+  at a given moment, each rule has a ‟$·$” somewhere in its RHS,
+  that splits the rule to the prefix that was already parsed (can
+  be empty) and the suffix that is anticiped to be parsed (can be
+  empty).
+
+The parsing step of the SLL always begins with popping a rule
+  from the stack.
+Upon popping the rule~$\<A> ::= Y₀ \ldot Y_{i-1}·Yᵢ…Yₖ$ the operates
+  as follows:
+\begin{enumerate}
+  \item
+    If~$\<A>$ is a start symbol, and~$i=k$ (i.e., it was fully parsed)
+      then the SLL expects the end-of-input symbol~$\$$ at the input
+      string ; matching it will cause the SLL to accept, and failing
+      to match it will cause rejection.
+  \item
+    If~$i=k$ but~$\<A>$ is not the start symbol, the rule is popped.
+  \item
+    If~$Yᵢ∈Σ$ then like the LL parser, the SLL tries to match 
+      it with the next terminal from the input string
+    Matching will advance the rule by one step, i.e.,
+      push~$\<A> ::= Y₀…Yᵢ·Y_{i+1}…Yₖ$, while failing to match
+      causes the SLL to reject.
+  \item 

@@ -22,10 +22,9 @@ To this end, we revise the classical algorithm for converting
 \subsection{LL(1) Parsing}
 \label{section:essentials}
 An LL(1) parser is a DPDA allowed to peek at the next input symbol.
-Thus,~$δ$, its transition function, takes two parameters: the current state of
-the automaton, and a peek into the terminal next to be read.
-The actual operation of the automaton
-  is by executing in loop the step
+Thus,~$δ$, its transition function, takes two parameters: the current
+  state of the automaton, and a peek into the terminal next to be read.
+The actual operation of the automaton is by executing in loop the step
   depicted in \cref{algorithm:ll-parser}.
 
 \renewcommand\algorithmicdo{\textbf{\emph{}}}
@@ -67,18 +66,18 @@ The actual operation of the automaton
   \begin{enumerate}
       \item
   Input is a string of terminals drawn from alphabet~$Σ$, ending
-  with a special symbol~$\$∉Σ$.
+    with a special symbol~$\$∉Σ$.
       \item
   Stack symbols are drawn from~$Σ∪❴\$❵∪Ξ$, where~$Ξ$ is
-the set of nonterminals of the grammar from which the automaton was generated.
+  the set of nonterminals of the grammar from which the automaton was generated.
 \item
   Functions~$\Function pop()$ and~$\Function push(·)$
-  operate on the push-down stack; function~$\Function next()$ returns
+    operate on the push-down stack; function~$\Function next()$ returns
   and consumes the next terminal from the input string;
-  function~$\Function peek()$ returns this terminal without consuming it.
+    function~$\Function peek()$ returns this terminal without consuming it.
 \item
-The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
-  into its stack.
+  The automaton starts with the stack with the start symbol~$S∈Ξ$ pushed
+    into its stack.
   \end{enumerate}
 \end{algorithm}
 
