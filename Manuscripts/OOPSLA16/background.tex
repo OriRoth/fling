@@ -71,4 +71,17 @@ will type check if and only if the stack was not pushed more
 An~\textbf{top()} operation was also showed, that returns the type
   of the current top of the stack.
 
-
+\subsubsection*{Peeping into the stack}
+Finally, a pattern-matching like example was shown,
+  using overloading in \Java to ‟peep” into type arguments of a
+  generic type.
+Given a ``stack'' type with two type parameters: top of the stack element
+  and rest of the stack, we can create a function that given such stack,
+  returns type \cc{Peep} that has the type argument of the top of the
+  input stack, i.e, we ``peeped'' into the stack.
+\[
+  \begin{array}{*1l}
+  \cc{Stack<$γ₁$,Stack<$γ₂$,Empty>> \_1 ;}⏎
+  \cc{Peep<$γ₁$,Stack<$γ₁$,Stack<$γ₂$,Empty>> \_2 = peep(x);}
+  \end{array}
+\]

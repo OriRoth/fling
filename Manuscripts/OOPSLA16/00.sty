@@ -19,6 +19,7 @@
 \usepackage{amsthm}      % AMS theorems
 \usepackage{anyfontsize} % fixes font warnings
 \usepackage{booktabs}    % Typography of tables
+\usepackage{caption}     % make table's caption bold
 \usepackage{cite}        % Sort citations
 \usepackage{code}
 \usepackage{float}
@@ -130,6 +131,7 @@
 \newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
 \def\nonterminal#1{\ensuremath{\text{\mdseries\rmfamily\textit{#1}}}}
+\def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}}}
 
 \newenvironment{Grammar}
 {%

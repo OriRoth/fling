@@ -51,9 +51,7 @@ public class PascalExample {
   }
 
   public static abstract class Program_Definition2 extends S {
-    // This is simplified, probably we should return Parameters1
     @Override public abstract Parameters1<Program_Definition4> pair_t();
-    // Parameters is derived to epsilon and semi_t is consumed
     @Override public abstract Program_Definition4 semi_t();
   }
 
@@ -76,9 +74,8 @@ public class PascalExample {
     // will be illegal
     // We can 1) move the jump dest. parameter in type argument but it will not
     // prevent the invocation.
-    // 2) create a duplicant Body nonterminal with duplicant rule Body -> begin
-    // end , where one will be endable and one not.
-    // public abstract void $();
+    // 2) create a Body' nonterminal with duplicant rule Body'->begin end
+    //   where one will be endable (has $ method) and one not.
   }
 
   // rule #1 of Constant
@@ -151,62 +148,49 @@ public class PascalExample {
   }
 
   public static abstract class Procedure_Definition4<jump_procedure, jump_begin> extends S {
-    @Override public abstract Body1<jump_begin, jump_procedure> begin_t(); 
+    @Override public abstract Body1<jump_begin, jump_procedure> begin_t();
     @Override public abstract Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>> procedure_t();
-    @Override public abstract Constants1<Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>,Body1<jump_begin, jump_procedure>> const_t();
-    @Override public abstract Labels1<Constants1<Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>,Body1<jump_begin, jump_procedure>>, Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>, Body1<jump_begin, jump_procedure>> label_t();
+    @Override public abstract Constants1<Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>, Body1<jump_begin, jump_procedure>> const_t();
+    @Override public abstract Labels1<Constants1<Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>, Body1<jump_begin, jump_procedure>>, Procedure_Definition1<ERROR, Body1<jump_begin, jump_procedure>>, Body1<jump_begin, jump_procedure>> label_t();
   }
 
   public static abstract class Procedure_Definition5<jump_procedure, jump_begin> extends S {
     @Override public abstract Body1<jump_begin, jump_procedure> begin_t();
   }
-  
-  public static class Pascal extends Program_Definition0{
 
+  public static class Pascal extends Program_Definition0 {
     @Override public Program_Definition1 program_t() {
       return null;
     }
-
     @Override protected Object semi_t() {
       return null;
     }
-
     @Override protected Object pair_t() {
       return null;
     }
-
     @Override protected Object abstract_t() {
       return null;
     }
-
     @Override protected Object begin_t() {
       return null;
     }
-
     @Override protected Object const_t() {
       return null;
     }
-
     @Override protected Object end_t() {
       return null;
     }
-
     @Override protected Object extends_t() {
       return null;
     }
-
     @Override protected Object id_t() {
       return null;
     }
-
     @Override protected Object label_t() {
       return null;
     }
-
     @Override protected Object procedure_t() {
       return null;
     }
-    
   }
-
 }
