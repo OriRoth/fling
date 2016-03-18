@@ -43,34 +43,27 @@ The SLL begins by pushing the grammar's start symbol's rule with a
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \FI
-      \CONTINUE 
-    \FI 
+      \CONTINUE
+    \FI
     \STATE{$\Function push(X::=αY·β)$}\COMMENT{push next}
     % STOPPED HEREEEEEEEEEEEEEEEEEEEEEEEEE
 
-    %\IF[ancipated~$Y$ is a terminal]{$Y∈Σ$}
-      %\IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
-        %\STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-      %\ELSE[read terminal is the anticipated~$Y$]
-        %\STATE{\textsc{Continue}}\COMMENT{next step}
-      %\FI
-    %\ELSIF[anticipating end-of-input]{$X=\$$}
-      %\IF[not the anticipated end-of-input]{$\$≠\Function next()$}
-        %\STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
-      %\ELSE[terminal just read was the anticipated~$X$]
-        %\STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
-      %\FI
-    %\ELSE[anticipated terminal~$X$ must be a nonterminal]
-      %\LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{which rule to reduce?}
-      %\IF[no rule found]{$R=⊥$}
-        %\STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
-      %\ELSE[A rule was found]
-        %\LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
-        %\STATE{\textbf{assert}~$Z=X$}\COMMENT{$δ$ constructed to return valid~$R$ only}
-        %\STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
-        %\STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}\COMMENT{push in reverse order}
-        %\STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
-      %\FI % No rule found
-    %\FI % Main
-\end{algorithmic}
+    \IF[$Y$ is a terminal]{$Y∈Σ$}
+      \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
+        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+      \ELSE[read terminal is the anticipated~$Y$]
+        \STATE{\textsc{Continue}}\COMMENT{next step}
+      \FI
+    \ELSE[$Y$ must be a nonterminal]
+      \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
+      \IF[no rule found]{$R=⊥$}
+        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+      \ELSE[A rule was found]
+        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+        \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
+        \STATE{$\Function push(Z ::= Y₁,…,Yₖ)$}\COMMENT{push the next rule}
+        \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
+      \FI % No rule found
+    \FI % Y is terminal or nonterminal
+  \end{algorithmic}
 \end{algorithm}
