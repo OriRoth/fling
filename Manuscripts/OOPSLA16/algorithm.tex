@@ -2,72 +2,69 @@
 
 \subsection{Solving~$k'$ using closure}
 \subsection{Solving~$k^*$}
-   
+
 \subsection{Main Algorithm}
 The idea of the main is simple
-
 
 \endinput
 
 In~\cref{section:intuition} we presented the practical issues of
-  implementing the LL(1) parser ‟as is”, using two indexes:
-  the substitution factor~$k'$, and the pop factor~$k^*$.
+implementing the LL(1) parser ‟as is”, using two indexes:
+the substitution factor~$k'$, and the pop factor~$k^*$.
 
 This section will cover the solutions to these issues and
-  introduce the algorithm for the recognizer generation.
+introduce the algorithm for the recognizer generation.
 
 \subsection{Substitution Factor~$k'$}
 The problem caused by the substitution factor if~$k'>0$
-  is that the recognizer needs to perform several substitution
-  of the top of the stack with the next rule to parse.
+is that the recognizer needs to perform several substitution
+of the top of the stack with the next rule to parse.
 
 What we would like to have, is a single substitution that composes
-  all consecutive substitutions at one step.
+all consecutive substitutions at one step.
 
 An important observation is that the only parameter
-  that changes during runtime is the top of the stack.
+that changes during runtime is the top of the stack.
 Thus, if we solve this issue for every nonterminal,
-  the sequence of operations could be computed statically.
+the sequence of operations could be computed statically.
 
 The computation process is rather simple:
-  given a nonterminal~$A∈Ξ$ (the top of the stack)
-  †{in case there's a terminal at the top of the stack~$k'=0$
-  and there are no substitutions}
-  and the next input symbol~$t∈Σ∪❴\$❵$, the algorithm iteratively
-  builds the RHS of the rule which is the ‟closure” of the consecutive rules.
+given a nonterminal~$A∈Ξ$ (the top of the stack)
+†{in case there's a terminal at the top of the stack~$k'=0$
+and there are no substitutions}
+and the next input symbol~$t∈Σ∪❴\$❵$, the algorithm iteratively
+builds the RHS of the rule which is the ‟closure” of the consecutive rules.
 
 The algorithm applies the following inductive step:
-  use~$r = \Function predict(A,t)$ to predict the next rule as the LL(1)
-  parser would ; add the RHS of~$r$ to the beginning of the result.
+use~$r = \Function predict(A,t)$ to predict the next rule as the LL(1)
+parser would ; add the RHS of~$r$ to the beginning of the result.
 If the first symbol of the result is~$t$, finish.
 Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
-  apply the inductive step again.
+apply the inductive step again.
 The full algorithm is given in~\cref{algorithm:llclosure}.
 
 \cref{algorithm:llclosure} presents
 \begin{algorithm}[p]
   \caption{\label{algorithm:llclosure}
-  An algorithm for computing the rule~$\Function closure(r,b)$ for some rule~$r∈P$ and
+    An algorithm for computing the rule~$\Function closure(r,b)$ for some rule~$r∈P$ and
   terminal~$b∈Σ$, when~$Ξ$ is the nonterminals set.}
   \begin{algorithmic}
     \STATE{$(A::=Y₀…Yₖ)←r$} \COMMENT{break~$r$ into its LHS ＆ RHS}
     \IF[$r$ cannot be derived to begin with~$b$]{$b∉\Function First(Y₀…Yₖ)$}
-      \STATE{\textsc{Error}}
+    \STATE{\textsc{Error}}
     \FI
     \STATE{$\text{LHS}=A$} \COMMENT{the output rule shares the LHS with the input}
     \STATE{$\text{RHS}=Y₀…Yₖ$} \COMMENT{initially, the RHS is the original rule}
     \LET{$h$}{$\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
     \WHILE[$h$ is always a nonterminal in the loop]{$h∉Σ$}
-      \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←get(P)$}
-        \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
-          \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
-          \BREAK \COMMENT{since were in LL(1), can't be other}
-        \ENDIF
-      \ENDFOR
-      \STATE{$h←\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
+    \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←get(P)$}
+    \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
+    \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
+    \BREAK \COMMENT{since were in LL(1), can't be other}
+    \ENDIF
+    \ENDFOR
+    \STATE{$h←\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
     \ENDWHILE
     \RETURN{$\text{LHS}::=\text{RHS}$}
   \end{algorithmic}
 \end{algorithm}
-
-

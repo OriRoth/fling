@@ -4,84 +4,86 @@
   \item Gutterman
   \item Reference to emulation of DFA\@. We can only do
         a constant number of moves in each iteration.
-  \item~$aⁿbⁿcⁿ$
+        \item~$aⁿbⁿcⁿ$
   \item \Prolog Unification.
   \item We investigated wildcards, intersection types and
         (the rather limited) type inference of
-        Java, but failed to employ these to increase the expressive power of the computation model.
-  \item Ecoop results.
+        \Java, but failed to employ these to increase the expressive power of
+        the computation model.  
+      \item Ecoop results.
   \item Lina reduction
 \end{enumerate}
 
 Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ,P⟩$.
-    \begin{enumerate}
-      \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) - linear grow, LR(1) - exponential blowup)
-      \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
-      \item The number of states grow to~$Q⨉Γᵏ$.
-      \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
-    \end{enumerate}
+\begin{enumerate}
+  \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) -
+    linear grow, LR(1) - exponential blowup)
+  \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
+  \item The number of states grow to~$Q⨉Γᵏ$.
+  \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
+\end{enumerate}
 
 \subsection{Toolkit summary}
 This toolkit presents how can one use the \Java compiler's
-  type checker to do compile time computations, mostly know as
-  ‟meta-programming”.
+type checker to do compile time computations, mostly know as
+‟meta-programming”.
 
 \subsubsection*{Unary functions}
 The first example presented in the toolkit is for encoding a
-  basic unary function~$g:A→A$ for any finite set~$A$.
+basic unary function~$g:A→A$ for any finite set~$A$.
 
 It was shown how can a fluent API be simply generated
-  to ensure that for any~$a,b∈A$,
+to ensure that for any~$a,b∈A$,
 \[
   \cc{a tmp = \kk{new} b().g();}
 \]
 will type check if and only if~$g(b)=a$.
 
 It was also shown that it could be made with generation
-  a number of classes linearly proportionate to~$|A|$.
+a number of classes linearly proportionate to~$|A|$.
 
 \subsection*{Partial Binary functions}
 The next example elaborated the previous, and showed
-  how can a partial binary function~$f:R⨉S↛T$
-  can be encoded for any finite sets~$R,S,T$.
+how can a partial binary function~$f:R⨉S↛T$
+can be encoded for any finite sets~$R,S,T$.
 
-It is shown that for any~$r∈R , s∈S , t∈T$
-  the statement
+It is shown that for any~$r∈R, s∈S, t∈T$
+the statement
 \[
   \cc{t tmp = f.r().s();}
 \]
-  will type check if and only if~$f(r,s)=t$.
+will type check if and only if~$f(r,s)=t$.
 
 Again, the number of generated types and their sizes (number of methods)
-  is linearly proportionate to~$|R|+|S|+|T|$.
+is linearly proportionate to~$|R|+|S|+|T|$.
 
 \subsubsection*{Compile Time Stack data Structure}
 Advancing toward more complicated and infinite structures,
-  a compile-time stack was introduced, to meet this end,
-  \Java Generics was employed.
+a compile-time stack was introduced, to meet this end,
+\Java Generics was employed.
 It was shown, that for any finite set~$Γ$ of stack symbol
-  a set of \Java types could be automatically generated,
-  implementing operations~\textbf{pop$()$},and~\textbf{push$γ()$}
-  for any~$γ∈Γ$.
+a set of \Java types could be automatically generated,
+implementing operations~\textbf{pop$()$},and~\textbf{push$γ()$}
+for any~$γ∈Γ$.
 For any set of such operations~\cc{op$₁$…op$ₖ$} the sequence of calls\[
-  \cc{Stack.empty.op$₁()$….op$ₖ()$;}
+\cc{Stack.empty.op$₁()$….op$ₖ()$;}
 \]
 will type check if and only if the stack was not pushed more
-  than it was popped for any prefix.
+than it was popped for any prefix.
 An~\textbf{top()} operation was also showed, that returns the type
-  of the current top of the stack.
+of the current top of the stack.
 
 \subsubsection*{Peeping into the stack}
 Finally, a pattern-matching like example was shown,
-  using overloading in \Java to ‟peep” into type arguments of a
-  generic type.
-Given a ``stack'' type with two type parameters: top of the stack element
-  and rest of the stack, we can create a function that given such stack,
-  returns type \cc{Peep} that has the type argument of the top of the
-  input stack, i.e, we ``peeped'' into the stack.
+using overloading in \Java to ‟peep” into type arguments of a
+generic type.
+Given a ‟stack” type with two type parameters: top of the stack element
+and rest of the stack, we can create a function that given such stack,
+returns type \cc{Peep} that has the type argument of the top of the
+input stack, i.e, we ‟peeped” into the stack.
 \[
   \begin{array}{*1l}
-  \cc{Stack<$γ₁$,Stack<$γ₂$,Empty>> \_1 ;}⏎
-  \cc{Peep<$γ₁$,Stack<$γ₁$,Stack<$γ₂$,Empty>> \_2 = peep(x);}
+    \cc{Stack<$γ₁$,Stack<$γ₂$,Empty>> \_1 ;}⏎
+    \cc{Peep<$γ₁$,Stack<$γ₁$,Stack<$γ₂$,Empty>> \_2 = peep(x);}
   \end{array}
 \]

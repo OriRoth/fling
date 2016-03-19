@@ -1,58 +1,58 @@
 %! TEX root = 00.tex
 In this section, we describe an algorithm for generating
-  a ‟JLR Recognizer" for a given context free grammar~$G$.
+a ‟JLR Recognizer" for a given context free grammar~$G$.
 The said recognizer is intended to be run on a jDPDA.
-(Recall that a jDPPA is similar to push-down automaton except that it supports 
-  ‟jump” operations on the stack, and is restricted to being ‟real time”, i.e.,
-  taking a constant number of steps in response
-  to an input symbol.
+(Recall that a jDPPA is similar to push-down automaton except that it supports
+‟jump” operations on the stack, and is restricted to being ‟real time”, i.e.,
+taking a constant number of steps in response
+to an input symbol.
 In the next section, we shall explain how the jDPDA and
-  recognizer are implemented on top of \Java generics.
+recognizer are implemented on top of \Java generics.
 
 In particular, we describe here the algorithms for filling
-  the transition tables of the jDPA.
-As explained above, that for given DCFG language~$𝓛$ ,
-  there exists at least one filling of the transitions table
-  that recognize~$𝓛$.
+the transition tables of the jDPA.
+As explained above, that for given DCFG language~$𝓛$,
+there exists at least one filling of the transitions table
+that recognize~$𝓛$.
 This section however describes a concrete algorithm for
-doing so. 
+doing so.
 
 The presented algorithm is inspired by the classical algorithms for generating
-  LR(1) parsers~\cite{family1,family2....}.
+LR(1) parsers~\cite{family1,family2....}.
 However, unlike these algorithms, the algorithm we present
-  produces only a recognizer; parsing and construction of an \AST
-  is left for later stages.
+produces only a recognizer; parsing and construction of an \AST
+is left for later stages.
 Also, just like the LR(1) parser generators, generation starts from
-  one concrete CFG~$G$ for a language~$𝓛$
-  (rather than some canonical description of the language).
+one concrete CFG~$G$ for a language~$𝓛$
+(rather than some canonical description of the language).
 As with the classical generators the performance of the algorithm
-  depends on the selection of~$G$, i.e., some grammars for the same language
-  are better than others.
+depends on the selection of~$G$, i.e., some grammars for the same language
+are better than others.
 
 Before describing our main algorithm brief reminders of LR parsing and
-  LR parser generators are due.
+LR parser generators are due.
 \subsection{LR Parsing}
 An LR(1) parser (henceforth, LR parser) for a grammar~$G=(Ξ,ξ,R)$
-  (Nonterminals set, initial start element, production rules set respectively)
-  has three components:
+(Nonterminals set, initial start element, production rules set respectively)
+has three components:
 \begin{itemize}
   \item An \emph{An automaton} whose states are~$Q=❴q₀,…,qₙ❵$
   \item A \emph{stack} which may contain any member of~$Q$.
-\item A \emph{specification} of state transition, 
-    which is done with one of two tables:
-  \begin{description}
-    \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
-    between the states of the automaton.
-    \item[Action table] which
-    defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
-  \end{description}
+  \item A \emph{specification} of state transition,
+        which is done with one of two tables:
+        \begin{description}
+          \item[Goto table] which defines a partial function~$δ:Q⨉Ξ↛Q$ of transitions
+                between the states of the automaton.
+          \item[Action table] which
+                defines a partial function\[η:Q⨉Σ↛ ❴ \textsf{Shift}(q) \,|\, q∈Q❵ ∪ ❴\textsf{Reduce}(r) \,| \, r∈G❵.\]
+        \end{description}
 \end{itemize}
 An \emph{LR item} is a rule~$r∈R$ and a dot index in the right-hand side of the rule,
-  i.e.,~$A→α·β$ is an LR item if~$A∈Ξ$,~$A→αβ∈R$,
-  the dot index in this example is~$|α|$.
+i.e.,~$A→α·β$ is an LR item if~$A∈Ξ$,~$A→αβ∈R$,
+the dot index in this example is~$|α|$.
 Every state~$q∈Q$ is a set of~\emph{LR items},
-  where every such item is in the~$Kernel_{q}$ set,
-  or in the~$NonKernel_{q}$ set.
+where every such item is in the~$Kernel_{q}$ set,
+or in the~$NonKernel_{q}$ set.
 Every state~$q$ is the unification of~$Kernel_{q}$ and~$NonKernel_{q}$.
 The parser begins by pushing~$q₀$ (the initial state) into the empty stack,
 and then repetitively executes the following:
@@ -73,53 +73,52 @@ defined by applying the transition function to~$ξ$, the left-hand side of the r
 i.e.,~$q”=η(q',ξ)$.
 
 The specifics of parser generation and specifically
-  calculating the sets~$Kernel_{q}$ and~$NonKernel_{q}$, lies beyond our interest here.
+calculating the sets~$Kernel_{q}$ and~$NonKernel_{q}$, lies beyond our interest here.
 We do mention however that the same LR parser can serve parsing table drawn using weaker LR parser generators,
 including SLR and LALR\@.
 
 The JLR recognizer is a shift-jump machine
-  based on the jDPDA automaton.
+based on the jDPDA automaton.
 It was invented with inspiration from the classical
-  LR(1) parser, with changes regarding the automaton's
-  \emph{realtime} nature.
+LR(1) parser, with changes regarding the automaton's
+\emph{realtime} nature.
 
 The core of LR parsing are the LR items,
-  which construct the LR automaton's states, and
-  characterize the shift and reduce operations.
+which construct the LR automaton's states, and
+characterize the shift and reduce operations.
 The following definition of JLR items,
-  encloses the changes required to those items to handle
-  jump operations.
+encloses the changes required to those items to handle
+jump operations.
 A JLR item is a tuple~$⟨i,ℓ⟩$ where~$i$ is an
-  LR item, and~$ℓ$ is a special stack element,
-  to which the recognizer will jump, in case this item will
-  be reduced.
+LR item, and~$ℓ$ is a special stack element,
+to which the recognizer will jump, in case this item will
+be reduced.
 This jump is designed to emulate the LR's
-  reduce operation, considering the unbounded list of consecutive
-  reductions that might occur.
-We denote such items as~$[A→α·β, b ,ℓ]$
-  where~$A→α·β, b$ is the original LR notation, and~$ℓ$
-  is the jump label.
+reduce operation, considering the unbounded list of consecutive
+reductions that might occur.
+We denote such items as~$[A→α·β, b,ℓ]$
+where~$A→α·β, b$ is the original LR notation, and~$ℓ$
+is the jump label.
 
 A set of JLR items is said to be a JLR state.
 
 \subsection{States generation algorithm}
 The method for constructing a shift-jump automaton
-  is basically the same as the LR automaton construction,
-  with small modification to update the labels of JLR items
-  and modifications regarding nullable symbols.
+is basically the same as the LR automaton construction,
+with small modification to update the labels of JLR items
+and modifications regarding nullable symbols.
 Like the original algorithms, we divide the work to three
-  sub-routines~$\Function Closure(I)$,~$\Function Goto(I,X)$ and~$\Function Items(G')$,
-  where the first slightly differs from the original function by handling the
-  labels of freshly added items as well as nullable symbols,
-  and the other two remain as in the original LR state construction.
+sub-routines~$\Function Closure(I)$,~$\Function Goto(I,X)$ and~$\Function Items(G')$,
+where the first slightly differs from the original function by handling the
+labels of freshly added items as well as nullable symbols,
+and the other two remain as in the original LR state construction.
 The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
-  and~\cref{algorithm:Items} accordingly.
-
+and~\cref{algorithm:Items} accordingly.
 
 \begin{algorithm}[p]
-    \newcommand\Queue{\ensuremath{Q}}
+  \newcommand\Queue{\ensuremath{Q}}
   \caption{\label{algorithm:Closure}
-  Function~$\Function Closure(I)$: compute the closure of items set~$I$}
+    Function~$\Function Closure(I)$: compute the closure of items set~$I$}
   \begin{algorithmic}[1]
     \INPUT{a set of JLR items~$I$}
     \OUTPUT{$J$, the set of JLR items obtained by a closure of~$I$}
@@ -127,27 +126,27 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
     \STATE{$J←∅$ \COMMENT{Initial approximation of returned value}}
     \WHILE[More work to do]{$\Queue ≠ ∅$}
     \LET{$i$}{$\Function dequeue(\Queue)$} \COMMENT{Next JLR item to process}
-      \IF[Equality w/o the label]{$i∈J$} % Should rewrite this line
-        \STATE{\textbf{continue}}
-      \ENDIF
-      \STATE{$J←J ∪ ❴i❵$}
-      \LET{$[A→α·β, a,ℓ,θ]$}{$i$}
-      \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
-      \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
-        \STATE{\textbf{continue}}
-      \ENDIF
-      \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
-      \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
-        \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\Function Nullable(δ)$}
-          \STATE{$\Function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
-        \ENDIF
-        \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\Function First(δ)$}
-          \STATE{$\Function enqueue(\Queue, [B→·γ,t,\Function newLabel(),N])$}
-        \ENDFOR % Closure item
-      \ENDFOR % Iterate over $B$
-      \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\Function Nullable(B)$}
-        \STATE{$\Function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
-      \ENDIF
+    \IF[Equality w/o the label]{$i∈J$} % Should rewrite this line
+    \STATE{\textbf{continue}}
+    \ENDIF
+    \STATE{$J←J ∪ ❴i❵$}
+    \LET{$[A→α·β, a,ℓ,θ]$}{$i$}
+    \COMMENT{Break item~$i$ into its~$A$,~$α$,~$β$,~$a$, and~$ℓ$ components}
+    \IF[The dot is not before a nonterminal] {$β=ε ∨ β=σβ', σ∈Σ$}
+    \STATE{\textbf{continue}}
+    \ENDIF
+    \STATE{$β= Bδ$}\COMMENT{$β$ starts with a nonterminal}
+    \FOR[Add to closure whatever~$Bδ$ may derive]{$B→γ∈G'$,$γ≠ε$}
+    \IF[Add to closure item representing~$δ\overset*⇒ε$]{$\Function Nullable(δ)$}
+    \STATE{$\Function enqueue(\Queue,[B→·γ,a,ℓ,¬N])$}
+    \ENDIF
+    \FOR[Add to closure item representing derivation~$δ\overset*⇒t⋯$]{$t∈\Function First(δ)$}
+    \STATE{$\Function enqueue(\Queue, [B→·γ,t,\Function newLabel(),N])$}
+    \ENDFOR % Closure item
+    \ENDFOR % Iterate over~$B$
+    \IF[Add to closure item representing derivation~$B\overset*⇒ε$]{$\Function Nullable(B)$}
+    \STATE{$\Function enqueue(\Queue,[A→αB·δ,a,ℓ,θ])$}
+    \ENDIF
     \ENDWHILE
     \RETURN{$J$}
   \end{algorithmic}
@@ -155,17 +154,17 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:Goto}
-  Function~$\Function Goto(I,X)$: generate the item set of successive to~$I$ after seeing~$X$}
+    Function~$\Function Goto(I,X)$: generate the item set of successive to~$I$ after seeing~$X$}
   \begin{algorithmic}
     \INPUT{a set of JLR items~$I$}
     \INPUT{a grammar symbol~$X$}
     \OUTPUT{the successive item set}
     \STATE{$J←∅$} \COMMENT{Initially, there are not items}
     \FOR{$i∈I$}
-      \LET{$[A→α·Xβ,a,ℓ,θ]$}{$i$}\COMMENT{Break item~$i$ into components}
-      \LET{$θ'$}{$θ∧X∈Ξ$}
-      \LET{$i'$}{$[A→αX·β,a,ℓ,θ']$}\COMMENT{Advance the dot}
-      \STATE{$J←J ∪ ❴i'❵~$}
+    \LET{$[A→α·Xβ,a,ℓ,θ]$}{$i$}\COMMENT{Break item~$i$ into components}
+    \LET{$θ'$}{$θ∧X∈Ξ$}
+    \LET{$i'$}{$[A→αX·β,a,ℓ,θ']$}\COMMENT{Advance the dot}
+    \STATE{$J←J ∪ ❴i'❵~$}
     \ENDFOR
     \RETURN{$\Function Closure(J)$}
   \end{algorithmic}
@@ -173,8 +172,8 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:Items}
-  Function~$\Function Items(G')$: generate set of states for
-      augmented grammar~$G'$}
+    Function~$\Function Items(G')$: generate set of states for
+  augmented grammar~$G'$}
   \begin{algorithmic}
     \INPUT{An augmented grammar~$G'$}
     \OUTPUT{the set of JLR states induced by~$G'$}
@@ -182,12 +181,12 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
     \COMMENT{Work list and return value}
     \REPEAT[Processing the work list]
     \FOR[Deal with items in set~$I$]{$I ∈ R$}
-  \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
+    \FOR{each grammar symbol~$X ∈Σ_\$ ∪ Ξ$}
     \IF{$\Function Goto(I,X)$ is not empty and not in~$R$}
     \STATE{$R←R ∪ ❴\Function Goto(I,X)❵$} % There is a tricky point here, the equality operator checks only the kernel items, since 2 different Closure(I) will generate items with different labels.
     \ENDIF % Grammar symbol
     \ENDFOR % For items
-      \ENDFOR
+    \ENDFOR
     \UNTIL{Set~$R$ is unchanged}
     \RETURN{$R$}
   \end{algorithmic}
@@ -196,84 +195,84 @@ The algorithms are depicted in~\cref{algorithm:Closure},~\cref{algorithm:Goto}
 Notes on the algorithms
 \begin{itemize}
   \item Each JLR state contains all items that would be generated
-    on an equivalent LR parser state
-    (intuition: without lines 17--18 in \cref{algorithm:Closure}
-    the algorithms differ only in the label field).
+        on an equivalent LR parser state
+        (intuition: without lines 17--18 in \cref{algorithm:Closure}
+        the algorithms differ only in the label field).
 \end{itemize}
 
 \subsection{Structure of the JLR action table and behavior of actions}
 As the last step before constructing the action table, we
-  define the function~$\textsf{JumpSet}: Q⨉Σ→(ℕ↛Q)$.
+define the function~$\textsf{JumpSet}: Q⨉Σ→(ℕ↛Q)$.
 $\Function JumpSet(q,σ)$ returns a function~$f$ that maps labels
-  to states.
-  In a way, it reminds the~$\Table Goto[]$ table used in LR parsing, since
-  that function will be used when a jump operation will occur.
+to states.
+In a way, it reminds the~$\Table Goto[]$ table used in LR parsing, since
+that function will be used when a jump operation will occur.
 
 \begin{algorithm}[H]
   \begin{algorithmic}
     \caption{\label{algorithm:JumpSet}
-    Function~$\Function JumpSet(q,σ)$ - auxiliary function for action table}
+      Function~$\Function JumpSet(q,σ)$ - auxiliary function for action table}
     \INPUT{current state~$q$}
     \INPUT{lookahead symbol~$σ$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
     \FOR{$[ A→α·σβ,σ',ℓ,N]∈ q$}
-      \STATE{$ f(ℓ) = \Function Goto(\Function Goto(q,A),σ')$}
+    \STATE{$ f(ℓ) = \Function Goto(\Function Goto(q,A),σ')$}
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}
 \end{algorithm}
 
 The structure of the JLR action table
-  resembles the LR(1) action table;
-  it is defined by a function~$\Table ACTION[q,σ]$
-  where~$q∈Q$, and~$σ∈Σ_\$$, being the current state and
-  the lookahead symbol accordingly.
+resembles the LR(1) action table;
+it is defined by a function~$\Table ACTION[q,σ]$
+where~$q∈Q$, and~$σ∈Σ_\$$, being the current state and
+the lookahead symbol accordingly.
 The result of~$\Table ACTION[q,σ]$ can have one of
-  four forms:
+four forms:
 \begin{description}
   \item[$\textsf{accept}$] The recognizer accepts on input.
   \item[$\textsf{reject}$] The recognizer rejects on input.
   \item[$\Function shift(f,p)$] A shift operation.
-  The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
-    in that order.
+        The recognizer pushes~$f∈ℕ↛Q$ and~$p∈Q$ onto the stack
+        in that order.
   \item[$\Function jump(ℓ)$] A jump operation. The recognizer jumps
-    to label~$ℓ$, specifically, the recognizer pops elements from the
-    stack until some function~$f$ is popped, such that~$f(ℓ)$
-    is defined, and yields~$q$.~$\Function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\Function Goto(q,σ)$.
+        to label~$ℓ$, specifically, the recognizer pops elements from the
+        stack until some function~$f$ is popped, such that~$f(ℓ)$
+        is defined, and yields~$q$.~$\Function JumpSet(q,σ)$ is then pushed onto the stack, follow by~$\Function Goto(q,σ)$.
 
   \item[$\Function delayedShift(d,f,p)$] A delayed shift operation.
-    The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function shift(f,p)$ operation.
+        The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function shift(f,p)$ operation.
 
-   \item[$\Function delayedJump(d,ℓ)$] A delayed jump operation.
-    The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function jump(ℓ)$ operation.
+  \item[$\Function delayedJump(d,ℓ)$] A delayed jump operation.
+        The recognizer pushes~$d$ onto the stack and then performs a normal~$\Function jump(ℓ)$ operation.
 
 \end{description}
 
 The construction of the action table for each state~$q∈Q$:
 \begin{itemize}
-  \item If~$[ A→α·, \$ ,ℓ,θ]∈q~$ then~$\Table
-    Action[q,\$] = \textsf{accept}$
+  \item If~$[ A→α·, \$,ℓ,θ]∈q~$ then~$\Table
+        Action[q,\$] = \textsf{accept}$
 
   \item If~$[ A→α·,σ,ℓ,θ]∈q~$ then~$\Table
-    Action[q,σ] = \Function jump(ℓ)$
+        Action[q,σ] = \Function jump(ℓ)$
 
   \item If~$[ A→α·β,σ,ℓ,θ]∈q~$ and~$σ'∈\Function First(β)$
-    then~$\Table Action[q,σ'] = \Function shift(\Function JumpSet(q,σ'),\Function
-    Goto(q,a))$
+        then~$\Table Action[q,σ'] = \Function shift(\Function JumpSet(q,σ'),\Function
+        Goto(q,a))$
 
 \end{itemize}
 
 \subsection{Theorems}
 \begin{Definition}[Equivalence relation]
   An LR state~$q$ and a JLR state~$qⱼ$ are said to be equivalent under~$≅$
-    if for each item~$i∈q$ there exists an item~$j∈ qⱼ$ such that~$i = \Function
+  if for each item~$i∈q$ there exists an item~$j∈ qⱼ$ such that~$i = \Function
   Clean(j)$.
 \end{Definition}
 
 \begin{Lemma}
   Given grammar~$G$, let~$P$ be the LR parser generated for~$G$, and~$Pⱼ$ be
-    the JLR recognizer generated for~$G$.
+  the JLR recognizer generated for~$G$.
   Then, for each~$q∈P$ there exists~$qⱼ∈Pⱼ$ such that~$q≅qⱼ$.
 \end{Lemma}
 \begin{description}
@@ -289,59 +288,59 @@ We would like to ‟compress” those epsilon moves. We can!
 Our problem was that we need to push another JumpSet during the finalizing push (emulating a full shift).
 But, we can ‟delay” this operation by creating a copy of state~$q$, that knows that another JumpSet needs to be
 pushed, if we shift, we just add the additional JustSet. If we accept, we accept, reject rejects, and finally jump:
-We act like we would if the jump set was already pushed ( is that possible???? probably yes)
+We act like we would if the jump set was already pushed (is that possible???? probably yes)
 \paragraph{Misc.}
 
 \endinput
 
 \subsection{Between LR and JLR - A direct approach}
 LR parsers are actually DPDAs\@. As we mentioned before in \cref{section:proof},~$ε$-moves
-  fails the emulation of a DPDA, thus, in order to type-encode an LR parser, we first need
-  to convert it to the encode-able jDPDA\@.
+fails the emulation of a DPDA, thus, in order to type-encode an LR parser, we first need
+to convert it to the encode-able jDPDA\@.
 
 A \emph{JLR parser}, or \emph{Jump LR Parser} is an LR parser, that
-  is based on a variation of the jDPDA\@.
+is based on a variation of the jDPDA\@.
 The objective of the JLR parser is refined in~\cref{theorem:JLR}.
 
 \begin{Theorem}
   \label{theorem:JLR}
   Let~$P$ be an LR parser, then there exists a jDPDA~$J$,
   such that for every string~$α∈Σ^*$, parser~$P$ accepts~$α$
-    if and only if~$J$ accepts~$α$
+  if and only if~$J$ accepts~$α$
 \end{Theorem}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
 A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
-  where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
-  is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
-  \begin{itemize}
-   \item~$δ(q,σ)= j(σ)$ if~$η_{LR}(q,σ)=Reduce(A→α)∧α≠ε$
+where~$Γ= Q∪(Σ_\$↛Q)$ are the stack elements,~$q₀∈Q$
+is the initial state, and~$delta:Γ⨉Σ↛Γ^*∪j(Σ_\$)$ is defined as follows:
+\begin{itemize}
+  \item~$δ(q,σ)= j(σ)$ if~$η_{LR}(q,σ)=Reduce(A→α)∧α≠ε$
 
-   % Automization based on the second example (Balanced parenthesis)
+  % Automization based on the second example (Balanced parenthesis)
 
-   % Green rule , only on kernel items
-   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$\textsf{Kernel}_q$ items
-   \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
-     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
-     and we advanced only on~$\textsf{Kernel}_q$ items
+  % Green rule, only on kernel items
+  \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$\textsf{Kernel}_q$ items
+  \item~$δ(q,σ)= q \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
+  and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+  and we advanced only on~$\textsf{Kernel}_q$ items
 
-  % Red rule , only on non-kernel items
+  % Red rule, only on non-kernel items
 
-   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
-     items, then
-    \[
-      f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
-    \]
+  \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Shift(p)$ and we advanced only on~$I⊆\textsf{NonKernel}_q$
+  items, then
+  \[
+    f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+  \]
 
-   \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
-     and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
-     and we advanced only on~$I⊆\textsf{NonKernel}_q$
-     items, then
-     \[
-      f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
-     \]
+  \item~$δ(q,σ)= q \: f \: p~$ if~$η_{LR}(q,σ)=Reduce(A→ε)$
+  and~$δ_{LR}(q,A)=Goto(q')$ and~$η_{LR}(q',σ)=Shift(p)$
+  and we advanced only on~$I⊆\textsf{NonKernel}_q$
+  items, then
+  \[
+    f = ❴σ'↦q' \; | \;∃i∈I. \Function lookahead(i)=σ' \,∧\, η_{LR}(q,σ')=Shift(q')❵
+  \]
 
-  \end{itemize}
+\end{itemize}
 \subsection{Informally}
 
 For an LR parser~$⟨Q,δ_{LR}, η_{LR}⟩$ defined over a grammar~$⟨Ξ,ξ,R⟩$
@@ -349,66 +348,66 @@ A JLR is like the jDPDA~$A=⟨Γ,q₀,δ⟩$ defined in~\cref{definiiton:JDPDA},
 
 \begin{itemize}
   \item When we \textsf{reduce()} a jump operation is performed.
-    The jump will be for the corresponding look-ahead symbol.
+        The jump will be for the corresponding look-ahead symbol.
   \item On a shift op:
-  if we shift on a~$item∈\textsf{Kernel}$
-    then everything as usual.
-  Else,~$item∈\textsf{Closure(Kernel)}$
-      if the look-ahead of this item will be consumed by a kernel item:
+        if we shift on a~$item∈\textsf{Kernel}$
+        then everything as usual.
+        Else,~$item∈\textsf{Closure(Kernel)}$
+        if the look-ahead of this item will be consumed by a kernel item:
         a new Jump symbol will be inserted on the stack.
-      Else:
+        Else:
         the look-ahead will cause a reduction of one of the kernel items,
         in that case, the previous Jump symbol is still relevant.
   \item[Even computation Invariant]
-    Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w=σ₁…σₖ\$∈Σ^*$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
-    When~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
-    then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
-    and \textsf{clean} is a function that removes all~$c∉Q$ from the input string.
+        Let~$L$ be an LR parser,~$J$ is the corresponding JLR, and word~$w=σ₁…σₖ\$∈Σ^*$ (we denote~$wᵢ$ to be~$σᵢ⋯σₖ ＄$).
+        When~$L$ parses~$w$, it reaches a configuration~$(wᵢ,γζ)$,
+        then when~$J$ parses~$w$, it reaches the configuration~$(wᵢ,γζ')$ where~$ζ= \textsf{clean}(ζ')$
+        and \textsf{clean} is a function that removes all~$c∉Q$ from the input string.
   \item[Jump invariant]
-    when jumping on a lookahead symbol~$a∈Σ_\$~$ during the computation of~$J$,
-    all consecutive reductions performed on~$L$ from the parallel configuration, are ‟done” by the \textsf{jump} operation.
+        when jumping on a lookahead symbol~$a∈Σ_\$~$ during the computation of~$J$,
+        all consecutive reductions performed on~$L$ from the parallel configuration, are ‟done” by the \textsf{jump} operation.
   \item[Parsing] can always be added to this model, because when we get to an item~$A→α·B,a$, and we shift on
-    one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
-    if we shift on another item~$A→·γ,a/b$?)
+        one of the items~$B→·β,a$, we know that every legal parsing will result in (thats actually not accurate, what happens
+        if we shift on another item~$A→·γ,a/b$?)
 \end{itemize}
 \paragraph{Problem 1} if we shift on more than one items, with different lookaheads,
-  and put multiple terminals on the stack, who should we put first? The ones that are
-  not first are the problem; if we jump to them, we still got other terminals on the
-  top of the stack, out invariant says we always want the top of the stack to be a
-  state element.
+and put multiple terminals on the stack, who should we put first? The ones that are
+not first are the problem; if we jump to them, we still got other terminals on the
+top of the stack, out invariant says we always want the top of the stack to be a
+state element.
 
 \paragraph{Solution 1} if save on the stack a single element for the
-  ‟multiple shifting items” which will be of type:~$𝓟(Σ)$
-  and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements
-  from the stack until a~$χ∈𝓟(Σ)$,~$σ∈χ$ is popped”.
+‟multiple shifting items” which will be of type:~$𝓟(Σ)$
+and we transform the jump operation on~$σ∈Σ$to be ‟Remove elements
+from the stack until a~$χ∈𝓟(Σ)$,~$σ∈χ$ is popped”.
 
-\paragraph{Problem 2} When we~$\textsf{Jump}(σ)$ , we consume~$σ$, and remove
-  from stack as expected, the problem is, the corresponding lookahead symbol
-  should be ‟consumed” and the shift on~$σ$ need to happen again.
+\paragraph{Problem 2} When we~$\textsf{Jump}(σ)$, we consume~$σ$, and remove
+from stack as expected, the problem is, the corresponding lookahead symbol
+should be ‟consumed” and the shift on~$σ$ need to happen again.
 
 \paragraph{Solution 2} Instead of pushing subsets of~$Σ$ we push partial
-  mappings~$Σ_{\$}↛Q$ (where~$Γ=Q∪(Σ_{＄}↛Q)$) jumping is still defined
-  on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack
-  until we popped some~$f∈(Σ↛Q)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
+mappings~$Σ_{\$}↛Q$ (where~$Γ=Q∪(Σ_{＄}↛Q)$) jumping is still defined
+on symbols~$σ∈Σ_{\$}$, and when the jump is performed we pop from the stack
+until we popped some~$f∈(Σ↛Q)$ for which~$f(σ)≠⊥$, and then push~$f(σ)$ back onto the stack.
 
 \paragraph{Problem 3} When we have a state \textsf{Base} that has
-  two items~$A₁→α₁·β₁,a$ and~$A₂→α₂·β₂,a$ we can't decide which function to put,
-  the mapping of~$a$ might be for the consecutive
-  transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
+two items~$A₁→α₁·β₁,a$ and~$A₂→α₂·β₂,a$ we can't decide which function to put,
+the mapping of~$a$ might be for the consecutive
+transitions~$\textsf{Base}.goto(A₁).shift(a)$ or to~$\textsf{Base}.goto(A₂).shift(a)$.
 
 \paragraph{Failed Solution 3} We cannot solve the problem by changing the function elements from~$Σ_\$↛Q$
-  to~$Σ_\$⨉Ξ↛Q$. The reason resides on the identity of the input nonterminal.
-  When we build the JLR's transition function, and want to add a function element to the stack, we choose for some~$σ∈Σ$
-  a transition to be performed after a goto, to a certain state~$q∈Q$, problem is, there might be more than one such transition
-  for that~$σ$, i.e., when for some~$q,q',q”∈Q$, and~$A,B∈Ξ$ ,~$q.goto(A).shift(a)=q'$,~$q.goto(B).shift(a)=q”$.
+to~$Σ_\$⨉Ξ↛Q$. The reason resides on the identity of the input nonterminal.
+When we build the JLR's transition function, and want to add a function element to the stack, we choose for some~$σ∈Σ$
+a transition to be performed after a goto, to a certain state~$q∈Q$, problem is, there might be more than one such transition
+for that~$σ$, i.e., when for some~$q,q',q”∈Q$, and~$A,B∈Ξ$,~$q.goto(A).shift(a)=q'$,~$q.goto(B).shift(a)=q”$.
 
 \paragraph{Problem 4} We add a function element on the stack for lookahead~$a∈Σ$
-  when we have an item that will consume~$a$ after some reduction,
-  i.e., an item of type~$A→·Baα,c$ for some~$A,B∈Ξ$ and~$c∈σ$,
-  and we don't add an item when we have a rule that will reduce
-  upon seeing such lookahead~$a$, i.e.,~$A→α·B , a$
-  ( not quite sure that these examples are as general as possible. I should verify it).
-  What happens if both appear in the same state?
+when we have an item that will consume~$a$ after some reduction,
+i.e., an item of type~$A→·Baα,c$ for some~$A,B∈Ξ$ and~$c∈σ$,
+and we don't add an item when we have a rule that will reduce
+upon seeing such lookahead~$a$, i.e.,~$A→α·B, a$
+(not quite sure that these examples are as general as possible. I should verify it).
+What happens if both appear in the same state?
 
 \paragraph{Solution 4} I believe that in \emph{every} such situation,
-  we would see a Shift/Reduce conflict, at some state reachable from the discussed state.
+we would see a Shift/Reduce conflict, at some state reachable from the discussed state.
