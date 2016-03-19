@@ -7,8 +7,6 @@ latex:
 
 include ../Programs/Makefile
 
-garbage += $(wildcard lipics*)
-
 SOURCES=$(wildcard *.sty *.tex *.fragment) $(LISTINGS) Makefile
 
 .PHONY:
