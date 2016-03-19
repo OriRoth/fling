@@ -1,7 +1,7 @@
 %! TEX root = 00.tex
 Formal presentation of the algorithm that compiles an LL(1) grammar into an implementation of a
   language recognizer with \Java generics
-  is delayed to~\cref{section:algorithm}. 
+  is delayed to~\cref{section:algorithm}.
 This section gives an intuitive perspective on this algorithm:
 
 We will first recall the essentials of the classical LL(1) parsing algorithm (\cref{section:essentials}).
@@ -262,8 +262,8 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
           \STATE{$\Function First(X) \; ∪\! = \Function First(Yᵢ)$}
             \COMMENT{add~$\Function First(Yᵢ)$ to~$\Function First(X)$}
           \ENDIF
-        \ENDFOR
-      \ENDFOR
+        \ENDFOR % Symbols in the right-hand-side of a production
+      \ENDFOR % Productions
     \ENDWHILE
   \end{algorithmic}
 \end{algorithm}
@@ -304,7 +304,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
             \STATE{$\Function Follow(Yᵢ) \, ∪ \! = \Function First(A)$}
             \COMMENT{add~$\Function First(A)$}
           \ENDIF
-        \ENDFOR
+        \ENDFOR % Symbol in the RHS
       \ENDFOR
     \ENDWHILE
   \end{algorithmic}

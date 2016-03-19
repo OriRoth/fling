@@ -1,39 +1,39 @@
 %! TEX root = 00.tex
 
 Advancing toward the algorithm, we now present a somewhat simplified
-  version of the LL(1) parsing algorithm, that will help us encode it
-  using \Java Generics, but will not weaken the computational model.
+version of the LL(1) parsing algorithm, that will help us encode it
+using \Java Generics, but will not weaken the computational model.
 
 The simplified LL parser (SLL) is an LL parser with a ‟higher”
-  perspective.
+perspective.
 While the LL's stack symbols are the terminals and
-  nonterminals of the grammar, the SLL's symbols are the grammar's
-  rules.
+nonterminals of the grammar, the SLL's symbols are the grammar's
+rules.
 
 As the LL parser, the SLL is consisted of a stack automaton
   and a prediction table†{This is the same table as the LL's prediction table}.
 The SLL makes it's decision based on the next input symbol and
-  the top of the stack.
+the top of the stack.
 It may also decide whether to consume the input token (a feature that
-  will later be revoked).
+will later be revoked).
 
 The SLL's stack symbols are ‟items” - grammar rules with an index,
-  indicating what is the prefix of the rule that has already been
-  parsed and what is the suffix that still needs to be parsed.
+indicating what is the prefix of the rule that has already been
+parsed and what is the suffix that still needs to be parsed.
 The SLL's stack symbols are similar to the famous LR items,
-  both in notation and meaning.
+both in notation and meaning.
 For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
-  where~$α$ was already parsed, then the symbol at the top of 
-  the stack will be denoted by~$\<A> ::=α·β$.
+where~$α$ was already parsed, then the symbol at the top of
+the stack will be denoted by~$\<A> ::=α·β$.
 
-  The SLL begins by pushing the grammar start symbol's rule†{
-    Of course, the grammar's start symbol might have more than one rule,
-    but since the grammar is LL, each rule has a
-    distinct~$\Function First(·)$ set, thus by peeking into the
-    first input symbol we can choose a start rule.}
-  with a dot before the first symbol, and perform in loop the
-  step depicted
-  in~\cref{algorithm:sll-parser}.
+The SLL begins by pushing the grammar start symbol's rule†{
+  Of course, the grammar's start symbol might have more than one rule,
+  but since the grammar is LL, each rule has a
+  distinct~$\Function First(·)$ set, thus by peeking into the
+first input symbol we can choose a start rule.}
+with a dot before the first symbol, and perform in loop the
+step depicted
+in~\cref{algorithm:sll-parser}.
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:sll-parser}
@@ -41,69 +41,69 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
   \begin{algorithmic}
     \LET{$X ::=α·Yβ$}{\Function pop()}\COMMENT{what's the anticipated input?}
     \IF[if rule is already parsed]{$|Yβ|=0$}
-      \IF{$X$ is a start symbol}
-        \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
-          \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-        \ELSE
-          \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
-        \FI
-      \FI
-      \CONTINUE\COMMENT{restart, popping a new rule etc.}
+    \IF{$X$ is a start symbol}
+    \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
+    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+    \ELSE
+    \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
+    \FI % Not anticipated EOF
+    \FI % Start symbol
+    \CONTINUE\COMMENT{restart, popping a new rule etc.}
     \FI
     \STATE{$\Function push(X::=αY·β)$}\COMMENT{push following item}
     \IF[$Y$ is a terminal]{$Y∈Σ$}
-      \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
-        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-      \ELSE[read terminal is the anticipated~$Y$]
-        \CONTINUE\COMMENT{restart, popping a new rule etc.}
-      \FI
+    \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
+    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+    \ELSE[read terminal is the anticipated~$Y$]
+    \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
+    \FI
     \ELSE[$Y$ must be a nonterminal]
-      \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
-      \IF[no rule found]{$R=⊥$}
-        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-      \ELSE[A rule was found]
-        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
-        \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
-        \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
-        \CONTINUE\COMMENT{restart, popping a new rule etc.}
-      \FI % No rule found
+    \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
+    \IF[no rule found]{$R=⊥$}
+    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+    \ELSE[A rule was found]
+    \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+    \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
+    \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
+    \CONTINUE\COMMENT{restart, popping a new rule etc.}
+    \FI % No rule found
     \FI % Y is a terminal or a nonterminal
   \end{algorithmic}
 \end{algorithm}
 
 The SLL maintains a stack of derivation rules that are being parsed
-  at the given moment, each rule has a ‟$·$” somewhere in its RHS,
-  that splits the rule to the prefix that was already parsed (can
-  be empty) and the suffix that is anticiped to be parsed (can be
-  empty).
+at the given moment, each rule has a ‟$·$” somewhere in its RHS,
+that splits the rule to the prefix that was already parsed (can
+be empty) and the suffix that is anticiped to be parsed (can be
+empty).
 
 The parsing step of the SLL always begins with popping a rule
-  from the stack.
-  Upon popping the rule
-  \[
-    \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
-  \]
- the SLL operates as follows:
+from the stack.
+Upon popping the rule
+\[
+  \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
+\]
+the SLL operates as follows:
 \begin{enumerate}
   \item
-    If~$\<A>$ is a start symbol, and~$i-1=k$ (i.e., it was fully parsed)
-      then the SLL expects the end-of-input symbol~$\$$ at the input
-      string ; matching it will cause the SLL to accept, and failing
-      to match it will cause rejection.
+        If~$\<A>$ is a start symbol, and~$i-1=k$ (i.e., it was fully parsed)
+        then the SLL expects the end-of-input symbol~$\$$ at the input
+        string ; matching it will cause the SLL to accept, and failing
+        to match it will cause rejection.
   \item
-    If~$i-1=k$ but~$\<A>$ is not the start symbol, the rule is 
-      simply popped (as it was fully parsed).
+        If~$i-1=k$ but~$\<A>$ is not the start symbol, the rule is
+        simply popped (as it was fully parsed).
   \item
-    If~$Yᵢ∈Σ$ then like the LL parser, the SLL tries to match
-      it with the next terminal from the input string.
-    Matching will advance the rule by one step, i.e.,
-      push~$\<A> ::= Y₀…Yᵢ·Y_{i+1}…Yₖ$, while failing to match
-      causes the SLL to reject.
+        If~$Yᵢ∈Σ$ then like the LL parser, the SLL tries to match
+        it with the next terminal from the input string.
+        Matching will advance the rule by one step, i.e.,
+        push~$\<A> ::= Y₀…Yᵢ·Y_{i+1}…Yₖ$, while failing to match
+        causes the SLL to reject.
   \item
-    The last case is that~$\<Y\ensuremath{ᵢ}>∈Ξ$.
-    In this case, as in LL parsing, we look for the right
-      derivation of~$\<Y\ensuremath{ᵢ}>$, using the prediction table.
-      If the table returned a rule~$\<Y\ensuremath{ᵢ}> ::= Y₀'…Yₘ'$,
-      the SLL will push~$\<Y\ensuremath{ᵢ}> ::=·Y₀'…Yₘ'$.
-    Failing to find such rule causes rejection.
+        The last case is that~$\<Y\ensuremath{ᵢ}>∈Ξ$.
+        In this case, as in LL parsing, we look for the right
+        derivation of~$\<Y\ensuremath{ᵢ}>$, using the prediction table.
+        If the table returned a rule~$\<Y\ensuremath{ᵢ}> ::= Y₀'…Yₘ'$,
+        the SLL will push~$\<Y\ensuremath{ᵢ}> ::=·Y₀'…Yₘ'$.
+        Failing to find such rule causes rejection.
 \end{enumerate}

@@ -19,14 +19,14 @@ This non-negligible prevalence raise two challenges:
   \item \emph{\textbf{Identification.}} Frequently, type-state receive little
     or no mention at all in the documentation. The challenge is in identifying
     the implicit type state in existing code.
-    \par
+        \par
     Specifically, given an implementation of a class (or more generally of a
     software framework), \emph{determine} which sequences of method calls are
     valid and which violate the type state requirement presumed by the
     implementation. \item \emph{\textbf{Maintenance and Enforcement.}} Having
     identified the type-states, the challenge is in automatically flagging out
     illegal sequence of calls that does not conform with the type-state.
-    \par
+        \par
     Part of this challenge is maintenance of these automatic flagging
     mechanisms as the type-state specification of the API evolves.
 \end{enumerate}
@@ -40,23 +40,23 @@ An object of type \cc{Seat}†
 }
 is created in the \cc{down} state, but it can then be \cc{raise}d to the
 \cc{up} state, and then be \cc{lower}ed to the \cc{down} state.
-Such an object can be used by two kinds of users, \cc{male}s and \cc{female}s, for
-two distinct purposes: \cc{urinate} and \cc{defecate}.
+Such an object can be used by two kinds of users, \cc{male}s and \cc{female}s,
+for two distinct purposes: \cc{urinate} and \cc{defecate}.
 
 Thus, there are a total of six methods that might be invoked
 on an instance of \cc{Seat}:
 \begin{quote}
   \begin{tabular}{lll}
-    \cc{male()} & \cc{raise()} & \cc{urinate()}⏎
+    \cc{male()}   & \cc{raise()} & \cc{urinate()}⏎
     \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
   \end{tabular}
 \end{quote}
 A fluent API design specifies the order in which such calls can be made.
 For example, a fluent API should recognize the sequences of
-  \cref{figure:toilette:legal} as being type correct.
+\cref{figure:toilette:legal} as being type correct.
 \begin{figure}[H]
   \caption{\label{figure:toilette:legal}
-    Legal sequences of calls in the toilette seat example}
+  Legal sequences of calls in the toilette seat example}
   \javaInput[minipage,width=\linewidth,left=-6ex]{toilette.legal.listing}
 \end{figure}
 
@@ -64,98 +64,95 @@ At the same time, illegal sequences as made in
 \cref{figure:toilette:illegal} should be signaled as type errors.
 
 \begin{figure}[H]
- \caption{\label{figure:toilette:illegal}
-   Illegal sequences of calls in the toilette seat example}
+  \caption{\label{figure:toilette:illegal}
+  Illegal sequences of calls in the toilette seat example}
   \javaInput[minipage,width=\linewidth,left=-6ex]{toilette.illegal.listing}
 \end{figure}
 
 To generate a fluent API that meets these requirements, one must observe that
 the protocol of a \cc{Seat} is defined completely by
-  the DFA depicted in \cref{figure:type-state-automaton}.
+the DFA depicted in \cref{figure:type-state-automaton}.
 
 \begin{figure}[H]
   \caption{\label{figure:type-state-automaton}%
     A deterministic finite automaton realizing the type states of
-     class \cc{Seat}.
+    class \cc{Seat}.
   }
-  \input ../Figures/toilete-dfa.tikz
+  \input{../Figures/toilete-dfa.tikz}
 \end{figure}
 
-Having constructed the automaton, generating the classes and methods is immediate
-by following the \emph{encoding convention}:
+Having constructed the automaton, generating the classes and methods is
+immediate by following the \emph{encoding convention}:
 \begin{enumerate}
   \item A state~$q$ in the automaton is encoded as an \kk{interface}.%
         †{%
-          The name of this interface is arbitrary; all that it is required is that
-          names assigned to distinct states are distinct.
-          For readability sake, there is often an attempt to choose a name
-          which makes a close approximation of the name of~$q$, within
-          the limits of the language's syntax and Unicode vocabulary.
+          The name of this interface is arbitrary; all that it is required is
+          that names assigned to distinct states are distinct.  For readability
+          sake, there is often an attempt to choose a name which makes a close
+          approximation of the name of~$q$, within the limits of the language's
+          syntax and Unicode vocabulary.
         }
   \item If there is an arc labeled~$ℓ$ leading from~$qᵢ$ to~$qⱼ$,
         then \kk{interface}~$qᵢ$ defines a
         method whose return type is \kk{interface}~$qⱼ$.%
         †{%
-          Again, the name of this method is often selected as an approximation of the name of~$ℓ$.
+          Again, the name of this method is often selected as an approximation
+          of the name of~$ℓ$.
         }
   \item The initial state~$q₀$ is made special in being the only type from
         which a fluent API call chain can start.%
         †{%
           This is achieved by generating a class~$c$ with \cc{public}
-          constructor that \kk{implements} the \kk{interface} encoding type~$q₀$.
-          If no other interfaces do not have a similar~$c$, then clients can only
-          start a fluent API chain by creating an instance of~$c$, which is
+          constructor that \kk{implements} the \kk{interface} encoding
+          type~$q₀$.  If no other interfaces do not have a similar~$c$, then
+          clients can only start a fluent API chain by creating an instance
+          of~$c$, which is
           effectively the state~$q₀$.
         }
 \end{enumerate}
 
-The result of employing these rules to our toilette example is depicted at~\cref{figure:toilette-types} 
+The result of employing these rules to our toilette example is depicted
+at~\cref{figure:toilette-types}
 
 \begin{figure}
   \caption{\label{figure:toilette-types}
     A fluent API realizing the toilette seat object defined as a DFA
-    in~\cref{figure:type-state-automaton}} 
+    in~\cref{figure:type-state-automaton}}
   \javaInput[minipage,width=\linewidth,left=-4ex]{toilette.types.listing}
 \end{figure}
 
 Using the implementation in~\cref{figure:toilette-types} we achieved
 our goals regarding the legal usage examples in~\cref{figure:toilette:legal}
-  and the illegal usage examples in~\cref{figure:toilette:illegal}.
+and the illegal usage examples in~\cref{figure:toilette:illegal}.
 So far.⏎⏎
 
 It should be clear that the type checking engine of the compiler can
 be employed to distinguish between legal and illegal sequences.
 
-
-
-
 % From that point on, the text is copied from the research proposal
 \endinput
 
-
-
-
 The \emph{first} novelty in this research is that the fluent API definition is
-  through a CFG, written as a BNF.
+through a CFG, written as a BNF.
 \cref{figure:BNF} is such a specification for the toilette seat problem.
 
 \begin{figure}[H]
   \begin{Grammar}
     \begin{aligned}
-      \<Visitors> & ::= \<Down-Visitors> \hfill⏎
-      \<Down-Visitors> & ::= \<Down-Visitor> \~\<Down-Visitors> \hfill⏎
-      {} & \| \<Raising-Visitor> \~\<Up-Visitors> \hfill⏎
-      {} & \| ε \hfill⏎
-      \<Up-Visitors> & ::= \<Up-Visitor> \~\<Up-Visitors> \hfill⏎
-      {} & \| \<Lowering-Visitor> \~\<Down-Visitors> \hfill⏎
-      {} & \| ε \hfill⏎
-      \<Up-Visitor> & ::= \cc{male()} \~\cc{urinate()} \hfill⏎
-      \<Down-Visitor> & ::= \cc{female()} \~\<Action> \hfill⏎
+      \<Visitors>         & ::= \<Down-Visitors> \hfill⏎
+      \<Down-Visitors>    & ::= \<Down-Visitor> \~\<Down-Visitors> \hfill⏎
+      {}                  & \| \<Raising-Visitor> \~\<Up-Visitors> \hfill⏎
+      {}                  & \| ε \hfill⏎
+      \<Up-Visitors>      & ::= \<Up-Visitor> \~\<Up-Visitors> \hfill⏎
+      {}                  & \| \<Lowering-Visitor> \~\<Down-Visitors> \hfill⏎
+      {}                  & \| ε \hfill⏎
+      \<Up-Visitor>       & ::= \cc{male()} \~\cc{urinate()} \hfill⏎
+      \<Down-Visitor>     & ::= \cc{female()} \~\<Action> \hfill⏎
                           & \| \cc{male()} \cc{defecate()} \hfill⏎
-      \<Raising-Visitor> & ::= \cc{male()} \~\cc{raise()} \~\cc{urinate()} \hfill⏎
+      \<Raising-Visitor>  & ::= \cc{male()} \~\cc{raise()} \~\cc{urinate()} \hfill⏎
       \<Lowering-Visitor> & ::= \cc{female()} \~\cc{lower()} \~\<Action> \hfill⏎
                           & \| \cc{male()} \~\cc{lower()} \cc{defecate()} \hfill⏎
-      \<Activity> & ::= \cc{urinate()} \hfill⏎
+      \<Activity>         & ::= \cc{urinate()} \hfill⏎
                           & \| \cc{defecate()} \hfill⏎
     \end{aligned}
   \end{Grammar}
@@ -164,15 +161,15 @@ The \emph{first} novelty in this research is that the fluent API definition is
 \end{figure}
 
 \Fajita takes this grammar specification as input, and in response
-  generates the corresponding
-  \Java type hierarchy.
+generates the corresponding
+\Java type hierarchy.
 
 \subsection{Verbs and Nouns}
 A second novelty of \Fajita is that the specification of a BNF such as in
-  \cref{figure:BNF} can be also made with a \Java fluent API\@.
+\cref{figure:BNF} can be also made with a \Java fluent API\@.
 To do so, it is first necessary to
-  define the set of \emph{grammar terminals}
-  \begin{code}{JAVA}
+define the set of \emph{grammar terminals}
+\begin{code}{JAVA}
 enum ToiletteTerminals implements Terminal {¢¢
   male, female,
   urinate, defecate,
@@ -181,8 +178,8 @@ enum ToiletteTerminals implements Terminal {¢¢
 \end{code}
 As common in fluent APIs we shall refer to these
 as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns.
-  An excuse might be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
-Verbs are translated by \Fajita into methods.
+An excuse might be that the words are used as nouns to mean ‟male-visit” and
+‟female-visit”.}.  Verbs are translated by \Fajita into methods.
 
 We are also required to define the set of \emph{grammar variables}
 \begin{code}{Java}
@@ -193,15 +190,15 @@ enum ToiletteVariables implements Variable {¢¢
   Activity
 };
 \end{code}
-  We shall use the term ‟\emph{noun}” as synonymous to ‟variable”.
+We shall use the term ‟\emph{noun}” as synonymous to ‟variable”.
 
 \subsection{Words and Grammar}
 The terms ‟symbol” and ‟word” refer to an entity which is either
-  a verb or a noun.
+a verb or a noun.
 
 Once the verbs and the nouns are set, the grammar can be defined,
-  using a fluent API generated by \Fajita itself as shown
-  in \cref{figure:fluent}.
+using a fluent API generated by \Fajita itself as shown
+in \cref{figure:fluent}.
 
 \begin{figure}[H]
   \begin{JAVA}[style=numbered]
@@ -236,16 +233,17 @@ new BNF()
 \end{figure}
 
 The call to function \cc{go()} (last line in \cref{figure:fluent}) instructs
-  \Fajita to generate the code for the fluent API specified by the
-  subsequent part of the expression.
-Roughly speaking, nouns are translated to classes while verbs are translated to methods which
-  take no parameters.
+\Fajita to generate the code for the fluent API specified by the
+subsequent part of the expression.
+Roughly speaking, nouns are translated to classes while verbs are translated to
+methods which take no parameters.
 Two exceptions apply:
 \begin{enumerate}
   \item
-    Library classes such as \cc{String} and \cc{Integer}, just as user-defined
-    classes such as \cc{Invoice} may be used as nouns.
-    \Fajita generate class definitions only for classes whose name is declared
-    in an \kk{enum} which is passed to \cc{with} verb in the BNF declaration.
+        Library classes such as \cc{String} and \cc{Integer}, just as
+        user-defined classes such as \cc{Invoice} may be used as nouns.
+        \Fajita generate class definitions only for classes whose name is
+        declared in an \kk{enum} which is passed to \cc{with} verb in the BNF
+        declaration.  
   \item Verbs may take noun parameters, as explained below.
 \end{enumerate}
