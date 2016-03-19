@@ -40,9 +40,9 @@ The algorithm applies the following inductive step:
   use~$r = \Function predict(A,t)$ to predict the next rule as the LL(1)
   parser would ; add the RHS of~$r$ to the beginning of the result.
 If the first symbol of the result is~$t$, finish.
-Otherwise, it is a nonterminal. set~$A$ to be that nonterminal, and
+Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
   apply the inductive step again.
-The full algorithm is depicted in~\cref{algorithm:llclosure}.
+The full algorithm is given in~\cref{algorithm:llclosure}.
 
 \cref{algorithm:llclosure} presents
 \begin{algorithm}[p]

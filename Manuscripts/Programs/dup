@@ -106,79 +106,52 @@ function isword(s) {
     return (s ~ /^[a-zA-Z]+$/ );
 }
 
+function setError(s) { error = s; return 1 } 
+
 function bad(s1, s2) {
-    if (toupper(s1) == toupper(s2) && s1 !~ /^[0-9.,]*$/ ) {
-        if (s1 !~ /^[^a-zA-Z]$/ && s1 !~ /^\\/) {
-            error = sprintf("Duplicate word (\"%s\")",s2);
-            return 1;
-        }
-    }
-    if ( (tolower(s1) in articles) && (tolower(s2) in articles)) {
-        error = sprintf("Double articles (\"%s\" and \"%s\")",s1, s2); 
-        return 1;
-    }
+    if (toupper(s1) == toupper(s2) && s1 !~ /^[0-9.,]*$/ ) 
+        if (s1 !~ /^[^a-zA-Z]$/ && s1 !~ /^\\/) 
+            return setError(sprintf("Duplicate word (\"%s\")",s2))
+    if ( (tolower(s1) in articles) && (tolower(s2) in articles)) 
+        return setError(sprintf("Double articles (\"%s\" and \"%s\")",s1, s2)) 
+    if (s2 ~ /[0-9]%/) 
+        return setError(sprintf("Apparently unquoted comment `%s'", s2))
+    if (tolower(s1)  == "example" && tolower(s2) == "for") 
+      return setError(sprintf("Change \"%s %s\" to \"example for\"",s1, s2)) 
 
-    if (s2 ~ /[0-9]%/) {
-        error = sprintf("Apparently unquoted comment `%s'", s2) 
-        return 1;
-    }
+    firstletter = tolower(first(s2))
 
-
-    firstletter = tolower(first(s2));
-
-    if (firstletter == "\"") {
-        error = sprintf("Bad TeX begin quote in `%s'", s2) 
-        return 1;
-    } 
-    if (firstletter == "'") {
-        error = sprintf("Bad TeX begin quote in \"%s\"", s2) 
-        return 1;
-    }
-
-    if (isletter(firstletter)) { 
-        isvowel = invowels(firstletter);
+    if (firstletter == "\"") 
+        return setError(sprintf("Bad TeX begin quote in `%s'", s2)) 
+    if (firstletter == "'") 
+        return setError(sprintf("Bad TeX begin quote in \"%s\"", s2)) 
+    if (isletter(firstletter)) {
+        isvowel = invowels(firstletter)
         if (toupper(s2) == s2)
-            isvowel = isvowel || firstletter in pseudov; 
+            isvowel = isvowel || firstletter in pseudov 
         if (firstletter == "u") 
-            isvowel = !( invowels(third(s2)) || second(s2) ~ /[bst]/) ;  
-        if (tolower(s1) == "an" && ! isvowel) {
-            error = sprintf("Wrong article \"%s %s\"",s1, s2); 
-            return 1;
-        }
-        if (tolower(s1) == "a" && isvowel) {
-            error = sprintf("Wrong article \"%s %s\"",s1, s2); 
-            return 1;
-        }
+            isvowel = !( invowels(third(s2)) || second(s2) ~ /[bst]/)   
+        if (tolower(s1) == "an" && ! isvowel) 
+            return setError(sprintf("Wrong article \"%s %s\"",s1, s2)) 
+        if (tolower(s1) == "a" && isvowel) 
+            return setError(sprintf("Wrong article \"%s %s\"",s1, s2)) 
     }
       
-    if ( (tolower(s1) in prop) && (tolower(s2) in prop)) {
-        error = sprintf("Double propositions (\"%s\" and \"%s\")",s1, s2); 
-        return 1;
-    }
-    if ( (tolower(s1) in articles) && (tolower(s2) in prop)) {
-        error = sprintf("Proposition following an article (\"%s\" and \"%s\")",s1, s2); 
-        return 1;
-    }
-    if ( (tolower(s1) in tobe) && (tolower(s2) in tobe)) {
-        error = sprintf("Repeated \"be\"  (\"%s\" and \"%s\")",s1, s2); 
-        return 1;
-    }
+    if ( (tolower(s1) in prop) && (tolower(s2) in prop)) 
+        return setError(sprintf("Double propositions (\"%s\" and \"%s\")",s1, s2))
+    if ( (tolower(s1) in articles) && (tolower(s2) in prop))
+        return setError(sprintf("Proposition following an article (\"%s\" and \"%s\")",s1, s2))
+    if ( (tolower(s1) in tobe) && (tolower(s2) in tobe)) 
+        return setError(sprintf("Repeated \"be\"  (\"%s\" and \"%s\")",s1, s2)) 
     if (tolower(s1) in egie)
         return 0;
-
-
-    if (isword(s1) || last(s1) == "," || last(s1) == ";") {
-        if (is_common_word(s2) && s2 != tolower(s2)) {
-            error = sprintf("Wrong capitalization of \"%s\"", s2);
-            return 1;
-        } 
-    }
+    if (isword(s1) || last(s1) == "," || last(s1) == ";") 
+        if (is_common_word(s2) && s2 != tolower(s2)) 
+            return setError(sprintf("Wrong capitalization of \"%s\"", s2))
     if (last(s1) == "." && last2(s1) != ".." && islower(first(s2))) {
-        error = sprintf("Capitalize \"%s\"", s2);
-        error = error sprintf(" otherwise, write \"%s\" as \"%s\\ \".", s1,s1);
-        return 1;
+        setError(sprintf("Capitalize \"%s\"", s2))
+        return setError(error sprintf(" otherwise, write \"%s\" as \"%s\\ \".", s1,s1))
     }
-
     return 0;
 }
 function filename() {

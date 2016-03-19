@@ -46,8 +46,8 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
           \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
         \ELSE
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
-        \FI
-      \FI
+        \FI % Not anticipated EOF 
+      \FI % Start symbol
       \CONTINUE\COMMENT{restart, popping a new rule etc.}
     \FI
     \STATE{$\Function push(X::=αY·β)$}\COMMENT{push following item}
