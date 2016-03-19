@@ -368,19 +368,17 @@ Until that token is consumed, the parser will:
     \item pop~$\<Definitions>$ from the stack, and push the
       nonterminals~$\<Labels>$,~$\<Constants>$, and~$\<Nested>$
       in reversed order.
-    \item pop~$\<Labels>$ and push the
-      symbols~$\cc{label}$,~$\<Label>$, and
-$\<MoreLabels>$ in reversed order.
-    \item match the top of the stack~\cc{label} with the input symbol~\cc{label}
-      and consume it.
+    \item pop~$\<Labels>$ and push the symbols~$\cc{label}$,~$\<Label>$,
+      and $\<MoreLabels>$ in reversed order.
+    \item match the top of the stack~\cc{label} with the input 
+      symbol~\cc{label} and consume it.
   \end{enumerate}
 Since we first substituted~$\<Definitions>$, then~$\<Labels>$
   and only then consumed the input symbol,~$k'=2$.
 
-The problem is that every such operation is
-  an~$ε$-move of the parser's DPDA, and as was shown in~\cref{ECOOP-PAPER}
-  it causes problems when we want to employ \Java's compiler to ‟run” our
-  automaton.
+The problem is that every such operation is an~$ε$-move of the 
+  parser's DPDA, and as was shown in~\cref{ECOOP-PAPER} it causes 
+  problems when we want to employ \Java's compiler to ‟run” our automaton.
 
 Another case is when encountering~$\<Nested>$ on the top of the stack
   and \cc{procedure} in the input string.
@@ -403,9 +401,10 @@ Until the next input token will be consumed, the following will happen:
     \item only after seeing nonterminal~$\<Body>$ shall the right rule will be
       pushed, and the token matched.
   \end{enumerate}
-In this case,~$k^*=3$ because we had to pop three nonterminals and ‟replace” them with
-  their matching rules, that are all~$ε$-rules before we got to a nonterminal
-  that will derive to something other then~$ε$.
+In this case,~$k^*=3$ because we had to pop three nonterminals and 
+  ‟replace” them with their matching rules, that are all~$ε$-rules 
+  before we got to a nonterminal that will derive to something other 
+  then~$ε$.
 
 In the last example~$k^*$ was determined by the size of~$\<Definitions>$, but that
   doesn't have to be the case all the time.

@@ -11,7 +11,7 @@ While the LL's stack symbols are the terminals and
   rules.
 
 As the LL parser, the SLL is consisted of a stack automaton
-  and a prediction table†{The same table as the LL prediction table}.
+  and a prediction table†{This is the same table as the LL's prediction table}.
 The SLL makes it's decision based on the next input symbol and
   the top of the stack.
 It may also decide whether to consume the input token (a feature that
@@ -55,7 +55,7 @@ For example, if the SLL currently parses the rule~$\<A> ::=αβ$,
       \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
         \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
       \ELSE[read terminal is the anticipated~$Y$]
-        \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
+        \CONTINUE\COMMENT{restart, popping a new rule etc.}
       \FI
     \ELSE[$Y$ must be a nonterminal]
       \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
