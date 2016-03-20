@@ -32,7 +32,8 @@ Also, semantics is typically one of two.
 \emph{Eager} execution semantics is
 found e.g., in \cc{StringBuilder}\urlref{Findsomething}
 
-\begin{lcode}[minipage,width=44ex,box align=center]{Java}
+\begin{quote}
+\begin{lcode}[minipage,width=52ex,box align=center]{Java}
 String time(int hours, int minutes, int seconds) {¢¢
   final StringBuilder sb = new StringBuilder();
   sb.append(hours);
@@ -42,6 +43,7 @@ String time(int hours, int minutes, int seconds) {¢¢
   sb.append(seconds);
   return sb.toString();
 }\end{lcode}
+\end{quote}
 
 In this semantics, each method in the chain executes a computation,
   whose result, is made the receiver of the next method
