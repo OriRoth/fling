@@ -19,7 +19,7 @@ To this end, we revise the classical algorithm for converting
   how it is modified to generate a recognizer executable
   on the computational model of \Java generics.
 
-\subsection{LL(1) Parsing}
+%\subsection{LL(1) Parsing}
 \label{section:essentials}
 An LL(1) parser is a DPDA allowed to peek at the next input symbol.
 Thus,~$δ$, its transition function, takes two parameters: the current
@@ -103,7 +103,7 @@ The algorithm rejects if~$δ$ can offer no such rule.
 Otherwise, it pushes into the stack, in reverse order, the symbols
   found in the right hand side of~$R$.
 
-\subsection{LL(1) Parsing with \Java Generics?}
+%\subsection{LL(1) Parsing with \Java Generics?}
 \label{section:limitations}
 Can \cref{algorithm:ll-parser} be executed on the machinery
   available with \Java generics?
@@ -368,7 +368,7 @@ The first is \cc{procedure}, because the nonterminal \<Procedure>
 The second is \cc{begin}, because \<Nested> is nullable, and
   \cc{begin} appears in the~$\Function Follow(·)$ set of \<Nested>.
 
-\subsubsection{Examples for~$k'$ for the grammar in~\cref{figure:running}}
+%\subsubsection{Examples for~\texorpdfstring{$k'$}{k'} for the grammar in~\cref{figure:running}}
 Consider a state of the parser, in which~$\<Definitions>$ is on
   the top of the top of the stack, and the next token on the input string
   is \cc{label}.
@@ -396,7 +396,7 @@ $k'=2$ again, where at first the non-$ε$ rule of~$\<Nested>$ will
   pushed, and only then will the terminal~\cc{procedure} will match,
   and be consumed from the input string.
 
-\subsubsection{Examples for~$k^*$ for the grammar in~\cref{figure:running}}
+  \subsubsection{Examples of \texorpdfstring{$k^*$}{k*} for the grammar in \texorpdfstring{\cref{figure:running}}{}}
 Consider a state in which the parser is in, where the
   only rule of~$\<Program>$ is being processed,~$\<Definitions>$
   was just replaced on the stack by it's only rule, and~$\<Body>$ is below.

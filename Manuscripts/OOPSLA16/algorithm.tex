@@ -4,7 +4,7 @@ The section uses the SLL described in~\cref{section:simplified} to solve
   the problems presented in~\cref{section:intuition} and then to
   implement a full encoding of the SLL using \Java Generics.
 
-\subsection{Solving the Substitution Factor~$k'>0$ problem \hfill}
+\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0} problem}
 The problem defined in~\cref{substitution:factor} when~$k'>0$ is that
 the recognizer needs to perform several substitutions of the top of
 the stack with the next rule to parse without consuming the input token.
@@ -83,13 +83,13 @@ In~\cref{algorithm:sll-closure} the algorithm for computing
       and returns whether its ``$\cdot$'' is at the end of rule,
       i.e., the rule is fully parsed.
   \end{enumerate}
-\
+
 \end{algorithm}
 
 The algorithm takes as input an item and an input terminal
   and computes the list of items that the SLL will push until
   the input terminal will be consumed.
-The algorithm also computes a list of applied reductions ;
+The algorithm also prints a list of applied reductions ;
   this list can be used to build a parse tree without additional
   computation at runtime.
 
