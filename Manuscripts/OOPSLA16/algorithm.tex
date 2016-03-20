@@ -51,19 +51,19 @@ The full algorithm is given in~\cref{algorithm:llclosure}.
   \begin{algorithmic}
     \STATE{$(A::=Y₀…Yₖ)←r$} \COMMENT{break~$r$ into its LHS ＆ RHS}
     \IF[$r$ cannot be derived to begin with~$b$]{$b∉\Function First(Y₀…Yₖ)$}
-    \STATE{\textsc{Error}}
+      \STATE{\textsc{Error}}
     \FI
     \STATE{$\text{LHS}=A$} \COMMENT{the output rule shares the LHS with the input}
     \STATE{$\text{RHS}=Y₀…Yₖ$} \COMMENT{initially, the RHS is the original rule}
     \LET{$h$}{$\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
     \WHILE[$h$ is always a nonterminal in the loop]{$h∉Σ$}
-    \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←get(P)$}
-    \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
-    \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
-    \BREAK \COMMENT{since were in LL(1), can't be other}
-    \ENDIF
-    \ENDFOR
-    \STATE{$h←\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
+      \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←get(P)$}
+        \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
+          \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
+          \BREAK \COMMENT{since were in LL(1), can't be other}
+        \ENDIF
+      \ENDFOR
+      \STATE{$h←\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
     \ENDWHILE
     \RETURN{$\text{LHS}::=\text{RHS}$}
   \end{algorithmic}

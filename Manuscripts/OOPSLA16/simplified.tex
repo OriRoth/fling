@@ -41,32 +41,32 @@ in~\cref{algorithm:sll-parser}.
   \begin{algorithmic}
     \LET{$X ::=α·Yβ$}{\Function pop()}\COMMENT{what's the anticipated input?}
     \IF[if rule is already parsed]{$|Yβ|=0$}
-    \IF{$X$ is a start symbol}
-    \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
-    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-    \ELSE
-    \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
-    \FI % Not anticipated EOF
-    \FI % Start symbol
-    \CONTINUE\COMMENT{restart, popping a new rule etc.}
+      \IF{$X$ is a start symbol}
+        \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
+          \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+        \ELSE
+          \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
+        \FI % Not anticipated EOF
+      \FI % Start symbol
+      \CONTINUE\COMMENT{restart, popping a new rule etc.}
     \FI
     \STATE{$\Function push(X::=αY·β)$}\COMMENT{push following item}
     \IF[$Y$ is a terminal]{$Y∈Σ$}
-    \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
-    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-    \ELSE[read terminal is the anticipated~$Y$]
-    \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
-    \FI
+      \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
+        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+      \ELSE[read terminal is the anticipated~$Y$]
+        \CONTINUE\COMMENT{restart, popping a new~$X::=…$, etc.}
+      \FI
     \ELSE[$Y$ must be a nonterminal]
-    \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
-    \IF[no rule found]{$R=⊥$}
-    \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-    \ELSE[A rule was found]
-    \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
-    \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
-    \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
-    \CONTINUE\COMMENT{restart, popping a new rule etc.}
-    \FI % No rule found
+      \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
+      \IF[no rule found]{$R=⊥$}
+        \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
+      \ELSE[A rule was found]
+        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+        \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
+        \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
+        \CONTINUE\COMMENT{restart, popping a new rule etc.}
+      \FI % No rule found
     \FI % Y is a terminal or a nonterminal
   \end{algorithmic}
 \end{algorithm}

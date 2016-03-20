@@ -35,15 +35,15 @@ The actual operation of the automaton is by executing in loop the step
   \begin{algorithmic}
       \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
       \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
-      \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
-      \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
-      \ELSE[terminal just read was the anticipated~$X$]
-      \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
+        \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
+          \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
+        \ELSE[terminal just read was the anticipated~$X$]
+          \STATE{\textsc{Continue}}\COMMENT{restart, popping a new~$X$, etc.}
         \FI
       \ELSIF[anticipating end-of-input]{$X=\$$}
         \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
-          \ELSE[terminal just read was the anticipated~$X$]
+        \ELSE[terminal just read was the anticipated~$X$]
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \ELSE[anticipated terminal~$X$ must be a nonterminal]
@@ -110,7 +110,7 @@ Can \cref{algorithm:ll-parser} be executed on the machinery
 As it turns out, most operations conducted by the algorithm
   are easy.
 The implementation of function~$δ$ can
-  be found in the toolbox\cref{what-toolbox}.
+  be found in the toolbox \cref{section:background}.
 Similarly, any fixed sequence of push and pop
   operations on the stack can be conducted within a \Java
   transition function:
@@ -185,7 +185,7 @@ This grammar, inspired by the prototypical
   \end{tabularx}
 \end{lrbox}
 
-\begin{figure}[H]
+\begin{figure}
   \caption{\label{figure:running}
     An LL(1) grammar over the alphabet
     \[
@@ -216,7 +216,7 @@ The grammar preserves the ‟theme”
   of nested definitions of \Pascal,
   while trimming these down as much as possible.
 \cref{figure:derived-strings} presents some legal sequences derived by this grammar:
-\begin{figure}[H]
+\begin{figure}
   \caption{\label{figure:derived-strings}
       Legal strings derived from \cref{figure:running}}
     \begin{enumerate}
@@ -321,7 +321,7 @@ $\Function Follow(\<Definitions>)$ on the other hand, contains only
 The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
   our running example (\cref{figure:running}) are listed in~\cref{table:running-first-follow}.
 \captionsetup[table]{labelfont=bf}
-\begin{table}[H]
+\begin{table}
   \caption{\label{table:running-first-follow}
     Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
     the grammar in~\cref{figure:running}}
@@ -377,7 +377,7 @@ Since we first substituted~$\<Definitions>$, then~$\<Labels>$
   and only then consumed the input symbol,~$k'=2$.
 
 The problem is that every such operation is an~$ε$-move of the 
-  parser's DPDA, and as was shown in~\cref{ECOOP-PAPER} it causes 
+  parser's DPDA, and as was shown in~\urlref{http://stlevy.cswp.cs.technion.ac.il/wp-content/uploads/sites/50/2015/12/00.pdf} it causes 
   problems when we want to employ \Java's compiler to ‟run” our automaton.
 
 Another case is when encountering~$\<Nested>$ on the top of the stack
