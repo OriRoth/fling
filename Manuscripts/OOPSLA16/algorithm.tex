@@ -42,27 +42,48 @@ In~\cref{algorithm:sll-closure} the algorithm for computing
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:sll-closure}
-    An algorithm for computing~$\Function Closure(i,b)$ the closure
+    An algorithm for computing~$\Function Closure(i,t)$ the closure
     of operations that will happen upon seeing item~$i$ at the top
     of the SLL's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
+    Output is returned in~$S$.
   }
   \begin{algorithmic}
-    \STATE{$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$} \COMMENT{break~$i$ into its LHS ＆ RHS}
-    \STATE{\textbf{assert}~$t∈\Function First(\<A>)$}\COMMENT{assert precondition}
-    \STATE{$\text{LHS}=A$} \COMMENT{the output rule shares the LHS with the input}
-    \STATE{$\text{RHS}=Y₀…Yₖ$} \COMMENT{initially, the RHS is the original rule}
-    \LET{$h$}{$\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
-    \WHILE[$h$ is always a nonterminal in the loop]{$h∉Σ$}
-      \FOR[for each~$h$-rule]{$h::=Y₀'…Yₖ'←get(P)$}
-        \IF[if this rule matches]{$b∈\Function First(Y₀'…Yₖ')$}
-          \STATE{$\text{RHS}=Y₀'…Yₖ' + \text{RHS}$} \COMMENT{add it to closure}
-          \BREAK \COMMENT{since were in LL(1), can't be other}
-        \ENDIF
-      \ENDFOR
-      \STATE{$h←\Function PopHead(\text{RHS})$} \COMMENT{unroll the first symbol in RHS}
+    \STATE{$Yᵢ←\Function afterDot(i)$} \COMMENT{get the symbol after~$i$'s dot}
+    \LET{$S$}{[i]} \COMMENT{initialize output stack}
+    \WHILE[loop while~$Yᵢ$ is a nonterminal]{$Yᵢ∉Σ$}
+      \STATE{$r←δ(Yᵢ,t)$} \COMMENT{next rule to apply}
+      \STATE{$\Function print(r)$} \COMMENT{useful for parsing}
+      \STATE{$\Function advance(S)$} \COMMENT{advance the TOTS}
+      \STATE{$\<B>::=X₀…Xₘ←r$} \COMMENT{break~$i$ into its components}
+      \IF[$δ$ returned an~$ε$-rule]{$X₀…Xₘ=ε$}
+        \WHILE[pop all parsed rules]{$\Function parsed(\Function peek(S))$}
+          \STATE{$\Function pop(S)$}
+        \ENDWHILE
+      \ELSE[$δ$ returned a non~$ε$-rule]
+        \STATE{$\Function push(S,r)$} \COMMENT{we now turn to parse~$r$}
+      \FI
+      \STATE{$Yᵢ←\Function afterDot(\Function peek(S))$} \COMMENT{prepare for next iteration}
     \ENDWHILE
-    \RETURN{$\text{LHS}::=\text{RHS}$}
+    \STATE{$\Function advance(S)$} \COMMENT{advance the TOTS}
   \end{algorithmic}
+  \vspace{0.3ex}
+  \hrule
+  \vspace{0.3ex}
+  \scriptsize
+  \begin{enumerate}
+    \item function~$\Function afterDot(·)$ receives an item as input
+      and return the symbol after the ‟$·$” of the item.
+      The algorithm ensures that for every invocation of~$\Function afterDot(·)$
+      the input rule has at least one symbol after its ‟$·$”
+    \item function~$\Function advance(S)$ pops an item from the top of
+      the stack~$S$ whose~‟$·$” is at index~$i$ and pushes the
+      the following item - with index~$i+1$.
+      Again, the algorithm ensures~$i$ is not the end of the rule.
+    \item function~$\Function parsed(i)$ receives an item as input
+      and returns whether its ``$\cdot$'' is at the end of rule,
+      i.e., the rule is fully parsed.
+  \end{enumerate}
+\
 \end{algorithm}
 
 The algorithm takes as input an item and an input terminal
