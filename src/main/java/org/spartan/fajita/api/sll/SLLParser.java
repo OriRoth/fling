@@ -19,7 +19,7 @@ public class SLLParser {
 
   public SLLParser(final BNF bnf) {
     this.bnf = bnf;
-    analyzer = new BNFAnalyzer(bnf,true);
+    analyzer = new BNFAnalyzer(bnf, true);
     predictionTable = createPredictionTable();
   }
   private Map<Symbol, Map<Verb, DerivationRule>> createPredictionTable() {
