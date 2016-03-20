@@ -117,7 +117,7 @@ function bad(s1, s2) {
     if (s2 ~ /[0-9]%/) 
         return setError(sprintf("Apparently unquoted comment `%s'", s2))
     if (tolower(s1)  == "example" && tolower(s2) == "for") 
-      return setError(sprintf("Change \"%s %s\" to \"example for\"",s1, s2)) 
+      return setError(sprintf("Change \"%s %s\" to \"example of\"",s1, s2)) 
 
     firstletter = tolower(first(s2))
 
@@ -203,6 +203,9 @@ $0 == "\\CPP" || $0 == "\\BNF" {
         if ($0 ~ /^\\END/)
             break;
     }
+}
+/THIS IS FUYA/,/END FUYA/ {
+    next
 }
 NF != 0 {
     current_line = ""
