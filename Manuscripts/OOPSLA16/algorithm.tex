@@ -1,11 +1,11 @@
 %! TEX root = 00.tex
 
-The section uses the SLL described in~\cref{section:simplified} to solve
+The section uses the SLL described in~\cref{section:sll} to solve
   the problems presented in~\cref{section:intuition} and then to
   implement a full encoding of the SLL using \Java Generics.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0} problem}
-The problem defined in~\cref{substitution:factor} when~$k'>0$ is that
+The problem defined in~\cref{substitution-factor} when~$k'>0$ is that
 the recognizer needs to perform several substitutions of the top of
 the stack with the next rule to parse without consuming the input token.
 
@@ -108,7 +108,7 @@ parser would ; add the RHS of~$r$ to the beginning of the result.
 If the first symbol of the result is~$t$, finish.
 Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
 apply the inductive step again.
-The full algorithm is given in~\cref{algorithm:llclosure}.
+The full algorithm is given in~\cref{algorithm:sll-closure}.
 
 \endinput
 \subsection{Solving~$k^*$}

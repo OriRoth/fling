@@ -198,7 +198,7 @@ This grammar, inspired by the prototypical
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>⏎
+      \<Program> & ::= \cc{program} \cc{id} \<Parameters>\~\cc{;} \<Definitions>⏎
                  &\<Body>\hfill⏎
       \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
       \<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
@@ -209,7 +209,7 @@ This grammar, inspired by the prototypical
       \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
       \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>~\cc{;}\<Definitions>⏎
+      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>\~\cc{;}\<Definitions>⏎
                     & \<Body> \hfill⏎
       \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
