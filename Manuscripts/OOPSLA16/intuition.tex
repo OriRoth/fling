@@ -29,10 +29,10 @@ The actual operation of the automaton is by executing in loop the step
 
 \renewcommand\algorithmicdo{\textbf{\emph{}}}
 \renewcommand\algorithmicthen{\textbf{\emph{}}}
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:ll-parser}
   DPDA algorithm for an LL(1) parsing step}
-  \begin{algorithmic}
+  \begin{algorithmic}[1]
       \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
       \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
         \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
@@ -51,7 +51,7 @@ The actual operation of the automaton is by executing in loop the step
         \IF[no rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
-          \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+          \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break into left/right}
           \STATE{\textbf{assert}~$Z=X$}\COMMENT{$δ$ constructed to return valid~$R$ only}
           \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
           \STATE{\textbf{For}~$i=k,…,1$,~$\Function push(Yᵢ)$}\COMMENT{push in reverse order}
@@ -250,7 +250,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   derived from~$A$ (Appropriate algorithm can be found
   at~\cref{algorithm:follow}).
 
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:first}
   An algorithm for computing~$\Function First(X)$ for each grammar symbol~$X$
     in the input grammar~$G =⟨Σ,Ξ,P⟩$}
@@ -276,7 +276,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:first-string}
   An algorithm for computing~$\Function First(α)$ for some string of symbols~$α$.
   This algorithm relies on results from~\cref{algorithm:first}}
@@ -293,7 +293,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:follow}
   An algorithm for computing~$\Function Follow(A)$ for each nonterminal~$X$
     in the input grammar~$G =⟨Σ,Ξ,P⟩$ when~$\$∉Σ$
@@ -438,12 +438,12 @@ The parser generator basically fills this table, leaving the
   and discussed in~\cref{section:essentials}).
   The prediction table construction is depicted in~\cref{algorithm:generation}
 
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:generation}
   An algorithm for filling the prediction table~$\Function predict(A,b)$ for some
     grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,
     where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
-  \begin{algorithmic}
+    \begin{algorithmic}
     \FOR[for each grammar rule]{$r∈P$}
       \LET{$A ::=α$}{$r$}\COMMENT{break~$r$ into its RHS ＆ LHS}
       \FOR[for each terminal in~$\Function First(α)$]{$t∈\Function First(α)$}

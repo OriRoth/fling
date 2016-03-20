@@ -1,17 +1,19 @@
 %! TEX root = 00.tex
 The section makes the first step of our construction: Presenting the \emph{SLL}
-  parser, a variant of the traditional LL parser~\cite{lewis:66}, but more economic in its
-  use of the stack resource, and
-  perhaps of independent value.
+parser, a variant of the traditional LL parser~\cite{lewis:66}, but more
+economic in its use of the stack resource, and perhaps of independent value.
 
-Recall that The stack symbols of the LL parser of a given grammar are the union
-of this grammar's terminals and nonterminals. In contrast, the stack symbols of
-the SLL-parser are \emph{items}. An item is pair of a grammar rule and a
-``\emph{dot}''. And, the dot is integer, ranging from 0 to the length of the
-right hand side of the rule. 
+Recall that the set of stack symbols of the LL parser of a given grammar are
+the union of this grammar's terminals and nonterminals. In contrast, the stack
+symbols of the SLL-parser are \emph{items}. An item is pair of a grammar rule
+and a ``\emph{dot}'', written as \[
+  \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
+\]
+Formally, the dot is integer, ranging from 0 to the length of the right hand
+side of the rule.  But it better to think of it as a notation for the prefix of
+the this right hand side. 
 
-Think of the dot as a notation for the prefix of a rule. With this perspective,
-an item represents these precise moments in the input analysis process the
+An item represents these precise moments in the input analysis process the
 input in which: 
 \begin{itemize}
   \item all symbols included in this prefix have been successfully parsed, and,
@@ -23,33 +25,33 @@ Just as the LL-parser, the SLL parser is a stack automaton equipped with a
 prediction table, whose next action is a function (realized in the prediction
 table) of the next input symbol and the top of the stack. This action may
 involve consuming the input token and conducting push or pop operations on the
-stack. Later, we show how the feature of not consuming a token can be revoked
-for the sake of encoding.
+stack. Later, we modify the parser so that it cannot examine the  next input
+token without consuming it.
 
-The SLL parser is initialized with the stack containing the start symbol's rule†{%
-  The grammar's start symbol might have more than one rule,
-  but since the grammar is LL, each rule has a
-  distinct~$\Function First(·)$ set, thus by peeking into the
-  first input symbol we can choose the aproppriate start rule.}
-with a dot before the first symbol, and perform in loop the step depicted
+The SLL parser is initialized with the stack containing an item denoting the
+degenerate prefix of a rule for deriving the start symbol. In case there are
+more than one such rule, the automaton selects the rule dictated by the first
+input token. (This rule is uniquely determined since the grammar is LL.)
+
+After this initialization, the SLL parser proceeds following the instructions
 in~\cref{algorithm:sll-parser}.
 
-\begin{algorithm}[p]
+\begin{algorithm}[h]
   \caption{\label{algorithm:sll-parser}
   SLL's parsing algorithm step}
-  \begin{algorithmic}
-    \LET{$X ::=α·Yβ$}{\Function pop()}\COMMENT{what's the anticipated input?}
-    \IF[if rule is already parsed]{$|Yβ|=0$}
-      \IF{$X$ is a start symbol}
+  \begin{algorithmic}[1]
+    \LET{$X ::=α·Yβ$}{\Function pop()}\COMMENT{what's anticipated on input?}
+    \IF[was rule fully parsed]{$|Yβ|=0$}
+      \IF{$X$ is the start symbol}
         \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
         \ELSE
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI % Not anticipated EOF
       \FI % Start symbol
-      \CONTINUE\COMMENT{restart, popping a new rule etc.}
+      \CONTINUE\COMMENT{restart, popping a new item etc.}
     \FI
-    \STATE{$\Function push(X::=αY·β)$}\COMMENT{push following item}
+    \STATE{$\Function push(X::=αY·β)$}\COMMENT{advance the dot, and push result}
     \IF[$Y$ is a terminal]{$Y∈Σ$}
       \IF[read terminal is not anticipated~$Y$]{$Y≠\Function next()$}
         \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
@@ -60,43 +62,34 @@ in~\cref{algorithm:sll-parser}.
       \LET{$R$}{$\Function δ(Y, \Function peek())$}\COMMENT{which rule to reduce?}
       \IF[no rule found]{$R=⊥$}
         \STATE{\textsc{Reject}}\COMMENT{SLL halts in error}
-      \ELSE[A rule was found]
-        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break~$R$ into left/right}
+      \ELSE[a rule was found]
+        \LET{$(Z ::= Y₁,…,Yₖ)$}{R}\COMMENT{break into left/right}
         \STATE{$\Function print(R)$}\COMMENT{rule~$R$ has just been applied}
-        \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next rule}
+        \STATE{$\Function push(Z ::=·Y₁,…,Yₖ)$}\COMMENT{push the next item}
         \CONTINUE\COMMENT{restart, popping a new rule etc.}
       \FI % No rule found
     \FI % Y is a terminal or a nonterminal
   \end{algorithmic}
 \end{algorithm}
 
-The parsing step of the SLL always begins with popping a rule
-from the stack.
-Upon popping the rule
-\[
-  \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
-\]
-the SLL operates as follows:
-\begin{enumerate}
-  \item If~$\<A>$ is a start symbol, and~$i-1=k$ (i.e., it was fully parsed)
-        then the SLL expects the end-of-input symbol~$\$$ at the input
-        string ; matching it will cause the SLL to accept, and failing
-        to match it will cause rejection.
-  \item If~$i-1=k$ but~$\<A>$ is not the start symbol, the rule is
-        simply popped (as it was fully parsed).
-  \item
-        If~$Yᵢ∈Σ$ then like the LL parser, the SLL tries to match
-        it with the next terminal from the input string.
-        Matching will advance the rule by one step, i.e.,
-        push~$\<A> ::= Y₀…Yᵢ·Y_{i+1}…Yₖ$, while failing to match
-        causes the SLL to reject.
-  \item
-        The last case is that~$\<Y\ensuremath{ᵢ}>∈Ξ$.
-        In this case, as in LL parsing, we look for the right
-        derivation of~$\<Y\ensuremath{ᵢ}>$, using the prediction table.
-        If the table returned a rule~$\<Y\ensuremath{ᵢ}> ::= Y₀'…Yₘ'$,
-        the SLL will push~$\<Y\ensuremath{ᵢ}> ::=·Y₀'…Yₘ'$.
-        Failing to find such rule causes rejection.
-\end{enumerate}
-The simplified LL parser (SLL) is an LL parser with a ‟higher”
-perspective.
+Comparing \cref{algorithm:sll-parser} with the LL-parsing algorithm
+(\cref{algorithm:ll-parser}), we see that they both begin with popping a stack 
+symbol. 
+
+However, after this popping, the SLL parser gives a special treatment to the
+case that the prefix denoted by the dot makes the entire right-hand-side of the
+rule. The instructions in charge (lines 2--7, of \cref{algorithm:sll-parser})
+do not occur as is in \cref{algorithm:ll-parser} (even though handling of `\$'
+in the input is similar in both), since the stack symbols of the LL parser do
+not carry any information on their location in the rule that originated them. 
+
+Other than that, the two algorithms are similar, except that the next symbol to
+parse, denoted $X$ in \cref{algoirthm:ll-parser} is obtained by extracting the
+symbol $Y$ that follows the dot in the item $X$ in \cref{algorithm:sll-parser}.
+
+We see that the SLL parser essentially emulates the LL parser except that it
+attaches to each symbol the location within the rule. This makes it possible to
+eliminate the loop of several of push operations of LL (line 20 in
+\cref{algorithm:ll-parser}) with a single push (line 22 in
+\cref{algorithm:sll-parser}). 
+
