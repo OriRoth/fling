@@ -26,7 +26,6 @@ $.*
 *.aux
 *.backup
 *.bak
-*.eho
 *.bbl
 *.blg
 *.Cache
@@ -35,6 +34,7 @@ $.*
 *.csv
 *.db
 *.dvi
+*.eho
 *.eml
 *.exe
 *.fdb_latexmk
@@ -85,6 +85,7 @@ $.*
 *.trs
 *.tsv
 *.vrb
+*.vtc
 *.xml
 *.yy.c
 *.yy.cpp
