@@ -10,7 +10,7 @@
   \node[state-style] (q6) [left=of q4] {$q_{6}$};
   \path[->,above,sloped,latex-, shorten <=1pt]
   (q1) edge[below] node {$\cc{female}()$} (q0)
-  (q0) edge[bend left=20,] node {\begin{minipage}{11ex}$\cc{urinate}()\newline \cc{defecate}()$\end{minipage}} (q1)
+  (q0) edge[bend left=20,] node {\begin{minipage}{11.5ex}$\cc{urinate}()\newline \cc{defecate}()$\end{minipage}} (q1)
   (q1) edge[] node {$\cc{lower}()$} (q2)
   (q2) edge[] node {$\cc{female}()$} (q3)
   (q4) edge[] node {$\cc{male}()$} (q3)

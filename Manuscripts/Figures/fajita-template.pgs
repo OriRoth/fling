@@ -43,6 +43,7 @@
 \usepackage[active,pdftex,tightpage]{preview}
 \PreviewEnvironment[]{tikzpicture}
 \PreviewEnvironment[]{pgfpicture}
+\overfullrule=1mm
 \begin{document}
 <>
 \end{document}

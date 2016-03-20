@@ -20,13 +20,19 @@ public class BNFAnalyzer {
   public final BNF bnf;
   private final Set<NonTerminal> nullableSymbols;
   private final Map<Symbol, Set<Verb>> baseFirstSets;
-  // private final Map<NonTerminal, Set<Verb>> followSets;
+   private final Map<NonTerminal, Set<Verb>> followSets;
 
   public BNFAnalyzer(final BNF bnf) {
+    this(bnf,false);
+  }
+  public BNFAnalyzer(final BNF bnf,boolean withFollow){
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    // followSets = calculateFollowSets();
+    if (withFollow)
+     followSets = calculateFollowSets();
+    else
+      followSets = null;
   }
   private Set<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -89,8 +95,8 @@ public class BNFAnalyzer {
   }
   public List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
-    if (isNullable(expression))
-      throw new IllegalArgumentException("Not handling epsilons!!");
+//    if (isNullable(expression))
+//      throw new IllegalArgumentException("Not handling epsilons!!");
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))
@@ -101,9 +107,11 @@ public class BNFAnalyzer {
   public List<Verb> firstSetOf(final List<Symbol> expression) {
     return firstSetOf(expression.toArray(new Symbol[] {}));
   }
-  // public Set<Verb> followSetOf(final NonTerminal nt) {
-  // return followSets.get(nt);
-  // }
+   public Set<Verb> followSetOf(final NonTerminal nt) {
+     if(followSets==null)
+       throw new IllegalStateException("you chose no follow set at comstructor");
+   return followSets.get(nt);
+   }
   public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
     List<Symbol> $ = new ArrayList<>();
     if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getChildren()).contains(v)))
