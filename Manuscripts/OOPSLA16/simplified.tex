@@ -26,7 +26,7 @@ involve consuming the input token and conducting push or pop operations on the
 stack. Later, we show how the feature of not consuming a token can be revoked
 for the sake of encoding.
 
-The SLL parser is initialized with the stack containing the start symbol's rule†{
+The SLL parser is initialized with the stack containing the start symbol's rule†{%
   The grammar's start symbol might have more than one rule,
   but since the grammar is LL, each rule has a
   distinct~$\Function First(·)$ set, thus by peeking into the

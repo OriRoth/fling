@@ -120,7 +120,7 @@ Superficially, the algorithm appears to be doing a constant amount
   of work for each input symbol.
 A little scrutiny falsifies such a conclusion.
 
-In the case~$R=X::=Y$,~$Y$
+In the case~$R=X::=Y$,~$Y$ % MAYBE WE SHOULD CHANGE THIS TO AN EXAMPLE WITH PARTIALLY NULLABLE PREFIX
   being a nonterminal, the algorithm will conduct
   a~$\Function pop(·)$ to remove~$X$ and a~$\Function push(·)$
   operation for~$Y$ before consuming a terminal from the input.
