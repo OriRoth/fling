@@ -120,25 +120,26 @@ Superficially, the algorithm appears to be doing a constant amount
   of work for each input symbol.
 A little scrutiny falsifies such a conclusion.
 
-In the case~$R=X→Y$,~$Y$
+In the case~$R=X::=Y$,~$Y$
   being a nonterminal, the algorithm will conduct
   a~$\Function pop(·)$ to remove~$X$ and a~$\Function push(·)$
   operation for~$Y$ before consuming a terminal from the input.
-Further,~$δ$ may return next the rule~$Y→Z$,
-  and then the rule~$Z→Z'$, etc.
+Further,~$δ$ may return next the rule~$Y::=Z$,
+  and then the rule~$Z::=Z'$, etc.
 Let~$k'$ be the number of such substitutions
   occurring while reading a single input token.
 
 \begin{Definition}[$k'$ - subtitution factor]
-  Let~$X$ be a nonterminal at the top of the stack
+  \label{substitution-factor}
+  Let~$A$ be a nonterminal at the top of the stack
     and~$t$ be the next input symbol.
-  Then~$k'$ is the number of consecutive substitutions
-  the parser will perform (replacing the nonterminal with
-  one of it's \emph{non-$ε$ rules}) until~$t$ will be consumed
-  from the input.
+  If~$t \in \Function First(A)$ then~$k'$ is the number of 
+  consecutive substitutions the parser will perform 
+  (replacing the nonterminal at the top the stack with one of it's rules)
+  until~$t$ will be consumed from the input.
 \end{Definition}
 
-Also, in the case~$R=X→ε$ the DPDA does not push
+Also, in the case~$R=X::=ε$ the DPDA does not push
   anything into the stack.
 Further, in its next iteration, the DPDA conducts another
 pop,
@@ -162,6 +163,7 @@ Let~$k^*$ be the number
   of such instructions in a certain such mishap.
 
 \begin{Definition}[$k^*$ - pop factor]
+  \label{pop-factor}
   Let~$X$ be a nonterminal at the top of the stack
     and~$t$ be the next input symbol.
   Then~$k^*$ is the number of consecutive substitutions
@@ -196,7 +198,7 @@ This grammar, inspired by the prototypical
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions> \\ 
+      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>⏎
                  &\<Body>\hfill⏎
       \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
       \<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
@@ -207,8 +209,8 @@ This grammar, inspired by the prototypical
       \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
       \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>~\cc{;}\<Definitions> \\
-                    &  \<Body> \hfill⏎
+      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>~\cc{;}\<Definitions>⏎
+                    & \<Body> \hfill⏎
       \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
@@ -229,7 +231,8 @@ The grammar preserves the ‟theme”
       \cc{program id () ; label ; begin end}⏎
       \cc{program id () ; label ; ; ; ; const ; begin end}⏎
       \cc{program id ; procedure id ; procedure id ;} \newline
-          \cc{begin end begin end begin end}
+          \cc{begin end begin end begin end}⏎
+    \bottomrule
   \end{tabular}
 \end{table}
 In order to demonstrate the problems with~$k'$ and~$k^*$ we first
@@ -296,7 +299,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
     in the input grammar~$G =⟨Σ,Ξ,P⟩$ when~$\$∉Σ$
     and~$S∈Σ$ is the start symbol of~$G$}
   \begin{algorithmic}
-    \STATE{$\Function Follow(S)=❴ \$ ❵~$}
+    \STATE{$\Function Follow(S)=❴ \$ ❵$}
     \COMMENT{initialize the start symbol}
     \WHILE{No changes in any~$\Function Follow(·)$ set}
       \FOR[for each grammar rule]{$A::=Y₀…Yₖ∈P$}
@@ -353,9 +356,10 @@ The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
 
 In our example, nonterminal \<Procedure> has only one derivation
   rule, which begins with the terminal \cc{procedure}.
-Thus, all derivations of \<Procedure> must begin with \cc{procedure} and
-  the~$\Function First(·)$ set of \<Procedure> is containts
-  only~\cc{procedure}, as can be seen in~\cref{table:running-first-follow}.
+Thus, all derivations of \<Procedure> must begin with terminal
+  \cc{procedure} and the~$\Function First(·)$ set of \<Procedure> is
+  containts only~\cc{procedure}, as can be seen
+  in~\cref{table:running-first-follow}.
 The~$\Function Follow(·)$ set of \<Procedure> contains two
   terminals.
 The first is \cc{procedure}, because the nonterminal \<Procedure>
@@ -402,9 +406,9 @@ Until the next input token will be consumed, the following will happen:
   \begin{enumerate}
     \item consulting with~$δ$,~$\<Labels>$'s~$ε$-rule will
       be chosen,
-      thus, $\<Labels>$ will be popped from the stack.
-    \item then the same will happen with~$\<Constants>$ 
-      and $\<Nested>$.
+      thus,~$\<Labels>$ will be popped from the stack.
+    \item the same will happen with~$\<Constants>$
+      and~$\<Nested>$.
     \item only after seeing nonterminal~$\<Body>$ shall the right rule will be
       pushed, and the token matched.
   \end{enumerate}

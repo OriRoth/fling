@@ -1,0 +1,7 @@
+<S> -> <A> c .
+<A> -> a <A> <B> | b .
+<B> -> b | .
+
+input string causing $k$ epsilon pops (popping <B>'s):
+   a^k b c
+
