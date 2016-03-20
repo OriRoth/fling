@@ -196,7 +196,8 @@ This grammar, inspired by the prototypical
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions>\~\<Body>\hfill⏎
+      \<Program> & ::= \cc{program} \cc{id} \<Parameters>~\cc{;} \<Definitions> \\ 
+                 &\<Body>\hfill⏎
       \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
       \<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
       \<Labels> & ::= ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
@@ -206,7 +207,8 @@ This grammar, inspired by the prototypical
       \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
       \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
       \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure} \cc{id} \<Parameters>~\cc{;} \<Definitions> \<Body> \hfill⏎
+      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>~\cc{;}\<Definitions> \\
+                    &  \<Body> \hfill⏎
       \<Parameters> & ::= ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
@@ -216,17 +218,20 @@ The grammar preserves the ‟theme”
   of nested definitions of \Pascal,
   while trimming these down as much as possible.
 \cref{figure:derived-strings} presents some legal sequences derived by this grammar:
-\begin{figure}
+\captionsetup[table]{labelfont=bf}
+\begin{table}
   \caption{\label{figure:derived-strings}
       Legal strings derived from \cref{figure:running}}
-    \begin{enumerate}
-      \item \cc{program id ; begin end}
-      \item \cc{program id () ; label ; begin end}
-      \item \cc{program id () ; label ; ; ; ; const ; begin end}
-      \item \cc{program id ; procedure id ; procedure id ;}
+  \rowcolors{2}{}{olive!20}
+  \begin{tabular}{m{58ex}}
+    \toprule
+      \cc{program id ; begin end}⏎
+      \cc{program id () ; label ; begin end}⏎
+      \cc{program id () ; label ; ; ; ; const ; begin end}⏎
+      \cc{program id ; procedure id ; procedure id ;} \newline
           \cc{begin end begin end begin end}
-    \end{enumerate}
-\end{figure}
+  \end{tabular}
+\end{table}
 In order to demonstrate the problems with~$k'$ and~$k^*$ we first
   supply the~$\Function First(·)$, and~$\Function Follow(·)$
   sets of our example grammar.
@@ -369,15 +374,15 @@ Until that token is consumed, the parser will:
       nonterminals~$\<Labels>$,~$\<Constants>$, and~$\<Nested>$
       in reversed order.
     \item pop~$\<Labels>$ and push the symbols~$\cc{label}$,~$\<Label>$,
-      and $\<MoreLabels>$ in reversed order.
-    \item match the top of the stack~\cc{label} with the input 
+      and~$\<MoreLabels>$ in reversed order.
+    \item match the top of the stack~\cc{label} with the input
       symbol~\cc{label} and consume it.
   \end{enumerate}
 Since we first substituted~$\<Definitions>$, then~$\<Labels>$
   and only then consumed the input symbol,~$k'=2$.
 
-The problem is that every such operation is an~$ε$-move of the 
-  parser's DPDA, and as was shown in~\urlref{http://stlevy.cswp.cs.technion.ac.il/wp-content/uploads/sites/50/2015/12/00.pdf} it causes 
+The problem is that every such operation is an~$ε$-move of the
+  parser's DPDA, and as was shown in~\urlref{http://stlevy.cswp.cs.technion.ac.il/wp-content/uploads/sites/50/2015/12/00.pdf} it causes
   problems when we want to employ \Java's compiler to ‟run” our automaton.
 
 Another case is when encountering~$\<Nested>$ on the top of the stack
@@ -387,7 +392,7 @@ $k'=2$ again, where at first the non-$ε$ rule of~$\<Nested>$ will
   pushed, and only then will the terminal~\cc{procedure} will match,
   and be consumed from the input string.
 
-\subsubsection{Examples for~$\k^*$ for the grammar in~\cref{figure:running}}
+\subsubsection{Examples for~$k^*$ for the grammar in~\cref{figure:running}}
 Consider a state in which the parser is in, where the
   only rule of~$\<Program>$ is being processed,~$\<Definitions>$
   was just replaced on the stack by it's only rule, and~$\<Body>$ is below.
@@ -396,14 +401,16 @@ Assume also, that the first terminal in the input string is \cc{begin}.
 Until the next input token will be consumed, the following will happen:
   \begin{enumerate}
     \item consulting with~$δ$,~$\<Labels>$'s~$ε$-rule will
-      be chosen, thus,~$\<Labels>$ will be popped from the stack.
-    \item then the same will happen with~$\<Constants>$ and~$\<Nested>$.
+      be chosen,
+      thus, $\<Labels>$ will be popped from the stack.
+    \item then the same will happen with~$\<Constants>$ 
+      and $\<Nested>$.
     \item only after seeing nonterminal~$\<Body>$ shall the right rule will be
       pushed, and the token matched.
   \end{enumerate}
-In this case,~$k^*=3$ because we had to pop three nonterminals and 
-  ‟replace” them with their matching rules, that are all~$ε$-rules 
-  before we got to a nonterminal that will derive to something other 
+In this case,~$k^*=3$ because we had to pop three nonterminals and
+  ‟replace” them with their matching rules, that are all~$ε$-rules
+  before we got to a nonterminal that will derive to something other
   then~$ε$.
 
 In the last example~$k^*$ was determined by the size of~$\<Definitions>$, but that

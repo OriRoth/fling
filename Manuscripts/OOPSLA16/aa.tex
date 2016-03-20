@@ -1,5 +1,5 @@
 %! TEX root = 00.tex
-Fluent APIs~\cite{Fowler:2005,VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
+Fluent APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
 neat. There is elegance in self-documenting code snippets such as
 \begin{quote}
   \label{figure:DSL}
@@ -8,7 +8,8 @@ neat. There is elegance in self-documenting code snippets such as
 (a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration
 framework), and,
 \begin{quote}
-  \parbox[c]{59ex}{\javaInput[]{jOOQ.java.fragment}}⏎
+  %\hspace{-20ex}
+  \parbox[c]{53ex}{\javaInput[]{jOOQ.java.fragment}}⏎
 \end{quote}
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
 SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
@@ -184,8 +185,8 @@ The answers we provide for the three questions above are:
   at runtime, a parse tree for the given language. This parse tree can then be
   supplied as input to the library that implements the language's semantic.
   \item
-  Unfortunately, a general purpose compiler-compiler
-  is not yet feasible with the current algorithm.
+  Unfortunately, a general purpose 
+  compiler-compiler is not yet feasible with the current algorithm.
   \begin{itemize}
     \item One difficulty is usual in the fields of formal languages:
       The algorithm is complicated and relies on

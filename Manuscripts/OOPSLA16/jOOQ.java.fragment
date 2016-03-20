@@ -1,4 +1,5 @@
-create.select(AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, count())
+create
+  .select(AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, count())
   .from(AUTHOR)
   .join(BOOK).on(AUTHOR.ID.equal(BOOK.AUTHOR_ID))
   .where(BOOK.LANGUAGE.eq("DE"))

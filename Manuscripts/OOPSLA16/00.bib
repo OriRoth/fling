@@ -24,12 +24,6 @@
   title = {Hibernate in action},
   year = 2005
 }
-@article{Fowler:2005,
-
-  title={Language workbenches: The killer-app for domain specific languages},
-  author={Fowler, Martin},
-  year=2005
-}
 
 @article{Deursen:2000,
   abstract = {We survey the literature available on the topic of domain-specific
@@ -80,32 +74,11 @@
   year = 1997
 }
 
-@book{Fowler:2010,
-  title = {Domain-specific languages},
-  author = FowlerM,
-  year = 2010,
-  publisher = {Pearson Education}
-}
-
-@inproceedings{Bierhoff:Aldrich:2005,
-  author    = {Kevin Bierhoff} #&# AldrichJE,
-  title     = {Lightweight object specification with typestates},
-  pages     = {217--226},
-  crossref  = {ESEC:05},
-}
-
 @mastersthesis{Gutterman:2003,
   title={Turing Templates---On \CC Compile Time Power},
   author={Gutterman, Zvi},
   school={Technion---Israel Institute of Technology},
   year=2003
-}
-
-@book{Chomsky:1963,
-  title={Formal properties of grammars},
-  author={Chomsky, Noam},
-  year=1963,
-  publisher=AW
 }
 
 @article{Turing:1936,
@@ -145,13 +118,6 @@
   publisher=SV
 }
 
-@book{Austern:1998,
-  title={Generic programming and the {STL}: using and extending the {\CC} Standard Template Library},
-  author={Austern, Matthew H},
-  year=1998,
-  publisher=AW
-}
-
 @mastersthesis{Larsen:2012,
   author = {Larsen, Robert},
   school = {University of Oslo},
@@ -178,103 +144,6 @@
   keywords = {domain-specific,dsl,java,typesafe},
   title = {Embedded typesafe domain specific languages for {\Java}},
   year = 2008
-}
-@book{Linz:2001,
-  abstract = {Written to address the fundamentals of formal languages, automata,
-    and computabilty, An Introduction to Formal Languages and Automata provides
-    an accessible, student-friendly presentation of all material essential to
-    an introductory Theory of Computation course. It is designed to familiarize
-    students with the foundations and principles of computer science and to
-    strengthen the students' ability to carry out formal and rigorous
-    mathematical arguments. In the new Fifth Edition, Peter Linz continues to
-    offer a straightforward, uncomplicated treatment of formal languages and
-    automata and avoids excessive mathematical detail so that students may
-    focus on and understand the underlying principles. In an effort to further
-    the accessibility and comprehension of the text, the author has added new
-    illustrative examples and exercises throughout. There is a substantial
-    amount of new material in the form of two new appendices, and a CD-ROM of
-    JFLAP exercises authored by Susan Rodger of Duke University. The first
-    appendix is an entire chapter on finite-state transducers. This optional
-    chapter can be used to prepare students for further related study. The
-    second appendix offers a brief introduction to JFLAP; an interactive
-    software tool that is of great help in both learning the material and in
-    teaching the course. Many of the exercises in the text require creating
-    structures that are complicated and that have to be tested for correctness.
-    JFLAP can greatly reduce students’ time spent on testing as well as help
-    them visualize abstract concepts. The CD-ROM that accompanies this fifth
-  edition expands this and offers exercises specific for JFLAP.},
-  author =
-  {Linz, Peter},
-  isbn = {0763714224},
-  publisher = {Jones {\&} Bartlett Learning},
-  title = {An Introduction to Formal Languages and Automata},
-  year = 2011
-}
-
-@article{Parr:1995,
-  abstract = {Despite the parsing power of LR/LALR algorithms, e.g. YACC,
-    programmers often choose to write recursive-descent parsers by hand to obtain
-    increased flexibility, better error handling, and ease of debugging. We
-    introduce ANTLR, a public-domain parser generator that combines the
-    flexibility of hand-coded parsing with the convenience of a parser
-    generator, which is a component of PCCTS. ANTLR has many features that make
-    it easier to use than other language tools. Most important, ANTLR provides
-    predicates which let the programmer systematically direct the parse via
-    arbitrary expressions using semantic and syntactic context; in practice,
-    the use of predicates eliminates the need to hand-tweak the ANTLR output,
-    even for difficult parsing problems. ANTLR also integrates the description of
-    lexical and syntactic analysis, accepts LL(k) grammars for k > 1 with
-    extended BNF notation, and can automatically generate abstract syntax
-    trees.ANTLR is widely used, with over 1000 registered industrial and
-    academic users in 37 countries. It has been ported to many popular systems
-    such as the PC, Macintosh, and a variety of UNIX platforms; a commercial
-    \CC front-end has been developed as a result of one of our industrial
-  collaborations.},
-  author = {Parr, T. J. and Quong, R. W.},
-  doi = {10.1002/spe.4380250705},
-  isbn = {0038-0644},
-  issn = {1097-024X},
-  journal = jSPAE,
-  keywords = {LL(k) parser,compiler,parser generator,parsing,predicates},
-  number = 7,
-  pages = {789--810},
-  title = {{ANTLR}: A predicated-{LL}(k) parser generator},
-  volume = 25,
-  year = 1995
-}
-
-@book{Hopcroft:2001,
-  crossref = {Hopcroft:Ullman:01},
-  pages = 249
-}
-
-@article{Knuth:65,
-  abstract = {There has been much recent interest in languages whose grammar is sufficiently simple
-    that an efficient left-to-right parsing algorithm can be mechanically produced from the grammar.
-    In this paper, we define LR(k) grammars, which are perhaps the most general ones of this type,
-    and they provide the basis for understanding all of the special tricks which have been used in
-    the construction of parsing algorithms for languages with simple structure, e.g., algebraic languages.
-    We give algorithms for deciding if a given grammar satisfies the LR(k) condition, for given k,
-    and also give methods for generating recognizes for LR(k) grammars.
-    It is shown that the problem of whether or not a grammar is LR(k) for some k is undecidable,
-    and the paper concludes by establishing various connections between LR(k) grammars and deterministic languages.
-  In particular, the LR(k) condition is a natural analogue, for grammars, of the deterministic condition, for languages.},
-  author = KnuthDE,
-  doi = {10.1016/S0019-9958(65)90426-2},
-  issn = {00199958},
-  journal = inf&ctrl,
-  number = 6,
-  pages = {607--639},
-  title = {On the translation of languages from left to right},
-  volume = 8,
-  year = 1965
-}
-
-@manual{Bison:manual,
-  author = {Donnelly, Charles and Stallman, Richard},
-  title = {Bison},
-  publisher = {Free Software Foundation},
-  year = 2015
 }
 
 @book{Cocke:1969,
@@ -334,15 +203,6 @@
   year = 1967
 }
 
-@article{Turing:37,
-  author = {Turing, Alan M.},
-  journal = {The Journal of Symbolic Logic},
-  pages = {153--163},
-  title = {Computability and {$\lambda$}-definability},
-  volume = 2,
-  year = 1937,
-  publisher={Cambridge Univ Press}
-}
 @article{Courcelle:77,
   author = {Courcelle, Bruno},
   isbn = {90-71301-40-0},
@@ -352,37 +212,8 @@
   volume = 11,
   year = 1977
 }
-@book{Papa:03,
-  title={Computational complexity},
-  author={Papadimitriou, Christos H},
-  year=2003,
-  publisher=Wiley,
-}
-@book{Autebert:97,
-  author = {Autebert, Jean-Michel and Berstel, Jean and Boasson, Luc},
-  pages = {111--174},
-  publisher = SV,
-  title = {Context-Free Languages and Pushdown Automata},
-  year = 1997
-}
-@book{Ibsen:Anstey:10,
-  title={Camel in action},
-  author={Ibsen, Claus and Anstey, Jonathan},
-  year=2010,
-  publisher={Manning Publications Co.},
-  address={Shelter Island, NY},
-}
 @mastersthesis{Papi:08,
-  abstract = {This paper introduces the Checker Framework, which supports adding pluggable type systems to the \Java language in a 
-	      backward-compatible way. A type system designer defines type qualifiers and their semantics, and a compiler plug-in 
-	      enforces the semantics. Programmers can write the type qualifiers in their programs and use the plug-in to detect or 
-	      prevent errors. The Checker Framework is useful both to programmers who wish to write error-free code, and to type system 
-	      designers who wish to evaluate and deploy their type systems. The Checker Framework includes new \Java syntax for 
-	      expressing type qualifiers; declarative and procedural mechanisms for writing type-checking rules; and support for 
-	      flow-sensitive local type qualifier inference and for polymorphism over types and qualifiers. The Checker Framework 
-	      is well-integrated with the \Java language and toolset. We have evaluated the Checker Framework by writing 5 checkers 
-	      and running them on over 600K lines of existing code. The checkers found real errors, then confirmed the absence of 
-	      further errors in the fixed code. The case studies also shed light on the type systems themselves.},
+  abstract = {This paper introduces the Checker Framework, which supports adding pluggable type systems to the \Java language in a backward-compatible way. A type system designer defines type qualifiers and their semantics, and a compiler plug-in enforces the semantics. Programmers can write the type qualifiers in their programs and use the plug-in to detect or prevent errors. The Checker Framework is useful both to programmers who wish to write error-free code, and to type system designers who wish to evaluate and deploy their type systems. The Checker Framework includes new \Java syntax for expressing type qualifiers; declarative and procedural mechanisms for writing type-checking rules; and support for flow-sensitive local type qualifier inference and for polymorphism over types and qualifiers. The Checker Framework is well-integrated with the \Java language and toolset. We have evaluated the Checker Framework by writing 5 checkers and running them on over 600K lines of existing code. The checkers found real errors, then confirmed the absence of further errors in the fixed code. The case studies also shed light on the type systems themselves.},
   author = {Papi, Matthew M},
   doi = {10.1145/1390630.1390656},
   isbn = {9781605580500},
@@ -394,18 +225,7 @@
   year = 2008
 }
 @inproceedings{Bodden:14,
-  abstract = {Typestate analyses determine whether a program's use of a given API obeys this API's usage constraints in the sense 
-	      that the right methods are called on the right objects in the right order. Previously, we and others have described 
-	      approaches that generate typestate analyses from textual finite-state property definitions written in specialized 
-	      domain-specific languages. While such an approach is feasible, it requires a heavyweight compiler, hindering an effective 
-	      integration into the programmer's development environment and thus often also into her software-development practice. 
-	      Here we explain the design of a pure-\Java interface facilitating both the definition and evaluation of typestate analyses. 
-	      The interface is fluent, a term coined by Eric Evans and Martin Fowler. Fluent interfaces provide the user with the possibility 
-	      to write method-invocation chains that almost read like natural-language text, in our case allowing for a seemingly declarative 
-	      style of typestate definitions. In all previously described approaches, however, fluent APIs are used to build configuration objects. 
-	      In this work, for the first time we show how to design a fluent API in such a way that it also encapsulates actual computation, not 
-	      just configuration. We describe an implementation on top of Soot, Heros and Eclipse, which we are currently evaluating together with 
-	      pilot customers in an industrial context at Fraunhofer SIT.},
+  abstract = {Typestate analyses determine whether a program's use of a given API obeys this API's usage constraints in the sense that the right methods are called on the right objects in the right order. Previously, we and others have described approaches that generate typestate analyses from textual finite-state property definitions written in specialized domain-specific languages. While such an approach is feasible, it requires a heavyweight compiler, hindering an effective integration into the programmer's development environment and thus often also into her software-development practice.  Here we explain the design of a pure-\Java interface facilitating both the definition and evaluation of typestate analyses.  The interface is fluent, a term coined by Eric Evans and Martin Fowler. Fluent interfaces provide the user with the possibility to write method-invocation chains that almost read like natural-language text, in our case allowing for a seemingly declarative style of typestate definitions. In all previously described approaches, however, fluent APIs are used to build configuration objects.  In this work, for the first time we show how to design a fluent API in such a way that it also encapsulates actual computation, not just configuration. We describe an implementation on top of Soot, Heros and Eclipse, which we are currently evaluating together with pilot customers in an industrial context at Fraunhofer SIT.},
   author = {Bodden, Eric},
   booktitle = {Proceedings of the \nth{3} ACM SIGPLAN International Workshop on the State of the Art in \Java Program Analysis - SOAP '14},
   doi = {10.1145/2614628.2614629},

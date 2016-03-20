@@ -1,8 +1,8 @@
 %! TEX root = 00.tex
 The section makes the first step of our construction: Presenting the \emph{SLL}
-parser, a variant of the traditional LL parser (add reference to
-\figuessoandso), but more economic in its use of the stack resource, and
-perhaps of independent value.
+  parser, a variant of the traditional LL parser~\cite{lewis:66}, but more economic in its
+  use of the stack resource, and
+  perhaps of independent value.
 
 Recall that The stack symbols of the LL parser of a given grammar are the union
 of this grammar's terminals and nonterminals. In contrast, the stack symbols of
@@ -23,16 +23,15 @@ Just as the LL-parser, the SLL parser is a stack automaton equipped with a
 prediction table, whose next action is a function (realized in the prediction
 table) of the next input symbol and the top of the stack. This action may
 involve consuming the input token and conducting push or pop operations on the
-stack. Later, we show how this feature \whichexactly can revoked.
+stack. Later, we show how the feature of not consuming a token can be revoked
+for the sake of encoding.
 
-The SLL parser is initialized with the  tack containing start symbol's rule†{
-  \ididnotquitegetthis
-  Of course, the grammar's start symbol might have more than one rule,
+The SLL parser is initialized with the stack containing the start symbol's rule†{
+  The grammar's start symbol might have more than one rule,
   but since the grammar is LL, each rule has a
   distinct~$\Function First(·)$ set, thus by peeking into the
-first input symbol we can choose a start rule.}
-with a dot before the first symbol, and perform in loop the
-step depicted
+  first input symbol we can choose the aproppriate start rule.}
+with a dot before the first symbol, and perform in loop the step depicted
 in~\cref{algorithm:sll-parser}.
 
 \begin{algorithm}[p]
