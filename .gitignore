@@ -44,6 +44,7 @@ $.*
 *.gls
 *.glsdef
 *.glsdefs
+*.gnuplot
 *.gnuplottex-fig[0-9]*.*
 *.gpState
 *.idc
