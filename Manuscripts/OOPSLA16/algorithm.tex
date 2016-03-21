@@ -239,9 +239,9 @@ The idea of the main is simple
       \FOR[calculate entry~$\Function Δ(i,t)$]{$t∈Σ$}
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
           \LET{$l$}{$\Function Closure(i,t)$} \COMMENT{use closure table}
-          \STATE{$\Function Δ(i,t)= Push(l)$} \COMMENT{a push operation}
-        \ELSE[$t$ is consumed after parsing~$i$]
-          \STATE{x}
+          \STATE{$\Function Δ(i,t)= \Function Push(l)$} \COMMENT{a push operation}
+          \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(\<A>)$}
+          \STATE{$\Function Δ(i,t)= \Function Jump(t)$} \COMMENT{a jump operation}
         \FI
       \ENDFOR
     \ENDFOR
