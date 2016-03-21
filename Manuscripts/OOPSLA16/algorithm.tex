@@ -242,8 +242,8 @@ The full algorithm is given in~\cref{algorithm:rll-closure}.
 \subsection{The Jumps Data Structure}
 \label{section:jump}
 
-It remains to show how the jump operations of \RLLp (lines 5 and 25 in
-\cref{algorithm:rll-parser}) are implemented.
+It remains to show how the jump operations of \RLLp (lines~5 
+and~25 in \cref{algorithm:rll-parser}) are implemented.
 For this purpose, we construct here
 the \emph{\textbf Jumps \textbf Data \textbf Structure} (JDS).
 
@@ -261,20 +261,23 @@ possible to make a direct jump into these items. We call these pointers
 ‟jump pointers” and use~$J$ to denote the type of these.
 
 Let us now build on top of~$S₀$ an abstract data type~$D$, which can thought of
-a as a stack of dictionaries
+as a stack of dictionaries, 
+supporting ordinary push and pop operations: 
 \[
-  D=ζₙ⋯ζ₁\$
+  D=dₙ⋯d₁\$
 \]
-where~$ζᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
-alphabet). Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
-associated with~$t$ in in the top most (maximal~$i$)~dictionary~$ζᵢ$, which
-satisfies~$t∈ζᵢ$. The query returns~$⊥$ if no~$t$ is not found in any of
-the~$ζᵢ$s.
+where~$dᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
+alphabet). 
+
+Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
+associated with~$t$ in in the top most (maximal~$i$)~dictionary~$dᵢ$, which
+satisfies~$t∈dᵢ$. The query returns~$⊥$ if no~$t$ is not found in any of
+the~$dᵢ$s.
 
 There is an efficient implementation of~$D$ in which~$\Function get(t)$
 is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
-keeping updates of the form~$\Function push(ζ)$ or~$ζ←\Function pop()$
-in~$O(|ζ|)$ time.
+keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
+in~$O(|d|)$ time.
 
 In fact, since~$D$ has the same semantics as that of the stack of symbol tables
 of dynamically scoped language (such as \TeX~\cite{TeX:the:program}), we can
@@ -285,30 +288,34 @@ rely on the classical method~\cite{Schoe:95} for implementing these
         of values of type~$J$. A search for key~$t\inΣ$, then returns in~$O(1)$
         time the value at the top of~$s(t)$ or~$⊥$ if stack~$s(t)$ is empty.
 
-  \item The call~$\Function push(ζ)$,~$|ζ|=m$ is implemented in~$O(m)$ time. Let
+  \item The call~$\Function push(d)$,~$|d|=m$ is implemented in~$O(m)$ time. Let
         \[
-          ζ=❴(t₁,j₁),…,(tₘ,jₘ)❵.
+          d=❴(t₁,j₁),…,(tₘ,jₘ)❵.
         \]
         Then iterate over the pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$,
         pushing~$pᵢ$ to stack~$s(tᵢ)$.
 
-        The call~$\Function push(ζ)$ terminates by pushing~$ζ$ itself
+        The call~$\Function push(d)$ terminates by pushing~$d$ itself
         (represented, say, as linked list) as a single item into an auxiliary stack,
         to be denoted~$S₁$.
 
   \item Thus, abstract data type~$D$ is implemented as the pair~$⟨S₁,H⟩$.
 
-        When~$D$ pops a map~$ζ$, it uses~$S₁$ to locate~$ζ$, and just before
-        returning it, the implementation of~$D$ uses this~$ζ$ to pop an element
-        from all stacks~$s(t)$ in~$H$,~$t∈ζ$.
+        When~$D$ pops a map~$d$, it uses~$S₁$ to locate~$d$, and just before
+        returning it, the implementation of~$D$ uses this~$d$ to pop an element
+        from the set~$s(dᵢ)$ of stacks in~$H$,
+        \[
+            s(dᵢ) = ❴s(t) \;|\; t∈dᵢ❵.
+        \]
 \end{enumerate}
 
-Let us now generalize~$D$ so that it supports jumps into it. To do so, let
+Let us now generalize~$D$ so that it also supports jumps into it. To do so, let
 clients of~$D$ store pointers to designated dictionaries in the stack~$S₁$.
 
-Upon jumping to a deep dictionary~$ζᵢ$, our generalized~$D$ must be able to do
-constant time jumps in all stacks~$s(t)$,~$t∈ζᵢ$. And, for this
-to happen we equip each~$ζᵢ$ in the stack~$S₁$ with the correct jump pointers
-into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are
-precisely the value of the top pointers of stacks~$s(t)$ at the time~$ζᵢ$
-was pushed into~$D$.
+Upon jumping to a deep dictionary~$dᵢ$, our generalized~$D$ must be able to do
+a constant time jumps in all stacks in~$s(dᵢ)$.
+
+For this to happen we equip each~$dᵢ$ in the stack~$S₁$ with the correct jump
+pointers into the these stacks.
+The value of these jump pointers is set as the top pointers of stacks~$s(t)$ at
+the time~$dᵢ$ was pushed into~$D$.
