@@ -49,6 +49,7 @@ A second novelty of \Fajita is that the specification of a BNF such as in
 \cref{figure:BNF} can be also made with a \Java fluent API\@.
 To do so, it is first necessary to
 define the set of \emph{grammar terminals}
+\begin{quote}
 \begin{code}{JAVA}
 enum ToiletteTerminals implements Terminal {¢¢
   male, female,
@@ -56,6 +57,7 @@ enum ToiletteTerminals implements Terminal {¢¢
   lower, raise;
 }
 \end{code}
+\end{quote}
 As common in fluent APIs we shall refer to these
 as \emph{verbs}†{Admittedly, the words ‟male” and ‟female” are nouns.
 An excuse might be that the words are used as nouns to mean ‟male-visit” and ‟female-visit”.}.
@@ -265,11 +267,13 @@ and those that do (such as the call \cc{derives($·$)} in the figure).
 \Fajita supports verbs with, and without, noun parameters.
 The following examples,`drawn from \cref{figure:fluent} and \cref{figure:BNF:fluent},
 demonstrate,
+\begin{quote}
 \begin{JAVA}
   ¢¢.to(male)
   ¢¢.to(with, Terminal.class)
   ¢¢.to(with, Variable.class)
   ¢¢.to(start, Variable)\end{JAVA}
+\end{quote}
 (The above is made possible with minor \Java language trickery,
   involving overloading and use of variadic signatures,
   with respect to function name \cc{to}.
