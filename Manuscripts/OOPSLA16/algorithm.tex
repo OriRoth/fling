@@ -254,7 +254,7 @@ the \emph{\textbf Jumps \textbf Data \textbf Structure} (JDS).
 Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
 this stack is implemented as a singly linked list of nodes of an appropriate
 type. Then, the top item of the stack is represented by a pointer, called the
-``\emph{top pointer}''.
+‟\emph{top pointer}”.
 
 The top pointer be used for pushing or popping from the list. It can
 also be used for pushing into the stack a pre-made string of items as done in
@@ -286,8 +286,8 @@ rely on the classical method~\cite{Schoe:95} for implementing these
 
 \begin{enumerate}
   \item Maintain a hash table~$H$ mapping each~$t∈Σ$ to a \emph{stack}~$s(t)$
-    of values of type~$J$. A search for key~$t\inΣ$, then returns in~$O(1)$
-    time the value at the top of~$s(t)$ or~$⊥$ if stack~$s(t)$ is empty.
+        of values of type~$J$. A search for key~$t\inΣ$, then returns in~$O(1)$
+        time the value at the top of~$s(t)$ or~$⊥$ if stack~$s(t)$ is empty.
 
   \item The call~$\Function push(ζ)$,~$|ζ|=m$ is implemented in~$O(m)$ time. Let
         \[
@@ -313,7 +313,6 @@ clients of~$D$ store pointers to designated dictionaries in the stack~$S₁$.
 Upon jumping to a deep dictionary~$ζᵢ$, our generalized~$D$ must be able to do
 constant time jumps in all stacks~$s(t)$,~$t∈ζᵢ$. And, for this
 to happen we equip each~$ζᵢ$ in the stack~$S₁$ with the correct jump pointers
-into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are 
-precisely the value of the top pointers of stacks $s(t)$ at the time $ζᵢ$
-was pushed into $D$.
- 
+into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are
+precisely the value of the top pointers of stacks~$s(t)$ at the time~$ζᵢ$
+was pushed into~$D$.
