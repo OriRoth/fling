@@ -149,7 +149,7 @@ keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
 in~$O(|d|)$ time.
 
 In fact, since~$D$ has the same semantics as that of the stack of symbol tables
-of dynamically scoped language (such as \TeX~\cite{TeX:the:program}), we can
+of dynamically scoped language (such as \TeX~\cite{TeX:79}), we can
 rely on the classical method~\cite{Schoe:95} for implementing these
 
 \begin{enumerate}
@@ -218,7 +218,7 @@ Most importantly, this map is correctly restored
 How should the JSM be dealt with by the algorithm that generates 
   a specific \RLLp?
 Jump operations are all handled at run time,
-  using information available on the JDS.
+  using information available on the JSM.
 The generator of \RLLp must however tell the \RLLp how to
   update the $S_1$ in the push operations (lines~15 and~22) in 
   \cref{algorithm:rll-parser}.
@@ -276,13 +276,13 @@ In~\cref{algorithm:rll-closure} the algorithm for computing this ‟closure” o
     Output is returned in~$S$.
   }
   \begin{algorithmic}
-    \STATE{$[\<X>::=α·Yβ] ← i$} \COMMENT{break~$i$ into its components}
+    \STATE{$[X::=α·Yβ] ← i$} \COMMENT{break~$i$ into its components}
     \LET{$S$}{$∅$} \COMMENT{initialize output stack}
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
       \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
       \STATE{$\Function print(r)$} \COMMENT{useful for parsing}
-      \STATE{$\Function push(S,[\<X> ::=αY·β])$}\COMMENT{advance the item}
-      \STATE{$\<B>::=X₀…Xₘ←r$} \COMMENT{break~$r$ into its components}
+      \STATE{$\Function push(S,[X ::=αY·β])$}\COMMENT{advance the item}
+      \STATE{$B::=X₀…Xₘ←r$} \COMMENT{break~$r$ into its components}
       \IF[$δ$ returned an~$ε$-rule]{$X₀…Xₘ=ε$}
         \WHILE[pop all parsed rules]{$\Function parsed(\Function peek(S))$}
           \STATE{$\Function pop(S)$}
@@ -290,9 +290,9 @@ In~\cref{algorithm:rll-closure} the algorithm for computing this ‟closure” o
       \ELSE[$δ$ returned a non~$ε$-rule]
         \STATE{$\Function push(S,r)$} \COMMENT{we now turn to parse~$r$}
       \FI
-      \STATE{$[\<X>::=α·Yβ] ← \Function pop(S)$} \COMMENT{break~$i$ into its components}
+      \STATE{$[X::=α·Yβ] ← \Function pop(S)$} \COMMENT{break~$i$ into its components}
     \ENDWHILE
-    \STATE{$\Function push(S,[\<X> ::=αY·β])$} \COMMENT{$Y$ must be~$t$}
+    \STATE{$\Function push(S,[X ::=αY·β])$} \COMMENT{$Y$ must be~$t$}
     \RETURN{$S$} \COMMENT{return the items to push}
   \end{algorithmic}
   \vspace{0.3ex}
