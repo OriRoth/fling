@@ -31,7 +31,7 @@ The actual operation of the automaton is by executing in loop the step
 
 \renewcommand\algorithmicdo{\textbf{\emph{}}}
 \renewcommand\algorithmicthen{\textbf{\emph{}}}
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:ll-parser}
   The iterative step of an \LLp}
   \begin{algorithmic}[1]
@@ -252,7 +252,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   derived from~$A$ (Appropriate algorithm can be found
   at~\cref{algorithm:follow}).
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:first}
   An algorithm for computing~$\Function First(X)$ for each grammar symbol~$X$
     in the input grammar~$G =⟨Σ,Ξ,P⟩$}
@@ -278,7 +278,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:first-string}
   An algorithm for computing~$\Function First(α)$ for some string of symbols~$α$.
   This algorithm relies on results from~\cref{algorithm:first}}
@@ -295,7 +295,7 @@ The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:follow}
   An algorithm for computing~$\Function Follow(A)$ for each nonterminal~$X$
     in the input grammar~$G =⟨Σ,Ξ,P⟩$ when~$\$∉Σ$
@@ -440,7 +440,7 @@ The parser generator basically fills this table, leaving the
   and discussed in~\cref{section:essentials}).
   The prediction table construction is depicted in~\cref{algorithm:generation}
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:generation}
   An algorithm for filling the prediction table~$\Function predict(A,b)$ for some
     grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,

@@ -3,13 +3,15 @@
 \subsection{The Realtime LL Parser}
 \label{section:realtime}
 The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation
-  Parser} (\RLLp), is a variant of
-The adjective realtime is to claim that:
+Parser} (\RLLp), is a variant of the famous LL(1) parser~\cite{Lewis:66}.  The
+adjective realtime is to claim that:
+
 \begin{itemize}
   \item an \RLLp examines its input only after consuming it, and,
   \item an \RLLp conducts at most one (potentially extended) stack operation in
         each step.
 \end{itemize}
+
 An extended stack operation is either a~$\Function push(α)$ of a string of
 symbols, or a long~$\Function jump(·)$ into the stack position denoted
 by its argument, involving an unbounded number of~$\Function pop()$ operation.
@@ -19,7 +21,7 @@ grammar rule and a ‟\emph{dot}”, written as
 \[
   \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
 \]
-Formally, the dot is integer, ranging from 0 to the length of the right-hand
+Formally, the dot is an integer, ranging from 0 to the length of the right-hand
 side of the rule. But it is better to think of it as a notation for the prefix
 of this right-hand side.
 
@@ -50,34 +52,34 @@ more than one such rule, the automaton selects the rule dictated by the first
 input token. (This rule is uniquely determined since the grammar is LL.)
 
 After this initialization, the \RLLp proceeds following the instructions
-in~\cref{algorithm:sll-parser}.
+in~\cref{algorithm:rll-parser}.
 
 \begin{algorithm}
-  \caption{\label{algorithm:sll-parser}
+  \caption{\label{algorithm:rll-parser}
     A high level sketch of the iterative step of an \RLLp
   }
   \begin{algorithmic}[1]
     \LET{$[X ::=α·Yβ]$}{\Function pop()}\COMMENT{retrieve parsing state}
     \LET{$t$}{$\Function next()$}\COMMENT{examine input once per iteration}
-    \IF[was rule fully parsed]{$|Yβ|=0$}
+    \IF[was rule fully parsed?]{$|Yβ|=0$}
       \IF{$X$ is not the start symbol}
-         \STATE{$\Function jump(t)$}\COMMENT{reduce this, potentially other rules}
+         \STATE{$\Function jump(t)$}\COMMENT{pop this, potentially other items}
          \CONTINUE\COMMENT{restart, popping a new item}
       \FI
       \IF[$X$ must be the start symbol]{$t=\$$}
         \STATE{\textsc{Accept}}\COMMENT{start symbol fully parsed}
-      \ELSE[start symbol fully derived, but more input stil]
+      \ELSE[start symbol parsed, but not all input consumed]
         \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
       \FI % Not anticipated EOF
-    \FI
+    \FI % Was rule fully parsed?
     \IF[$Y$ is a terminal]{$Y∈Σ$}
       \IF[read terminal is not anticipated~$Y$]{$Y≠t$}
         \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
         \ELSE[anticipated terminal found on input, proceed]
       \STATE{$\Function push(X::=αY·β)$}\COMMENT{push item with dot advanced}
       \CONTINUE\COMMENT{restart, popping this item, and parsing~$β$}
-      \FI
-    \FI
+      \FI % Not anticipated input token
+    \FI % Y is a terminals
     \STATE{\textbf{assert}~$Y∈Ξ$}\COMMENT{$Y$ must be a nonterminal}
     \LET{$a$}{$\Function Δ(Y, t)$}\COMMENT{$Δ(Y,t)$ says what to do with~$Y$}
     \IF[input~$t$ was unanticipated]{$a=⊥$}
@@ -87,33 +89,33 @@ in~\cref{algorithm:sll-parser}.
       \STATE{$\Function push(I₁, …, I_ℓ)$}
       \CONTINUE\COMMENT{restart with a somewhat deeper stack}
     \FI
-    \STATE{\textbf{assert}~$a$ must represent a jump} \COMMENT{token~$t$ indicates that~$Y \stackrel*⇒ε$}
-    \STATE{$\Function jump(t)$}\COMMENT{reduce this, and potentially other rules}
+    \STATE{\textbf{assert}~$a$ represents a jump} \COMMENT{$t$ indicates that~$Y \stackrel*⇒ε$}
+    \STATE{$\Function jump(t)$}\COMMENT{pop this, potentially other items}
   \end{algorithmic}
 \end{algorithm}
 
-Comparing \cref{algorithm:sll-parser} with the LL-parsing algorithm
+Comparing \cref{algorithm:rll-parser} with the LL-parsing algorithm
 (\cref{algorithm:ll-parser}), we see that they both begin with popping a stack
 symbol. More similarities are apparent, after observing that the next
-symbol to read or parse, denoted~$X$ in \cref{algorithm:ll-parser} is obtained
+symbol to read or parse, denoted by~$X$ in \cref{algorithm:ll-parser} is obtained
 by extracting the symbol~$Y$ that follows the dot in the item~$X$ in
-\cref{algorithm:sll-parser}.
+\cref{algorithm:rll-parser}.
 
 In some ways, our \RLLp emulates an \LLp except that it attaches to each symbol
 the rule in which it was found and the location within this rule.
 (Thus, a push of single item is equivalent to the loop of push operations in
 line 20 in \cref{algorithm:ll-parser}).
 
-Function,~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
-general, and may command the algorithm it to push a sequence of stack symbols
+Function~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
+general, and may command the algorithm to push a sequence of stack symbols
 (items), or carry out a jump into the stack.
 
 We delay the detail discussion of the concept of (long) jump and its
-realization \cref{algorithm:rll-parser} to \cref{section:jump} below.
+realization  to \cref{section:jump} below.
 
-The section uses the \RLLp described in~\cref{section:sll} to solve
-the problems presented in~\cref{section:intuition} and then
-by modifying the \RLLp a bit more, we fully encode it using \Java Generics.
+The section uses the \RLLp described in~\cref{section:realtime} to solve the
+problems presented in~\cref{section:intuition} and encode it using \Java
+Generics.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
 problem}
@@ -270,8 +272,8 @@ keeping updates of the form~$\Function push(ζ)$ or~$ζ←\Function pop()$
 in~$O(|ζ|)$ time.
 
 In fact, since~$D$ has the same semantics of the stack of symbol tables of a
-language with dynamic scoping (such as \TeX), the same trick~\cite{see if y ou
-an can find c knuth mnnetions this} can be applied:
+language with dynamic scoping (such as \TeX), the same trick~\cite{Schoe:95}
+can be applied:
 
 \begin{enumerate}
   \item Maintain a hash table~$H$ that maps keys of the~$T$ to \emph{stacks}
