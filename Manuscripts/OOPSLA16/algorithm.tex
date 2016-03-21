@@ -199,20 +199,13 @@ consumed (emulating the \LLp operations). The algorithm also prints a list of
 applied reductions ; this list can be used to build a parse tree without
 additional computation at runtime.
 
-The computation process is rather simple: given an
-item~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ †{in case there's a terminal at the top of the
-stack~$k'=0$ and there are no substitutions} and the next input
-symbol~$t∈Σ∪❴\$❵$, the algorithm iteratively applies the rules for
-substitution, while keeping a list of all substitutions on the way, the output
-of the algorithm is the list of substitutions for each nonterminal% NOT FINISHED WRITING HERE
+The computation process is rather simple: given an item~$\<X>::=α·Yβ$ and
+input symbol~$t∈Σ$, the algorithm iteratively applies the operations the \RLLp
+would, keeping in an auxiliary stack the state of the stack as it would in a
+normal run.  Since~$t \in \Function First(Y\beta )$, we know the auxiliary
+stack's height will never go below 0.  The stack is returned when we find the
+terminal in the list of derivations.
 
-The algorithm applies the following inductive step:
-use~$r = \Function predict(A,t)$ to predict the next rule as the LL(1)
-parser would ; add the RHS of~$r$ to the beginning of the result.
-If the first symbol of the result is~$t$, finish.
-Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
-apply the inductive step again.
-The full algorithm is given in~\cref{algorithm:rll-closure}.
 
 \subsection{Main Algorithm}
 
@@ -250,7 +243,7 @@ the \emph{\textbf Jumps \textbf Data \textbf Structure} (JDS).
 Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
 this stack is implemented as a singly linked list of nodes of an appropriate
 type. Then, the top item of the stack is represented by a pointer, called the
-``\emph{top pointer}''.
+‟\emph{top pointer}”.
 
 The top pointer be used for pushing or popping from the list. It can
 also be used for pushing into the stack a pre-made string of items as done in
@@ -309,7 +302,6 @@ clients of~$D$ store pointers to designated dictionaries in the stack~$S₁$.
 Upon jumping to a deep dictionary~$ζᵢ$, our generalized~$D$ must be able to do
 constant time jumps in all stacks~$s(t)$,~$t∈ζᵢ$. And, for this
 to happen we equip each~$ζᵢ$ in the stack~$S₁$ with the correct jump pointers
-into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are 
-precisely the value of the top pointers of stacks $s(t)$ at the time $ζᵢ$
-was pushed into $D$.
- 
+into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are
+precisely the value of the top pointers of stacks~$s(t)$ at the time~$ζᵢ$
+was pushed into~$D$.
