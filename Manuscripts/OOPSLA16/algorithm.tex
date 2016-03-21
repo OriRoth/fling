@@ -1,14 +1,14 @@
 %! TEX root = 00.tex
 
 The section uses the SLL described in~\cref{section:sll} to solve
-  the problems presented in~\cref{section:intuition} and then to
-  implement a full encoding of the SLL using \Java Generics.
+  the problems presented in~\cref{section:intuition} and then
+  by modifying the SLL a bit more, we fully encode it using \Java Generics.
 
-\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0} problem}
-\cref{substitution-factor} defined a problem when~$k'>0$.
-The problem was that the recognizer needs to perform several substitutions of
-the top of the stack with the next rule to parse without consuming the input
-token.
+\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
+problem} In \cref{substitution-factor}~$k'$ was defined and it was shown
+problematic when~$k'>0$.  The problem relies in the need to perform several
+substitutions of the top of the stack with the next rule without consuming the
+input token.
 
 What we would like to have, is a ‟big” substitution that composes all
 consecutive substitutions, i.e., upon seeing the top of the stack and the input
