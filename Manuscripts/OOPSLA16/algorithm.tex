@@ -146,11 +146,11 @@ First(Yᵢ…Yₖ)$ which ensures that~$t$ will be consumed while parsing~$Yᵢ�
 The result of this observation is that for every item, we can compute the
 wanted ‟big” substitution statically (without running the \RLLp on any input).
 
-In~\cref{algorithm:sll-closure} the algorithm for computing this ‟closure” of
+In~\cref{algorithm:rll-closure} the algorithm for computing this ‟closure” of
 operations is shown.
 
 \begin{algorithm}
-  \caption{\label{algorithm:sll-closure}
+  \caption{\label{algorithm:rll-closure}
     An algorithm for computing~$\Function Closure(i,t)$ the closure
     of operations that will happen upon seeing item~$i$ at the top
     of the \RLLp's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
@@ -202,14 +202,12 @@ The algorithm also prints a list of applied reductions ;
 this list can be used to build a parse tree without additional
 computation at runtime.
 
-The computation process is rather simple:
-given an item~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$
-†{in case there's a terminal at the top of the stack~$k'=0$
-and there are no substitutions}
-and the next input symbol~$t∈Σ∪❴\$❵$, the algorithm iteratively
-applies the rules for substitution, while keeping a list
-of all substitutions on the way, the output of the algorithm
-is the list of substitutions for each nonterminal% NOT FINISHED WRITING HERE
+The computation process is rather simple: given an
+item~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ †{in case there's a terminal at the top of the
+stack~$k'=0$ and there are no substitutions} and the next input
+symbol~$t∈Σ∪❴\$❵$, the algorithm iteratively applies the rules for
+substitution, while keeping a list of all substitutions on the way, the output
+of the algorithm is the list of substitutions for each nonterminal% NOT FINISHED WRITING HERE
 
 The algorithm applies the following inductive step:
 use~$r = \Function predict(A,t)$ to predict the next rule as the LL(1)
@@ -217,7 +215,7 @@ parser would ; add the RHS of~$r$ to the beginning of the result.
 If the first symbol of the result is~$t$, finish.
 Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
 apply the inductive step again.
-The full algorithm is given in~\cref{algorithm:sll-closure}.
+The full algorithm is given in~\cref{algorithm:rll-closure}.
 
 \subsection{Main Algorithm}
 
