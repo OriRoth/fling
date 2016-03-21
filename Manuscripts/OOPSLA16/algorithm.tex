@@ -110,15 +110,128 @@ Function~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
 general, and may command the algorithm to push a sequence of stack symbols
 (items), or carry out a jump into the stack.
 
-We delay the detail discussion of the concept of (long) jump and its
-realization to \cref{section:jump} below.
+\subsection{The Jump Stack Map Structure}
+\label{section:jump}
+We still need to explain how the meaning jump operations of \RLLp (lines~5
+and~25 in \cref{algorithm:rll-parser}) are implemented.  For this purpose, we
+construct here the \emph{\textbf Jump \textbf Stack \textbf Map} (JSM).
 
+Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
+this stack is implemented as a singly linked list of nodes of an appropriate
+type. Then, the top item of the stack is represented by a pointer, called the
+‟\emph{top pointer}”.
+
+The top pointer be used for pushing or popping from the list. It can
+also be used for pushing into the stack a pre-made string of items as done in
+line 22 of the algorithm.
+
+Storing pointers into designated items that lie deeper in the stack makes it
+possible to make a direct jump into these items. We call these pointers
+‟jump pointers” and use~$J$ to denote the type of these.
+
+Let us now build on top of~$S₀$ an abstract data type~$D$, which can thought of
+as a stack of dictionaries,
+supporting ordinary push and pop operations:
+\[
+  D=dₙ⋯d₁\$
+\]
+where~$dᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
+alphabet).
+
+Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
+associated with~$t$ in in the top most (maximal~$i$)~dictionary~$dᵢ$, which
+satisfies~$t∈dᵢ$. The query returns~$⊥$ if no~$t$ is not found in any of
+the~$dᵢ$s.
+
+There is an efficient implementation of~$D$ in which~$\Function get(t)$
+is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
+keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
+in~$O(|d|)$ time.
+
+In fact, since~$D$ has the same semantics as that of the stack of symbol tables
+of dynamically scoped language (such as \TeX~\cite{TeX:the:program}), we can
+rely on the classical method~\cite{Schoe:95} for implementing these
+
+\begin{enumerate}
+  \item Maintain a hash table~$H$ mapping each~$t∈Σ$ to a \emph{stack}~$s(t)$
+        of values of type~$J$. A search for key~$t\inΣ$, then returns in~$O(1)$
+        time the value at the top of~$s(t)$ or~$⊥$ if stack~$s(t)$ is empty.
+
+  \item The call~$\Function push(d)$,~$|d|=m$ is implemented in~$O(m)$ time. Let
+        \[
+          d=❴(t₁,j₁),…,(tₘ,jₘ)❵.
+        \]
+        Then iterate over the pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$,
+        pushing~$pᵢ$ to stack~$s(tᵢ)$.
+
+        The call~$\Function push(d)$ terminates by pushing~$d$ itself
+        (represented, say, as linked list) as a single item into an auxiliary stack,
+        to be denoted~$S₁$.
+
+  \item Thus, abstract data type~$D$ is implemented as the pair~$⟨S₁,H⟩$.
+
+        When~$D$ pops a map~$d$, it uses~$S₁$ to locate~$d$, and just before
+        returning it, the implementation of~$D$ uses this~$d$ to pop an element
+        from the set~$s(dᵢ)$ of stacks in~$H$,
+        \[
+            s(dᵢ) = ❴s(t) \;|\; t∈dᵢ❵.
+        \]
+\end{enumerate}
+
+Let us now generalize~$D$ so that it also supports jumps into it. To do so, let
+clients of~$D$ store pointers to designated dictionaries in the stack~$S₁$.
+
+Upon jumping to a deep dictionary~$dᵢ$, our generalized~$D$ must be able to do
+a constant time jumps in all stacks in~$s(dᵢ)$.
+
+For this to happen we equip each~$dᵢ$ in the stack~$S₁$ with the correct jump
+pointers into the these stacks.
+The value of these jump pointers is set as the top pointers of stacks~$s(t)$ at
+the time~$dᵢ$ was pushed into~$D$.
+
+A jump into~$D$, yielding a dictionary of size~$m$ can now be implemented
+  in~$O(m)$ time:
+The jump pointer into stack~$S₁$ yields a dictionary~$d$ stored in it.
+In~$d$ we find~$m$ jump pointers into the~$m$ stacks~$s(d)$ in~$H$,
+  carrying out the these~$m$ jumps, concludes the jump operation on~$D$.
+
+The final step in constructing the JSM is by coordinating
+  stacks~$S₀$ and~$S₁$:
+  \begin{itemize}
+      \item A push operation on stack $S_0$ is required to push, a potentially
+        empty dictionary into the stack $S_1$. 
+      \item Augment items in stack~$S_0$  to include also the jump pointer to
+        the dictionary it pushed into $S_1$.
+      \item Let a jump into stack $S_0$ also 
+          force a jump into the stack $S_1$.
+          (As expected, a jump into an item $i$ means also a jump
+            in stack $S_1$ to dictionary $d(i)$.)
+  \end{itemize}
+Thus, the JSM data structure supports both 
+  jumps into the items stack, but also maintaining 
+  a current map of the jumps to carry out at each item.
+This map is updated with every push, which might
+  override (or add) entries to it. 
+Most importantly, this map is correctly restored
+  in the process of long jumps into the items stack.
+
+How should the JSM be dealt with by the algorithm that generates 
+  a specific \RLLp?
+Jump operations are all handled at run time,
+  using information available on the JDS.
+The generator of \RLLp must however tell the \RLLp how to
+  update the $S_1$ in the push operations (lines~15 and~22) in 
+  \cref{algorithm:rll-parser}.
+
+Thus, our RLL generator must not only supply values for the $Δ$ transition
+  function, but also appropriate modification to the dictionary.  
+
+\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
+problem}
 The section uses the \RLLp described in~\cref{section:realtime} to solve the
 problems presented in~\cref{section:intuition} and encode it using \Java
 Generics.
 
-\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
-problem}
 In \cref{substitution-factor}~$k'$ was defined and it was shown problematic
 when~$k'>0$. The problem relies in the need to perform several substitutions
 of the top of the stack with the next rule without consuming the input token.
@@ -232,76 +345,3 @@ terminal in the list of derivations.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{The Jumps Data Structure}
-\label{section:jump}
-
-It remains to show how the jump operations of \RLLp (lines 5 and 25 in
-\cref{algorithm:rll-parser}) are implemented.
-For this purpose, we construct here
-the \emph{\textbf Jumps \textbf Data \textbf Structure} (JDS).
-
-Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
-this stack is implemented as a singly linked list of nodes of an appropriate
-type. Then, the top item of the stack is represented by a pointer, called the
-‟\emph{top pointer}”.
-
-The top pointer be used for pushing or popping from the list. It can
-also be used for pushing into the stack a pre-made string of items as done in
-line 22 of the algorithm.
-
-Storing pointers into designated items that lie deeper in the stack makes it
-possible to make a direct jump into these items. We call these pointers
-‟jump pointers” and use~$J$ to denote the type of these.
-
-Let us now build on top of~$S₀$ an abstract data type~$D$, which can thought of
-a as a stack of dictionaries
-\[
-  D=ζₙ⋯ζ₁\$
-\]
-where~$ζᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
-alphabet). Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
-associated with~$t$ in in the top most (maximal~$i$)~dictionary~$ζᵢ$, which
-satisfies~$t∈ζᵢ$. The query returns~$⊥$ if no~$t$ is not found in any of
-the~$ζᵢ$s.
-
-There is an efficient implementation of~$D$ in which~$\Function get(t)$
-is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
-keeping updates of the form~$\Function push(ζ)$ or~$ζ←\Function pop()$
-in~$O(|ζ|)$ time.
-
-In fact, since~$D$ has the same semantics as that of the stack of symbol tables
-of dynamically scoped language (such as \TeX~\cite{TeX:the:program}), we can
-rely on the classical method~\cite{Schoe:95} for implementing these
-
-\begin{enumerate}
-  \item Maintain a hash table~$H$ mapping each~$t∈Σ$ to a \emph{stack}~$s(t)$
-    of values of type~$J$. A search for key~$t\inΣ$, then returns in~$O(1)$
-    time the value at the top of~$s(t)$ or~$⊥$ if stack~$s(t)$ is empty.
-
-  \item The call~$\Function push(ζ)$,~$|ζ|=m$ is implemented in~$O(m)$ time. Let
-        \[
-          ζ=❴(t₁,j₁),…,(tₘ,jₘ)❵.
-        \]
-        Then iterate over the pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$,
-        pushing~$pᵢ$ to stack~$s(tᵢ)$.
-
-        The call~$\Function push(ζ)$ terminates by pushing~$ζ$ itself
-        (represented, say, as linked list) as a single item into an auxiliary stack,
-        to be denoted~$S₁$.
-
-  \item Thus, abstract data type~$D$ is implemented as the pair~$⟨S₁,H⟩$.
-
-        When~$D$ pops a map~$ζ$, it uses~$S₁$ to locate~$ζ$, and just before
-        returning it, the implementation of~$D$ uses this~$ζ$ to pop an element
-        from all stacks~$s(t)$ in~$H$,~$t∈ζ$.
-\end{enumerate}
-
-Let us now generalize~$D$ so that it supports jumps into it. To do so, let
-clients of~$D$ store pointers to designated dictionaries in the stack~$S₁$.
-
-Upon jumping to a deep dictionary~$ζᵢ$, our generalized~$D$ must be able to do
-constant time jumps in all stacks~$s(t)$,~$t∈ζᵢ$. And, for this
-to happen we equip each~$ζᵢ$ in the stack~$S₁$ with the correct jump pointers
-into the correct stack~$s(t)$,~$t∈ζᵢ$. These jump pointers are
-precisely the value of the top pointers of stacks~$s(t)$ at the time~$ζᵢ$
-was pushed into~$D$.

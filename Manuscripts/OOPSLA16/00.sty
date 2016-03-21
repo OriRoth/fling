@@ -1,28 +1,27 @@
 %! TEX root = 00.tex
 
-\newcommand\LLp{LL$ₚ$\xspace}
-\newcommand\RLLp{R{}LL$ₚ$\xspace}
+\newcommand\LLp{LL$_{{}p}$\xspace}
+\newcommand\RLLp{R{}LL$_{{}p{}}$\xspace}
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \passOptions{algorithm}{plain}
-\passOptions{amsmath}{fleqn} 
-\passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{amsmath}{fleqn}
+\passOptions{cleveref}{capitalize,nameinlink}
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
-\passOptions{xcolor} {usenames, dvipsnames, table} 
+\passOptions{xcolor} {usenames, dvipsnames, table}
 
-
-% Vim: +,/^ *$/-1!sort -u 
-\usepackage{adjustbox}   % Easy size adjustment of tables and figures.
-\usepackage{amsfonts}    % AMS fonts
-\usepackage{amsmath}     % AMS Mathematics
-\usepackage{amssymb}     % Load more math symbols
-\usepackage{amsthm}      % AMS theorems
+% Vim: +,/^*$/-1!sort -u
+\usepackage{adjustbox} % Easy size adjustment of tables and figures.
+\usepackage{amsfonts} % AMS fonts
+\usepackage{amsmath} % AMS Mathematics
+\usepackage{amssymb} % Load more math symbols
+\usepackage{amsthm} % AMS theorems
 \usepackage{anyfontsize} % fixes font warnings
-\usepackage{booktabs}    % Typography of tables
-\usepackage{caption}     % make table's caption bold
-\usepackage{cite}        % Sort citations
+\usepackage{booktabs} % Typography of tables
+\usepackage{caption} % make table's caption bold
+\usepackage{cite} % Sort citations
 \usepackage{code}
 \usepackage{float}
 \usepackage{fontspec}
@@ -38,25 +37,26 @@
 \usepackage{tabularx}
 \usepackage{tikz}
 \usepackage{wasysym}
+%\usepackage{univim}
 \usepackage{wrapfig}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \passOptions{yogi-algorithm}{terse}
 \passOptions{yogi-lang}{terse}
+\passOptions{yogi-unicode}{terse}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \usepackage{yogi-algorithm}
 \usepackage{yogi-lang}
-\usepackage{yogi-unicode}
 
 \lstset{language=Java,style=code}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \usetikzlibrary{graphdrawing}
-\usetikzlibrary{graphs} 
-\usetikzlibrary{shapes} 
+\usetikzlibrary{graphs}
+\usetikzlibrary{shapes}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 % \usegdlibrary{circular}
 % \usegdlibrary{trees}
 
@@ -72,31 +72,30 @@
 \restylefloat{algorithm}
 \restylefloat{figure}
 
-
 \adjustboxset{max width=\columnwidth}
 \adjustboxset{center}
 \adjustboxset{max height=0.8\textheight}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
 \newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
 
-\newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}%
+\newcommand✓{\textcolor{green!70!black}{\ding{51}}}%
 \def \Fajita {\textsc{Fajita}\xspace}
 \newcommand \AST {AST}
-\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}%
+\newcommand✗{\textcolor{red!70!black}{\ding{55}}}%
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \newtheorem{Theorem}{Theorem}
 \newtheorem{Conjecture}{Conjecture}
 \newtheorem{Definition}{Definition}
 \newtheorem{Lemma}{Lemma}
 \newtheorem{Proposition}{Proposition}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \numberwithin{equation}{section}
 \numberwithin{figure}{section}
 \numberwithin{algorithm}{section}
 
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \def\sectionautorefname{Sect.}
 \def\tablename{Table}
 \def\figureautorefname{\figurename}
@@ -105,7 +104,7 @@
 \def\subsectionautorefname{Sect.}
 
 % How should entities be names in references
-% Vim: +,/^ *$/-1!sort -u 
+% Vim: +,/^*$/-1!sort -u
 \crefname{algorithm}{Alg.\@}{algs.\@}
 \Crefname{algorithm}{Alg.\@}{Algs.\@}
 \crefname{conjecture}{Conj.\@}{conjs.\@}
@@ -124,8 +123,7 @@
 \crefname{theorem}{Thm.\@}{thms.\@}
 \Crefname{theorem}{Thm.\@}{Thms.\@}
 
-
-\newcommand \urlref [1] {\footnote{\url{#1}}}
+\newcommand \urlref [1] {†{\url{#1}}}
 \def\nthscript#1{\textsuperscript{\textit{#1}}}
 
 \intextsep=6pt
@@ -141,8 +139,8 @@
   \renewcommand\baselinestretch{0.8}
   \def\~{\text{~}}
   \def\|{\~\textcolor{red}{\mathbf|\~}}
-  \def\Derives{\textcolor{red}{ \mathbf{\rightarrow} }\xspace}
-  \def\<##1>{\textcolor{black}{\text{$\langle\nonterminal{##1}\rangle$}}}
+  \def\Derives{\textcolor{red}{ \mathbf{→}}\xspace}
+  \def\<##1>{\textcolor{black}{\text{$\langle\nonterminal{##1}⟩$}}}
   \let\oldCc=\cc
   \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
   \let\oldKk=\kk
@@ -156,18 +154,18 @@
 % Alter some LaTeX defaults for better treatment of figures:
 % See p.105 of "TeX Unbound" for suggested values.
 % See pp. 199-200 of Lamport's "LaTeX" book for details.
-%   General parameters, for ALL pages:
-\renewcommand{\topfraction}{0.9}	% max fraction of floats at top
-\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
-%   Parameters for TEXT pages (not float pages):
+% General parameters, for ALL pages:
+\renewcommand{\topfraction}{0.9} % max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8} % max fraction of floats at bottom
+% Parameters for TEXT pages (not float pages):
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{2}
-\setcounter{totalnumber}{4}     % 2 may work better
-\setcounter{dbltopnumber}{2}    % for 2-column pages
-\renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
-\renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
-%   Parameters for FLOAT pages (not text pages):
-\renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+\setcounter{totalnumber}{4} % 2 may work better
+\setcounter{dbltopnumber}{2} % for 2-column pages
+\renewcommand{\dbltopfraction}{0.9} % fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07} % allow minimal text w. figs
+% Parameters for FLOAT pages (not text pages):
+\renewcommand{\floatpagefraction}{0.7} % require fuller float pages
 % N.B.: floatpagefraction MUST be less than topfraction !!
-\renewcommand{\dblfloatpagefraction}{0.8}	% require fuller float pages
+\renewcommand{\dblfloatpagefraction}{0.8} % require fuller float pages
 % remember to use [htp] or [htpb] for placement
