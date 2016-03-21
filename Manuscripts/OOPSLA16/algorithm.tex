@@ -3,19 +3,20 @@
 \subsection{The Realtime LL Parser}
 \label{section:realtime}
 The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation
-Parser} (\RLLp), is a variant of
+  Parser} (\RLLp), is a variant of
 The adjective realtime is to claim that:
 \begin{itemize}
   \item an \RLLp examines its input only after consuming it, and,
   \item an \RLLp conducts at most one (potentially extended) stack operation in
-    each step.
+        each step.
 \end{itemize}
 An extended stack operation is either a~$\Function push(α)$ of a string of
 symbols, or a long~$\Function jump(·)$ into the stack position denoted
 by its argument, involving an unbounded number of~$\Function pop()$ operation.
 
 The stack symbols of an \RLLp are \emph{items}, where an item is pair of a
-grammar rule and a ‟\emph{dot}”, written as \[
+grammar rule and a ‟\emph{dot}”, written as
+\[
   \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
 \]
 Formally, the dot is integer, ranging from 0 to the length of the right-hand
@@ -27,7 +28,7 @@ input in which:
 \begin{itemize}
   \item all symbols included in this prefix have been successfully parsed, and,
   \item all symbols that lie after this prefix, are awaiting their turn
-      to be parsed.
+        to be parsed.
 \end{itemize}
 
 Items can be thought of as a generalization of the stack symbols of an \LLp
@@ -53,8 +54,8 @@ in~\cref{algorithm:sll-parser}.
 
 \begin{algorithm}
   \caption{\label{algorithm:sll-parser}
-  A high level sketch of the iterative step of an \RLLp
-}
+    A high level sketch of the iterative step of an \RLLp
+  }
   \begin{algorithmic}[1]
     \LET{$[X ::=α·Yβ]$}{\Function pop()}\COMMENT{retrieve parsing state}
     \LET{$t$}{$\Function next()$}\COMMENT{examine input once per iteration}
@@ -111,8 +112,8 @@ We delay the detail discussion of the concept of (long) jump and its
 realization \cref{algorithm:rll-parser} to \cref{section:jump} below.
 
 The section uses the \RLLp described in~\cref{section:sll} to solve
-  the problems presented in~\cref{section:intuition} and then
-  by modifying the \RLLp a bit more, we fully encode it using \Java Generics.
+the problems presented in~\cref{section:intuition} and then
+by modifying the \RLLp a bit more, we fully encode it using \Java Generics.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
 problem}
@@ -132,8 +133,8 @@ of~$k'$ for the \RLLp.
   \label{sll-substitution-factor} Let~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at
   the top of the stack and~$t$ be the next input symbol. If~$t∈\Function
   First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive substitutions the parser
-will perform (replacing the item at the top of the stack with one
-of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
+  will perform (replacing the item at the top of the stack with one
+  of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
 \end{Definition}
 
 An important observation is that when computing~$k'$, the computation does not
@@ -178,26 +179,26 @@ operations is shown.
   \scriptsize
   \begin{enumerate}
     \item function~$\Function afterDot(·)$ receives an item as input
-      and return the symbol after the ‟$·$” of the item.
-      The algorithm ensures that for every invocation of~$\Function afterDot(·)$
-      the input rule has at least one symbol after its ‟$·$”
+          and return the symbol after the ‟$·$” of the item.
+          The algorithm ensures that for every invocation of~$\Function afterDot(·)$
+          the input rule has at least one symbol after its ‟$·$”
     \item function~$\Function advance(S)$ pops an item from the top of
-      the stack~$S$ whose~‟$·$” is at index~$i$ and pushes
-      the following item - with index~$i+1$.
-      Again, the algorithm ensures~$i$ is not the end of the rule.
+          the stack~$S$ whose~‟$·$” is at index~$i$ and pushes
+          the following item - with index~$i+1$.
+          Again, the algorithm ensures~$i$ is not the end of the rule.
     \item function~$\Function parsed(i)$ receives an item as input
-      and returns whether its ‟$·$” is at the end of rule,
-      i.e., the rule is fully parsed.
+          and returns whether its ‟$·$” is at the end of rule,
+          i.e., the rule is fully parsed.
   \end{enumerate}
 
 \end{algorithm}
 
 The algorithm takes as input an item and an input terminal
-  and computes the list of items that the \RLLp will push until
-  the input terminal will be consumed.
+and computes the list of items that the \RLLp will push until
+the input terminal will be consumed.
 The algorithm also prints a list of applied reductions ;
-  this list can be used to build a parse tree without additional
-  computation at runtime.
+this list can be used to build a parse tree without additional
+computation at runtime.
 
 The computation process is rather simple:
 given an item~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$
@@ -256,32 +257,35 @@ Storing pointers into deeper designated items in the stack makes it possible to
 make a direct jump into these items. Let~$J$ be the type of these ‟jump”
 pointers. Let~$T$ be the type these tokens.
 
-Let us now build on top of~$S₀$ a second stack~$S₁$, \[
-  D =ζₙ ⋯ζ₁ \$
-\]
-where~$ζᵢ$ is a (partial) map of the type~$T↛J$. A query~$\Function get(t)$ for
-some token~$t∈T$ retrieves its value from the top most~$ζᵢ$ which contains
+Let us now build on top of~$S₀$ an abstract data type~$D$, which can be written
+as the symbolic ‟stack” \[
+D =ζₙ⋯ζ₁\$
+\] where~$ζᵢ$ is a (partial) map of the type~$T↛J$. A query~$\Function get(t)$
+to~$D$ for some token~$t∈T$ retrieves its value from the top most~$ζᵢ$ which contains
 it~$t$, and returns~$⊥$ if no such~$ζᵢ$ exists.
 
-There is an efficient implementation of~$S₁$ in which~$\Function get(t)$
-is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$S₁$,, while
+There is an efficient implementation of~$D$ in which~$\Function get(t)$
+is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
 keeping updates of the form~$\Function push(ζ)$ or~$ζ←\Function pop()$
 in~$O(|ζ|)$ time.
 
-In fact, since~$S₁$ has the same semantics of the stack of symbol tables of a
+In fact, since~$D$ has the same semantics of the stack of symbol tables of a
 language with dynamic scoping (such as \TeX), the same trick~\cite{see if y ou
 an can find c knuth mnnetions this} can be applied:
-\begin{quote}
-Maintain a hash table which maps keys of the~$T$ to \emph{stacks} of values of
-type~$J$. Let~$s(t)$ be the stack associated by this hash table with key~$t$.
-Then, a search for a key~$t$ returns the value at the top of the stack that
-the hash table associates with~$t$.
 
-The call~$\Function push(ζ)$,~$ζ=❴(t₁,p₁),…,(tₘ,pₘ)❵$,~$|ζ|=m$ iterates over
-the~$m$ pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$, pushing~$pᵢ$ to stack~$s(tᵢ)$.
-The call~$\Function push(ζ)$ terminates by pushing~$ζ$ itself (say as linked list),
-into an auxiliary stack. 
+\begin{enumerate}
+  \item Maintain a hash table~$H$ that maps keys of the~$T$ to \emph{stacks}
+        of values of type~$J$. Let~$s(t)$ be the stack associated by this hash
+        table with key~$t$. Then, a search for a key~$t$ returns the value at the
+        top of the stack that the hash table associates with~$t$.
 
-When~$S₁$ pops a map~$ζ$, just before returning it,
-it pops stack~$s(t)$ for all~$t∈ζ$
-\end{quote}
+  \item The call~$\Function push(ζ)$,~$ζ=❴(t₁,p₁),…,(tₘ,pₘ)❵$,~$|ζ|=m$ iterates
+        over the~$m$ pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$, pushing~$pᵢ$ to stack~$s(tᵢ)$. The
+        call~$\Function push(ζ)$ terminates by pushing~$ζ$ itself (say as linked
+        list), into an auxiliary stack, to be denoted~$S₂$.
+
+  \item Thus, abstract data type~$D$ is implemented as the pair~$⟨S₁,H⟩$
+        When~$D$ pops a map~$ζ$, it uses~$S₁$ to locate~$ζ$, and just before
+        returning it, the implementation of~$D$ uses this~$ζ$ to pops element from
+        all stacks~$s(t)$ in~$H$,~$t∈ζ$.
+\end{enumerate}
