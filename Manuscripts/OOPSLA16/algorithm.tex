@@ -96,12 +96,12 @@ Comparing \cref{algorithm:sll-parser} with the LL-parsing algorithm
 symbol. More similarities are apparent, after observing that the next
 symbol to read or parse, denoted~$X$ in \cref{algorithm:ll-parser} is obtained
 by extracting the symbol~$Y$ that follows the dot in the item~$X$ in
-\cref{algorithm:sll-parser}.  
+\cref{algorithm:sll-parser}.
 
 In some ways, our \RLLp emulates an \LLp except that it attaches to each symbol
-the rule in which it was found and the location within this rule. 
+the rule in which it was found and the location within this rule.
 (Thus, a push of single item is equivalent to the loop of push operations in
-line 20 in \cref{algorithm:ll-parser}). 
+line 20 in \cref{algorithm:ll-parser}).
 
 Function,~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
 general, and may command the algorithm it to push a sequence of stack symbols
@@ -160,7 +160,7 @@ operations is shown.
       \STATE{$r←δ(Yᵢ,t)$} \COMMENT{next rule to apply}
       \STATE{$\Function print(r)$} \COMMENT{useful for parsing}
       \STATE{$\Function advance(S)$} \COMMENT{advance the TOTS}
-      \STATE{$\<B>::=X₀…Xₘ←r$} \COMMENT{break~$i$ into its components}
+      \STATE{$\<B>::=X₀…Xₘ←r$} \COMMENT{break~$r$ into its components}
       \IF[$δ$ returned an~$ε$-rule]{$X₀…Xₘ=ε$}
         \WHILE[pop all parsed rules]{$\Function parsed(\Function peek(S))$}
           \STATE{$\Function pop(S)$}
@@ -216,7 +216,6 @@ Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
 apply the inductive step again.
 The full algorithm is given in~\cref{algorithm:sll-closure}.
 
-\endinput
 \subsection{Solving~$k^*$}
 
 \subsection{Main Algorithm}
@@ -224,4 +223,27 @@ The full algorithm is given in~\cref{algorithm:sll-closure}.
 The idea of the main is simple
 
 \subsection{Long Jumps into The Stack}
-\labele{section:jump}
+\label{section:jump}
+
+\begin{algorithm}
+  \begin{algorithmic}
+    \caption{\label{algorithm:construction-delta}
+      Algorithm for construction of~$Δ$.
+      For each item and terminal it computes the required operation.
+    }
+    \FOR[for each item]{$i∈ \Function Items()$}
+      \STATE{$\<A>::=Y₀…Y_{i-1}…Yᵢ…Yₘ←i$} \COMMENT{break~$i$}
+      \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
+        \CONTINUE \COMMENT{handle next item.}
+      \FI
+      \FOR[calculate entry~$\Function Δ(i,t)$]{$t∈Σ$}
+        \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
+          \LET{$l$}{$\Function Closure(i,t)$} \COMMENT{use closure table}
+          \STATE{$\Function Δ(i,t)= Push(l)$} \COMMENT{a push operation}
+        \ELSE[$t$ is consumed after parsing~$i$]
+          \STATE{x}
+        \FI
+      \ENDFOR
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
