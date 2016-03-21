@@ -259,7 +259,7 @@ pointers. Let~$T$ be the type these tokens.
 Let us now build on top of~$S₀$ a second stack~$S₁$, \[
   D =ζₙ ⋯ζ₁ \$
 \]
-where~$ζᵢ$ is a partial map of the type~$T↛J$. A query~$\Function get(t)$ for
+where~$ζᵢ$ is a (partial) map of the type~$T↛J$. A query~$\Function get(t)$ for
 some token~$t∈T$ retrieves its value from the top most~$ζᵢ$ which contains
 it~$t$, and returns~$⊥$ if no such~$ζᵢ$ exists.
 
@@ -277,9 +277,11 @@ type~$J$. Let~$s(t)$ be the stack associated by this hash table with key~$t$.
 Then, a search for a key~$t$ returns the value at the top of the stack that
 the hash table associates with~$t$.
 
-The call~$\Funtion push(ζ)$,~$ζ=❴(t₁,p₁),…,(tₘ,pₘ)❵$,~$|ζ|=m$ iterates over
+The call~$\Function push(ζ)$,~$ζ=❴(t₁,p₁),…,(tₘ,pₘ)❵$,~$|ζ|=m$ iterates over
 the~$m$ pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$, pushing~$pᵢ$ to stack~$s(tᵢ)$.
-The call~$\Funtion push(ζ)$ terminates by pushing~$ζ$ itself (say as linked list),
-into an auxiliary stack. When~$S₁$ pops a map~$ζ$, just before returning it,
+The call~$\Function push(ζ)$ terminates by pushing~$ζ$ itself (say as linked list),
+into an auxiliary stack. 
+
+When~$S₁$ pops a map~$ζ$, just before returning it,
 it pops stack~$s(t)$ for all~$t∈ζ$
 \end{quote}
