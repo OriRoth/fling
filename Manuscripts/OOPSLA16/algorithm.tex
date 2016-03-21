@@ -5,40 +5,36 @@ The section uses the SLL described in~\cref{section:sll} to solve
   implement a full encoding of the SLL using \Java Generics.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0} problem}
-The problem defined in~\cref{substitution-factor} when~$k'>0$ is that
-the recognizer needs to perform several substitutions of the top of
-the stack with the next rule to parse without consuming the input token.
+\cref{substitution-factor} defined a problem when~$k'>0$.
+The problem was that the recognizer needs to perform several substitutions of
+the top of the stack with the next rule to parse without consuming the input
+token.
 
-What we would like to have, is a ‟big” substitution that composes
-all consecutive substitutions, i.e., upon seeing the top of the stack
-and the input token, the SLL in one step will perform all substitutions.
+What we would like to have, is a ‟big” substitution that composes all
+consecutive substitutions, i.e., upon seeing the top of the stack and the input
+token, the SLL in one step will perform all substitutions.
 
-The problem was presented for the LL parser rather then for the SLL,
-  but it exists almost at the same form in the SLL\@.
-Following is a redefinition of~$k'$ for the SLL\@.
+The problem was presented for the LL parser rather then for the SLL, but it
+exists almost at the same form in the SLL\@.  Following is a redefinition
+of~$k'$ for the SLL\@.
 
 \begin{Definition}[$k'$ - SLL's subtitution factor]
-  \label{sll-substitution-factor}
-  Let~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at the top of the stack
-    and~$t$ be the next input symbol.
-  If~$t∈\Function First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive
-    substitutions the parser will perform (replacing the item at
-    the top of the stack with one of~$\<Y\ensuremath{ᵢ}>$'s rules)
-    until~$t$ will be consumed from the input.
+  \label{sll-substitution-factor} Let~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at
+  the top of the stack and~$t$ be the next input symbol.  If~$t∈\Function
+  First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive substitutions the parser
+will perform (replacing the item at the top of the stack with one
+of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
 \end{Definition}
 
-An important observation is that when computing~$k'$, the
-  computation does not use the information \emph{inside} the stack,
-  but only the very top of the stack.
-This observation can be made solely because~$t$ is
-  in~$\Function First(Yᵢ…Yₖ)$ which ensures that~$t$ will be consumed
-  while parsing~$Yᵢ…Yₖ$.
-The result of this observation is that for every item, we can
-  compute the wanted ‟big” substitution statically
-  (without running the SLL on any input).
+An important observation is that when computing~$k'$, the computation does not
+use the information \emph{inside} the stack, but only the very top of the
+stack.  This observation can be made solely because~$t$ is in~$\Function
+First(Yᵢ…Yₖ)$ which ensures that~$t$ will be consumed while parsing~$Yᵢ…Yₖ$.
+The result of this observation is that for every item, we can compute the
+wanted ‟big” substitution statically (without running the SLL on any input).
 
-In~\cref{algorithm:sll-closure} the algorithm for computing
-  this ‟closure” of operations is shown.
+In~\cref{algorithm:sll-closure} the algorithm for computing this ‟closure” of
+operations is shown.
 
 \begin{algorithm}[p]
   \caption{\label{algorithm:sll-closure}
