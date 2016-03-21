@@ -104,7 +104,7 @@ by extracting the symbol~$Y$ that follows the dot in the item~$X$ in
 In some ways, our \RLLp emulates an \LLp except that it attaches to each symbol
 the rule in which it was found and the location within this rule.
 (Thus, a push of single item is equivalent to the loop of push operations in
-line 20 in \cref{algorithm:ll-parser}).
+line 22 in \cref{algorithm:ll-parser}).
 
 Function~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
 general, and may command the algorithm to push a sequence of stack symbols
@@ -113,7 +113,7 @@ general, and may command the algorithm to push a sequence of stack symbols
 \subsection{The Jump Stack Map Structure}
 \label{section:jump}
 We still need to explain how the meaning jump operations of \RLLp (lines~5
-and~25 in \cref{algorithm:rll-parser}) are implemented.  For this purpose, we
+and~32 in \cref{algorithm:rll-parser}) are implemented.  For this purpose, we
 construct here the \emph{\textbf Jump \textbf Stack \textbf Map} (JSM).
 
 Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
@@ -123,7 +123,7 @@ type. Then, the top item of the stack is represented by a pointer, called the
 
 The top pointer can be used for pushing or popping from the list. It can
 also be used for pushing into the stack a pre-made string of items as done in
-line 22 of the algorithm.
+line 28 of the algorithm.
 
 Storing pointers into designated items that lie deeper in the stack makes it
 possible to make a direct jump into these items. We call these pointers
@@ -146,7 +146,7 @@ the~$dᵢ$s.
 There is an efficient implementation of~$D$ in which~$\Function get(t)$
 is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
 keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
-in~$O(|d|)$ time ($|d|$ being the size of the partial function).
+  in~$O(|d|)$ time ($|d|$ being the size of the partial function).
 
 In fact, since~$D$ has the same semantics as that of the stack of symbol tables
 of dynamically scoped language (such as \TeX~\cite{TeX:79}), we can
@@ -220,7 +220,7 @@ How should the JSM be dealt with by the algorithm that generates
 Jump operations are all handled at run time,
   using information available on the JSM.
 The generator of \RLLp must however tell the \RLLp how to
-  update the $S_1$ in the push operations (lines~15 and~22) in 
+  update the $S_1$ in the push operations (lines~18 and~28) in 
   \cref{algorithm:rll-parser}.
 
 Thus, our RLL generator must not only supply values for the $Δ$ transition
