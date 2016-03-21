@@ -121,7 +121,7 @@ this stack is implemented as a singly linked list of nodes of an appropriate
 type. Then, the top item of the stack is represented by a pointer, called the
 ‟\emph{top pointer}”.
 
-The top pointer be used for pushing or popping from the list. It can
+The top pointer can be used for pushing or popping from the list. It can
 also be used for pushing into the stack a pre-made string of items as done in
 line 22 of the algorithm.
 
@@ -136,17 +136,17 @@ supporting ordinary push and pop operations:
   D=dₙ⋯d₁\$
 \]
 where~$dᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
-alphabet).
+alphabet,~$d_n$ being the top of the stack and~$d_1$ the last item in the stack).
 
 Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
 associated with~$t$ in in the top most (maximal~$i$)~dictionary~$dᵢ$, which
-satisfies~$t∈dᵢ$. The query returns~$⊥$ if no~$t$ is not found in any of
+satisfies~$t∈dᵢ$. The query returns~$⊥$ if~$t$ is not found in any of
 the~$dᵢ$s.
 
 There is an efficient implementation of~$D$ in which~$\Function get(t)$
 is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
 keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
-in~$O(|d|)$ time.
+in~$O(|d|)$ time ($|d|$ being the size of the partial function).
 
 In fact, since~$D$ has the same semantics as that of the stack of symbol tables
 of dynamically scoped language (such as \TeX~\cite{TeX:79}), we can
