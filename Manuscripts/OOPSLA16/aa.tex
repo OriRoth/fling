@@ -8,7 +8,6 @@ neat. There is elegance in self-documenting code snippets such as
 (a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration
 framework), and,
 \begin{quote}
-  %\hspace{-20ex}
   \parbox[c]{53ex}{\javaInput[]{jOOQ.java.fragment}}⏎
 \end{quote}
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
@@ -28,9 +27,9 @@ Concretely, we argue that all fluent API designs
 must define which sequences of method applications are legal
 and which are not.
 
-Also, semantics is typically one of two.
+Also, semantics is typically one of two. 
 \emph{Eager} execution semantics is
-found e.g., in \cc{StringBuilder}\urlref{Findsomething}
+found e.g., in \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
 
 \begin{quote}
 \begin{lcode}[minipage,width=52ex,box align=center]{Java}
@@ -88,11 +87,7 @@ Advantages are many: base language tools (compiler, debugger, IDE, etc.) remain
   applicable, programmers are saved the trouble of learning a new syntax, etc.
 However, these advantages come at the cost of expressive power;
   in the words of Fowler:
-  ‟\emph{Internal DSLs are limited by the syntax and structure of your base language.}”†
-  {M. Fowler, \emph{Language Workbenches: The Killer-App for Domain Specific Languages?},
-    2005
-    \newline
-  \url{http://www.martinfowler.com/articles/languageWorkbench.html＃InternalDsl}}.
+  ‟\emph{Internal DSLs are limited by the syntax and structure of your base language.}”~\cite{Fowler:2005}
 Indeed, in languages such as \CC, fluent APIs
   often make extensive use of operator overloading (examine, e.g., \textsf{Ara-Rat}~\cite{Gil:Lenz:07}),
   but this capability is not available in \Java.
