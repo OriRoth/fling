@@ -51,7 +51,7 @@ input token. (This rule is uniquely determined since the grammar is LL.)
 After this initialization, the \RLLp proceeds following the instructions
 in~\cref{algorithm:sll-parser}.
 
-\begin{algorithm}[h]
+\begin{algorithm}
   \caption{\label{algorithm:sll-parser}
   A high level sketch of the iterative step of an \RLLp
 }
@@ -108,7 +108,7 @@ general, and may command the algorithm it to push a sequence of stack symbols
 (items), or carry out a jump into the stack.
 
 We delay the detail discussion of the concept of (long) jump and its
-realization \cref{algorithm:rll-parser} to \cref{Section:jump} below.
+realization \cref{algorithm:rll-parser} to \cref{section:jump} below.
 
 The section uses the \RLLp described in~\cref{section:sll} to solve
   the problems presented in~\cref{section:intuition} and then
@@ -146,7 +146,7 @@ wanted ‟big” substitution statically (without running the \RLLp on any input
 In~\cref{algorithm:sll-closure} the algorithm for computing this ‟closure” of
 operations is shown.
 
-\begin{algorithm}[p]
+\begin{algorithm}
   \caption{\label{algorithm:sll-closure}
     An algorithm for computing~$\Function Closure(i,t)$ the closure
     of operations that will happen upon seeing item~$i$ at the top
@@ -216,14 +216,7 @@ Otherwise, it is a nonterminal. Let set~$A$ to be that nonterminal, and
 apply the inductive step again.
 The full algorithm is given in~\cref{algorithm:sll-closure}.
 
-\subsection{Solving~$k^*$}
-
 \subsection{Main Algorithm}
-
-The idea of the main is simple
-
-\subsection{Long Jumps into The Stack}
-\label{section:jump}
 
 \begin{algorithm}
   \begin{algorithmic}
@@ -232,7 +225,7 @@ The idea of the main is simple
       For each item and terminal it computes the required operation.
     }
     \FOR[for each item]{$i∈ \Function Items()$}
-      \STATE{$\<A>::=Y₀…Y_{i-1}…Yᵢ…Yₘ←i$} \COMMENT{break~$i$}
+    \STATE{$[\<A>::=Y₀…Y_{i-1}…Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
       \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
         \CONTINUE \COMMENT{handle next item.}
       \FI
@@ -247,3 +240,46 @@ The idea of the main is simple
     \ENDFOR
   \end{algorithmic}
 \end{algorithm}
+
+\subsection{The Long Jumps Data Structure}
+\label{section:jump}
+
+It is easier to describe the ds in terms of data abstraction. Later on we will
+worry about the implementation.
+
+Think of a stack~$S₀$ implemented as a linked list of items. Then, the top item
+of the stack is represented by a single pointer, which can be used for pushing
+or popping from the list. The top pointer can also be used for pushing into the
+stack a string of items.
+
+Storing pointers into deeper designated items in the stack makes it possible to
+make a direct jump into these items. Let~$J$ be the type of these ‟jump”
+pointers. Let~$T$ be the type these tokens.
+
+Let us now build on top of~$S₀$ a second stack~$S₁$, \[
+  D =ζₙ ⋯ζ₁ \$
+\]
+where~$ζᵢ$ is a partial map of the type~$T↛J$. A query~$\Function get(t)$ for
+some token~$t∈T$ retrieves its value from the top most~$ζᵢ$ which contains
+it~$t$, and returns~$⊥$ if no such~$ζᵢ$ exists.
+
+There is an efficient implementation of~$S₁$ in which~$\Function get(t)$
+is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$S₁$,, while
+keeping updates of the form~$\Function push(ζ)$ or~$ζ←\Function pop()$
+in~$O(|ζ|)$ time.
+
+In fact, since~$S₁$ has the same semantics of the stack of symbol tables of a
+language with dynamic scoping (such as \TeX), the same trick~\cite{see if y ou
+an can find c knuth mnnetions this} can be applied:
+\begin{quote}
+Maintain a hash table which maps keys of the~$T$ to \emph{stacks} of values of
+type~$J$. Let~$s(t)$ be the stack associated by this hash table with key~$t$.
+Then, a search for a key~$t$ returns the value at the top of the stack that
+the hash table associates with~$t$.
+
+The call~$\Funtion push(ζ)$,~$ζ=❴(t₁,p₁),…,(tₘ,pₘ)❵$,~$|ζ|=m$ iterates over
+the~$m$ pairs~$(tᵢ, pᵢ)$,~$i=1,…,m$, pushing~$pᵢ$ to stack~$s(tᵢ)$.
+The call~$\Funtion push(ζ)$ terminates by pushing~$ζ$ itself (say as linked list),
+into an auxiliary stack. When~$S₁$ pops a map~$ζ$, just before returning it,
+it pops stack~$s(t)$ for all~$t∈ζ$
+\end{quote}
