@@ -1,26 +1,136 @@
 %! TEX root = 00.tex
 
-The section uses the SLL described in~\cref{section:sll} to solve
+\subsection{The Realtime LL Parser}
+\label{section:realtime}
+The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation
+Parser} (\RLLp), is a variant of
+The adjective realtime is to claim that:
+\begin{itemize}
+  \item an \RLLp examines its input only after consuming it, and,
+  \item an \RLLp conducts at most one (potentially extended) stack operation in
+    each step.
+\end{itemize}
+An extended stack operation is either a~$\Function push(α)$ of a string of
+symbols, or a long~$\Function jump(·)$ into the stack position denoted
+by its argument, involving an unbounded number of~$\Function pop()$ operation.
+
+The stack symbols of an \RLLp are \emph{items}, where an item is pair of a
+grammar rule and a ‟\emph{dot}”, written as \[
+  \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
+\]
+Formally, the dot is integer, ranging from 0 to the length of the right-hand
+side of the rule. But it is better to think of it as a notation for the prefix
+of this right-hand side.
+
+An item represents these precise moments in the analysis process of the
+input in which:
+\begin{itemize}
+  \item all symbols included in this prefix have been successfully parsed, and,
+  \item all symbols that lie after this prefix, are awaiting their turn
+      to be parsed.
+\end{itemize}
+
+Items can be thought of as a generalization of the stack symbols of an \LLp
+(recall that these are the grammar's terminals and nonterminals). \LLp stack
+symbols are markers of the next symbol to be read or parsed. \RLLp stack
+symbols store this information as well: The next symbol to be read or parsed,
+is simply the symbol that follows that dot. The generalization is in adding to
+this symbol the context of containing rule and the point of derivation within
+it.
+
+Just like the \LLp, the \RLLp is a stack automaton equipped with a prediction
+table, whose next action is a function (realized in the prediction table) of
+the next input symbol and the item present at the stack's top.
+token without consuming it.
+
+The \RLLp is initialized with the stack containing an item denoting the
+degenerate prefix of a rule for deriving the start symbol. In case there are
+more than one such rule, the automaton selects the rule dictated by the first
+input token. (This rule is uniquely determined since the grammar is LL.)
+
+After this initialization, the \RLLp proceeds following the instructions
+in~\cref{algorithm:sll-parser}.
+
+\begin{algorithm}[h]
+  \caption{\label{algorithm:sll-parser}
+  A high level sketch of the iterative step of an \RLLp
+}
+  \begin{algorithmic}[1]
+    \LET{$[X ::=α·Yβ]$}{\Function pop()}\COMMENT{retrieve parsing state}
+    \LET{$t$}{$\Function next()$}\COMMENT{examine input once per iteration}
+    \IF[was rule fully parsed]{$|Yβ|=0$}
+      \IF{$X$ is not the start symbol}
+         \STATE{$\Function jump(t)$}\COMMENT{reduce this, potentially other rules}
+         \CONTINUE\COMMENT{restart, popping a new item}
+      \FI
+      \IF[$X$ must be the start symbol]{$t=\$$}
+        \STATE{\textsc{Accept}}\COMMENT{start symbol fully parsed}
+      \ELSE[start symbol fully derived, but more input stil]
+        \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
+      \FI % Not anticipated EOF
+    \FI
+    \IF[$Y$ is a terminal]{$Y∈Σ$}
+      \IF[read terminal is not anticipated~$Y$]{$Y≠t$}
+        \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
+        \ELSE[anticipated terminal found on input, proceed]
+      \STATE{$\Function push(X::=αY·β)$}\COMMENT{push item with dot advanced}
+      \CONTINUE\COMMENT{restart, popping this item, and parsing~$β$}
+      \FI
+    \FI
+    \STATE{\textbf{assert}~$Y∈Ξ$}\COMMENT{$Y$ must be a nonterminal}
+    \LET{$a$}{$\Function Δ(Y, t)$}\COMMENT{$Δ(Y,t)$ says what to do with~$Y$}
+    \IF[input~$t$ was unanticipated]{$a=⊥$}
+      \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
+    \FI
+    \IF[a string of~$ℓ$ items to push]{$a=I₁,…,I_ℓ$}
+      \STATE{$\Function push(I₁, …, I_ℓ)$}
+      \CONTINUE\COMMENT{restart with a somewhat deeper stack}
+    \FI
+    \STATE{\textbf{assert}~$a$ must represent a jump} \COMMENT{token~$t$ indicates that~$Y \stackrel*⇒ε$}
+    \STATE{$\Function jump(t)$}\COMMENT{reduce this, and potentially other rules}
+  \end{algorithmic}
+\end{algorithm}
+
+Comparing \cref{algorithm:sll-parser} with the LL-parsing algorithm
+(\cref{algorithm:ll-parser}), we see that they both begin with popping a stack
+symbol. More similarities are apparent, after observing that the next
+symbol to read or parse, denoted~$X$ in \cref{algorithm:ll-parser} is obtained
+by extracting the symbol~$Y$ that follows the dot in the item~$X$ in
+\cref{algorithm:sll-parser}.  
+
+In some ways, our \RLLp emulates an \LLp except that it attaches to each symbol
+the rule in which it was found and the location within this rule. 
+(Thus, a push of single item is equivalent to the loop of push operations in
+line 20 in \cref{algorithm:ll-parser}). 
+
+Function,~$Δ(·,·)$, the transition function of an \RLLp is also a bit more
+general, and may command the algorithm it to push a sequence of stack symbols
+(items), or carry out a jump into the stack.
+
+We delay the detail discussion of the concept of (long) jump and its
+realization \cref{algorithm:rll-parser} to \cref{Section:jump} below.
+
+The section uses the \RLLp described in~\cref{section:sll} to solve
   the problems presented in~\cref{section:intuition} and then
-  by modifying the SLL a bit more, we fully encode it using \Java Generics.
+  by modifying the \RLLp a bit more, we fully encode it using \Java Generics.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
-problem} In \cref{substitution-factor}~$k'$ was defined and it was shown
-problematic when~$k'>0$.  The problem relies in the need to perform several
-substitutions of the top of the stack with the next rule without consuming the
-input token.
+problem}
+In \cref{substitution-factor}~$k'$ was defined and it was shown problematic
+when~$k'>0$. The problem relies in the need to perform several substitutions
+of the top of the stack with the next rule without consuming the input token.
 
 What we would like to have, is a ‟big” substitution that composes all
 consecutive substitutions, i.e., upon seeing the top of the stack and the input
-token, the SLL in one step will perform all substitutions.
+token, the \RLLp in one step will perform all substitutions.
 
-The problem was presented for the LL parser rather then for the SLL, but it
-exists almost at the same form in the SLL\@.  Following is a redefinition
-of~$k'$ for the SLL\@.
+The problem was presented for the \LLp rather then for the \RLLp, but it
+exists almost at the same form in the \RLLp. Following is a redefinition
+of~$k'$ for the \RLLp.
 
-\begin{Definition}[$k'$ - SLL's subtitution factor]
+\begin{Definition}[$k'$ - \RLLp's subtitution factor]
   \label{sll-substitution-factor} Let~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at
-  the top of the stack and~$t$ be the next input symbol.  If~$t∈\Function
+  the top of the stack and~$t$ be the next input symbol. If~$t∈\Function
   First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive substitutions the parser
 will perform (replacing the item at the top of the stack with one
 of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
@@ -28,10 +138,10 @@ of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
 
 An important observation is that when computing~$k'$, the computation does not
 use the information \emph{inside} the stack, but only the very top of the
-stack.  This observation can be made solely because~$t$ is in~$\Function
+stack. This observation can be made solely because~$t$ is in~$\Function
 First(Yᵢ…Yₖ)$ which ensures that~$t$ will be consumed while parsing~$Yᵢ…Yₖ$.
 The result of this observation is that for every item, we can compute the
-wanted ‟big” substitution statically (without running the SLL on any input).
+wanted ‟big” substitution statically (without running the \RLLp on any input).
 
 In~\cref{algorithm:sll-closure} the algorithm for computing this ‟closure” of
 operations is shown.
@@ -40,7 +150,7 @@ operations is shown.
   \caption{\label{algorithm:sll-closure}
     An algorithm for computing~$\Function Closure(i,t)$ the closure
     of operations that will happen upon seeing item~$i$ at the top
-    of the SLL's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
+    of the \RLLp's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
     Output is returned in~$S$.
   }
   \begin{algorithmic}
@@ -72,18 +182,18 @@ operations is shown.
       The algorithm ensures that for every invocation of~$\Function afterDot(·)$
       the input rule has at least one symbol after its ‟$·$”
     \item function~$\Function advance(S)$ pops an item from the top of
-      the stack~$S$ whose~‟$·$” is at index~$i$ and pushes the
+      the stack~$S$ whose~‟$·$” is at index~$i$ and pushes
       the following item - with index~$i+1$.
       Again, the algorithm ensures~$i$ is not the end of the rule.
     \item function~$\Function parsed(i)$ receives an item as input
-      and returns whether its ``$\cdot$'' is at the end of rule,
+      and returns whether its ‟$·$” is at the end of rule,
       i.e., the rule is fully parsed.
   \end{enumerate}
 
 \end{algorithm}
 
 The algorithm takes as input an item and an input terminal
-  and computes the list of items that the SLL will push until
+  and computes the list of items that the \RLLp will push until
   the input terminal will be consumed.
 The algorithm also prints a list of applied reductions ;
   this list can be used to build a parse tree without additional
@@ -112,3 +222,6 @@ The full algorithm is given in~\cref{algorithm:sll-closure}.
 \subsection{Main Algorithm}
 
 The idea of the main is simple
+
+\subsection{Long Jumps into The Stack}
+\labele{section:jump}

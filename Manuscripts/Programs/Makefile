@@ -23,7 +23,7 @@ help:
 
 need-help := $(filter help,$(MAKECMDGOALS))
 define tip 
-	$(if $(need-help),$(warning $1 -- $2)) 
+	$(if $(need-help),$(warning $1: $2)) 
 endef
 
 # Compound:
@@ -53,8 +53,9 @@ clean: $(call tip,clean,\
 	@ - [ $(G0) -eq 0 ] && echo already clean || true 
 
 .PHONY: latex 
-latex: $(call tip,latex, run latex to make $(MAIN).pdf) $(MAIN).pdf
+latex: $(call tip,latex,run latex to make $(MAIN).pdf) $(MAIN).pdf
 	texfot $(LATEX) ./$(MAIN).tex
+
 
 .PHONY: force 
 force: $(call tip,force, alias of 'latex') 
@@ -63,8 +64,12 @@ force: $(call tip,force, alias of 'latex')
 $(MAIN).pdf: $(call tip,$(MAIN).pdf,our main latex target) $(SOURCES) 
 	texfot $(LATEX) ./$(MAIN).tex
 
+.PHONY: verbose 
+verbose: $(call tip,verbose,run latex interactively; to fix compilation errors)  
+	$(LATEX_COMMAND) ./$(MAIN).tex
+
 .PHONY: all 
-all: $(call tip,all,recreate all targets (currently $(TARGETS))) $(TARGETS)
+all: $(call tip,all,recreate all targets (currently $(TARGETS); useful in batch mode)) $(TARGETS)
 
 .PHONY: silent
 silent: $(call tip,silent,remake $(MAIN).pdf but silently) $(MAIN).pdf $(SOURCES) Makefile
@@ -88,7 +93,7 @@ all: write18 bibtex latex
 
 .PHONY: warnings
 warnings: $(call tip,warnings,present all LaTeX warnings) 
-	 $(LATEX) -draftmoe -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
+	 $(LATEX) -interaction=batchmode -draftmoe -recorder 00.tex 2>&1 | grep --color=auto -E "Warning|Missing" 
 
 .PHONY: lacheck
 lacheck: $(call tip,lachek,run lacheck on all sources) 
@@ -155,4 +160,4 @@ garbage := $(sort $(wildcard \
 	*.vtc                    \
 ))
 G0 := $(words $(garbage)) # 0th moment, i.e., garbage count
-G1 := $(shell ls -ls $(garbage)| tee  $(TMP)/files.lst | awk "{t+=$$$$6}END{print t}")
+G1 := $(shell ls -ls $(garbage)|tee  $(TMP)/files.lst|awk "{t+=$$$$6}END{print t}")
