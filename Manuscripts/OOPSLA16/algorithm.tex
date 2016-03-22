@@ -118,20 +118,19 @@ construct here the \emph{\textbf Jump \textbf Stack \textbf Map} (JSM).
 
 Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
 this stack is implemented as a singly linked list of nodes of an appropriate
-type. Then, the top item of the stack is represented by a pointer, called the
-‟\emph{top pointer}”.
+type. 
 
-The top pointer can be used for pushing or popping from the list. It can
-also be used for pushing into the stack a pre-made string of items as done in
-line 28 of the algorithm.
+The top item of a stack (and in particular $S_0$ is represented by a pointer,
+called the ‟\emph{top pointer}”. This pointer can be used for pushing or
+popping from the list. It can also be used for pushing into the stack a
+pre-made string of items as done in line 28 of the \RLLp algorithm. 
 
 Storing pointers into designated items that lie deeper in the stack makes it
 possible to make a direct jump into these items. We call these pointers
-‟jump pointers” and use~$J$ to denote the type of these.
+‟\emph{jump pointers}” and use the letter~$J$ to denote the type of these.
 
 Let us now build on top of~$S₀$ an abstract data type~$D$, which can thought of
-as a stack of dictionaries,
-supporting ordinary push and pop operations:
+as a stack of dictionaries, supporting ordinary push and pop operations:
 \[
   D=dₙ⋯d₁\$
 \]
@@ -146,11 +145,14 @@ the~$dᵢ$s.
 There is an efficient implementation of~$D$ in which~$\Function get(t)$
 is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
 keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
-  in~$O(|d|)$ time ($|d|$ being the size of the partial function).
+in~$O(|d|)$ time ($|d|$ being the size of the partial function).
 
-In fact, since~$D$ has the same semantics as that of the stack of symbol tables
-of dynamically scoped language (such as \TeX~\cite{TeX:79}), we can
-rely on the classical method~\cite{Schoe:95} for implementing these
+In fact, since~$D$ has the same semantics as that of the stack of binding in
+dynamically scoped language\footnote{a dictionary $d_i$ is a collection of
+names and their binding to nameable entities defined in the scope, which hide
+the definitions made in containing scopes} definitions (such as
+\TeX~\cite{TeX:79}), we can rely on the classical method~\cite{Schoe:95} for
+implementing these
 
 \begin{enumerate}
   \item Maintain a hash table~$H$ mapping each~$t∈Σ$ to a \emph{stack}~$s(t)$
