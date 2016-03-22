@@ -69,15 +69,18 @@ fluent API based on this automaton.  Usage example of fluflu is depicted at
 \cref{figure:fluflu}. 
 
 \begin{figure}
+  \caption{\label{figure:fluflu}
+    Usage example for fluflu, generation a fluent
+    api for the regular expression~$a*$}
     \javaInput[minipage,left=-2ex]{fluflu.example.listing} 
 \end{figure}
   
 The automaton is single stated, the state
-being both initial and accepting, with a single self transition, label with the
-terminal symbol~$a$.  The almost trivial language realized by the automaton is
+being both initial and accepting, with a single self transition, labeled with 
+terminal~$a$.  The almost trivial language realized by the automaton is
 the regular language~$L=a*$ for the alphabet~$Σ=❴a❵$
 
-using fluflu
+NOW EXPLAIN THAT THIS IS SHITTY.
 
 We would like to design fluent APIs with a designated fluent API\@.
 Since meaningful fluent APIs are specified by a BNF, the core of
