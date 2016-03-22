@@ -19,7 +19,7 @@ by its argument, involving an unbounded number of~$\Function pop()$ operation.
 The stack symbols of an \RLLp are \emph{items}, where an item is pair of a
 grammar rule and a ‟\emph{dot}”, written as
 \[
-  \<A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
+  A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
 \]
 Formally, the dot is an integer, ranging from 0 to the length of the right-hand
 side of the rule. But it is better to think of it as a notation for the prefix
@@ -118,25 +118,24 @@ construct here the \emph{\textbf Jump \textbf Stack \textbf Map} (JSM).
 
 Let~$S₀$ be the implicit stack of items used by the \RLLp, and suppose that
 this stack is implemented as a singly linked list of nodes of an appropriate
-type. Then, the top item of the stack is represented by a pointer, called the
-‟\emph{top pointer}”.
+type.
 
-The top pointer can be used for pushing or popping from the list. It can
-also be used for pushing into the stack a pre-made string of items as done in
-line 22 of the algorithm.
+The top item of a stack (and in particular~$S₀$) is represented by a pointer,
+called the ‟\emph{top pointer}”. This pointer can be used for pushing or
+popping from the list. It can also be used for pushing into the stack a
+pre-made string of items as done in line 22 of the \RLLp algorithm.
 
 Storing pointers into designated items that lie deeper in the stack makes it
 possible to make a direct jump into these items. We call these pointers
-‟jump pointers” and use~$J$ to denote the type of these.
+‟\emph{jump pointers}” and use the letter~$J$ to denote the type of these.
 
 Let us now build on top of~$S₀$ an abstract data type~$D$, which can thought of
-as a stack of dictionaries,
-supporting ordinary push and pop operations:
+as a stack of dictionaries, supporting ordinary push and pop operations:
 \[
   D=dₙ⋯d₁\$
 \]
 where~$dᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
-alphabet,~$dₙ$ being the top of the stack and~$d₁$ the last item in the stack).
+alphabet,~$dₙ$ being the top of the stack and~$d₁$ the deepest item in it).
 
 Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
 associated with~$t$ in in the top most (maximal~$i$)~dictionary~$dᵢ$, which
@@ -146,11 +145,14 @@ the~$dᵢ$s.
 There is an efficient implementation of~$D$ in which~$\Function get(t)$
 is~$O(1)$ time, regardless of the depth at which~$t$ is found in~$D$, while
 keeping updates of the form~$\Function push(d)$ or~$d←\Function pop()$
-  in~$O(|d|)$ time ($|d|$ being the size of the partial function).
+in~$O(|d|)$ time ($|d|$ being the size of the partial function).
 
-In fact, since~$D$ has the same semantics as that of the stack of symbol tables
-of dynamically scoped language (such as \TeX~\cite{TeX:79}), we can
-rely on the classical method~\cite{Schoe:95} for implementing these
+In fact, since~$D$ has the same semantics as that of the stack of binding in
+dynamically scoped language†{a dictionary~$dᵢ$ is a collection of
+names and their binding to nameable entities defined in the scope, which hide
+the definitions made in containing scopes} definitions (such as
+\TeX~\cite{TeX:79}), we can rely on the classical method~\cite{Schoe:95} for
+implementing these
 
 \begin{enumerate}
   \item Maintain a hash table~$H$ mapping each~$t∈Σ$ to a \emph{stack}~$s(t)$
@@ -280,11 +282,11 @@ exists almost at the same form in the \RLLp. Following is a redefinition
 of~$k'$ for the \RLLp.
 
 \begin{Definition}[$k'$ - \RLLp's subtitution factor]
-  \label{sll-substitution-factor} Let~$\<A>::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at
+  \label{sll-substitution-factor} Let~$A::=Y₀…Y_{i-1}·Yᵢ…Yₖ$ be the item at
   the top of the stack and~$t$ be the next input symbol. If~$t∈\Function
   First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive substitutions the parser
   will perform (replacing the item at the top of the stack with one
-  of~$\<Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
+  of~$Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
 \end{Definition}
 
 An important observation is that when computing~$k'$, the computation does not
@@ -292,21 +294,21 @@ use the information \emph{inside} the stack, but only the very top of the
 stack. This observation can be made solely because~$t$ is in~$\Function
 First(Yᵢ…Yₖ)$ which ensures that~$t$ will be consumed while parsing~$Yᵢ…Yₖ$.
 The result of this observation is that for every item, we can compute the
-wanted ‟big” substitution statically (without running the \RLLp on any input).
+desired ‟big” substitution statically (without running the \RLLp on any input).
 
 Since we need the \RLLp to emulate the sequence of operations the \LLp would
 perform on an equivalent state, and because of the observation we just made
-(that the stack can only only grow is such cases), we need an algorithm
-that calculates the ‟closure” of the operations that the \LLp would perform,
-i.e.,how would the stack grow.
+(that the stack can only only grow is such cases), we need an algorithm that
+calculates the ‟closure” of the operations that the \LLp would perform, i.e.,
+how would the stack grow.
 
 In~\cref{algorithm:rll-closure} the algorithm for computing this ‟closure” of
 \LLp operations is shown.
 
 \begin{algorithm}
   \caption{\label{algorithm:rll-closure}
-    An algorithm for computing~$\Function Closure(i,t)$ the closure
-    of operations that will happen upon seeing item~$i$ at the top
+~$\Function Closure(i,t)$ returning the closure of push operations that will
+    happen upon seeing item~$i$ at the top
     of the \RLLp's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
     Output is returned in~$S$.
   }
@@ -347,12 +349,12 @@ consumed (emulating the \LLp operations). The algorithm also prints a list of
 applied reductions ; this list can be used to build a parse tree without
 additional computation at runtime.
 
-The computation process is rather simple: given an item~$\<X>::=α·Yβ$ and
-input symbol~$t∈Σ$, the algorithm iteratively applies the operations the \RLLp
-would, keeping in an auxiliary stack the state of the stack as it would in a
-normal run. Since~$t∈\Function First(Yβ)$, we know the auxiliary
-stack's height will never go below 0. The stack is returned when we find the
-terminal in the list of derivations.
+The computation process is rather simple: given an item~$X::=α·Yβ$ and input
+symbol~$t∈Σ$, the algorithm iteratively applies the operations the \RLLp would,
+keeping in an auxiliary stack the state of the stack as it would in a normal
+run. Since~$t∈\Function First(Yβ)$, we know the auxiliary stack's height will
+never go below 0. The stack is returned when we find the terminal in the list
+of derivations.
 
 \subsection{Main Algorithm}
 
@@ -363,7 +365,7 @@ terminal in the list of derivations.
       For each item and terminal it computes the required operation.
     }
     \FOR[for each item]{$i∈ \Function Items()$}
-    \STATE{$[\<A>::=Y₀…Y_{i-1}…Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
+    \STATE{$[A::=Y₀…Y_{i-1}…Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
       \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
         \CONTINUE \COMMENT{handle next item.}
       \FI
@@ -371,7 +373,7 @@ terminal in the list of derivations.
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
           \LET{$l$}{$\Function Closure(i,t)$} \COMMENT{use closure table}
           \STATE{$\Function Δ(i,t)= \Function Push(l)$} \COMMENT{a push operation}
-          \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(\<A>)$}
+          \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A>)$}
           \STATE{$\Function Δ(i,t)= \Function Jump(t)$} \COMMENT{a jump operation}
         \FI
       \ENDFOR
