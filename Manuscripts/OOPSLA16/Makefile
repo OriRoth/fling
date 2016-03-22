@@ -2,6 +2,7 @@ LISTINGS=
 LISTINGS+=toilette.types.listing
 LISTINGS+=toilette.legal.listing
 LISTINGS+=toilette.illegal.listing
+LISTINGS+=fluflu.example.listing
 
 latex:
 
@@ -16,6 +17,7 @@ listings: $(LISTINGS)
 CODE_PATH = ../../src/main/java/automaton/oopsla
 
 TOILETTE = $(CODE_PATH)/ToiletteSeat.java
+FLUFLU = $(CODE_PATH)/FlufluTest.java
 
 toilette.types.listing: $(TOILETTE)
 	awk '/begin{types}/{f=1;c+=1;next}/end{types}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
@@ -25,3 +27,6 @@ toilette.legal.listing: $(TOILETTE)
 
 toilette.illegal.listing: $(TOILETTE)
 	awk '/begin{illegal}/{f=1;c+=1;next}/end{illegal}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+fluflu.example.listing: $(FLUFLU)
+	awk '/begin{full}/{f=1;c+=1;next}/end{full}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 

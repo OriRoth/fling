@@ -3,12 +3,12 @@ Fluent APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
 neat. There is elegance in self-documenting code snippets such as
 \begin{quote}
   \label{figure:DSL}
-  \parbox[c]{44ex}{\javaInput[]{camel-apache.java.fragment}}
+  \parbox[c]{44ex}{\javaInput[]{../Fragments/camel-apache.java.fragment}}
 \end{quote}
 (a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration
 framework), and,
 \begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{jOOQ.java.fragment}}⏎
+  \parbox[c]{53ex}{\javaInput[]{../Fragments/jOOQ.java.fragment}}⏎
 \end{quote}
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
 SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
@@ -27,21 +27,12 @@ Concretely, we argue that all fluent API designs
 must define which sequences of method applications are legal
 and which are not.
 
-Also, semantics is typically one of two. 
+Also, semantics is typically one of two.
 \emph{Eager} execution semantics is
-found e.g., in \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
+found e.g., in \Java's\cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
 
 \begin{quote}
-\begin{lcode}[minipage,width=52ex,box align=center]{Java}
-String time(int hours, int minutes, int seconds) {¢¢
-  final StringBuilder sb = new StringBuilder();
-  sb.append(hours);
-  sb.append(':');
-  sb.append(minutes);
-  sb.append(':');
-  sb.append(seconds);
-  return sb.toString();
-}\end{lcode}
+  \parbox[c]{53ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
 \end{quote}
 
 In this semantics, each method in the chain executes a computation,
@@ -67,9 +58,37 @@ As it turns out, an answer relies on
   the computational expressive power of type systems,
   and, ancient theory of pushdown automata (PDAs).
 
-  \subsection{the many trials of doing it in \Java}
-are neat. Designing is complicated,
+\subsection{the many trials of doing it in \Java}
+Fluent APIs are neat, but design is complicated,
 involving theory of automata, type theory, language design, etc.
+
+An example for automatically generating fluent APIs is
+fluflu\urlref{https://github.com/verhas/fluflu}, a software artifact that uses
+\Java annotations to define a finite state automaton, and then generates a
+fluent API based on this automaton.  Usage example of fluflu is depicted at
+\cref{figure:fluflu}. 
+
+\begin{figure}
+  \caption{\label{figure:fluflu}
+    Usage example for fluflu, generation a fluent
+    api for the regular expression~$a*$}
+    \javaInput[minipage,left=-2ex]{fluflu.example.listing} 
+\end{figure}
+  
+The automaton is single stated, the state
+being both initial and accepting, with a single self transition, labeled with 
+terminal~$a$.  The almost trivial language realized by the automaton is
+the regular language~$L=a*$ for the alphabet~$Σ=❴a❵$
+
+NOW EXPLAIN THAT THIS IS SHITTY.
+
+We would like to design fluent APIs with a designated fluent API\@.
+Since meaningful fluent APIs are specified by a BNF, the core of
+  this designated API is for specifying BNFs\@.
+
+Luckily, the language for defining BNFs is regular,
+(Intuitively, since the definition of a rule (LHS and RHS) is regular,
+and a set of those is also regular)
 
 \subsection{Tell about the computational model of \CC.}
 
@@ -180,7 +199,7 @@ The answers we provide for the three questions above are:
   at runtime, a parse tree for the given language. This parse tree can then be
   supplied as input to the library that implements the language's semantic.
   \item
-  Unfortunately, a general purpose 
+  Unfortunately, a general purpose
   compiler-compiler is not yet feasible with the current algorithm.
   \begin{itemize}
     \item One difficulty is usual in the fields of formal languages:
