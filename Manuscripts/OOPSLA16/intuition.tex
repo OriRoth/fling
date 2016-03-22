@@ -200,20 +200,20 @@ This grammar, inspired by the prototypical
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & ::= \cc{program} \cc{id} \<Parameters>\~\cc{;} \<Definitions>⏎
+      \<Program> & \Derives \cc{program} \cc{id} \<Parameters>\~\cc{;} \<Definitions>⏎
                  &\<Body>\hfill⏎
-      \<Body> & ::= \cc{begin} \cc{end}\hfill⏎
-      \<Definitions> & ::= \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
-      \<Labels> & ::= ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
-      \<Constants> & ::= ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
-      \<Label> & ::=\cc{;} \hfill⏎
-      \<Constant> & ::=\cc{;} \hfill⏎
-      \<MoreLabels> & ::= ε \| \<Label>\~\<MoreLabels>\hfill⏎
-      \<MoreConstants> & ::= ε \| \<Constant>\~\<MoreConstants>\hfill⏎
-      \<Nested> & ::= ε \| \<Procedure>\~\<Nested> \hfill⏎
-      \<Procedure> & ::= \cc{procedure}\cc{id}\<Parameters>\~\cc{;}\<Definitions>⏎
+      \<Body> & \Derives \cc{begin} \cc{end}\hfill⏎
+      \<Definitions> & \Derives \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
+      \<Labels> & \Derives ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
+      \<Constants> & \Derives ε \| \cc{const} \<Constant>\~\<MoreConstants> \hfill⏎
+      \<Label> & \Derives\cc{;} \hfill⏎
+      \<Constant> & \Derives\cc{;} \hfill⏎
+      \<MoreLabels> & \Derives ε \| \<Label>\~\<MoreLabels>\hfill⏎
+      \<MoreConstants> & \Derives ε \| \<Constant>\~\<MoreConstants>\hfill⏎
+      \<Nested> & \Derives ε \| \<Procedure>\~\<Nested> \hfill⏎
+      \<Procedure> & \Derives \cc{procedure}\cc{id}\<Parameters>\~\cc{;}\<Definitions>⏎
                     & \<Body> \hfill⏎
-      \<Parameters> & ::= ε \| \cc{()} \hfill⏎
+      \<Parameters> & \Derives ε \| \cc{()} \hfill⏎
     \end{aligned}
   \end{Grammar}
 \end{figure}
