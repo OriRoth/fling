@@ -57,4 +57,13 @@ public class SQLFrag {
       .finish();
     // end{BNF}
   }
+  // begin{usage}
+  void usage_example(Column c,Table t,Expr e){
+    new Query()
+      .select().all().from(t);
+    new Query()
+      .select().all().from(t)
+      .where().column(c).equals(e);
+  }
+  // end{usage}
 }
