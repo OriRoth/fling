@@ -26,18 +26,18 @@ public class SQLFrag {
   
   
   static 
-    // begin{terminals}
+    // begin{enums}
   enum SQLTerminals implements Terminal{
     select,from,all,columns,
     where,column,equals,greaterThan,lowerThan;
   }
-    // end{terminals}
+    // end{enums}
   static
-    // begin{nonterminals}
+    // begin{enums}
   enum SQLNonterminals implements NonTerminal{
     Query,Quant,Where,Operator;
   }
-    // end{nonterminals}
+    // end{enums}
 
   void defineBNF(){
     // begin{BNF}
