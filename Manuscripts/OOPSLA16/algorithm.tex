@@ -19,7 +19,7 @@ by its argument, involving an unbounded number of~$\Function pop()$ operation.
 The stack symbols of an \RLLp are \emph{items}, where an item is pair of a
 grammar rule and a ‟\emph{dot}”, written as
 \[
-  A> ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
+  A ::= Y₀…Y_{i-1}·Yᵢ…Yₖ
 \]
 Formally, the dot is an integer, ranging from 0 to the length of the right-hand
 side of the rule. But it is better to think of it as a notation for the prefix
@@ -286,7 +286,7 @@ of~$k'$ for the \RLLp.
   the top of the stack and~$t$ be the next input symbol. If~$t∈\Function
   First(Yᵢ…Yₖ)$ then~$k'$ is the number of consecutive substitutions the parser
   will perform (replacing the item at the top of the stack with one
-  of~$Y\ensuremath{ᵢ}>$'s rules) until~$t$ will be consumed from the input.
+  of~$Y\ensuremath{ᵢ}$'s rules) until~$t$ will be consumed from the input.
 \end{Definition}
 
 An important observation is that when computing~$k'$, the computation does not
@@ -373,7 +373,7 @@ of derivations.
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
           \LET{$l$}{$\Function Closure(i,t)$} \COMMENT{use closure table}
           \STATE{$\Function Δ(i,t)= \Function Push(l)$} \COMMENT{a push operation}
-          \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A>)$}
+          \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
           \STATE{$\Function Δ(i,t)= \Function Jump(t)$} \COMMENT{a jump operation}
         \FI
       \ENDFOR

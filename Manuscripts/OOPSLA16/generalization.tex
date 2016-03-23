@@ -117,15 +117,15 @@ to specify this same notation.
       \<Rules>              & \Derives \<Rule> \~\<Rules>\hfill⏎
       {}                    & \| \<Rule> \hfill⏎
       \<Rule>               & \Derives \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
-      \<Conjunctions>       & \Derives \<First-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
-      \<First-Conjunction>  & \Derives \cc{to(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      \<Conjunctions>       & \Derives \<First-Conjunction>\~\<Conjunctions>\hfill⏎
+      \<First-Conjunction>  & \Derives \cc{to(\<Symbol>)}\~\<Symbols>\hfill⏎
       {}                    & \| \cc{toNone()}\hfill⏎
-      \<Extra-Conjunctions> & \Derives \<Extra-Conjunction>\~\<Extra-Conjunctions>\hfill⏎
+      \<Conjunctions> & \Derives \<Conjunction>\~\<Conjunctions>\hfill⏎
       {}                    & \| ε\hfill⏎
-      \<Extra-Conjunction>  & \Derives \cc{or(\<Symbol>)}\~\<Symbol-Sequence>\hfill⏎
+      \<Conjunction>  & \Derives \cc{or(\<Symbol>)}\~\<Symbols>\hfill⏎
       {}                    & \| \cc{orNone()} \hfill⏎
-      \<Symbol-Sequence>    & \Derives ε \hfill⏎
-      {}                    & \| \cc{and(\<Symbol>)}\~\<Symbol-Sequence> \hfill⏎
+      \<Symbols>    & \Derives ε \hfill⏎
+      {}                    & \| \cc{and(\<Symbol>)}\~\<Symbols> \hfill⏎
       \<Symbol>             & \Derives \cc{Variable} \hfill⏎
       {}                    & \| \<Verb>\hfill⏎
       {}                    & \| \<Verb>\~\cc{,} \<Noun> \hfill⏎

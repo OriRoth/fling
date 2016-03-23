@@ -218,13 +218,13 @@ This grammar, inspired by the prototypical
   \end{Grammar}
 \end{figure}
 
-The grammar preserves the ‟theme”
-  of nested definitions of \Pascal,
-  while trimming these down as much as possible.
-\cref{figure:derived-strings} presents some legal sequences derived by this grammar:
+The grammar preserves the ‟theme” of nested definitions of \Pascal, while
+trimming these down as much as possible. \cref{table:derived-strings}
+presents some legal sequences derived by this grammar.
+
 \captionsetup[table]{labelfont=bf}
-\begin{table}
-  \caption{\label{figure:derived-strings}
+\begin{table}[ht]
+  \caption{\label{table:derived-strings}
       Legal strings derived from \cref{figure:running}}
   \rowcolors{2}{}{olive!20}
   \begin{tabular}{m{58ex}}
@@ -240,12 +240,15 @@ The grammar preserves the ‟theme”
 In order to demonstrate the problems with~$k'$ and~$k^*$ we first
   supply the~$\Function First(·)$, and~$\Function Follow(·)$
   sets of our example grammar.
-The~$\Function First(·)$ set of nonterminal~$A$ is the set of all
-  terminals that might appear at the beginning of a string derived by~$A$
-  (algorithm for computing~$\Function First(·)$ is presented in \cref{algorithm:first}).
+
+The~$\Function First(·)$ set of symbol~$X$ is the set of all terminals
+that might appear at the beginning of a string derived from~$X$ (algorithm for
+computing~$\Function First(·)$ is presented in \cref{algorithm:first}),
+thus, for example, if~$X$ is a terminal then its first set is the set
+containing only~$X$.
 The~$\Function First(·)$ set is extended for strings too,~$\Function First(α)$
-  contains all terminals that can begin a string derived from~$α$
-  (Appropriate algorithm can be found at~\cref{algorithm:first-string}).
+contains all terminals that can begin a string derived from~$α$ (Appropriate
+algorithm can be found at~\cref{algorithm:first-string}).
 
 The~$\Function Follow(·)$ set of nonterminal~$A$ is the set of all
   terminals that might appear immediately after a string that was
@@ -331,7 +334,7 @@ $\Function Follow(\<Definitions>)$ on the other hand, contains only
 The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
   our running example (\cref{figure:running}) are listed in~\cref{table:running-first-follow}.
 \captionsetup[table]{labelfont=bf}
-\begin{table}
+\begin{table}[ht]
   \caption{\label{table:running-first-follow}
     Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
     the grammar in~\cref{figure:running}}

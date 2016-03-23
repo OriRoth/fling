@@ -1,22 +1,26 @@
 %! TEX root = 00.tex
-What can be computed, and what can not be computed by coercing the type system
-and the type checker of a certain programming language to do abstract
-computations it was never meant to carry out? At first sight, the question
-seems to be relevant only to the theoreticians who take strange joy of
-theoretical exercises of this sort. This paper however concentrates on a
-context in which the question becomes relevant to a practical problem. 
+What can be computed, and what can not be computed by coercing the type
+system and the type checker to do abstract computations it was never meant to
+carry out? At first sight, the question seems to be relevant only to the
+theoreticians who take strange joy of theoretical exercises of this sort.
+This paper however concentrates on a context in which the question becomes
+relevant to a practical problem. 
 
-AFluent APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
+Fluent APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
 neat. There is elegance in self-documenting code snippets such as
+
 \begin{quote}
   \label{figure:DSL}
   \parbox[c]{44ex}{\javaInput[]{../Fragments/camel-apache.java.fragment}}
 \end{quote}
+
 (a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration
 framework), and,
+
 \begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{../Fragments/jOOQ.java.fragment}}⏎
+  \javaInput[minipage,width=54ex,left=-2ex]{../Fragments/jOOQ.java.fragment}
 \end{quote}
+
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
 SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
 in the context of \CSharp).
@@ -39,7 +43,7 @@ Also, semantics is typically one of two.
 found e.g., in \Java's \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
 
 \begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
+  \parbox[c]{50ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
 \end{quote}
 
 In this semantics, each method in the chain executes a computation,
@@ -99,6 +103,7 @@ Although fluent API generation was ‟achieved”, this example has many flaws, 
 Since fluent APIs are neat to read and use,
   and in order to solve the issues that rose with fluflu,
   we would like a designated fluent API to design fluent APIs with.
+This designated API is \Fajita.
 
 In order to demonstrate the concept, first consider the fragment SQL queries
 language defined in \cref{figure:sql-bnf}.
@@ -121,7 +126,7 @@ language defined in \cref{figure:sql-bnf}.
   \end{Grammar}
 \end{figure}
 
-Defining a fluent API for this language could be made
+Defining a fluent API for this language with \Fajita is made
 intuitive and concise as shown in \cref{figure:sql-bnf-java}.
 
 \begin{figure}[ht]
@@ -135,7 +140,7 @@ intuitive and concise as shown in \cref{figure:sql-bnf-java}.
 such a way that the code can be read in English as one would read the
 grammatical definition in \cref{figure:sql-bnf}.
 
-The excerpt shows how can a designated API can be used to define fluent
+The excerpt shows how can \Fajita be used to define fluent
   APIs in terms of BNFs (or context-free grammars), in addition it provides
   insight to solving all three issues that appeared with fluflu.
 
@@ -150,13 +155,14 @@ Except the required API for the calls to~\cc{derive($·$)},
   \cc{to($·$)}, \cc{and($·$)} etc., the definition of terminals such as
   \cc{select}, \cc{from}, \cc{all}, and nonterminals as \cc{Query},
   \cc{Where}, \cc{Operator}, is also required.
+
 The definition of these is possible by defining two \Java enums, one for the
 nonterminals (also reffed as variables) and one for the terminals (also
 referred as input symbols), for the current example we would define the types
 \cc{SQLTerminals} and \cc{SQLNonTerminals} as:
 
 \begin{quote}
-  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.enums.listing}
+  \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.enums.listing}}
 \end{quote}
 
 
@@ -165,15 +171,14 @@ The \cc{BNFBuilder} class receives two parameters in the constructor, being the 
 To improve the type safeness of the API the types implement the base classes
   \cc{Terminal} and \cc{NonTerminal} accordingly.
 
-Finally, the code in \cref{figure:sql-bnf-java} allows the designers to annotate
-  each terminal with types that after generation will be the parameters of the
-  methods constructing the fluent API.
+Finally, the code in \cref{figure:sql-bnf-java} allows designers to annotate
+  each terminal with a list of types.
+These types will become the parameters of the terminal's method.
 
-A question rises after seeing fluflu and the designated fluent API shown in
-  \cref{figure:sql-bnf-java}: how come the representation of simple languages
-  such as regular languages is so complex (as seen in fluflu) and the representation
-  of a more complex class of languages - the context-free language, is rather simple?
-As it turns out, two factors should be considered.
+A question rises after seeing \Fajita and fluflu: how come the representation
+of simple languages such as regular languages is so complex (as seen in fluflu)
+and the representation of a more complex class of languages, is rather simple?
+As it turns out, two factors are involved in the answer.
 
 The first is the complexity of representing the language.
 Regular language are mostly defined by regular expression, but the language of
@@ -187,11 +192,11 @@ Thus, in order to define a fluent API for generating regular languages, on needs
 Since fluflu ‟know” only how to generate fluent APIs for regular languages,
   it cannot represent a fluent API for the generation of itself.
 
-The second factor is the theoretical and practical complexity of generating the
-  \Java types to support the fluent API. As covered in \cref{section:example}
-  the generation of fluent APIs for regular languages is rather simple, while
-  the generation of those for context-free languages is the main challenge this
-  paper is confronting.
+The second factor is the practical complexity of generating the \Java types to
+support the fluent API. As covered in \cref{section:example} the generation of
+fluent APIs for regular languages is rather simple, while the generation of
+those for context-free languages is the main challenge this paper is
+confronting.
 
 \subsection{Tell about the computational model of \CC.}
 
@@ -199,42 +204,24 @@ The second factor is the theoretical and practical complexity of generating the
 
 \subsection{contributions}
 
-Ever after their inception\urlref{http://martinfowler.com/bliki/FluentInterface.html} \emph{fluent APIs}
-  increasingly gain popularity~\cite{Bauer:2005,Freeman:Pryce:06,Larsen:2012} and research
-  interest~\cite{Deursen:2000,Kabanov:2008}.
-In many ways, fluent APIs are a kind of
-  \emph{internal} \emph{\textbf Domain \textbf Specific \textbf Language}:
-They make it possible to enrich a host programming language without changing it.
-Advantages are many: base language tools (compiler, debugger, IDE, etc.) remain
-  applicable, programmers are saved the trouble of learning a new syntax, etc.
-However, these advantages come at the cost of expressive power;
-  in the words of Fowler:
-  ‟\emph{Internal DSLs are limited by the syntax and structure of your base language.}”~\cite{Fowler:2005}
-Indeed, in languages such as \CC, fluent APIs
-  often make extensive use of operator overloading (examine, e.g., \textsf{Ara-Rat}~\cite{Gil:Lenz:07}),
-  but this capability is not available in \Java.
-
-Despite this limitation, fluent API in \Java can be rich and expressive, as demonstrated
-(open-source integration framework),
-and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
-  SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
-
 \subsection{A Type Perspective on Fluent APIs}
-For the entire SQL language,
-or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
-Of course, with no operator overloading it is impossible
-to fully emulate tokens; method names though make a good substitute for tokens, as done
-in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{figure:DSL}).
-The questions that motivate this research are:
+Is it possible at all to produce a fluent API for the entire SQL language, or
+XPath, HTML, regular expressions, BNFs, EBNFs, etc.?  Of course, with no
+operator overloading it is impossible to fully emulate tokens; method names
+though make a good substitute for tokens, as done in
+‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{figure:DSL}).  The
+questions that motivate this research are:
+
 \begin{quote}
   \begin{itemize}
     \item Given a specification of a DSL, determine whether there exists
         a fluent API that can be made for this specification?
     \item In the cases that such fluent API is possible,
       can it be produced automatically?
-    \item Is it feasible to produce a \emph{compiler-compiler} such as Bison~\cite{Bison:manual}
+    \item Is it feasible to produce a Bison~\cite{Bison:manual}
+        like \emph{compiler-compiler}
         to convert a language specification into a fluent API?
-\end{itemize}
+  \end{itemize}
 \end{quote}
 
 Inspired by the theory of formal languages and automata,

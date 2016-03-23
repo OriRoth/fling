@@ -31,6 +31,7 @@ public class SQLFrag {
     select,from,all,columns,
     where,column,equals,greaterThan,lowerThan;
   }
+
     // end{enums}
   static
     // begin{enums}
