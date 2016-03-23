@@ -58,10 +58,10 @@ where there is at least one type for each of these symbols.
 
 Here we present an algorithm to compile an LL(1) grammar of a fluent API
 language into a \Java implementation whose size is linear in the grammar's
-size. \Fajita is \Java tool that implements this
-algorithm.
+size. \Fajita is a \Java tool that implements this algorithm.
 
-\Cref{figure:sql-bnf} is a BNF specification of a fluent API for a certain fragment of SQL.
+\Cref{figure:sql-bnf} is a BNF specification of a fluent API for a certain
+fragment of SQL.
 
 \begin{figure}[H]
   \caption{\label{figure:sql-bnf}
@@ -102,11 +102,17 @@ In particular, the code in \cref{figure:sql-bnf-java} shows how fluent API speci
 
 Other than the derivation rules, \Fajita  needs to be told the start rule
   and the sets of terminals and nonterminals.
-These are specified in the first two method calls in the chain where, 
+These are specified in the first method call in the chain where, 
   the enumerate types \cc{SQLTerminals} and \cc{SQLNonTerminals} are:
 
 \begin{quote}
   \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.enums.listing}}
+\end{quote}
+
+\Fajita then generates types and methods realizing the fluent API
+ in such a way, that code snippet such as 
+\begin{quote}
+  \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.usage.listing}}
 \end{quote}
 
 A problem related to that of recognizing a formal language,
@@ -134,7 +140,8 @@ AST).
 The challenges of \Java generic programming were highlighted by Garcia et
 al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} research on the expressive
 power of generics in half a dozen major programming languages, 
-Indeed, unlike \CC~\cite{long delted list}, the literature on meta-programming with \Java
+Indeed, unlike \CC~\cite{Austern:1998,Musser:Stepanov:1989,
+Backhouse:Jansson:1999, Dehnert:Stepanov:2000,Gil:Gutterman:98,Abrahams:Gurtovoy:04}, the literature on meta-programming with \Java
 generics is minimal. 
 
 Suggestions for semi-automatic generation of fluent APIs in \Java can be found
