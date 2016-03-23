@@ -227,13 +227,13 @@ The generator of \RLLp must however tell the \RLLp how to
   update~$S₁$ in the push operations (lines~15 and~22) in
   \cref{algorithm:rll-parser}.
 
-Fortunately, the partial function we need to push to~$S₁$ upon
+Fortunately, the partial map we need to push to~$S₁$ upon
   pushing some item to~$S₀$ depends only on the identity of the latter.
-  I.e., let~$Ψ$ be a function~$Ψ: I→(Σ↛J)$ that maps each item~$i$ ($I$ here represents
-  the item set) to a partial function (or, dictionary) that will be pushed to~$S₁$
-  whenever~$S₀$ is pushed to~$S₀$.
 
-$Ψ$ can be realized statically because it does not require any runtime
+Let~$Ψ$,~$Ψ: I→(Σ↛J)$ be the function returning for 
+  an item $i\in I$ the dictionary that needs to be pushed into~$S₁$
+  whenever~$i$ is pushed to~$S₀$.
+Function $Ψ$ can be realized statically because it does not require any runtime
   information on the stack~$S₀$, and assumes no preconditions on~$D$ nor~$S₁$
   The algorithm for realizing~$Ψ$ is given at~\cref{algorithm:coordination}
 
@@ -270,10 +270,10 @@ problems presented in~\cref{section:intuition} and encode it using \Java
 Generics.
 
 In \cref{substitution-factor}~$k'$ was defined and it was shown problematic
-when~$k'>0$. The problem relies in the need to perform several substitutions
-of the top of the stack with the next rule without consuming the input token.
+when~$k'>0$. The problem is in the need to perform several substitutions of the
+top of the stack with the next rule without consuming the input token.
 
-What we would like to have, is a ‟big” substitution that composes all
+What we would like to have, is a consolidated substitution that composes all
 consecutive substitutions, i.e., upon seeing the top of the stack and the input
 token, the \RLLp in one step will perform all substitutions.
 
