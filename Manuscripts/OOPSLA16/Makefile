@@ -5,6 +5,7 @@ LISTINGS+=toilette.illegal.listing
 LISTINGS+=fluflu.example.listing
 LISTINGS+=sql.bnf.listing
 LISTINGS+=sql.enums.listing
+LISTINGS+=sql.usage.listing
 
 latex:
 
@@ -39,3 +40,6 @@ sql.bnf.listing: $(SQL)
 
 sql.enums.listing: $(SQL)
 	awk '/begin{enums}/{f=1;c+=1;next}/end{enums}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
+
+sql.usage.listing: $(SQL)
+	awk '/begin{usage}/{f=1;c+=1;next}/end{usage}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; ./escape.py) > $@ 
