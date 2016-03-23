@@ -1,28 +1,5 @@
 %! TEX root = 00.tex
 
-\begin{enumerate}
-  \item Gutterman
-  \item Reference to emulation of DFA\@. We can only do
-        a constant number of moves in each iteration.
-        \item~$aⁿbⁿcⁿ$
-  \item \Prolog Unification.
-  \item We investigated wildcards, intersection types and
-        (the rather limited) type inference of
-        \Java, but failed to employ these to increase the expressive power of
-        the computation model.  
-      \item Ecoop results.
-  \item Lina reduction
-\end{enumerate}
-
-Lina's reduction size :Assume a grammar~$G=⟨Σ,Ξ,P⟩$.
-\begin{enumerate}
-  \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) -
-    linear grow, LR(1) - exponential blowup)
-  \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
-  \item The number of states grow to~$Q⨉Γᵏ$.
-  \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
-\end{enumerate}
-
 \subsection{Toolkit summary}
 This toolkit presents how can one use the \Java compiler's
 type checker to do compile time computations, mostly know as
