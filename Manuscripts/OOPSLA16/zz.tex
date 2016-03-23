@@ -1,0 +1,28 @@
+  
+  
+  
+  Also, semantics is typically one of two.
+\emph{Eager} execution semantics is
+found e.g., in \Java's \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
+
+\begin{quote}
+  \parbox[c]{50ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
+\end{quote}
+
+In this semantics, each method in the chain executes a computation,
+  whose result, is made the receiver of the next method
+  in the chain.
+
+Conversely, \emph{delayed} execution semantics, occurring e.g., in jOOQ,
+  maintain a ‟production line”,
+  by which each method in the fluent call chain receives a
+  ‟action builder” (called ‟query builder” in jOOQ and LINQ)
+  data record from the method preceding it, adds a bit of
+  information to this record, and passes it to the next method
+  in the chain.
+If an action builder is sufficiently defined it can
+  produce an action record.
+And, action records, may execute
+  when specifically requested to so.
+
+

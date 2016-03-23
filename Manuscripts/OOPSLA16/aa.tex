@@ -1,31 +1,27 @@
 %! TEX root = 00.tex
-What can be computed, and what can not be computed by coercing the type
-system and the type checker to do abstract computations it was never meant to
-carry out? At first sight, the question seems to be relevant only to the
-theoreticians who take strange joy of theoretical exercises of this sort.
-This paper however concentrates on a context in which the question becomes
-relevant to a practical problem. 
+What can be computed, and what can not be computed by coercing the type system
+and the type checker of a certain programming language to do abstract
+computations it was never meant to carry out? And, why should we care? 
 
-Fluent APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are
-neat. There is elegance in self-documenting code snippets such as
-
+One concrete reason is fluent
+APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010} are neat. 
+There is joy, and in many cases boost to productivity
+  in elegant,  self-documenting code snippets such as
 \begin{quote}
   \label{figure:DSL}
   \parbox[c]{44ex}{\javaInput[]{../Fragments/camel-apache.java.fragment}}
 \end{quote}
-
 (a use case of Apache Camel~\cite{Ibsen:Anstey:10}, open-source integration
 framework), and,
-
 \begin{quote}
   \javaInput[minipage,width=54ex,left=-2ex]{../Fragments/jOOQ.java.fragment}
 \end{quote}
-
 (a use case of jOOQ\urlref{http://www.jooq.org}, a framework for writing
 SQL like code in \Java, much like LINQ project~\cite{Meijer:Beckman:Bierman:06}
 in the context of \CSharp).
 
-However, the actual implementation of the many fluent API systems
+We argue that 
+  the actual implementation of the many fluent API systems
 jMock~\cite{Freeman:Pryce:06},
 Hamcrest\urlref{http://hamcrest.org/JavaHamcrest/},
 EasyMock\urlref{http://easymock.org/},
@@ -33,34 +29,42 @@ jOOR\urlref{https://github.com/jOOQ/jOOR},
 jRTF\urlref{https://github.com/ullenboom/jrtf},
 etc., is traditionally not carried out
 in the neat manner it could possibly take.
+Our reason for saying this is that the fundamental problem in 
+  fluent API designs is the decision on the ``language''.  
+This language is the precise definition of which sequences of method
+applications are legal and which are not.
 
-Concretely, we argue that all fluent API designs
-must define which sequences of method applications are legal
-and which are not.
+As it turns out, the question of whether a BNF definition of a such a language
+can be ``compiled'' automatically into a fluent API implementation is, a
+question of the computational power of the underlying language. In \Java, the problem
+is particularly interesting since in \Java (unlike e.g., \CC\cite{Gutterman}),
+the type system is not Turing complete.
 
-Also, semantics is typically one of two.
-\emph{Eager} execution semantics is
-found e.g., in \Java's \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
+It was shown that for any reasonable fluent API language definition
+(specifically, one which can be recognized by an LR($k$) grammar for some $k \ge 0$),
+there exists some \Java implementation that realizes this language~\cite{GL}.
+However, the theoretical result takes a toll of exponential blowup.
 
-\begin{quote}
-  \parbox[c]{50ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
-\end{quote}
+The actual production of this implementation
+However, 
+The objective of this work was the production of \Fajita, an automatic tool for
+converting 
 
-In this semantics, each method in the chain executes a computation,
-  whose result, is made the receiver of the next method
-  in the chain.
+In this work we are interested in the problem of the actual 
 
-Conversely, \emph{delayed} execution semantics, occurring e.g., in jOOQ,
-  maintain a ‟production line”,
-  by which each method in the fluent call chain receives a
-  ‟action builder” (called ‟query builder” in jOOQ and LINQ)
-  data record from the method preceding it, adds a bit of
-  information to this record, and passes it to the next method
-  in the chain.
-If an action builder is sufficiently defined it can
-  produce an action record.
-And, action records, may execute
-  when specifically requested to so.
+
+pro
+the implementation relies on the generation of many types and methods, fundamentally,  
+in part, by this 
+  work.
+We present an algorithm that compiles an LL(1) grammar of a fluent API language
+  into a \Java implementation of this fluent API.
+
+\Fajita is an actual  
+Alas, the implementation of a fluent API is by creating
+  types and methods, 
+
+We believe it is possible
 
 Can these observations on fluent APIs mature into
   a tool to produce these automatically from a specification?
@@ -388,3 +392,5 @@ defines. This translation generates the intricate type hierarchy
   that only sequence of calls that conform
   to the specification would
   compile correctly (concretely, type-check).
+  
+
