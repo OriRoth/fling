@@ -1,5 +1,9 @@
 package automaton.oopsla.test;
+import automaton.oopsla.PascalExample.Body1;
+import automaton.oopsla.PascalExample.ERROR;
 import automaton.oopsla.PascalExample.Pascal;
+import automaton.oopsla.PascalExample.Procedure_Definition1_rec;
+import automaton.oopsla.PascalExample.Procedure_Definition4;
 class PascalTest{
   public static void main(String[] args) {
       new Pascal().program_t().id_t().pair_t().semi_t();

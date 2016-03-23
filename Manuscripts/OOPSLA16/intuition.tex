@@ -21,9 +21,8 @@ for converting an LL grammar (in writing LL, we, here and henceforth really mean
   on the computational model of \Java generics.
 
 \label{section:essentials}
-the traditional \emph{\textbf{LL} \textbf
-Parser} (\LLp)
-An LL(1) parser is a DPDA allowed to peek at the next input symbol.
+The traditional \emph{\textbf{LL} \textbf Parser} (\LLp)
+  is a DPDA allowed to peek at the next input symbol.
 Thus,~$δ$, its transition function, takes two parameters: the current
   state of the automaton, and a peek into the terminal next to be read.
 The actual operation of the automaton is by executing in loop the step
@@ -35,8 +34,8 @@ The actual operation of the automaton is by executing in loop the step
   \caption{\label{algorithm:ll-parser}
   The iterative step of an \LLp}
   \begin{algorithmic}[1]
-      \LET{$X$}{\Function pop()}\COMMENT{what's anticipated on input?}
-      \IF[ancipated~$X$ is a terminal]{$X∈Σ$}
+      \LET{$X$}{\Function pop()}\COMMENT{what's next to parse?}
+      \IF[ancipate to match terminal~$X$]{$X∈Σ$}
         \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[terminal just read was the anticipated~$X$]
@@ -45,11 +44,11 @@ The actual operation of the automaton is by executing in loop the step
       \ELSIF[anticipating end-of-input]{$X=\$$}
         \IF[not the anticipated end-of-input]{$\$≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
-        \ELSE[terminal just read was the anticipated~$X$]
+        \ELSE[matched the anticipated end-of-input]
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
-      \ELSE[anticipated terminal~$X$ must be a nonterminal]
-        \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{which rule to reduce?}
+      \ELSE[anticipated~$X$ must be a nonterminal]
+        \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{to which rule~$X$ is parsed?}
         \IF[no rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
@@ -73,8 +72,8 @@ The actual operation of the automaton is by executing in loop the step
   Stack symbols are drawn from~$Σ∪❴\$❵∪Ξ$, where~$Ξ$ is
   the set of nonterminals of the grammar from which the automaton was generated.
 \item
-  Functions~$\Function pop()$ and~$\Function push(·)$
-    operate on the push-down stack; function~$\Function next()$ returns
+  Functions~$\Function pop(·)$ and~$\Function push(·)$
+    operate on the pushdown stack; function~$\Function next()$ returns
   and consumes the next terminal from the input string;
     function~$\Function peek()$ returns this terminal without consuming it.
 \item
@@ -99,20 +98,20 @@ The parser accepts if the input is exhausted with
 The more interesting case is that~$X$, the popped symbol
   is a nonterminal: the DPDA peeks into the next terminal in the input
   string (without consuming it).
-Based on this terminal, and~$X$ the transition function~$δ$
-  determines~$R$ the derivation rule to use in order to derive~$X$.
+Based on this terminal, and~$X$, the transition function~$δ$
+  determines~$R$-the derivation rule applied to derive~$X$.
 The algorithm rejects if~$δ$ can offer no such rule.
 Otherwise, it pushes into the stack, in reverse order, the symbols
   found in the right hand side of~$R$.
 
-%\subsection{LL(1) Parsing with \Java Generics?}
+\subsection{LL(1) Parsing with \Java Generics?}
 \label{section:limitations}
 Can \cref{algorithm:ll-parser} be executed on the machinery
   available with \Java generics?
 As it turns out, most operations conducted by the algorithm
   are easy.
 The implementation of function~$δ$ can
-  be found in the toolbox \cref{section:background}.
+be found in the toolbox in \cref{section:background}.
 Similarly, any fixed sequence of push and pop
   operations on the stack can be conducted within a \Java
   transition function:
@@ -173,7 +172,7 @@ Let~$k^*$ be the number
   until~$t$ will be consumed from the input.
 \end{Definition}
 
-The cases~$k' > 0$ and~$k^*$ are not rarities.
+The cases~$k' > 0$ and~$k^* > 0$ are not rarities.
 For example, let us concentrate on the grammar
   depicted in \cref{figure:running}.
 This grammar, inspired by the prototypical
