@@ -79,7 +79,7 @@ Usage example of fluflu is depicted at \cref{figure:fluflu}.
   \caption{\label{figure:fluflu}
     Usage example for fluflu, generation a fluent
     api for the regular expression~$a^*$}
-    \javaInput[minipage,left=-2ex]{fluflu.example.listing} 
+    \javaInput[minipage,left=-4ex]{fluflu.example.listing} 
 \end{figure}
   
 The code excerpt in~\cref{figure:fluflu} defines a single stated FSA using fluflu.
@@ -98,49 +98,107 @@ Although fluent API generation was ``achieved'', this example has many flaws, so
 \end{enumerate}
 
 Since fluent APIs are neat to read and use, 
- and in order to solve our first issue, we would like a designated fluent API
- to design fluent APIs with.
-Consider for example, the case of SOME EXAMPLE.
-Defining the fluent API of THE EXAMPLE could be made intuitive and concise 
-  as in the following excerpt:
+  and in order to solve the issues that rose with fluflu, 
+  we would like a designated fluent API to design fluent APIs with.
 
-\begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{../Fragments/EXAMPLE-example.fragment}}⏎
-\end{quote}
+In order to demonstrate the concept, first consider the fragment SQL queries
+language defined in \cref{figure:sql-bnf}.
 
-In the excerpt, we see how can such designated API be used to define fluent
-APIs in terms of BNFs (or context-free grammars).  This excerpt provides
-insight to solving all the issues that rose with fluflu.  First, the code for
-defining the BNF is easily read, and very intuitive to write (given no operator
-overloading), second, defining the API by BNF is by all means simpler than
-defining automated machines and their transition functions.  Lastly, BNFs allow
-the fluent API designer much more freedom in API design (in terms of
-expressiveness), considering that programming languages themselves are mostly
-defined by BNFs (or the equivalent EBNF).
+\begin{figure}[ht]
+  \caption{\label{figure:sql-bnf}
+    A BNF for a fragment of SQL select queries.
+  }
+  \begin{Grammar}
+    \begin{aligned}
+      \<Query> & \Derives \cc{select()} \<Quant>\~\cc{from(Table.\kk{class})} \<Where> \hfill⏎
+      \<Quant> & \Derives \cc{all()} \hfill \\ 
+               & \| \cc{columns(Column[].\kk{class})} \hfill⏎
+      \<Where> & \Derives \cc{where()} \cc{column(Column.\kk{class})} \<Operator> \hfill⏎ 
+          & \|ε \hfill \\
+      \<Operator> & \Derives \cc{equals(Expr.\kk{class})}\hfill⏎
+          & \| \cc{greaterThan(Expr.\kk{class})} \hfill⏎
+          & \|\cc{lowerThan(Expr.\kk{class})} \hfill⏎
+    \end{aligned}
+  \end{Grammar}
+\end{figure}
 
-Except for the API required for the calls to~\cc{derive($\cdot$)}, \cc{to($\cdot$)}, \cc{and($\cdot$)} etc.,
-  the definition of SOME TERMINALS and SOME NONTERMINALS is also required.
-  This can be done by defining two \Java enums, one for the nonterminals (also reffed as variables) 
-  and on for the terminals (also referred as input symbols), for the current example we would define
+
+Defining a fluent API for this language could be made 
+intuitive and concise as shown in \cref{figure:sql-bnf-java}.
+
+\begin{figure}[ht]
+  \caption{\label{figure:sql-bnf-java}
+    A \Java code excerpt defining the BNF specification of the fragment SQL
+    language defined in \cref{figure:sql-bnf}.}
+  \javaInput[minipage,width=\linewidth,left=-6ex]{sql.bnf.listing}
+\end{figure}
+
+\cref{figure:sql-bnf-java} defines the details of the fluent API we want.
+The definitions of the derivation rules are read in English as one would
+  read the rule from the grammatical definition in \cref{figure:sql-bnf}.
+
+The excerpt shows how can a designated API can be used to define fluent
+  APIs in terms of BNFs (or context-free grammars), in addition it provides
+  insight to solving all three issues that appeared with fluflu.
+
+First, the code
+  in \cref{figure:sql-bnf-java} is intuitive to write, easily read, and type safe.
+The other two issues are solved by defining the API using a BNF, as it better
+  conforms with design of DSLs (the connection between fluent APIs and DSLs is
+  discussed later in this section) and provides the designer with a much
+  expressive tool then regular languages (the glass ceiling of fluflu).
+
+Except for the API required for the calls to~\cc{derive($\cdot$)},
+  \cc{to($\cdot$)}, \cc{and($\cdot$)} etc., the definition of terminals such as
+  \cc{select}, \cc{from}, \cc{all}, and nonterminals such as \cc{Query},
+  \cc{Where}, \cc{Operator}, is also required.
+The definition of these is possible by defining two \Java enums, one for the
+nonterminals (also reffed as variables) and one for the terminals (also referred
+as input symbols), for the current example we would define the type \cc{SQLTerminals}
+  as:
   
 \begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{../Fragments/TERMINALS-example.fragment}}⏎
+  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.terminals.listing}
 \end{quote}
 
- for the terminals and 
+And for the nonterminals we would define the enum type \cc{SQLNonTerminals} as:
 
 \begin{quote}
-  \parbox[c]{53ex}{\javaInput[]{../Fragments/EXAMPLE-example.fragment}}⏎
+  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.nonterminals.listing}
 \end{quote}
 
-for the nonterminals.
+The \cc{BNFBuilder} class receives two parameters in the constructor, being the enums
+  of the terminals and nonterminals.
+To improve the type safeness of the API the types implement the base classes 
+  \cc{Terminal} and \cc{NonTerminal} accordingly.
 
-UNLUCKILY for fluflu,  the language of all regular expressions is not 
-regular (since regular expressions use parenthesizing), and thus it 
-cannot generate a fluent API for defining ``regular'' fluent APIs.
+Finally, the code in \cref{figure:sql-bnf-java} allows the designers to annotate
+  each terminal with types that after generation will be the parameters of the 
+  methods constructing the fluent API.
 
-Luckily, the language of all BNFs is regular, thus in particular
-  on can use the fluent API generator to generate itself!
+A question rises after seeing fluflu and the designated fluent API shown in 
+  \cref{figure:sql-bnf-java}: how come the representation of simple languages
+  such as regular languages is so complex (as seen in fluflu) and the representation
+  of a more complex class of languages - the context-free language, is rather simple?
+As it turns out, two factors should be considered.
+
+The first is the complexity of representing the language.
+Regular language are mostly defined by regular expression, but the language of
+  all regular expressions is actually context-free and not regular!
+  (Intuitively, since regular expressions uses parenthesizing).  On the contrary,
+  the definition of context-free languages is usually done with a BNF (or
+  context-free grammar), and the language of all BNF is regular!
+Thus, in order to define a fluent API for generating regular languages, on needs a
+  context-free language fluent API, but in order to define a fluent API for
+  generating context-free languages, one only need a regular fluent API.
+Since fluflu ``know'' only how to generate fluent APIs for regular languages,
+  it cannot represent a fluent API for the generation of itself.
+
+The second factor is the theoretical and practical complexity of generating the
+  \Java types to support the fluent API.  As covered in \cref{section:example}
+  the generation of fluent APIs for regular languages is rather simple, while
+  the generation of those for context-free languages is the main challenge this
+  paper is confronting.
 
 \subsection{Tell about the computational model of \CC.}
 
