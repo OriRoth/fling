@@ -40,14 +40,45 @@ question of the computational power of the underlying language. In \Java, the pr
 is particularly interesting since in \Java (unlike e.g., \CC\cite{Gutterman}),
 the type system is not Turing complete.
 
-It was shown that for any reasonable fluent API language definition
-(specifically, one which can be recognized by an LR($k$) grammar for some $k \ge 0$),
-there exists some \Java implementation that realizes this language~\cite{GL}.
+It was shown recently that for any reasonable fluent API language definition
+(specifically, one which can be recognized by an LR($k$) grammar for some $k
+\ge 0$), there exists some \Java implementation that realizes this
+language~\cite{GL}.
 However, the theoretical result takes a toll of exponential blowup.
+(Specifically, the construction builds a determinsitic pushown automaton 
+whose size parameters, $g$ (number of stack symbols), and, $q$   (number of internal states), are polynomial in the size of the grammar
+    
+  
+  th
+  \item The number of stack symbols grow to~$Γᵏ⨉(Q²⨉Γ^{2k})^{Q⨉Γᵏ}$
+  
+  \begin{enumerate}
+  \item Gutterman
+  \item Reference to emulation of DFA\@. We can only do
+        a constant number of moves in each iteration.
+        \item~$aⁿbⁿcⁿ$
+  \item \Prolog Unification.
+  \item We investigated wildcards, intersection types and
+        (the rather limited) type inference of
+        \Java, but failed to employ these to increase the expressive power of
+        the computation model.  
+      \item Ecoop results.
+  \item Lina reduction
+\end{enumerate}
+
+Lina's reduction size :
+\begin{enumerate}
+  \item On the first step, we transform the grammar to a DPDA~$⟨Q,Γ⟩$ (LL(1) -
+    linear grow, LR(1) - exponential blowup)
+  \item For an arbitrary~$k$ the size of stack symbols turns to~$Γᵏ$.
+  \item The number of states grow to~$Q⨉Γᵏ$.
+\end{enumerate}
+
+
 
 The actual production of this implementation
 However, 
-The objective of this work was the production of \Fajita, an automatic tool for
+The objective of this work was the production of \Fajita, an automatic tool for
 converting 
 
 In this work we are interested in the problem of the actual 
