@@ -1,32 +1,4 @@
 %! TEX root = 00.tex
-All that remains is to explain how the \RLLp parser and its 
-  underlying JLS is implemented with \Java generics. 
-
-As it turns out, in addition to its application in runtime systems of
-dynamically scoped langauge, the JLS datastructure is just another
-name for the ``\emph{Jump Deterministic PushDown Automata}" (JDPDA), 
-a theoretical model used in the study of automata and formal languages.
-  
-Incidentally, this JDPS is the one used by Gil and Levy~\cite{Gil:Levy}
-
-
-
-
-\subsection{Toolkit summary}
-This toolkit presents how can one use the \Java compiler's
-type checker to do compile time computations, mostly know as
-‟meta-programming”.
-
-\subsubsection*{Unary functions}
-The first example presented in the toolkit is for encoding a
-basic unary function~$g:A→A$ for any finite set~$A$.
-
-It was shown how can a fluent API be simply generated
-to ensure that for any~$a,b∈A$,
-\[
-  \cc{a tmp = \kk{new} b().g();}
-\]
-will type check if and only if~$g(b)=a$.
 
 It was also shown that it could be made with generation
 a number of classes linearly proportionate to~$|A|$.

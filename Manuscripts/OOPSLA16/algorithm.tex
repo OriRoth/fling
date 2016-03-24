@@ -1,5 +1,29 @@
 %! TEX root = 00.tex
 
+The main effort of this section is in explaining the algorithm
+for converting an LL grammar into \RLLp, a parsing automaton equipped with a stack
+that has the unique quality of spending constant time on each read input.
+This realtime property is crucial to the implementation language recognizers
+with \Java types implementation.
+
+When this is achieved, all that remains is the ‟compilation”' of the \RLLp into
+\Java types.  The challenging part of this translation is dealing
+with the ``JLS'', a data structure on which the \RLLp relies. 
+
+This data structure has been used before, e.g., for efficient management of the
+runtime environment in programming languages with dynamic scoping, i.e.,
+languages such as \Lisp, in which name resolution is with respect to previous
+bindings made on the run time stack (disregarding the usual scoping and nesting
+rules in languages such as \Pascal). 
+
+Interestingly, the JLS datastructure is just another name for the ‟\emph{Jump
+Deterministic PushDown Automata}" (JDPDA), a theoretical model used in the
+study of automata and formal languages (see e.g.,~\cite{Lin:xx,Courcelle:77}).
+And, Incidentally, this JDPS is the one used by Gil and
+Levy~\cite{Gil:Levy:2016}, in their proof that the \Java type checker can
+recognize DCFG languages. Using their construction, the translation to \Java is
+rather mechanical.
+
 \subsection{The Realtime LL Parser}
 \label{section:realtime}
 The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation
@@ -362,15 +386,15 @@ irrespective of the length of the consolidated list.
 \end{algorithm}
 
 \subsection{Putting the Pieces Together}
-Generating an \RLLp for a given LL grammar requires providing to the 
+Generating an \RLLp for a given LL grammar requires providing to the
 built-in algorithm of the \RLLp, the specific information it needs to
 realize the given grammar.
 
-Reexamining the code of the \RLLp (\cref{algorithm:rll-parser}) 
-  we see that all such information is contained in
-  function~$\Delta$. 
-Therefore, the core of the \RLLp generator is 
-  \cref{algorithm:main} that computes~$\Delta$.
+Reexamining the code of the \RLLp (\cref{algorithm:rll-parser})
+we see that all such information is contained in
+function~$\Delta$.
+Therefore, the core of the \RLLp generator is
+\cref{algorithm:main} that computes~$\Delta$.
 
 \begin{algorithm}[H]
   \caption{\label{algorithm:main}
@@ -390,7 +414,7 @@ Therefore, the core of the \RLLp generator is
           \LET{$L$}{$\Function Consolidate(i,t)$}
           \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Push(L)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a push operation}
         \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
-          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in $\Delta$:}}}
+          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$\Delta$:}}}
           \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Jumps(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
         \FI
       \ENDFOR % for all terminals
@@ -398,7 +422,7 @@ Therefore, the core of the \RLLp generator is
   \end{algorithmic}
 \end{algorithm}
 
-Recall that we manage the ``$k^*$'' phenomena using jumps, and that the
+Recall that we manage the ‟$k^*$” phenomena using jumps, and that the
 jumps are realized by the sophisticated JLS data structure that drives the
 \RLLp.
 
@@ -406,16 +430,16 @@ The contract between the \RLLp and its generator is that function~$\Delta$
 supplies the dictionaries that need to be pushed (and later jumped to)
 by the JLS.
 
-This information is retrieved by the \RLLp from the $\Delta$ table,
-and used and $\Function push(\cdot)$ed accordingly into the JLS.
+This information is retrieved by the \RLLp from the~$\Delta$ table,
+and used and~$\Function push(·)$ed accordingly into the JLS.
 Only with the aide of this information, the underlying JLS can support the
 constant-time jumps (lines 5 and 25).
 
 For this reason, \cref{algorithm:main} consults function~$\Function Jumps(·)$
-to compute this dictionary storing it in the $\Delta$ table.
+to compute this dictionary storing it in the~$\Delta$ table.
 
 Another part of the contract between the parser and its generator deals
-with the~``$k'$'' phenomena.  The generator invokes function~$\Function
+with the~‟$k'$” phenomena. The generator invokes function~$\Function
 Consolidate(·)$ (\cref{algorithm:consolidate}) to
-compute $L$, the consolidated list of push operations.  List $L$ will be later
-read by \RLLp (line 18 in \cref{algorithm:rll-parser}).  
+compute~$L$, the consolidated list of push operations. List~$L$ will be later
+read by \RLLp (line 18 in \cref{algorithm:rll-parser}).
