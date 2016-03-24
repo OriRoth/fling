@@ -226,7 +226,7 @@ Jump operations are all at the responsibility of the JSM,
 which maintains the information required to support these.
 But, in order to be able to do this, the generator must
 provide the \RLLp with the contents dictionary~$D$ that should be pushed to
-to~$S₁$, the~$Dᵢ$i, together with the push to~$S₀$ (lines~15 and~22 in
+to~$S₁$, the~$dᵢ$s, together with the push to~$S₀$ (lines~15 and~22 in
 \cref{algorithm:rll-parser}).
 
 In particular, the \RLLp generator must compute for each
@@ -360,12 +360,6 @@ irrespective of the length of the consolidated list.
           it are no longer need.
   \end{itemize}
 \end{algorithm}
-
-The idea is that given an item~$X::=α·Yβ$ and input symbol~$t∈Σ$, the algorithm
-iteratively applies the operations the \RLLp would, keeping in an auxiliary
-stack the state of the stack as it would in a normal run. Since~$t∈\Function
-First(Yβ)$, we know the auxiliary stack's height will never go below 0. The
-stack is returned when we find the terminal in the list of derivations.
 
 \subsection{Putting the Pieces Together}
 Generating an \RLLp for a given LL grammar requires providing to the 
