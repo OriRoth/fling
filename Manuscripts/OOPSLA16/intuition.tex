@@ -446,8 +446,8 @@ The parser generator basically fills this table, leaving the
 \begin{algorithm}
   \caption{\label{algorithm:generation}
   An algorithm for filling the prediction table~$\Function predict(A,b)$ for some
-    grammar~$G =⟨Σ,Ξ,P⟩$ and end-of-input symbol~$\$∉Σ$,
-    where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
+    grammar~$G =⟨Σ,Ξ,P⟩$ and an end-of-input symbol~$\$∉Σ$,
+    and where~$A∈Ξ$ and~$b∈Σ∪❴\$❵$.}
     \begin{algorithmic}
     \FOR[for each grammar rule]{$r∈P$}
       \LET{$A ::=α$}{$r$}\COMMENT{break~$r$ into its RHS ＆ LHS}

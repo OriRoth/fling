@@ -242,104 +242,123 @@ respect to~$i$, to~$t$'s jump value.
   the dictionary~$d$ mapping each token~$t$ that
     triggers a jump with respect to~$i$, to~$t$'s jump value.
   }
-  \LET{$[A::=α·Y₀…Yₙ]$}{$i$} \COMMENT{break~$i$ into its components}
+  \LET{$[A::=α·Y₁…Yₙ]$}{$i$} \COMMENT{break~$i$ into components}
   \LET{$d$}{$∅$} \COMMENT{initialize return variable}
-  \FOR[for all symbols in suffix of~$i$]{$j$ in~$0…n$}
-    \IF[continue to build~$d$?]{not~$\Function Nullable(Y₁…Yⱼ)$}
+  \FOR[for all symbols in suffix of~$i$]{$j = 1,…,n$}
+  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₁…Y_{j-1})$}
       \BREAK
     \FI
-    \FOR[symbols that might cause jump in~$Y₀$]{$t∈\Function First(Yⱼ)$}
-      \IF[is this the first update for~$t$?]{$d(t)=⊥$}
-      \STATE{$d(t) = [A::=αY₀…·Yⱼ…Yₙ]$} \COMMENT{update~$f(t)$}
+    \FOR[symbols that might cause jump in~$Y₁$]{$t∈\Function First(Yⱼ)$}
+    \IF[\nth{1} update of key~$t$ in dictionary $d$?]{$d(t)=⊥$}
+      \STATE{$d(t) = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{update~$d(t)$}
       \FI
-    \ENDFOR % all symbols in first
-  \ENDFOR % all symbol in suffix
-  \RETURN{$f$}
+    \ENDFOR % Symbols
+  \ENDFOR
+  \RETURN{$d$}
   \end{algorithmic}
 \end{algorithm}
 
-Let~$β= Y₀…Yₙ$ be the suffix denoted by~$i$'s dot.
+Let~$β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
 Then, for each terminal~$t∈Σ$,
 function~$\Function Jumps(i)$ determines the shortest
-prefix~$Y₀…Y_{j-1}$ of~$β$ which is nullable
+prefix~$Y₁…Y_{j-1}$ of~$β$ which is nullable
 and such that~$k ∈ \Function First(Yⱼ)$.
 The following line of thought explains the rationale.
 
-Assume that~$Y₀…Y_{j-1}$ is nullable and
-  that~$t∈\Function First(Yⱼ)$, for some~$t\inΣ$.
+Assume that~$Y₁…Y_{j-1}$ is nullable and
+that~$t∈\Function First(Yⱼ)$, for some~$t\inΣ$.
 Then, when the \RLLp is at states described by~$i$ and~$t$
-  is seen, the \RLLp should conclude that~$Y₀…Y_{j-1}\stackrel * ⇒ε$
-  and jump forward to the point of the parsing process just before
-  seeing~$Yⱼ$.
+is seen, the \RLLp should conclude that~$Y₁…Y_{j-1}\stackrel * ⇒ε$
+and jump forward to the point of the parsing process just before
+seeing~$Yⱼ$.
 
 This point in parsing is exactly the item obtained
-  from~$i$ by moving the dot to just before~$Yⱼ$.
+from~$i$ by moving the dot to just before~$Yⱼ$.
 
 One subtlety applies though.
 In the case that the assumption holds for
-  both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
-  two alternatives to choose from:
-  \begin{itemize}
-      \item~$Y₀…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,~$Yⱼ \stackrel * ⇒ tγ$
-      \item~$Y₀…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,~$Y_{j'} \stackrel * ⇒ tγ'$
-    \end{itemize}
+both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
+two alternatives to choose from:
+\begin{itemize}
+  \item~$Y₁…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,~$Yⱼ \stackrel * ⇒ tγ$
+  \item~$Y₁…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,~$Y_{j'} \stackrel * ⇒ tγ'$
+\end{itemize}
 Recalling that an \LLp pushes
-  stack symbols in reverse order and that \RLLp emulates its behavior, we can
-  see that~$Y_{j'}$ is never given the opportunity to derive~$t$.
+stack symbols in reverse order and that \RLLp emulates its behavior, we can
+see that~$Y_{j'}$ is never given the opportunity to derive~$t$.
 
 \subsection{Consolidating Push Operations }
-Recalling \cref{substitution-factor}, capturing the notion of 
-repeated substitution, we realize that the \RLLp-generator 
-  must consolidate $k'$ push operations into one. 
+Recalling \cref{substitution-factor}, capturing the notion of
+repeated substitution, we realize that the \RLLp-generator
+must consolidate~$k'$ push operations into one.
 
 Function~$\Function Consolidate(i,t)$ in \cref{algorithm:consolidate}
-  returns the consolidated list of consecutive push operations conducted
-  by the \RLLp parser in state $i$ and encounters terminal $t$. 
-This is achieved by figuring out, ahead-of-time, 
-  the operations of the \LLp. 
+returns the consolidated list of consecutive push operations conducted
+by the \RLLp parser in state~$i$ and encounters terminal~$t$.
+This is achieved by figuring out, ahead-of-time,
+the operations of the \LLp.
 
-Function $\Function Consolidate(\cdot,\cdot)$ is invoked by the \RLLp generator
-  to pre-compute the consolidated list of push operations for all relevant
-  item-token pairs. 
-At runtime, the \RLLp will push the consolidated lists in constant time, 
+Function~$\Function Consolidate(·,·)$ is invoked by the \RLLp generator
+to pre-compute the consolidated list of push operations for all relevant
+item-token pairs.
+At runtime, the \RLLp will push the consolidated lists in constant time,
 irrespective of the length of the consolidated list.
 
 \begin{algorithm}[htb]
   \caption{\label{algorithm:consolidate}
-Function~$\Function Consolidate(i,t)$ pre-computing $L$, the list of push
-operations that happen when an item~$i$ at the top of an \RLLp's stack
-encounters terminal~$t∈Σ∪❴\$❵$ on the input.
+    Function~$\Function Consolidate(i,t)$ pre-computing~$L$, the list of push
+    operations that happen when an item~$i$ at the top of an \RLLp's stack
+    encounters terminal~$t∈Σ∪❴\$❵$ on the input.
   }
-
   \begin{algorithmic}
     \STATE{$[X::=α·Yβ] ← i$} \COMMENT{break~$i$ into its components}
-    \LET{$L$}{$∅$} \COMMENT{initialize output stack}
+    \LET{$L$}{$∅$} \COMMENT{initialize return value}
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
-      \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
       %\STATE{$\Function print(r)$} \COMMENT{useful for parsing}
-      \STATE{$\Function push(S,[X ::=αY·β])$}\COMMENT{advance the item}
-      \STATE{$B::=X₀…Xₘ←r$} \COMMENT{break~$r$ into its components}
-      \IF[$δ$ returned an~$ε$-rule]{$X₀…Xₘ=ε$}
-        \WHILE[pop all parsed rules]{$\Function parsed(\Function peek(S))$}
-          \STATE{$\Function pop(S)$}
+      \STATE{$\Function push(L,[X ::=αY·β])$}\COMMENT{advance the item}
+      \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
+      \STATE{$[B::=X₁…Xₘ]←r$} \COMMENT{break~$r$ into components}
+      \IF[$δ$ returned an~$ε$-rule]{$X₁…Xₘ=ε$}
+        \WHILE[pop all exhausted rules]{$\Function exhausted(\Function peek(L))$}
+          \STATE{$\Function pop(L)$}
         \ENDWHILE
       \ELSE[$δ$ returned a non~$ε$-rule]
-        \STATE{$\Function push(S,r)$} \COMMENT{we now turn to parse~$r$}
+        \STATE{$\Function push(L,r)$} \COMMENT{we now turn to parse~$r$}
       \FI
       \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{break~$i$ into its components}
     \ENDWHILE
-    \STATE{$\Function push(S,[X ::=αY·β])$} \COMMENT{$Y$ must be~$t$}
+    \STATE{$\Function push(L,[X ::=αY·β])$} \COMMENT{$Y$ must be~$t$}
     \RETURN{$L$} \COMMENT{return the items to push}
   \end{algorithmic}
   \vspace{0.3ex}
   \hrule
   \vspace{0.3ex}
   \scriptsize
-  \begin{enumerate}
-    \item function~$\Function parsed(i)$ receives an item as input
-          and returns whether its ‟$·$” is at the end of rule,
-          i.e., the rule is fully parsed.
-  \end{enumerate}
+  \begin{itemize}
+    \item List~$L$ is used in the main loop of the code to emulate the
+          runtime stack of the generated \RLLp, and thus, pre-compute the net effect
+          of stack operations that take place in
+          configuration~$⟨i,t⟩$ until~$t$ is consumed.
+          \par
+          Accordingly, the emulation applies stack
+          functions~$\Function pop(·)$ and~$\Function peek(·)$
+          as well as operation~$\Function push(·,·)$ on the list~$L$,
+          as if it were a stack.
+          \par
+          Calling~$\Function (·)$ on the emulation stack~$L$ at the time an
+          \RLLp is generated, obviates the need for the \RLLp to~$\Function
+          peek()$, at runtime, into its own stack.
+    \item
+          The algorithm relies on function~$\Function exhausted(i)$ that returns
+          true for an item~$i$ when its dot is in its right most position,
+          i.e., the item represents times during parsing in which all
+          right hand side symbols of the item's rule have been parsed.
+          \par
+          Figuratively, an item~$i$ is exhausted right after the rule's body
+          have been seen in full, and the item ‟waits” for the \RLLp to take
+          the stack action appropriate when the rule reduces, and items representing
+          it are no longer need.
+  \end{itemize}
 \end{algorithm}
 
 The idea is that given an item~$X::=α·Yβ$ and input symbol~$t∈Σ$, the algorithm
@@ -348,27 +367,27 @@ stack the state of the stack as it would in a normal run. Since~$t∈\Function
 First(Yβ)$, we know the auxiliary stack's height will never go below 0. The
 stack is returned when we find the terminal in the list of derivations.
 
-
 \subsection{Main Algorithm}
 The section uses the \RLLp described in~\cref{section:realtime} to solve the
 problems presented in~\cref{section:intuition} and encode it using \Java
 Generics.
 
-
 \begin{algorithm}
-    \caption{\label{algorithm:construction-delta}
-      Algorithm for construction of~$Δ$.
-      For each item and terminal it computes the required operation.
-    }
+  \caption{\label{algorithm:construction-delta}
+    Compute contents of prediction table
+    (transition function) entry~$Δ[i,t]$
+    for all item~$i∈I$, token~$t ∈Σ$ pairs
+    for which this entry is defined.
+  }
   \begin{algorithmic}
     \FOR[for each item]{$i∈I$}
-    \LET{$[A::=Y₀…Y_{i-1}·Yᵢ…Yₘ]$}{$i$} \COMMENT{break~$i$}
-      \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
+    \LET{$[A::=α·Yβ]$}{$i$} \COMMENT{break~$i$ into components}
+      \IF[$Δ$ doesn't handle terminals]{$Y∈Σ$}
         \CONTINUE \COMMENT{handle next item.}
       \FI
       \FOR[calculate entry~${Δ[i,t]}$]{$t∈Σ$}
-        \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
-          \LET{$d$}{$\Function Consolidate(i,t)$} \COMMENT{use closure table}
+        \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yβ)$}
+          \LET{$d$}{$\Function Consolidate(i,t)$} \COMMENT{obtain jumps dictionary}
           \LET{$Δ[i,t]$}{$\Function Push(d)$} \COMMENT{a push operation}
           \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
           \LET{$Δ[i,t]$}{$\Function Jump(t)$} \COMMENT{a jump operation}
