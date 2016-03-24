@@ -1,5 +1,29 @@
 %! TEX root = 00.tex
 
+The main effort of this section is in explaining the algorithm
+  for converting  an LL grammar into a parsing automaton equipped with a stack that
+  has the unique quality of spending constant time on each read input. 
+This constant time property is crucial to question of implementing 
+  \Java types implementation.
+
+All that remains is to explain how the \RLLp parser together 
+  with the underlying JLS is compiled into \Java generics. 
+
+As it turns out, in addition to its application in runtime systems of
+dynamically scoped langauge, the JLS datastructure is just another
+name for the ``\emph{Jump Deterministic PushDown Automata}" (JDPDA), 
+a theoretical model used in the study of automata and formal languages.
+  
+Incidentally, this JDPS is the one used by 
+  Gil and Levy~\cite{Gil:Levy:2016}, in their proof that 
+  the \Java type checker can recognize DCFG languages. 
+The translation 
+  the translation to \Java is rather mechanical.
+
+Intuitively, we can say that 
+
+
+
 \subsection{The Realtime LL Parser}
 \label{section:realtime}
 The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation

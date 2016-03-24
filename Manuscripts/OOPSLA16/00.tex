@@ -31,13 +31,12 @@
 \section{Introduction}
 \input{aa}
 
-\paragraph{Outline.} \Cref{section:example} explains how \Fajita may serve the
-designer of a fluent API\@.
-Then, \Cref{section:background} discusses the core computational theory problem
-that \Fajita needs to solve: recognizing and parsing of formal languages within
-the framework of the limited abilities of \Java generics.  The language
-recognition algorithm that \Fajita implements is the subject of
-\cref{section:intuition}.  \Cref{section:zz} concludes.
+\paragraph{Outline.} \Cref{section:example} familiarizes the reader with
+techniques of converting a formal language specification into \Java types that
+realizes the fluent API defined by the language. \Cref{section:inuition} the is
+a reminder of LL parsing, and explains the difficulties of implementing it
+withing the \Java type-checking model.  The main algorithm is described in
+\cref{section:algorithm}.  \Cref{section:zz} concludes.
 
 \section{Type States and a Fluent API Example}
 \label{section:example}
@@ -47,7 +46,7 @@ recognition algorithm that \Fajita implements is the subject of
 \label{section:generalization}
 \input{generalization}
 
-\section{Intuition}
+\section{LL Parsing and Realtime Constraints}
 \label{section:intuition}
 \input{intuition}
 
@@ -55,10 +54,9 @@ recognition algorithm that \Fajita implements is the subject of
 \label{section:algorithm}
 \input{algorithm}
 
-\section{Compiling an \RLLp to \Java types}
-\label{section:background}
-\input{background}
-
+%\section{Compiling an \RLLp to \Java types}
+%\label{section:background}
+%\input{background}
 
 \section{Conclusions}
 \label{section:zz}
