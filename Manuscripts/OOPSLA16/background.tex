@@ -38,17 +38,14 @@ is linearly proportionate to~$|R|+|S|+|T|$.
 Advancing toward more complicated and infinite structures,
 a compile-time stack was introduced, to meet this end,
 \Java Generics was employed.
-It was shown, that for any finite set~$Γ$ of stack symbol
-a set of \Java types could be automatically generated,
-implementing operations~\textbf{pop$()$},and~\textbf{push$γ()$}
-for any~$γ∈Γ$.
-For any set of such operations~\cc{op$₁$…op$ₖ$} the sequence of calls\[
-\cc{Stack.empty.op$₁()$….op$ₖ()$;}
-\]
-will type check if and only if the stack was not pushed more
-than it was popped for any prefix.
-An~\textbf{top()} operation was also showed, that returns the type
-of the current top of the stack.
+It was shown, that for any finite set~$Γ$ of stack symbol a set of \Java types
+could be automatically generated, implementing
+operations~\textbf{pop$()$},and~\textbf{push$γ()$} for any~$γ∈Γ$ such that for
+any set of operations~\cc{op$₁$…op$ₖ$} the sequence of calls\[
+\cc{Stack.empty.op$₁()$….op$ₖ()$;} \] will type check if and only if the stack
+was not popped more than it was pushed for any prefix of calls.  A~\textbf{top()}
+operation was also showed, that returns the type of the current top of the
+stack.
 
 \subsubsection*{Peeping into the stack}
 Finally, a pattern-matching like example was shown,
