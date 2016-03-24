@@ -44,7 +44,6 @@ it.
 Just like the \LLp, the \RLLp is a stack automaton equipped with a prediction
 table, whose next action is a function (realized in the prediction table) of
 the next input symbol and the item present at the stack's top.
-token without consuming it.
 
 The \RLLp is initialized with the stack containing an item denoting the
 degenerate prefix of a rule for deriving the start symbol. In case there are
@@ -138,7 +137,7 @@ where~$dᵢ$,~$i=1…n$ is a (partial) map of the type~$Σ↛J$ ($Σ$ being our
 alphabet,~$dₙ$ being the top of the stack and~$d₁$ the deepest item in it).
 
 Sending query~$\Function get(t)$ to~$D$,~$t∈Σ$ returns the~$J$ value
-associated with~$t$ in in the top most (maximal~$i$) dictionary~$dᵢ$, which
+associated with~$t$ in the top most (maximal~$i$) dictionary~$dᵢ$, which
 satisfies~$t∈dᵢ$. The query returns~$⊥$ if~$t$ is not found in any of
 the~$dᵢ$s.
 
@@ -253,8 +252,8 @@ respect to~$i$, to~$t$'s jump value.
       \IF[is this the first update for~$t$?]{$d(t)=⊥$}
       \STATE{$d(t) = [A::=αY₀…·Yⱼ…Yₙ]$} \COMMENT{update~$f(t)$}
       \FI
-    \ENDFOR
-  \ENDFOR
+    \ENDFOR % all symbols in first
+  \ENDFOR % all symbol in suffix
   \RETURN{$f$}
   \end{algorithmic}
 \end{algorithm}
@@ -374,7 +373,7 @@ Generics.
           \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
           \LET{$Δ[i,t]$}{$\Function Jump(t)$} \COMMENT{a jump operation}
         \FI
-      \ENDFOR
-    \ENDFOR
+      \ENDFOR % for all terminals
+    \ENDFOR % for all items
   \end{algorithmic}
 \end{algorithm}
