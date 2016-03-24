@@ -305,7 +305,7 @@ Function $\Function Consolidate(\cdot,\cdot)$ is invoked by the \RLLp generator
 At runtime, the \RLLp will push the consolidated lists in constant time, 
 irrespective of the length of the consolidated list.
 
-\begin{algorithm}[H]
+\begin{algorithm}[htb]
   \caption{\label{algorithm:consolidate}
 Function~$\Function Consolidate(i,t)$ pre-computing $L$, the list of push
 operations that happen when an item~$i$ at the top of an \RLLp's stack
@@ -357,22 +357,22 @@ Generics.
 
 
 \begin{algorithm}
-  \begin{algorithmic}
     \caption{\label{algorithm:construction-delta}
       Algorithm for construction of~$Δ$.
       For each item and terminal it computes the required operation.
     }
-    \FOR[for each item]{$i∈ \Function Items()$}
-    \STATE{$[A::=Y₀…Y_{i-1}·Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
+  \begin{algorithmic}
+    \FOR[for each item]{$i∈I$}
+    \LET{$[A::=Y₀…Y_{i-1}·Yᵢ…Yₘ]$}{$i$} \COMMENT{decompose~$i$}
       \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
         \CONTINUE \COMMENT{handle next item.}
       \FI
       \FOR[calculate entry~$\Function Δ(i,t)$]{$t∈Σ$}
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
           \LET{$l$}{$\Function Consolidate(i,t)$} \COMMENT{use closure table}
-          \STATE{$\Function Δ(i,t)= \Function Push(l)$} \COMMENT{a push operation}
+          \LET{$\Function Δ(i,t)$}{$\Function Push(l)$} \COMMENT{a push operation}
           \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
-          \STATE{$\Function Δ(i,t)= \Function Jump(t)$} \COMMENT{a jump operation}
+          \LET{$\Function Δ(i,t)$}{$\Function Jump(t)$} \COMMENT{a jump operation}
         \FI
       \ENDFOR
     \ENDFOR
