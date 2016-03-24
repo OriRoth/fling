@@ -39,7 +39,7 @@ public class DC2 {
         .start(A) //
         
         .derive(A).to(A).and(a).or(a) //
-        .finish();
+        .go();
     return bnf;
   }
 }

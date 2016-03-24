@@ -77,7 +77,7 @@ public class BNFBootstrap {
         /*                             */.or(and, Terminal.class, ClassEllipsis.class) //
         /*                             */.orNone() //
         .derive(Footer)/*            */.to(go)//
-        .finish();
+        .go();
     return b;
   }
 }

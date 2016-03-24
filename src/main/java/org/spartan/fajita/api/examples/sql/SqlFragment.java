@@ -45,7 +45,7 @@ public class SqlFragment {
         .derive(WHERE).to(where).and(EXPRESSION) //
         .derive(EXPRESSION).to(column).and(OP).and(literal) //
         .derive(OP).to(equals).or(geq).or(leq) //
-        .finish();
+        .go();
     System.out.println(b);
   }
 }

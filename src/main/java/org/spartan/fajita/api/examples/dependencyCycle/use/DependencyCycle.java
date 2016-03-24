@@ -42,7 +42,7 @@ public class DependencyCycle {
         .start(A) //
         .derive(A).to(B).and(d).or(a) //
         .derive(B).to(A).and(e) //
-        .finish();
+        .go();
     return bnf;
   }
 }

@@ -38,7 +38,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
         .derive(A).to(a) //
         .derive(B).to(b) //
         .derive(C).to(c) //
-        .finish();
+        .go();
     jlr = new JLRRecognizer(bnf);
     Main.lrAutomatonVisualisation(bnf);
   }

@@ -54,7 +54,7 @@ public class SQLFrag {
       .derive(Operator).to(equals,Expr.class)
                        .or(greaterThan,Expr.class)
                        .or(lowerThan,Expr.class)
-      .finish();
+      .go();
     // end{BNF}
   }
   // begin{usage}

@@ -50,7 +50,7 @@ import org.spartan.fajita.api.sll.SLLParser;
         .derive(B).to(D) //
         .derive(C).to(c) //
         .derive(D).toNone() //
-        .finish();
+        .go();
     sll = new SLLParser(bnf);
   }
   @Test public void test() {

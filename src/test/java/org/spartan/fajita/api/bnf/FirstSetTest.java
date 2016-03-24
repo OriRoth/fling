@@ -35,7 +35,7 @@ public class FirstSetTest {
         .derive(NT.C).to(NT.AB) //
         .derive(NT.D).to(Term.d) //
         .derive(NT.REDUNDANT).to(NT.REDUNDANT) //
-        .finish();
+        .go();
     parser = new LRParser(bnf);
   }
   @Test public void testTerminal() {

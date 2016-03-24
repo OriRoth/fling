@@ -38,7 +38,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
         .derive(A).to(a) //
         .derive(B).to(b) //
         .derive(C).to(c) //
-        .finish();
+        .go();
     JLRRecognizer jlr = new JLRRecognizer(bnf);
     test(jlr, "ab", false);
     test(jlr, "a", false);
@@ -52,7 +52,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
         .derive(B).to(B).and(b).orNone() // Left recursive
         .derive(A).to(a).and(A).orNone() // Right recursive
         // .derive(C).to(c) //
-        .finish();
+        .go();
     ab_list_jlr = new JLRRecognizer(bnf);
     Main.lrAutomatonVisualisation(bnf);
   }

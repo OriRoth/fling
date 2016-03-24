@@ -29,7 +29,7 @@ public class BalancedParenthesis {
         .start(B) //
         .derive(B).to(B).and(lp).and(B).and(rp) //
         /*        */.orNone()
-        .finish();
+        .go();
     return bnf;
   }
 }

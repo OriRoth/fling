@@ -37,7 +37,7 @@ public class AutomatonCycles {
         .derive(A).to(a).and(A) //
         /* */.or(a) //
         .derive(B).to(b) //
-        .finish();
+        .go();
     return bnf;
   }
 }

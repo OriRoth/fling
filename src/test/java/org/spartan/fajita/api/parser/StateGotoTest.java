@@ -37,7 +37,7 @@ public class StateGotoTest {
         .start(NT.S) //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
-        .finish();
+        .go();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
     assertFalse(initialState.isLegalTransition(Term.c));
@@ -50,7 +50,7 @@ public class StateGotoTest {
         .start(NT.S) //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
-        .finish();
+        .go();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
     assertTrue(initialState.isLegalTransition(Term.a));
@@ -65,7 +65,7 @@ public class StateGotoTest {
         .start(NT.S) //
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a).and(Term.c) //
-        .finish();
+        .go();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
     assertTrue(initialState.isLegalTransition(NT.A));
@@ -80,7 +80,7 @@ public class StateGotoTest {
         .start(NT.S) //
         .derive(NT.S).to(Term.a).and(NT.A) //
         .derive(NT.A).to(Term.b).and(Term.c) //
-        .finish();
+        .go();
     LRParser parser = new LRParser(bnf);
     State initialState = parser.getStates().get(0);
     State nextState = initialState.goTo(Term.a);

@@ -51,7 +51,7 @@ public class BinaryExpressionsUse {
         .derive(OR).to(EXPRESSION).and(or).and(EXPRESSION)//
         .derive(AND).to(EXPRESSION).and(and).and(EXPRESSION)//
         .derive(NOT).to(not).and(EXPRESSION)//
-        .finish();
+        .go();
     System.out.println(b);
   }
 }
