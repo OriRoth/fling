@@ -36,7 +36,7 @@ public class StatesSetTest {
         .start(NT.S)//
         .derive(NT.S).to(NT.A).and(Term.b) //
         .derive(NT.A).to(Term.a) //
-        .finish();
+        .go();
     statesSet = new LRParser(bnf).getStates();
   }
   @Test public void testNumberOfStates() {

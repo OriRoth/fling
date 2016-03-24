@@ -139,6 +139,6 @@ public class Main {
         .derive(NT.S).to(NT.A).and(NT.B) //
         .derive(NT.B).to(NT.B).and(Term.b).orNone() // Left recursive
         .derive(NT.A).to(Term.a).and(NT.A).orNone() // Right recursive
-        .finish();
+        .go();
   }
 }

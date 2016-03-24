@@ -92,7 +92,7 @@ public class JsonObject {
         .derive(ELEMENT).to(add) //
         .derive(OBJECT_ELEMENT).to(addObject).and(OBJECT) //
         .derive(ARRAY_ELEMENT).to(addArray).and(ARRAY) //
-        .finish();
+        .go();
     System.out.println(b);
   }
 }

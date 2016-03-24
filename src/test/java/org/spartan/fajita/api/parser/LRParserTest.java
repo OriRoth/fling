@@ -44,7 +44,7 @@ public class LRParserTest {
         .derive(NT.T).to(NT.F) //
         .derive(NT.F).to(Term.lp).and(NT.E).and(Term.rp) //
         .derive(NT.F).to(Term.id) //
-        .finish();
+        .go();
     parser = new LRParser(bnf);
   }
   @Test public void testActionTableGoto() {
@@ -64,7 +64,7 @@ public class LRParserTest {
         .derive(NT2.A).to(NT2.S) //
         .derive(NT2.B).to(Term.id) //
         .derive(NT2.C).to(Term.id) //
-        .finish();
+        .go();
     new LRParser(bnf2);
   }
   @SuppressWarnings({ "static-method",
@@ -76,7 +76,7 @@ public class LRParserTest {
         .derive(NT2.A).to(Term.id) //
         .derive(NT2.B).to(Term.id) //
         .derive(NT2.C).to(Term.id) //
-        .finish();
+        .go();
     new LRParser(bnf2);
   }
 }

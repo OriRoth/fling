@@ -100,7 +100,7 @@ public class BNFBuilder {
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
-    @SuppressWarnings("synthetic-access") public BNF finish() {
+    @SuppressWarnings("synthetic-access") public BNF go() {
       return BNFBuilder.this.finish();
     }
     /**
@@ -175,9 +175,9 @@ public class BNFBuilder {
       symbols.add(new Verb(term.name(), type));
       return this;
     }
-    @Override public BNF finish() {
+    @Override public BNF go() {
       addRuleToBNF();
-      return super.finish();
+      return super.go();
     }
   }
 

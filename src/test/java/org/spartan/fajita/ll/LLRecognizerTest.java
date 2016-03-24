@@ -45,7 +45,7 @@ import org.spartan.fajita.api.ll.LLRecognizerGenerator;
         .start(S) //
         .derive(F).to(x) //
         .derive(S).to(F) //
-        .or(lp).and(S).and(plus).and(F).and(rp).finish();
+        .or(lp).and(S).and(plus).and(F).and(rp).go();
     ll = new LLRecognizer(bnf);
   }
   

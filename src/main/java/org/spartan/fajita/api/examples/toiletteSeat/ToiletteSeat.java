@@ -64,7 +64,7 @@ public class ToiletteSeat {
     .derive(Action) //
       .to(urinate) //
       .or(defecate) //
-    .finish(); 
+    .go(); 
     return bnf;
   }
 }

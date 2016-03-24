@@ -39,7 +39,7 @@ public class StrongerThanLALR {
         /* */.or(b).and(E).and(d) //
         .derive(F).to(e) //
         .derive(E).to(e) //
-        .finish();
+        .go();
     return bnf;
   }
 }

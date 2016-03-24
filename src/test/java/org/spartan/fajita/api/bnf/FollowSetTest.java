@@ -38,7 +38,7 @@ public class FollowSetTest {
         .derive(NT.AB).to(NT.A).and(NT.B) //
         .derive(NT.C).to(Term.c) //
         .derive(NT.UNREACHABLE).to(Term.d) //
-        .finish();
+        .go();
     parser = new LRParser(bnf);
   }
   @Test public void testStartFollowedBy$() {
@@ -53,7 +53,7 @@ public class FollowSetTest {
         .derive(NT.AB).to(NT.A).and(NT.B) //
         .derive(NT.C).to(Term.c)//
         .derive(NT.UNREACHABLE).to(NT.UNREACHABLE) //
-        .finish();
+        .go();
     parser = new LRParser(b);
     assertThat(expectedSet(SpecialSymbols.$), equalTo(parser.followSetOf(NT.S)));
     assertTrue(parser.followSetOf(NT.A).contains(SpecialSymbols.$));

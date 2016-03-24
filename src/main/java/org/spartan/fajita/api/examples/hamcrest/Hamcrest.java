@@ -51,7 +51,7 @@ public class Hamcrest {
         // /* */.or(any_of).and(MATCHERS) //
         // .derive(MATCHERS).to(MATCHER)//
         // /* */.or(MATCHER).and(MATCHERS) //
-        .finish();
+        .go();
     return bnf;
   }
 }
