@@ -13,12 +13,13 @@ The discussion proceeds to the observation
   within these limitations.
 
 Building on all these, \Cref{section:generation} can
-  make the intuitive introduction to the main algorithm.
-To this end, we revise here the classical algorithm~\cite{Lewis:66}. 
-for converting an LL grammar (in writing LL, we, here and henceforth really mean LL(1)),
-  and explain
-  how it is modified to generate a recognizer executable
-  on the computational model of \Java generics.
+make the intuitive introduction to the main algorithm.
+To this end, we revise here the classical
+algorithm~\cite{Lewis:66} for converting an LL grammar
+(in writing LL, we, here and henceforth really mean
+LL(1)), and explain how it is modified to generate a
+recognizer executable on the computational model of
+\Java generics.
 
 \label{section:essentials}
 The traditional \emph{\textbf{LL} \textbf Parser} (\LLp)
@@ -35,7 +36,7 @@ The actual operation of the automaton is by executing in loop the step
   The iterative step of an \LLp}
   \begin{algorithmic}[1]
       \LET{$X$}{\Function pop()}\COMMENT{what's next to parse?}
-      \IF[ancipate to match terminal~$X$]{$X∈Σ$}
+      \IF[anticipate to match terminal~$X$]{$X∈Σ$}
         \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[terminal just read was the anticipated~$X$]
@@ -121,7 +122,7 @@ Superficially, the algorithm appears to be doing a constant amount
   of work for each input symbol.
 A little scrutiny falsifies such a conclusion.
 
-In the case~$R=X::=Y$,~$Y$ % MAYBE WE SHOULD CHANGE THIS TO AN EXAMPLE WITH PARTIALLY NULLABLE PREFIX
+In the case~$R=X::=Y$,~$Y$ 
   being a nonterminal, the algorithm will conduct
   a~$\Function pop(·)$ to remove~$X$ and a~$\Function push(·)$
   operation for~$Y$ before consuming a terminal from the input.
@@ -362,7 +363,7 @@ In our example, nonterminal \<Procedure> has only one derivation
   rule, which begins with the terminal \cc{procedure}.
 Thus, all derivations of \<Procedure> must begin with terminal
   \cc{procedure} and the~$\Function First(·)$ set of \<Procedure> is
-  containts only~\cc{procedure}, as can be seen
+  contains only~\cc{procedure}, as can be seen
   in~\cref{table:running-first-follow}.
 The~$\Function Follow(·)$ set of \<Procedure> contains two
   terminals.
