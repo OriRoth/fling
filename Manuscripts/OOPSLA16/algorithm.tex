@@ -3,7 +3,7 @@
 \subsection{The Realtime LL Parser}
 \label{section:realtime}
 The \emph{\textbf Realtime \textbf Left-to-right \textbf Leftmost-derivation
-Parser} (\RLLp), is a variant of the famous LL(1) parser~\cite{Lewis:66}. The
+  Parser} (\RLLp), is a variant of the famous LL(1) parser~\cite{Lewis:66}. The
 adjective realtime is to claim that:
 
 \begin{itemize}
@@ -149,7 +149,7 @@ in~$O(|d|)$ time ($|d|$ being the size of the partial function).
 
 In fact, since~$D$ has the same semantics as that of the stack of binding in
 dynamically scoped language†{a dictionary~$dᵢ$ is a collection of
-names and their binding to nameable entities defined in the scope, which hide
+  names and their binding to nameable entities defined in the scope, which hide
 the definitions made in containing scopes} definitions (such as
 \TeX~\cite{TeX:79}), we can rely on the classical method~\cite{Schoe:95} for
 implementing these
@@ -176,7 +176,7 @@ implementing these
         returning it, the implementation of~$D$ uses this~$d$ to pop an element
         from the set~$s(dᵢ)$ of stacks in~$H$,
         \[
-            s(dᵢ) = ❴s(t) \;|\; t∈dᵢ❵.
+          s(dᵢ) = ❴s(t) \;|\; t∈dᵢ❵.
         \]
 \end{enumerate}
 
@@ -192,65 +192,66 @@ The value of these jump pointers is set as the top pointers of stacks~$s(t)$ at
 the time~$dᵢ$ was pushed into~$D$.
 
 A jump into~$D$, yielding a dictionary of size~$m$ can now be implemented
-  in~$O(m)$ time:
+in~$O(m)$ time:
 The jump pointer into stack~$S₁$ yields a dictionary~$d$ stored in it.
 In~$d$ we find~$m$ jump pointers into the~$m$ stacks~$s(d)$ in~$H$,
-  carrying out the these~$m$ jumps, concludes the jump operation on~$D$.
+carrying out the these~$m$ jumps, concludes the jump operation on~$D$.
 
 The final step in constructing the JSM is by coordinating
-  stacks~$S₀$ and~$S₁$:
-  \begin{itemize}
-      \item A push operation on stack~$S₀$ is required to push, a (potentially
+stacks~$S₀$ and~$S₁$:
+\begin{itemize}
+  \item A push operation on stack~$S₀$ is required to push, a (potentially
         empty) dictionary into the stack~$S₁$.
-      \item A pop operation (the first command at every step of~\cref{algorithm:rll-parser})
+  \item A pop operation (the first command at every step of~\cref{algorithm:rll-parser})
         on stack~$S₀$ forces a pop operation of stack~$S₁$.
-      \item Augment items in stack~$S₀$ to include also the jump pointer to
+  \item Augment items in stack~$S₀$ to include also the jump pointer to
         the dictionary it pushed into~$S₁$.
-      \item Let a jump into stack~$S₀$ also
-          force a jump into the stack~$S₁$.
-          (As expected, a jump into an item~$i$ means also a jump
-            in stack~$S₁$ to dictionary~$dᵢ$.)
-  \end{itemize}
-Thus, the JSM data structure supports both
-  jumps into the items stack, but also maintaining
-  a current map of the jumps to carry out at each item.
+  \item Let a jump into stack~$S₀$ also
+        force a jump into the stack~$S₁$.
+        (As expected, a jump into an item~$i$ means also a jump
+        in stack~$S₁$ to dictionary~$dᵢ$.)
+\end{itemize}
+Thus, the linearly sized JSM data structure keeps its two
+duties: supporting jumps into the items stack,
+and maintaining a current map of the jumps to carry out at each item.
 This map is updated with every push, which might
-  override (or add) entries to it.
+override (or add) entries to it.
 Most importantly, this map is correctly restored
-  in the process of long jumps into the items stack.
+in the process of long jumps into the items stack.
 
-How should the JSM be dealt with by the algorithm that generates
-  a specific \RLLp?
-Jump operations are all handled at run time,
-  using information available on the JSM.
-The generator of \RLLp must however tell the \RLLp how to
-  update~$S₁$ in the push operations (lines~15 and~22) in
-  \cref{algorithm:rll-parser}.
+\subsection{The Jumps Dictionary}
+How should the JSM be used by the algorithm that generates
+a specific \RLLp?
 
-Fortunately, the partial map we need to push to~$S₁$ upon
-  pushing some item to~$S₀$ depends only on the identity of the latter.
+Jump operations are all at the responsibility of the JSM,
+which maintains the information required to support these.
+But, in order to be able to do this, the generator must
+provide the \RLLp with the contents dictionary~$D$ that should be pushed to
+to~$S₁$, the~$Dᵢ$i, together with the push to~$S₀$ (lines~15 and~22 in
+\cref{algorithm:rll-parser}).
 
-Let~$Ψ$,~$Ψ: I→(Σ↛J)$ be the function returning for 
-  an item $i\in I$ the dictionary that needs to be pushed into~$S₁$
-  whenever~$i$ is pushed to~$S₀$.
-Function $Ψ$ can be realized statically because it does not require any runtime
-  information on the stack~$S₀$, and assumes no preconditions on~$D$ nor~$S₁$
-  The algorithm for realizing~$Ψ$ is given at~\cref{algorithm:coordination}
+In particular, the \RLLp generator must compute for each
+item~$i∈I$, the dictionary~$\Function Jumps(i)$ which
+map each token~$t$ that triggers a jump with
+respect to~$i$, to~$t$'s jump value.
+\Cref{algorithm:coordination} is the algorithm for doing so.
 
 \begin{algorithm}
   \begin{algorithmic}
   \caption{\label{algorithm:coordination}
-  Algorithm for computing function~$Ψ: I→(Σ↛J)$ for
-  an item~$i∈I$}
-  \LET{$[A::=α·Y₀…Yₘ]$}{$i$} \COMMENT{break~$i$ into its components}
-  \LET{$f$}{$∅$} \COMMENT{initialize output partial function}
+    Function~$\Function Jumps(i)$ returning, for an item~$i∈I$,
+  the dictionary~$d$ mapping each token~$t$ that
+    triggers a jump with respect to~$i$, to~$t$'s jump value.
+  }
+  \LET{$[A::=α·Y₀…Yₙ]$}{$i$} \COMMENT{break~$i$ into its components}
+  \LET{$d$}{$∅$} \COMMENT{initialize return variable}
   \FOR[for all symbols in suffix of~$i$]{$j$ in~$0…n$}
-    \IF[continue to build~$f$?]{not~$\Function Nullable(Y₁…Yⱼ)$}
+    \IF[continue to build~$d$?]{not~$\Function Nullable(Y₁…Yⱼ)$}
       \BREAK
     \FI
     \FOR[symbols that might cause jump in~$Y₀$]{$t∈\Function First(Yⱼ)$}
-      \IF[is this the first update for~$t$?]{$f(t)=⊥$}
-      \STATE{$f(t) = [A::=αY₀…·Yⱼ…Yₙ]$} \COMMENT{update~$f(t)$}
+      \IF[is this the first update for~$t$?]{$d(t)=⊥$}
+      \STATE{$d(t) = [A::=αY₀…·Yⱼ…Yₙ]$} \COMMENT{update~$f(t)$}
       \FI
     \ENDFOR
   \ENDFOR
@@ -258,10 +259,34 @@ Function $Ψ$ can be realized statically because it does not require any runtime
   \end{algorithmic}
 \end{algorithm}
 
-The input of the algorithm is an item~$i$ ; let~$Y₀…Yₙ$ be the suffix denoted
-by~$i$'s dot, then for each terminal~$t∈Σ$, the algorithms looks for the
-smallest (possibly empty) nullable prefix of the suffix (i.e.,smallest~$j$
-s.t.,~$Y₁…Y_{j-1}$ is nullable) for which~$t∈\Function First(Yⱼ)$
+Let~$\beta = Y₀…Yₙ$ be the suffix denoted by~$i$'s dot.
+Then, for each terminal~$t∈Σ$, 
+function $\Function Jumps(i)$ determines the shortest
+prefix~$Y₀…Y_{j-1}$ of $β$ which is nullable 
+and such that $k ∈ \Function First(Y_j)$.
+The following line of thought explains the rationale.
+
+Assume that~$Y₀…Y_{j-1}$ is nullable and
+  that~$t∈\Function First(Yⱼ)$, for some~$t\inΣ$.
+Then, when the \RLLp is at states described by~$i$ and~$t$
+  is seen, the \RLLp should conclude that~$Y₀…Y_{j-1}\stackrel * ⇒ε$
+  and jump forward to the point of the parsing process just before
+  seeing~$Yⱼ$.
+
+This point in parsing is exactly the item obtained
+  from~$i$ by moving the dot to just before~$Yⱼ$.
+
+An subtlety applies though.
+In the case that the assumption holds for
+  both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
+  two alternatives to choose from:
+  \begin{itemize}
+      \item~$Y₀…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$
+      \item~$Y₀…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$
+    \end{itemize}
+Recalling that an \LLp pushes 
+  stack symbols in reverse order and that \RLLp emulates its behavior, we can
+  see that $Y_{j'}$ is never given the opportunity to derive $t$. 
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
 problem}
