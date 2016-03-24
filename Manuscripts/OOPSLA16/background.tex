@@ -1,4 +1,16 @@
 %! TEX root = 00.tex
+All that remains is to explain how the \RLLp parser and its 
+  underlying JLS is implemented with \Java generics. 
+
+As it turns out, in addition to its application in runtime systems of
+dynamically scoped langauge, the JLS datastructure is just another
+name for the ``\emph{Jump Deterministic PushDown Automata}" (JDPDA), 
+a theoretical model used in the study of automata and formal languages.
+  
+Incidentally, this JDPS is the one used by Gil and Levy~\cite{Gil:Levy}
+
+
+
 
 \subsection{Toolkit summary}
 This toolkit presents how can one use the \Java compiler's
