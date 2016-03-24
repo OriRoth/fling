@@ -259,11 +259,11 @@ respect to~$i$, to~$t$'s jump value.
   \end{algorithmic}
 \end{algorithm}
 
-Let~$\beta = Y₀…Yₙ$ be the suffix denoted by~$i$'s dot.
-Then, for each terminal~$t∈Σ$, 
-function $\Function Jumps(i)$ determines the shortest
-prefix~$Y₀…Y_{j-1}$ of $β$ which is nullable 
-and such that $k ∈ \Function First(Y_j)$.
+Let~$β= Y₀…Yₙ$ be the suffix denoted by~$i$'s dot.
+Then, for each terminal~$t∈Σ$,
+function~$\Function Jumps(i)$ determines the shortest
+prefix~$Y₀…Y_{j-1}$ of~$β$ which is nullable
+and such that~$k ∈ \Function First(Yⱼ)$.
 The following line of thought explains the rationale.
 
 Assume that~$Y₀…Y_{j-1}$ is nullable and
@@ -284,9 +284,9 @@ In the case that the assumption holds for
       \item~$Y₀…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$
       \item~$Y₀…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$
     \end{itemize}
-Recalling that an \LLp pushes 
+Recalling that an \LLp pushes
   stack symbols in reverse order and that \RLLp emulates its behavior, we can
-  see that $Y_{j'}$ is never given the opportunity to derive $t$. 
+  see that~$Y_{j'}$ is never given the opportunity to derive~$t$.
 
 \subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
 problem}
@@ -390,7 +390,7 @@ of derivations.
       For each item and terminal it computes the required operation.
     }
     \FOR[for each item]{$i∈ \Function Items()$}
-    \STATE{$[A::=Y₀…Y_{i-1}…Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
+    \STATE{$[A::=Y₀…Y_{i-1}·Yᵢ…Yₘ]←i$} \COMMENT{break~$i$}
       \IF[$Δ$ doesn't handle terminals]{$Yᵢ∈Σ$}
         \CONTINUE \COMMENT{handle next item.}
       \FI
