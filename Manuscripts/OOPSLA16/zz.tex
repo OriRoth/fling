@@ -1,29 +1,17 @@
-(overloaded occurrences of the same method are considered   
-  
-  
-  
-  Also, semantics is typically one of two.
-\emph{Eager} execution semantics is
-found e.g., in \Java's \cc{StringBuilder}\urlref{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}
+We presented the first practical algorithm for the automatic generation of a
+fluent API for \Java from LL grammars.  Future research is extending the
+achievement to LR grammars. 
 
-\begin{quote}
-  \parbox[c]{50ex}{\javaInput[]{../Fragments/stringbuilder-example.fragment}}⏎
-\end{quote}
+\Fajita, a fluent API software system by itself, is a prototypical
+implementation of this algorithmic. 
 
-In this semantics, each method in the chain executes a computation,
-  whose result, is made the receiver of the next method
-  in the chain.
+More work is required to mature \Fajita into a production tool. A stumbling
+block is that experimenting with \Fajita we discovered limitations of the \Java
+compiler \cc(javac 1.8.0_66_}, sometimes crashing when trying to compile
+\Fajita generated code and often applying unnecessary replication in the
+representation of types, leading to memory bloat problems.
 
-Conversely, \emph{delayed} execution semantics, occurring e.g., in jOOQ,
-  maintain a ‟production line”,
-  by which each method in the fluent call chain receives a
-  ‟action builder” (called ‟query builder” in jOOQ and LINQ)
-  data record from the method preceding it, adds a bit of
-  information to this record, and passes it to the next method
-  in the chain.
-If an action builder is sufficiently defined it can
-  produce an action record.
-And, action records, may execute
-  when specifically requested to so.
-
-
+These limitations are likely to receive more attention by compiler developer as
+the use of fluent APIs increases. As the two phenomena happen, advanced
+features such as automatic production of ASTs, and EBNF support should become
+even more useful.
