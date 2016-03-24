@@ -1,31 +1,3 @@
-% Conclusions
-
-Fluent are neat. being easy to use, read, and write (thanks to IDEs)
-
-Most reasonable fluent APIs can be realized theoretically(if its LR($k$) for some~$k$ , result from ECOOP)
-
-The class of ``regular'' APIs can be realized easily (as seen in \cref{section:example})
-But, defining the specifications of these APIs is hard (as there is not fluent API for regular expressions)
-
-Realizing general fluent APIs automatically can be (very!) hard (abundance of algorithms...)
-
-We did it! to the class of LL(1) grammars.
-
-% Future work
-
-LL(1) is nice .. what about LR(1), LALR or even LL($k$) for $k>1$ ?
-
-We used the type arguments to keep a compile-time stack,
-  it is known that a PDA with two stacks is Turing-complete.
-Can a second stack be emulated with more type arguments? (as far as i know, no. you can't coordinate between the stacks)
-  if so, what is the expressive power of the \Java system?
-
-Can the recognizer provide some runtime information to build a parse tree (or AST) without running 
-  an orthogonal parser at runtime?
-
-How can our algorithm or \Fajita itself be employed on other programming languages like \CS.
-
-% Taken from ECOOP
 The main contribution of this work is the proof that
   most useful grammars have a fluent API\@.
 This brings good news to library designers laboring
