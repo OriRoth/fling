@@ -36,7 +36,7 @@ The actual operation of the automaton is by executing in loop the step
   The iterative step of an \LLp}
   \begin{algorithmic}[1]
       \LET{$X$}{\Function pop()}\COMMENT{what's next to parse?}
-      \IF[ancipate to match terminal~$X$]{$X∈Σ$}
+      \IF[anticipate to match terminal~$X$]{$X∈Σ$}
         \IF[read terminal is not anticipated~$X$]{$X≠\Function next()$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[terminal just read was the anticipated~$X$]
@@ -363,7 +363,7 @@ In our example, nonterminal \<Procedure> has only one derivation
   rule, which begins with the terminal \cc{procedure}.
 Thus, all derivations of \<Procedure> must begin with terminal
   \cc{procedure} and the~$\Function First(·)$ set of \<Procedure> is
-  containts only~\cc{procedure}, as can be seen
+  contains only~\cc{procedure}, as can be seen
   in~\cref{table:running-first-follow}.
 The~$\Function Follow(·)$ set of \<Procedure> contains two
   terminals.
