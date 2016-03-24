@@ -58,7 +58,7 @@ where there is at least one type for each of these symbols.
 
 Here we present an algorithm to compile an LL(1) grammar of a fluent API
 language into a \Java implementation whose size is linear in the grammar's
-size. \Fajita 
+size.
 \Fajita\footnote{\itshape \textbf Fluent \textbf API for 
     \textsc{\textbf Java} 
     (\textbf Inspired by the \textbf Theory of \textbf Automata)
@@ -116,7 +116,7 @@ These are specified in the first method call in the chain where,
 
 The call \cc{.go()}, occurring last in the chain, makes 
 \Fajita generate types and methods realizing the fluent API,
- in such a way code snippet 
+ in such a way that code snippets like:
 \begin{quote}
   \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.usage.listing}}
 \end{quote}
@@ -158,12 +158,12 @@ web. However, none of these matured into an actual general purpose
 implementation.  
 
 Fluflu\urlref{https://github.com/verhas/fluflu} is a software artifact similar
-to in principle~\Fajita, which uses \Java annotations to define deterministic finite
+in principle to~\Fajita, which uses \Java annotations to define deterministic finite
 automaton (DFA), to be compiled into a fluent API based on this automaton. 
 
 Compare \Fajita use case (\cref{figure:sql-bnf-java}) with \cref{figure:fluflu} in
-which fluflu is used to define a DFS with a single, both initial- and
-accepting- and  state, and accepting, with a single self transition, labeled
+which fluflu is used to define a DFA with a single, both initial and
+accepting state, with a single self transition, labeled
 with terminal~$a$, whereby realizing the regular language~$L=a^*$.
 
 \begin{figure}[H]

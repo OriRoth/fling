@@ -1,5 +1,5 @@
 %! TEX root = 00.tex
-Fluent APIs is related to the topic of type-states.
+Fluent APIs are related to the topic of type-states.
 There is a large body of research on \emph{type-states} (see
 e.g., these review articles~\cite{Aldrich:Sunshine:2009,Bierhoff:Aldrich:2005})
 Informally, an object that belongs to a certain type (\kk{class} in the object
@@ -54,7 +54,7 @@ on an instance of \cc{Seat}:
 A fluent API design specifies the order in which such calls can be made.
 For example, a fluent API should recognize the sequences of
 \cref{figure:toilette:legal} as being type correct.
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:toilette:legal}
   Legal sequences of calls in the toilette seat example}
   \javaInput[minipage,width=\linewidth,left=-6ex]{toilette.legal.listing}
@@ -63,7 +63,7 @@ For example, a fluent API should recognize the sequences of
 At the same time, illegal sequences as made in
 \cref{figure:toilette:illegal} should be signaled as type errors.
 
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:toilette:illegal}
   Illegal sequences of calls in the toilette seat example}
   \javaInput[minipage,width=\linewidth,left=-6ex]{toilette.illegal.listing}
@@ -73,7 +73,7 @@ To generate a fluent API that meets these requirements, one must observe that
 the protocol of a \cc{Seat} is defined completely by
 the DFA depicted in \cref{figure:type-state-automaton}.
 
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:type-state-automaton}%
     A deterministic finite automaton realizing the type states of
     class \cc{Seat}.
@@ -114,7 +114,7 @@ immediate by following the \emph{encoding convention}:
 The result of employing these rules to our toilette example is depicted
 at~\cref{figure:toilette-types}
 
-\begin{figure}
+\begin{figure}[H]
   \caption{\label{figure:toilette-types}
     A fluent API realizing the toilette seat object defined as a DFA
     in~\cref{figure:type-state-automaton}}
