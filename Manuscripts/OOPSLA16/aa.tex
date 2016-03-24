@@ -3,7 +3,7 @@ What can be computed, and what can not be computed by coercing the type system
 and the type checker of a certain programming language to do abstract
 computations it was never meant to carry out? And, why should we care?
 
-One concrete reason is that fluent
+One concrete reason is fluent
 APIs~\cite{VanDeursen:Klint:2000,Hudak:1997,Fowler:2010}.  There is joy, and in
 many cases boost to productivity in elegant, neat code snippets such as
 \begin{quote}
@@ -29,11 +29,11 @@ jRTF\urlref{https://github.com/ullenboom/jrtf},
 etc., is traditionally not carried out
 in the neat manner it could possibly take.
 Our reason for saying this is that the fundamental problem in
-fluent API designs is the decision on the ‟language”.
+fluent API design is the decision on the ‟language”.
 This language is the precise definition of which sequences of method
 applications are legal and which are not.
 
-As it turns out, the question of whether a BNF definition of a such a language
+As it turns out, the question of whether a BNF definition of such a language
 can be ‟compiled” automatically into a fluent API implementation is, a
 question of the computational power of the underlying language. In \Java, the problem
 is particularly interesting since in \Java (unlike e.g., \CC~\cite{Gutterman:2003}),
@@ -45,10 +45,10 @@ It was shown recently that for any reasonable fluent API language definition
 language~\cite{Gil:Levy:2016}.
 
 The theoretical result takes a toll of exponential blowup. Specifically, the
-construction builds first a deterministic pushdown automaton whose size
+construction first builds a deterministic pushdown automaton whose size
 parameters, $g$ (number of stack symbols), and,~$q$ (number of internal
 states), are polynomial in the size of the input grammar. This automaton is then
-by emulated by a weaker automaton, with as many as
+emulated by a weaker automaton, with as many as
 \[
   O\left(g^{O(1)}\left(q²g^{O(1)}\right)^{qg^{O(1)}}\right)
 \] 
