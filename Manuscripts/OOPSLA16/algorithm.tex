@@ -288,12 +288,7 @@ Recalling that an \LLp pushes
   stack symbols in reverse order and that \RLLp emulates its behavior, we can
   see that~$Y_{j'}$ is never given the opportunity to derive~$t$.
 
-\subsection{Solving the Substitution Factor \texorpdfstring{$k'>0$}{k'>0}
-problem}
-The section uses the \RLLp described in~\cref{section:realtime} to solve the
-problems presented in~\cref{section:intuition} and encode it using \Java
-Generics.
-
+\subsection{Consolidating Push Operations }
 In \cref{substitution-factor}~$k'$ was defined and it was shown problematic
 when~$k'>0$. The problem is in the need to perform several substitutions of the
 top of the stack with the next rule without consuming the input token.
@@ -332,14 +327,14 @@ In~\cref{algorithm:rll-closure} the algorithm for computing this ‟closure” o
 
 \begin{algorithm}
   \caption{\label{algorithm:rll-closure}
-~$\Function Closure(i,t)$ returning the closure of push operations that will
-    happen upon seeing item~$i$ at the top
-    of the \RLLp's stack and terminal~$t∈Σ∪❴\$❵$ at the input string.
-    Output is returned in~$S$.
+Function~$\Function Consolidate(i,t)$ pre-computing $L$, the list of push
+operations that happen when an item~$i$ at the top of an \RLLp's stack
+encounters terminal~$t∈Σ∪❴\$❵$ on the input.
   }
+
   \begin{algorithmic}
     \STATE{$[X::=α·Yβ] ← i$} \COMMENT{break~$i$ into its components}
-    \LET{$S$}{$∅$} \COMMENT{initialize output stack}
+    \LET{$L$}{$∅$} \COMMENT{initialize output stack}
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
       \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
       \STATE{$\Function print(r)$} \COMMENT{useful for parsing}
@@ -374,14 +369,17 @@ consumed (emulating the \LLp operations). The algorithm also prints a list of
 applied reductions ; this list can be used to build a parse tree without
 additional computation at runtime.
 
-The computation process is rather simple: given an item~$X::=α·Yβ$ and input
-symbol~$t∈Σ$, the algorithm iteratively applies the operations the \RLLp would,
-keeping in an auxiliary stack the state of the stack as it would in a normal
-run. Since~$t∈\Function First(Yβ)$, we know the auxiliary stack's height will
-never go below 0. The stack is returned when we find the terminal in the list
-of derivations.
+The idea is that given an item~$X::=α·Yβ$ and input symbol~$t∈Σ$, the algorithm
+iteratively applies the operations the \RLLp would, keeping in an auxiliary
+stack the state of the stack as it would in a normal run. Since~$t∈\Function
+First(Yβ)$, we know the auxiliary stack's height will never go below 0. The
+stack is returned when we find the terminal in the list of derivations.
 
 \subsection{Main Algorithm}
+The section uses the \RLLp described in~\cref{section:realtime} to solve the
+problems presented in~\cref{section:intuition} and encode it using \Java
+Generics.
+
 
 \begin{algorithm}
   \begin{algorithmic}
@@ -396,7 +394,7 @@ of derivations.
       \FI
       \FOR[calculate entry~$\Function Δ(i,t)$]{$t∈Σ$}
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yᵢ…Yₘ)$}
-          \LET{$l$}{$\Function Closure(i,t)$} \COMMENT{use closure table}
+          \LET{$l$}{$\Function Consolidate(i,t)$} \COMMENT{use closure table}
           \STATE{$\Function Δ(i,t)= \Function Push(l)$} \COMMENT{a push operation}
           \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
           \STATE{$\Function Δ(i,t)= \Function Jump(t)$} \COMMENT{a jump operation}
