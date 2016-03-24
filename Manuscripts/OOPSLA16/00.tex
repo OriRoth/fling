@@ -33,7 +33,8 @@
 
 \paragraph{Outline.} \Cref{section:example} familiarizes the reader with
 techniques of converting a formal language specification into \Java types that
-realizes the fluent API defined by the language. \Cref{section:inuition} the is
+realizes the fluent API defined by the language, it is also an brief introduction to
+\Cref{section:fajita} which proposes \Fajita. \Cref{section:intuition} the is
 a reminder of LL parsing, and explains the difficulties of implementing it
 withing the \Java type-checking model.  The main algorithm is described in
 \cref{section:algorithm}.  \Cref{section:zz} concludes.
@@ -42,9 +43,9 @@ withing the \Java type-checking model.  The main algorithm is described in
 \label{section:example}
 \input{example}
 
-\section{Type State For Making Type States?}
-\label{section:generalization}
-\input{generalization}
+\section{Fajita}
+\label{section:fajita}
+%\input{generalization}
 
 \section{LL Parsing and Realtime Constraints}
 \label{section:intuition}
@@ -53,10 +54,6 @@ withing the \Java type-checking model.  The main algorithm is described in
 \section{Generating a Realtime Parser \\ from an LL Grammar}
 \label{section:algorithm}
 \input{algorithm}
-
-%\section{Compiling an \RLLp to \Java types}
-%\label{section:background}
-%\input{background}
 
 \section{Conclusions}
 \label{section:zz}
@@ -71,9 +68,3 @@ withing the \Java type-checking model.  The main algorithm is described in
   GPCE,OOPSLA,PLDI,USENIX,ECOOP,%
   00}
 \end{document}
-
-\clearpage
-\appendix
-\section{Hints from ECOOP}
-\label{section:ecoop}
-\input{ecoop}
