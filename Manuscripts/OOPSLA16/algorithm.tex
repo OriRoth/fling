@@ -7,14 +7,14 @@ This realtime property is crucial to the implementation language recognizers
 with \Java types implementation.
 
 When this is achieved, all that remains is the ‟compilation”' of the \RLLp into
-\Java types.  The challenging part of this translation is dealing
-with the ``JLS'', a data structure on which the \RLLp relies. 
+\Java types. The challenging part of this translation is dealing
+with the ‟JLS”, a data structure on which the \RLLp relies.
 
 This data structure has been used before, e.g., for efficient management of the
 runtime environment in programming languages with dynamic scoping, i.e.,
 languages such as \Lisp, in which name resolution is with respect to previous
 bindings made on the run time stack (disregarding the usual scoping and nesting
-rules in languages such as \Pascal). 
+rules in languages such as \Pascal).
 
 Interestingly, the JLS data structure is just another name for the ‟\emph{Jump
 Deterministic PushDown Automata}" (JDPDA), a theoretical model used in the
@@ -268,13 +268,15 @@ respect to~$i$, to~$t$'s jump value.
   }
   \LET{$[A::=α·Y₁…Yₙ]$}{$i$} \COMMENT{break~$i$ into components}
   \LET{$d$}{$∅$} \COMMENT{initialize return variable}
-  \FOR[for all symbols in suffix of~$i$]{$j = 1,…,n$}
-  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₁…Y_{j-1})$}
+  \FOR[for all symbols in suffix of~$i$]{$j = 2,…,n$}
+  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₂…Y_{j-1})$}
       \BREAK
     \FI
     \FOR[symbols that might cause jump in~$Y₁$]{$t∈\Function First(Yⱼ)$}
     \IF[\nth{1} update of key~$t$ in dictionary~$d$?]{$d(t)=⊥$}
       \STATE{$d(t) = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{update~$d(t)$}
+      % This is the real value of d(t), when considering the "Push after jump phenomena"
+      %\STATE{$d(t) = Consolidate([A::=αY₁…·Yⱼ…Yₙ],t)$} \COMMENT{update~$d(t)$}
       \FI
     \ENDFOR % Symbols
   \ENDFOR

@@ -1,6 +1,8 @@
 package org.spartan.fajita.api.rllp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +17,13 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.ll.LLParser;
 
-import com.javax0.fluflu.AddTo;
-
 public class RLLP {
   public final BNF bnf;
   public final BNFAnalyzer analyzer;
   public final List<Item> items;
   private final Map<NonTerminal, Map<Verb, DerivationRule>> llPredictionTable;
   private Map<Item, Map<Verb, List<Item>>> consolidationTable;
+  private Map<Item, Map<Verb, List<Item>>> jumpsTable;
 
   public RLLP(BNF bnf) {
     this.bnf = bnf;
@@ -30,12 +31,32 @@ public class RLLP {
     items = calculateItems();
     llPredictionTable = createPredictionTable();
     consolidationTable = calculateConsolidateTable();
+    jumpsTable = calculateJumpsTable();
   }
   private List<Item> calculateItems() {
     List<Item> $ = new ArrayList<>();
     for (DerivationRule r : bnf.getRules())
       for (int i = 0; i <= r.getChildren().size(); i++)
         $.add(new Item(r, i));
+    return $;
+  }
+  private Map<Item, Map<Verb, List<Item>>> calculateJumpsTable() {
+    Map<Item, Map<Verb, List<Item>>> $ = new HashMap<>();
+    for (Item i : items) {
+      $.put(i, new HashMap<>());
+      final List<Symbol> suffix = i.rule.getChildren().subList(i.dotIndex + 1, i.rule.getChildren().size());
+      for (Verb v : analyzer.firstSetOf(suffix)) {
+        for (int j = 0; j < suffix.size(); j++) {
+          Symbol s = suffix.get(j);
+          if (analyzer.firstSetOf(s).contains(v)) {
+            Item jumpLocation = new Item(i.rule, j + i.dotIndex + 1);
+            $.get(i).put(v, consolidate(jumpLocation, v));
+          }
+        }
+        if ($.get(i).get(v) == null)
+          throw new InternalError("Algorithm fault. for some reason, jumps(" + i + ")[" + v + "] is in first, but wasn't updated");
+      }
+    }
     return $;
   }
   private Map<Item, Map<Verb, List<Item>>> calculateConsolidateTable() {
@@ -53,7 +74,8 @@ public class RLLP {
   private static void addToPredictionTable(Map<NonTerminal, Map<Verb, DerivationRule>> $, Verb v, DerivationRule d) {
     DerivationRule result = $.get(d.lhs).put(v, d);
     if (result != null)
-      throw new LLParser.NotLLGrammar("predict[" + d.lhs + ","+v.name()+"] has two conflicting rules : <" + result + "> , <" + d + ">");
+      throw new LLParser.NotLLGrammar(
+          "predict[" + d.lhs + "," + v.name() + "] has two conflicting rules : <" + result + "> , <" + d + ">");
   }
   private Map<NonTerminal, Map<Verb, DerivationRule>> createPredictionTable() {
     Map<NonTerminal, Map<Verb, DerivationRule>> $ = new HashMap<>();
@@ -84,15 +106,17 @@ public class RLLP {
       Y = current_i.afterDot();
     }
     $.push(current_i.advance());
-    Stack<Item> reverse = new Stack<>();
-    reverse.addAll($);
-    return reverse;
+    Collections.reverse($);
+    return $;
   }
   public DerivationRule llPredict(NonTerminal Y, Verb v) {
     return llPredictionTable.get(Y).get(v);
   }
   public List<Item> consolidate(Item i, Verb v) {
     return consolidationTable.get(i).get(v);
+  }
+  public List<Item> jumps(Item i, Verb v) {
+    return jumpsTable.get(i).get(v);
   }
   public Item getStartItem(Verb initialInput) {
     final Stream<Item> filter2 = items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0);
