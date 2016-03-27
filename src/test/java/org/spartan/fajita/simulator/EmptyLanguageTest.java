@@ -1,6 +1,7 @@
 package org.spartan.fajita.simulator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.fajita.simulator.EmptyLanguageTest.NT.A;
 import static org.spartan.fajita.simulator.EmptyLanguageTest.NT.B;
 import static org.spartan.fajita.simulator.EmptyLanguageTest.NT.C;

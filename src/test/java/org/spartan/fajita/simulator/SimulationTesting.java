@@ -51,7 +51,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
         .derive(S).to(A).and(B) //
         .derive(B).to(B).and(b).orNone() // Left recursive
         .derive(A).to(a).and(A).orNone() // Right recursive
-        // .derive(C).to(c) //
+        .derive(C).to(c) //
         .go();
     ab_list_jlr = new JLRRecognizer(bnf);
     Main.lrAutomatonVisualisation(bnf);

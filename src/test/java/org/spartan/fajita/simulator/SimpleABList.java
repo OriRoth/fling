@@ -4,9 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.fajita.simulator.SimpleABList.NT.A;
 import static org.spartan.fajita.simulator.SimpleABList.NT.B;
+import static org.spartan.fajita.simulator.SimpleABList.NT.C;
 import static org.spartan.fajita.simulator.SimpleABList.NT.S;
 import static org.spartan.fajita.simulator.SimpleABList.Term.a;
 import static org.spartan.fajita.simulator.SimpleABList.Term.b;
+import static org.spartan.fajita.simulator.SimpleABList.Term.c;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,6 +38,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
         .derive(S).to(A).and(B) //
         .derive(A).to(A).and(a).or(a) //
         .derive(B).to(B).and(b).or(b)//
+        .derive(C).to(c) //
         .go();
     jlr = new JLRRecognizer(bnf);
     Main.lrAutomatonVisualisation(bnf);
@@ -59,11 +62,11 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
     testRejects("aaaaaaabbbbbbaaaaaabbbbbb");
   }
   public static void testRejects(String input) {
-    System.out.println("Testing "+input+"...");
+    System.out.println("Testing " + input + "...");
     assertFalse(JLRSimulator.runJLR(jlr, input));
   }
   public static void testAccepts(String input) {
-    System.out.println("Testing "+input+"...");
+    System.out.println("Testing " + input + "...");
     assertTrue(JLRSimulator.runJLR(jlr, input));
   }
 }
