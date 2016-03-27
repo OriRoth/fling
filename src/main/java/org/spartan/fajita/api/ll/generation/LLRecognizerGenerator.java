@@ -33,7 +33,7 @@ public class LLRecognizerGenerator {
     for (Verb v : bnf.getVerbs())
       configurationTypes.add(generateVerbConfiguration(v));
     for (NonTerminal nt : bnf.getNonTerminals())
-      if (!nt.equals(SpecialSymbols.augmentedStartSymbol))
+      if (!bnf.getStartSymbols().contains(nt))
         configurationTypes.add(generateNTConfiguration(recognizer, nt));
     TypeSpec.Builder container = TypeSpec.classBuilder(containerClass).addTypes(configurationTypes);
     ParameterizedTypeName startType = ParameterizedTypeName.get(type("C_"+bnf.getStartSymbols().get(0).name()),type("C_$"));

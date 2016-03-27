@@ -70,10 +70,10 @@ public class BNFBuilder {
   }
   private BNF finish() {
     validate();
-    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
+//    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     verbs.add(SpecialSymbols.$);
-    for (NonTerminal startSymbol : getStartSymbols())
-      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
+//    for (NonTerminal startSymbol : getStartSymbols())
+//      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
   List<DerivationRule> getRules() {
@@ -123,7 +123,7 @@ public class BNFBuilder {
       this.lhs = lhs;
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
-      return new AndDeriver(lhs, new Verb(term.name(), type));
+      return new AndDeriver(lhs, new Verb(term, type));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);
@@ -140,7 +140,7 @@ public class BNFBuilder {
     }
     public AndDeriver or(final Terminal term, Class<?>... type) {
       addRule(lhs, symbols);
-      return new AndDeriver(lhs, new Verb(term.name(), type));
+      return new AndDeriver(lhs, new Verb(term, type));
     }
     public AndDeriver or(final NonTerminal nt) {
       addRule(lhs, symbols);
@@ -164,14 +164,14 @@ public class BNFBuilder {
     }
     public AndDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
       super(lhs);
-      symbols.add(new Verb(child.name(), type));
+      symbols.add(new Verb(child, type));
     }
     public AndDeriver and(final NonTerminal nt) {
       symbols.add(nt);
       return this;
     }
     public AndDeriver and(final Terminal term, Class<?>... type) {
-      symbols.add(new Verb(term.name(), type));
+      symbols.add(new Verb(term, type));
       return this;
     }
     @Override public BNF go() {

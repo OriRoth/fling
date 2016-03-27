@@ -41,7 +41,7 @@ public class FollowSetTest {
     assertThat(expectedSet(SpecialSymbols.$), equalTo(analyzer.followSetOf(NT.S)));
   }
   @Test public void testBasicFollow() {
-    assertTrue(analyzer.followSetOf(NT.A).contains(new Verb(Term.b.name())));
+    assertTrue(analyzer.followSetOf(NT.A).contains(new Verb(Term.b)));
   }
   @Test public void testNTFolloweByNullableContainsLhsFollow() {
     assertTrue(analyzer.followSetOf(NT.C).contains(SpecialSymbols.$));

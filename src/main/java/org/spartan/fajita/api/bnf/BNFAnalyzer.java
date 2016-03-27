@@ -41,7 +41,7 @@ public class BNFAnalyzer {
       moreChanges = false;
       for (DerivationRule rule : bnf.getRules())
         if (rule.getChildren().stream().allMatch(child -> nullables.contains(child)))
-          moreChanges = nullables.add(rule.lhs);
+          moreChanges |= nullables.add(rule.lhs);
     } while (moreChanges);
     return nullables;
   }
@@ -71,7 +71,8 @@ public class BNFAnalyzer {
     // initialization
     for (NonTerminal nt : bnf.getNonTerminals())
       $.put(nt, new HashSet<>());
-    $.get(SpecialSymbols.augmentedStartSymbol).add(SpecialSymbols.$);
+    for (NonTerminal start : bnf.getStartSymbols())
+      $.get(start).add(SpecialSymbols.$);
     // iterative step
     boolean moreChanges;
     do {
