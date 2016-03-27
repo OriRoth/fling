@@ -1,7 +1,6 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public class SpecialSymbols {
-  // TODO: make $,augmentedStartSymbol not visible to end user.
   public static final Verb $ = new Verb("$") {
     @Override public String toString() {
       return "$";

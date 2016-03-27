@@ -64,10 +64,9 @@ public class BNFBuilder {
     validateNonterminals();
   }
   private void validateNonterminals() {
-    //TODO: re-validate
-//    for (NonTerminal nonTerminal : getNonTerminals())
-//      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
-//        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    for (NonTerminal nonTerminal : getNonTerminals())
+      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
+        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
   }
   private BNF finish() {
     validate();

@@ -96,7 +96,6 @@ public class JLRRecognizer {
     } while (!todo.isEmpty());
     return $;
   }
-  //TODO: remove this
   private static Symbol[] ruleSuffix(JItem item, int index) {
     return Arrays.copyOfRange(item.rule.getChildren().toArray(new Symbol[] {}), index, item.rule.getChildren().size());
   }
