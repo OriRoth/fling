@@ -95,7 +95,6 @@ public class BNFAnalyzer {
   }
   public List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
-//    if (isNullable(expression))
 //      throw new IllegalArgumentException("Not handling epsilons!!");
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
@@ -109,7 +108,7 @@ public class BNFAnalyzer {
   }
    public Set<Verb> followSetOf(final NonTerminal nt) {
      if(followSets==null)
-       throw new IllegalStateException("you chose no follow set at comstructor");
+       throw new IllegalStateException("you chose no follow set at constructor");
    return followSets.get(nt);
    }
   public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {

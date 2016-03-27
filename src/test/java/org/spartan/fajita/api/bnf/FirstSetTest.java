@@ -2,7 +2,6 @@ package org.spartan.fajita.api.bnf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,7 @@ public class FirstSetTest {
   }
 
   private BNF bnf;
-  private BNFAnalyzer parser;
+  private BNFAnalyzer analyzer;
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
@@ -31,21 +30,15 @@ public class FirstSetTest {
         .derive(NT.D).to(Term.d) //
         .derive(NT.REDUNDANT).to(NT.REDUNDANT) //
         .go();
-    parser = new BNFAnalyzer(bnf);
-  }
-  @Test public void testTerminal() {
-    assertEquals(expectedSet(Term.a), parser.firstSetOf(Term.a));
+    analyzer = new BNFAnalyzer(bnf);
   }
   @Test public void testNT() {
-    assertEquals(expectedSet(Term.a), parser.firstSetOf(NT.A));
-  }
-  @Test public void testInheritedNT() {
-    assertEquals(expectedSet(Term.a, Term.b), parser.firstSetOf(NT.AB));
+    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A).get(0).name());
   }
   @Test public void testExpressionWithNoNullables() {
-    assertEquals(expectedSet(Term.a), parser.firstSetOf(NT.A, NT.B));
+    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A, NT.B).get(0).name());
   }
   @Test public void testRedundantNT() {
-    assertTrue(parser.firstSetOf(NT.REDUNDANT).isEmpty());
+    assertTrue(analyzer.firstSetOf(NT.REDUNDANT).isEmpty());
   }
 }
