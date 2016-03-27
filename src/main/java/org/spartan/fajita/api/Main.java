@@ -24,7 +24,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -34,15 +33,15 @@ import org.spartan.fajita.api.jlr.JState;
 
 public class Main {
   public static void main(final String[] args) {
-     apiGenerator();
-//     expressionBuilder();
+    apiGenerator();
+    // expressionBuilder();
   }
   static void apiGenerator() {
-//    final BNF bnf = BalancedParenthesis.buildBNF();
+    // final BNF bnf = BalancedParenthesis.buildBNF();
     BNF bnf = testBNF();
     lrAutomatonVisualisation(bnf);
-//    JavaFile fluentAPI = ApiGenerator.generate(bnf);
-//    System.out.println(fluentAPI.toString());
+    // JavaFile fluentAPI = ApiGenerator.generate(bnf);
+    // System.out.println(fluentAPI.toString());
   }
   static void expressionBuilder() {
     BalancedParenthesis.expressionBuilder();
@@ -57,11 +56,8 @@ public class Main {
         AbstractNode symbNode;
         if (s.isVerb())
           symbNode = new Atomic((Verb) s);
-        else if (s == SpecialSymbols.epsilon)
-          symbNode = AbstractNode.epsilon;
-        else {
+        else
           symbNode = compoundQueue.pop();
-        }
         children.add(0, symbNode);
       }
       compoundQueue.add(new Compound(reduce.lhs, children));
@@ -83,7 +79,6 @@ public class Main {
     frame.add(jgraph);
     frame.setVisible(true);
   }
-  
   private static DirectedGraph<JState, LabeledEdge> generateGraph(final JLRRecognizer parser) {
     DefaultDirectedGraph<JState, LabeledEdge> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory());
     parser.getStates().forEach(s -> $.addVertex(s));
@@ -126,14 +121,16 @@ public class Main {
     cellAttr.put(cell, attr);
     model.edit(cellAttr, null, null, null);
   }
-  
-  enum Term implements Terminal{
-    a,b,c
+
+  enum Term implements Terminal {
+    a, b, c
   }
-  enum NT implements NonTerminal{
-    S,A,B
+
+  enum NT implements NonTerminal {
+    S, A, B
   }
-  static BNF testBNF(){
+
+  static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class) //
         .start(NT.S) //
         .derive(NT.S).to(NT.A).and(NT.B) //

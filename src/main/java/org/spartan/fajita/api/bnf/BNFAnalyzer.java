@@ -40,7 +40,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule rule : bnf.getRules())
-        if (rule.getChildren().stream().allMatch(child -> nullables.contains(child) || child.equals(SpecialSymbols.epsilon)))
+        if (rule.getChildren().stream().allMatch(child -> nullables.contains(child)))
           moreChanges = nullables.add(rule.lhs);
     } while (moreChanges);
     return nullables;
@@ -91,7 +91,7 @@ public class BNFAnalyzer {
   }
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream()
-        .allMatch(symbol -> nullableSymbols.contains(symbol) || symbol == SpecialSymbols.epsilon);
+        .allMatch(symbol -> nullableSymbols.contains(symbol));
   }
   public List<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
