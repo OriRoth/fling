@@ -1,9 +1,9 @@
-package org.spartan.fajita.api.ll;
+package org.spartan.fajita.api.ll.generation;
 
-import static org.spartan.fajita.api.ll.GeneratorStrings.basicMethod;
-import static org.spartan.fajita.api.ll.GeneratorStrings.containerClass;
-import static org.spartan.fajita.api.ll.GeneratorStrings.tailParameter;
-import static org.spartan.fajita.api.ll.GeneratorStrings.type;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.basicMethod;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.containerClass;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.tailParameter;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.ll.LLRecognizer;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;

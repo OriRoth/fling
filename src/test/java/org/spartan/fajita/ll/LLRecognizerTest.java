@@ -21,7 +21,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.ll.LLRecognizer;
-import org.spartan.fajita.api.ll.LLRecognizerGenerator;
+import org.spartan.fajita.api.ll.generation.LLRecognizerGenerator;
 
 @SuppressWarnings("static-method") public class LLRecognizerTest {
   private static BNF bnf;

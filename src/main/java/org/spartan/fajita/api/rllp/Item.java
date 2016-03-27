@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.sll;
+package org.spartan.fajita.api.rllp;
 
 import java.util.List;
 
