@@ -8,15 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.old.LRParser;
 
 public class FirstSetTest {
   private enum Term implements Terminal {
     a, b, c, d;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   private enum NT implements NonTerminal {
@@ -24,19 +19,19 @@ public class FirstSetTest {
   }
 
   private BNF bnf;
-  private LRParser parser;
+  private BNFAnalyzer parser;
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
         .start(NT.A) //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b) //
-        .derive(NT.AB).to(Term.a).or().to(Term.b) //
+        .derive(NT.AB).to(Term.a).or(Term.b) //
         .derive(NT.C).to(NT.AB) //
         .derive(NT.D).to(Term.d) //
         .derive(NT.REDUNDANT).to(NT.REDUNDANT) //
         .go();
-    parser = new LRParser(bnf);
+    parser = new BNFAnalyzer(bnf);
   }
   @Test public void testTerminal() {
     assertEquals(expectedSet(Term.a), parser.firstSetOf(Term.a));

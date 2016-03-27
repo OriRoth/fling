@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples;
+package org.spartan.fajita.api.examples.utils;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;

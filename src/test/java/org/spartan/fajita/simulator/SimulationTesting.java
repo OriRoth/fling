@@ -89,7 +89,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
   public static void test_ab(String input, boolean expected) {
     test(ab_list_jlr, input, expected);
   }
-  public static void test(JLRRecognizer jlr, String input, boolean expected) {
+  @SuppressWarnings("boxing") public static void test(JLRRecognizer jlr, String input, boolean expected) {
     assertEquals(JLRSimulator.runJLR(jlr, input), expected);
   }
 }

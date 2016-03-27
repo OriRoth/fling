@@ -1,12 +1,6 @@
-package automaton.seminar;
+package org.spartan.fajita.api.examples.utils;
 
-class EmptyStack implements AbstractStack<EmptyStack> {
-  Stack<EmptyStack> push(){return null;}
-}
 @SuppressWarnings({"all"})
-interface AbstractStack<Tail extends AbstractStack<?>> {
-}
-
 public interface Stack<Tail extends AbstractStack<?> > 
                   extends AbstractStack<Tail> {
   Stack<Stack<Tail>> push();

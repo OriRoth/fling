@@ -27,8 +27,8 @@ public class JLRSimulator {
   private Boolean result;
   private String inputHandled;
   private int internalState;
-  private boolean isDelayed ; 
-  private Map<Integer,JState> delayedElement;
+//  private boolean isDelayed ; 
+//  private Map<Integer,JState> delayedElement;
 
   public JLRSimulator(JActionTable actionTable, Collection<Verb> verbs) {
     this.actionTable = actionTable;
@@ -37,8 +37,8 @@ public class JLRSimulator {
     inputHandled = "";
     internalState = 0;
     stack = new Stack<>();
-    isDelayed = false;
-    delayedElement = null;
+//    isDelayed = false;
+//    delayedElement = null;
   }
   private Boolean result() {
     return result;

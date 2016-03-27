@@ -11,15 +11,10 @@ import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.bnf.symbols.Type;
-import org.spartan.fajita.api.parser.old.LRParser;
 
 public class FollowSetTest {
   private enum Term implements Terminal {
     a, b, c, d;
-    @Override public Type type() {
-      return Type.VOID;
-    }
   }
 
   private enum NT implements NonTerminal {
@@ -27,47 +22,47 @@ public class FollowSetTest {
   }
 
   private BNF bnf;
-  private LRParser parser;
+  private BNFAnalyzer analyzer;
 
   @Before public void initialize() {
     bnf = new BNFBuilder(Term.class, NT.class) //
         .start(NT.S) //
-        .derive(NT.S).to(NT.A).or().to(NT.B).or().to(NT.AB).or().to(NT.C) //
+        .derive(NT.S).to(NT.A).or(NT.B).or(NT.AB).or(NT.C) //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b)//
         .derive(NT.AB).to(NT.A).and(NT.B) //
         .derive(NT.C).to(Term.c) //
         .derive(NT.UNREACHABLE).to(Term.d) //
         .go();
-    parser = new LRParser(bnf);
+    analyzer = new BNFAnalyzer(bnf);
   }
   @Test public void testStartFollowedBy$() {
-    assertThat(expectedSet(SpecialSymbols.$), equalTo(parser.followSetOf(NT.S)));
+    assertThat(expectedSet(SpecialSymbols.$), equalTo(analyzer.followSetOf(NT.S)));
   }
   @Test public void testMultipleStartsFollowedBy$() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .start(NT.S, NT.A) //
-        .derive(NT.S).to(NT.B).or().to(NT.AB) //
+        .derive(NT.S).to(NT.B).or(NT.AB) //
         .derive(NT.A).to(NT.C) //
         .derive(NT.B).to(Term.b)//
         .derive(NT.AB).to(NT.A).and(NT.B) //
         .derive(NT.C).to(Term.c)//
         .derive(NT.UNREACHABLE).to(NT.UNREACHABLE) //
         .go();
-    parser = new LRParser(b);
-    assertThat(expectedSet(SpecialSymbols.$), equalTo(parser.followSetOf(NT.S)));
-    assertTrue(parser.followSetOf(NT.A).contains(SpecialSymbols.$));
+    analyzer = new BNFAnalyzer(b);
+    assertThat(expectedSet(SpecialSymbols.$), equalTo(analyzer.followSetOf(NT.S)));
+    assertTrue(analyzer.followSetOf(NT.A).contains(SpecialSymbols.$));
   }
   @Test public void testBasicFollow() {
-    assertTrue(parser.followSetOf(NT.A).contains(Term.b));
+    assertTrue(analyzer.followSetOf(NT.A).contains(Term.b));
   }
   @Test public void testNTFolloweByNullableContainsLhsFollow() {
-    assertTrue(parser.followSetOf(NT.C).contains(SpecialSymbols.$));
+    assertTrue(analyzer.followSetOf(NT.C).contains(SpecialSymbols.$));
   }
   @Test public void testEndOfExpressionContainsLhsFollow() {
-    assertTrue(parser.followSetOf(NT.A).contains(SpecialSymbols.$));
+    assertTrue(analyzer.followSetOf(NT.A).contains(SpecialSymbols.$));
   }
   @Test public void testUnreachableNT() {
-    assertEquals(expectedSet(), parser.followSetOf(NT.UNREACHABLE));
+    assertEquals(expectedSet(), analyzer.followSetOf(NT.UNREACHABLE));
   }
 }
