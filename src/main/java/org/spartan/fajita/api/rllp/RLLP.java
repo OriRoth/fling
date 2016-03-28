@@ -23,7 +23,7 @@ public class RLLP {
   public final List<Item> items;
   private final Map<NonTerminal, Map<Verb, DerivationRule>> llPredictionTable;
   private Map<Item, Map<Verb, List<Item>>> consolidationTable;
-  private Map<Item, Map<Verb, List<Item>>> jumpsTable;
+  public final Map<Item, Map<Verb, List<Item>>> jumpsTable;
   private Map<Item, Map<Verb, Action>> rllPredictionTable;
 
   public RLLP(BNF bnf) {
@@ -65,9 +65,9 @@ public class RLLP {
   private Map<Item, Map<Verb, List<Item>>> calculateJumpsTable() {
     Map<Item, Map<Verb, List<Item>>> $ = new HashMap<>();
     for (Item i : items) {
+      $.put(i, new HashMap<>());
       if (i.readyToReduce())
         continue;
-      $.put(i, new HashMap<>());
       final List<Symbol> suffix = i.rule.getChildren().subList(i.dotIndex + 1, i.rule.getChildren().size());
       for (Verb v : analyzer.firstSetOf(suffix)) {
         for (int j = 0; j < suffix.size(); j++) {
