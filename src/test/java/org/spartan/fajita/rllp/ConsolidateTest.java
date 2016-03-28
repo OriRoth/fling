@@ -45,13 +45,20 @@ import org.spartan.fajita.api.rllp.RLLP;
         .go();
     rllp = new RLLP(bnf);
   }
+  @Test public void testTrivialConsolidation() {
+    Item Ditem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 0);
+    Item Ditem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
+    List<Item> consolidation = rllp.consolidate(Ditem0, new Verb(d));
+    assertEquals(Ditem1, consolidation.remove(0));
+    assertTrue(consolidation.isEmpty());
+  }
   @Test public void testWideConsolidation() {
     Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 2);
     Item Ditem = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(d));
     List<Item> consolidation = rllp.consolidate(start, new Verb(d));
-    assertEquals(Sitem, consolidation.remove(0));
     assertEquals(Ditem, consolidation.remove(0));
+    assertEquals(Sitem, consolidation.remove(0));
     assertTrue(consolidation.isEmpty());
   }
   @Test public void testDeepConsolidation() {
@@ -61,10 +68,10 @@ import org.spartan.fajita.api.rllp.RLLP;
     Item Citem = getAnyMatchingItem(rllp, i -> i.rule.lhs == C && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(c));
     List<Item> consolidation = rllp.consolidate(start, new Verb(c));
-    assertEquals(Sitem, consolidation.remove(0));
-    assertEquals(Aitem, consolidation.remove(0));
-    assertEquals(Bitem, consolidation.remove(0));
     assertEquals(Citem, consolidation.remove(0));
+    assertEquals(Bitem, consolidation.remove(0));
+    assertEquals(Aitem, consolidation.remove(0));
+    assertEquals(Sitem, consolidation.remove(0));
     assertTrue(consolidation.isEmpty());
   }
   static Item getAnyMatchingItem(RLLP parser, Predicate<Item> predicate) {

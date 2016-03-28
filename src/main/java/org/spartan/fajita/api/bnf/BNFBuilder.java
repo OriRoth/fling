@@ -55,7 +55,7 @@ public class BNFBuilder {
     return this;
   }
   void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
+    DerivationRule r = new DerivationRule(lhs, symbols);
     symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb)v));
     checkNewRule(r);
     getRules().add(r);

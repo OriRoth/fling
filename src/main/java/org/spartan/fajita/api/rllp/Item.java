@@ -14,7 +14,7 @@ public class Item {
     this.rule = rule;
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder(rule.lhs.serialize() + " ::= ");
+    StringBuilder sb = new StringBuilder(rule.lhs.toString2() + " ::= ");
     List<Symbol> expression = rule.getChildren();
     for (int i = 0; i < expression.size(); i++) {
       if (i == dotIndex)

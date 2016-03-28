@@ -47,12 +47,12 @@ public class Verb implements Terminal {
     result = prime * result + ((type == null) ? 0 : type.hashCode());
     return result;
   }
-  @Override public String serialize() {
-    return "%" + name() + "%" + "*" + type.serialize() + "*";
-  }
-  public static Verb deserialize(String data) {
-    Type t = Type.deserialize(data.substring(data.indexOf("*") + 1, data.lastIndexOf("*")));
-    String name = data.substring(data.indexOf("%") + 1, data.lastIndexOf("%"));
-    return new Verb(name, t);
-  }
+//  @Override public String serialize() {
+//    return "%" + name() + "%" + "*" + type.serialize() + "*";
+//  }
+//  public static Verb deserialize(String data) {
+//    Type t = Type.deserialize(data.substring(data.indexOf("*") + 1, data.lastIndexOf("*")));
+//    String name = data.substring(data.indexOf("%") + 1, data.lastIndexOf("%"));
+//    return new Verb(name, t);
+//  }
 }
