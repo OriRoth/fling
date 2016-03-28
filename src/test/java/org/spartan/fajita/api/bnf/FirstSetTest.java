@@ -33,10 +33,10 @@ public class FirstSetTest {
     analyzer = new BNFAnalyzer(bnf);
   }
   @Test public void testNT() {
-    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A).get(0).name());
+    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A).iterator().next().name());
   }
   @Test public void testExpressionWithNoNullables() {
-    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A, NT.B).get(0).name());
+    assertEquals(Term.a.name(), analyzer.firstSetOf(NT.A, NT.B).iterator().next().name());
   }
   @Test public void testRedundantNT() {
     assertTrue(analyzer.firstSetOf(NT.REDUNDANT).isEmpty());

@@ -151,10 +151,10 @@ public class RLLP {
         .findAny().get();
   }
 
-  static abstract class Action {
+  public static abstract class Action {
     public abstract boolean isPush();
 
-    static class Jump extends Action {
+    public static class Jump extends Action {
       public final Verb v;
 
       public Jump(Verb v) {
@@ -168,7 +168,7 @@ public class RLLP {
       }
     }
 
-    static class Push extends Action {
+    public static class Push extends Action {
       public final List<Item> itemsToPush;
 
       public Push(List<Item> dest) {

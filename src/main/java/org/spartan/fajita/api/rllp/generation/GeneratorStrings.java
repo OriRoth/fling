@@ -1,0 +1,43 @@
+package org.spartan.fajita.api.rllp.generation;
+
+import java.util.Collection;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.rllp.Item;
+
+import com.squareup.javapoet.TypeVariableName;
+
+public class GeneratorStrings {
+  // public static final String stackClass = "Stack";
+  // public static final String tailParameter = "Tail";
+  // public static final String containerClass= "Container";
+  // public static ClassName type(final String classname) {
+  // return ClassName.get("", classname);
+  // }
+  public static TypeVariableName typeArg(final Verb verb) {
+    String name = verb.name();
+    return TypeVariableName.get(name);
+  }
+  public static String itemTypeName(final Item i) {
+    return i.rule.lhs + "_" + i.dotIndex + "_" + i.rule.hashCode();
+  }
+  // public static MethodSpec.Builder basicMethod(String name){
+  // return MethodSpec.methodBuilder(name).addCode("return null;\n");
+  // }
+  public static <T> Mapper<T> map(Collection<T> toMap) {
+    return new Mapper<>(toMap);
+  }
+
+  public static class Mapper<T> {
+    private Collection<T> arg;
+
+    Mapper(Collection<T> arg) {
+      this.arg = arg;
+    }
+    public <S> Collection<S> with(Function<T, S> func) {
+      return arg.stream().map(t -> func.apply(t)).collect(Collectors.toList());
+    }
+  }
+}
