@@ -7,12 +7,13 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.rllp.Item;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeVariableName;
 
 public class GeneratorStrings {
   // public static final String stackClass = "Stack";
   // public static final String tailParameter = "Tail";
-  // public static final String containerClass= "Container";
+   public static final String enclosingClass = "Container";
   // public static ClassName type(final String classname) {
   // return ClassName.get("", classname);
   // }
@@ -21,7 +22,10 @@ public class GeneratorStrings {
     return TypeVariableName.get(name);
   }
   public static String itemTypeName(final Item i) {
-    return i.rule.lhs + "_" + i.dotIndex + "_" + i.rule.hashCode();
+    return i.rule.lhs + "_" + i.dotIndex + "_" + Math.abs(i.rule.hashCode());
+  }
+  public static ClassName itemClass(final Item i){
+    return ClassName.get("",itemTypeName(i));
   }
   // public static MethodSpec.Builder basicMethod(String name){
   // return MethodSpec.methodBuilder(name).addCode("return null;\n");

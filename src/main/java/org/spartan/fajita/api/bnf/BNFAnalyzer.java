@@ -95,6 +95,9 @@ public class BNFAnalyzer {
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
+  public boolean isNullable(final Item i) {
+    return isNullable(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size()));
+  }
   public Collection<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
     // throw new IllegalArgumentException("Not handling epsilons!!");
@@ -110,6 +113,11 @@ public class BNFAnalyzer {
   }
   public Collection<Verb> firstSetOf(Item i) {
     return firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size()));
+  }
+  public Collection<Verb> followSetWO$(final NonTerminal nt) {
+    final Collection<Verb> $ = new ArrayList<>(followSetOf(nt));
+    $.remove(SpecialSymbols.$);
+    return $;
   }
   public Collection<Verb> followSetOf(final NonTerminal nt) {
     if (followSets == null)

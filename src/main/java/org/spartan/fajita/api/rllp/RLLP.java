@@ -30,7 +30,7 @@ public class RLLP {
     this.bnf = bnf;
     this.analyzer = new BNFAnalyzer(bnf, true);
     items = calculateItems();
-    llPredictionTable = createPredictionTable();
+    llPredictionTable = createLLPredictionTable();
     consolidationTable = calculateConsolidateTable();
     jumpsTable = calculateJumpsTable();
     rllPredictionTable = calculateRLLPredictionTable();
@@ -50,12 +50,14 @@ public class RLLP {
       Map<Verb, Action> currentLine = new HashMap<>();
       $.put(i, currentLine);
       for (Verb v : bnf.getVerbs()) {
-        if (v == SpecialSymbols.$)
-          continue;
         if (analyzer.firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size())).contains(v))
           currentLine.put(v, new Action.Push(consolidate(i, v)));
-        else if (analyzer.followSetOf(i.rule.lhs).contains(v))
-          currentLine.put(v, new Action.Jump(v));
+        else if (analyzer.followSetOf(i.rule.lhs).contains(v)) {
+          if (v == SpecialSymbols.$)
+            currentLine.put(v, new Action.Accept());
+          else
+            currentLine.put(v, new Action.Jump(v));
+        }
       }
     }
     return $;
@@ -99,7 +101,7 @@ public class RLLP {
       throw new LLParser.NotLLGrammar(
           "predict[" + d.lhs + "," + v.name() + "] has two conflicting rules : <" + result + "> , <" + d + ">");
   }
-  private Map<NonTerminal, Map<Verb, DerivationRule>> createPredictionTable() {
+  private Map<NonTerminal, Map<Verb, DerivationRule>> createLLPredictionTable() {
     Map<NonTerminal, Map<Verb, DerivationRule>> $ = new HashMap<>();
     for (Symbol nt : bnf.getNonTerminals())
       $.put((NonTerminal) nt, new HashMap<>());
@@ -132,16 +134,40 @@ public class RLLP {
     return $;
   }
   public DerivationRule llPredict(NonTerminal Y, Verb v) {
-    return llPredictionTable.get(Y).get(v);
+    final Map<Verb, DerivationRule> row = llPredictionTable.get(Y);
+    if (row == null)
+      throw new RuntimeException("llPredict( " + Y + " , _ ) does not exist.");
+    final DerivationRule value = row.get(v);
+    if (value == null)
+      throw new RuntimeException("llPredict( " + Y + " , " + v + " ) does not exist.");
+    return value;
   }
   public List<Item> consolidate(Item i, Verb v) {
-    return consolidationTable.get(i).get(v);
+    final Map<Verb, List<Item>> row = consolidationTable.get(i);
+    if (row == null)
+      throw new RuntimeException("consolidate( " + i + " , _ ) does not exist.");
+    final List<Item> value = row.get(v);
+    if (value == null)
+      throw new RuntimeException("consolidate( " + i + " , " + v + " ) does not exist.");
+    return value;
   }
   public List<Item> jumps(Item i, Verb v) {
-    return jumpsTable.get(i).get(v);
+    final Map<Verb, List<Item>> row = jumpsTable.get(i);
+    if (row == null)
+      throw new RuntimeException("jumps( " + i + " , _ ) does not exist.");
+    final List<Item> value = row.get(v);
+    if (value == null)
+      throw new RuntimeException("jumps( " + i + " , " + v + " ) does not exist.");
+    return value;
   }
   public Action predict(Item i, Verb v) {
-    return rllPredictionTable.get(i).get(v);
+    final Map<Verb, Action> row = rllPredictionTable.get(i);
+    if (row == null)
+      throw new RuntimeException("predict( " + i + " , _ ) does not exist.");
+    final Action value = row.get(v);
+    if (value == null)
+      throw new RuntimeException("predict( " + i + " , " + v + " ) does not exist.");
+    return value;
   }
   public Item getStartItem(Verb initialInput) {
     final Stream<Item> filter2 = items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0);
@@ -152,7 +178,17 @@ public class RLLP {
   }
 
   public static abstract class Action {
-    public abstract boolean isPush();
+    public static enum ActionType {
+      ACCEPT, PUSH, JUMP;
+    }
+
+    public static class Accept extends Action {
+      @Override public ActionType type() {
+        return ActionType.ACCEPT;
+      }
+    }
+
+    public abstract ActionType type();
 
     public static class Jump extends Action {
       public final Verb v;
@@ -160,11 +196,11 @@ public class RLLP {
       public Jump(Verb v) {
         this.v = v;
       }
-      @Override public boolean isPush() {
-        return false;
-      }
       @Override public String toString() {
-        return "jump("+v+")";
+        return "jump(" + v + ")";
+      }
+      @Override public ActionType type() {
+        return ActionType.JUMP;
       }
     }
 
@@ -174,11 +210,11 @@ public class RLLP {
       public Push(List<Item> dest) {
         this.itemsToPush = dest;
       }
-      @Override public boolean isPush() {
-        return true;
-      }
       @Override public String toString() {
-        return "push("+itemsToPush+")";
+        return "push(" + itemsToPush + ")";
+      }
+      @Override public ActionType type() {
+        return ActionType.PUSH;
       }
     }
   }

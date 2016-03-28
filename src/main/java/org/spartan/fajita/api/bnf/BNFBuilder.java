@@ -62,6 +62,10 @@ public class BNFBuilder {
   }
   private void validate() {
     validateNonterminals();
+    validateNoRedundant();
+  }
+  private void validateNoRedundant() {
+    // TODO validate no redundant
   }
   private void validateNonterminals() {
     for (NonTerminal nonTerminal : getNonTerminals())

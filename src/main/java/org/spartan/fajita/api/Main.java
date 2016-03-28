@@ -30,6 +30,11 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.jlr.JLRRecognizer;
 import org.spartan.fajita.api.jlr.JState;
+import org.spartan.fajita.api.rllp.RLLP;
+import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
+
+import static org.spartan.fajita.api.Main.NT.*;
+import static org.spartan.fajita.api.Main.Term.*;
 
 public class Main {
   public static void main(final String[] args) {
@@ -39,7 +44,9 @@ public class Main {
   static void apiGenerator() {
     // final BNF bnf = BalancedParenthesis.buildBNF();
     BNF bnf = testBNF();
-    lrAutomatonVisualisation(bnf);
+    String code = RLLPEncoder.generate(new RLLP(bnf));
+    System.out.println(code);
+    // lrAutomatonVisualisation(bnf);
     // JavaFile fluentAPI = ApiGenerator.generate(bnf);
     // System.out.println(fluentAPI.toString());
   }
@@ -115,8 +122,8 @@ public class Main {
       final int y) {
     DefaultGraphCell cell = model.getVertexCell(vertex);
     Map attr = cell.getAttributes();
-    Rectangle2D b = GraphConstants.getBounds(attr);
-    GraphConstants.setBounds(attr, new Rectangle(x, y, (int) b.getWidth(), (int) b.getHeight()));
+    Rectangle2D rect = GraphConstants.getBounds(attr);
+    GraphConstants.setBounds(attr, new Rectangle(x, y, (int) rect.getWidth(), (int) rect.getHeight()));
     Map cellAttr = new HashMap();
     cellAttr.put(cell, attr);
     model.edit(cellAttr, null, null, null);
@@ -132,10 +139,10 @@ public class Main {
 
   static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class) //
-        .start(NT.S) //
-        .derive(NT.S).to(NT.A).and(NT.B) //
-        .derive(NT.B).to(NT.B).and(Term.b).orNone() // Left recursive
-        .derive(NT.A).to(Term.a).and(NT.A).orNone() // Right recursive
+        .start(S) //
+        .derive(S).to(A) //
+        .derive(A).to(B).or(a) //
+        .derive(B).to(b) //
         .go();
   }
 }
