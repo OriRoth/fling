@@ -11,6 +11,7 @@ import javax.lang.model.element.Modifier;
 
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.rllp.Item;
+import org.spartan.fajita.api.rllp.JSM;
 import org.spartan.fajita.api.rllp.RLLP;
 import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
@@ -67,12 +68,13 @@ public class RLLPEncoder {
       case JUMP:
         return returnTypeOfJump((Action.Jump) action);
       case PUSH:
-        return returnTypeOfPush((Action.Push) action, i, v);
+        return returnTypeOfPush((Action.Push) action);
       default:
         throw new IllegalStateException();
     }
   }
   private static TypeName returnTypeOfAccept() {
+    //TODO:CHANGE TYPE
     return TypeName.INT;
   }
   private TypeName instanciateNextItem(Item i) {
@@ -82,8 +84,13 @@ public class RLLPEncoder {
       return itemClass(next);
     return ParameterizedTypeName.get(itemClass(next), map(followOfItem).with(v -> typeArg(v)).toArray(new TypeName[] {}));
   }
-  private TypeName returnTypeOfPush(Push action, Item i, Verb v) {
-    return TypeName.VOID;
+  private TypeName returnTypeOfPush(Push action) {
+    JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
+    action.itemsToPush.descendingIterator().forEachRemaining(i->jsm.push(i));
+    return encodeJSM(jsm);
+  }
+  private TypeName encodeJSM(JSM jsm) {
+
   }
   private static TypeName returnTypeOfJump(Jump action) {
     return typeArg(action.v);

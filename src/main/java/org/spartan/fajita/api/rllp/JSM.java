@@ -57,7 +57,13 @@ public class JSM {
     S1.addFirst(partMap);
     S0.addFirst(i);
   }
-  public void jump(Verb v) {
+  /**
+   * Jumps to using v's jump stack, returning the result JSM.
+   * 
+   * @param v
+   *          the jump stack used
+   */
+  public JSM dryJump(Verb v) {
     JSM dest = null;
     for (Map<Verb, JSM> partMap : S1)
       if (partMap.containsKey(v)) {
@@ -66,6 +72,15 @@ public class JSM {
       }
     if (dest == null)
       throw new IllegalStateException("The jump stack for verb " + v + " is empty!");
-    load(dest);
+    return dest;
+  }
+  /**
+   * Jumps to using v's jump stack, changing the state of the JSM accordingly.
+   * 
+   * @param v
+   *          the jump stack used
+   */
+  public void jump(Verb v) {
+    load(dryJump(v));
   }
 }
