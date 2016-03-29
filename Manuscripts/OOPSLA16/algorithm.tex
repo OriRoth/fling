@@ -284,17 +284,17 @@ respect to~$i$, to~$t$'s jump value.
   \end{algorithmic}
 \end{algorithm}
 
-Let~$β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
+Let~$Y₁β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
 Then, for each terminal~$t∈Σ$,
 function~$\Function Jumps(i)$ determines the shortest
-prefix~$Y₁…Y_{j-1}$ of~$β$ which is nullable
+prefix~$Y₂…Y_{j-1}$ of~$β$ which is nullable
 and such that~$k ∈ \Function First(Yⱼ)$.
 The following line of thought explains the rationale.
 
-Assume that~$Y₁…Y_{j-1}$ is nullable and
+Assume that~$Y₂…Y_{j-1}$ is nullable and
 that~$t∈\Function First(Yⱼ)$, for some~$t\inΣ$.
-Then, when the \RLLp is at states described by~$i$ and~$t$
-is seen, the \RLLp should conclude that~$Y₁…Y_{j-1}\stackrel * ⇒ε$
+Then, when the \RLLp finished parsing~$Y₁$ and~$t$
+is seen, the \RLLp should conclude that~$Y₂…Y_{j-1}\stackrel * ⇒ε$
 and jump forward to the point of the parsing process just before
 seeing~$Yⱼ$.
 
@@ -306,8 +306,8 @@ In the case that the assumption holds for
 both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
 two alternatives to choose from:
 \begin{itemize}
-  \item~$Y₁…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,~$Yⱼ \stackrel * ⇒ tγ$
-  \item~$Y₁…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,~$Y_{j'} \stackrel * ⇒ tγ'$
+  \item~$Y₂…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,~$Yⱼ \stackrel * ⇒ tγ$
+  \item~$Y₂…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,~$Y_{j'} \stackrel * ⇒ tγ'$
 \end{itemize}
 Recalling that an \LLp pushes
 stack symbols in reverse order and that \RLLp emulates its behavior, we can
@@ -341,15 +341,17 @@ irrespective of the length of the consolidated list.
     \LET{$L$}{$∅$} \COMMENT{initialize return value}
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
       %\STATE{$\Function print(r)$} \COMMENT{useful for parsing}
-      \STATE{$\Function push(L,[X ::=αY·β])$}\COMMENT{advance the item}
+      \STATE{$\Function push(L,[X ::=α·Yβ])$}\COMMENT{currently parsing~$Y$}
       \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
       \STATE{$[B::=X₁…Xₘ]←r$} \COMMENT{break~$r$ into components}
       \IF[$δ$ returned an~$ε$-rule]{$X₁…Xₘ=ε$}
         \WHILE[pop all exhausted rules]{$\Function exhausted(\Function peek(L))$}
           \STATE{$\Function pop(L)$}
         \ENDWHILE
+        \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{$Y$ was just fully parsed}
+        \STATE{$[X::=αY·β] ← \Function pop(L)$} \COMMENT{advance the rule}
       \ELSE[$δ$ returned a non~$ε$-rule]
-        \STATE{$\Function push(L,r)$} \COMMENT{we now turn to parse~$r$}
+        \STATE{$\Function push(L,[B::=·X₁…Xₘ])$} \COMMENT{we now turn to parse~$r$}
       \FI
       \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{break~$i$ into its components}
     \ENDWHILE
@@ -376,9 +378,11 @@ irrespective of the length of the consolidated list.
           peek()$, at runtime, into its own stack.
     \item
           The algorithm relies on function~$\Function exhausted(i)$ that returns
-          true for an item~$i$ when its dot is in its right most position,
+          true for an item~$i$ when its dot is in its almost right most position,
           i.e., the item represents times during parsing in which all
-          right hand side symbols of the item's rule have been parsed.
+          right hand side symbols of the item's rule have been parsed except for the last.
+          Since the item was just reviled at the top of the stack, the last symbol
+          was parsed as well, and the rule is fully parsed (and thus, exhausted).
           \par
           Figuratively, an item~$i$ is exhausted right after the rule's body
           have been seen in full, and the item ‟waits” for the \RLLp to take

@@ -1,19 +1,10 @@
 package org.spartan.fajita.rllp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.spartan.fajita.rllp.JumpsTest.NT.A;
-import static org.spartan.fajita.rllp.JumpsTest.NT.B;
-import static org.spartan.fajita.rllp.JumpsTest.NT.C;
-import static org.spartan.fajita.rllp.JumpsTest.NT.D;
-import static org.spartan.fajita.rllp.JumpsTest.NT.S;
-import static org.spartan.fajita.rllp.JumpsTest.Term.a;
-import static org.spartan.fajita.rllp.JumpsTest.Term.b;
-import static org.spartan.fajita.rllp.JumpsTest.Term.c;
-import static org.spartan.fajita.rllp.JumpsTest.Term.d;
+import static org.junit.Assert.*;
+import static org.spartan.fajita.rllp.JumpsTest.NT.*;
+import static org.spartan.fajita.rllp.JumpsTest.Term.*;
 
-import java.util.List;
+import java.util.Deque;
 import java.util.function.Predicate;
 
 import org.junit.BeforeClass;
@@ -51,26 +42,25 @@ import org.spartan.fajita.api.rllp.RLLP;
   }
   @Test public void testWideJump() {
     Item Sitem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 0);
-    Item Sitem4 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 4);
+    Item Sitem3 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 3);
     Item Ditem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
-    List<Item> jumps = rllp.jumps(Sitem0, new Verb(d));
-    assertEquals(Ditem1, jumps.remove(0));
-    assertEquals(Sitem4, jumps.remove(0));
+    Deque<Item> jumps = rllp.jumps(Sitem0, new Verb(d));
+    assertEquals(Ditem1, jumps.removeFirst());
+    assertEquals(Sitem3, jumps.removeFirst());
     assertTrue(jumps.isEmpty());
   }
   @Test public void testNarrowJump() {
     Item Sitem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 0);
-    Item Sitem2 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 2);
+    Item Sitem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 1);
     Item Bitem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == B && i.dotIndex == 1);
-    List<Item> jumps = rllp.jumps(Sitem0, new Verb(b));
-    assertEquals(Bitem1, jumps.remove(0));
-    assertEquals(Sitem2, jumps.remove(0));
+    Deque<Item> jumps = rllp.jumps(Sitem0, new Verb(b));
+    assertEquals(Bitem1, jumps.removeFirst());
+    assertEquals(Sitem1, jumps.removeFirst());
     assertTrue(jumps.isEmpty());
   }
-  @Test public void testTrivialJumps() {
+  @Test(expected = IllegalStateException.class) public void testNoJumps() {
     Item Aitem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == A && i.dotIndex == 0);
-    List<Item> jumps = rllp.jumps(Aitem0, new Verb(a));
-    assertNull(jumps);
+    rllp.jumps(Aitem0, new Verb(a));
   }
   static Item getAnyMatchingItem(RLLP parser, Predicate<Item> predicate) {
     return parser.items.stream().filter(predicate).findAny().get();

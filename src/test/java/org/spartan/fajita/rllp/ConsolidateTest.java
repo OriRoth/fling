@@ -1,15 +1,12 @@
 package org.spartan.fajita.rllp;
 
-import static org.junit.Assert.*;
-import static org.spartan.fajita.rllp.ConsolidateTest.NT.A;
-import static org.spartan.fajita.rllp.ConsolidateTest.NT.B;
-import static org.spartan.fajita.rllp.ConsolidateTest.NT.C;
-import static org.spartan.fajita.rllp.ConsolidateTest.NT.D;
-import static org.spartan.fajita.rllp.ConsolidateTest.NT.S;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.spartan.fajita.rllp.ConsolidateTest.NT.*;
 import static org.spartan.fajita.rllp.ConsolidateTest.Term.c;
 import static org.spartan.fajita.rllp.ConsolidateTest.Term.d;
 
-import java.util.List;
+import java.util.Deque;
 import java.util.function.Predicate;
 
 import org.junit.BeforeClass;
@@ -48,30 +45,30 @@ import org.spartan.fajita.api.rllp.RLLP;
   @Test public void testTrivialConsolidation() {
     Item Ditem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 0);
     Item Ditem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
-    List<Item> consolidation = rllp.consolidate(Ditem0, new Verb(d));
-    assertEquals(Ditem1, consolidation.remove(0));
+    Deque<Item> consolidation = rllp.consolidate(Ditem0, new Verb(d));
+    assertEquals(Ditem1, consolidation.removeFirst());
     assertTrue(consolidation.isEmpty());
   }
   @Test public void testWideConsolidation() {
-    Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 2);
+    Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 1);
     Item Ditem = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(d));
-    List<Item> consolidation = rllp.consolidate(start, new Verb(d));
-    assertEquals(Ditem, consolidation.remove(0));
-    assertEquals(Sitem, consolidation.remove(0));
+    Deque<Item> consolidation = rllp.consolidate(start, new Verb(d));
+    assertEquals(Ditem, consolidation.removeFirst());
+    assertEquals(Sitem, consolidation.removeFirst());
     assertTrue(consolidation.isEmpty());
   }
   @Test public void testDeepConsolidation() {
-    Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 1);
-    Item Aitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == A && i.dotIndex == 1);
-    Item Bitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == B && i.dotIndex == 1);
+    Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 0);
+    Item Aitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == A && i.dotIndex == 0);
+    Item Bitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == B && i.dotIndex == 0);
     Item Citem = getAnyMatchingItem(rllp, i -> i.rule.lhs == C && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(c));
-    List<Item> consolidation = rllp.consolidate(start, new Verb(c));
-    assertEquals(Citem, consolidation.remove(0));
-    assertEquals(Bitem, consolidation.remove(0));
-    assertEquals(Aitem, consolidation.remove(0));
-    assertEquals(Sitem, consolidation.remove(0));
+    Deque<Item> consolidation = rllp.consolidate(start, new Verb(c));
+    assertEquals(Citem, consolidation.removeFirst());
+    assertEquals(Bitem, consolidation.removeFirst());
+    assertEquals(Aitem, consolidation.removeFirst());
+    assertEquals(Sitem, consolidation.removeFirst());
     assertTrue(consolidation.isEmpty());
   }
   static Item getAnyMatchingItem(RLLP parser, Predicate<Item> predicate) {

@@ -4,48 +4,68 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
   Deque<Item> S0;
-  Map<Verb, JSM> S1;
+  Deque<Map<Verb, JSM>> S1;
   private Collection<Verb> verbs;
-  private Map<Item, Map<Verb, List<Item>>> jumpsTable;
+  private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
 
-  public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, List<Item>>> jumpsTable) {
+  public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
     this.verbs = verbs;
     this.jumpsTable = jumpsTable;
     S0 = new ArrayDeque<>();
-    S1 = new HashMap<>();
-    verbs.forEach(v -> S1.put(v, null));
+    S1 = new ArrayDeque<>();
+  }
+  private JSM(JSM fromJSM) {
+    this(fromJSM.verbs, fromJSM.jumpsTable);
+    fromJSM.S0.descendingIterator().forEachRemaining(i -> S0.addFirst(i));
+    fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
+  }
+  public JSM deepCopy() {
+    return new JSM(this);
+  }
+  /**
+   * 
+   * @param loadFrom
+   *          the JSM the is loaded into ``this'' instance.
+   */
+  private void load(JSM loadFrom) {
+    S0 = loadFrom.S0;
+    S1 = loadFrom.S1;
   }
   public Item peek() {
-    return S0.peek();
+    return S0.getFirst();
+  }
+  public Item pop() {
+    S1.removeFirst();
+    return S0.removeFirst();
   }
   public void push(Item i) {
-    HashMap<Verb, JSM> addToS1 = new HashMap<>();
+    HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
-      JSM snapshot = new JSM(this);
-      for (Item toPush : jumpsTable.get(i).get(v))
-        snapshot.push(toPush);
-      addToS1.put(v, snapshot);
+      JSM copy = deepCopy();
+      // This is the push after jump
+      final Deque<Item> nextConsolidate = jumpsTable.get(i).get(v);
+      nextConsolidate.descendingIterator()//
+          .forEachRemaining(toPush -> copy.push(toPush));
+      partMap.put(v, copy);
     }
-    addToS1.forEach((v, jsm) -> S1.put(v, jsm));
-    S0.push(i);
+    S1.addFirst(partMap);
+    S0.addFirst(i);
   }
   public void jump(Verb v) {
-    JSM dest = S1.get(v);
-    S1 = dest.S1;
-    S0 = dest.S0;
-  }
-  private JSM(JSM snapshot) {
-    this(snapshot.verbs, snapshot.jumpsTable);
-    snapshot.S0.descendingIterator().forEachRemaining(i -> S0.addLast(i));
-    for (Verb v : verbs) {
-      S1.put(v, new JSM(snapshot.S1.get(v)));
-    }
+    JSM dest = null;
+    for (Map<Verb, JSM> partMap : S1)
+      if (partMap.containsKey(v)) {
+        dest = partMap.get(v);
+        break;
+      }
+    if (dest == null)
+      throw new IllegalStateException("The jump stack for verb " + v + " is empty!");
+    load(dest);
   }
 }
