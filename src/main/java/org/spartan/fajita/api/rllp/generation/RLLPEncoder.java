@@ -2,10 +2,12 @@ package org.spartan.fajita.api.rllp.generation;
 
 import static org.spartan.fajita.api.rllp.generation.GeneratorStrings.*;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.lang.model.element.Modifier;
 
@@ -22,6 +24,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
+import com.squareup.javapoet.TypeVariableName;
 
 public class RLLPEncoder {
   private RLLP rllp;
@@ -74,7 +77,7 @@ public class RLLPEncoder {
     }
   }
   private static TypeName returnTypeOfAccept() {
-    //TODO:CHANGE TYPE
+    // TODO:CHANGE TYPE
     return TypeName.INT;
   }
   private TypeName instanciateNextItem(Item i) {
@@ -86,11 +89,30 @@ public class RLLPEncoder {
   }
   private TypeName returnTypeOfPush(Push action) {
     JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
-    action.itemsToPush.descendingIterator().forEachRemaining(i->jsm.push(i));
+    action.itemsToPush.descendingIterator().forEachRemaining(i -> jsm.push(i));
     return encodeJSM(jsm);
   }
   private TypeName encodeJSM(JSM jsm) {
-
+    Map<Verb, TypeName> typeArguments = new TreeMap<>();
+    if (!jsm.iterator().hasNext()) // no possible jumps
+      return encodeTypeArgumentsMap(jsm.peek(), typeArguments);
+    for (SimpleEntry<Verb, JSM> e : jsm)
+      typeArguments.put(e.getKey(), encodeJSM(e.getValue()));
+    return encodeTypeArgumentsMap(jsm.peek(), typeArguments);
+  }
+  private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments) {
+    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(mainType.rule.lhs);
+    if (followSet.isEmpty())
+      return itemClass(mainType);
+    for (Verb v : followSet)
+      typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
+    TypeName[] arguments = new TypeName[followSet.size()];
+    int i = 0;
+    for (Verb v : typeArguments.keySet()) {
+      arguments[i] = typeArguments.get(v);
+      i++;
+    }
+    return ParameterizedTypeName.get(itemClass(mainType), arguments);
   }
   private static TypeName returnTypeOfJump(Jump action) {
     return typeArg(action.v);

@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -58,7 +59,7 @@ public class BNFAnalyzer {
       moreChanges = false;
       for (DerivationRule dRule : bnf.getRules())
         for (Symbol symbol : dRule.getChildren()) {
-          moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new HashSet<>()));
+          moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
             break;
         }
@@ -72,7 +73,7 @@ public class BNFAnalyzer {
     Map<NonTerminal, Collection<Verb>> $ = new HashMap<>();
     // initialization
     for (NonTerminal nt : bnf.getNonTerminals())
-      $.put(nt, new HashSet<>());
+      $.put(nt, new TreeSet<>());
     for (NonTerminal start : bnf.getStartSymbols())
       $.get(start).add(SpecialSymbols.$);
     // iterative step

@@ -129,20 +129,22 @@ public class Main {
     model.edit(cellAttr, null, null, null);
   }
 
-  enum Term implements Terminal {
-    a, b, c
+  static enum Term implements Terminal {
+    a, b, c, d;
   }
 
-  enum NT implements NonTerminal {
-    S, A, B
+  static enum NT implements NonTerminal {
+    S, A, B, C, D
   }
 
   static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class) //
         .start(S) //
-        .derive(S).to(A) //
-        .derive(A).to(B).or(a) //
-        .derive(B).to(b) //
+        .derive(S).to(A).and(D) //
+        .derive(A).to(B) //
+        .derive(B).to(C).and(b) //
+        .derive(C).to(c).orNone() //
+        .derive(D).to(d) //
         .go();
   }
 }

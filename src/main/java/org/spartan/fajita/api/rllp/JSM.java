@@ -1,21 +1,26 @@
 package org.spartan.fajita.api.rllp;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class JSM {
+public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   Deque<Item> S0;
   Deque<Map<Verb, JSM>> S1;
   private Collection<Verb> verbs;
   private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
-    this.verbs = verbs;
+    this.verbs = new ArrayDeque<>(verbs);
+    verbs.remove(SpecialSymbols.$);
     this.jumpsTable = jumpsTable;
     S0 = new ArrayDeque<>();
     S1 = new ArrayDeque<>();
@@ -64,14 +69,18 @@ public class JSM {
    *          the jump stack used
    */
   public JSM dryJump(Verb v) {
+    JSM dest = findJump(v);
+    if (dest == null)
+      throw new IllegalStateException("The jump stack for verb " + v + " is empty!");
+    return dest;
+  }
+  private JSM findJump(Verb v) {
     JSM dest = null;
     for (Map<Verb, JSM> partMap : S1)
       if (partMap.containsKey(v)) {
         dest = partMap.get(v);
         break;
       }
-    if (dest == null)
-      throw new IllegalStateException("The jump stack for verb " + v + " is empty!");
     return dest;
   }
   /**
@@ -82,5 +91,9 @@ public class JSM {
    */
   public void jump(Verb v) {
     load(dryJump(v));
+  }
+  @Override public Iterator<SimpleEntry<Verb, JSM>> iterator() {
+    return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v))).filter(e -> e.getValue() != null)//
+        .collect(Collectors.toList()).iterator();
   }
 }

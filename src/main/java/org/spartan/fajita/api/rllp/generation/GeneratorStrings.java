@@ -11,12 +11,9 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeVariableName;
 
 public class GeneratorStrings {
-  // public static final String stackClass = "Stack";
-  // public static final String tailParameter = "Tail";
    public static final String enclosingClass = "Container";
-  // public static ClassName type(final String classname) {
-  // return ClassName.get("", classname);
-  // }
+   public static final String errorClass = "ERROR";
+
   public static TypeVariableName typeArg(final Verb verb) {
     String name = verb.name();
     return TypeVariableName.get(name);
@@ -27,9 +24,6 @@ public class GeneratorStrings {
   public static ClassName itemClass(final Item i){
     return ClassName.get("",itemTypeName(i));
   }
-  // public static MethodSpec.Builder basicMethod(String name){
-  // return MethodSpec.methodBuilder(name).addCode("return null;\n");
-  // }
   public static <T> Mapper<T> map(Collection<T> toMap) {
     return new Mapper<>(toMap);
   }
