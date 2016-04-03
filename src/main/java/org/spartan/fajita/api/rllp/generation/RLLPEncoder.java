@@ -21,10 +21,11 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.MethodSpec.Builder;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
 import com.squareup.javapoet.TypeVariableName;
 
 public class RLLPEncoder {
@@ -38,14 +39,12 @@ public class RLLPEncoder {
     encodeItems(rllp.items);
     enclosing = TypeSpec.classBuilder(enclosingClass) //
         .addModifiers(Modifier.PUBLIC) //
-        .addType(addErrorType())
-        .addTypes(itemTypes.values()) //
+        .addType(addErrorType()).addTypes(itemTypes.values()) //
         .build();
   }
   private static TypeSpec addErrorType() {
     return TypeSpec.classBuilder(errorClass)//
-        .addModifiers(Modifier.STATIC)
-        .build();
+        .addModifiers(Modifier.STATIC).build();
   }
   private void encodeItems(List<Item> items) {
     for (Item i : filterItems(items))
@@ -57,7 +56,7 @@ public class RLLPEncoder {
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(i.rule.lhs);
     final Collection<Verb> firstOfItem = rllp.analyzer.firstSetOf(i);
-    final Builder itemType = TypeSpec.classBuilder(itemTypeName(i)) //
+    final TypeSpec.Builder itemType = TypeSpec.classBuilder(itemTypeName(i)) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
         .addMethods(map(firstOfItem).with(v -> methodOf(i, v)));
     if (rllp.analyzer.isNullable(i))
@@ -67,10 +66,19 @@ public class RLLPEncoder {
     return itemType.build();
   }
   private MethodSpec methodOf(Item i, Verb v) {
-    return MethodSpec.methodBuilder(v.name()) //
+    final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .returns(returnTypeOfMethod(i, v)) //
+        .returns(returnTypeOfMethod(i, v));
+    augmentWithParameters(methodSpec, v);
+    return methodSpec //
         .build();
+  }
+  private static void augmentWithParameters(Builder methodSpec, Verb v) {
+    List<Class<?>> classes = v.type.classes;
+    for (int i = 0; i < classes.size(); i++) {
+      Class<?> clazz = classes.get(i);
+      methodSpec.addParameter(ParameterSpec.builder(clazz, "arg" + i).build());
+    }
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     if ((!i.readyToReduce()) && i.afterDot().isVerb())
