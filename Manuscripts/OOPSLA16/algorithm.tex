@@ -349,7 +349,7 @@ irrespective of the length of the consolidated list.
           \STATE{$\Function pop(L)$}
         \ENDWHILE
         \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{$Y$ was just fully parsed}
-        \STATE{$[X::=αY·β] ← \Function pop(L)$} \COMMENT{advance the rule}
+        \STATE{$\Function push(L,[X ::=αY·β])$} \COMMENT{advance the rule}
       \ELSE[$δ$ returned a non~$ε$-rule]
         \STATE{$\Function push(L,[B::=·X₁…Xₘ])$} \COMMENT{we now turn to parse~$r$}
       \FI
