@@ -1,10 +1,13 @@
 package org.spartan.fajita.api.bnf.symbols;
 
 public interface NonTerminal extends Symbol {
-  @Override public default String serialize() {
+  public default String toString2() {
     return "<" + name() + ">";
   }
-  public static NonTerminal deserialize(String signature) {
-    return () -> signature.substring(1, signature.length() - 1);
-  }
+//  @Override public default String serialize() {
+//    return "<" + name() + ">";
+//  }
+//  public static NonTerminal deserialize(String signature) {
+//    return () -> signature.substring(1, signature.length() - 1);
+//  }
 }

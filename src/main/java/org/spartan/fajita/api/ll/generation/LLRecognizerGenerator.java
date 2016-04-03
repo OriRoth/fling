@@ -1,9 +1,9 @@
-package org.spartan.fajita.api.ll;
+package org.spartan.fajita.api.ll.generation;
 
-import static org.spartan.fajita.api.ll.GeneratorStrings.basicMethod;
-import static org.spartan.fajita.api.ll.GeneratorStrings.containerClass;
-import static org.spartan.fajita.api.ll.GeneratorStrings.tailParameter;
-import static org.spartan.fajita.api.ll.GeneratorStrings.type;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.basicMethod;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.containerClass;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.tailParameter;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.ll.LLRecognizer;
 
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -32,7 +33,7 @@ public class LLRecognizerGenerator {
     for (Verb v : bnf.getVerbs())
       configurationTypes.add(generateVerbConfiguration(v));
     for (NonTerminal nt : bnf.getNonTerminals())
-      if (!nt.equals(SpecialSymbols.augmentedStartSymbol))
+      if (!bnf.getStartSymbols().contains(nt))
         configurationTypes.add(generateNTConfiguration(recognizer, nt));
     TypeSpec.Builder container = TypeSpec.classBuilder(containerClass).addTypes(configurationTypes);
     ParameterizedTypeName startType = ParameterizedTypeName.get(type("C_"+bnf.getStartSymbols().get(0).name()),type("C_$"));

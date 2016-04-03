@@ -1,6 +1,5 @@
 package org.spartan.fajita.api.ast;
 
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 
 public abstract class AbstractNode {
@@ -24,9 +23,4 @@ public abstract class AbstractNode {
     return current;
   }
   
-  public static final AbstractNode epsilon = new AbstractNode(){
-    @Override public Symbol getSymbol() {
-      return SpecialSymbols.epsilon;
-    }
-  };
 }

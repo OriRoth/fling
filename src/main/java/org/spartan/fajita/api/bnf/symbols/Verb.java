@@ -1,15 +1,18 @@
 package org.spartan.fajita.api.bnf.symbols;
 
-public class Verb implements Terminal {
+public class Verb implements Terminal, Comparable<Verb> {
   public final Type type;
   private final String name;
 
-  public Verb(String name, Class<?>... type) {
-    this(name,new Type(type));
+  private Verb(String name, Class<?>... type) {
+    this(name, new Type(type));
   }
-  private Verb(String name,Type t){
+  private Verb(String name, Type t) {
     this.name = name;
     this.type = t;
+  }
+  public Verb(Terminal terminal, Class<?>... type) {
+    this(terminal.name(), type);
   }
   @Override public String toString() {
     return name + type.toString();
@@ -44,13 +47,7 @@ public class Verb implements Terminal {
     result = prime * result + ((type == null) ? 0 : type.hashCode());
     return result;
   }
-  
-  @Override public String serialize() {
-    return "%" + name() +"%"+"*"+type.serialize() +"*";
-  }
-  public static Verb deserialize(String data){
-    Type t= Type.deserialize(data.substring(data.indexOf("*")+1,data.lastIndexOf("*")));
-    String name = data.substring(data.indexOf("%")+1,data.lastIndexOf("%"));
-    return new Verb(name,t);
+  @Override public int compareTo(Verb v) {
+    return toString().compareTo(v.toString());
   }
 }

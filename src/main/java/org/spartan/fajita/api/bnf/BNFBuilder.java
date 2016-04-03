@@ -55,19 +55,22 @@ public class BNFBuilder {
     return this;
   }
   void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    DerivationRule r = new DerivationRule(lhs, symbols, getRules().size());
-    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb)v));
+    DerivationRule r = new DerivationRule(lhs, symbols);
+    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb) v));
     checkNewRule(r);
     getRules().add(r);
   }
   private void validate() {
     validateNonterminals();
+    validateNoRedundant();
+  }
+  private void validateNoRedundant() {
+    // TODO validate no redundant
   }
   private void validateNonterminals() {
-    //TODO: re-validate
-//    for (NonTerminal nonTerminal : getNonTerminals())
-//      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
-//        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
+    for (NonTerminal nonTerminal : getNonTerminals())
+      if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
+        throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
   }
   private BNF finish() {
     validate();
@@ -124,7 +127,7 @@ public class BNFBuilder {
       this.lhs = lhs;
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
-      return new AndDeriver(lhs, new Verb(term.name(), type));
+      return new AndDeriver(lhs, new Verb(term, type));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);
@@ -141,7 +144,7 @@ public class BNFBuilder {
     }
     public AndDeriver or(final Terminal term, Class<?>... type) {
       addRule(lhs, symbols);
-      return new AndDeriver(lhs, new Verb(term.name(), type));
+      return new AndDeriver(lhs, new Verb(term, type));
     }
     public AndDeriver or(final NonTerminal nt) {
       addRule(lhs, symbols);
@@ -165,14 +168,14 @@ public class BNFBuilder {
     }
     public AndDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
       super(lhs);
-      symbols.add(new Verb(child.name(), type));
+      symbols.add(new Verb(child, type));
     }
     public AndDeriver and(final NonTerminal nt) {
       symbols.add(nt);
       return this;
     }
     public AndDeriver and(final Terminal term, Class<?>... type) {
-      symbols.add(new Verb(term.name(), type));
+      symbols.add(new Verb(term, type));
       return this;
     }
     @Override public BNF go() {

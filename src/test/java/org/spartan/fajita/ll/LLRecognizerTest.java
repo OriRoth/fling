@@ -21,7 +21,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.ll.LLRecognizer;
-import org.spartan.fajita.api.ll.LLRecognizerGenerator;
+import org.spartan.fajita.api.ll.generation.LLRecognizerGenerator;
 
 @SuppressWarnings("static-method") public class LLRecognizerTest {
   private static BNF bnf;
@@ -29,7 +29,7 @@ import org.spartan.fajita.api.ll.LLRecognizerGenerator;
 
   public static List<Verb> mapTerminals(Terminal... terminals) {
     return Arrays.asList(terminals).stream()
-        .map(term -> bnf.getVerbs().stream().filter(verb -> term.name().equals(verb.name())).findAny().get()).collect(Collectors.toList());
+        .map(term -> new Verb(term)).collect(Collectors.toList());
   }
 
   static enum Term implements Terminal {

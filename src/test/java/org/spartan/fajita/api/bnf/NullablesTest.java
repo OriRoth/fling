@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class NullablesTest {
@@ -28,9 +27,6 @@ public class NullablesTest {
         .derive(NT.A).to(Term.a) //
         .go();
     analyzer = new BNFAnalyzer(bnf);
-  }
-  @Test public void testEpsilonNullable() {
-    assertTrue(analyzer.isNullable(SpecialSymbols.epsilon));
   }
   @Test public void testDirectEpsilon() {
     assertTrue(analyzer.isNullable(NT.Nullable));

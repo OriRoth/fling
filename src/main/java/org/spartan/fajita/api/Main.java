@@ -1,7 +1,13 @@
 package org.spartan.fajita.api;
 
+import static org.spartan.fajita.api.Main.NT.*;
+import static org.spartan.fajita.api.Main.Term.*;
+
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,25 +30,31 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis;
 import org.spartan.fajita.api.jlr.JLRRecognizer;
 import org.spartan.fajita.api.jlr.JState;
+import org.spartan.fajita.api.rllp.RLLP;
+import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
 
 public class Main {
-  public static void main(final String[] args) {
-     apiGenerator();
-//     expressionBuilder();
+  public static void main(final String[] args) throws IOException {
+    apiGenerator(testBNF());
+    // expressionBuilder();
   }
-  static void apiGenerator() {
-//    final BNF bnf = BalancedParenthesis.buildBNF();
-    BNF bnf = testBNF();
-    lrAutomatonVisualisation(bnf);
-//    JavaFile fluentAPI = ApiGenerator.generate(bnf);
-//    System.out.println(fluentAPI.toString());
+  public static void apiGenerator(BNF bnf) throws IOException {
+    String code = RLLPEncoder.generate(new RLLP(bnf));
+    System.out.println(code);
+    try (FileOutputStream fos = new FileOutputStream(new File(
+        "/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/Container_" + bnf.hashCode() % 1000 + ".java"))) {
+      fos.write(code.getBytes(), 0, code.getBytes().length);
+      fos.close();
+    }
+    // lrAutomatonVisualisation(bnf);
+    // JavaFile fluentAPI = ApiGenerator.generate(bnf);
+    // System.out.println(fluentAPI.toString());
   }
   static void expressionBuilder() {
     BalancedParenthesis.expressionBuilder();
@@ -57,11 +69,8 @@ public class Main {
         AbstractNode symbNode;
         if (s.isVerb())
           symbNode = new Atomic((Verb) s);
-        else if (s == SpecialSymbols.epsilon)
-          symbNode = AbstractNode.epsilon;
-        else {
+        else
           symbNode = compoundQueue.pop();
-        }
         children.add(0, symbNode);
       }
       compoundQueue.add(new Compound(reduce.lhs, children));
@@ -83,7 +92,6 @@ public class Main {
     frame.add(jgraph);
     frame.setVisible(true);
   }
-  
   private static DirectedGraph<JState, LabeledEdge> generateGraph(final JLRRecognizer parser) {
     DefaultDirectedGraph<JState, LabeledEdge> $ = new DefaultDirectedGraph<>(new LabeledEdgeFactory());
     parser.getStates().forEach(s -> $.addVertex(s));
@@ -120,25 +128,29 @@ public class Main {
       final int y) {
     DefaultGraphCell cell = model.getVertexCell(vertex);
     Map attr = cell.getAttributes();
-    Rectangle2D b = GraphConstants.getBounds(attr);
-    GraphConstants.setBounds(attr, new Rectangle(x, y, (int) b.getWidth(), (int) b.getHeight()));
+    Rectangle2D rect = GraphConstants.getBounds(attr);
+    GraphConstants.setBounds(attr, new Rectangle(x, y, (int) rect.getWidth(), (int) rect.getHeight()));
     Map cellAttr = new HashMap();
     cellAttr.put(cell, attr);
     model.edit(cellAttr, null, null, null);
   }
-  
-  enum Term implements Terminal{
-    a,b,c
+
+  static enum Term implements Terminal {
+    a, b, c, d;
   }
-  enum NT implements NonTerminal{
-    S,A,B
+
+  static enum NT implements NonTerminal {
+    S, A, B, C, D
   }
-  static BNF testBNF(){
+
+  static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class) //
-        .start(NT.S) //
-        .derive(NT.S).to(NT.A).and(NT.B) //
-        .derive(NT.B).to(NT.B).and(Term.b).orNone() // Left recursive
-        .derive(NT.A).to(Term.a).and(NT.A).orNone() // Right recursive
+        .start(S) //
+        .derive(S).to(A).and(D) //
+        .derive(A).to(B) //
+        .derive(B).to(C).and(b) //
+        .derive(C).to(c).orNone() //
+        .derive(D).to(d) //
         .go();
   }
 }

@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.ll;
+package org.spartan.fajita.api.ll.generation;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;

@@ -22,7 +22,6 @@ public class JActionTable {
     table[state.index].put(lookahead, act);
   }
   private void checkForConflicts(final JState state, final Symbol lookahead, final Action act) {
-    // TODO: how do conflicts look like?
     Action previous = table[state.index].get(lookahead);
     if (previous == null || previous.equals(act))
       return;

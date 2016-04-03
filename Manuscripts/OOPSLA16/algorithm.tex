@@ -8,7 +8,7 @@ with \Java types implementation.
 
 When this is achieved, all that remains is the ‟compilation”' of the \RLLp into
 \Java types. The challenging part of this translation is dealing
-with the ‟JLS”, a data structure on which the \RLLp relies.
+with the ‟JSM”, a data structure on which the \RLLp relies.
 
 This data structure has been used before, e.g., for efficient management of the
 runtime environment in programming languages with dynamic scoping, i.e.,
@@ -16,7 +16,7 @@ languages such as \Lisp, in which name resolution is with respect to previous
 bindings made on the run time stack (disregarding the usual scoping and nesting
 rules in languages such as \Pascal).
 
-Interestingly, the JLS data structure is just another name for the ‟\emph{Jump
+Interestingly, the JSM data structure is just another name for the ‟\emph{Jump
 Deterministic PushDown Automata}" (JDPDA), a theoretical model used in the
 study of automata and formal languages (see e.g.,~\cite{Linna:79,Courcelle:77}).
 And, Incidentally, this JDPS is the one used by Gil and
@@ -249,7 +249,7 @@ a specific \RLLp?
 Jump operations are all at the responsibility of the JSM,
 which maintains the information required to support these.
 But, in order to be able to do this, the generator must
-provide the \RLLp with the contents dictionary~$D$ that should be pushed to
+provide the \RLLp with the contents dictionary~$D$ that should be pushed
 to~$S₁$, the~$dᵢ$s, together with the push to~$S₀$ (lines~15 and~22 in
 \cref{algorithm:rll-parser}).
 
@@ -268,13 +268,15 @@ respect to~$i$, to~$t$'s jump value.
   }
   \LET{$[A::=α·Y₁…Yₙ]$}{$i$} \COMMENT{break~$i$ into components}
   \LET{$d$}{$∅$} \COMMENT{initialize return variable}
-  \FOR[for all symbols in suffix of~$i$]{$j = 1,…,n$}
-  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₁…Y_{j-1})$}
+  \FOR[for all symbols in suffix of~$i$]{$j = 2,…,n$}
+  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₂…Y_{j-1})$}
       \BREAK
     \FI
     \FOR[symbols that might cause jump in~$Y₁$]{$t∈\Function First(Yⱼ)$}
     \IF[\nth{1} update of key~$t$ in dictionary~$d$?]{$d(t)=⊥$}
       \STATE{$d(t) = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{update~$d(t)$}
+      % This is the real value of d(t), when considering the ‟Push after jump phenomena”
+      %\STATE{$d(t) = Consolidate([A::=αY₁…·Yⱼ…Yₙ],t)$} \COMMENT{update~$d(t)$}
       \FI
     \ENDFOR % Symbols
   \ENDFOR
@@ -282,17 +284,17 @@ respect to~$i$, to~$t$'s jump value.
   \end{algorithmic}
 \end{algorithm}
 
-Let~$β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
+Let~$Y₁β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
 Then, for each terminal~$t∈Σ$,
 function~$\Function Jumps(i)$ determines the shortest
-prefix~$Y₁…Y_{j-1}$ of~$β$ which is nullable
+prefix~$Y₂…Y_{j-1}$ of~$β$ which is nullable
 and such that~$k ∈ \Function First(Yⱼ)$.
 The following line of thought explains the rationale.
 
-Assume that~$Y₁…Y_{j-1}$ is nullable and
+Assume that~$Y₂…Y_{j-1}$ is nullable and
 that~$t∈\Function First(Yⱼ)$, for some~$t\inΣ$.
-Then, when the \RLLp is at states described by~$i$ and~$t$
-is seen, the \RLLp should conclude that~$Y₁…Y_{j-1}\stackrel * ⇒ε$
+Then, when the \RLLp finished parsing~$Y₁$ and~$t$
+is seen, the \RLLp should conclude that~$Y₂…Y_{j-1}\stackrel * ⇒ε$
 and jump forward to the point of the parsing process just before
 seeing~$Yⱼ$.
 
@@ -304,12 +306,12 @@ In the case that the assumption holds for
 both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
 two alternatives to choose from:
 \begin{itemize}
-  \item~$Y₁…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.\[
-  Yⱼ \stackrel * ⇒ tγ.
+  \item~$Y₂…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,\[ 
+    Yⱼ \stackrel * ⇒ tγ.
 \]
-\item~$Y₁…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,\[
-Y_{j'} \stackrel * ⇒ tγ'.
-\]
+\item~$Y₂…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,\[
+    Y_{j'} \stackrel * ⇒ tγ'.
+  \]
 \end{itemize}
 Recalling that an \LLp pushes
 stack symbols in reverse order and that \RLLp emulates its behavior, we can
@@ -343,15 +345,17 @@ irrespective of the length of the consolidated list.
     \LET{$L$}{$∅$} \COMMENT{initialize return value}
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
       %\STATE{$\Function print(r)$} \COMMENT{useful for parsing}
-      \STATE{$\Function push(L,[X ::=αY·β])$}\COMMENT{advance the item}
+      \STATE{$\Function push(L,[X ::=α·Yβ])$}\COMMENT{currently parsing~$Y$}
       \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
       \STATE{$[B::=X₁…Xₘ]←r$} \COMMENT{break~$r$ into components}
       \IF[$δ$ returned an~$ε$-rule]{$X₁…Xₘ=ε$}
         \WHILE[pop all exhausted rules]{$\Function exhausted(\Function peek(L))$}
           \STATE{$\Function pop(L)$}
         \ENDWHILE
+        \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{$Y$ was just fully parsed}
+        \STATE{$\Function push(L,[X ::=αY·β])$} \COMMENT{advance the rule}
       \ELSE[$δ$ returned a non~$ε$-rule]
-        \STATE{$\Function push(L,r)$} \COMMENT{we now turn to parse~$r$}
+        \STATE{$\Function push(L,[B::=·X₁…Xₘ])$} \COMMENT{we now turn to parse~$r$}
       \FI
       \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{break~$i$ into its components}
     \ENDWHILE
@@ -378,9 +382,11 @@ irrespective of the length of the consolidated list.
           peek()$, at runtime, into its own stack.
     \item
           The algorithm relies on function~$\Function exhausted(i)$ that returns
-          true for an item~$i$ when its dot is in its right most position,
+          true for an item~$i$ when its dot is in its almost right most position,
           i.e., the item represents times during parsing in which all
-          right hand side symbols of the item's rule have been parsed.
+          right hand side symbols of the item's rule have been parsed except for the last.
+          Since the item was just reviled at the top of the stack, the last symbol
+          was parsed as well, and the rule is fully parsed (and thus, exhausted).
           \par
           Figuratively, an item~$i$ is exhausted right after the rule's body
           have been seen in full, and the item ‟waits” for the \RLLp to take
@@ -396,9 +402,9 @@ realize the given grammar.
 
 Reexamining the code of the \RLLp (\cref{algorithm:rll-parser})
 we see that all such information is contained in
-function~$\Delta$.
+function~$Δ$.
 Therefore, the core of the \RLLp generator is
-\cref{algorithm:main} that computes~$\Delta$.
+\cref{algorithm:main} that computes~$Δ$.
 
 \begin{algorithm}[H]
   \caption{\label{algorithm:main}
@@ -416,10 +422,10 @@ Therefore, the core of the \RLLp generator is
       \FOR[calculate entry~${Δ[i,t]}$]{$t∈Σ$}
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yβ)$}
           \LET{$L$}{$\Function Consolidate(i,t)$}
-          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Push(L)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a push operation}
+          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function push(L)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a push operation}
         \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
-          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$\Delta$:}}}
-          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Jumps(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
+          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$Δ$:}}}
+          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function jump(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
         \FI
       \ENDFOR % for all terminals
     \ENDFOR % for all items
@@ -427,20 +433,21 @@ Therefore, the core of the \RLLp generator is
 \end{algorithm}
 
 Recall that we manage the ‟$k^*$” phenomena using jumps, and that the
-jumps are realized by the sophisticated JLS data structure that drives the
+jumps are realized by the sophisticated JSM data structure that drives the
 \RLLp.
 
-The contract between the \RLLp and its generator is that function~$\Delta$
+The contract between the \RLLp and its generator is that function~$Δ$
 supplies the dictionaries that need to be pushed (and later jumped to)
-by the JLS.
+by the JSM.
 
-This information is retrieved by the \RLLp from the~$\Delta$ table,
-and used and~$\Function push(·)$ed accordingly into the JLS.
-Only with the aide of this information, the underlying JLS can support the
+This information is retrieved by the \RLLp from the~$Δ$ table,
+and used and~$\Function push(·)$ed accordingly into the JSM.
+Only with the aide of this information, the underlying JSM can support the
 constant-time jumps (lines 5 and 25).
 
-For this reason, \cref{algorithm:main} consults function~$\Function Jumps(·)$
-to compute this dictionary storing it in the~$\Delta$ table.
+For this reason, \cref{algorithm:main} implicitly consults the function~$\Function Jumps(·)$
+(recall that~$\Function Jumps(·)$ is the coordinator between stacks~$S₀$ and~$S₁$)
+to compute this dictionary storing it in the~$Δ$ table.
 
 Another part of the contract between the parser and its generator deals
 with the~‟$k'$” phenomena. The generator invokes function~$\Function
