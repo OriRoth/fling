@@ -12,7 +12,7 @@ public class SpecialSymbols {
   };
   public static final NonTerminal augmentedStartSymbol = new NonTerminal() {
     @Override public String name() {
-      return "S'";
+      return "augS";
     }
     @Override public String toString() {
       return name();

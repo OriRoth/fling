@@ -4,6 +4,9 @@ import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParent
 import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.lp;
 import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.rp;
 
+import java.io.IOException;
+
+import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -26,9 +29,12 @@ public class BalancedParenthesis {
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(B) //
-        .derive(B).to(B).and(lp).and(B).and(rp) //
+        .derive(B).to(lp).and(B).and(rp).and(B) //
         /*        */.orNone()
         .go();
     return bnf;
+  }
+  public static void main(String[] args) throws IOException {
+    Main.apiGenerator(buildBNF());
   }
 }

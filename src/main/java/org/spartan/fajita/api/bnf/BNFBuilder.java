@@ -56,7 +56,7 @@ public class BNFBuilder {
   }
   void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
     DerivationRule r = new DerivationRule(lhs, symbols);
-    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb)v));
+    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb) v));
     checkNewRule(r);
     getRules().add(r);
   }
@@ -74,10 +74,10 @@ public class BNFBuilder {
   }
   private BNF finish() {
     validate();
-//    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
+    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     verbs.add(SpecialSymbols.$);
-//    for (NonTerminal startSymbol : getStartSymbols())
-//      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
+    for (NonTerminal startSymbol : getStartSymbols())
+      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return new BNF(BNFBuilder.this);
   }
   List<DerivationRule> getRules() {

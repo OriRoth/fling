@@ -38,12 +38,21 @@ public class RLLPEncoder {
     encodeItems(rllp.items);
     enclosing = TypeSpec.classBuilder(enclosingClass) //
         .addModifiers(Modifier.PUBLIC) //
+        .addType(addErrorType())
         .addTypes(itemTypes.values()) //
         .build();
   }
+  private static TypeSpec addErrorType() {
+    return TypeSpec.classBuilder(errorClass)//
+        .addModifiers(Modifier.STATIC)
+        .build();
+  }
   private void encodeItems(List<Item> items) {
-    for (Item i : items)
+    for (Item i : filterItems(items))
       itemTypes.put(i, encodeItem(i));
+  }
+  private Collection<Item> filterItems(List<Item> items) {
+    return items;
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(i.rule.lhs);

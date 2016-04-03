@@ -41,12 +41,10 @@ import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
 
 public class Main {
   public static void main(final String[] args) throws IOException {
-    apiGenerator();
+    apiGenerator(testBNF());
     // expressionBuilder();
   }
-  static void apiGenerator() throws IOException {
-    // final BNF bnf = BalancedParenthesis.buildBNF();
-    BNF bnf = testBNF();
+  public static void apiGenerator(BNF bnf) throws IOException {
     String code = RLLPEncoder.generate(new RLLP(bnf));
     System.out.println(code);
     try (FileOutputStream fos = new FileOutputStream(new File(
