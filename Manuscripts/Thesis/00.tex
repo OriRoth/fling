@@ -1,0 +1,119 @@
+\title{%
+  \Huge \Lola \\
+  \Large\itshape A Programming Language for \\
+  \Large\itshape Augmenting Programming Languages}
+\author{Iddo E. Zmiry}
+\date{\today}
+
+\documentclass[12pt]{book}
+\usepackage{\jobname}
+
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\input{reference-definitions}
+
+\begin{document}
+
+\frontmatter
+\input{title}
+
+\chapter*{Acknowledgements}
+\label{chapter:acks}
+\input{acks}
+
+\cleardoublepage\phantomsection
+\begin{centering}
+  \hfill \Large\bfseries Abstract\hfill
+\end{centering}
+\markboth{Abstract}{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\begin{quote}
+  \slshape
+  \large
+  \input{abstract}
+\end{quote}
+
+\tableofcontents
+\cleardoublepage\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\cleardoublepage\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\cleardoublepage\phantomsection
+\listoffigures
+\cleardoublepage\phantomsection
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\listofalgorithms
+\cleardoublepage\phantomsection
+\addcontentsline{toc}{chapter}{List of Listings}
+\lstlistoflistings
+
+\mainmatter
+
+\chapter{Introduction}
+\label{chapter:introduction}
+\input{aa}
+
+\subsection*{Outline.}
+\Lola's capabilities are demonstrated through a series of examples in
+\cref{chapter:gallery}. \Cref{chapter:elements} presents the main elements of 
+  \Lola, furthering the discussion of notions such as patterns (extended
+  regular expressions) and, generative expressions. 
+This section also explains two architectural issues: 
+  how \Lola interacts with \Python, and how \Lola  is configured to 
+  recognize the tokens of a specific host language. 
+More details on host-language configuration can be found in 
+\cref{chapter:tokens}.
+
+\Cref{chapter:deeper-dip}, intended for the working \Lola programmer, 
+  takes the time to explain in detail some of the
+  subtle issues of \Lola processing.
+Building on these, \cref{chapter:advanced} shows some rather
+  advanced applications. 
+  
+Related work is the subject of \Cref{chapter:related-work}. 
+\Cref{chapter:conclusions}
+concludes, discussing the current implementation, and drawing 
+directions for future
+work.
+
+\chapter{Examples Gallery}
+\label{chapter:gallery}
+\input{gallery}
+
+\chapter{The Elements of \Lola}
+\label{chapter:elements}
+\input{elements}
+
+\chapter{The Host Language Configuration File}
+\label{chapter:tokens}
+\input{tokens}
+
+\chapter{Lexical and Syntactical Analysis}
+\label{chapter:builder}
+\input{builder}
+
+\chapter{Order of Execution}
+\label{chapter:order-or-execution}
+
+\chapter{A Deeper Dip}
+\label{chapter:deeper-dip}
+\input{deeper-dip}
+
+\chapter{Advanced Applications}
+\label{chapter:advanced}
+\input{advanced}
+
+\chapter{Related Work}
+\label{chapter:related-work}
+\input{related-work}
+
+\chapter{Conclusions and Future Work}
+\label{chapter:conclusions}
+\input{zz}
+
+\bibs
+\appendix
+
+\end{document}
