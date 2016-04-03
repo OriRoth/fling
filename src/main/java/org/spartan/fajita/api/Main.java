@@ -1,7 +1,13 @@
 package org.spartan.fajita.api;
 
+import static org.spartan.fajita.api.Main.NT.*;
+import static org.spartan.fajita.api.Main.Term.*;
+
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,19 +39,21 @@ import org.spartan.fajita.api.jlr.JState;
 import org.spartan.fajita.api.rllp.RLLP;
 import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
 
-import static org.spartan.fajita.api.Main.NT.*;
-import static org.spartan.fajita.api.Main.Term.*;
-
 public class Main {
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws IOException {
     apiGenerator();
     // expressionBuilder();
   }
-  static void apiGenerator() {
+  static void apiGenerator() throws IOException {
     // final BNF bnf = BalancedParenthesis.buildBNF();
     BNF bnf = testBNF();
     String code = RLLPEncoder.generate(new RLLP(bnf));
     System.out.println(code);
+    try (FileOutputStream fos = new FileOutputStream(new File(
+        "/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/Container_" + bnf.hashCode() % 1000 + ".java"))) {
+      fos.write(code.getBytes(), 0, code.getBytes().length);
+      fos.close();
+    }
     // lrAutomatonVisualisation(bnf);
     // JavaFile fluentAPI = ApiGenerator.generate(bnf);
     // System.out.println(fluentAPI.toString());

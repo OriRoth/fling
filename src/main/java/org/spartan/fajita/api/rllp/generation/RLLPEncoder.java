@@ -19,6 +19,7 @@ import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -36,6 +37,7 @@ public class RLLPEncoder {
     itemTypes = new HashMap<>();
     encodeItems(rllp.items);
     enclosing = TypeSpec.classBuilder(enclosingClass) //
+        .addModifiers(Modifier.PUBLIC) //
         .addTypes(itemTypes.values()) //
         .build();
   }
@@ -108,10 +110,8 @@ public class RLLPEncoder {
       typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
     TypeName[] arguments = new TypeName[followSet.size()];
     int i = 0;
-    for (Verb v : typeArguments.keySet()) {
-      arguments[i] = typeArguments.get(v);
-      i++;
-    }
+    for (Verb v : followSet)
+      arguments[i++] = typeArguments.get(v);
     return ParameterizedTypeName.get(itemClass(mainType), arguments);
   }
   private static TypeName returnTypeOfJump(Jump action) {
@@ -121,6 +121,6 @@ public class RLLPEncoder {
     return enclosing.toString();
   }
   public static String generate(RLLP parser) {
-    return new RLLPEncoder(parser).toString();
+    return JavaFile.builder("org.spartan.fajita.api.junk", new RLLPEncoder(parser).enclosing).build().toString();
   }
 }

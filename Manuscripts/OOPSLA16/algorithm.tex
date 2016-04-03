@@ -398,9 +398,9 @@ realize the given grammar.
 
 Reexamining the code of the \RLLp (\cref{algorithm:rll-parser})
 we see that all such information is contained in
-function~$\Delta$.
+function~$Δ$.
 Therefore, the core of the \RLLp generator is
-\cref{algorithm:main} that computes~$\Delta$.
+\cref{algorithm:main} that computes~$Δ$.
 
 \begin{algorithm}[H]
   \caption{\label{algorithm:main}
@@ -420,8 +420,8 @@ Therefore, the core of the \RLLp generator is
           \LET{$L$}{$\Function Consolidate(i,t)$}
           \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Push(L)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a push operation}
         \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
-          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$\Delta$:}}}
-          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function Jumps(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
+          \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$Δ$:}}}
+          \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function jump(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
         \FI
       \ENDFOR % for all terminals
     \ENDFOR % for all items
@@ -432,17 +432,18 @@ Recall that we manage the ‟$k^*$” phenomena using jumps, and that the
 jumps are realized by the sophisticated JSM data structure that drives the
 \RLLp.
 
-The contract between the \RLLp and its generator is that function~$\Delta$
+The contract between the \RLLp and its generator is that function~$Δ$
 supplies the dictionaries that need to be pushed (and later jumped to)
 by the JSM.
 
-This information is retrieved by the \RLLp from the~$\Delta$ table,
+This information is retrieved by the \RLLp from the~$Δ$ table,
 and used and~$\Function push(·)$ed accordingly into the JSM.
 Only with the aide of this information, the underlying JSM can support the
 constant-time jumps (lines 5 and 25).
 
-For this reason, \cref{algorithm:main} consults function~$\Function Jumps(·)$
-to compute this dictionary storing it in the~$\Delta$ table.
+For this reason, \cref{algorithm:main} implicitly consults the function~$\Function Jumps(·)$
+(recall that~$\Function Jumps(·)$ is the coordinator between stacks~$S₀$ and~$S₁$)
+to compute this dictionary storing it in the~$Δ$ table.
 
 Another part of the contract between the parser and its generator deals
 with the~‟$k'$” phenomena. The generator invokes function~$\Function
