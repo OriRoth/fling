@@ -1,8 +1,8 @@
 \title{%
-  \Huge \Lola \\
+  \Huge \Fajita \\
   \Large\itshape A Programming Language for \\
   \Large\itshape Augmenting Programming Languages}
-\author{Iddo E. Zmiry}
+\author{Tomer Levy}
 \date{\today}
 
 \documentclass[12pt]{book}
@@ -11,16 +11,14 @@
 \setlength{\pdfpageheight}{\paperheight}
 \setlength{\pdfpagewidth}{\paperwidth}
 
-\input{reference-definitions}
-
 \begin{document}
 
 \frontmatter
 \input{title}
 
 \chapter*{Acknowledgements}
-\label{chapter:acks}
-\input{acks}
+\label{chapter:acknowledgements}
+\input{acknowledgements}
 
 \cleardoublepage\phantomsection
 \begin{centering}
@@ -56,19 +54,19 @@
 \input{aa}
 
 \subsection*{Outline.}
-\Lola's capabilities are demonstrated through a series of examples in
+\Fajita's capabilities are demonstrated through a series of examples in
 \cref{chapter:gallery}. \Cref{chapter:elements} presents the main elements of 
-  \Lola, furthering the discussion of notions such as patterns (extended
+  \Fajita, furthering the discussion of notions such as patterns (extended
   regular expressions) and, generative expressions. 
 This section also explains two architectural issues: 
-  how \Lola interacts with \Python, and how \Lola  is configured to 
+  how \Fajita interacts with \Python, and how \Fajita  is configured to 
   recognize the tokens of a specific host language. 
 More details on host-language configuration can be found in 
 \cref{chapter:tokens}.
 
-\Cref{chapter:deeper-dip}, intended for the working \Lola programmer, 
+\Cref{chapter:deeper-dip}, intended for the working \Fajita programmer, 
   takes the time to explain in detail some of the
-  subtle issues of \Lola processing.
+  subtle issues of \Fajita processing.
 Building on these, \cref{chapter:advanced} shows some rather
   advanced applications. 
   
@@ -78,42 +76,44 @@ concludes, discussing the current implementation, and drawing
 directions for future
 work.
 
-\chapter{Examples Gallery}
+\chapter{Formal Language Recognition with the \protect \Java Type Checker}
 \label{chapter:gallery}
-\input{gallery}
+\footnote{Based on article accepted to ECOOP'16~\protect\cite{Gil:Levy:2016}}
+%\input{gallery}
 
-\chapter{The Elements of \Lola}
+\chapter{An Algorithm for Generating Fluent APIs for \protect\Java}
+\footnote{Based on article submitted to OOPSLA'16~\cite{Gil:Levy:2016a}}
 \label{chapter:elements}
-\input{elements}
+%\input{elements}
 
-\chapter{The Host Language Configuration File}
+\chapter{A Prototype Implementation}
 \label{chapter:tokens}
-\input{tokens}
-
-\chapter{Lexical and Syntactical Analysis}
-\label{chapter:builder}
-\input{builder}
-
-\chapter{Order of Execution}
-\label{chapter:order-or-execution}
-
-\chapter{A Deeper Dip}
-\label{chapter:deeper-dip}
-\input{deeper-dip}
-
-\chapter{Advanced Applications}
-\label{chapter:advanced}
-\input{advanced}
-
-\chapter{Related Work}
-\label{chapter:related-work}
-\input{related-work}
+%\input{tokens}
 
 \chapter{Conclusions and Future Work}
 \label{chapter:conclusions}
 \input{zz}
 
-\bibs
-\appendix
+\bibliographystyle{abbrv}
+
+\bibliography{%
+  author-names,%
+  other-shorthands-abbreviated,%
+  publishers-abbreviated,%
+  conferences-abbreviated,%
+  journals-abbreviated,%
+  journals-full,%
+  yogi-tr,%
+  yogi-book,%
+  yogi-practice,%
+  yogi-journal,%
+  yogi-theory,%
+  yogi-confs,%
+  GPCE,%
+  OOPSLA,%
+  PLDI,%
+  USENIX,%
+  ECOOP,%
+}
 
 \end{document}
