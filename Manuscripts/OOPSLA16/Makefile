@@ -5,7 +5,8 @@ LISTINGS+=toilette.illegal.listing
 LISTINGS+=fluflu.example.listing
 LISTINGS+=sql.bnf.listing
 LISTINGS+=sql.enums.listing
-LISTINGS+=sql.usage.listing
+LISTINGS+=sql.legal.listing
+LISTINGS+=sql.illegal.listing
 
 ESCAPE = ../Programs/escape.py
 
@@ -43,5 +44,8 @@ sql.bnf.listing: $(SQL)
 sql.enums.listing: $(SQL)
 	awk '/begin{enums}/{f=1;c+=1;next}/end{enums}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; $(ESCAPE)) > $@ 
 
-sql.usage.listing: $(SQL)
-	awk '/begin{usage}/{f=1;c+=1;next}/end{usage}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; $(ESCAPE)) > $@ 
+sql.legal.listing: $(SQL)
+	awk '/begin{legal}/{f=1;c+=1;next}/end{legal}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; $(ESCAPE)) > $@ 
+
+sql.illegal.listing: $(SQL)
+	awk '/begin{illegal}/{f=1;c+=1;next}/end{illegal}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | ( export PYTHONIOENCODING=UTF-8 ; $(ESCAPE)) > $@ 

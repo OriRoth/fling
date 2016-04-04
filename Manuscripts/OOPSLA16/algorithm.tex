@@ -109,7 +109,7 @@ in~\cref{algorithm:rll-parser}.
       \STATE{\textsc{Reject}}\COMMENT{\RLLp halts in error}
     \FI
     \IF[a string of~$ℓ$ items to push]{$a=I₁,…,I_ℓ$}
-      \STATE{$\Function push(I₁, …, I_ℓ)$}
+    \STATE{$\Function push(I₁, …, I_ℓ)$} \COMMENT{note, this is a single push operation}
       \CONTINUE\COMMENT{restart with a somewhat deeper stack}
     \FI
     \STATE{\textbf{assert}~$a$ represents a jump} \COMMENT{$t$ indicates that~$Y \stackrel*⇒ε$}

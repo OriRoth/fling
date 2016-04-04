@@ -49,7 +49,7 @@ The actual operation of the automaton is by executing in loop the step
           \STATE{\textsc{Accept}}\COMMENT{all input successfully consumed}
         \FI
       \ELSE[anticipated~$X$ must be a nonterminal]
-        \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{to which rule~$X$ is parsed?}
+        \LET{$R$}{$\Function δ(X, \Function peek())$}\COMMENT{determine rule to parse~$X$}
         \IF[no rule found]{$R=⊥$}
           \STATE{\textsc{Reject}}\COMMENT{automaton halts in error}
         \ELSE[A rule was found]
@@ -225,7 +225,7 @@ presents some legal sequences derived by this grammar.
 \captionsetup[table]{labelfont=bf}
 \begin{table}[ht]
   \caption{\label{table:derived-strings}
-      Legal strings derived from \cref{figure:running}}
+      Legal words in the language defined by \cref{figure:running}}
   \rowcolors{2}{}{olive!20}
   \begin{tabular}{m{58ex}}
     \toprule
