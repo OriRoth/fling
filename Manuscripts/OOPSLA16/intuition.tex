@@ -2,7 +2,7 @@
 Formal presentation of the algorithm that compiles an LL(1) grammar into an implementation of a
   language recognizer with \Java generics
   is delayed to~\cref{section:algorithm}.
-This section gives an intuitive perspective on this algorithm:
+This section gives an intuitive perspective on this algorithm.
 
 We will first recall the essentials of the classical LL(1) parsing algorithm (\cref{section:essentials}).
 Then, we will explain the limitations of the computational model
@@ -18,9 +18,10 @@ To this end, we revise here the classical
 algorithm~\cite{Lewis:66} for converting an LL grammar
 (in writing LL, we, here and henceforth really mean
 LL(1)), and explain how it is modified to generate a
-recognizer executable on the computational model of
+  recognizer executable on the computational model of
 \Java generics.
 
+\subsection{Essentials of LL parsing}
 \label{section:essentials}
 The traditional \emph{\textbf{LL} \textbf Parser} (\LLp)
   is a DPDA allowed to peek at the next input symbol.
@@ -200,8 +201,7 @@ This grammar, inspired by the prototypical
   }
   \begin{Grammar}
     \begin{aligned}
-      \<Program> & \Derives \cc{program} \cc{id} \<Parameters>\~\cc{;} \<Definitions>⏎
-                 &\<Body>\hfill⏎
+      \<Program> & \Derives \cc{program} \cc{id} \<Parameters>\~\cc{;} \<Definitions> \<Body>\hfill⏎
       \<Body> & \Derives \cc{begin} \cc{end}\hfill⏎
       \<Definitions> & \Derives \<Labels>\~\<Constants>\~\<Nested>\hfill⏎
       \<Labels> & \Derives ε \| \cc{label} \<Label>\~\<MoreLabels> \hfill⏎
@@ -373,7 +373,7 @@ The first is \cc{procedure}, because the nonterminal \<Procedure>
 The second is \cc{begin}, because \<Nested> is nullable, and
   \cc{begin} appears in the~$\Function Follow(·)$ set of \<Nested>.
 
-%\subsubsection{Examples for~\texorpdfstring{$k'$}{k'} for the grammar in~\cref{figure:running}}
+\subsubsection{Examples for~\texorpdfstring{$k'$}{k'} for the \Pascal grammar fragment in~\texorpdfstring{\cref{figure:running}}{}}
 Consider a state of the parser, in which~$\<Definitions>$ is on
   the top of the top of the stack, and the next token on the input string
   is \cc{label}.
@@ -401,7 +401,7 @@ $k'=2$ again, where at first the non-$ε$ rule of~$\<Nested>$ will
   pushed, and only then will the terminal~\cc{procedure} will match,
   and be consumed from the input string.
 
-  \subsubsection{Examples of \texorpdfstring{$k^*$}{k*} for the grammar in \texorpdfstring{\cref{figure:running}}{}}
+\subsubsection{Examples of \texorpdfstring{$k^*$}{k*} for the \Pascal grammar fragment in \texorpdfstring{\cref{figure:running}}{}}
 Consider a state in which the parser is in, where the
   only rule of~$\<Program>$ is being processed,~$\<Definitions>$
   was just replaced on the stack by it's only rule, and~$\<Body>$ is below.
@@ -438,10 +438,9 @@ Again, the problem relies with the multiple pops that occur without reading the 
 The LL(1) parser is based on a prediction table.
 For a given nonterminal as the top of the stack, and an input symbol,
   the prediction table provides the next rule to be parsed.
-The parser generator basically fills this table, leaving the
-  rest to the parsing algorithm (depicted in~\cref{algorithm:ll-parser}
-  and discussed in~\cref{section:essentials}).
-  The prediction table construction is depicted in~\cref{algorithm:generation}
+The parser generator fills prediction table, leaving the
+  rest to the parsing algorithm in~\cref{algorithm:ll-parser}
+The prediction table construction is depicted in~\cref{algorithm:generation}
 
 \begin{algorithm}
   \caption{\label{algorithm:generation}

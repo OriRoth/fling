@@ -8,7 +8,8 @@ previous section:
     \cc{female()} & \cc{lower()} & \cc{defecate()}⏎
   \end{tabular}
 \end{quote}
-\Cref{figure:BNF} is a BNF specification of the order in which they might
+\cref{figure:BNF} is a BNF specification of the order in which they might be
+invoked.
 
 \begin{figure}
   \begin{Grammar}
@@ -39,12 +40,13 @@ generates the corresponding \Java type hierarchy.
 (Our proof-of-concept
 implementation does not yet deal with the construction of an AST from a concrete
 method call chain.) 
-actual chain; the
 
-The \Fajita specification is made with a \Java fluent API\@.
-\cref{figure:BNF} can be also 
-To do so, it is first necessary to
-define the set of \emph{grammar terminals}
+The \Fajita specification is made with a \Java fluent API
+  in the form of context-free grammar.
+The grammar for out toillete example is depicted in \cref{figure:BNF}.
+
+To define grammars, one must first define the set of \emph{grammar
+terminals}
 \begin{quote}
   \javaInput[minipage,width=43ex,left=-2ex]{../Fragments/toilette-terminals.fragment}
 \end{quote}
@@ -68,13 +70,13 @@ The call to function \cc{go()} (last line in \cref{figure:fluent}) instructs
 \Fajita to generate the code for the fluent API specified by the
 subsequent part of the expression.
 
-Nonterminals are translated to classes while terms are translated to methods which
+Nonterminals are translated to classes while terminals are translated to methods which
 take no parameters.  
 
 Library classes such as \cc{String} and \cc{Integer}, just as user-defined
-classes such as \cc{Invoice} may be used as well.  \Fajita generate class
+classes such as \cc{Invoice} may be used as well.  \Fajita generates class
 definitions only for classes whose name is declared in an \kk{enum} which is
-passed to \cc{with} verb in the BNF declaration.  Recall also that methods that
+passed to the \cc{with} function in the BNF declaration.  Recall also that methods that
 take a parameters (\cref{figure:sql-bnf-java}) can be used as tokens as well.
 
 Even though \Fajita is not at production level, we plan on submitting it to 
@@ -82,8 +84,7 @@ artifact evaluation. The current BNF specification of the tool is given in
 \cref{figure:BNF:BNF} (which incidentally can be written in \Fajita fluent 
 API iteself)
 
-
-\begin{figure}
+\begin{figure}[H]
   \begin{Grammar}
     \begin{aligned}
       \<BNF>                & \Derives \<Header>\~\<Body>\~\<Footer> \hfill⏎
@@ -91,10 +92,10 @@ API iteself)
       {}                    & \| \<Terminals> \~\<Variables> \hfill⏎
       \<Variables>          & \Derives \cc{with(Class<? \kk{extends} Variable>)}\hfill⏎
       \<Terminals>          & \Derives \cc{with(Class<? \kk{extends} Terminal>)}\hfill⏎
-      \<Body>               & \Derives \<Start> \~\<Rules> \hfill⏎
+      \<Body>               & \Derives \<Start> \~\<Rule> \~ \<Rules> \hfill⏎
       \<Start>              & \Derives \cc{start(\<Variable>)} \hfill⏎
       \<Rules>              & \Derives \<Rule> \~\<Rules>\hfill⏎
-      {}                    & \| \<Rule> \hfill⏎
+      {}                    & \| ε\hfill⏎
       \<Rule>               & \Derives \cc{derives(\<Variable>)} \<Conjunctions>\hfill⏎
       \<Conjunctions>       & \Derives \<First-Conjunction>\~\<Conjunctions>\hfill⏎
       \<First-Conjunction>  & \Derives \cc{to(\<Symbol>)}\~\<Symbols>\hfill⏎
@@ -106,11 +107,10 @@ API iteself)
       \<Symbols>    & \Derives ε \hfill⏎
       {}                    & \| \cc{and(\<Symbol>)}\~\<Symbols> \hfill⏎
       \<Symbol>             & \Derives \cc{Variable} \hfill⏎
-      {}                    & \| \<Verb>\hfill⏎
-      {}                    & \| \<Verb>\~\cc{,} \<Noun> \hfill⏎
-      \<Noun>               & \Derives \<Variable> \hfill⏎
-      {}                    & \| \<Existing-Class> \hfill⏎
-      \<Variable>           & \Derives \cc{Variable} \hfill⏎
+      {}                    & \| \cc{Terminal} \hfill⏎
+      {}                    & \| \cc{Terminal} \~ \<Parameters> \hfill⏎
+      \<Parameters>         & \Derives \cc{,} \<Existing-Class> \~ \<Parameters>\hfill⏎
+      {}                    & \| ε \hfill⏎
       \<Footer>             & \Derives \cc{go()}\hfill⏎
     \end{aligned}
   \end{Grammar}

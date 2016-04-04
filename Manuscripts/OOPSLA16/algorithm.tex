@@ -242,6 +242,10 @@ override (or add) entries to it.
 Most importantly, this map is correctly restored
 in the process of long jumps into the items stack.
 
+In a way, the JSM is a data structure generalizing the symbol table
+  of programming languages with lexical binding.
+The jump operationg in the JSM generalizes a ‟goto” operation to
+  label on the stack.
 \subsection{The Jumps Dictionary}
 How should the JSM be used by the algorithm that generates
 a specific \RLLp?
@@ -306,7 +310,7 @@ In the case that the assumption holds for
 both~$j$ and~$j'$,~$j < j'$ for the same token~$t$, there are
 two alternatives to choose from:
 \begin{itemize}
-  \item~$Y₂…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,\[ 
+  \item~$Y₂…Y_{j-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation of~$Yⱼ$ i.e.,\[
     Yⱼ \stackrel * ⇒ tγ.
 \]
 \item~$Y₂…Y_{j'-1}\stackrel * ⇒ε~$ and~$t$ is the first token in the derivation~$Y_{j'}$ i.e.,\[
@@ -328,11 +332,10 @@ by the \RLLp parser in state~$i$ and encounters terminal~$t$.
 This is achieved by figuring out, ahead-of-time,
 the operations of the \LLp.
 
-Function~$\Function Consolidate(·,·)$ is invoked by the \RLLp generator
-to pre-compute the consolidated list of push operations for all relevant
-item-token pairs.
-At runtime, the \RLLp will push the consolidated lists in constant time,
-irrespective of the length of the consolidated list.
+Function~$\Function Consolidate(·,·)$ is invoked by the \RLLp generator to
+pre-compute the consolidated list of push operations for all relevant
+item-token pairs. At runtime, the \RLLp will push the consolidated lists in
+constant time, irrespective of the length of the consolidated list.
 
 \begin{algorithm}[htb]
   \caption{\label{algorithm:consolidate}
@@ -395,6 +398,20 @@ irrespective of the length of the consolidated list.
   \end{itemize}
 \end{algorithm}
 
+Some examples of the~$\Function Consolidate(·,·)$
+for our running example (defined in~\cref{figure:running})
+are :
+
+\scriptsize
+\[
+  \Function Consolidate(
+    \; [\<Program> ::=…\cc{;} · \<Definitions> \<Body>] \;,
+    \; \cc{label} \;
+) = \hfill⏎
+  \<Program> ::= \cc{program} \cc{id} \<Parameters> \cc{;} \<Definitions> \<Body> \hfill
+\]
+
+\normalsize
 \subsection{Putting the Pieces Together}
 Generating an \RLLp for a given LL grammar requires providing to the
 built-in algorithm of the \RLLp, the specific information it needs to
