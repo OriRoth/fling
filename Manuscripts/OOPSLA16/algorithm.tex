@@ -450,7 +450,7 @@ chosen. Since this rule revealed the terminal\cc{;} that will match the input
 symbol, the dot in the result item follows the terminal.
 
 The last example (third row of the table) presents another ‟ability” of the
-consolidation, which is to ignore nonterminals that derive to~$ε$.  In the
+consolidation, which is to ignore nonterminals that derive to~$ε$. In the
 example, since the input token is \cc{const},~$\<Labels>$ is derived to~$ε$.
 Thus, the last item in the output, is the input item with the dot following
 nonterminal~$\<Labels>$ instead of preceding it,~$\<Constants>$ rule is then
@@ -492,6 +492,69 @@ Therefore, the core of the \RLLp generator is
     \ENDFOR % for all items
   \end{algorithmic}
 \end{algorithm}
+
+\cref{table:running-main} provides some of~$Δ$'s values for our running example
+  defined in~\cref{figure:running}.
+
+\begin{table*}
+  \caption{\label{table:running-main}
+    Example values for the prediction table~$Δ$ on the grammar
+    defined in \cref{figure:running}}
+  \scriptsize
+  \rowcolors{2}{}{olive!20}
+  \def\~{\text{~}}
+  \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$~}}}
+  \let\oldCc=\cc
+  \def\cc#1{{\text{{\scriptsize\oldCc{#1}}~}}}
+  \begin{tabular}{m{0.38\linewidth} |>{\centering}m{0.1\linewidth} | m{0.45\linewidth}}
+     \toprule
+     \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$Δ[i,t]$ \hfill⏎
+     \midrule
+$ [ \<Labels> ::=ε· \~]$&
+\oldCc{procedure} &
+$ \Function jump(\oldCc{procedure})$
+  \hfill⏎
+$ [ \<Nested> ::= \<Procedure> \<Nested> · \~]$&
+\oldCc{begin} &
+$ \Function jump(\oldCc{begin})$
+  \hfill⏎
+$ [ \<Labels> ::=ε· \~]$&
+\oldCc{end} &
+\textbf{Error}
+  \hfill⏎
+$[ \<Labels> ::= \cc{label} \<Label> · \~\<MoreLabels> ]$&
+\oldCc{;} &
+$\Function push(\Function Consolidate([ \<Labels> ::= \cc{label} \<Label> · \~\<MoreLabels> ],\oldCc{;}))$
+  \hfill⏎
+$[ \<Definitions> ::= · \~\<Labels> \<Constants> \<Nested> ]$&
+\oldCc{begin} &
+~$\Function jump(\cc{begin})$
+  \hfill⏎
+     \bottomrule
+  \end{tabular}
+\end{table*}
+
+In the first two rows of~\cref{table:running-main}, there are examples for
+rules that have been fully parsed. In these cases, the input terminals
+(\cc{procedure} and \cc{begin} correspondingly) are in the rules left-hand
+side's~$\Function Follow(·)$ set (\<Labels> and \<Nested> correspondingly),
+causing~$Δ$ returns a jump operation.
+
+The third row presents a case in which the rule~$\<Labels> ::=ε$ was fully
+parsed, but the input terminal is not in the set~$\Function Follow(\<Labels>)$, and
+thus,~$Δ$ returns no operation (interpreted as error).
+
+The fourth row of~\cref{table:running-main} presents a case in which the input
+terminal is in the~$\Function First(·)$ set of the symbol following the dot,
+thus, a push operation is returned, with the values of the
+corresponding~$\Function Consolidate(·,·)$ function.
+
+The last row of the table presents a special case, in which the input item's
+dot is not at the end of \<Definition>'s rule, and the operation is
+a~$\Function jump(\cc{begin})$ operation. This happens because \cc{begin} is
+not in~$\Function First(\<Definition>)$ and is in~$\Function
+Follow(\<Definition>)$ (it is also required the \<Definition> will be
+nullable).
 
 Recall that we manage the ‟$k^*$” phenomena using jumps, and that the
 jumps are realized by the sophisticated JSM data structure that drives the
