@@ -398,20 +398,64 @@ constant time, irrespective of the length of the consolidated list.
   \end{itemize}
 \end{algorithm}
 
-Some examples of the~$\Function Consolidate(·,·)$
-for our running example (defined in~\cref{figure:running})
-are :
+Some examples of the consolidation table for our running example (defined
+in~\cref{figure:running}) are presented in~\cref{table:running-consolidate}.
 
-\scriptsize
-\[
-  \Function Consolidate(
-    \; [\<Program> ::=…\cc{;} · \<Definitions> \<Body>] \;,
-    \; \cc{label} \;
-) = \hfill⏎
-  \<Program> ::= \cc{program} \cc{id} \<Parameters> \cc{;} \<Definitions> \<Body> \hfill
-\]
+\begin{table*}
+  \caption{\label{table:running-consolidate}
+    Example values for the~$\Function Consolidate(·,·)$ functions on the grammar
+    defined in \cref{figure:running}}
+  \scriptsize
+  \rowcolors{2}{}{olive!20}
+  \def\~{\text{~}}
+  \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$~}}}
+  \let\oldCc=\cc
+  \def\cc#1{{\text{{\scriptsize\oldCc{#1}}~}}}
+  \begin{tabular}{m{0.4\linewidth} | >{\centering}m{0.1\linewidth} | m{0.4\linewidth}}
+     \toprule
+     \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$\Function Consolidate(i,t)$ \hfill⏎
+     \midrule
+$ [ \<Body> ::= \cc{begin}·\~\cc{end} ]$&
+\cc{end} &
+$ [ \<Body> ::= \cc{begin} \cc{end} ·]$
+     \hfill⏎
+$ [ \<Constants> ::= \cc{const} \<Constant> · \<MoreConstants> ]$ &
+\cc{;} &
+$[\<Constant> ::= \cc{;} ·]$ \newline~$[\<MoreConstants> ::= · \~\<Constant> \<MoreConstants>]$ \newline~$[\<Constants> ::= \cc{const} \<Constant> · \~\<MoreConstants>]$
+     \hfill⏎
+$ [ \<Definitions> ::= · \~\<Labels> \<Constants> \<Nested> ]$&
+\cc{const} &
+$ [ \<Constants> ::= \cc{const} · \~\<Constant> \<Constants>]$ \newline~$ [ \<Definitions> ::= \<Labels> · \~\<Constants> \<Nested> ]$
+     \hfill⏎
+     \bottomrule
+  \end{tabular}
+\end{table*}
 
-\normalsize
+The first example (in the first line) presents the most ‟deformed” case of
+function~$\Function Consolidate(·,·)$, in which the input item has a
+dot before a terminal. In this case the function returns the same item with
+the dot advanced to after the terminal.
+
+In the second example, the function returns three items. The last item in the
+result (the third in the table) is the input item itself, the reason is that
+the rule is currently being parsed when the dot precedes~$\<MoreConstants>$
+because it is yet to be fully parsed.
+
+Upon seeing nonterminal~$\<MoreConstants>$ and terminal \cc{;} the \LLp would
+choose rule~$\<MoreConstants> ::= \<Constant> \; \<MoreConstants>$, and thus it
+is added to the result with a dot at the beginning of the rule's right-hand
+side(again, because at this time nothing of the rule was parsed). Now a similar
+decision based on the \LLp's prediction table rule~$\<Constant> ::= \cc{;}$ is
+chosen. Since this rule revealed the terminal\cc{;} that will match the input
+symbol, the dot in the result item follows the terminal.
+
+The last example (third row of the table) presents another ‟ability” of the
+consolidation, which is to ignore nonterminals that derive to~$ε$.  In the
+example, since the input token is \cc{const},~$\<Labels>$ is derived to~$ε$.
+Thus, the last item in the output, is the input item with the dot following
+nonterminal~$\<Labels>$ instead of preceding it,~$\<Constants>$ rule is then
+  chosen as we seen in the second example.
+
 \subsection{Putting the Pieces Together}
 Generating an \RLLp for a given LL grammar requires providing to the
 built-in algorithm of the \RLLp, the specific information it needs to
@@ -423,7 +467,7 @@ function~$Δ$.
 Therefore, the core of the \RLLp generator is
 \cref{algorithm:main} that computes~$Δ$.
 
-\begin{algorithm}[H]
+\begin{algorithm}
   \caption{\label{algorithm:main}
     Compute contents of prediction table
     (transition function) entry~$Δ[i,t]$

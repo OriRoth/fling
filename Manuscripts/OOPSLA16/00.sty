@@ -132,11 +132,14 @@
 \def\nthscript#1{\textsuperscript{\textit{#1}}}
 
 \intextsep=6pt
+\captionsetup[table]{labelfont=bf}
+\renewcommand{\arraystretch}{1.3}
 
 \newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
 \def\nonterminal#1{\ensuremath{\text{\mdseries\rmfamily\textit{#1}}}}
 \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}}}
+
 
 \newenvironment{Grammar}
 {%
