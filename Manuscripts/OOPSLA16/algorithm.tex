@@ -382,13 +382,13 @@ irrespective of the length of the consolidated list.
           peek()$, at runtime, into its own stack.
     \item
           The algorithm relies on function~$\Function exhausted(i)$ that returns
-          true for an item~$i$ when its dot is in its almost right most position,
+          true for an item~$i$ when its dot is in its penultimate position,
           i.e., the item represents times during parsing in which all
           right hand side symbols of the item's rule have been parsed except for the last.
-          Since the item was just reviled at the top of the stack, the last symbol
+          Since the item was just revealed at the top of the stack, the last symbol
           was parsed as well, and the rule is fully parsed (and thus, exhausted).
           \par
-          Figuratively, an item~$i$ is exhausted right after the rule's body
+          Intuitively, an item~$i$ is exhausted right after the rule's body
           have been seen in full, and the item ‟waits” for the \RLLp to take
           the stack action appropriate when the rule reduces, and items representing
           it are no longer need.
