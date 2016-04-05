@@ -4,17 +4,17 @@
 
 \title
 {%
-  %%\begin{flushright}
-  %  \textcolor{blue!20!black}
-  %  {\footnotesize\mdseries\slshape
-  %    \renewcommand\baselinestretch{0.3}
-  %    Software design is language design\\
-  %    (and vice versa).\vspace{-4ex}\tiny\\
-  %    \renewcommand\baselinestretch{0.3}
-  %    ---a programmers' proverb
-  %  }
-  %\end{flushright}
-  An Algorithm For Generating Fluent APIs for  Java 
+%%\begin{flushright}
+%  \textcolor{blue!20!black}
+%  {\footnotesize\mdseries\slshape
+%    \renewcommand\baselinestretch{0.3}
+%    Software design is language design\\
+%    (and vice versa).\vspace{-4ex}\tiny\\
+%    \renewcommand\baselinestretch{0.3}
+%    ---a programmers' proverb
+%  }
+%\end{flushright}
+An Algorithm For Generating Fluent APIs for  Java 
 }
 
 \usepackage{\jobname}
@@ -25,7 +25,7 @@
 \maketitle
 
 \begin{abstract}
-  \input{abstract}
+\input{abstract}
 \end{abstract}
 
 \section{Introduction}
@@ -44,7 +44,7 @@ type-checking model.  The main algorithm is described in
 \label{section:example}
 \input{example}
 
-\section{Fajita}
+\section{Introducing \Fajita}
 \label{section:fajita}
 \input{generalization}
 
@@ -61,11 +61,24 @@ type-checking model.  The main algorithm is described in
 \input{zz}
 
 \bibliographystyle{abbrv}\small
-\bibliography{author-names,other-shorthands-abbreviated,%
-  publishers-abbreviated,%
-  conferences-abbreviated,%
-  journals-abbreviated,journals-full,%
-  yogi-tr,yogi-book,yogi-practice,yogi-journal,yogi-theory,yogi-confs,%
-  GPCE,OOPSLA,PLDI,USENIX,ECOOP,%
-  00}
+\bibliography{%
+author-names,%
+other-shorthands-abbreviated,%
+publishers-abbreviated,%
+conferences-abbreviated,%
+journals-abbreviated,%
+journals-full,%
+yogi-tr,%
+yogi-book,%
+yogi-practice,%
+yogi-misc,%
+yogi-journal,%
+yogi-theory,%
+yogi-confs,%
+GPCE,%
+OOPSLA,%
+PLDI,%
+USENIX,%
+ECOOP%
+}
 \end{document}

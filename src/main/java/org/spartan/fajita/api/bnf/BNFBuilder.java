@@ -166,9 +166,9 @@ public class BNFBuilder {
       super(lhs);
       symbols.add(child);
     }
-    public AndDeriver(NonTerminal lhs, final Terminal child, Class<?>... type) {
+    public AndDeriver(NonTerminal lhs, final Verb child) {
       super(lhs);
-      symbols.add(new Verb(child, type));
+      symbols.add(child);
     }
     public AndDeriver and(final NonTerminal nt) {
       symbols.add(nt);

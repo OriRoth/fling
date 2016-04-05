@@ -166,17 +166,8 @@ In a way, it reminds the~$Goto$ table used in LR parsing, since
     \INPUT{lookahead symbol~$a$}
     \OUTPUT{a mapping between labels and states}
     \STATE{$f←❴❵$}
-<<<<<<< HEAD
-    \FOR{$[ A→α·aβ, b,ℓ]∈q$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
-      \FOR{$ c∈\function First(β)$}
-        \IF{$ f(B,c)=⊥$}
-          \STATE{$ f(B,c) = fresh()$}
-        \ENDIF
-      \ENDFOR
-=======
     \FOR{$[ A→α·aβ, b,ℓ]∈\function Kernel(q)$} % Problem: we add to the function only for non-kernel items, now the distinction is a bit elusive.
       \STATE{$ f(\ell) = \function Goto(\function Goto(q,A),b)$}
->>>>>>> c9917f63367bf2354de0c1331bfb24ea06d06160
     \ENDFOR
     \RETURN{$f$}
   \end{algorithmic}

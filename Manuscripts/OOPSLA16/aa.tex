@@ -1,5 +1,5 @@
 %! TEX root = 00.tex
-What can be computed, and what can not be computed by coercing the type system
+What can be compute, and what can not be computed by coercing the type system
 and the type checker of a certain programming language to do abstract
 computations it was never meant to carry out? And, why should we care?
 
@@ -122,14 +122,24 @@ These are specified in the first method call in the chain where,
   \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.enums.listing}}
 \end{quote}
 
-The call \cc{.go()}, occurring last in the chain, makes 
-\Fajita generate types and methods realizing the fluent API,
- in such a way that code snippets like:
-\begin{quote}
-  \parbox[c]{43ex}{\javaInput[minipage,width=\linewidth,left=-4ex]{sql.usage.listing}}
-\end{quote}
-is syntactically legal, while snippets disobeying the BNF specification 
-in \cref{figure:sql-bnf}, do not type check.
+The call \cc{.go()}, occurring last in the chain, makes \Fajita generate types
+and methods realizing the fluent API, in such a way that legal use of the API
+like in \cref{figure:sql:legal} is syntactically legal,
+
+\begin{figure}[H]
+  \caption{\label{figure:sql:legal}
+  Legal sequences of calls in the sql fragment example}
+  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.legal.listing}
+\end{figure}
+
+while snippets disobeying the BNF specification in \cref{figure:sql-bnf} like
+\cref{figure:sql:illegal} , do not type check.
+
+\begin{figure}[H]
+  \caption{\label{figure:sql:illegal}
+  Illegal sequences of calls in the sql fragment example}
+  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.illegal.listing}
+\end{figure}
 
 A problem related to that of recognizing a formal language,
 is that of parsing, i.e., creating, for input which is within the language,
@@ -156,7 +166,7 @@ AST).
 The challenges of \Java generic programming were highlighted by Garcia et
 al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} research on the expressive
 power of generics in half a dozen major programming languages, 
-Indeed, unlike \CC~\cite{Austern:1998,Musser:Stepanov:1989,
+Indeed, unlike \CC~\cite{Austern:98,Musser:Stepanov:1989,
 Backhouse:Jansson:1999, Dehnert:Stepanov:2000,Gil:Gutterman:98,Abrahams:Gurtovoy:04}, the literature on meta-programming with \Java
 generics is minimal. 
 

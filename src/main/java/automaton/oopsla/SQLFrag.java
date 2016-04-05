@@ -57,13 +57,15 @@ public class SQLFrag {
       .go();
     // end{BNF}
   }
-  // begin{usage}
   void usage_example(Column c,Table t,Expr e){
-    new Query()
-      .select().all().from(t);
-    new Query()
-      .select().all().from(t)
-      .where().column(c).equals(e);
+    // begin{legal}
+    new Query().select().all().from(t).$();
+    new Query().select().all().from(t)
+        .where().column(c).equals(e).$();
+    // end{legal}
+    // begin{illegal}
+    new Query().select().select().from(t).$();
+    new Query().select().all().from(t).where().column(c).$();
+    // end{illegal}
   }
-  // end{usage}
 }
