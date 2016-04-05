@@ -135,7 +135,7 @@ general, and may command the algorithm to push a sequence of stack symbols
 
 \subsection{The Jump Stack Map Structure}
 \label{section:jump}
-We still need to explain how the meaning jump operations of \RLLp (lines~5
+We still need to explain how the jump operations of \RLLp (lines~5
 and~25 in \cref{algorithm:rll-parser}) are implemented. For this purpose, we
 construct here the \emph{\textbf Jump \textbf Stack \textbf Map} (JSM).
 
@@ -243,9 +243,47 @@ Most importantly, this map is correctly restored
 in the process of long jumps into the items stack.
 
 In a way, the JSM is a data structure generalizing the symbol table
-  of programming languages with lexical binding.
+  of a programming languages with lexical binding.
 The jump operationg in the JSM generalizes a ‟goto” operation to
   label on the stack.
+\subsection{Push After Jump}
+Before the algorithm for coordinating stacks~$S₀$ and~$S₁$
+  is shown, another problem regarding the jump operation needs
+  to be discussed.
+This problem combined both~$k'$ and~$k^*$ problems already discussed.
+
+Consider the legal string \[ s = \cc{program id ; label ; begin end} \] derived
+from the \Pascal BNF fragment (\cref{figure:running}) representing a program
+with no parameters, with a single definition of a constant, and a body.
+
+During the \RLLp's parse of~$s$, just after parsing the prefix \cc{program id ; label ;}
+and before reading \cc{begin}, the state of the items stack~$S₀$ is
+\[ \scriptsize
+  \begin{array}{l@{}l}
+   \<Constant> & ::= \cc{;} \; ·\;⏎
+   \<Constants> & ::= \cc{const} \; · \; \<Constant> \; \<MoreConstants> \;⏎
+  \<Definitions>  & ::= \<Labels> \; · \; \<Constants> \; \<Nested> \; ⏎
+  \<Program> & ::= \cc{program} \; \cc{id} \; \<Parameters> \; \cc{;} \; · \; \<Definitions> \; \<Body> \; 
+\end{array}
+\]
+when \<Constant>'s item is the top of the stack.
+
+Since the item at the top of the stack was fully parsed, and since 
+ \cc{begin} is in $\Function Follow(\<Constant>)$, the \RLLp should perform a
+ jump operation.
+The \RLLp pops the top three elements of the stack during this jump, while the
+forth element's dot advances after \<Definitions>.
+
+Up until now we described the~$k^*$ problem. 
+but, now comes the~$k'$ problem: we need to continue until we ``consume'' \cc{begin},
+and we are in a realtime model!!!
+
+
+
+
+
+
+
 \subsection{The Jumps Dictionary}
 How should the JSM be used by the algorithm that generates
 a specific \RLLp?
