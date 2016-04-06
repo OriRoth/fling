@@ -1,15 +1,15 @@
-package automaton;
+package automaton.ecoop;
 
-import automaton.Domain.JS;
-import automaton.Domain.JS.¤;
-import automaton.Domain.Stack;
-import automaton.Domain.Stack.E;
-import automaton.Domain.Stack.P;
-import automaton.Domain.f;
-import automaton.Domain.Γʹ;
-import automaton.Domain.Γʹ.Γ;
-import automaton.Domain.Γʹ.Γ.γ1;
-import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.ecoop.Domain.JS;
+import automaton.ecoop.Domain.JS.¤;
+import automaton.ecoop.Domain.Stack;
+import automaton.ecoop.Domain.Stack.E;
+import automaton.ecoop.Domain.Stack.P;
+import automaton.ecoop.Domain.f;
+import automaton.ecoop.Domain.Γʹ;
+import automaton.ecoop.Domain.Γʹ.Γ;
+import automaton.ecoop.Domain.Γʹ.Γ.γ1;
+import automaton.ecoop.Domain.Γʹ.Γ.γ2;
 
 //@Formatter:off
 public class DomainDemo {

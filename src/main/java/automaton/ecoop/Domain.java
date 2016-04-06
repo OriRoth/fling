@@ -1,21 +1,21 @@
-package automaton;
+package automaton.ecoop;
 
-import automaton.Domain.MultiPush.DoubleP.DoubleP_γ1_γ1;
-import automaton.Domain.MultiPush.DoubleP.DoubleP_γ1_γ2;
-import automaton.Domain.MultiPush.NoOp.NoOp2;
-import automaton.Domain.MultiPush.SingleP.SingleP_γ2;
-import automaton.Domain.Q.q0;
-import automaton.Domain.Q.q1.q1_γ1;
-import automaton.Domain.Q.q1.q1_γ2;
-import automaton.Domain.Q.q2.q2_E;
-import automaton.Domain.Q.q3.q3_γ2;
-import automaton.Domain.R.r1;
-import automaton.Domain.R.r2;
-import automaton.Domain.Stack.E;
-import automaton.Domain.Stack.P;
-import automaton.Domain.Γʹ.Γ;
-import automaton.Domain.Γʹ.Γ.γ1;
-import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.ecoop.Domain.MultiPush.DoubleP.DoubleP_γ1_γ1;
+import automaton.ecoop.Domain.MultiPush.DoubleP.DoubleP_γ1_γ2;
+import automaton.ecoop.Domain.MultiPush.NoOp.NoOp2;
+import automaton.ecoop.Domain.MultiPush.SingleP.SingleP_γ2;
+import automaton.ecoop.Domain.Q.q0;
+import automaton.ecoop.Domain.Q.q1.q1_γ1;
+import automaton.ecoop.Domain.Q.q1.q1_γ2;
+import automaton.ecoop.Domain.Q.q2.q2_E;
+import automaton.ecoop.Domain.Q.q3.q3_γ2;
+import automaton.ecoop.Domain.R.r1;
+import automaton.ecoop.Domain.R.r2;
+import automaton.ecoop.Domain.Stack.E;
+import automaton.ecoop.Domain.Stack.P;
+import automaton.ecoop.Domain.Γʹ.Γ;
+import automaton.ecoop.Domain.Γʹ.Γ.γ1;
+import automaton.ecoop.Domain.Γʹ.Γ.γ2;
 /**
  * This is were we place code that must compile correctly. To be extracted and
  * placed as part of LaTeX documents.
