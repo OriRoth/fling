@@ -1,11 +1,11 @@
-package automaton;
+package automaton.ecoop;
 
-import automaton.Domain.JS;
-import automaton.Domain.JS.E;
-import automaton.Domain.JS.P;
-import automaton.Domain.JS.¤;
-import automaton.Domain.Γʹ.Γ.γ1;
-import automaton.Domain.Γʹ.Γ.γ2;
+import automaton.ecoop.Domain.JS;
+import automaton.ecoop.Domain.JS.E;
+import automaton.ecoop.Domain.JS.P;
+import automaton.ecoop.Domain.JS.¤;
+import automaton.ecoop.Domain.Γʹ.Γ.γ1;
+import automaton.ecoop.Domain.Γʹ.Γ.γ2;
 
 //@formatter:off
 class JumpStackDemo {

@@ -57,6 +57,8 @@ $.*
 *.lakexmk
 *.ldf
 *.listing
+*.loa
+*.lol
 *.lof
 *.log
 *.lot

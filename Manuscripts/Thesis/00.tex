@@ -1,9 +1,4 @@
-\title{%
-  \Huge \Fajita \\
-  \Large\itshape A Programming Language for \\
-  \Large\itshape Augmenting Programming Languages}
-\author{Tomer Levy}
-\date{\today}
+\input title
 
 \documentclass[12pt]{book}
 \usepackage{\jobname}
@@ -12,9 +7,8 @@
 \setlength{\pdfpagewidth}{\paperwidth}
 
 \begin{document}
-
+\maketitle
 \frontmatter
-\input{title}
 
 \chapter*{Acknowledgements}
 \label{chapter:acknowledgements}
@@ -55,36 +49,36 @@
 
 \subsection*{Outline.}
 \Fajita's capabilities are demonstrated through a series of examples in
-\cref{chapter:gallery}. \Cref{chapter:elements} presents the main elements of 
+\cref{chapter:gallery}. \Cref{chapter:elements} presents the main elements of
   \Fajita, furthering the discussion of notions such as patterns (extended
-  regular expressions) and, generative expressions. 
-This section also explains two architectural issues: 
-  how \Fajita interacts with \Python, and how \Fajita  is configured to 
-  recognize the tokens of a specific host language. 
-More details on host-language configuration can be found in 
+  regular expressions) and, generative expressions.
+This section also explains two architectural issues:
+  how \Fajita interacts with \Python, and how \Fajita is configured to
+  recognize the tokens of a specific host language.
+More details on host-language configuration can be found in
 \cref{chapter:tokens}.
 
-\Cref{chapter:deeper-dip}, intended for the working \Fajita programmer, 
+\Cref{chapter:deeper-dip}, intended for the working \Fajita programmer,
   takes the time to explain in detail some of the
   subtle issues of \Fajita processing.
 Building on these, \cref{chapter:advanced} shows some rather
-  advanced applications. 
-  
-Related work is the subject of \Cref{chapter:related-work}. 
+  advanced applications.
+
+Related work is the subject of \Cref{chapter:related-work}.
 \Cref{chapter:conclusions}
-concludes, discussing the current implementation, and drawing 
+concludes, discussing the current implementation, and drawing
 directions for future
 work.
 
-\chapter{Formal Language Recognition with the \protect \Java Type Checker}
-\label{chapter:gallery}
-\footnote{Based on article accepted to ECOOP'16~\protect\cite{Gil:Levy:2016}}
-%\input{gallery}
+\chapter{Formal Language Recognition with the Java Type Checker
+†{Based on article accepted to ECOOP'16~\protect\cite{Gil:Levy:2016}}}
+\label{chapter:ecoop}
+\input{ecoop}
 
-\chapter{An Algorithm for Generating Fluent APIs for \protect\Java}
-\footnote{Based on article submitted to OOPSLA'16~\cite{Gil:Levy:2016a}}
-\label{chapter:elements}
-%\input{elements}
+\chapter{An Algorithm for Generating Fluent APIs for Java}
+†{Based on article submitted to OOPSLA'16~\cite{Gil:Levy:2016a}}
+\label{chapter:oopsla}
+\input{oopsla}
 
 \chapter{A Prototype Implementation}
 \label{chapter:tokens}

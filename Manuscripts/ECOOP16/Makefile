@@ -59,7 +59,7 @@ graphs: $(wildcard *.sty *.tex) $(LISTINGS)
 
 all:	graphs bibtex latex 
 
-CODE_PATH = ../../src/main/java/automaton
+CODE_PATH = ../../src/main/java/automaton/ecoop
 
 DOMAIN = $(CODE_PATH)/Domain.java 
 DOMAIN_DEMO = $(CODE_PATH)/DomainDemo.java  

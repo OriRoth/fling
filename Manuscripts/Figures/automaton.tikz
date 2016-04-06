@@ -1,3 +1,4 @@
+{
 \usetikzlibrary{trees}
 \begin{tikzpicture}[level distance=20ex,every node/.style={rounded corners,fill=Yellow,minimum height=4ex, text centered},
 edge from parent fork down,
@@ -60,6 +61,4 @@ child [level distance=30ex,xshift=15ex,yshift=10ex]{node [abstract]{\cc{Q.q17<S 
   child [,level distance=20ex] {node[xshift=5ex,yshift=5ex] {\cc{Q.q1.q1\_$\gamma$2}}} 
 } ;
 \end{tikzpicture}
-
- 
-
+}
