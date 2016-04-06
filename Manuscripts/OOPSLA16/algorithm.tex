@@ -507,13 +507,13 @@ constant time, irrespective of the length of the consolidated list.
           peek()$, at runtime, into its own stack.
     \item
           The algorithm relies on function~$\Function exhausted(i)$ that returns
-          true for an item~$i$ when its dot is in its almost right most position,
+          true for an item~$i$ when its dot is in its penultimate position,
           i.e., the item represents times during parsing in which all
           right hand side symbols of the item's rule have been parsed except for the last.
-          Since the item was just reviled at the top of the stack, the last symbol
+          Since the item was just revealed at the top of the stack, the last symbol
           was parsed as well, and the rule is fully parsed (and thus, exhausted).
           \par
-          Figuratively, an item~$i$ is exhausted right after the rule's body
+          Intuitively, an item~$i$ is exhausted right after the rule's body
           have been seen in full, and the item ‟waits” for the \RLLp to take
           the stack action appropriate when the rule reduces, and items representing
           it are no longer need.
@@ -563,13 +563,16 @@ result (the third in the table) is the input item itself, the reason is that
 the rule is currently being parsed when the dot precedes~$\<MoreConstants>$
 because it is yet to be fully parsed.
 
-Upon seeing nonterminal~$\<MoreConstants>$ and terminal \cc{;} the \LLp would
-choose rule~$\<MoreConstants> ::= \<Constant> \, \<MoreConstants>$, and thus it
-is added to the result with a dot at the beginning of the rule's right-hand
+Upon seeing nonterminal~$\<MoreConstants>$ and terminal~``\cc{;}'' the \LLp would
+choose rule\[
+  \<MoreConstants> ::= \<Constant> \, \<MoreConstants>,
+\] and thus it is added to the result with a dot at the beginning of the rule's right-hand
 side(again, because at this time nothing of the rule was parsed). Now a similar
-decision based on the \LLp's prediction table rule~$\<Constant> ::= \cc{;}$ is
-chosen. Since this rule revealed the terminal\cc{;} that will match the input
-symbol, the dot in the result item follows the terminal.
+decision based on the \LLp's prediction table rule~\[
+  \<Constant> ::= \cc{;}
+\]
+is chosen. Since this rule revealed the terminal\cc{;} that will match the
+input symbol, the dot in the result item follows the terminal.
 
 The last example (third row of the table) presents another ‟ability” of the
 consolidation, which is to ignore nonterminals that derive to~$ε$. In the
@@ -661,6 +664,9 @@ rules that have been fully parsed. In these cases, the input symbols
 (\cc{procedure} and \cc{begin} correspondingly) are in the rules left-hand
 side's~$\Function Follow(·)$ set (\<Labels> and \<Nested> correspondingly),
 causing~$Δ$ returns a jump operation.
+
+%\def⌘$#1$#2{\[#1#2\]}
+%\def⌘$#1$#2{$#1$#2 }
 
 The third row presents a case in which the rule~$\<Labels> ::=ε$ was fully
 parsed, but the input symbol is not in the set~$\Function Follow(\<Labels>)$, and

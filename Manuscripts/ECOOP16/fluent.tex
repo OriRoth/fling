@@ -61,7 +61,9 @@ Let the return type of function \cc{allowing} (respectively \cc{method}) be deno
 Then, the fact that~$τ₁≠τ₂$ means that the set of methods that can be placed after the dot
 in the partial call chain~$\cc{allowing(any(Object.\kk{class})).}$
 is not necessarily the same set of methods that can be placed after the 
-dot in the partial call chain~$\cc{allowing(any(Object.\kk{class})).method("get.*").}$.
+dot in the partial call chain \[
+\cc{allowing(any(Object.\kk{class})).method("get.*").}.
+\]
 This distinction makes it possible to design expressive and rich fluent APIs, in which a
 sequence of ‟chained” calls is not only readable, but also robust, in the sense that the
 sequence is type correct only when it makes sense semantically.

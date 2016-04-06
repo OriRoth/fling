@@ -109,6 +109,14 @@ function isword(s) {
 function setError(s) { error = s; return 1 } 
 
 function bad(s1, s2) {
+    if (s1 ~ /^.*---$/) 
+      return setError(sprintf("Triple hyphens (\"%s\") is a punctuation mark, much like ';', except that it must be juxtaposed to the next word", s1 )) 
+    if (s2 ~ /^---.*$/) 
+      return setError(sprintf("Triple hyphens (\"%s\") is a punctuation mark, much like ';', except that it must be juxtaposed to the previous word", s2 )) 
+    if (s1 ~ /^.*--$/) 
+      return setError(sprintf("Double hyphens (\"%s\") is a range indicator, e.g., pages 10--13. There should be no spaces around it", s1))
+    if (s2 ~ /^--.*$/) 
+      return setError(sprintf("Double hyphens (\"%s\") is a range indicator, e.g., pages 10--13. There should be no spaces around it", s2))
     if (toupper(s1) == toupper(s2) && s1 !~ /^[0-9.,]*$/ ) 
         if (s1 !~ /^[^a-zA-Z]$/ && s1 !~ /^\\/) 
             return setError(sprintf("Duplicate word (\"%s\")",s2))
@@ -118,6 +126,22 @@ function bad(s1, s2) {
         return setError(sprintf("Apparently unquoted comment `%s'", s2))
     if (tolower(s1)  == "example" && tolower(s2) == "for") 
       return setError(sprintf("Change \"%s %s\" to \"example of\"",s1, s2)) 
+    if (tolower(s1)  == "a" && tolower(s2) == "another" || tolower(s1)  == "another" && tolower(s2) == "a") 
+      return setError(sprintf("You wrote \"%s %s\" but I believe the 'a' is redundant ",s1, s2)) 
+    if (tolower(s1)  == "\\]," ||
+        tolower(s1)  == "\\]!" ||
+        tolower(s1)  == "\\]." ||
+        tolower(s1)  == "\\];")
+      return setError(sprintf("Puctuation mark \"%s\" should be inside display (\"[...]\")",substr(s1,length(s1),1))) 
+    if (tolower(s1)  == "\\]" && (tolower(s2) == "," || 
+                                  tolower(s2) == "!" || 
+                                  tolower(s2) == "." || 
+                                  tolower(s2) == ";")) 
+      return setError(sprintf("Puctuation mark \"%s\" should be inside display (\"[...]\")",s2)) 
+    if (tolower(s1)  == "quite" && tolower(s2) == "very")
+      return setError(sprintf("'quite' followed by 'very'"))
+    if (tolower(s1)  == "very" && tolower(s2) == "quite")
+      return setError(sprintf("'very' followed by 'quite'"))
 
     firstletter = tolower(first(s2))
 
@@ -205,6 +229,15 @@ $0 == "\\CPP" || $0 == "\\BNF" {
     }
 }
 /THIS IS FUYA/,/END FUYA/ {
+    next
+}
+/\\begin{LolaCodeTcbListing}/,/\\end{LolaCodeTcbListing}/ {
+    next
+}
+/\\begin{code}/,/\\end{code}/ {
+    next
+}
+/% vim:/,/\n/ {
     next
 }
 NF != 0 {
