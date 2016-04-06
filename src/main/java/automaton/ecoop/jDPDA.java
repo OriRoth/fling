@@ -1,7 +1,7 @@
-package automaton;
-import automaton.A.C.Cγ1;
-import automaton.A.C.E;
-import automaton.A.C.¤;
+package automaton.ecoop;
+import automaton.ecoop.A.C.Cγ1;
+import automaton.ecoop.A.C.E;
+import automaton.ecoop.A.C.¤;
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
 //begin{full}

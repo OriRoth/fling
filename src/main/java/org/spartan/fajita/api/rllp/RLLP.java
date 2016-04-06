@@ -51,7 +51,7 @@ public class RLLP {
       $.put(i, currentLine);
       for (Verb v : bnf.getVerbs()) {
         if (analyzer.firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size())).contains(v))
-          currentLine.put(v, new Action.Push(consolidate(i, v)));
+          currentLine.put(v, new Action.Push(i, v, consolidate(i, v)));
         else if (analyzer.followSetOf(i.rule.lhs).contains(v)) {
           if (v == SpecialSymbols.$)
             currentLine.put(v, new Action.Accept());
@@ -187,6 +187,9 @@ public class RLLP {
       @Override public ActionType type() {
         return ActionType.ACCEPT;
       }
+      @Override public String toString() {
+        return "Accept";
+      }
     }
 
     public abstract ActionType type();
@@ -207,12 +210,16 @@ public class RLLP {
 
     public static class Push extends Action {
       public final Deque<Item> itemsToPush;
+      private Item i;
+      private Verb v;
 
-      public Push(Deque<Item> deque) {
+      public Push(Item i, Verb v, Deque<Item> deque) {
+        this.i = i;
+        this.v = v;
         this.itemsToPush = deque;
       }
       @Override public String toString() {
-        return "push(" + itemsToPush + ")";
+        return "push( cons(" + i + "," + v + ")";
       }
       @Override public ActionType type() {
         return ActionType.PUSH;

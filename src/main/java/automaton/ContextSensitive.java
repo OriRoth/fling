@@ -1,9 +1,9 @@
 package automaton;
 
 import automaton.ContextSensitive.End;
-import automaton.Domain.Stack;
-import automaton.Domain.Stack.E;
-import automaton.Domain.Stack.P;
+import automaton.ecoop.Domain.Stack;
+import automaton.ecoop.Domain.Stack.E;
+import automaton.ecoop.Domain.Stack.P;
 
 class ContextSensitive {
   public static interface End {

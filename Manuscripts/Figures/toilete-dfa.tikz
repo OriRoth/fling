@@ -1,13 +1,34 @@
-\usetikzlibrary{automata,positioning,topaths}
-\tikzstyle{state-style}=[state,draw=blue!50,very thick,fill=blue!20,node distance=13ex]
 \begin{tikzpicture}
-  \node[state-style,initial,initial where=above left] (q0) {$q_{0}$};
-  \node[state-style] (q1) [above right= of q0] {$q_{1}$};
-  \node[state-style] (q2) [right=of q1] {$q_{2}$};
-  \node[state-style] (q3) [below right=of q2] {$q_{3}$};
-  \node[state-style] (q4) [below left=of q3] {$q_{4}$};
-  \node[state-style] (q5) [left=of q3] {$q_{5}$};
-  \node[state-style] (q6) [left=of q4] {$q_{6}$};
+\tikzstyle{state-style}=[state,every node={draw=black},font=\scriptsize,text width=5ex,align=center,on grid,node distance=13ex]
+
+\node[state-style,accepting] (closed)[blue] {closed};
+\node[state-style,accepting] (opened) [blue,right=2.9 of closed] {opened};
+\node[state-style,text width=4ex] (error) [above right=of closed,red] {runtime error};
+
+
+\path[->,distance = 2ex,above,thick] 
+
+				(closed) edge[below] node {\cc{open()}} (opened)
+				(opened) edge[bend left,below] node {\cc{close()}} (closed)
+				(closed) edge[bend left,above left] node {\cc{close()}} (error)
+				(opened) edge[bend right,right] node {\cc{open()}} (error);
+\draw[<-] (closed) -- node[below left] {start} ++(-5ex,4ex);
+\end{tikzpicture}
+
+
+\endinput
+
+
+\begin{tikzpicture}
+  \usetikzlibrary{automata,positioning,topaths}
+  \tikzstyle{statestyle}=[state,draw=blue!50,very thick,fill=blue!20,node distance=13ex]
+  \node[statestyle,initial,initial where=above left] (q0) {$q_{0}$};
+  \node[statestyle] (q1) [above right= of q0] {$q_{1}$};
+  \node[statestyle] (q2) [right=of q1] {$q_{2}$};
+  \node[statestyle] (q3) [below right=of q2] {$q_{3}$};
+  \node[statestyle] (q4) [below left=of q3] {$q_{4}$};
+  \node[statestyle] (q5) [left=of q3] {$q_{5}$};
+  \node[statestyle] (q6) [left=of q4] {$q_{6}$};
   \path[->,above,sloped,latex-, shorten <=1pt]
   (q1) edge[below] node {$\cc{female}()$} (q0)
   (q0) edge[bend left=20,] node {\begin{minipage}{11.5ex}$\cc{urinate}()\newline \cc{defecate}()$\end{minipage}} (q1)
@@ -22,4 +43,3 @@
   (q0) edge[above] node {$\cc{defecate}()$} (q6)
   ;
 \end{tikzpicture}
-

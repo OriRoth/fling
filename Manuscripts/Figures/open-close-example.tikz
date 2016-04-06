@@ -1,6 +1,5 @@
-\usetikzlibrary{automata,positioning,topaths}
-\tikzstyle{state-style}=[state,every node={draw=black},font=\scriptsize,text width=5ex,align=center,on grid,node distance=13ex]
 \begin{tikzpicture}
+\tikzstyle{state-style}=[state,every node={draw=black},font=\scriptsize,text width=5ex,align=center,on grid,node distance=13ex]
 
 \node[state-style,accepting] (closed)[blue] {closed};
 \node[state-style,accepting] (opened) [blue,right=2.9 of closed] {opened};

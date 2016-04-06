@@ -1,23 +1,22 @@
-%! TEX root = 00.tex
-
 \newcommand\LLp{LL$_{{}p}$\xspace}
 \newcommand\RLLp{R{}LL$_{{}p{}}$\xspace}
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
-% Vim: +,/^*$/-1!sort -u
-
-\passOptions{algorithm}{plain}
+% Vim: +,/^\s*$/-1!sort -u
 \passOptions{algorithmic}{noend}
+\passOptions{algorithm}{plain}
 \passOptions{amsmath}{fleqn}
-\passOptions{cleveref}{capitalize,nameinlink}
+\passOptions{cleveref}{capitalize,nameinlink} 
+\passOptions{geometry}{inner=2.8cm,outer=0.8in,top=0.8in,bottom=0.8in}
+\passOptions{gnuplottex}{subfolder} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table}
+\passOptions{yogi-algorithm}{terse}
 
-\usepackage[inner=2.8cm,outer=0.8in,top=0.8in,bottom=0.8in]{geometry}
-
-% Vim: +,/^*$/-1!sort -u
+% Vim: +,/^\s*$/-1!sort -u
 \usepackage{adjustbox} % Easy size adjustment of tables and figures.
+\usepackage{geometry}
 \usepackage{amsfonts} % AMS fonts
 \usepackage{amsmath} % AMS Mathematics
 \usepackage{amssymb} % Load more math symbols
@@ -29,6 +28,7 @@
 \usepackage{code}
 \usepackage{float}
 \usepackage{fontspec}
+\usepackage{gnuplottex}
 \usepackage{graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{lipsum}
@@ -42,29 +42,30 @@
 \usepackage{tabularx}
 \usepackage{tikz}
 \usepackage{wasysym}
-%\usepackage{univim}
 \usepackage{wrapfig}
 
-% Vim: +,/^*$/-1!sort -u
+% Vim: +,/^\s*$/-1!sort -u
 \usepackage{yogi-unicode}
 \usepackage{yogi-algorithm}
 \usepackage{yogi-lang}
 
-% Vim: +,/^*$/-1!sort -u
+% Vim: +,/^\s*$/-1!sort -u
 \passOptions{yogi-algorithm}{terse}
 \passOptions{yogi-lang}{terse}
 \passOptions{yogi-unicode}{terse}
 
 \lstset{language=Java,style=code}
 
-% Vim: +,/^*$/-1!sort -u
+% Vim: +,/^\s*$/-1!sort -u
 \usetikzlibrary{graphdrawing}
 \usetikzlibrary{graphs}
 \usetikzlibrary{shapes}
+\usetikzlibrary{positioning}
+\usetikzlibrary{automata}
+\usetikzlibrary{topaths}
 
 % Vim: +,/^*$/-1!sort -u
-% \usegdlibrary{circular}
-% \usegdlibrary{trees}
+\usegdlibrary{trees}
 
 \renewcommand{\algorithmicforall}{\textbf{For each}}
 
@@ -72,87 +73,116 @@
 \newcommand\gobble[1]{\@gobble{#1}}
 \makeatother
 
-\renewcommand\UrlFont{\scriptsize}
+\renewcommand\UrlFont{\scriptsize} % If last, will urls are scriptsize
+\renewcommand\UrlFont{\normalsize} % If last, will urls are normalsize
 
-\floatstyle{plain}
+\floatstyle{plain} 
 \restylefloat{table}
+
 \floatstyle{ruled}
 \restylefloat{algorithm}
 \restylefloat{figure}
 
 \adjustboxset{max width=\columnwidth}
+\adjustboxset{max width=\textwidth}
 \adjustboxset{center}
 \adjustboxset{max height=0.8\textheight}
 \newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
-\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
+\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\textwidth}}
 
-\newcommand✓{\textcolor{green!70!black}{\ding{51}}}%
-\def \Fajita {\textsc{Fajita}\xspace}
-\newcommand \AST {AST}
-\newcommand✗{\textcolor{red!70!black}{\ding{55}}}%
+% Vim: +,/^\s*$/-1!column -t|sort -u
+\newcommand\AST     {AST}
+\newcommand\Fajita  {\textsc{Fajita}\xspace}
+\newcommand✓        {\textcolor{green!70!black}{\ding{51}}}%
+\newcommand✗        {\textcolor{red!70!black}{\ding{55}}}%
 
-% Vim: +,/^*$/-1!sort -u
-\newtheorem{Theorem}{Theorem}
+% Vim: +,/^\s*$/-1!sort -u
 \newtheorem{Conjecture}{Conjecture}
+\newtheorem{conjecture}{conjecture}
 \newtheorem{Definition}{Definition}
+\newtheorem{definition}{definition}
 \newtheorem{Lemma}{Lemma}
+\newtheorem{lemma}{lemma}
+\newtheorem{Theorem}{Theorem}
+\newtheorem{theorem}{theorem}
 \newtheorem{Proposition}{Proposition}
+\newtheorem{proposition}{proposition}
 
-% Vim: +,/^*$/-1!sort -u
-\numberwithin{equation}{section}
-\numberwithin{figure}{section}
-\numberwithin{algorithm}{section}
+% Vim: +,/^\s*$/-1!sort -u
+\numberwithin{algorithm}{chapter}
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
 
-% Vim: +,/^*$/-1!sort -u
-\def\sectionautorefname{Sect.}
+% Vim: +,/^\s*$/-1!sort -u
 \def\tablename{Table}
-\def\figureautorefname{\figurename}
-\def\figurename{Fig.}
-\def\sectionautorefname{Sect.}
-\def\subsectionautorefname{Sect.}
+\def\figurename{Figure}
 
 % How should entities be names in references
-% Vim: +,/^*$/-1!sort -u
-\crefname{algorithm}{Alg.\@}{algs.\@}
-\Crefname{algorithm}{Alg.\@}{Algs.\@}
-\crefname{conjecture}{Conj.\@}{conjs.\@}
-\Crefname{conjecture}{Conj.\@}{Conjs.\@}
-\crefname{definition}{Def.\@}{defs.\@}
-\Crefname{definition}{Def.\@}{Defs.\@}
-\crefname{equation}{eq.\@}{eqs.\@}
-\Crefname{equation}{Eq.\@}{Eqs.\@}
-\crefname{figure}{Fig.\@}{figs.\@}
-\Crefname{figure}{Fig.\@}{Figs.\@}
-\crefname{section}{Sect.\@}{sects.\@}
-\Crefname{section}{Sect.\@}{Sects.\@}
-\crefname{table}{Table}{tables.}
+% If last, use abbreviated names // vim: +,/^$/-!sort -u
+% Vim: +,/^\s*$/-1!sort -u
+\crefname{appendix}{Appendix}{appendices}
+\Crefname{appendix}{Appendix}{Appendices}
+\crefname{chapter}{Chap.}{chaps.}
+\Crefname{chapter}{Chap.}{Chaps.}
+\crefname{definition}{Def.}{defs.}
+\Crefname{definition}{Def.}{Defs.}
+\crefname{figure}{Fig.}{figs.}
+\Crefname{figure}{Fig.}{Figs.}
+\crefname{lstlisting}{List.}{listings}
+\Crefname{lstlisting}{List.}{Listings}
+\crefname{section}{Sect.}{sects.}
+\Crefname{section}{Sect.}{Sects.}
 \crefname{table}{Table}{tables}
 \Crefname{table}{Table}{Tables}
-\crefname{theorem}{Thm.\@}{thms.\@}
-\Crefname{theorem}{Thm.\@}{Thms.\@}
+\crefname{theorem}{Theorem}{theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+
+% If last, use full names // vim: +,/^$/-!sort -u
+% Vim: +,/^\s*$/-1!sort -u
+\crefname{appendix}{Appendix}{appendices}
+\Crefname{appendix}{Appendix}{Appendices}
+\Crefname{chapter}{Chapter}{Chapsters}
+\crefname{chapter}{Chapter}{chapters}
+\crefname{definition}{Definition}{definitions}
+\Crefname{definition}{Definition}{Definitions}
+\crefname{figure}{Figure}{figures}
+\Crefname{figure}{Figure}{Figures}
+\crefname{lstlisting}{Listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
+\crefname{section}{Section}{sections}
+\Crefname{section}{Section}{Sections}
+\crefname{table}{Table}{tables}
+\Crefname{table}{Table}{Tables}
+\crefname{theorem}{Theorem}{theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+
 
 \newcommand \urlref [1] {†{\url{#1}}}
 \def\nthscript#1{\textsuperscript{\textit{#1}}}
 
 \intextsep=6pt
+\captionsetup[table]{labelfont=bf}
+\renewcommand{\arraystretch}{1.3}
 
 \newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
 
 \def\nonterminal#1{\ensuremath{\text{\mdseries\rmfamily\textit{#1}}}}
 \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}}}
 
+
 \newenvironment{Grammar}
 {%
-  \scriptsize
+  \UrlFont
   \renewcommand\baselinestretch{0.8}
   \def\~{\text{~}}
   \def\|{\~\textcolor{red}{\mathbf|\~}}
   \def\Derives{\textcolor{red}{\,\mathbf{::=}\~}\xspace}
   \def\<##1>{\textcolor{black}{\text{$\langle\nonterminal{##1}⟩$}}}
   \let\oldCc=\cc
-  \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
+  \def\cc##1{{\text{{\UrlFont{##1}}~}}}
   \let\oldKk=\kk
-  \def\kk##1{{\text{{\scriptsize\oldKk{##1}}}}}
+  \def\kk##1{{\text{{\UrlFont{##1}}}}}
   \begin{equation*}
 }
 {

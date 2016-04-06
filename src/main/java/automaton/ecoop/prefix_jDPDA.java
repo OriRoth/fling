@@ -1,4 +1,4 @@
-package automaton;
+package automaton.ecoop;
 
 //@formatter:off
 @SuppressWarnings({"rawtypes","unused"}) 
