@@ -5,6 +5,7 @@
 \def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
 % Vim: +,/^*$/-1!sort -u
+
 \passOptions{algorithm}{plain}
 \passOptions{algorithmic}{noend}
 \passOptions{amsmath}{fleqn}
@@ -12,6 +13,8 @@
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
 \passOptions{xcolor} {usenames, dvipsnames, table}
+
+\usepackage[inner=2.8cm,outer=0.8in,top=0.8in,bottom=0.8in]{geometry}
 
 % Vim: +,/^*$/-1!sort -u
 \usepackage{adjustbox} % Easy size adjustment of tables and figures.
