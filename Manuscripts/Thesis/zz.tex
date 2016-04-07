@@ -1,0 +1,46 @@
+% Parsing from ecoop
+A problem related to that of recognizing a formal language,
+is that of parsing, i.e., creating, for input which is within the language,
+  a parse tree according to the language's grammar.
+In the domain of fluent APIs, the distinction between recognition and parsing is
+  in fact the distinction between compile time and runtime.
+Before a program is run, the compiler checks whether the fluent API call is legal,
+  and code completion tools will only suggest legal extensions of a current call chain.
+
+In contrast, a parse tree can only be created at runtime.
+Some fluent API definitions create the parse-tree
+  iteratively, where each method invocations in the call chain adding
+  more components to this tree.
+However, it is always possible to generate this tree in ‟batch” mode:
+This is done by maintaining a \emph{fluent-call-list} which
+  starts empty and grows at runtime by having each method invoked add to it
+  a record storing the method's name and values of its parameters.
+The list is completed at the end of the fluent-call-list, at which point it is fed to an appropriate parser that
+  converts it into a parse tree (or even an AST).
+
+
+Can we parse without running ANY parsing method on runtime? 
+i.e., can the recognizer do most of the parsing process?
+% parsing from oopsla
+% What can be done statically
+A problem related to that of recognizing a formal language,
+is that of parsing, i.e., creating, for input which is within the language,
+a parse tree according to the language's grammar.
+In the domain of fluent APIs, the distinction between recognition and parsing
+is in fact the distinction between compile time and runtime.
+Before a program is run, the compiler checks whether the fluent API call is
+legal, and code completion tools will only suggest legal extensions of a
+current call chain.
+% Parse in runtime
+In contrast, a parse tree can only be created at runtime.
+Some fluent API definitions create the parse-tree
+iteratively, where each method invocations in the call chain adding
+more components to this tree.
+However, it is always possible to generate this tree in ‟batch” mode:
+This is done by maintaining a \emph{fluent-call-list} which
+starts empty and grows at runtime by having each method invoked add to it
+a record storing the method's name and values of its parameters.
+The list is completed at the end of the fluent-call-list, at which point it is
+fed to an appropriate parser that converts it into a parse tree (or even an
+AST).
+
