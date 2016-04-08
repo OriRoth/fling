@@ -49,28 +49,25 @@
 
 \subsection*{Outline.}
 
-\cref{chapter:introduction} introduces the notion of ``fluent API''s.  The
-goals and motivation for this research are given at \cref{section:goal},
-while our main results are presented in \cref{section:contribution},
-\cref{section:related} completes the chapter by providing a literature review
-on meta-programming and fluent APIs and other related work.
-
 During the research we faced some interesting theoretical questions regarding
-automata theory, and the \Java type-checker ; \cref{chapter:ecoop} reviews
-these issues, and their problems. Specifically, \cref{section:result} presents
-our main theorem \cref{section:proof} gives a proof to that theorem, and
-\cref{section:prefix} generalizes it.
+automata theory and the \Java type-checker ; \cref{chapter:ecoop} reviews
+these issues. Specifically, \cref{section:result} presents our main theorem.
+\cref{section:proof} gives a proof to that theorem, \cref{section:prefix}
+extends the theorem, and \cref{section:toolkit} provides a toolkit for type-encoding
+in \Java.
 
 Using the theoretical results from \cref{chapter:ecoop}, \cref{chapter:oopsla}
-  introduces a set of algorithms and data structures to automatically generate
-  fluent APIs from BNF specifications. Specifically, \cref{section:generalization}
-  introduces \Fajita, \cref{section:intuition} reminds the core of LL parsing and gives
-  some intuition to the main algorithm presented in \cref{section:algorithm}.
+introduces a set of algorithms and data structures to automatically generate
+fluent APIs from BNF specifications. Specifically,
+\cref{section:fajita} introduces \Fajita, \cref{section:intuition}
+reminds the core of LL parsing and gives some intuition to the main algorithm
+presented in \cref{section:algorithm}.
 
 % Review this part again
-\cref{chapter:prototype} gives interesting points regarding the implementation
-of the prototypical implementation of \Fajita, while \cref{chapter:conclusions}
-concludes and discusses directions for future work.
+\cref{chapter:prototype} notes some limitations and interesting points
+regarding the implementation of the prototypical implementation of \Fajita,
+while \cref{chapter:conclusions} concludes and discusses directions for future
+work.
 
 \chapter{Formal Language Recognition with the Java Type Checker}
 \Large Based on an article accepted to ECOOP'16~\cite{Gil:Levy:2016}
@@ -85,7 +82,7 @@ concludes and discusses directions for future work.
 \input{oopsla}
 
 \chapter{A Prototype Implementation}
-\label{chapter:tokens}
+\label{chapter:prototype}
 %\input{tokens}
 
 \chapter{Conclusions and Future Work}

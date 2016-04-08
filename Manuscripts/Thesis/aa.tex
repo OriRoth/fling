@@ -121,8 +121,8 @@ To create a \Java implementation that realizes this fluent API,
   \cref{figure:sql-bnf-java}.
 
 \begin{figure}[H]
-  \caption{\label{figure:sql-bnf-java}
-    A \texorpdfstring{\Java}{Java} code excerpt defining the BNF specification of the fragment SQL
+  \caption[Defining BNFs using \Fajita]{\label{figure:sql-bnf-java}
+    A \Java code excerpt defining the BNF specification of the fragment SQL
     language defined in \cref{figure:sql-bnf}.}
   \javaInput[minipage,width=\linewidth,left=-6ex]{sql.bnf.listing}
 \end{figure}
@@ -150,7 +150,7 @@ and methods realizing the fluent API, in such a way that legal use of the API
 like in \cref{figure:sql:legal} is syntactically legal,
 
 \begin{figure}[H]
-  \caption{\label{figure:sql:legal}
+  \caption[Legal sequences of calls in the sql fragment example]{\label{figure:sql:legal}
   Legal sequences of calls in the sql fragment example,
   where \cc{t} is of type \cc{Table}, \cc{c} is of type \cc{Column} and \cc{e}
   is of type \cc{Expr}}
@@ -162,7 +162,7 @@ while snippets disobeying the BNF specification in \cref{figure:sql-bnf} like
 \cref{figure:sql:illegal} , do not type check.
 
 \begin{figure}[H]
-  \caption{\label{figure:sql:illegal}
+  \caption[Illegal sequences of calls in the sql fragment example]{\label{figure:sql:illegal}
   Illegal sequences of calls in the sql fragment example,
   where \cc{t} is of type \cc{Table} and \cc{c} is of type \cc{Column}.}
   \javaInput[minipage,width=\linewidth,left=-4ex]{sql.illegal.listing}
@@ -175,12 +175,12 @@ involving theory of automata, type theory, language design, etc.
 And still, automatic generation of these exist to some extent.
 One example, is fluflu\urlref{https://github.com/verhas/fluflu}: a software artifact that uses
 \Java annotations to define deterministic finite automata (henceforth, DFA), and then
-compiles it to a fluent API based on this automaton. Usage example of fluflu is
+compiles it to a fluent API based on this automaton. Use example of fluflu is
 depicted at \cref{figure:fluflu}.
 
 \begin{figure}[ht]
   \caption{\label{figure:fluflu}
-    Usage example of fluflu, generation a fluent
+    Use example of fluflu, generation a fluent
   API for the regular expression~\texorpdfstring{$a^*$}{a*}}
   \javaInput[minipage,left=-4ex]{fluflu.example.listing}
 \end{figure}
@@ -192,7 +192,7 @@ automaton is~$L=a^*$.
 Although fluent API generation was ‟achieved”, this example has many flaws, some of them are:
 
 \begin{enumerate}
-  \item The usage is complicated and the resulted code is messy.
+  \item Using fluflu is complicated and the resulted code is messy.
   \item Defining a DFA is harder then writing, for example, the equivalent regular
         expression (and in some cases, the size of the DFA is exponentially bigger)
   \item Languages defined by DFA can only be regular, a rather small

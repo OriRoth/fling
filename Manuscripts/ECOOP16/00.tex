@@ -38,62 +38,62 @@
 \input{aa}
 
 \textbf{Outline.} \small
-\Cref{Section:fluent} is a brief reminder of method chaining, 
+\Cref{section:fluent} is a brief reminder of method chaining, 
   and fluent APIs, accompanied a discussion of how this work is related to type states.
 It is followed by a similar reminder of context-free languages, pushdown automata, 
-  and such in \cref{Section:pushdown}.
+  and such in \cref{section:pushdown}.
 Based on the vocabulary established this far, 
-  the main result is stated in~\cref{Section:result}.
+  the main result is stated in~\cref{section:result}.
   
-Towards the proof in \cref{Section:proof}, \cref{Section:toolkit} 
+Towards the proof in \cref{section:proof}, \cref{section:toolkit} 
   shows idioms and techniques for encoding computation with    
   the \Java type-checker.
-\Cref{Section:jump} makes use of these for encoding 
+\Cref{section:jump} makes use of these for encoding 
   ``jump-stack'', a non-trivial data-structure,
   which is used, with suitable modifications, in the proof. 
 
-In \cref{Section:applicability}, we discuss the challenges in
+In \cref{section:applicability}, we discuss the challenges in
   translating the proof into a compiler-compiler for fluent APIs.
 In particular, this section demonstrates our claim (that may be
   surprising to some) that the standard \Java compiler may spend
   an exponential time on compiling rather simple programs.
-\cref{Section:zz} concludes with directions for further research.
+\cref{section:zz} concludes with directions for further research.
 \normalsize
 
 \section{Method Chaining, Fluent APIs, and, Type States}
-\label{Section:fluent}
+\label{section:fluent}
 \input{fluent}
 
-\section{Context-Free Languages and Pushdown Automata: \HideFromThesis{Reminder and Terminology}}
-\label{Section:pushdown}
+\section{Context-Free Languages and Pushdown Automata: Reminder and Terminology}
+\label{section:pushdown}
 \input{pushdown}
 
 \section{Statement of the Main Result} 
-\label{Section:result}
+\label{section:result}
 \input{result}
 
 \section{Techniques of Type Encoding}
-\label{Section:toolkit}
+\label{section:toolkit}
 \input{toolkit}
 
 \section{The Jump-Stack Data-Structure}
-\label{Section:jump}
+\label{section:jump}
 \input{jump}
 
 \section{Proof of \Cref{Theorem:Gil-Levy}}
-\label{Section:proof}
+\label{section:proof}
 \input{proof}
 
 \section{The Prefix Theorem}
-\label{Section:prefix}
+\label{section:prefix}
 \input{prefix}
 
 \section{Notes on Practical Applicability}
-\label{Section:applicability}
+\label{section:applicability}
 \input{applicability}
 
 \section{Conclusion and Future Work}
-\label{Section:zz}
+\label{section:zz}
 \input{zz}
 
 % \textbf{Acknowledgment.}

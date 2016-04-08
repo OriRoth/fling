@@ -15,7 +15,7 @@ We argue that~$g$ can
     from \Java programs that compile correctly with a \Java 8 compiler.}
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:unary-function}%
+  \caption[Type encoding of partial unary function]{\label{Figure:unary-function}%
     Type encoding of partial function~$g:Γ↛Γ$,
     defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
   }
@@ -93,7 +93,7 @@ A \Java type encoding of this definition of function~$f$
     are in~\cref{Figure:simple-binary}(b).
 
 \begin{figure}[hbt]
-  \caption{\label{Figure:simple-binary}%
+  \caption[Type encoding of partial binary function]{\label{Figure:simple-binary}%
     Type encoding of partial binary function~$f:R⨉S↛Γ$,
     where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
     is specified by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$.}
@@ -212,7 +212,7 @@ of type \cc{Stack} and its subtypes.
 gives the implementation of these types.
 
 \begin{figure}[!htb]
-  \caption{Type encoding of an unbounded stack data structure.}
+  \caption{Type encoding of an unbounded stack data structure}
   \label{Figure:stack-encoding}
   \begin{tabular}{cc}
     \parbox[c]{0.3\linewidth}{%
