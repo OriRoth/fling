@@ -13,13 +13,13 @@ However, these advantages come at the cost of expressive power;
   {M. Fowler, \emph{Language Workbenches: The Killer-App for Domain Specific Languages?},
     2005
     \newline
-  \url{http://www.martinfowler.com/articles/languageWorkbench.html＃InternalDsl}}.
+  \url{http://www.martinfowler.com/articles/languageWorkbench.html}}.
 Indeed, in languages such as \CC, fluent APIs
   often make extensive use of operator overloading (examine, e.g., \textsf{Ara-Rat}~\cite{Gil:Lenz:07}),
   but this capability is not available in \Java.
 
 Despite this limitation, fluent APIs in \Java can be rich, expressive,
-and in many cases cab boost productivity in elegant, neat code snippets such as
+and in many cases can boost productivity in elegant and neat code snippets such as
 
 \begin{quote}
   \javaInput[minipage,width=\linewidth,left=-2ex]{../Fragments/camel-apache.java.fragment}
@@ -61,13 +61,14 @@ coercing the type system and the type checker of a certain programming language
 to do abstract computations it was never meant to carry out? And, why should we
 care?
 
-The previous jOOQ example suggests that jOOQ imitates SQL, but, is it possible at
-all to produce a fluent API for the entire SQL language, or XPath, HTML,
+The previous jOOQ example suggests that jOOQ imitates SQL, but, is it possible
+at all to produce a fluent API for the entire SQL language, or XPath, HTML,
 regular expressions, BNFs, EBNFs, etc.?
 
-Of course, with no operator overloading it is impossible
-to fully emulate tokens; method names though make a good substitute for tokens, as done
-in
+Of course, with no operator overloading it is impossible to fully emulate
+tokens; method names though make a good substitute for tokens, as done in the
+Apache Camel code excerpt above
+
 \begin{quote}
   \javaInput[minipage,width=45ex,left=-2ex]{../Fragments/jOOQ-mini.java.fragment}.
 \end{quote}
@@ -134,9 +135,10 @@ In particular, the code in \cref{figure:sql-bnf-java} shows how fluent API speci
   take parameters, e.g., method \cc{column} taking parameter of type \cc{Column} and
     method \cc{from} taking a \cc{Table} parameter.
 
-Other than the derivation rules, \Fajita needs to be told the start rule
+Other than the derivation rules, \Fajita needs to be told the start rule 
   and the sets of terminals and nonterminals.
-These are specified in the first method call in the chain where,
+The start symbol is given in the \cc{start} method that receives a nonterminal,
+and the symbol sets are specified in the first method call in the chain where,
   the enumerate types \cc{SQLTerminals} and \cc{SQLNonTerminals} are:
 
 \begin{quote}
@@ -149,8 +151,10 @@ like in \cref{figure:sql:legal} is syntactically legal,
 
 \begin{figure}[H]
   \caption{\label{figure:sql:legal}
-  Legal sequences of calls in the sql fragment example}
-  \javaInput[minipage,width=\linewidth,left=-4ex]{sql.legal.listing}
+  Legal sequences of calls in the sql fragment example,
+  where \cc{t} is of type \cc{Table}, \cc{c} is of type \cc{Column} and \cc{e}
+  is of type \cc{Expr}}
+\javaInput[minipage,width=\linewidth,left=-4ex]{sql.legal.listing}
 
 \end{figure}
 
@@ -159,7 +163,8 @@ while snippets disobeying the BNF specification in \cref{figure:sql-bnf} like
 
 \begin{figure}[H]
   \caption{\label{figure:sql:illegal}
-  Illegal sequences of calls in the sql fragment example}
+  Illegal sequences of calls in the sql fragment example,
+  where \cc{t} is of type \cc{Table} and \cc{c} is of type \cc{Column}.}
   \javaInput[minipage,width=\linewidth,left=-4ex]{sql.illegal.listing}
 \end{figure}
 
@@ -169,7 +174,7 @@ involving theory of automata, type theory, language design, etc.
 
 And still, automatic generation of these exist to some extent.
 One example, is fluflu\urlref{https://github.com/verhas/fluflu}: a software artifact that uses
-\Java annotations to define deterministic finite automata(henceforth, DFA), and then
+\Java annotations to define deterministic finite automata (henceforth, DFA), and then
 compiles it to a fluent API based on this automaton. Usage example of fluflu is
 depicted at \cref{figure:fluflu}.
 
@@ -189,22 +194,23 @@ Although fluent API generation was ‟achieved”, this example has many flaws, 
 \begin{enumerate}
   \item The usage is complicated and the resulted code is messy.
   \item Defining a DFA is harder then writing, for example, the equivalent regular
-        expression (and in some cases, the size of the DFA might be exponentially bigger)
+        expression (and in some cases, the size of the DFA is exponentially bigger)
   \item Languages defined by DFA can only be regular, a rather small
         class of languages.
 \end{enumerate}
 
 A question rises after seeing \Fajita and fluflu: how come the representation
-of simple languages such as regular languages is so complex (as seen in fluflu)
-and the representation of a more complex class of languages, is rather simple?
-As it turns out, two factors are involved in the answer.
+of simple languages such as regular languages is so complex (as seen in
+\cref{figure:fluflu}) and the representation of a more complex class of
+languages, is rather simple (as seen \cref{figure:sql-bnf-java}?) As it turns
+out, two factors are involved in the answer.
 
 The first is the complexity of \emph{representing the language}.
 Regular language are mostly defined by regular expression, but the language of
-all regular expressions is actually context-free and not regular!
+all regular expressions is context-free and not regular
 (Intuitively, since regular expressions uses parenthesizing). On the contrary,
-the definition of context-free languages is usually done with a BNF (or a
-context-free grammar), and the language of all BNFs is regular!
+the definition of context-free languages is usually done with BNFs (or 
+context-free grammars), and the language of all BNFs is regular.
 
 Thus, in order to define a fluent API for generating regular languages, one needs a
 fluent API defined by a context-free language, while in order to define a fluent API for
@@ -225,33 +231,39 @@ those for context-free languages is the main challenge of this thesis.
 The main results of this research are:
 \begin{quote}
   \begin{enumerate}
-  \item If the DSL specification is that of a deterministic context-free
-    language, then a fluent API exists for the language, but we do not know
-    whether such a fluent API exists for more general languages.
-  \par
-  Recall that there are universal cubic time parsing
-  algorithms~\cite{Cocke:1969,Earley:1970,Younger:1967} which can parse (and recognize) any
-  context-free language. What we do not know is whether algorithms of this sort
-  can be encoded within the framework of the \Java type system.
+  \item 
+    If the DSL specification is that of a deterministic context-free language,
+    then a fluent API exists for the language, but we do not know whether such
+    a fluent API exists for more general languages.
+    \par
+    Recall that there are universal cubic time parsing
+    algorithms~\cite{Cocke:1969,Earley:1970,Younger:1967} which can parse (and
+    recognize) any (non-deterministic) context-free language. What we do not
+    know is whether algorithms of this sort can be encoded within the framework
+    of the \Java type system.
   \item
-  There exists an algorithm to generate a fluent API that realizes any
-  deterministic context-free languages. Moreover, this fluent API can create
-  at runtime, a parse tree for the given language. This parse tree can then be
-  supplied as input to the library that implements the language's semantics.
-    \item
-  Unfortunately, a general purpose compiler-compiler
-  is not yet feasible with the current algorithm.
-  \begin{itemize}
-    \item One difficulty is usual in the fields of formal languages:
-      The algorithm is complicated and relies on
-      modules implementing complicated theoretical results, which, to the best of our
-      knowledge, have never been implemented.
-    \item Another difficulty is that a certain design decision in the
-      implementation of the standard \texttt{javac} compiler is likely to make it choke on the
-      \Java code generated by the algorithm.
-  \end{itemize}
+    There exists an algorithm to generate a fluent API that realizes any
+    deterministic context-free languages. Moreover, this fluent API can create
+    at runtime, a parse tree for the given language. This parse tree can then
+    be supplied as input to the library that implements the language's
+    semantics.
   \item
-    We did implement a prototype for a compiler-compiler that works for LL(1) grammars.
+    Unfortunately, a general purpose compiler-compiler is not yet feasible with
+    the current algorithm.
+    \begin{itemize}
+      \item 
+        One difficulty is usual in the fields of formal languages: The
+        algorithm is complicated and relies on modules implementing complicated
+        theoretical results, which, to the best of our knowledge, have never
+        been implemented.
+      \item
+        Another difficulty is that a certain design decision in the
+        implementation of the standard \texttt{javac} compiler is likely to
+        make it choke on the \Java code generated by the algorithm.
+    \end{itemize}
+  \item
+    We did implement a prototype for a compiler-compiler that works for LL(1)
+    grammars.
   \end{enumerate}
 \end{quote}
 
@@ -279,7 +291,6 @@ automaton is then emulated by a weaker automaton, with as many as
 stack symbols.
 This weaker automaton is then ‟compiled” into a collection of generic \Java types,
 where there is at least one type for each of these symbols.
-
 
 This work present an algorithm to compile an LL grammar of a fluent API
 language into a \Java implementation whose size parameters are linear in
@@ -331,23 +342,18 @@ Garcia et al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} compared
   In several ways, the \Java approach~\cite{Bracha:Odersky:Stoutamire:Wadler:98}
   did not rank as well as others.
 
-Not surprisingly, work on meta-programming using \Java generics,
-  research concentrating on other means for enriching the language,
-  most importantly annotations~\cite{Papi:08}.
+Unlike \CC~\cite{Austern:98,Musser:Stepanov:1989, Backhouse:Jansson:1999,
+Dehnert:Stepanov:2000,Gil:Gutterman:98,Abrahams:Gurtovoy:04}, the literature on
+meta-programming with \Java generics is minimal, research concentrating on
+other means for enriching the language, most importantly
+annotations~\cite{Papi:08}.
 
 The work on SugarJ~\cite{Erdweg:2011} is only one of many other attempts
   to achieve the embedded DSL effect of fluent APIs by language extensions.
 
 Suggestions for semi-automatic generation can be found in the work of
-Bodden~\cite{Bodden:14} and on numerous locations in the web.  None of these
-materialized into an algorithm or analysis of complexity.  However, there is a
+Bodden~\cite{Bodden:14} and on numerous locations in the web. None of these
+materialized into an algorithm or analysis of complexity. However, there is a
 software artifact (the previously reviewed
 fluflu\urlref{https://github.com/verhas/fluflu}) that automatically generates a
 fluent API that obeys the transitions of a given finite automaton.
-
-The challenges of \Java generic programming were highlighted by Garcia et
-al.~\cite{Garcia:Jarvi:Lumsdaine:Siek:Willcock:03} research on the expressive
-power of generics in half a dozen major programming languages,
-Indeed, unlike \CC~\cite{Austern:98,Musser:Stepanov:1989,
-Backhouse:Jansson:1999, Dehnert:Stepanov:2000,Gil:Gutterman:98,Abrahams:Gurtovoy:04}, the literature on meta-programming with \Java
-generics is minimal.
