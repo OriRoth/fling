@@ -1,46 +1,87 @@
-% Parsing from ecoop
-A problem related to that of recognizing a formal language,
-is that of parsing, i.e., creating, for input which is within the language,
-  a parse tree according to the language's grammar.
-In the domain of fluent APIs, the distinction between recognition and parsing is
-  in fact the distinction between compile time and runtime.
-Before a program is run, the compiler checks whether the fluent API call is legal,
-  and code completion tools will only suggest legal extensions of a current call chain.
+\section{Conclusions}
 
-In contrast, a parse tree can only be created at runtime.
-Some fluent API definitions create the parse-tree
-  iteratively, where each method invocations in the call chain adding
-  more components to this tree.
-However, it is always possible to generate this tree in ‟batch” mode:
-This is done by maintaining a \emph{fluent-call-list} which
-  starts empty and grows at runtime by having each method invoked add to it
-  a record storing the method's name and values of its parameters.
-The list is completed at the end of the fluent-call-list, at which point it is fed to an appropriate parser that
-  converts it into a parse tree (or even an AST).
+\section{Future Work}
+\subsection{Parsing}
+A problem related to that of recognizing a formal language, is that of parsing,
+i.e., creating, for input which is within the language, a parse tree according
+to the language's grammar.  In the domain of fluent APIs, the distinction
+between recognition and parsing is in fact the distinction between compile time
+and runtime.  Before a program is run, the compiler checks whether the fluent
+API call is legal, and code completion tools will only suggest legal extensions
+of a current call chain.
 
+In contrast, a parse tree can only be created at runtime, as the fluent API can
+either or compile, or not compile, but cannot do much more.
 
-Can we parse without running ANY parsing method on runtime? 
-i.e., can the recognizer do most of the parsing process?
-% parsing from oopsla
-% What can be done statically
-A problem related to that of recognizing a formal language,
-is that of parsing, i.e., creating, for input which is within the language,
-a parse tree according to the language's grammar.
-In the domain of fluent APIs, the distinction between recognition and parsing
-is in fact the distinction between compile time and runtime.
-Before a program is run, the compiler checks whether the fluent API call is
-legal, and code completion tools will only suggest legal extensions of a
-current call chain.
-% Parse in runtime
-In contrast, a parse tree can only be created at runtime.
-Some fluent API definitions create the parse-tree
-iteratively, where each method invocations in the call chain adding
-more components to this tree.
-However, it is always possible to generate this tree in ‟batch” mode:
-This is done by maintaining a \emph{fluent-call-list} which
-starts empty and grows at runtime by having each method invoked add to it
-a record storing the method's name and values of its parameters.
-The list is completed at the end of the fluent-call-list, at which point it is
-fed to an appropriate parser that converts it into a parse tree (or even an
-AST).
+There are two possible ways to parse at runtime with fluent APIs.  The first is
+by creating the parse-tree iteratively, where each method invocations in the
+call chain adding more components to this tree (again, it's computed during
+runtime).
 
+The second way is by generating this tree in ‟batch” mode: this is done by
+maintaining a \emph{fluent-call-list} which starts empty and grows at runtime
+by having each method invoked add to it a record storing the method's name and
+values of its parameters.  The list is completed at the end of the
+fluent-call-list, at which point it is fed to an appropriate parser that
+converts it into a parse tree (or even an AST).
+
+An interesting hypothesis we have, is that the parse tree can be created at
+  runtime without running any additional parsing algorithm.
+We believe it can be done because in LL parsing once we see a new rule, we 
+know it is the next derivation in the leftmost derivation of the string.
+
+The main question we wish to leave the reader with is:
+\begin{quote}
+  Can we ALWAYS parse without running ANY parsing method on runtime? 
+\end{quote}
+
+\subsection{The Endable Symbols Pitfall}
+\label{section:endable}
+
+Consider the nonterminal \<Body> from out running example
+(\cref{figure:running}),
+since \<Body> appears as the last symbol in a rule of a start symbol,~$\$$ is
+in $\Function Follow(\<Body>)$.
+
+In that case, the type encoding item \[
+  i = [ \<Body> ::= \cc{begin} \; \cc{end} \; \cdot ] 
+\] should have a method~\cc{\$()} concluding the API chain.
+
+However, \<Body> appears in a non-endable context in \<Procedure>'s rule (this
+context is not endable as~$\$$ is not in~$\Function Follow(\<Procedure>)$) and
+since we have only one type encoding for item~$i$, a user of the fluent API
+could legally conclude the API chain even when the call chain is not legal.
+
+We believe this problem can be solved with some grammar tweaking.
+
+\subsection{The Recursive JSM Encoding Pitfall}
+In the way the JSMs are encoded in \Java, the~$S_1$ stack of partial mapping
+is encoded as if the JSM have for each terminal a JSM snapshot that represents
+the state of the JSM in case of jumping. 
+
+In the case of right recursion, the JSM is requested to keep a snapshot of
+itself (which includes another snapshot of itself, etc.).  It can be thought of
+as the popping of the jump and the ``push after jump'' cancel each other
+perfectly, to remain in the same state.  Thus, the matching encoding of the JSM
+is a type, that tries to have itself as one of its type arguments.
+
+We think this problem can be solved with two possible solutions:
+\begin{enumerate}
+  \item Upon recognizing this state, remove the recursive formal parameter, and the method
+    that performs the jump will simply return the type of ``\kk{this}''
+  \item \Java allows recursive types definitions as in the following example 
+    \begin{quote}
+      \javaInput[minipage,width=\linewidth]{../Fragments/java-enums.java}
+    \end{quote}
+\end{enumerate}
+
+\subsection{Generating a Realtime Parser from an LR Grammar}
+LR grammar are much more expressive than LL grammar, as they 
+can express the syntax of most modern programming languages.
+
+The LR parser is much more complex as every state of the parser holds all the
+possibilities for parsing from this point (this is due to the parser's rightmost
+derivation property).
+
+We know from \cref{chapter:ecoop} that it can theoretically be done,
+but we would like a practical algorithm.
