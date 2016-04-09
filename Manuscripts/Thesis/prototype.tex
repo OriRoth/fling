@@ -54,7 +54,8 @@ the stack is e.g., \[
   i = \left[\<Definitions>::= \<Labels> \<Constants> \<Nested>·\right]
 \] then for each input symbol from~$\Function Follow(\<Definitions>)$
 (that contains \cc{begin} and \cc{procedure}), the \RLLp will
-perform a jump operation.
+perform a jump operation ( the only exception is when~$\$$ is in the follow
+set, which in this case the \RLLp accepts).
 
 Since the JSM's state can only be known at ‟runtime” of the \RLLp
 (being compile time of the fluent API), the JSM must be encoded with
@@ -184,3 +185,16 @@ In all of these cases, the implementation of the ‟jump” operation with \Java
     \cc{Procedure4}'s actual parameters are given from \cc{Procedure2}
     formal parameters.
   \end{description}
+
+\section{Small Implementation Details}
+It is worth mentioning that for technical convenience, we did a small
+transformation on the input grammar, as being done by LR parsers.
+A new start symbol~$\<S'>$ is added to the grammar while for each old
+start symbol~$\<S>$, a rule~$\<S'> ::= \<S>$ is introduced.
+
+The reason is to prevent cases where the start symbol appears on the
+right side of the derivations, without constraining the use of \Fajita.
+In these cases, the $\Function Follow(\cdot)$ set of the start symbol
+might not contain~$\$$ exclusively, which means that the derived items
+will have type parameters. This situation is awkward as the correct instantiation
+of these items will always have \cc{Error} types as arguments.
