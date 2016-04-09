@@ -34,6 +34,8 @@ LISTINGS+=toilette.illegal.listing
 LISTINGS+=toilette.legal.listing
 LISTINGS+=toilette.types.listing
 LISTINGS+=pascal.jump.encoding.listing
+LISTINGS+=pascal.push.encoding.listing
+LISTINGS+=pascal.item.encoding.listing
 
 
 ESCAPE = ( export PYTHONIOENCODING=UTF-8 ; ../Programs/escape.py)
@@ -177,3 +179,9 @@ sql.illegal.listing: $(SQL)
 
 pascal.jump.encoding.listing: $(PASCAL)
 	awk '/begin{jump}/{f=1;c+=1;next}/end{jump}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | $(ESCAPE) > $@ 
+
+pascal.push.encoding.listing: $(PASCAL)
+	awk '/begin{push}/{f=1;c+=1;next}/end{push}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | $(ESCAPE) > $@ 
+
+pascal.item.encoding.listing: $(PASCAL)
+	awk '/begin{item}/{f=1;c+=1;next}/end{item}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | $(ESCAPE) > $@ 

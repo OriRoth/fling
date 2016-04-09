@@ -87,9 +87,9 @@ public class PascalExample {
   /*
   // \begin{jump}
   class Constant1<jump_semi, jump_procedure, jump_begin>{
-    public jump_semi semi_t() { ... }
-    public jump_begin begin_t() { ... }
-    public jump_procedure procedure_t() { ... }
+    public jump_semi semi_t() { ¢\ldots¢ }
+    public jump_begin begin_t() { ¢\ldots¢ }
+    public jump_procedure procedure_t() { ¢\ldots¢ }
   }
   // \end{jump}
   */
@@ -146,6 +146,15 @@ public class PascalExample {
     //
   }
 
+
+      /*
+  // \begin{push}
+  class Procedure2<jump_procedure, jump_begin> {
+    public Parameters1<Procedure4<jump_procedure, jump_begin>> pair_t() { ¢\ldots¢ }
+    ¢\vdots¢
+  }
+  // \end{push}
+  */
   public static abstract class Procedure_Definition2<jump_procedure, jump_begin> extends S {
     @Override public abstract Procedure_Definition4<jump_procedure, jump_begin> semi_t();
     @Override public abstract Parameters1<Procedure_Definition4<jump_procedure, jump_begin>> pair_t();
@@ -201,4 +210,13 @@ public class PascalExample {
       return null;
     }
   }
+  /*
+  // \begin{item}
+  class Definition0<¢\ldots¢> { ¢\ldots¢ }
+  class Definition1<¢\ldots¢> { ¢\ldots¢ }
+  class Definition2<¢\ldots¢> { ¢\ldots¢ }
+  class Definition3<¢\ldots¢> { ¢\ldots¢ }
+  // \end{item}
+  */
+ 
 }

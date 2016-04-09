@@ -18,14 +18,28 @@ For example, of the grammar rule \[
 \]
 taken from our running example in \cref{figure:running},
 four derived \RLLp items will be encoded
-\begin{equation}
+\begin{equation*}
 \begin{array}{l}
   \left[\<Definitions>::=·\<Labels> \<Constants> \<Nested>\right]\hfill⏎
   \left[\<Definitions>::= \<Labels>·\<Constants> \<Nested>\right]\hfill⏎
   \left[\<Definitions>::= \<Labels> \<Constants>·\<Nested>\right]\hfill⏎
   \left[\<Definitions>::= \<Labels> \<Constants> \<Nested>·\right]\hfill⏎
 \end{array}.
-\end{equation}
+\end{equation*}
+
+The notation we use from now on, is that the name of the class is
+the nonterminal at the left-hand side of the item concatenated with the
+dot index. In out example the types will be
+\begin{figure}[ht]
+    \caption[Type encoding of \RLLp items]
+      {\label{figure:item-encoding}
+      Type encoding of items derived from rule \[
+        \<Definitions> ::= \<Labels> \<Constants> \<Nested>
+      \] (taken from the \Pascal fragment BNF defined in
+      \cref{figure:running}).
+      The index of the dot is denoted by the number in the class name.}
+    \javaInput[minipage,width=\linewidth,left=-5ex]{pascal.item.encoding.listing}
+  \end{figure}
 
 \section{Encoding the JSM}
 
@@ -47,12 +61,12 @@ Since the JSM's state can only be known at ‟runtime” of the \RLLp
 \Java generics. Using out observation regarding the~$\Function
 Follow(·)$ set, each item \[
   [\<A> ::=α·β]
-\] will have~$k$ type arguments,~$k$ being the size of the
+\] will have~$k$ type parameters,~$k$ being the size of the
 corresponding~$\Function Follow(\<A>)$ set - for item~$i$,~$k=1$.
 
-The JSM's hash table is encoded with the type arguments of each type,
+The JSM's hash table is encoded with the type parameters of each type,
 when ‟querying” this hash table is done by using the name of this
-argument.
+parameter.
 The second operation of the JSM is push operation. It will be discussed in
 the next sections.
 
@@ -62,56 +76,111 @@ Recall that~$Δ$ is the main prediction table of the \RLLp.
 With the main loop step in \cref{algorithm:rll-parser}, it determines
 whether the automaton ‟accept”s, ‟reject”s, ‟jump”s or ‟push”es.
 
-As we seen in the jDPDA encoding (\cref{section:ecoop}), encoding of ‟reject”
+\begin{description}
+  \item[‟Reject”] as we seen in the jDPDA encoding (\cref{section:ecoop}), encoding of ‟reject”
 operation in case the next input symbol is~$t$ summarizes in \emph{not} adding
 any method for~$t$, this way, trying to invoke~$t$'s method will cause a
 type-check error.
 
-‟Accept” operation can only occur if the end-of-input symbol,~$\$$, was seen.
-Encoding ‟accept” operation then, is by adding method~$\$()$ to an item that
-can be followed by~$\$$ (there is more to this issue than meets the eye, and we
-will revise it later in
-\cref{section:in:prototype-or-conclusions-and-further-research}).
+\item[‟Accept”] operation can only occur if the end-of-input symbol,~$\$$, was
+  seen. Encoding ‟accept” operation then, is by adding method~$\$()$ to an
+  item that can be followed by~$\$$ (there is more to this issue than meets the
+  eye, and we will revise it later in
+  \cref{chapter:conclusions}).
 
-‟jump” operation upon seeing input symbol~$t$ has two components, the first
-being the jump itself - popping multiple times from the stack are reverting to
-a former state, the second being the ‟push after jump” phenomena described in
-\cref{subsection:push-after-jump}.
+\item[‟Jump”] encoding a ‟jump” operation upon seeing input symbol~$t$ means
+  popping multiple times from the stack and reverting to a former state.
 
-The first component is given by the JSM, querying it is done by using the
-correct type argument,~$t$'s type argument in this case,~$t$'s type argument is
-the state of the JSM after a jump operation!
+  This operation is enabled by the JSM. Querying it is done by using the
+  correct type parameter. Performing a~$\Function jump(t)$ operation is simply
+  returning~$t$'s type parameter. The actual parameter will be the state of
+  the JSM after a jump operation.
 
-The second component is the ‟push after done”, by using~$\Function
-Jumps(·)$ we know what needs to be pushed after the jump operation. For
-example, if item \[
-  i = [\<Constant> ::= \cc{;} · ]
-\] is at the top of stack~$S₀$, and the next input symbol is \cc{begin}, the
-type of~$i$ will be:
+  \cref{figure:jump-encoding} shows an example of jump operations with our
+  \Pascal fragment grammar example.
+  \begin{figure}[ht]
+    \caption[Type encoding of jump operations]
+      {\label{figure:jump-encoding}
+      Type encoding example of jump operations where \[
+        i = [\<Constant> ::= \;\cc{;} \;· \;]
+      \] is the item at top of the stack ( taken from the \Pascal
+      fragment BNF defined in \cref{figure:running}).
+      Methods \cc{semi\_t()}, \cc{begin\_t()} and \cc{procedure\_t()}
+      represent the terminals ‟\cc{;}”, ‟\cc{begin}” and
+      ‟\cc{procedure}” respectively.}
+    \javaInput[minipage,width=\linewidth,left=-5ex]{pascal.jump.encoding.listing}
+  \end{figure}
 
-\begin{figure}[H]
-  \caption[An example for type encoding of a jump operation]
-    {\label{figure:jump-encoding}
-    An example for type encoding of item \[
-      i = [\<Constant> ::= \cc{;} · ]
-    \] from the \Pascal fragment BNF defined in \cref{figure:running},
-    where methods \cc{semi\_t}, \cc{begin\_t} and \cc{procedure_t} 
-    represent the terminals ``\cc{;}'', ``\cc{begin}'' and 
-    ``\cc{procedure}'' respectively}
-  \javaInput[minipage,width=\linewidth,left=-4ex]{pascal.jump.encoding.listing}
-\end{figure}
-This push will be demonstrated using an example we've already seen with
-  the \Pascal fragment example.
-
-  Think of a run of the \RLLp where the state of the stack~$S₀$ is:
-\[ \scriptsize
-  \begin{array}{ll}
-  \<Constant> & ::= \cc{;} \, ·⏎
-  \<Constants> & ::= \cc{const} \, · \, \<Constant> \, \<MoreConstants>⏎
-  \<Definitions> & ::= \<Labels> \, · \, \<Constants> \, \<Nested>⏎
-  \<Program> & ::= \cc{program} \, \cc{id} \, \<Parameters> \, \cc{;} \, · \, \<Definitions> \, \<Body>
-\end{array}
+Item~$i$ in \cref{figure:jump-encoding} is ready to reduce,
+thus,~$\FunctionΔ(i,t) = \textrm{jump}(t)$ for every terminal~$t$
+from\[
+  \Function Follow(\<Constant>) = ❴ \cc{;},\cc{procedure},\cc{begin}❵.
 \]
+In all of these cases, the implementation of the ‟jump” operation with \Java
+    generics is expressed by the return type of the methods, specifically,
+  the corresponding type argument will be returned.
 
-Given the next input symbol is \cc{begin}, the \RLLp will perform a jump
-operation, popping all symbols from the stack, and pushing
+\item[‟Push”] lastly, the ‟push” operation is the most complicated one as it
+  needs to express the full complexity of the JSM :~$S₀$,~$S₁$ and the
+  coordination between them. The coordination between~$S₀$ and~$S₁$ is
+  expressed in \Java with the actual parameters of items.
+
+  \cref{figure:push-encoding} shows how the coordination between~$S₀$
+  and~$S₁$ is encoded using \Java generics.
+
+  \begin{figure}[ht]
+    \caption[Type encoding of push operations]
+      {\label{figure:push-encoding}
+        Type encoding example of~$\Function push(\Function Consolidate(i,t))$
+        where \[
+          i = [ \<Procedure>::= \cc{procedure} \; \cc{id} \;·\;
+                \<Parameters> \;\cc{;} \;\<Definitions> \;\<Body> \;]
+        \] and~$t=\cc{()}$.
+        Method \cc{pair\_t()} represents the terminal ‟\cc{()}”.
+        Type \cc{Procedure4} represents the item~$i$ with dot after
+        \cc{;} and type \cc{Parameters1} represents item~$ [ \<Parameter> ::=
+        \cc{()}·]$.
+     }
+    \javaInput[minipage,width=\linewidth,left=-5ex]{pascal.push.encoding.listing}
+  \end{figure}
+  \cref{figure:push-encoding} presents the encoding of item \[
+  i = [ \<Procedure>::= \cc{procedure} \; \cc{id} \;·\;
+  \<Parameters> \;\cc{;} \;\<Definitions> \;\<Body> \;] .
+  \]
+
+  Upon seeing terminal~$t=\cc{()}$, the \RLLp decides to push the value\[
+    \Function Consolidate(i,t) = ❴
+      \begin{array}{l}
+      \left[ \<Parameters> ::= \cc{()} \;·\; \right]
+⏎
+       \left[ \<Procedure>::= \cc{procedure} \; \cc{id} \;·\;
+        \<Parameters> \;\cc{;} \;\<Definitions> \;\<Body> \; \right]
+      \end{array}
+      ❵ ,
+    \]
+    when \<Parameter>'s item is the new item at the top of the stack. Sure
+    enough, the return type of method~$\cc{pair_t()}$ in
+    \cref{figure:push-encoding} is \cc{Parameter1}. Note that the actual
+    parameters (i.e., the instantiation of generic types) encode the JSM's
+    ‟runtime” state. Consider now what should be pushed to~$S₁$ (for
+    brevity, we only show~\cc{()}'s entry in the partial maps). Since \[
+      \Function Jumps(\left[ \<Parameters> ::= \cc{()} \;·\; \right])
+      = ❴ ❵ ,
+    \], it does not effect on~$S_1$, and accordingly, on the actual parameters,
+    while \[
+      \Function Jumps(\left[ \<Procedure>::= \cc{procedure} \; \cc{id}
+      \;·\; \<Parameters> \;\cc{;} \;\<Definitions> \;\<Body> \; \right])[\cc{()}] =
+    \]\[
+      \left[ \<Procedure>::= \cc{procedure} \; \cc{id}
+      \<Parameters> \;\cc{;} \;·\; \;\<Definitions> \;\<Body> \; \right]
+    \] means that if the \RLLp will perform~$\Function jump(\cc{;})$, the
+    operation will return the type~$Procedure4$ (defined in
+    \cref{figure:push-encoding}).
+
+    Returning to our example (\cref{figure:push-encoding}),
+    \cc{Parameters1}'s actual parameter is \cc{Procedure4} as it should
+    be the type return upon jumping on ‟\cc{;}”, and that since we
+    have no additional information regading the state of the JSM,
+    \cc{Procedure4}'s actual parameters are given from \cc{Procedure2}
+    formal parameters.
+  \end{description}
