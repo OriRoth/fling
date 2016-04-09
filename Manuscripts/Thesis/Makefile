@@ -33,6 +33,7 @@ LISTINGS+=stack.listing
 LISTINGS+=toilette.illegal.listing
 LISTINGS+=toilette.legal.listing
 LISTINGS+=toilette.types.listing
+LISTINGS+=pascal.jump.encoding.listing
 
 
 ESCAPE = ( export PYTHONIOENCODING=UTF-8 ; ../Programs/escape.py)
@@ -57,6 +58,7 @@ PREFIX_JDPDA = $(ECOOP_CODE_PATH)/prefix_jDPDA.java
 TOILETTE = $(OOPSLA_CODE_PATH)/ToiletteSeat.java
 FLUFLU = $(OOPSLA_CODE_PATH)/FlufluTest.java
 SQL = $(OOPSLA_CODE_PATH)/SQLFrag.java
+PASCAL = $(OOPSLA_CODE_PATH)/PascalExample.java
 JS_DEMO = $(ECOOP_CODE_PATH)/JumpStackDemo.java
 
 prefix-proof.full.listing: $(PREFIX_JDPDA)
@@ -172,3 +174,6 @@ sql.legal.listing: $(SQL)
 
 sql.illegal.listing: $(SQL)
 	awk '/begin{illegal}/{f=1;c+=1;next}/end{illegal}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | $(ESCAPE) > $@ 
+
+pascal.jump.encoding.listing: $(PASCAL)
+	awk '/begin{jump}/{f=1;c+=1;next}/end{jump}/{f=0;next}f&& ($$0!~/begin{/) && ($$0!~/end{/){print}' $< | $(ESCAPE) > $@ 

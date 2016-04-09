@@ -84,7 +84,15 @@ public class PascalExample {
     @Override public abstract jump_begin begin_t();
     @Override public abstract jump_procedure procedure_t();
   }
-
+  /*
+  // \begin{jump}
+  class Constant1<jump_semi, jump_procedure, jump_begin>{
+    public jump_semi semi_t() { ... }
+    public jump_begin begin_t() { ... }
+    public jump_procedure procedure_t() { ... }
+  }
+  // \end{jump}
+  */
   // rule #1 of Constants
   public static abstract class Constants1<jump_procedure, jump_begin> extends S {
     @Override public abstract Constant1<Optional_Constants1<jump_procedure, jump_begin>, jump_procedure, jump_begin> semi_t();

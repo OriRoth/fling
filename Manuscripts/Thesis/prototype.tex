@@ -1,0 +1,117 @@
+In previous chapters, we've seen the \RLLp, a jump automata based recognizer
+that emulates the classic \LLp. The \RLLp uses the JSM, a special data
+structure supporting jump and push operations in constant amount of work, it
+also uses some pre-computed tables ($\Function Consolidate(·,·)$,~$\Function
+Jumps(·)$,~$\Function Δ(·,·)$…).
+
+In this chapter we will show can such data structure be encoded using the \Java
+type checker, and the generics mechanism in particular.
+
+\section{Encoding of the Stack Items}
+
+As we seen in \cref{section:toolkit}, the stack symbols are encoded to types.
+The main stack of the \RLLp ($S₀$) uses items as stack symbols, thus,
+each grammar item is encoded into a \Java type.
+
+For example, of the grammar rule \[
+  \<Definitions> ::= \<Labels> \<Constants> \<Nested>
+\]
+taken from our running example in \cref{figure:running},
+four derived \RLLp items will be encoded
+\begin{equation}
+\begin{array}{l}
+  \left[\<Definitions>::=·\<Labels> \<Constants> \<Nested>\right]\hfill⏎
+  \left[\<Definitions>::= \<Labels>·\<Constants> \<Nested>\right]\hfill⏎
+  \left[\<Definitions>::= \<Labels> \<Constants>·\<Nested>\right]\hfill⏎
+  \left[\<Definitions>::= \<Labels> \<Constants> \<Nested>·\right]\hfill⏎
+\end{array}.
+\end{equation}
+
+\section{Encoding the JSM}
+
+The \RLLp uses the JSM to support jump operations.
+During it's run, the \RLLp uses the JSM's information if~$\Function Δ (·,·)$
+determines a jump operation. Observe that this might happen only when the
+input symbol is in~$\Function Follow(\<A>)$ set, \<A> being the left-hand
+side of the top of the stack item.
+
+For example, when recognizing the \Pascal fragment grammar, if the top of
+the stack is e.g., \[
+  i = \left[\<Definitions>::= \<Labels> \<Constants> \<Nested>·\right]
+\] then for each input symbol from~$\Function Follow(\<Definitions>)$
+(that contains \cc{begin} and \cc{procedure}), the \RLLp will
+perform a jump operation.
+
+Since the JSM's state can only be known at ‟runtime” of the \RLLp
+(being compile time of the fluent API), the JSM must be encoded with
+\Java generics. Using out observation regarding the~$\Function
+Follow(·)$ set, each item \[
+  [\<A> ::=α·β]
+\] will have~$k$ type arguments,~$k$ being the size of the
+corresponding~$\Function Follow(\<A>)$ set - for item~$i$,~$k=1$.
+
+The JSM's hash table is encoded with the type arguments of each type,
+when ‟querying” this hash table is done by using the name of this
+argument.
+The second operation of the JSM is push operation. It will be discussed in
+the next sections.
+
+\section{Encoding \texorpdfstring{Δ}{}}
+
+Recall that~$Δ$ is the main prediction table of the \RLLp.
+With the main loop step in \cref{algorithm:rll-parser}, it determines
+whether the automaton ‟accept”s, ‟reject”s, ‟jump”s or ‟push”es.
+
+As we seen in the jDPDA encoding (\cref{section:ecoop}), encoding of ‟reject”
+operation in case the next input symbol is~$t$ summarizes in \emph{not} adding
+any method for~$t$, this way, trying to invoke~$t$'s method will cause a
+type-check error.
+
+‟Accept” operation can only occur if the end-of-input symbol,~$\$$, was seen.
+Encoding ‟accept” operation then, is by adding method~$\$()$ to an item that
+can be followed by~$\$$ (there is more to this issue than meets the eye, and we
+will revise it later in
+\cref{section:in:prototype-or-conclusions-and-further-research}).
+
+‟jump” operation upon seeing input symbol~$t$ has two components, the first
+being the jump itself - popping multiple times from the stack are reverting to
+a former state, the second being the ‟push after jump” phenomena described in
+\cref{subsection:push-after-jump}.
+
+The first component is given by the JSM, querying it is done by using the
+correct type argument,~$t$'s type argument in this case,~$t$'s type argument is
+the state of the JSM after a jump operation!
+
+The second component is the ‟push after done”, by using~$\Function
+Jumps(·)$ we know what needs to be pushed after the jump operation. For
+example, if item \[
+  i = [\<Constant> ::= \cc{;} · ]
+\] is at the top of stack~$S₀$, and the next input symbol is \cc{begin}, the
+type of~$i$ will be:
+
+\begin{figure}[H]
+  \caption[An example for type encoding of a jump operation]
+    {\label{figure:jump-encoding}
+    An example for type encoding of item \[
+      i = [\<Constant> ::= \cc{;} · ]
+    \] from the \Pascal fragment BNF defined in \cref{figure:running},
+    where methods \cc{semi\_t}, \cc{begin\_t} and \cc{procedure_t} 
+    represent the terminals ``\cc{;}'', ``\cc{begin}'' and 
+    ``\cc{procedure}'' respectively}
+  \javaInput[minipage,width=\linewidth,left=-4ex]{pascal.jump.encoding.listing}
+\end{figure}
+This push will be demonstrated using an example we've already seen with
+  the \Pascal fragment example.
+
+  Think of a run of the \RLLp where the state of the stack~$S₀$ is:
+\[ \scriptsize
+  \begin{array}{ll}
+  \<Constant> & ::= \cc{;} \, ·⏎
+  \<Constants> & ::= \cc{const} \, · \, \<Constant> \, \<MoreConstants>⏎
+  \<Definitions> & ::= \<Labels> \, · \, \<Constants> \, \<Nested>⏎
+  \<Program> & ::= \cc{program} \, \cc{id} \, \<Parameters> \, \cc{;} \, · \, \<Definitions> \, \<Body>
+\end{array}
+\]
+
+Given the next input symbol is \cc{begin}, the \RLLp will perform a jump
+operation, popping all symbols from the stack, and pushing
