@@ -1,4 +1,38 @@
 \section{Conclusions}
+The main contribution of this thesis is the first \emph{practical} algorithm for the
+automatic generation of a fluent API for \Java from LL grammars.  \Fajita, a
+fluent API software system by itself, is a prototypical implementation of this
+algorithm. 
+
+More work is required to mature \Fajita into a production tool. A stumbling
+block is that experimenting with \Fajita we discovered limitations of the \Java
+compiler (e.g., \cc{javac 1.8.0\_66\_}), sometimes crashing when trying to compile
+\Fajita generated code and often applying unnecessary replication in the
+representation of types, leading to memory bloat problems.
+
+These limitations are likely to receive more attention by compiler developer as
+the use of fluent APIs increases. 
+
+
+We also contributed on a \emph{theoretical} front: we provide a proof that most useful
+grammars have a fluent API\@.  This brings good news to library designers
+laboring at making their API slick, accessible, and more robust to mistakes of
+clients: If your API can be phrased in terms of a ‟decent” BNF, do not lose
+hope; the task may be Herculean, but it is (most likely) possible.
+
+Other practitioners may appreciate the toolbox of type encodings offered here
+  gaining better understanding of the computational expressiveness of
+  \Java generics and type hierarchy, and, a better tool
+  for designing, experimenting with and perfecting fluent APIs.
+
+On a \emph{philosophical} perspective, several modern programming languages acquire
+high-level constructs at a staggering rate (\CC and \Scala being prominent
+examples).  The main yardstick for evaluation these is ‟programmer's
+convenience”.  This work suggests an orthogonal perspective, namely
+computational expressiveness, or, stated differently, ranking of a new
+construct by its ability to recognize languages in the Chomsky
+hierarchy~\cite{Chomsky:1963}.
+
 
 \section{Future Work}
 \subsection{Parsing}
@@ -85,3 +119,8 @@ derivation property).
 
 We know from \cref{chapter:ecoop} that it can theoretically be done,
 but we would like a practical algorithm.
+
+\subsection{Elaboration for different languages}
+Having opened a debate over the expressiveness of the \Java type checker,
+  and \Java generics. This research can be extended to other languages,
+  such as \CSharp or \Scala.
