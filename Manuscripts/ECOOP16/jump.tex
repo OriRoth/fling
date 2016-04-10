@@ -1,9 +1,16 @@
+\ReplaceInThesis{
 \begin{wrapfigure}[19]{r}{44ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \javaInput[minipage,listing style=numbered]{jump-stack.listing}
 \end{wrapfigure}
-
+}{
+  \begin{figure}[ht]
+  \caption{Skeleton of type encoding for the jump-stack data structure}%
+  \label{Figure:jump}%
+  \javaInput[minipage,listing style=numbered,width=\linewidth]{jump-stack.listing}
+\end{figure}
+}
 A \emph{jump-stack} is a stack data structure whose elements are drawn from a finite set~$Γ$,
   except that jump-stack supports~$\textsf{jump}(γ)$,~$γ∈Γ$ operations
   (which means ‟repetitively \emph{pop} elements from the stack up
@@ -11,9 +18,9 @@ A \emph{jump-stack} is a stack data structure whose elements are drawn from a fi
 
 \Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},
   of a jump-stack whose elements are drawn from type~\cc{$Γ$}
-(\cref{Figure:unary-function}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
+(\cref{Figure:unary-function-b}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
 
-Just like \cc{Stack} (\cref{Figure:stack-encoding}(b)), \cc{JS} takes
+Just like \cc{Stack} (\cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}), \cc{JS} takes
   a \cc{Rest} parameter encoding the type of a jump-stack after popping.
 In addition \cc{JS} takes~$k=|Γ|$ type parameters, one for each~$γ∈Γ$,
   which is the type encoding of the jump-stack after a~$\textsf{jump}(γ)$
@@ -29,7 +36,7 @@ In our case, these are \cc{jump\_$γ$1} and \cc{jump\_$γ$2},
   thanks to their return type being~\cc{J\_$γ${}$i$},~$i=1,2$.
 
 The type hierarchy rooted at \cc{JS} is similar to that of
-\cref{Figure:stack-encoding}(a):
+\cref{Figure:stack-encoding\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{}:
 Two of the specializations are parameter-less and are
   almost identical to their \cc{Stack}
   counterparts:
@@ -37,11 +44,17 @@ Two of the specializations are parameter-less and are
 e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
+\ReplaceInThesis{
 \begin{wrapfigure}[11]r{31ex}
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=31ex,listing style=numbered]{jump-stack-push.listing}
 \end{wrapfigure}
-
+}{
+  \begin{figure}[ht]
+  \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
+  \javaInput[minipage,width=\linewidth,listing style=numbered]{jump-stack-push.listing}
+\end{figure}
+}
 Type \cc{JS.P} (lines 16--23 in \cref{Figure:jump}) makes the third specialization of \cc{JS}, encoding
   a stack with one or more elements.
 Just like in \cref{Figure:id}, there are no overridden functions in \cc{JS.P}; it fulfills
@@ -77,11 +90,17 @@ The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
 The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ_2)$.
 
+\ReplaceInThesis{
 \begin{wrapfigure}[12]r{42ex}
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
-
+}{
+  \begin{figure}[ht]
+  \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
+  \javaInput[minipage,width=\linewidth,left=-2ex]{jump-stack-example.listing}
+\end{figure}
+}
 
 Some use cases for the encoded jump-stack data structure are in \cref{Figure:jump-stack-example}.
 The type of variable \cc{\_1} encodes a stack into which \cc{$γ$2}, \cc{$γ$1}, \cc{$γ$1} were pushed

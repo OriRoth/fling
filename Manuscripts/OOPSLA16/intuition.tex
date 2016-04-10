@@ -65,7 +65,8 @@ The actual operation of the automaton is by executing in loop the step
   \vspace{0.3ex}
   \hrule
   \vspace{0.3ex}
-  \scriptsize
+
+  \ReplaceInThesis{\scriptsize}{}
   \begin{enumerate}
       \item
   Input is a string of terminals drawn from alphabet~$Σ$, ending
@@ -226,6 +227,7 @@ presents some legal sequences derived by this grammar.
   \caption{\label{table:derived-strings}
       Legal words in the language defined by \cref{figure:running}}
   \rowcolors{2}{}{olive!20}
+  \centering
   \begin{tabular}{m{58ex}}
     \toprule
       \cc{program id ; begin end}⏎
@@ -337,16 +339,21 @@ The~$\Function First(·)$ and~$\Function Follow(·)$ sets for
     Sets~$\Function First(·)$ and~$\Function Follow(·)$ for nonterminals of
     the grammar in~\cref{figure:running}}
     \rowcolors{2}{}{olive!20}
-    \begin{tabular}{m{16ex}m{14ex}m{19ex}}
+    \centering
+    \ReplaceInThesis{
+      \begin{tabular}{m{16ex}m{14ex}m{19ex}}
+    }{
+      \begin{tabular}{m{0.21\linewidth}m{0.32\linewidth}m{0.37\linewidth}}
+    }
       \toprule
     Nonterminal & $\Function First(·)$ & $\Function Follow(·)$⏎
       \midrule
     \<Program> & \cc{program} & $∅$⏎
-    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
+    \<Labels> & \cc{label} & \cc{const}, \cc{procedure}, \ReplaceInThesis{\newline}{} \cc{begin}⏎
     \<Constants> & \cc{constant} & \cc{procedure}, \cc{begin}⏎
-    \<Label> & \cc{;} & \cc{;}, \cc{const}, \newline \cc{procedure}, \newline \cc{begin}⏎
-    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \newline \cc{begin}⏎
-    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \newline \cc{begin}⏎
+    \<Label> & \cc{;} & \cc{;}, \cc{const}, \ReplaceInThesis{\newline}{} \cc{procedure}, \ReplaceInThesis{\newline}{} \cc{begin}⏎
+    \<MoreLabels> & \cc{;} & \cc{const}, \cc{procedure}, \ReplaceInThesis{\newline}{} \cc{begin}⏎
+    \<Constant> & \cc{;} & \cc{;}, \cc{procedure}, \ReplaceInThesis{\newline}{} \cc{begin}⏎
     \<MoreConstants> & \cc{;} & \cc{procedure}, \cc{begin}⏎
     \<Nested> & \cc{procedure} & \cc{begin}⏎
     \<Procedure> & \cc{procedure} & \cc{procedure}, \cc{begin}⏎

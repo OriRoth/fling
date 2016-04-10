@@ -260,7 +260,7 @@ with no parameters, a single definition of a constant, and a body.
 
 During the \RLLp's parse of~$s$, just after parsing the prefix \cc{program id ; label ;}
 and before reading \cc{begin}, the state of the items stack~$S₀$ is
-\[ \scriptsize
+\[ \ReplaceInThesis{\scriptsize}{}
   \begin{array}{ll}
   \<Constant> & ::= \cc{;} \, ·⏎
   \<Constants> & ::= \cc{const} \, · \, \<Constant> \, \<MoreConstants>⏎
@@ -271,7 +271,7 @@ and before reading \cc{begin}, the state of the items stack~$S₀$ is
 when \<Constant>'s item is the top of the stack.
 
 After reading the next input symbol \cc{begin}, the state of the stack ought to be
-\[ \scriptsize
+\[ \ReplaceInThesis{\scriptsize}{}
   \begin{array}{ll}
   \<Body> & ::= \cc{begin} \, · \, \cc{end}⏎
   \<Program> & ::= \cc{program} \, \cc{id} \, \<Parameters> \, \cc{;} \, \<Definitions> \, · \, \<Body>
@@ -395,7 +395,7 @@ phenomena mentioned in~\cref{subsection:push-after-jump}.
 \cref{table:running-coordination} presents some of the values computed
 by~\cref{algorithm:coordination} on our running example defined in \cref{figure:running}
 
-\begin{table*}
+\ReplaceInThesis{\begin{table*}}{\begin{table}}
   \caption{\label{table:running-coordination}
     Example values of an entry~$t$ from the map~$dᵢ$ returned from~$\Function Jumps(·)$.
     The grammar in use is our running example defined in \cref{figure:running}}
@@ -405,11 +405,11 @@ by~\cref{algorithm:coordination} on our running example defined in \cref{figure:
   \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}\~}}
   \let\oldCc=\cc
   \def\cc#1{{\text{{\scriptsize\oldCc{#1}}\~}}}
-  \begin{tabular}{m{0.45\linewidth} | >{\centering}m{0.1\linewidth} | m{0.45\linewidth}}
+  \begin{tabular}{m{0.50\linewidth} | >{\centering}m{0.12\linewidth} | m{0.43\linewidth}}
      \toprule
      \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$\Function Jumps(i)[t]$ \hfill⏎
      \midrule
-$[\<Program> ::= \cc{program} \~\cc{id} \<Parameters> \cc{;} · \~\<Definitions> \<Body> ]$&
+$[\<Program> ::= \cc{program} \~\cc{id} \<Parameters> \cc{;} \!\! · \<Definitions> \<Body> ]$&
 \cc{begin} &
 $ [ \<Body> ::= \cc{begin}·\~\cc{end} ]$ \newline~$[\<Program> ::= \cc{program} \~ \cc{id} \<Parameters> \cc{;} \<Definitions> · \~\<Body> ]$
      \hfill⏎
@@ -423,7 +423,7 @@ $⊥$
      \hfill⏎
      \bottomrule
   \end{tabular}
-\end{table*}
+\ReplaceInThesis{\end{table*}}{\end{table}}
 
 The first row of~\cref{table:running-coordination} shows that in case
 \<Program>'s item will be pushed to~$S_0$, the matching push to~$S_1$ will hold
@@ -522,7 +522,7 @@ constant time, irrespective of the length of the consolidated list.
 Some examples of the consolidation table for our running example (defined
 in~\cref{figure:running}) are presented in~\cref{table:running-consolidate}.
 
-\begin{table*}
+\ReplaceInThesis{\begin{table*}}{\begin{table}}
   \caption{\label{table:running-consolidate}
     Example values for the~$\Function Consolidate(·,·)$ functions on the grammar
     defined in \cref{figure:running}}
@@ -532,7 +532,7 @@ in~\cref{figure:running}) are presented in~\cref{table:running-consolidate}.
   \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$}\~}}
   \let\oldCc=\cc
   \def\cc#1{{\text{{\scriptsize\oldCc{#1}}\~}}}
-  \begin{tabular}{m{0.4\linewidth} | >{\centering}m{0.1\linewidth} | m{0.4\linewidth}}
+  \begin{tabular}{m{0.43\linewidth} | >{\centering}m{0.12\linewidth} | m{0.42\linewidth}}
      \toprule
      \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$\Function Consolidate(i,t)$ \hfill⏎
      \midrule
@@ -550,7 +550,7 @@ $ [ \<Constants> ::= \cc{const} · \~\<Constant> \<Constants>]$ \newline~$ [ \<D
      \hfill⏎
      \bottomrule
   \end{tabular}
-\end{table*}
+\ReplaceInThesis{\end{table*}}{\end{table}}
 
 The first example (in the first line) presents the most ‟deformed” case of
 function~$\Function Consolidate(·,·)$, in which the input item has a
@@ -593,11 +593,9 @@ Therefore, the core of the \RLLp generator is
 
 \begin{algorithm}
   \caption{\label{algorithm:main}
-    Compute contents of prediction table
-    (transition function) entry~$Δ[i,t]$
-    for all item~$i∈I$, token~$t ∈Σ$ pairs
-    for which this entry is defined.
-  }
+    Compute contents of prediction table (transition function) entry~$Δ[i,t]$
+  for all item~$i∈I$, token~$t ∈Σ$ pairs for which this entry is defined.  }
+
   \begin{algorithmic}
     \FOR[for each item]{$i∈I$}
     \LET{$[A::=α·Yβ]$}{$i$} \COMMENT{break~$i$ into components}
@@ -620,7 +618,7 @@ Therefore, the core of the \RLLp generator is
 \cref{table:running-main} provides some of~$Δ$'s values for our running example
   defined in~\cref{figure:running}.
 
-\begin{table*}
+\ReplaceInThesis{\begin{table*}}{\begin{table}}
   \caption{\label{table:running-main}
     Example values for the prediction table~$Δ$ on the grammar
     defined in \cref{figure:running}}
@@ -630,7 +628,7 @@ Therefore, the core of the \RLLp generator is
   \def\<#1>{\textcolor{black}{\text{$⟨\nonterminal{#1}⟩$\~}}}
   \let\oldCc=\cc
   \def\cc#1{{\text{{\scriptsize\oldCc{#1}}\~}}}
-  \begin{tabular}{m{0.38\linewidth} |>{\centering}m{0.1\linewidth} | m{0.45\linewidth}}
+  \begin{tabular}{m{0.38\linewidth} |>{\centering}m{0.12\linewidth} | m{0.50\linewidth}}
      \toprule
      \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$Δ[i,t]$ \hfill⏎
      \midrule
@@ -646,7 +644,7 @@ $ [ \<Labels> ::=ε· \~]$&
 \oldCc{end} &
 \textbf{Error}
   \hfill⏎
-$[ \<Labels> ::= \cc{label} \<Label> · \~\<MoreLabels> ]$&
+$[ \<Labels> \!\! ::= \! \cc{label} \<Label> · \<MoreLabels> ]$&
 \oldCc{;} &
 $\Function push(\Function Consolidate([ \<Labels> ::= \cc{label} \<Label> · \~\<MoreLabels> ],\oldCc{;}))$
   \hfill⏎
@@ -656,7 +654,7 @@ $[ \<Definitions> ::= · \~\<Labels> \<Constants> \<Nested> ]$&
   \hfill⏎
      \bottomrule
   \end{tabular}
-\end{table*}
+\ReplaceInThesis{\end{table*}}{\end{table}}
 
 In the first two rows of~\cref{table:running-main}, there are examples for
 rules that have been fully parsed. In these cases, the input symbols

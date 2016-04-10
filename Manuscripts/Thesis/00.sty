@@ -26,6 +26,7 @@
 \usepackage{caption} % make table's caption bold
 \usepackage{cite} % Sort citations
 \usepackage{code}
+\usepackage{enumitem}
 \usepackage{float}
 \usepackage{fontspec}
 \usepackage{gnuplottex}
@@ -189,6 +190,9 @@
 {
   \end{equation*}
 }
+
+\newlist{abbrv}{itemize}{1}
+\setlist[abbrv,1]{label=,labelwidth=1in,align=parleft,itemsep=0.1\baselineskip,leftmargin=!}
 
 % Alter some LaTeX defaults for better treatment of figures:
 % See p.105 of "TeX Unbound" for suggested values.

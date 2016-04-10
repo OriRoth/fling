@@ -48,12 +48,12 @@ The grammar for out toillete example is depicted in \cref{figure:BNF}.
 To define grammars, one must first define the set of \emph{grammar
 terminals}
 \begin{quote}
-  \javaInput[minipage,width=43ex,left=-2ex]{../Fragments/toilette-terminals.fragment}
+  \javaInput[minipage,width=\ReplaceInThesis{43ex}{\linewidth},left=-2ex]{../Fragments/toilette-terminals.fragment}
 \end{quote}
 
 We are also required to define the set of \emph{grammar variables}
 \begin{quote}
-  \javaInput[minipage,width=43ex,left=-2ex]{../Fragments/toilette-variables.fragment}
+  \javaInput[minipage,width=\ReplaceInThesis{43ex}{\linewidth},left=-2ex]{../Fragments/toilette-variables.fragment}
 \end{quote}
 
 Once the set of terminals and nonterminals are fixed, the grammar can be
@@ -84,7 +84,7 @@ artifact evaluation. The current BNF specification of the tool is given in
 \cref{figure:BNF:BNF} (which incidentally can be written in \Fajita fluent 
 API iteself)
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \begin{Grammar}
     \begin{aligned}
       \<BNF>                & \Derives \<Header>\~\<Body>\~\<Footer> \hfill⏎

@@ -41,7 +41,7 @@ We will use the same running example, defined by~\cref{Table:A}.
 The main types here are a subset of the previously defined main types.
 
 \begin{quote}
-  \javaInput[minipage,width=45ex,left=-2ex]{prefix-proof.configuration.listing}
+  \javaInput[minipage,width=\ReplaceInThesis{45ex}{\linewidth},left=-2ex]{prefix-proof.configuration.listing}
 \end{quote}
 
 First, type \cc{$ΣΣ$} is removed.
@@ -61,7 +61,7 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, still represent stacks
 In~$A$ there are two such types:
 
 \begin{quote}
-  \javaInput[minipage,width=51ex,left=-2ex]{prefix-proof.many.listing}
+  \javaInput[minipage,width=\ReplaceInThesis{51ex}{\linewidth},left=-2ex]{prefix-proof.many.listing}
 \end{quote}
 
 
@@ -69,6 +69,7 @@ Note, that the type parameters of the former types hasn't changed,
   since the model we are trying to implement, hasn't changed.
   These~$k+1$ parameters still suffice for our cause.
 
+\ReplaceInThesis{
 \begin{wrapfigure}[13]r{42ex}
   \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
@@ -76,7 +77,15 @@ Note, that the type parameters of the former types hasn't changed,
   cause type errors}
   \javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
 \end{wrapfigure}
-
+}{
+\begin{figure}[ht]
+  \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
+  cause type errors}
+  \javaInput[minipage,width=\linewidth,left=-2ex]{prefix-proof.cases.listing}
+\end{figure}
+}
 In~\cref{Figure:prefix-chain}, call chains in the~\cc{accepts()} method
   correctly type-checks (i.e., in~$L$), while the chains in~\cc{rejects()}
   do not type-check (i.e., these prefixes have no continuation that can lead to a legal word in~$L$),
@@ -110,11 +119,11 @@ The minor differences are in the illegal operations \textsf{reject} and~$⊥$:
 
 The use of sidekicks is still allowed and recommended to improve readability of code.
 
-\begin{figure}[htbp]
+\begin{figure}[ht]
   \caption{\label{Figure:prefix-A}Type encoding of jDPDA~$A$ (as defined in \cref{Table:A})
     that allow a partial call chain, if and only if, there exists a legal continuation, that
-    leads to a word in~$L$ (the language of~$A$}
-  \javaInput[minipage,listing style=numbered,width=\textwidth]{prefix-proof.full.listing}
+    leads to a word in~$L$ (the language of~$A$)}
+  \javaInput[minipage,listing style=numbered,width=1.08\textwidth]{prefix-proof.full.listing}
 \end{figure}
 
 \paragraph*{Conclusion}

@@ -7,13 +7,14 @@ Let~$g:Γ↛Γ$ be a partial function,
   from the finite set~$Γ$ into itself.
 We argue that~$g$ can
   be represented using the compile-time mechanism of \Java.
-  \cref{Figure:unary-function} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
+  \cref{Figure:unary-function\ReplaceInThesis{}{-b}} encodes such a partial function for~$Γ=❴γ₁,γ₂❵$, where~$g(γ₁)=γ₂$
   and~$g(γ₂)=⊥$, i.e.,~$g(γ₂)$ is undefined.%
 †{Unless otherwise stated,
       all code excerpts here represent full implementations,
       and automatically extracted, omitting headers and footers,
     from \Java programs that compile correctly with a \Java 8 compiler.}
 
+\ReplaceInThesis{
 \begin{figure}[hbt]
   \caption[Type encoding of partial unary function]{\label{Figure:unary-function}%
     Type encoding of partial function~$g:Γ↛Γ$,
@@ -38,8 +39,31 @@ We argue that~$g$ can
 \textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
   \end{tabular}
 \end{figure}
+}{
+\begin{figure}[hbt]
+  \caption[Type hierarchy of partial unary function]{\label{Figure:unary-function-a}%
+    Type hierarchy of partial function~$g:Γ↛Γ$,
+    defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
+  }\centering
+      \input{../Figures/unary-function-classification.tikz}
+\end{figure}
+\begin{figure}[hbt]
+  \caption[Type encoding of partial unary function]{\label{Figure:unary-function-b}%
+    Type encoding of partial function defined in \cref{Figure:unary-function-a}
+  }
+      \javaInput[minipage,width=\linewidth]{gamma.listing}
+\end{figure}
+\begin{figure}[hbt]
+  \caption[Use cases of partial unary function]{\label{Figure:unary-function-c}%
+    Use cases of partial function defined in \cref{Figure:unary-function-a}
+  }
+      \javaInput[minipage,width=\linewidth]{gamma-example.listing}
+\end{figure}
 
-The type hierarchy depicted in~\cref{Figure:unary-function}(a) shows five classes:
+
+
+}
+The type hierarchy depicted in~\cref{Figure:unary-function\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{} shows five classes:
 Abstract class~\cc{Γ}~†{Remember that \Java admits Unicode characters in identifier names} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
 The remaining two classes are private final class~\cc{¤} that stands for an error value,
@@ -48,17 +72,17 @@ Accordingly, both classes~\cc{¤} and~\cc{$Γ$} extend~\cc{$Γ'$}.†{The use
   of short names, e.g.,~\cc{$Γ$} instead of \cc{$Γ'.Γ$},
     is made possible by an appropriate \kk{import} statement omitted here and henceforth.}
 
-The full implementation of these classes is provided in~\cref{Figure:unary-function}(b).
+    The full implementation of these classes is provided in~\cref{Figure:unary-function\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
 This actual code excerpt should be placed as a nested class of some appropriate host class. Import statements are omitted, here and henceforth for brevity.
 
-The use cases in~\cref{Figure:unary-function}(c) explain better
+The use cases in~\cref{Figure:unary-function\ReplaceInThesis{}{-c}}\ReplaceInThesis{(c)}{} explain better
   what we mean in saying that function~$g$ is encoded in the type system:
   An instance of class~\cc{$γ$1} returns a value of type~\cc{$γ$2} upon
   method call~\cc{g()}, while
   an instance of class~\cc{$γ$2} returns a value of our~\kk{private}
   error type~\cc{$Γ'$.¤} upon the same call.
 
-Three recurring idioms employed in~\cref{Figure:unary-function}(b) are:
+Three recurring idioms employed in~\cref{Figure:unary-function\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{} are:
 \begin{enumerate}
   \item An~\kk{abstract} class encodes a set (alternatively, one can use \kk{interface}s).
     Abstract classes that extend it encode
@@ -89,9 +113,10 @@ Consider the partial binary function~$f: R⨉S↛Γ$, defined by
   \end{array}.
 \end{equation}
 A \Java type encoding of this definition of function~$f$
-  is in~\cref{Figure:simple-binary}(a); use cases
-    are in~\cref{Figure:simple-binary}(b).
+is in~\cref{Figure:simple-binary\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{}; use cases
+are in~\cref{Figure:simple-binary\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
 
+\ReplaceInThesis{
 \begin{figure}[hbt]
   \caption[Type encoding of partial binary function]{\label{Figure:simple-binary}%
     Type encoding of partial binary function~$f:R⨉S↛Γ$,
@@ -112,6 +137,23 @@ A \Java type encoding of this definition of function~$f$
       & \hspace{-5ex}\textbf{(b)} use cases⏎
   \end{tabular}
 \end{figure}
+}{
+\begin{figure}[hbt]
+  \caption[Type encoding of partial binary function]{\label{Figure:simple-binary-a}%
+    Type encoding of partial binary function~$f:R⨉S↛Γ$,
+    where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
+    is specified by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$
+     (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
+    found in \cref{Figure:unary-function-b}) }
+    \javaInput[minipage,width=\linewidth]{binary-function.listing}
+\end{figure}
+\begin{figure}[hbt]
+  \caption[Use cases of partial binary function]{\label{Figure:simple-binary-b}%
+    Use cases of partial binary defined in \cref{Figure:simple-binary-a} 
+  }
+    \javaInput[minipage,left=-2ex,width=\linewidth]{binary-function-example.listing}
+\end{figure}
+}
 
 As the figure shows, to compute~$f(r₁,s₁)$ at compile time we write~\cc{f.r1().s1()}.
 Also, the fluent API call chain~\cc{f.r2().s2().g()} results in a compile time
@@ -135,12 +177,13 @@ Both functions are overridden in classes~\cc{r1} and~\cc{r2},
    with the appropriate covariant change of their return type,
 
 It should be clear now that the encoding scheme presented
-  in \Cref{Figure:simple-binary} can be generalized to functions
+in \Cref{Figure:simple-binary\ReplaceInThesis{}{-a}} can be generalized to functions
   with any number of arguments, provided that the domain and range sets are finite.
 The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end.
 
+\ReplaceInThesis{
 \begin{wrapfigure}[8]{r}{31ex}
   \intextsep=0pt
   \caption{\label{Figure:id}%
@@ -149,6 +192,14 @@ Genericity can be employed to serve this end.
   }
   \javaInput[,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
+}{
+\begin{figure}[ht]
+  \caption{\label{Figure:id}%
+    Covariant return type of function \cc{id()}
+    with \Java generics.  }
+  \javaInput[minipage,left=-2ex,width=\linewidth]{id.listing}
+\end{figure}
+}
 
 \Cref{Figure:id} shows a genericity based recipe for
   a function whose return type
@@ -163,7 +214,7 @@ It is also possible to encode with \Java generic types
   featuring a use case of a stack of an \emph{unbounded} depth.
 \vspace{2ex}
 
-\begin{figure}[H]
+\begin{figure}[ht]
   \caption{\label{Figure:stack-use-cases}%
     Use cases of a compile-time stack data structure.
   }
@@ -178,7 +229,7 @@ Trying then to pop from an empty stack (l.10), or to examine its top (l.11), end
 
 Stack elements may be drawn from some abstract set~$Γ$.
 In the figure these are either class~\cc{$γ$1}
-or class \cc{$γ$2} (both defined in \cref{Figure:unary-function}).
+or class \cc{$γ$2} (both defined in \cref{Figure:unary-function\ReplaceInThesis{}{-b}}).
 A call to function \cc{$γ$}$i$ pushes the type \cc{$γ$}$i$
   into the stack, for~$i=1,$.
 The expression
@@ -206,11 +257,11 @@ A recurring building block occurs in this type:
   \end{enumerate}
 Incidentally, \kk{static} field \cc{Stack.empty} is of type~\cc{E}.
 
-\Cref{Figure:stack-encoding}(a) gives the type inheritance hierarchy 
+\Cref{Figure:stack-encoding\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{} gives the type inheritance hierarchy 
 of type \cc{Stack} and its subtypes.
-\Cref{Figure:stack-encoding}(b)
+\Cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}
 gives the implementation of these types.
-
+\ReplaceInThesis{
 \begin{figure}[!htb]
   \caption{Type encoding of an unbounded stack data structure}
   \label{Figure:stack-encoding}
@@ -225,7 +276,21 @@ gives the implementation of these types.
     for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
   \end{tabular}
 \end{figure}
-
+}{
+\begin{figure}[ht]
+  \caption{Type hierarchy of an unbounded stack data structure}
+  \label{Figure:stack-encoding-a}
+    \centering  \input{../Figures/stack-classification.tikz}
+\end{figure}
+\begin{figure}[ht]
+  \caption[Type encoding of an unbounded stack data structure]
+    {Type encoding of an unbounded stack data structure (except
+    for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
+    which is in \cref{Figure:unary-function-b})}
+  \label{Figure:stack-encoding-b}
+    \javaInput[minipage,left=-3ex,width=\linewidth]{stack.listing}
+\end{figure}
+}
 The code in the figure shows that the ‟rest” parameter of~\cc{P} must extend class \cc{Stack},
   and that both types~\cc{P} and~\cc{E} extend \cc{Stack}.
 Other points to notice are:
@@ -240,19 +305,25 @@ Other points to notice are:
         functions: \cc{top()}, \cc{push()},~\cc{$γ$1()}, and,~\cc{$γ$2()}, return an appropriate error type.
 \end{itemize}
 In fact, this recursive generic type technique can used to encode S-expressions: In the spirit of
-  \cref{Figure:stack-encoding}, the idea is to make use of a \cc{Cons} generic type
+  \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}, the idea is to make use of a \cc{Cons} generic type
   with covariant \cc{car()} and \cc{cdr()} methods.
 
 A standard technique of template programming in \CC is to encode conditionals with template specialization.
 Since \Java forbids specialization of generics, in lieu we use covariant overloading of function
-  return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary} and the
-  return type of \cc{top()} in \cref{Figure:stack-encoding}).
+return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary\ReplaceInThesis{}{-a}} and the
+  return type of \cc{top()} in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}).
 
+\ReplaceInThesis{
 \begin{wrapfigure}[6]r{38ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
   \javaInput[minipage,]{mammal.listing}
 \end{wrapfigure}
-
+}{
+  \begin{figure}[ht]
+  \caption{\label{Figure:generic} Covariance of parameters to generics}
+\javaInput[minipage,left=-2ex,width=\linewidth]{mammal.listing}
+\end{figure}
+}
 \cref{Figure:generic} shows that a similar covariant change is possible 
   in extending a generic type.
 The type of the parameter \cc{M} 

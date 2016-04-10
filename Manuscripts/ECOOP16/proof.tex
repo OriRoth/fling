@@ -1,7 +1,7 @@
 On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
-The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary},
-and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding}.
+The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary-a},
+and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}.
 
 The techniques however fail with~$ε$-transitions,
   which allow the automaton to move between an unbounded number of
@@ -60,6 +60,7 @@ Our proof relies on a special kind of realtime automata,
   an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
 
+\ReplaceInThesis{
 \begin{wraptable}r{36ex}
   \caption[Transition function of a jDPDA]
   {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
@@ -72,7 +73,21 @@ $σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
   \end{tabular}
 \end{wraptable}
-
+}{
+  \begin{table}[ht]
+  \caption[Transition function of a jDPDA]
+  {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
+  \centering
+  \begin{tabular}{c|ll}
+  & \hfill~$γ₁$ & \hfill~$γ₂$⏎
+    \midrule
+$σ₁$ & $\textsf{push}(γ₁,γ₁,γ₂)$ & $\textsf{push}(γ₂,γ₂)$⏎
+$σ₂$ & \hfill$⊥$ & $\textsf{push}(ε)$⏎
+$σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
+$\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
+  \end{tabular}
+\end{table}
+}
 As it turns out, every DCFG language is recognized by some jDPDA, and conversely,
   every language accepted by a jDPDA is a DCFG language~\cite{Courcelle:77}.
 The proof of \cref{Theorem:Gil-Levy} is therefore reduced to type-encoding of a given jDPDA\@.
@@ -102,7 +117,7 @@ Neither the BNF nor the representation are material for the proof.
 Generation of a type encoding for a jDPDA starts with two empty types for sets~$L$,~$Σ^*$,
   where~$L$ represents the languages accepted by the jDPDA and~$Σ^*$ represents all words:
 \begin{quote}
-  \javaInput[minipage,width=53ex,left=-2ex]{proof.headers.listing}
+  \javaInput[minipage,width=\ReplaceInThesis{53ex}{\linewidth},left=-2ex]{proof.headers.listing}
 \end{quote}
 (The full type encoding is in \cref{Figure:A} below; to streamline the reading, we bring
   excerpts as necessary.)
@@ -131,7 +146,7 @@ All instantiations of~\cc{C} must make sure that actual parameters are properly 
 
 In the running example,~\cc{C} is defined as:
 \begin{quote}
-  \javaInput[minipage,width=61ex,left=-2ex]{proof.configuration.listing}
+  \javaInput[minipage,width=\ReplaceInThesis{61ex}{\linewidth},left=-2ex]{proof.configuration.listing}
 \end{quote}
 This excerpt shows also classes~\cc{E} and~\cc{¤} which encode (as in \cref{Figure:jump})
   the empty and the error configurations.
@@ -149,19 +164,27 @@ Types \cc{C$γ$1}, … ,\cc{C$γ${}$k$}, specializing~\cc{C},
   encode stacks whose top element is~$γ₁$, … ,$γₖ$.
 In~$A$ there are two of these:
 \begin{quote}
-  \javaInput[minipage,width=42ex,left=-4ex]{proof.many.listing}
+  \javaInput[minipage,width=\ReplaceInThesis{42ex}{\linewidth},left=-4ex]{proof.many.listing}
 \end{quote}
 
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
 in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
+\ReplaceInThesis{
 \begin{wrapfigure}[14]r{45ex}
   \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
   \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
-
+}{
+\begin{figure}[ht]
+  \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
+  type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
+  All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
+  \javaInput[minipage,left=-2ex,width=\linewidth]{proof.cases.listing}
+\end{figure}
+}
 The method signatures of these types are generated using the mentioned parameters.
 The generating of methods will be discussed next.
 
@@ -229,7 +252,7 @@ Overall, there are six kinds of entries in a transition table:
     operations particularly simple.
   All that is required is to covariantly change the return type of the
     appropriate \cc{$σ${}$j$()} function to the appropriate \cc{JR$γ{}i$} or~\cc{Rest} parameter
-    (recall that a jump occurs after popping the current element from the stack, so % or is it now TOMER XXXXXXXXXXXXXXXXXX
+    (recall that a jump occurs after popping the current element from the stack, so 
     we refer to \cc{JR} type parameters rather than~\cc{J}'s).
   \par
   In \cref{Table:A} we find that~$δ(γ₂,σ₃) =\textsf{jump}(γ₁)$. 
