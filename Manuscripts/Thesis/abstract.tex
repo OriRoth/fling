@@ -1,0 +1,24 @@
+The main result of this thesis is Fajita, a practical prototypical tool for the
+automatic generation of \NonCitingUse{Java} Fluent APIs from their
+specification.
+
+We begin with a theoretical study, that explains why the problem's core lies
+with the expressive power of \NonCitingUse{Java} generics.  We show that
+automatic generation is possible whenever the specification is an instance of
+the set of deterministic context-free languages, a set which contains most
+``practical'' languages.
+
+We then advances to present, for the first, an efficient (specifically linear
+time) algorithm for generating an automaton, implementable within the framework
+of compile time computation of \NonCitingUse{Java}, which recognizes
+a given LL(1) language. The generated automaton is time efficient,
+spending a constant amount of time on each symbol of the ``input''. Space
+requirement is also polynomially bounded. 
+
+Other contributions include a collection of techniques and idioms of the
+limited meta-programming possible with \NonCitingUse{Java} generics, and an
+empirical measurement demonstrating that the runtime of the ``javac'' compiler
+of \NonCitingUse{Java} may be exponential in the program's length, even for
+programs composed of a handful of lines and which do not rely on overly complex
+use of generics. Another theoretical contribution of this work is the RLLp, an
+automaton for recognizing LL(1) grammars that supplies the realtime property.

@@ -18,13 +18,13 @@ Indeed, in languages such as \CC, fluent APIs
   but this capability is not available in \Java.
 
 Despite this limitation, fluent APIs in \Java can be rich and expressive, as demonstrated
-  in \cref{Figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
+  in \cref{figure:DSL} showing use cases of the DSL of Apache Camel~\cite{Ibsen:Anstey:10}
 (open-source integration framework),
 and that of jOOQ\urlref{http://www.jooq.org}, a framework for writing
   SQL in \Java, much like Linq~\cite{Meijer:Beckman:Bierman:06}.
 
 \begin{figure}[H]
-  \caption{\label{Figure:DSL} Two examples of \Java fluent API}
+  \caption{\label{figure:DSL} Two examples of \Java fluent API}
   \begin{tabular}{@{}c@{}c@{}}
     \parbox[c]{44ex}{\javaInput[]{../Fragments/camel-apache.java.fragment}} &
     \hspace{-3ex} \parbox[c]{59ex}{\javaInput[]{../Fragments/jOOQ.java.fragment}}⏎
@@ -41,13 +41,13 @@ Other examples of fluent APIs in \Java are abundant:
   and many more.
 
 \subsection{A Type Perspective on Fluent APIs}
-\Cref{Figure:DSL}(B) suggests that jOOQ imitates SQL,
+\Cref{figure:DSL}(B) suggests that jOOQ imitates SQL,
 but, is it possible at all to produce a fluent API
 for the entire SQL language,
 or XPath, HTML, regular expressions, BNFs, EBNFs, etc.?
 Of course, with no operator overloading it is impossible
 to fully emulate tokens; method names though make a good substitute for tokens, as done
-in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{Figure:DSL}).
+in ‟\lstinline{.when(header(foo).isEqualTo("bar")).}” (\cref{figure:DSL}).
 The questions that motivate this research are:
 \begin{quote}
   \begin{itemize}
