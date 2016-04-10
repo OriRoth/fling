@@ -6,24 +6,12 @@
 \setlength{\pdfpagewidth}{\paperwidth}
 
 \begin{document}
-\input title
 \frontmatter
+\input title
 
 \chapter*{Acknowledgements}
 \label{chapter:acknowledgements}
 \input{acknowledgements}
-
-\cleardoublepage\phantomsection
-\begin{centering}
-  \hfill \Large\bfseries Abstract\hfill
-\end{centering}
-\markboth{Abstract}{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
-\begin{quote}
-  \slshape
-  \large
-  \input{abstract}
-\end{quote}
 
 \tableofcontents
 \cleardoublepage\phantomsection
@@ -44,10 +32,27 @@
 \lstlistoflistings
 \cleardoublepage\phantomsection
 
+\chapter*{}
+\begin{centering}
+  \hfill \Large\bfseries Abstract\hfill
+\end{centering}
+\markboth{\MakeUppercase{Abstract}}{}
+\addcontentsline{toc}{chapter}{Abstract}
+\begin{quote}
+  \slshape
+  \large
+  \indent
+  \input{abstract}
+\end{quote}
+
+
 \addcontentsline{toc}{chapter}{List of Names and Symbols}
 \chapter*{List of Names and Symbol}
 \input{symbols}
 
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\chapter*{List of Abbreviations}
+\input{abbrv}
 
 \mainmatter
 
