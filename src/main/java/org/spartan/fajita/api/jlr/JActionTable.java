@@ -30,9 +30,7 @@ public class JActionTable {
   }
   public Action get(final int stateIndex, final Verb lookahead) {
     Action $ = table[stateIndex].get(lookahead);
-    if ($ == null)
-      return new Error();
-    return $;
+    return $ == null ? new Error() : $;
   }
   @Override public String toString() {
     String $ = "action table:\n   |";

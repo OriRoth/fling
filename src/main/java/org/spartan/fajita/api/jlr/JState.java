@@ -54,10 +54,8 @@ public class JState {
           .filter(i -> i.rule.equals(item.getKey()) && i.dotIndex == item.getValue().intValue()).collect(Collectors.toList());
       for (int i = 0; i < matching.size(); i++) {
         JItem match = matching.get(i);
-        if (i == 0)
-          $ += "[" + match.toString();
-        else
-          $ += "/" + match.lookahead.toString() + "," + match.labelToString() + "," + match.isNewLabelToString();
+        $ += i == 0 ? "[" + match.toString()
+            : "/" + match.lookahead.toString() + "," + match.labelToString() + "," + match.isNewLabelToString();
       }
       $ += "]" + System.lineSeparator();
     }
