@@ -14,7 +14,7 @@ We argue that~$g$ can
       and automatically extracted, omitting headers and footers,
     from \Java programs that compile correctly with a \Java 8 compiler.}
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{figure}[hbt]
   \caption[Type encoding of partial unary function]{\label{Figure:unary-function}%
     Type encoding of partial function~$g:Γ↛Γ$,
@@ -39,7 +39,7 @@ We argue that~$g$ can
 \textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
   \end{tabular}
 \end{figure}
-}{
+}{%
 \begin{figure}[hbt]
   \caption[Type hierarchy of partial unary function]{\label{Figure:unary-function-a}%
     Type hierarchy of partial function~$g:Γ↛Γ$,
@@ -48,21 +48,21 @@ We argue that~$g$ can
       \input{../Figures/unary-function-classification.tikz}
 \end{figure}
 \begin{figure}[hbt]
-  \caption[Type encoding of partial unary function]{\label{Figure:unary-function-b}%
+  \caption[Type encoding of partial unary function]{%
     Type encoding of partial function defined in \cref{Figure:unary-function-a}
   }
+  \label{Figure:unary-function-b}%
       \javaInput[minipage,width=\linewidth]{gamma.listing}
 \end{figure}
 \begin{figure}[hbt]
-  \caption[Use cases of partial unary function]{\label{Figure:unary-function-c}%
+  \caption[Use cases of partial unary function]{%
     Use cases of partial function defined in \cref{Figure:unary-function-a}
   }
+  \label{Figure:unary-function-c}%
       \javaInput[minipage,width=\linewidth]{gamma-example.listing}
 \end{figure}
-
-
-
 }
+
 The type hierarchy depicted in~\cref{Figure:unary-function\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{} shows five classes:
 Abstract class~\cc{Γ}~†{Remember that \Java admits Unicode characters in identifier names} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
@@ -116,7 +116,7 @@ A \Java type encoding of this definition of function~$f$
 is in~\cref{Figure:simple-binary\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{}; use cases
 are in~\cref{Figure:simple-binary\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{figure}[hbt]
   \caption[Type encoding of partial binary function]{\label{Figure:simple-binary}%
     Type encoding of partial binary function~$f:R⨉S↛Γ$,
@@ -137,20 +137,22 @@ are in~\cref{Figure:simple-binary\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
       & \hspace{-5ex}\textbf{(b)} use cases⏎
   \end{tabular}
 \end{figure}
-}{
+}{%
 \begin{figure}[hbt]
-  \caption[Type encoding of partial binary function]{\label{Figure:simple-binary-a}%
+  \caption[Type encoding of partial binary function]{%
     Type encoding of partial binary function~$f:R⨉S↛Γ$,
     where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
     is specified by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$
      (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
     found in \cref{Figure:unary-function-b}) }
+    \label{Figure:simple-binary-a}%
     \javaInput[minipage,width=\linewidth]{binary-function.listing}
 \end{figure}
 \begin{figure}[hbt]
-  \caption[Use cases of partial binary function]{\label{Figure:simple-binary-b}%
-    Use cases of partial binary defined in \cref{Figure:simple-binary-a} 
+  \caption[Use cases of partial binary function]{%
+    Use cases of partial binary function defined in \cref{Figure:simple-binary-a} 
   }
+    \label{Figure:simple-binary-b}
     \javaInput[minipage,left=-2ex,width=\linewidth]{binary-function-example.listing}
 \end{figure}
 }
@@ -183,7 +185,7 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end.
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[8]{r}{31ex}
   \intextsep=0pt
   \caption{\label{Figure:id}%
@@ -192,7 +194,7 @@ Genericity can be employed to serve this end.
   }
   \javaInput[,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
-}{
+}{%
 \begin{figure}[ht]
   \caption{\label{Figure:id}%
     Covariant return type of function \cc{id()}
@@ -261,7 +263,7 @@ Incidentally, \kk{static} field \cc{Stack.empty} is of type~\cc{E}.
 of type \cc{Stack} and its subtypes.
 \Cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}
 gives the implementation of these types.
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{figure}[!htb]
   \caption{Type encoding of an unbounded stack data structure}
   \label{Figure:stack-encoding}
@@ -276,7 +278,7 @@ gives the implementation of these types.
     for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
   \end{tabular}
 \end{figure}
-}{
+}{%
 \begin{figure}[ht]
   \caption{Type hierarchy of an unbounded stack data structure}
   \label{Figure:stack-encoding-a}
@@ -313,12 +315,12 @@ Since \Java forbids specialization of generics, in lieu we use covariant overloa
 return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary\ReplaceInThesis{}{-a}} and the
   return type of \cc{top()} in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}).
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[6]r{38ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
   \javaInput[minipage,]{mammal.listing}
 \end{wrapfigure}
-}{
+}{%
   \begin{figure}[ht]
   \caption{\label{Figure:generic} Covariance of parameters to generics}
 \javaInput[minipage,left=-2ex,width=\linewidth]{mammal.listing}
@@ -345,7 +347,7 @@ Overloading gives rise to a third idiom for partial emulation of conditionals, a
 \end{figure}
 
 The figure depicts type \cc{Peep} and overloaded versions of \cc{peep()} which 
-  together make it possible to extract the top of the stack.
+      together make it possible to extract the top of the stack.
 The first generic parameter to \cc{Peep} is the top of the stack, the second is the stack itself.
 Indeed, we see (l.11) that peeping into an empty stack, places a~\cc{?}
   in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.2).

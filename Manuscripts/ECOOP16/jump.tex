@@ -1,10 +1,10 @@
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[19]{r}{44ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
   \javaInput[minipage,listing style=numbered]{jump-stack.listing}
 \end{wrapfigure}
-}{
+}{%
   \begin{figure}[ht]
   \caption{Skeleton of type encoding for the jump-stack data structure}%
   \label{Figure:jump}%
@@ -18,7 +18,7 @@ A \emph{jump-stack} is a stack data structure whose elements are drawn from a fi
 
 \Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},
   of a jump-stack whose elements are drawn from type~\cc{$Γ$}
-(\cref{Figure:unary-function-b}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
+  (\ReplaceInThesis{\cref{Figure:unary-function}(b)}{\cref{Figure:unary-function-b}}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
 
 Just like \cc{Stack} (\cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}), \cc{JS} takes
   a \cc{Rest} parameter encoding the type of a jump-stack after popping.
@@ -44,12 +44,12 @@ Two of the specializations are parameter-less and are
 e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[11]r{31ex}
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=31ex,listing style=numbered]{jump-stack-push.listing}
 \end{wrapfigure}
-}{
+}{%
   \begin{figure}[ht]
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=\linewidth,listing style=numbered]{jump-stack-push.listing}
@@ -90,12 +90,12 @@ The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
 The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ_2)$.
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[12]r{42ex}
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
-}{
+}{%
   \begin{figure}[ht]
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=\linewidth,left=-2ex]{jump-stack-example.listing}

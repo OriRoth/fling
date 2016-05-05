@@ -1,6 +1,6 @@
 On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
-The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary-a},
+  The partial transition function~$δ$ may be type encoded as in \ReplaceInThesis{\cref{Figure:simple-binary}(a)}{\cref{Figure:simple-binary-a}},
 and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}.
 
 The techniques however fail with~$ε$-transitions,
@@ -60,7 +60,7 @@ Our proof relies on a special kind of realtime automata,
   an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wraptable}r{36ex}
   \caption[Transition function of a jDPDA]
   {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
@@ -73,7 +73,7 @@ $σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
   \end{tabular}
 \end{wraptable}
-}{
+}{%
   \begin{table}[ht]
   \caption[Transition function of a jDPDA]
   {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
@@ -170,14 +170,14 @@ In~$A$ there are two of these:
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
 in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
-\ReplaceInThesis{
+\ReplaceInThesis{%
 \begin{wrapfigure}[14]r{45ex}
   \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
   \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
-}{
+}{%
 \begin{figure}[ht]
   \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
