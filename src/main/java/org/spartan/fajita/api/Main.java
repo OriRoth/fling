@@ -64,14 +64,9 @@ public class Main {
     for (DerivationRule reduce : reduces) {
       List<AbstractNode> children = new ArrayList<>();
       final List<Symbol> rhs = reduce.getChildren();
-      for (int i = rhs.size() - 1; i >= 0; i--) {
+      for (int i = rhs.size() - 1; i >= 0; --i) {
         Symbol s = rhs.get(i);
-        AbstractNode symbNode;
-        if (s.isVerb())
-          symbNode = new Atomic((Verb) s);
-        else
-          symbNode = compoundQueue.pop();
-        children.add(0, symbNode);
+        children.add(0, (s.isVerb() ? new Atomic((Verb) s) : compoundQueue.pop()));
       }
       compoundQueue.add(new Compound(reduce.lhs, children));
     }

@@ -1,0 +1,9 @@
+String time(int hours, int minutes, int seconds) {
+  return new StringBuilder()
+    .append(hours)
+    .append(':')
+    .append(minutes)
+    .append(':')
+    .append(seconds)
+    .toString();
+}

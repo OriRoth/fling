@@ -1,0 +1,7 @@
+enum BNFVariables implements Variable {
+  BNF, Header, Body, Footer,
+  Terminals, Variables, Start,
+  Rules,Rule,Conjunctions, Extra_Conjunctions,
+  First_Conjunction, Extra_Conjunction, Symbol_Sequence,
+  Symbol, Variable, Noun;
+}

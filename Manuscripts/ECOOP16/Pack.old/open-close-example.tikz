@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+\tikzstyle{state-style}=[state,every node={draw=black},font=\scriptsize,text width=5ex,align=center,on grid,node distance=13ex]
+
+\node[state-style,accepting] (closed)[blue] {closed};
+\node[state-style,accepting] (opened) [blue,right=2.9 of closed] {opened};
+\node[state-style,text width=4ex] (error) [above right=of closed,red] {runtime error};
+
+
+\path[->,distance = 2ex,above,thick] 
+
+				(closed) edge[below] node {\cc{open()}} (opened)
+				(opened) edge[bend left,below] node {\cc{close()}} (closed)
+				(closed) edge[bend left,above left] node {\cc{close()}} (error)
+				(opened) edge[bend right,right] node {\cc{open()}} (error);
+\draw[<-] (closed) -- node[below left] {start} ++(-5ex,4ex);
+\end{tikzpicture}

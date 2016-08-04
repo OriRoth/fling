@@ -32,10 +32,7 @@ public class BNFAnalyzer {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    if (withFollow)
-      followSets = calculateFollowSets();
-    else
-      followSets = null;
+    followSets = withFollow ? calculateFollowSets() : null;
   }
   private Collection<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();

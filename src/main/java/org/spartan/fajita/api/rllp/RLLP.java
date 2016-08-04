@@ -138,19 +138,19 @@ public class RLLP {
     final Map<Verb, DerivationRule> row = llPredictionTable.get(Y);
     if (row == null)
       throw new IllegalStateException("llPredict( " + Y + " , _ ) does not exist.");
-    final DerivationRule value = row.get(v);
-    if (value == null)
+    final DerivationRule $ = row.get(v);
+    if ($ == null)
       throw new IllegalStateException("llPredict( " + Y + " , " + v + " ) does not exist.");
-    return value;
+    return $;
   }
   public Deque<Item> consolidate(Item i, Verb v) {
     final Map<Verb, Deque<Item>> row = consolidationTable.get(i);
     if (row == null)
       throw new IllegalStateException("consolidate( " + i + " , _ ) does not exist.");
-    final Deque<Item> value = row.get(v);
-    if (value == null)
+    final Deque<Item> $ = row.get(v);
+    if ($ == null)
       throw new IllegalStateException("consolidate( " + i + " , " + v + " ) does not exist.");
-    return value;
+    return $;
   }
   public Deque<Item> jumps(Item i, Verb v) {
     final Map<Verb, Deque<Item>> row = jumpsTable.get(i);
@@ -165,17 +165,14 @@ public class RLLP {
     final Map<Verb, Action> row = rllPredictionTable.get(i);
     if (row == null)
       throw new IllegalStateException("predict( " + i + " , _ ) does not exist.");
-    final Action value = row.get(v);
-    if (value == null)
+    final Action $ = row.get(v);
+    if ($ == null)
       throw new IllegalStateException("predict( " + i + " , " + v + " ) does not exist.");
-    return value;
+    return $;
   }
   public Item getStartItem(Verb initialInput) {
-    final Stream<Item> filter2 = items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0);
-    final Stream<Item> filter = filter2 // get start rules
-        .filter(i -> analyzer.firstSetOf(i.rule.getChildren()).contains(initialInput));
-    return filter // get the correct rule using the initial input character
-        .findAny().get();
+    return items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0)
+        .filter(i -> analyzer.firstSetOf(i.rule.getChildren()).contains(initialInput)).findAny().get();
   }
 
   public static abstract class Action {

@@ -1,1173 +1,16 @@
 \title{Formal Language Recognition with the Java Type Checker}
 \documentclass[a4paper,USenglish]{lipics-v2016}
-\usepackage{filecontents}
 
-\begin{filecontents*}{yogi-algorithm.sty}
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{yogi-algorithm}[2008/12/12 v0.1]
-
-\DeclareOption{terse}{\PassOptionsToPackage{noend}{algorithmic}}
-\DeclareOption{verbose}{\relax}
-
-\ProcessOptions
-
-\RequirePackage{algorithm}
-\RequirePackage{algorithmic}
-\RequirePackage{yogi-lines}
-
-  \newcommand{\LET}[2]{\STATE{\textbf{Let}~\ensuremath{\text{#1}\;←\;\text{#2}}}}
-  \newcommand\BREAK{\STATE{\textbf{break}}}
-  \newcommand\CONTINUE{\STATE{\textbf{continue}}}
-  \newcommand\INPUT\REQUIRE
-  \newcommand\OUTPUT\ENSURE
-  \def\FI{\ENDIF}
-  \def\DONE{\ENDWHILE}
-
-\renewcommand{\algorithmicrequire}{\textbf{Input}}
-\renewcommand{\algorithmicensure}{\textbf{Output}}
-
-\def\Function#1(#2){\ensuremath{\textrm{\textup{\textsf{#1}}}(#2)}}
-\def\Table#1[#2]{\ensuremath{\textsf{#1}[#2]}}
-
-
-\renewcommand{\algorithmiccomment}[1]{{\hfill\small\textup{//}$\,$\small\emph{#1}\/}}
-
-\renewcommand{\algorithmicrepeat}{\textbf{Repeat}}
-\renewcommand{\algorithmicuntil}{\textbf{until}}
-
-\renewcommand{\algorithmicprint}{\textbf{Print}}
-\renewcommand{\algorithmicreturn}{\textbf{Return}}
-
-\renewcommand{\algorithmicif}{\textbf{If}}
-\renewcommand{\algorithmicelsif}{\textbf{\emph{else if}}}
-\renewcommand{\algorithmicelse}{\textbf{\emph{else}}}
-\renewcommand{\algorithmicendif}{\textbf{fi}}
-\renewcommand{\algorithmicthen}{\textbf{\emph{then}}}
-
-\renewcommand{\algorithmicfor}{\textbf{For}}
-\renewcommand{\algorithmicendfor}{\textbf{od}}
-
-\renewcommand{\algorithmicforall}{\textbf{For all}}
-
-\renewcommand{\algorithmicwhile}{\textbf{While}}
-\renewcommand{\algorithmicdo}{\textbf{\emph{do}}}
-\renewcommand{\algorithmicendwhile}{\textbf{od}}
-
-\renewcommand{\algorithmicloop}{\textbf{Loop}}
-\renewcommand{\algorithmicendloop}{\textbf{od}}
-\end{filecontents*}
-\begin{filecontents*}{yogi-lines.sty}
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{yogi-lines}[2009/04/01 v0.1]
-\DeclareOption{terse}{}
-\DeclareOption{verbose}{}
-
-\ProcessOptions
-
-\newcommand\Label[1]{\label{line:#1}}
-\newcommand\Begin[1]{\Label{#1:begin}}
-\newcommand\End[1]{\Label{#1:end}}
-
-\newcommand\Line[1]{Line~\ref{line:#1}}
-\newcommand\lines[1]{lines~\ref{line:#1:begin}--\ref{line:#1:end}}
-\newcommand\Lines[1]{Lines~\ref{line:#1:begin}--\ref{line:#1:end}}
-\end{filecontents*}
-\begin{filecontents*}{yogi-unicode.sty}
-%\usepackage{fontspec}
-\usepackage{ifxetex,ifluatex}
-\usepackage{newunicodechar}
-\usepackage{wasysym}
-\usepackage[utf8]{inputenc}
-
-\newif\ifunicode
-\ifxetex\unicodetrue\fi
-\ifluatex\unicodetrue\fi
-
-\ifunicode
-  \newcommand\DeclareUnicodeCharacter[2]{%
-    \begingroup\lccode`|=\string"#1\relax
-    \lowercase{\endgroup\newunicodechar{|}}{#2} %
-  }
-\else
-\fi
-
-% Vim: +,/^\s*$/-!column  -t  |  sort  -n  |  sort  -u
-\DeclareUnicodeCharacter{00A4}{\textcurrency}           %   ¤
-\DeclareUnicodeCharacter{00AC}{\neg}                    %   ¬
-\DeclareUnicodeCharacter{00B1}{\pm}                     %   ±
-\DeclareUnicodeCharacter{00B2}{^2}                      %   ²
-\DeclareUnicodeCharacter{00B3}{^3}                      %   ³
-\DeclareUnicodeCharacter{00B6}{\mypar}                  %   ¶
-\DeclareUnicodeCharacter{00B7}{\cdot}                   %   ·
-\DeclareUnicodeCharacter{00B9}{^1}                      %   ¹
-\DeclareUnicodeCharacter{02B9}{'}                       %   ʹ
-\DeclareUnicodeCharacter{0393}{\Gamma}                  %   Γ
-\DeclareUnicodeCharacter{0394}{\Delta}                  %   Δ
-\DeclareUnicodeCharacter{0398}{\Theta}                  %   Θ
-\DeclareUnicodeCharacter{039E}{\Xi}                     %   Ξ
-\DeclareUnicodeCharacter{03A3}{\Sigma}                  %   Σ
-\DeclareUnicodeCharacter{03A6}{\Phi}                    %   Φ
-\DeclareUnicodeCharacter{03A7}{\Xhi}                    %   Χ
-\DeclareUnicodeCharacter{03A8}{\Psi}                    %   Ψ
-\DeclareUnicodeCharacter{03A9}{\Omega}                  %   Ω
-\DeclareUnicodeCharacter{03B1}{\alpha}                  %   α
-\DeclareUnicodeCharacter{03B2}{\beta}                   %   β
-\DeclareUnicodeCharacter{03B3}{\gamma}                  %   γ
-\DeclareUnicodeCharacter{03B4}{\delta}                  %   δ
-\DeclareUnicodeCharacter{03B5}{\epsilon}                %   ε
-\DeclareUnicodeCharacter{03B6}{\zeta}                   %   ζ
-\DeclareUnicodeCharacter{03B7}{\eta}                    %   η
-\DeclareUnicodeCharacter{03B8}{\theta}                  %   θ
-\DeclareUnicodeCharacter{03B9}{\iota}                   %   ι
-\DeclareUnicodeCharacter{03BA}{\kappa}                  %   κ
-\DeclareUnicodeCharacter{03BB}{\lambda}                 %   λ
-\DeclareUnicodeCharacter{03BC}{\mu}                     %   μ
-\DeclareUnicodeCharacter{03BE}{\xi}                     %   ξ
-\DeclareUnicodeCharacter{03C0}{\pi}                     %   π
-\DeclareUnicodeCharacter{03C1}{\rho}                    %   ρ
-\DeclareUnicodeCharacter{03C3}{\sigma}                  %   σ
-\DeclareUnicodeCharacter{03C4}{\tau}                    %   τ
-\DeclareUnicodeCharacter{03C5}{\phi}                    %   φ
-\DeclareUnicodeCharacter{03C7}{\chi}                    %   χ
-\DeclareUnicodeCharacter{03D5}{\varphi}                 %   ϕ
-\DeclareUnicodeCharacter{1D4F}{^k}                      %   ᵏ
-\DeclareUnicodeCharacter{1D62}{_i}                      %   ᵢ
-\DeclareUnicodeCharacter{201D}{''}                      %   ”
-\DeclareUnicodeCharacter{201F}{``}                      %   ‟
-\DeclareUnicodeCharacter{2020}{\footnote}               %   †
-\DeclareUnicodeCharacter{2021}{\ddag}                   %   ‡
-\DeclareUnicodeCharacter{2022}{\item}                   %   •
-\DeclareUnicodeCharacter{2026}{\ldots}                  %   …
-\DeclareUnicodeCharacter{2070}{^0}                      %   ⁰
-\DeclareUnicodeCharacter{2071}{^i}                      %   ⁱ
-\DeclareUnicodeCharacter{2074}{^4}                      %   ⁴
-\DeclareUnicodeCharacter{2075}{^5}                      %   ⁵
-\DeclareUnicodeCharacter{2076}{^6}                      %   ⁶
-\DeclareUnicodeCharacter{2077}{^7}                      %   ⁷
-\DeclareUnicodeCharacter{2078}{^8}                      %   ⁸
-\DeclareUnicodeCharacter{2079}{^9}                      %   ⁹
-\DeclareUnicodeCharacter{207A}{^+}                      %
-\DeclareUnicodeCharacter{207B}{^-}                      %   ⁺
-\DeclareUnicodeCharacter{207F}{^n}                      %   ⁿ
-\DeclareUnicodeCharacter{2080}{_0}                      %   ₀
-\DeclareUnicodeCharacter{2081}{_1}                      %   ₁
-\DeclareUnicodeCharacter{2082}{_2}                      %   ₂
-\DeclareUnicodeCharacter{2083}{_3}                      %   ₃
-\DeclareUnicodeCharacter{2084}{_4}                      %   ₄
-\DeclareUnicodeCharacter{2085}{_5}                      %   ₅
-\DeclareUnicodeCharacter{2086}{_6}                      %   ₆
-\DeclareUnicodeCharacter{2087}{_7}                      %   ₇
-\DeclareUnicodeCharacter{2088}{_8}                      %   ₈
-\DeclareUnicodeCharacter{2089}{_9}                      %   ₉
-\DeclareUnicodeCharacter{2096}{_k}                      %   ₖ
-\DeclareUnicodeCharacter{2098}{_m}                      %   ₘ
-\DeclareUnicodeCharacter{2099}{_n}                      %   ₙ
-\DeclareUnicodeCharacter{209A}{_p}                      %   ₚ
-\DeclareUnicodeCharacter{209B}{_s}                      %   ₛ
-\DeclareUnicodeCharacter{209C}{_t}                      %   ₜ
-\DeclareUnicodeCharacter{20BA}{_+}                      %   ₊
-\DeclareUnicodeCharacter{2102}{\mathbb{C}}              %   ℂ
-\DeclareUnicodeCharacter{2113}{\ell}                    %   ℓ
-\DeclareUnicodeCharacter{2115}{\mathbb{N}}              %   ℕ
-\DeclareUnicodeCharacter{211D}{\mathbb{R}}              %   ℝ
-\DeclareUnicodeCharacter{2124}{\mathbb{Z}}              %   ℤ
-\DeclareUnicodeCharacter{2135}{\aleph}                  %   ℵ
-\DeclareUnicodeCharacter{2190}{\leftarrow}              %   ←
-\DeclareUnicodeCharacter{2191}{\uparrow}                %   ↑
-\DeclareUnicodeCharacter{2192}{\rightarrow}             %   →
-\DeclareUnicodeCharacter{2193}{\downarrow}              %   ↓
-\DeclareUnicodeCharacter{219A}{\nleftarrow}             %   ↚
-\DeclareUnicodeCharacter{219B}{\nrightarrow}            %   ↛
-\DeclareUnicodeCharacter{21A6}{\mapsto}                 %   ↦
-\DeclareUnicodeCharacter{21D0}{\Leftarrow}              %   ⇐
-\DeclareUnicodeCharacter{21D2}{\Rightarrow}             %   ⇒
-\DeclareUnicodeCharacter{21D4}{\Leftrightarrow}         %   ⇔
-\DeclareUnicodeCharacter{2200}{\forall}                 %   ∀
-\DeclareUnicodeCharacter{2202}{\partial}                %   ∂
-\DeclareUnicodeCharacter{2203}{\exists}                 %   ∃
-\DeclareUnicodeCharacter{2205}{\emptyset}               %   ∅
-\DeclareUnicodeCharacter{2208}{\in}                     %   ∈
-\DeclareUnicodeCharacter{2209}{\notin}                  %   ∉
-\DeclareUnicodeCharacter{2219}{\bullet}                 %   ∙
-\DeclareUnicodeCharacter{221A}{\sqrt}                   %   √
-\DeclareUnicodeCharacter{221D}{\propto}                 %   ∝
-\DeclareUnicodeCharacter{221E}{\infty}                  %   ∞
-\DeclareUnicodeCharacter{2227}{\wedge}                  %   ∧
-\DeclareUnicodeCharacter{2228}{\vee}                    %   ∨
-\DeclareUnicodeCharacter{2229}{\cap}                    %   ∩
-\DeclareUnicodeCharacter{222A}{\cup}                    %   ∪
-\DeclareUnicodeCharacter{223F}{\text{\textasciitilde}}  %   ∼
-\DeclareUnicodeCharacter{2245}{\cong}                   %   ≅
-\DeclareUnicodeCharacter{2248}{\approx}                 %   ≈
-\DeclareUnicodeCharacter{2260}{\ne}                     %   ≠
-\DeclareUnicodeCharacter{2261}{\equiv}                  %   ≡
-\DeclareUnicodeCharacter{2264}{\le}                     %   ≤
-\DeclareUnicodeCharacter{2265}{\ge}                     %   ≥
-\DeclareUnicodeCharacter{226A}{\ll}                     %   ≪
-\DeclareUnicodeCharacter{226B}{\gg}                     %   ≫
-\DeclareUnicodeCharacter{226D}{\not\equiv}              %   ≉
-\DeclareUnicodeCharacter{2272}{\lesssim}                %   ≲
-\DeclareUnicodeCharacter{2273}{\gtrsim}                 %   ≳
-\DeclareUnicodeCharacter{227A}{\prec}                   %   ≺
-\DeclareUnicodeCharacter{2282}{\subset}                 %   ⊂
-\DeclareUnicodeCharacter{2286}{\subseteq}               %   ⊆
-\DeclareUnicodeCharacter{22A4}{\top}                    %   ⊤
-\DeclareUnicodeCharacter{22A5}{\bot}                    %   ⊥
-\DeclareUnicodeCharacter{22EE}{\vdots}                  %   ⋮
-\DeclareUnicodeCharacter{22EF}{\cdots}                  %   ⋯
-\DeclareUnicodeCharacter{23CE}{\\}                      %   ⏎
-\DeclareUnicodeCharacter{2621}{\dbend}                  %   ☡
-\DeclareUnicodeCharacter{2640}{\venus}                  %·
-\DeclareUnicodeCharacter{2693}{\pause}                  %   ⚓
-\DeclareUnicodeCharacter{2713}{\cmark}                  %   ✓
-\DeclareUnicodeCharacter{2717}{\xmark}                  %   ✗
-\DeclareUnicodeCharacter{2774}{\{}                      %   ❴
-\DeclareUnicodeCharacter{2775}{\}}                      %   ❵
-\DeclareUnicodeCharacter{27E8}{\langle}                 %   ⟨
-\DeclareUnicodeCharacter{27E9}{\rangle}                 %   ⟩
-\DeclareUnicodeCharacter{2A09}{\times}                  %   ⨉
-\DeclareUnicodeCharacter{2C7C}{_j}                      %   ⱼ
-\DeclareUnicodeCharacter{FF03}{\#}                      %   ＃
-\DeclareUnicodeCharacter{FF04}{\$}                      %   $
-\DeclareUnicodeCharacter{FF05}{\%}                      %   ％
-\DeclareUnicodeCharacter{FF06}{\&}                      %   ＆
-
-\DeclareUnicodeCharacter{1D49E}{\mathcal{C}}            %    𝒞
-\DeclareUnicodeCharacter{1D49F}{\mathcal{D}}            %    𝒟
-\DeclareUnicodeCharacter{1D4DF}{\mathcal{P}}            %    𝓟
-\DeclareUnicodeCharacter{1D4AB}{\wp}                    %    𝒫
-\DeclareUnicodeCharacter{1D4BB}{\mathcal{f}}            %    𝒻
-\DeclareUnicodeCharacter{1D4DB}{\mathcal{L}}            %    𝓛
-\DeclareUnicodeCharacter{1D4E3}{\mathcal{T}}            %    𝓣
-\DeclareUnicodeCharacter{1D540}{\mathbb{I}}             %    𝕀
-\DeclareUnicodeCharacter{1D54B}{\mathbb{T}}             %    𝕋
-\DeclareUnicodeCharacter{1D54D}{\mathbb{V}}             %    𝕍
-\DeclareUnicodeCharacter{1D5FB}{\mathbf{n}}             %    𝗻
-\DeclareUnicodeCharacter{1D7EC}{\mathbf{0}}             %    𝟬
-\DeclareUnicodeCharacter{1D7ED}{\mathbf{1}}             %    𝟭
-\end{filecontents*}
-
-\def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
-
-\passOptions{amsmath}{fleqn} 
-\passOptions{cleveref}{capitalize,nameinlink} 
-\passOptions{gnuplottex}{subfolder} 
-\passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} \passOptions{lmodern}{lighttt}
-\passOptions{xcolor} {usenames, dvipsnames, table} 
-\passOptions{yogi-algorithm}{terse}
-
-\usepackage{adjustbox}
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{amssymb} \usepackage{amsthm}
-\usepackage{anyfontsize} \usepackage{booktabs}
-\usepackage{cite}
-\usepackage{float}
-\usepackage{fontspec}
-\usepackage{gnuplottex}
-\usepackage{graphicx}
-\usepackage{hyperref,cleveref}
-\usepackage{listingsutf8}
-\usepackage{nth}
-\usepackage{pifont}
-\usepackage{syntax}
-\usepackage{tikz}
-\usepackage{wasysym}
-\usepackage{wrapfig}
-
-\NeedsTeXFormat{LaTeX2e}
-
-\RequirePackage{amstext}
-\RequirePackage{listings}
-\PassOptionsToPackage{dvipsnames}{xcolor}
-\RequirePackage{tcolorbox}
-
-\tcbuselibrary{listings}
-\tcbuselibrary{skins}
-
-\newcommand\codesize{\scriptsize}
-\def\codedisplayspace{0pt}
-
-\ProcessOptions
-
-\newcommand\kk[1]{\textcolor{RoyalBlue}{\text{\textup{\textbf{\texttt{#1}}}}}}
-\newcommand\cc[1]{\textcolor{Sepia}{\text{\textup{\textbf{\texttt{#1}}}}}}
-
-\providecommand{\listingsfont}{\ttfamily}
-\providecommand{\commentsfont}{\rmfamily}
-
-\def\nameBASH{\Bash}
-\def\nameADA{\Ada}
-\def\nameAWKPROG{\AWK}
-\def\nameCEEPL{\CPL}
-\def\nameCPLUSPLUS{\CC}
-\def\nameCSHARP{\CSharp}
-\def\nameEMEL{\ML}
-\def\nameFORTRAN{\Fortran}
-\def\nameGO{\Go}
-\def\nameHASKELL{\Haskell}
-\def\nameJAVA{\Java}
-\def\nameLISP{\Lisp}
-\def\nameOCCAM{\Occam}
-\def\namePASCAL{\Pascal}
-\def\namePEEAGEPEE{\PHP}
-\def\namePEEELONE{PL/I}
-\def\namePERL{\Perl}
-\def\namePROLOG{\Prolog}
-\def\namePYTHON{\Python}
-
-\tcbuselibrary{fitting}
-
-\tcbset{codebox/.style={
-  after=\relax,
-  before=\relax,
-  left=-2ex,
-  right=0pt,
-  left skip=0pt,
-  right skip=0pt,
-  top=0pt,
-  bottom=0pt,
-  boxsep=0pt,
-  toprule=0pt,
-  bottomrule=0pt,
-  leftrule=0pt,
-  rightrule=0pt,
-  clip title=false,
-  colframe=white,
-  sharp corners=all,
-  collower=Blue,
-  coltitle=blue!50!black,
-    enhanced,
-  fontlower=\footnotesize\ttfamily\slshape\bfseries,
-  hbox,
-  listing only,
-  listing remove caption=true,
-  listing style=#1,
-  notitle,
-}}
-
-\tcbset{output/.style={
-    minipage,
-    comment=#1,
-    listing and comment,
-}}
-
-\newtcblisting{code}[2][]{  codebox=#2,
-  #1
-}
-
-\newtcblisting{Code}[2][]{  codebox=#2,
-  listing options={style=numbered,style=#2},
-  minipage,
-  width=\linewidth,
-  #1
-}
-
-\newtcblisting{lcode}[2][]{  codebox=#2,
-  #1
-}
-
-
-\newtcblisting{lCode}[3][]{  codebox=#2,
-  title={#3},
-  before=\par\smallskip,
-  #1
-}
-
-\newtcblisting{session}[1][]{  codebox=printout,
-  size=small,
-  minipage,
-  outer arc=12pt,
-  sharp corners=downhill,
-  arc=12pt,
-  #1
-}
-
-
-\lstdefinestyle{basic}{  fontadjust,
-  showstringspaces=true,
-  extendedchars=true,       
-  escapechar=¢,
-  columns={fullflexible},
-  keepspaces=true,
-  tabsize=2,                 
-  belowskip=0pt,
-  aboveskip=3pt,
-  xleftmargin=200pt,
-  xrightmargin=0pt,
-  breaklines=true,
-}
-
-\lstdefinestyle{printout}{  style=basic,
-  frame=none,
-  basicstyle=\color{White}\listingsfont\codesize\slshape,
-  keywordstyle=\color{White}\listingsfont\codesize\slshape,
-  commentstyle=\color{White}\listingsfont\codesize\slshape,
-  stringstyle=\color{White}\listingsfont\codesize\slshape,
-}
-
-\lstdefinestyle{code}{  style=basic,
-  basicstyle=\color{Sepia}\listingsfont\codesize\upshape,
-  keywordstyle=\color{RoyalBlue}\listingsfont\codesize\textup\bfseries,
-  commentstyle=\color{ForestGreen}\commentsfont\codesize\slshape,
-  stringstyle=\color{OliveGreen}\listingsfont\codesize\itshape,
-  language=C,
-  emphstyle={\color{Magenta}\listingsfont\codesize\slshape},
-  language=Java,
-}
-
-
-
-\lstdefinestyle{display}{  style=code,
-  basicstyle=\color{Sepia}\listingsfont\codesize\upshape,
-  keywordstyle=\color{RoyalBlue}\listingsfont\codesize\textup\bfseries,
-  commentstyle=\color{ForestGreen}\commentsfont\codesize\slshape,
-  stringstyle=\color{OliveGreen}\listingsfont\codesize\itshape,
-  xleftmargin=3ex,
-}
-
-\lstdefinestyle{inline}{  style=code,
-}
-
-\lstdefinestyle{numbered}{  style=display,
-  numbers=left,
-  stepnumber=1,
-  numbersep=2pt,
-  numberblanklines=false,
-  numberstyle=\tiny\bf\color{black},
-}
-
-
-\lstset{defaultdialect=[GNU]C++}
-
-\lstdefinelanguage{GoOH}{	morekeywords=[1]{break,default,func,interface,		case,defer,go,map,struct,chan,else,goto,package,		switch,const,fallthrough,if,range,type,continue,	for,import,return,var,select},
-		morekeywords=[2]{make,new,nil,len,cap,copy,cmplx,		real,imag,panic,recover,print,println,iota,close,		closed,\ignore$_\ignore$}, 		morekeywords=[3]{		string,int,uint,uintptr,double,float,complex,byte,		int8,int16,int32,int64,int128,		uint8,uint16,uint32,uint64,uint128,	float32,float64,complex64,complex128},
-		morestring=[b]{"},
-	morestring=[b]{'},
-	morestring=[b]{`},
-		comment=[l]{//},
-	morecomment=[s]{/*}{*/},
-		sensitive=true
-}
-
-\lstdefinelanguage{Macroscope}{  morekeywords={    numeric,
-    identifier,
-    optional,
-    oneormore,
-    expression,
-    seperatedby,
-    pattern,
-    example,
-    captures,
-    expands,
-    run,
-    assert,
-    foreach,
-    eval,
-    either, 
-    or,   
-    empty,
-  },
-  deletekeywords={
-    for,
-    int,
-  },
-  sensitive=true,
-  morestring=[b]",
-}
-
-\newcommand\newLanguage[3][]{	\lstdefinestyle{#3}{language={#2},style=display,#1}  \lstnewenvironment{#3}[1][]{\lstset{style=#3,##1}}{}}
-
-
-\newLanguage{Ada}{ADA}
-\newLanguage{Algol}{ALGOL}
-\newLanguage[morekeywords={else,in}]{AWK}{AWKPROG}
-\newLanguage{Bash}{BASH}
-\newLanguage[directivestyle={\listingsfont\bfseries\codesize\color{olive}}]{[GNU]C++}{CEEPL}
-\newLanguage[directivestyle={\listingsfont\bfseries\codesize\color{olive}}]{[GNU]C++}{CPLUSPLUS}
-\newLanguage[morekeywords={select,in,from,where,var,yield},deletekeywords={base}]{[Sharp]C}{CSHARP}
-\newLanguage{Cobol}{COBOL}
-\newLanguage[morekeywords={yield}]{Python}{PYTHON}
-\newLanguage[morekeywords={create,factory,note}]{Eiffel}{EIFFEL}
-\newLanguage{php}{PEEAGEPEE}
-\newLanguage{HTML}{AGETEEEMEL}
-\newLanguage{GoOH}{GO}
-\newLanguage[alsoletter={-}]{HTML}{HTML}
-\newLanguage[morekeywords={enum,strictfp,@interface,inherited},
-emph={@Override},alsoletter=@,literate={->}{$\rightarrow$}1]{Java}{JAVA}
-\newLanguage{Macroscope}{MACROSCOPE}
-\newLanguage{Oberon-2}{OBERON}
-\newLanguage{Pascal}{PASCAL}
-\newLanguage{Prolog}{PROLOG}
-\newLanguage[morekeywords={car,cdr,caar,cddr,cadr,cdar}]{Lisp}{LISP}
-\newLanguage{Fortran}{FORTRAN}
-\newLanguage{Perl}{PERL}
-\newLanguage{ML}{EMEL}
-\newLanguage{PL/I}{PEEELONE}
-\newLanguage{Haskell}{HASKELL}
-\newLanguage{Occam}{OCCAM}
-\newLanguage[morekeywords={<python}]{HTML}{EXEMEL}
- 
-\usepackage{yogi-algorithm}
-\usepackage{yogi-lang}
-\usepackage{yogi-unicode}
-
-\lstset{language=Java}
-
-\usetikzlibrary{graphdrawing}
-\usetikzlibrary{graphs} 
-\usetikzlibrary{shapes} 
-\usetikzlibrary{automata,positioning,topaths}
-
-\usegdlibrary{circular}
-\usegdlibrary{trees}
-
-\renewcommand{\algorithmicforall}{\textbf{For each}}
-
-\makeatletter
-\newcommand\gobble[1]{\@gobble{#1}}
-\makeatother
-
-\floatstyle{ruled}
-\restylefloat{figure}
-\restylefloat{table}
-\restylefloat{algorithm}
-
-\adjustboxset{max width=\columnwidth}
-\adjustboxset{max height=0.8\textheight}
-\adjustboxset{center}
-\newadjustboxkey*{W}[1]{\setkeys{adjbox}{max width=#1\columnwidth}}
-\newadjustboxkey*{H}[1]{\setkeys{adjbox}{max height=#1\textheight}}
-
-\newcommand \cmark {\textcolor{green!70!black}{\ding{51}}}\newcommand \xmark {\textcolor{red!70!black}{\ding{55}}}\newcommand\ReplaceInThesis[2]{#1} 
-
-\newtheorem{Theorem}{Theorem}
-\newtheorem{Lemma}{Lemma}
-\newtheorem{Proposition}{Proposition}
-\newtheorem{Definition}{Definition}
-\newtheorem{Conjecture}{Conjecture}
-
-\numberwithin{equation}{section}
-\numberwithin{figure}{section}
-
-\def\sectionautorefname{Sect.}
-\def\subsectionautorefname{Sect.}
-\def\figurename{Fig.}
-\def\figureautorefname{\figurename}
-\def\tablename{Table}
-
-
-\intextsep=6pt
-
-\newcommand \urlref [1] {\footnote{\url{#1}}}
-
-\def\nthscript#1{\textsuperscript{\textit{#1}}}
-\newcommand\javaInput[2][]{\tcbinputlisting{codebox=Java,listing options={style=Java},left=0ex,listing file=#2,#1}}
-
-\newenvironment{Grammar}
-{  \scriptsize
-  \renewcommand\baselinestretch{0.8}
-  \def\~{\text{~}}
-  \def\|{\~\~|\~\~\~}
-  \def\<##1>{\textcolor{black}{\text{$\langle\text{\mdseries\rmfamily\/\textit{##1}}\rangle$}}}
-  \let\oldCc=\cc
-  \def\cc##1{{\text{{\scriptsize\oldCc{##1}}~}}}
-  \let\oldKk=\kk
-  \def\kk##1{{\text{{\scriptsize\oldKk{##1}}}}}
-  \begin{equation*}
-}
-{
-  \end{equation*}
-}
- \bibliographystyle{plainurl}
+\input gil.sty
+\bibliographystyle{plainurl}
 
 \author[1]{Yossi Gil}
 \author[1]{Tomer Levy}
-\affil[1]{Department of Computer Science, The Technion---Israel Institute of Technology, Haifa, Israel.}
+\affil[1]{ Department of Computer Science, The
+ Technion---Israel Institute of Technology, Haifa, Israel.
+}
 
-\def\ReplaceInThesis#1#2{#1}
-\begin{filecontents*}{00.listing}
-String time(int hours, int minutes, int seconds) {¢¢
-    return new StringBuilder()
-      ¢¢.append(hours).append(':')
-      ¢¢.append(minutes).append(':')
-      ¢¢.append(seconds)
-      ¢¢.toString();
-}
-\end{filecontents*}
-\begin{filecontents*}{1.listing}
-String time(int hours, int minutes, int seconds) {¢¢
-    return new StringBuilder()
-      ¢¢.append(hours).append(':')
-      ¢¢.append(minutes).append(':')
-      ¢¢.append(seconds)
-      ¢¢.toString();
-}
-\end{filecontents*}
-\begin{filecontents*}{2.listing}
-String time(int hours, int minutes, int seconds) {¢¢
-    return new StringBuilder()
-      ¢¢.append(hours).append(':')
-      ¢¢.append(minutes).append(':')
-      ¢¢.append(seconds)
-      ¢¢.toString();
-}
-\end{filecontents*}
-\begin{filecontents*}{abc.listing}
-
-\end{filecontents*}
-\begin{filecontents*}{binary-function-example.listing}
-public static void four_use_cases_of_function_f() {
-  ¢$γ$¢1 _1 = f.r1().s1(); // ✓ ¢$f(r_1,s_1) = \gamma_1$¢
-  ¢$γ$¢2 _2 = f.r1().s2(); // ✓ ¢$f(r_1,s_2) = \gamma_2$¢
-  ¢$γ$¢2 _3 = f.r2().s1(); // ✓ ¢$f(r_2,s_1) = \gamma_2$¢
-  f.r2().s2().g(); // ✗ method ¢\cc{s2()}¢ undefined in type ¢\cc{\scriptsize $\Gamma$'}¢
-}
-\end{filecontents*}
-\begin{filecontents*}{binary-function.listing}
-public static abstract class f { // Starting point of fluent API
-  public static r1 r1() { return null; }
-  public static r2 r2() { return null; }
-}  
-public static abstract class R { 
-  public abstract ¢$Γ$¢¢$ʹ$¢ s1();
-  public abstract ¢$Γ$¢¢$ʹ$¢ s2();
-  public static final class r1 extends R {
-    @Override public ¢$γ$¢1 s1() { return null; } 
-    @Override public ¢$γ$¢2 s2() { return null; }
-  }
-  public static final class r2 extends R {
-    @Override public ¢$γ$¢2 s1() { return null; }
-    @Override public ¢$Γ$¢¢$ʹ$¢.¤ s2() { return null; }
-  }
-}
-\end{filecontents*}
-\begin{filecontents*}{compiler.listing}
-static interface Cons<Car,Cdr>{ 
-  Cons<
-    Cons<Car,Cdr>,
-    Cons<Car,Cdr>
-  > d(); 
-}
-\end{filecontents*}
-\begin{filecontents*}{gamma-example.listing}
-public static void five_use_cases_of_function_g() {
-  ¢$γ$¢2 _1 = new ¢$γ$¢1().g(); // ✓
-  ¢$γ$¢1 _2 = new ¢$γ$¢2().g(); // ✗ type mismatch
-  ¢$Γ$¢¢$ʹ$¢.¤ _3 = new ¢$γ$¢2().g(); // ✗ class ¤ is private
-  ¢$Γ$¢¢$ʹ$¢ _4 = new ¢$γ$¢2().g(); // ✓
-  _4.g(); // ✗ g() undefined in type ¢$Γ$¢¢$ʹ$¢
-}
-\end{filecontents*}
-\begin{filecontents*}{gamma.listing}
-public static abstract class ¢$Γ$¢¢$ʹ$¢ { 
-  private static abstract class ¤ extends ¢$Γ$¢¢$ʹ$¢ {
-    // Empty private class, cannot be used by clients.
-    private ¤() { /* Private constructor hinders extension by clients */ }
-  }
-  public  static abstract class ¢$Γ$¢ extends ¢$Γ$¢¢$ʹ$¢ { 
-    public abstract ¢$Γ$¢¢$ʹ$¢ g(); 
-    public static final class ¢$γ$¢1 extends ¢$Γ$¢ {
-      // Covariant return type in overriding:
-      @Override public ¢$γ$¢2 g() { return null; } 
-    }
-    public static final class ¢$γ$¢2 extends ¢$Γ$¢ {
-      // Covariant return type in overriding:
-      @Override  public ¢$Γ$¢¢$ʹ$¢.¤ g() { return null; }
-    }
-  }
-} 
-\end{filecontents*}
-\begin{filecontents*}{id.listing}
-interface ID<T extends ID<?>> {
-  default T id() { return null; }
-}
-class A implements ID<A> { /**/ }
-abstract class B<Z extends B<?>> implements ID<Z> { /**/ }
-class C extends B<C> { /**/ }
-\end{filecontents*}
-\begin{filecontents*}{jump-stack-currency.listing}
-interface ¤ extends JS<¤, ¤, ¤> {
-  @Override public ¢$Γ$¢¢$ʹ$¢.¤ top();
-  @Override public ¤ pop();
-  @Override public ¤ ¢$γ$¢1();
-  @Override public ¤ ¢$γ$¢2();
-}
-\end{filecontents*}
-\begin{filecontents*}{jump-stack-E.listing}
-public interface E extends JS<¤, ¤, ¤> {
-  @Override public ¢$Γ$¢¢$ʹ$¢.¤ top();
-  @Override public ¤ pop();
-  @Override public P<¢$γ$¢1, E, E, ¤> ¢$γ$¢1();
-  @Override public P<¢$γ$¢2, E, ¤, E> ¢$γ$¢2();
-}
-\end{filecontents*}
-\begin{filecontents*}{jump-stack-example.listing}
-public static void jump_stack_use_cases(){
-  P<
-    ¢$γ$¢1,                             // Top   
-    P<¢$γ$¢1,P<¢$γ$¢2,E,¤,E>,P<¢$γ$¢2,E,¤,E>,E>,// Rest 
-    P<¢$γ$¢1,P<¢$γ$¢2,E,¤,E>,P<¢$γ$¢2,E,¤,E>,E>,// jump(¢$γ$¢1) 
-    E                               // jump(¢$γ$¢2)                      
-  > _1 = JS.empty.¢$γ$¢2().¢$γ$¢1().¢$γ$¢1();
-  E _2 = _1.jump_¢$γ$¢2();
-  P<
-    ¢$γ$¢1,             // Top
-    P<¢$γ$¢2,E,¤,E>,    // Rest
-    P<¢$γ$¢2,E,¤,E>     // jump(¢$γ$¢1)
-    ,E              // jump(¢$γ$¢2)
-  > _3 = _1.jump_¢$γ$¢1();
-}
-\end{filecontents*}
-\begin{filecontents*}{jump-stack.listing}
-public interface JS<  // ¢$1+k$¢ generic parameters
-  //As a convention, we use JS with its raw type when no parameters are introduced 
-    Rest extends JS, 
-    J_¢$γ$¢1 extends JS, 
-    J_¢$γ$¢2 extends JS 
-> {
-  ¢$Γ$¢¢$ʹ$¢ top();
-  Rest pop();
-  JS ¢$γ$¢1();
-  JS ¢$γ$¢2();
-  J_¢$γ$¢1 jump_¢$γ$¢1();
-  J_¢$γ$¢2 jump_¢$γ$¢2();
-  interface ¤ extends JS<¤, ¤, ¤> { ¢$…$¢ }
-  public interface E extends JS<¤, ¤, ¤> { ¢$…$¢ }
-  public static final E empty = null;
-  public interface P<// ¢$2+k$¢ generic arguments:
-      Top extends ¢$Γ$¢, 
-      Rest extends JS,    
-      J_¢$γ$¢1 extends JS, 
-      J_¢$γ$¢2 extends JS
-  > extends P¢$ʹ$¢<Top, Rest, J_¢$γ$¢1, J_¢$γ$¢2, 
-        P<Top, Rest, J_¢$γ$¢1, J_¢$γ$¢2>
-  > { /**/ }
-}
-\end{filecontents*}
-\begin{filecontents*}{jump-stack-push.listing}
-private interface P¢$ʹ$¢<
-// ¢$2+k+1$¢ generic arguments: 
-  Top extends ¢$Γ$¢,   
-  Rest extends JS, 
-  J_¢$γ$¢1 extends JS, 
-  J_¢$γ$¢2 extends JS,
-  Me extends JS
-> extends JS<Rest, J_¢$γ$¢1, J_¢$γ$¢2> {
-   public Top top();
-   P<¢$γ$¢1, Me, Me, J_¢$γ$¢2> ¢$γ$¢1();
-   P<¢$γ$¢2, Me, J_¢$γ$¢2, Me> ¢$γ$¢2();
-}
-\end{filecontents*}
-\begin{filecontents*}{mammal.listing}
-class Mammals { /* ¢$…$¢ */ }
-class Heap<M extends Mammals> { /* ¢$…$¢ */}
-class Whales extends Mammals { /* ¢$…$¢ */}
-class School<W extends Whales> 
-  extends Heap<W> { /* ¢$…$¢ */}
-\end{filecontents*}
-\begin{filecontents*}{peep.listing}
-public static class Peep<¢$γ$¢ extends ¢$Γ$¢¢$ʹ$¢, S extends Stack<? extends Stack<?>>> {}
-public static Peep<?, E> peep(E _) { return null; } // First overloaded version of ¢\cc{peep()}¢
-public static                                       // Second overloaded version of ¢\cc{peep()}¢
-<Top extends ¢$Γ$¢, Rest extends Stack<?>> // Two generic parameters
-Peep<Top, P<Top, Rest>>                // Function return type
-peep(P<Top, Rest> _) { return null; }    // Function parameters and body
-public static void peeping_into_a_stack_use_cases() {
-  P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢2, E>>>>> _1 = Stack.empty.¢$γ$¢2().¢$γ$¢1().¢$γ$¢2().¢$γ$¢1().¢$γ$¢2();
-  Peep<¢$γ$¢2, P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢2, E>>>>>> _2 = peep(_1);
-  E _3 = Stack.empty;
-  Peep<?, E> _4 = peep(_3);
-}
-\end{filecontents*}
-\begin{filecontents*}{prefix-proof.cases.listing}
-static void accepts() {
-  A.build.$();
-  A.build.¢$σ$¢1().¢$σ$¢3().$();
-  A.build.¢$σ$¢1().¢$σ$¢2().$(); 
-  A.build.¢$σ$¢1().¢$σ$¢1().¢$σ$¢2().¢$σ$¢3().¢$σ$¢1().¢$σ$¢2().$(); 
-}
-static void rejects() {
-  A.build.¢$σ$¢1().$();
-  A.build.¢$σ$¢2();
-  A.build.¢$σ$¢1().¢$σ$¢2().¢$σ$¢3();
-  A.build.¢$σ$¢1().¢$σ$¢1().¢$σ$¢2().¢$σ$¢3().¢$σ$¢1().$();  
-}
-\end{filecontents*}
-\begin{filecontents*}{prefix-proof.configuration.listing}
-static class L // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-  { /* empty */  }
-public interface E { /* Empty stack configuration */ }
-interface ¤ { /* Error configuration. */ }
-\end{filecontents*}
-\begin{filecontents*}{prefix-proof.full.listing}
-static class A { // Encode automaton ¢$A$¢
-  static class L // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /* empty */  }
-  public interface E { /* Empty stack configuration */ }
-  interface ¤ { /* Error configuration. */ }
-  // Configuration of the automaton
-  interface C¢$γ$¢1< // Configuration when ¢$\gamma_1$¢ is at top
-    Rest, JR¢$γ$¢1, JR¢$γ$¢2
-  > extends 
-    ¢$γ$¢1¢$σ$¢1_Push_¢$γ$¢1¢$γ$¢1¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2,C¢$γ$¢1<Rest, JR¢$γ$¢1, JR¢$γ$¢2>>
-  {
-    L $();
-  }
-  interface C¢$γ$¢2< // Configuration when ¢$\gamma_2$¢ is at top
-    Rest, JR¢$γ$¢1, JR¢$γ$¢2
-  > extends 
-    ¢$γ$¢2¢$σ$¢1_Push_¢$γ$¢2¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2>
-  { 
-    Rest ¢$σ$¢2();
-    JR¢$γ$¢1 ¢$σ$¢3();
-  }
-  interface ¢$γ$¢1¢$σ$¢1_Push_¢$γ$¢1¢$γ$¢1¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2,P extends C¢$γ$¢1<Rest, JR¢$γ$¢1, JR¢$γ$¢2 >>{
-    // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1,\gamma_2)$¢
-    C¢$γ$¢2<C¢$γ$¢1<P, Rest, JR¢$γ$¢2>,P,JR¢$γ$¢2> ¢$σ$¢1();
-  }
-  interface ¢$γ$¢2¢$σ$¢1_Push_¢$γ$¢2¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2>{
-    // Sidekick of ¢$\delta(\gamma_2,\sigma_1)=\textsf{push}(\gamma_2,\gamma_2)$¢
-    C¢$γ$¢2<C¢$γ$¢2<Rest, JR¢$γ$¢1, JR¢$γ$¢2>, JR¢$γ$¢1, Rest> ¢$σ$¢1();
-  }
-  static C¢$γ$¢1<E,¤,¤> build = null;
-}
-\end{filecontents*}
-\begin{filecontents*}{prefix-proof.many.listing}
-interface C¢$γ$¢1< // Configuration when ¢$\gamma_1$¢ is at top
-  Rest, JR¢$γ$¢1, JR¢$γ$¢2
-> extends 
-  ¢$γ$¢1¢$σ$¢1_Push_¢$γ$¢1¢$γ$¢1¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2,C¢$γ$¢1<Rest, JR¢$γ$¢1, JR¢$γ$¢2>>
-{
-}
-interface C¢$γ$¢2< // Configuration when ¢$\gamma_2$¢ is at top
-  Rest, JR¢$γ$¢1, JR¢$γ$¢2
-> extends 
-  ¢$γ$¢2¢$σ$¢1_Push_¢$γ$¢2¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2>
-{ 
-}
-static C¢$γ$¢1<E,¤,¤> build = null;
-\end{filecontents*}
-\begin{filecontents*}{proof.cases.listing}
-static void isL(L l) {/**/}
-static void accepts() {
-  isL(A.build.$());
-  isL(A.build.¢$σ$¢1().¢$σ$¢3().$());
-  isL(A.build.¢$σ$¢1().¢$σ$¢2().$()); 
-  isL(A.build.¢$σ$¢1().¢$σ$¢1().¢$σ$¢2().¢$σ$¢3().¢$σ$¢1().¢$σ$¢2().$()); 
-}
-static void rejects() {
-  isL(A.build.¢$σ$¢1().$());
-  isL(A.build.¢$σ$¢2().¢$σ$¢1().$());
-  isL(A.build.¢$σ$¢1().¢$σ$¢2().¢$σ$¢3().$());
-  isL(A.build.¢$σ$¢1().¢$σ$¢1().¢$σ$¢2().¢$σ$¢3().¢$σ$¢1().$());  
-}
-\end{filecontents*}
-\begin{filecontents*}{proof.configuration.listing}
-interface C<      // Generic parameters:
-  Rest extends C, // The rest of the stack, for pop or ¢$\textsf{jump}(\gamma)$¢ operations
-  JR¢$γ$¢1 extends C, // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_1)$¢, may be rest, or anything in it. 
-  JR¢$γ$¢2 extends C  // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_2)$¢, may be rest, or anything in it.  
->
-{
-  ¢$Σ$¢¢$Σ$¢ $();        // ¢$δ$¢ transition on end of input; invalid language by default 
-  C ¢$σ$¢1();         // ¢$δ$¢ transition on ¢$\sigma_1$¢; dead end by default
-  C ¢$σ$¢2();         // ¢$δ$¢ transition on ¢$\sigma_2$¢; dead end by default
-  C ¢$σ$¢3();         // ¢$δ$¢ transition on ¢$\sigma_3$¢; dead end by default
-  public interface E extends C<¤,¤,¤> { /* Empty stack configuration */ }
-  interface ¤ extends C<¤,¤,¤> { /* Error configuration. */ }
-}
-\end{filecontents*}
-\begin{filecontents*}{proof.full.listing}
-class A { // Encode automaton ¢$A$¢
-  private static class ¢$Σ$¢¢$Σ$¢   // Encodes set ¢$\Sigma^*$¢, type of reject
-    { /* empty */  } 
-  static class L extends ¢$Σ$¢¢$Σ$¢ // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-    { /* empty */  }
-  // Configuration of the automaton
-  interface C<      // Generic parameters:
-    Rest extends C, // The rest of the stack, for pop or ¢$\textsf{jump}(\gamma)$¢ operations
-    JR¢$γ$¢1 extends C, // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_1)$¢, may be rest, or anything in it. 
-    JR¢$γ$¢2 extends C  // Type of ¢$~\cc{Rest}.\textsf{jump}(\gamma_2)$¢, may be rest, or anything in it.  
-  >
-  {
-    ¢$Σ$¢¢$Σ$¢ $();        // ¢$δ$¢ transition on end of input; invalid language by default 
-    C ¢$σ$¢1();         // ¢$δ$¢ transition on ¢$\sigma_1$¢; dead end by default
-    C ¢$σ$¢2();         // ¢$δ$¢ transition on ¢$\sigma_2$¢; dead end by default
-    C ¢$σ$¢3();         // ¢$δ$¢ transition on ¢$\sigma_3$¢; dead end by default
-    public interface E extends C<¤,¤,¤> { /* Empty stack configuration */ }
-    interface ¤ extends C<¤,¤,¤> { /* Error configuration. */ }
-    interface C¢$γ$¢1< // Configuration when ¢$\gamma_1$¢ is at top
-      Rest extends C, JR¢$γ$¢1 extends C, JR¢$γ$¢2 extends C
-    > extends 
-      C<Rest, JR¢$γ$¢1, JR¢$γ$¢2>   
-      ,¢$γ$¢1¢$σ$¢1_Push_¢$γ$¢1¢$γ$¢1¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2,C¢$γ$¢1<Rest, JR¢$γ$¢1, JR¢$γ$¢2>>
-    {
-      @Override L $();
-    }
-    interface C¢$γ$¢2< // Configuration when ¢$\gamma_2$¢ is at top
-      Rest extends C, JR¢$γ$¢1 extends C, JR¢$γ$¢2 extends C
-    > extends 
-      C<Rest, JR¢$γ$¢1, JR¢$γ$¢2>
-      ,¢$γ$¢2¢$σ$¢1_Push_¢$γ$¢2¢$γ$¢2<Rest,JR¢$γ$¢1,JR¢$γ$¢2>
-    { 
-      @Override Rest ¢$σ$¢2();
-      @Override JR¢$γ$¢1 ¢$σ$¢3();
-    }
-    interface ¢$γ$¢1¢$σ$¢1_Push_¢$γ$¢1¢$γ$¢1¢$γ$¢2<Rest extends C,JR¢$γ$¢1 extends C,JR¢$γ$¢2 extends C,P extends C¢$γ$¢1<Rest, JR¢$γ$¢1, JR¢$γ$¢2 >>{
-      // Sidekick of ¢$\delta(\gamma_1,\sigma_1)=\textsf{push}(\gamma_1,\gamma_1,\gamma_2)$¢
-      C¢$γ$¢2<C¢$γ$¢1<P, Rest, JR¢$γ$¢2>,P,JR¢$γ$¢2> ¢$σ$¢1();
-    }
-    interface ¢$γ$¢2¢$σ$¢1_Push_¢$γ$¢2¢$γ$¢2<Rest extends C,JR¢$γ$¢1 extends C,JR¢$γ$¢2 extends C>{
-      // Sidekick of ¢$\delta(\gamma_2,\sigma_1)=\textsf{push}(\gamma_2,\gamma_2)$¢
-      C¢$γ$¢2<C¢$γ$¢2<Rest, JR¢$γ$¢1, JR¢$γ$¢2>, JR¢$γ$¢1, Rest> ¢$σ$¢1();
-    }
-  }
-    static C¢$γ$¢1<E,¤,¤> build = null;
-}
-\end{filecontents*}
-\begin{filecontents*}{proof.headers.listing}
-private static class ¢$Σ$¢¢$Σ$¢   // Encodes set ¢$\Sigma^*$¢, type of reject
-  { /* empty */  } 
-static class L extends ¢$Σ$¢¢$Σ$¢ // Encodes set ¢$L\subseteq \Sigma^*$¢, type of accept 
-  { /* empty */  }
-\end{filecontents*}
-\begin{filecontents*}{proof.many.listing}
-  interface C¢$γ$¢1< // Configuration when ¢$\gamma_1$¢ is at top
-    Rest extends C, JR¢$γ$¢1 extends C, JR¢$γ$¢2 extends C
-  > extends 
-    C<Rest, JR¢$γ$¢1, JR¢$γ$¢2>   
-  {
-  }
-  interface C¢$γ$¢2< // Configuration when ¢$\gamma_2$¢ is at top
-    Rest extends C, JR¢$γ$¢1 extends C, JR¢$γ$¢2 extends C
-  > extends 
-    C<Rest, JR¢$γ$¢1, JR¢$γ$¢2>
-  { 
-  }
-  static C¢$γ$¢1<E,¤,¤> build = null;
-\end{filecontents*}
-\begin{filecontents*}{spda.listing}
-public static abstract class Q<S extends Stack<?>, Top extends ¢$Γ$¢¢$ʹ$¢> {
-  private static final class ¤ extends Q<Stack<?>, ¢$Γ$¢¢$ʹ$¢.¤> {/**/}
-  public static final class q0 extends Q<E,¢$Γ$¢¢$ʹ$¢.¤>{
-    public SingleP_¢$γ$¢2<E> ¢$σ$¢1() { return null; }
-  }
-  public static abstract class q1<S extends Stack<?> , T extends ¢$Γ$¢¢$ʹ$¢> extends Q<S,T> {
-    private static final class ¤ extends q1<E, ¢$Γ$¢¢$ʹ$¢.¤> {/**/}
-    public static final class q1_¢$γ$¢1<Rest extends Stack<?>> extends q1<P<¢$γ$¢1,Rest>,¢$γ$¢1> {/**/}
-    public static final class q1_¢$γ$¢2<Rest extends Stack<?>> extends q1<P<¢$γ$¢2,Rest>,¢$γ$¢2> {
-      public NoOp2<Rest> ¢$σ$¢1() { return null; }
-    }
-  }
-  public static abstract class q2<S extends Stack<?> , T extends ¢$Γ$¢¢$ʹ$¢> extends Q<S,T> {
-    public static final class q2_E extends q2<E, ¢$Γ$¢¢$ʹ$¢.¤> {
-      public DoubleP_¢$γ$¢1_¢$γ$¢2 ¢$σ$¢1() { return null; }
-    }
-    public static final class q2_¢$γ$¢1<S extends Stack<?>> extends q2<S,¢$γ$¢1> {/**/}
-    public static final class q2_¢$γ$¢2<S extends Stack<?>> extends q2<S,¢$γ$¢2> {
-      public DoubleP_¢$γ$¢1_¢$γ$¢1<S> ¢$σ$¢1() { return null; }
-    }
-  }
-  public static abstract class q3<S extends Stack<?>, T extends ¢$Γ$¢¢$ʹ$¢> extends Q<S,T> {
-    public static final class q3_¢$γ$¢1<Rest extends Stack<?>> extends q3<P<¢$γ$¢1,Rest>,¢$γ$¢1> {/**/}
-    public static final class q3_¢$γ$¢2<Rest extends Stack<?>> extends q3<P<¢$γ$¢2,Rest>,¢$γ$¢2> {/**/}
-    private static final class ¤ extends q3<E, ¢$Γ$¢¢$ʹ$¢.¤> {/**/}
-  }
-}
-\end{filecontents*}
-\begin{filecontents*}{stack.listing}
-public static abstract class Stack<Rest extends Stack<?>> { 
-  public abstract ¢$Γ$¢¢$ʹ$¢ top();      
-  public abstract Rest pop();    
-  public abstract Stack<?> ¢$γ$¢1();  // Push type ¢\cc{\scriptsize $\Gamma'.\Gamma.\gamma1$}¢
-  public abstract Stack<?> ¢$γ$¢2();  // Push type ¢\cc{\scriptsize $\Gamma'.\Gamma.\gamma2$}¢ 
-  public static class P<Top extends ¢$Γ$¢, Rest extends Stack<?>> 
-    extends Stack<Rest> { // Type of a non-empty stack: 
-       @Override public Top top() { return null; } 
-       @Override public Rest pop() { return null; }
-       @Override public P<¢$γ$¢1, P<Top,Rest>> ¢$γ$¢1() { return null; } 
-       @Override public P<¢$γ$¢2, P<Top,Rest>> ¢$γ$¢2() { return null; }
-  }
-  public static final class E 
-    extends Stack<¤> { // Type of an empty stack
-      @Override public ¢$Γ$¢¢$ʹ$¢.¤ top() { return null; }
-      @Override public ¤ pop() { return null; } 
-      @Override public P<¢$γ$¢1, E> ¢$γ$¢1() { return null; } 
-      @Override public P<¢$γ$¢2, E> ¢$γ$¢2() { return null; }
-  }
-  public static final E empty = null; 
-  private static final class ¤ 
-    extends Stack<¤> { // Type of pop from empty stack 
-      @Override public ¢$Γ$¢¢$ʹ$¢.¤ top() { return null; }
-      @Override public ¤ pop() { return null; } 
-      @Override public ¤ ¢$γ$¢1() { return null; } 
-      @Override public ¤ ¢$γ$¢2() { return null; }
-  }
-}
-\end{filecontents*}
-\begin{filecontents*}{stack-use-cases.listing}
-public static void use_case_of_stack() {
-  // Create a stack a with five items in it:
-  P<¢$γ$¢1, P<¢$γ$¢1, P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢1, E>>>>> _1 = Stack.empty.¢$γ$¢1().¢$γ$¢1().¢$γ$¢2().¢$γ$¢1().¢$γ$¢1();
-  P<¢$γ$¢1, P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢1, E>>>> _2 = _1.pop(); // ✓ Pop one item
-  P<¢$γ$¢2, P<¢$γ$¢1, P<¢$γ$¢1, E>>> _3 = _2.pop(); // ✓ Pop another item
-  P<¢$γ$¢1, P<¢$γ$¢1, E>> _4 = _3.pop(); // ✓ Pop yet another item
-  P<¢$γ$¢1, E> _5 = _4.pop(); // ✓ Pop penultimate item
-  ¢$γ$¢1 _6 = _5.top(); // ✓ Examine last item
-  E _7 = _5.pop(); // ✓ Pop last item
-  Stack.¤ _8 = _7.pop(); // ✗ Cannot pop from an empty stack
-  ¢$Γ$¢¢$ʹ$¢.¤ _9 = _7.top(); // ✗ empty stack has no top element
-} 
-\end{filecontents*}
-\begin{filecontents*}{camel-apache.java.fragment}
-from("direct:a").choice()
-    .when(header("foo").isEqualTo("bar"))
-      .to("direct:b")
-    .when(header("foo").isEqualTo("cheese"))
-      .to("direct:c")
-    .otherwise()
-      .to("direct:d");
-\end{filecontents*}
-\begin{filecontents*}{fajita-bootstrap.fragment}
-new BNF()
-  .with(BNFTerminals.class)
-  .with(BNFSymbols.class)
-  .start(BNF)
-  .derive(BNF)
-    .to(Header).and(Body).and(Footer)
-  .derive(Header)
-    .to(Variables).and(Terminals)
-    .or(Terminals).and(Variables)
-  .derive(Variables)
-    .to(with, Variable.class)
-  .derive(Terminals)
-    .to(with, Terminal.class)
-  .derive(Body)
-    .to(Start).and(Rules)
-  .derive(Start)
-    .to(start, Variable)
-  .derive(Rules)
-    .to(Rule).and(Rules)
-    .or(Rule)
-  .derive(Conjunctions)
-    .to(First_Conjunction).and(Conjunctions)
-  .derive(First_Conjunction)
-    .to(to,Symbol).and(Symbols)
-    .or(toNone)
-  .derive(Conjunctions)
-    .to(Conjunction).and(Conjunctions)
-    .orNone()
-  .derive(Conjunction)
-    .to(or,Symbol).and(Symbols)
-    .orNone()
-  .derive(Symbols)
-    .toNone()
-    .or(and, Symbol).and(Symbols)
-  .derive(Symbol)
-    .to(Verb)
-    .or(Verb,Noun)
-    .or(Variable)
-  .derive(Footer)
-    .to(go)
-.go();
- 
-\end{filecontents*}
-\begin{filecontents*}{fajita-nouns.fragment}
-enum BNFVariables implements Variable {
-  BNF, Header, Body, Footer,
-  Terminals, Variables, Start,
-  Rules,Rule,Conjunctions, Extra_Conjunctions,
-  First_Conjunction, Extra_Conjunction, Symbol_Sequence,
-  Symbol, Variable, Noun;
-}
-\end{filecontents*}
-\begin{filecontents*}{fajita-verbs.fragment}
-enum BNFTerminals implements Terminal {
-  toNone,orNone,go,// No parameters
-  start,derive // One parameter
-  with, // One parameter, overloaded
-  or,and,to, // One parameter (or more), overloaded, variadic
-  ;
-\end{filecontents*}
-\begin{filecontents*}{fajita-verbs-nouns.fragment}
-.to(male)
-.to(with, Terminal.class)
-.to(with, Variable.class)
-.to(start, Variable)
-\end{filecontents*}
-\begin{filecontents*}{jOOQ.java.fragment}
-create
-  .select(AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME, count())
-  .from(AUTHOR)
-  .join(BOOK).on(AUTHOR.ID.equal(BOOK.AUTHOR_ID))
-  .where(BOOK.LANGUAGE.eq("DE"))
-  .and(BOOK.PUBLISHED.gt(date("2008-01-01")))
-  .groupBy(AUTHOR.FIRST_NAME, AUTHOR.LAST_NAME)
-  .having(count().gt(5))
-  .orderBy(AUTHOR.LAST_NAME.asc().nullsFirst())
-  .limit(2)
-  .offset(1);
-\end{filecontents*}
-\begin{filecontents*}{jOOQ-mini.java.fragment}
-.when(header(foo).isEqualTo("bar")).
-\end{filecontents*}
-\begin{filecontents*}{stringbuilder-example.fragment}
-String time(int hours, int minutes, int seconds) {
-  return new StringBuilder()
-    .append(hours)
-    .append(':')
-    .append(minutes)
-    .append(':')
-    .append(seconds)
-    .toString();
-}
-\end{filecontents*}
-\begin{filecontents*}{toilette-generation.fragment}
-new BNF()
-  .with(ToiletteTerminals.class)
-  .with(ToiletteSymbols.class)
-  .start(Visitors)
-  .derive(Visitors).to(Down_Visitors)
-  .derive(Down_Visitors)
-    .to(Down_Visitor).and(Down_Visitors)
-    .or(Raising_Visitor).and(Up_Visitors)
-    .orNone()
-  .derive(Up_Visitors)
-    .to(Up_Visitor).and(Up_Visitors)
-    .or(Lowering_Visitor).and(Down_Visitors)
-    .orNone()
-  .derive(Up_Visitor).to(male).and(urinate)
-  .derive(Down_Visitor)
-    .to(female).and(Action)
-    .or(male).and(defecate)
-  .derive(Raising_Visitor).to(male).and(raise).and(urinate)
-  .derive(Lowering_Visitor)
-    .to(female).and(lower).and(Action)
-    .or(male).and(lower).and(defecate)
-  .derive(Activity)
-    .to(urinate)
-    .or(defecate)
-  .go();
- 
-\end{filecontents*}
-\begin{filecontents*}{toilette-terminals.fragment}
-enum ToiletteTerminals implements Terminal {
-  male, female,
-  urinate, defecate,
-  lower, raise;
-}
-\end{filecontents*}
-\begin{filecontents*}{toilette-variables.fragment}
-enum ToiletteVariables implements Variable {
-  Visitors, Down_Visitors, Up_Visitors,
-  Up_Visitor, Down_Visitor,
-  Lowering_Visitor, Raising_Visitor,
-  Activity
-};
-\end{filecontents*}
- \begin{document}
-
+\begin{document}
 
 \maketitle
 \hfill
@@ -1397,19 +240,19 @@ However, there is a software artifact (fluflu\urlref{https://github.com/verhas/f
     of a given finite automaton.
  
 \textbf{Outline.} \small
-\Cref{section:fluent} is a brief reminder of method chaining,
+\Cref{section:fluent} is a brief reminder of method chaining, 
   and fluent APIs, accompanied a discussion of how this work is related to type states.
-It is followed by a similar reminder of context-free languages, pushdown automata,
+It is followed by a similar reminder of context-free languages, pushdown automata, 
   and such in \cref{section:pushdown}.
-Based on the vocabulary established this far,
+Based on the vocabulary established this far, 
   the main result is stated in~\cref{section:result}.
-
-Towards the proof in \cref{section:proof}, \cref{section:toolkit}
-  shows idioms and techniques for encoding computation with  
+  
+Towards the proof in \cref{section:proof}, \cref{section:toolkit} 
+  shows idioms and techniques for encoding computation with    
   the \Java type-checker.
-\Cref{section:jump} makes use of these for encoding
+\Cref{section:jump} makes use of these for encoding 
   ``jump-stack'', a non-trivial data-structure,
-  which is used, with suitable modifications, in the proof.
+  which is used, with suitable modifications, in the proof. 
 
 In \cref{section:applicability}, we discuss the challenges in
   translating the proof into a compiler-compiler for fluent APIs.
@@ -1656,7 +499,7 @@ Equivalently, \emph{DCFG languages} (deterministic context-free grammar language
 The set of DCFG languages is still a proper superset of regular languages,
   but a proper subset of CFG languages.
  
-\section{Statement of the Main Result}
+\section{Statement of the Main Result} 
 \label{section:result}
 Let~$\textsf{java}$ be a function that translates a terminal~$σ∈Σ$
 into a call to a uniquely named function (with respect to~$σ$).
@@ -1771,13 +614,15 @@ We argue that~$g$ can
       and automatically extracted, omitting headers and footers,
     from \Java programs that compile correctly with a \Java 8 compiler.}
 
-\ReplaceInThesis{\begin{figure}[hbt]
+\ReplaceInThesis{
+\begin{figure}[hbt]
   \caption[Type encoding of partial unary function]{\label{Figure:unary-function}    Type encoding of partial function~$g:Γ↛Γ$,
     defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
   }
   \begin{tabular}{@{}c@{}c@{}c@{}}
     \hspace{-7ex}
     \parbox[c]{0.26\linewidth}{      \begin{tikzpicture}
+
 \usetikzlibrary{calc}
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=3ex,minimum width=7ex,rectangle ,rounded corners,level distance=10ex]
 \graph [tree layout] {"\cc{$\Gamma'$}"[concept],
@@ -1790,8 +635,11 @@ We argue that~$g$ can
 } -> "\cc{$\Gamma'.\Gamma$}",
 "\cc{$\Gamma'$.\currency}"}-> 
 	"\cc{$\Gamma'$}", 
+ 
 };
 \end{tikzpicture}
+
+
      }    &
     \hspace{-1ex}
     \parbox[c]{0.64\linewidth}{      \javaInput[]{gamma.listing}
@@ -1802,11 +650,13 @@ We argue that~$g$ can
 \textbf{(a)} type hierarchy & \textbf{(b)} implementation & \hspace{-62ex} \textbf{(c)} use cases
   \end{tabular}
 \end{figure}
-}{\begin{figure}[hbt]
+}{
+\begin{figure}[hbt]
   \caption[Type hierarchy of partial unary function]{\label{Figure:unary-function-a}    Type hierarchy of partial function~$g:Γ↛Γ$,
     defined by~$Γ=❴γ₁,γ₂❵$,~$g(γ₁)=γ₂$ and~$g(γ₂)=⊥$.
   }\centering
       \begin{tikzpicture}
+
 \usetikzlibrary{calc}
 \tikzstyle{concept}=[,text=red!50,font=,  text centered, rectangle,inner sep=4pt,fill=yellow!50,outer sep=2pt,minimum height=3ex,minimum width=7ex,rectangle ,rounded corners,level distance=10ex]
 \graph [tree layout] {"\cc{$\Gamma'$}"[concept],
@@ -1819,21 +669,26 @@ We argue that~$g$ can
 } -> "\cc{$\Gamma'.\Gamma$}",
 "\cc{$\Gamma'$.\currency}"}-> 
 	"\cc{$\Gamma'$}", 
+ 
 };
 \end{tikzpicture}
+
+
  \end{figure}
 \begin{figure}[hbt]
-  \caption[Type encoding of partial unary function]{    Type encoding of partial function defined in \cref{Figure:unary-function-a}
+  \caption[Type encoding of partial unary function]{\label{Figure:unary-function-b}    Type encoding of partial function defined in \cref{Figure:unary-function-a}
   }
-  \label{Figure:unary-function-b}      \javaInput[minipage,width=\linewidth]{gamma.listing}
+      \javaInput[minipage,width=\linewidth]{gamma.listing}
 \end{figure}
 \begin{figure}[hbt]
-  \caption[Use cases of partial unary function]{    Use cases of partial function defined in \cref{Figure:unary-function-a}
+  \caption[Use cases of partial unary function]{\label{Figure:unary-function-c}    Use cases of partial function defined in \cref{Figure:unary-function-a}
   }
-  \label{Figure:unary-function-c}      \javaInput[minipage,width=\linewidth]{gamma-example.listing}
+      \javaInput[minipage,width=\linewidth]{gamma-example.listing}
 \end{figure}
-}
 
+
+
+}
 The type hierarchy depicted in~\cref{Figure:unary-function\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{} shows five classes:
 Abstract class~\cc{Γ}~†{Remember that \Java admits Unicode characters in identifier names} represents the set~$Γ$, final classes~\cc{γ1},~\cc{γ2}
   that extend~\cc{$Γ$}, represent the actual members of the set~$Γ$.
@@ -1886,7 +741,8 @@ A \Java type encoding of this definition of function~$f$
 is in~\cref{Figure:simple-binary\ReplaceInThesis{}{-a}}\ReplaceInThesis{(a)}{}; use cases
 are in~\cref{Figure:simple-binary\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
 
-\ReplaceInThesis{\begin{figure}[hbt]
+\ReplaceInThesis{
+\begin{figure}[hbt]
   \caption[Type encoding of partial binary function]{\label{Figure:simple-binary}    Type encoding of partial binary function~$f:R⨉S↛Γ$,
     where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
     is specified by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$.}
@@ -1904,18 +760,18 @@ are in~\cref{Figure:simple-binary\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}.
       & \hspace{-5ex}\textbf{(b)} use cases⏎
   \end{tabular}
 \end{figure}
-}{\begin{figure}[hbt]
-  \caption[Type encoding of partial binary function]{    Type encoding of partial binary function~$f:R⨉S↛Γ$,
+}{
+\begin{figure}[hbt]
+  \caption[Type encoding of partial binary function]{\label{Figure:simple-binary-a}    Type encoding of partial binary function~$f:R⨉S↛Γ$,
     where~$R=❴r₁,r₂❵$,~$S=❴s₁,s₂❵$, and~$f$
     is specified by~$f(r₁,s₁)=γ₁$,~$f(r₁,s₂)=γ₂$,~$f(r₂,s₁)=γ₁$, and~$f(r₂, s₂)=⊥$
      (except for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2},
     found in \cref{Figure:unary-function-b}) }
-    \label{Figure:simple-binary-a}    \javaInput[minipage,width=\linewidth]{binary-function.listing}
+    \javaInput[minipage,width=\linewidth]{binary-function.listing}
 \end{figure}
 \begin{figure}[hbt]
-  \caption[Use cases of partial binary function]{    Use cases of partial binary function defined in \cref{Figure:simple-binary-a} 
+  \caption[Use cases of partial binary function]{\label{Figure:simple-binary-b}    Use cases of partial binary defined in \cref{Figure:simple-binary-a} 
   }
-    \label{Figure:simple-binary-b}
     \javaInput[minipage,left=-2ex,width=\linewidth]{binary-function-example.listing}
 \end{figure}
 }
@@ -1948,14 +804,16 @@ The encoding of sets of unbounded size require means for creating an unbounded
  number of types.
 Genericity can be employed to serve this end.
 
-\ReplaceInThesis{\begin{wrapfigure}[8]{r}{31ex}
+\ReplaceInThesis{
+\begin{wrapfigure}[8]{r}{31ex}
   \intextsep=0pt
   \caption{\label{Figure:id}  Covariant return type of function \cc{id()}
   with \Java generics.
   }
   \javaInput[,minipage,width=31ex]{id.listing}
 \end{wrapfigure}
-}{\begin{figure}[ht]
+}{
+\begin{figure}[ht]
   \caption{\label{Figure:id}    Covariant return type of function \cc{id()}
     with \Java generics.  }
   \javaInput[minipage,left=-2ex,width=\linewidth]{id.listing}
@@ -2020,7 +878,8 @@ Incidentally, \kk{static} field \cc{Stack.empty} is of type~\cc{E}.
 of type \cc{Stack} and its subtypes.
 \Cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}
 gives the implementation of these types.
-\ReplaceInThesis{\begin{figure}[!htb]
+\ReplaceInThesis{
+\begin{figure}[!htb]
   \caption{Type encoding of an unbounded stack data structure}
   \label{Figure:stack-encoding}
   \begin{tabular}{cc}
@@ -2034,6 +893,8 @@ gives the implementation of these types.
   {"\cc{Stack.E}","\cc{Stack.P<Top,Rest>}",  "\cc{Stack.\currency}", } ->"\cc{Stack<Rest>}",
 };
 \end{tikzpicture}
+
+
      } &
     \hspace{-3ex} \parbox[c]{63ex}{\javaInput[minipage,]{stack.listing}}⏎
     \textbf{(a)} type hierarchy &
@@ -2041,7 +902,8 @@ gives the implementation of these types.
     for classes~\cc{$Γ$},~\cc{$Γ'$},~\cc{$γ$1}, and~\cc{$γ$2}, which is in \cref{Figure:unary-function}).}
   \end{tabular}
 \end{figure}
-}{\begin{figure}[ht]
+}{
+\begin{figure}[ht]
   \caption{Type hierarchy of an unbounded stack data structure}
   \label{Figure:stack-encoding-a}
     \centering  \begin{tikzpicture}
@@ -2054,6 +916,8 @@ gives the implementation of these types.
   {"\cc{Stack.E}","\cc{Stack.P<Top,Rest>}",  "\cc{Stack.\currency}", } ->"\cc{Stack<Rest>}",
 };
 \end{tikzpicture}
+
+
  \end{figure}
 \begin{figure}[ht]
   \caption[Type encoding of an unbounded stack data structure]
@@ -2086,16 +950,17 @@ Since \Java forbids specialization of generics, in lieu we use covariant overloa
 return type (e.g., the return type of \cc{s2()} in \cref{Figure:simple-binary\ReplaceInThesis{}{-a}} and the
   return type of \cc{top()} in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}).
 
-\ReplaceInThesis{\begin{figure}
+\ReplaceInThesis{
+\begin{wrapfigure}[6]r{38ex}
   \caption{\label{Figure:generic} Covariance of parameters to generics}
   \javaInput[minipage,]{mammal.listing}
-\end{figure}
-}{  \begin{figure}[ht]
+\end{wrapfigure}
+}{
+  \begin{figure}[ht]
   \caption{\label{Figure:generic} Covariance of parameters to generics}
 \javaInput[minipage,left=-2ex,width=\linewidth]{mammal.listing}
 \end{figure}
 }
-
 \cref{Figure:generic} shows that a similar covariant change is possible 
   in extending a generic type.
 The type of the parameter \cc{M} 
@@ -2114,7 +979,7 @@ Overloading gives rise to a third idiom for partial emulation of conditionals, a
 \end{figure}
 
 The figure depicts type \cc{Peep} and overloaded versions of \cc{peep()} which 
-      together make it possible to extract the top of the stack.
+  together make it possible to extract the top of the stack.
 The first generic parameter to \cc{Peep} is the top of the stack, the second is the stack itself.
 Indeed, we see (l.11) that peeping into an empty stack, places a~\cc{?}
   in the first parameter, thanks to the first overloaded version of \cc{peep()} (l.2).
@@ -2140,10 +1005,12 @@ However, since \cc{Peep} is a type that receives~$τ$ as parameter,
  
 \section{The Jump-Stack Data-Structure}
 \label{section:jump}
-\ReplaceInThesis{\begin{figure}[ht]
+\ReplaceInThesis{
+\begin{wrapfigure}[19]{r}{44ex}
   \caption{Skeleton of type encoding for the jump-stack data structure}  \label{Figure:jump}  \javaInput[minipage,listing style=numbered]{jump-stack.listing}
-\end{figure}
-}{  \begin{figure}[ht]
+\end{wrapfigure}
+}{
+  \begin{figure}[ht]
   \caption{Skeleton of type encoding for the jump-stack data structure}  \label{Figure:jump}  \javaInput[minipage,listing style=numbered,width=\linewidth]{jump-stack.listing}
 \end{figure}
 }
@@ -2154,7 +1021,7 @@ A \emph{jump-stack} is a stack data structure whose elements are drawn from a fi
 
 \Cref{Figure:jump} shows the skeleton of type-encoding, in parameterized type \cc{JS},
   of a jump-stack whose elements are drawn from type~\cc{$Γ$}
-  (\ReplaceInThesis{\cref{Figure:unary-function}(b)}{\cref{Figure:unary-function-b}}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
+(\cref{Figure:unary-function-b}), i.e., either~\cc{$γ$1} or~\cc{$γ$2}.
 
 Just like \cc{Stack} (\cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}\ReplaceInThesis{(b)}{}), \cc{JS} takes
   a \cc{Rest} parameter encoding the type of a jump-stack after popping.
@@ -2180,11 +1047,13 @@ Two of the specializations are parameter-less and are
 e.g., after popping from \cc{JS.E}.
 The body of these two types is omitted here.
 
-\ReplaceInThesis{\begin{wrapfigure}[12]r{31ex}
+\ReplaceInThesis{
+\begin{wrapfigure}[11]r{31ex}
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=31ex,listing style=numbered]{jump-stack-push.listing}
 \end{wrapfigure}
-}{  \begin{figure}[ht]
+}{
+  \begin{figure}[ht]
   \caption{\label{Figure:jump-stack-push} Auxiliary type~\cc{Pʹ} encoding succinctly a non-empty jump-stack}
   \javaInput[minipage,width=\linewidth,listing style=numbered]{jump-stack-push.listing}
 \end{figure}
@@ -2224,11 +1093,13 @@ The third parameter to~$τ$ says that since \cc{$γ$1} was pushed the result
 The fourth parameter is \cc{J\_$γ$2} since a push of~$γ₁$ does not
   change the result of~$\textsf{jump}(γ_2)$.
 
-\ReplaceInThesis{\begin{wrapfigure}[12]r{42ex}
+\ReplaceInThesis{
+\begin{wrapfigure}[12]r{42ex}
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=42ex,left=-2ex]{jump-stack-example.listing}
 \end{wrapfigure}
-}{  \begin{figure}[ht]
+}{
+  \begin{figure}[ht]
   \caption{\label{Figure:jump-stack-example} Use cases for the~\cc{JS} type hierarchy}
   \javaInput[minipage,width=\linewidth,left=-2ex]{jump-stack-example.listing}
 \end{figure}
@@ -2247,7 +1118,7 @@ The type of \cc{\_3} is that state of the same stack
 \label{section:proof}
 On a first sight, the proof of \cref{Theorem:Gil-Levy} could follow the techniques
   sketched in \cref{section:toolkit} to type encode a DPDA (\cref{Definition:DPDA}).
-  The partial transition function~$δ$ may be type encoded as in \ReplaceInThesis{\cref{Figure:simple-binary}(a)}{\cref{Figure:simple-binary-a}},
+The partial transition function~$δ$ may be type encoded as in \cref{Figure:simple-binary-a},
 and the stack data structure of a DPDA can be encoded as in \cref{Figure:stack-encoding\ReplaceInThesis{}{-b}}.
 
 The techniques however fail with~$ε$-transitions,
@@ -2307,7 +1178,8 @@ Our proof relies on a special kind of realtime automata,
   an empty stack (either at the beginning of a step or on course of a \textsf{jump operation}).
 \end{Definition}
 
-\ReplaceInThesis{\begin{wraptable}r{36ex}
+\ReplaceInThesis{
+\begin{wraptable}r{36ex}
   \caption[Transition function of a jDPDA]
   {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
   \begin{tabular}{c|ll}
@@ -2319,7 +1191,8 @@ $σ₃$ & \hfill$⊥$ & $\textsf{jump}(γ₁)$⏎
 $\$$ & \hfill$\textsf{accept}$ & $\textsf{reject}$⏎
   \end{tabular}
 \end{wraptable}
-}{  \begin{table}[ht]
+}{
+  \begin{table}[ht]
   \caption[Transition function of a jDPDA]
   {\label{Table:A} The transition function of a jDPDA~$A$,~$Σ=❴σ₁,σ₂,σ₃❵$,~$Γ=❴γ₁,γ₂❵$ where~$γ₁$ is the initial element}
   \centering
@@ -2413,13 +1286,15 @@ In~$A$ there are two of these:
 In~$A$, types \cc{C$γ$1} and \cc{C$γ$2} take three parameters;
 in general ‟Top of Stack" types take the aforementioned~$k+1$ parameters.
 
-\ReplaceInThesis{\begin{wrapfigure}[14]r{45ex}
+\ReplaceInThesis{
+\begin{wrapfigure}[14]r{45ex}
   \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
   \javaInput[minipage,left=-2ex,width=45ex]{proof.cases.listing}
 \end{wrapfigure}
-}{\begin{figure}[ht]
+}{
+\begin{figure}[ht]
   \caption[Use examples of the type encoding of the jDPDA]{\label{Figure:chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts()} type-check, while all lines in \cc{rejects()} do not type-check.}
@@ -2625,14 +1500,16 @@ Note, that the type parameters of the former types hasn't changed,
   since the model we are trying to implement, hasn't changed.
   These~$k+1$ parameters still suffice for our cause.
 
-\ReplaceInThesis{\begin{wrapfigure}[13]r{42ex}
+\ReplaceInThesis{
+\begin{wrapfigure}[13]r{42ex}
   \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
   cause type errors}
   \javaInput[minipage,width=42ex,left=-2ex]{prefix-proof.cases.listing}
 \end{wrapfigure}
-}{\begin{figure}[ht]
+}{
+\begin{figure}[ht]
   \caption{\label{Figure:prefix-chain} Accepting and non-accepting call chains with the
   type encoding of jDPDA~$A$ (as defined in \cref{Table:A}).
   All lines in \cc{accepts} type-check, and all lines in \cc{rejects}
@@ -2824,7 +1701,9 @@ This work suggests an orthogonal perspective, namely
     ranking of a new construct by its ability to recognize languages
     in the Chomsky hierarchy~\cite{Chomsky:1963}.
  
+
 \small
 \bibliography{gil}
+
 
 \end{document}

@@ -1,0 +1,115 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{yogi-lang}[2005/09/12 v0.6]
+\DeclareOption{terse}{\relax}
+\DeclareOption{verbose}{\relax}
+\ProcessOptions
+
+\RequirePackage{xspace}
+\providecommand\forceLTR{\ifdefined\setLTR\setLTR\else\relax\fi}
+\providecommand\ensureLR[1]{\ifdefined\LRE\LRE{#1}\else{#1}\fi}
+\newcommand{\@pl}[1]{\mbox{\textsc{\ensureLR{#1}}}\xspace}
+\newcommand\lang[1]{\@pl{#1}}
+
+\newcommand\NonCitingUseX[1]{\csname nocite#1\endcsname}
+\newcommand\NonCitingUse[1]{\NonCitingUseX{#1}\xspace}
+\newcommand\@IgnoreLanguageCitation[1]{%
+    \expandafter\gdef\csname#1\endcsname{\csname nocite#1\endcsname}%
+}
+\newcommand\StopLanguageCitation[1]{%
+\expandafter\gdef\csname#1\endcsname{\csname nocite#1\endcsname\xspace}%
+}
+
+
+\def\@LANG#1#2#3{%
+    \expandafter\gdef\csname nocite#1\endcsname{#3}% Define the base version, as e.g., \nociteJava
+    \expandafter\gdef\csname#1\endcsname{% First time invocation.
+        \NonCitingUseX{#1}\relax      % Invoke the base version.
+        \StopLanguageCitation{#1}\relax % Reset the definition for all future uses.
+         ~#2\relax                    % Append the citation.
+        \xspace
+    }%
+    \xspace
+}
+\newcommand\languageShape[1]{\textsc{#1}}
+\newcommand\NewLanguageCitation[2]{\@LANG{#1}{\textup{#2}}{\languageShape{#1}}}
+\newcommand\NewLangaugeCitationSpecial[3]{\@LANG{#1}{#2}{#3}}
+
+\DeclareOption{terse}{%
+\gdef\@LANG#1#2#3{%
+    \expandafter\gdef\csname nocite#1\endcsname{#3}% Define the base version, as e.g., \nociteJava
+    \expandafter\gdef\csname#1\endcsname{% First time invocation.
+        \NonCitingUseX{#1}\relax      % Invoke the base version.
+        \StopLanguageCitation{#1}\relax % Reset the definition for all future uses.
+        %~#2\relax                    % Append the citation.
+        \xspace
+    }%
+   \xspace
+}}
+
+\ProcessOptions
+\def\STOPLANGUAGECITATION{\def\langcite##1{}}
+\def\STARTLANGUAGECITATION{\def\langcite##1{\cite{##1}}}
+\STARTLANGUAGECITATION
+%Use alphabetical ordering
+\NewLanguageCitation{Go}{\langcite{Donovan:15}}
+\NewLangaugeCitationSpecial{AJEE}{\langcite{Cohen:Gil:04}}{\textsc{AspectJ2EE}}
+\NewLanguageCitation{Ada}{\langcite{Tucker:97}}
+\NewLanguageCitation{Bash}{}
+\NewLanguageCitation{BCPL}{\langcite{Richards:Whitby-Strevens:80}}
+\NewLanguageCitation{AspectJ}{\langcite{Kiczales:2001}}
+\NewLanguageCitation{AWK}{\langcite{Aho:Kernighan:Weinberger:Book:88}}
+\NewLanguageCitation{Basic}{}
+\NewLangaugeCitationSpecial{CPL}{\langcite{Kernighan:Ritchie:Book:88}}{C}
+\NewLangaugeCitationSpecial{CC}{\langcite{Stroustrup:Book:97}}{\mbox{C++}}
+\NewLanguageCitation{Cecil}{\langcite{Chambers:Cecil:93}}
+\NewLanguageCitation{Cilk}{\langcite{Blumofe:96}}
+\NewLanguageCitation{CLOS}{\langcite{CLOS}}
+\NewLanguageCitation{Cobol}{}
+\NewLanguageCitation{CommonLoops}{\langcite{Bobrow:Kahn:Kiczales:Masinter:Stefik:Zdybel:86}}
+\NewLangaugeCitationSpecial{CProlog}{\langcite{Shapiro:87}}{\textsc{Concurrent Prolog}}
+\NewLangaugeCitationSpecial{CSharp}{\langcite{Hejlsberg:Wiltamuth:Golde:03}}{\textsc{C}${}^{\#}$}
+\NewLanguageCitation{Datalog}{\langcite{Ceri:Gottlob:Tanca:90}}
+\NewLanguageCitation{Dylan}{\langcite{Dylan:Shalit:97}}
+\NewLanguageCitation{Eiffel}{\langcite{Eiffel:Reference:97}}
+\NewLanguageCitation{Fickle}{\langcite{Drossopoulou:Damiani:Ciancaglini:Giannini:01}}
+\NewLanguageCitation{Flavors}{\langcite{Moon:Flavors:86}}
+\NewLanguageCitation{MFOUR}{\langcite{M4}}
+\NewLanguageCitation{Fortran}{}
+\NewLanguageCitation{Haskell}{\langcite{Jones:03}}
+\NewLanguageCitation{Jam}{\langcite{Ancona:Lagorio:Zucca:03}}
+\NewLanguageCitation{Java}{\langcite{Arnold:Gosling:96}}
+\NewLanguageCitation{JavaDoc}{\langcite{Kramer:99}}
+\NewLanguageCitation{JavaScript}{\langcite{Flanagan:11}}
+\NewLanguageCitation{Kea}{\langcite{Kea}}
+\NewLanguageCitation{Lisp}{\langcite{Graham:95}}
+\NewLanguageCitation{Mathematica}{\langcite{mangano:10}}
+\NewLanguageCitation{Mesa}{}
+\NewLangaugeCitationSpecial{MFour}{\langcite{GNU:M4}}{\textsc{M4}}
+\NewLanguageCitation{MixGen}{\langcite{Allen:Bannet:Cartwright:03}}
+\NewLanguageCitation{ML}{\langcite{ml-spec:Milner:Tofte:Harper:MacQueen:97}}
+\NewLanguageCitation{Modula}{\langcite{Nelson:91}}
+\NewLanguageCitation{NextGen}{\langcite{Allen:Bannet:Cartwright:03}}
+\NewLanguageCitation{Occam}{\langcite{Jones:88}}
+\NewLanguageCitation{Oberon}{\langcite{Wirth:Reiser:Book:92}}
+\NewLanguageCitation{ObjectiveC}{\langcite{Cox:Book:Evolutionary:86}}
+\NewLanguageCitation{Pascal}{\langcite{Wirth:71}}
+\NewLanguageCitation{Perl}{\langcite{Perl:94}}
+\NewLangaugeCitationSpecial{PFour}{\langcite{Bosshart:14}}{\textsc{P4}}
+\NewLanguageCitation{PHP}{\langcite{Lerdorf:Tatroe:02}}
+\NewLangaugeCitationSpecial{PLI}{\langcite{Hughes:86}}{\textsc{PL/1}}
+\NewLanguageCitation{PolyGlot}{\langcite{PolyGlot}}
+\NewLanguageCitation{Prolog}{\langcite{Deransart:Cervoni:Ed-Dbali:96}}
+\NewLanguageCitation{Python}{\langcite{Lutz:96}}
+\NewLanguageCitation{Ruby}{\langcite{Thomas:Hunt:00}}
+\NewLanguageCitation{Scala}{\langcite{Odersky:Altherr:Cremet:Emir:Maneth:Micheloud:Mihaylov:Schinz:Stenman:Zenger:04}}
+\NewLanguageCitation{Scheme}{\langcite{Dickey:92}}
+\NewLanguageCitation{SED}{\langcite{ref:sed}}
+\NewLanguageCitation{Self}{\langcite{Ungar:Smith:87}}
+\NewLanguageCitation{Smalltalk}{\langcite{Goldberg:Book:84}}
+\NewLanguageCitation{Snobol}{\langcite{Griswold:Poage:Polonsky:Book:71}}
+\NewLanguageCitation{SQL}{}
+\NewLanguageCitation{Tcl}{\langcite{Ousterhout:90}}
+\NewLangaugeCitationSpecial{THETA}{\langcite{Liskov:al:95}}{\lang{Theta}}
+\NewLanguageCitation{XQuery}{\langcite{XQuery}}
+\NewLanguageCitation{APL}{\langcite{Iverson:62}}
+

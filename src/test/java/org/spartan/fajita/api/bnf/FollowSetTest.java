@@ -1,7 +1,6 @@
 package org.spartan.fajita.api.bnf;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;

@@ -92,22 +92,10 @@ public class JActionTable {
       return "s" + nextState.index;
     }
     @Override public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + nextState.getItems().hashCode();
-      return result;
+      return 1 * 31 + nextState.getItems().hashCode();
     }
-    @Override public boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      Shift other = (Shift) obj;
-      if (nextState != other.nextState)
-        return false;
-      return true;
+    @Override public boolean equals(final Object o) {
+      return o == this || o != null && getClass() == o.getClass() && nextState == ((Shift)o).nextState;
     }
   }
 

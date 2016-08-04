@@ -1,0 +1,14 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{yogi-lines}[2009/04/01 v0.1]
+\DeclareOption{terse}{}
+\DeclareOption{verbose}{}
+
+\ProcessOptions
+
+\newcommand\Label[1]{\label{line:#1}}
+\newcommand\Begin[1]{\Label{#1:begin}}
+\newcommand\End[1]{\Label{#1:end}}
+
+\newcommand\Line[1]{Line~\ref{line:#1}}
+\newcommand\lines[1]{lines~\ref{line:#1:begin}--\ref{line:#1:end}}
+\newcommand\Lines[1]{Lines~\ref{line:#1:begin}--\ref{line:#1:end}}

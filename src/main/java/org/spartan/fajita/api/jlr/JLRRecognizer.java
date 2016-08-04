@@ -62,15 +62,12 @@ public class JLRRecognizer {
   private void addJumpAction(final JState state, final Verb lookahead, final int label) {
     getActionTable().set(state, lookahead, new Jump(label));
   }
-  public Action actionTable(final JState state, final Verb lookahead) {
-    return getActionTable().get(state.index, lookahead);
+  public Action actionTable(final JState s, final Verb lookahead) {
+    return getActionTable().get(s.index, lookahead);
   }
   private JState generateInitialState() {
-    Set<JItem> initialItems = bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol) //
-        .stream().map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel().asNew()) //
-        .collect(Collectors.toSet());
-    Set<JItem> closure = calculateClosure(initialItems);
-    return new JState(closure, bnf, 0);
+    return new JState(calculateClosure(bnf.getRulesOf(SpecialSymbols.augmentedStartSymbol).stream()
+        .map(r -> new JItem(r, SpecialSymbols.$, labelsCount++).asKernel().asNew()).collect(Collectors.toSet())), bnf, 0);
   }
   private Set<JItem> calculateClosure(final Set<JItem> initialItems) {
     Queue<JItem> todo = new LinkedList<>(initialItems);
@@ -111,11 +108,14 @@ public class JLRRecognizer {
           continue;
         JState nextState = generateNextState(state, lookahead, $.size());
         int existingIndex = $.indexOf(nextState);
-        if (existingIndex == -1) { // a non existing new state
+        // a non existing new state
+        // an already existing new state
+        if (existingIndex != -1)
+          nextState = $.get(existingIndex);
+        else {
           todo.add(nextState);
           $.add(nextState);
-        } else // an already existing new state
-          nextState = $.get(existingIndex);
+        }
         state.addGotoTransition(lookahead, nextState);
       }
     }
@@ -144,18 +144,19 @@ public class JLRRecognizer {
   }
   private Set<Symbol> legalSymbols() {
     Set<Symbol> notAllowed = new HashSet<>();
-    Set<Symbol> symbols = new HashSet<>();
-    symbols.addAll(bnf.getNonTerminals());
-    symbols.addAll(bnf.getVerbs());
-    symbols.removeAll(notAllowed);
-    return symbols;
+    Set<Symbol> $ = new HashSet<>();
+    $.addAll(bnf.getNonTerminals());
+    $.addAll(bnf.getVerbs());
+    $.removeAll(notAllowed);
+    return $;
   }
   @Override public String toString() {
+    if (a && b)
+      f();
     String $ = "States:" + System.lineSeparator();
     for (JState state : states)
       $ += state.extendedToString() + System.lineSeparator();
-    $ += getActionTable().toString();
-    return $;
+    return $ += getActionTable().toString();
   }
   public List<JState> getStates() {
     return states;

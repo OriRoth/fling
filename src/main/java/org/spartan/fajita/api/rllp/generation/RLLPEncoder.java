@@ -85,14 +85,14 @@ public class RLLPEncoder {
       return instanciateNextItem(i);
     final Action action = rllp.predict(i, v);
     switch (action.type()) {
+      default:
+        throw new IllegalStateException();
       case ACCEPT:
         return returnTypeOfAccept();
       case JUMP:
-        return returnTypeOfJump((Action.Jump) action);
+        return returnTypeOfJump((Action.Jump)action);
       case PUSH:
-        return returnTypeOfPush((Action.Push) action);
-      default:
-        throw new IllegalStateException();
+        return returnTypeOfPush((Action.Push)action);
     }
   }
   private static TypeName returnTypeOfAccept() {
