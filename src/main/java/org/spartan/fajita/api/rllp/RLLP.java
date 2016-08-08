@@ -6,7 +6,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFAnalyzer;
