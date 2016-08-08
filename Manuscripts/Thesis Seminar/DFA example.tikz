@@ -13,6 +13,7 @@
 				(q0) edge[below] node {b} (q1)
 				(q1) edge[below,loop above,distance= 2ex] node {b} (q1)
 				(q1) edge[below] node {c} (q2)
-				(q2) edge[below,loop above,distance= 2ex] node {c} (q2);
+				(q2) edge[below,loop above,distance= 2ex] node {c} (q2)
+				(q0) edge[below,loop below,distance= 2ex] node {c} (q2);
 \draw[<-] (q0) -- node[below left] {start} (-5ex,4ex);
 \end{tikzpicture}
