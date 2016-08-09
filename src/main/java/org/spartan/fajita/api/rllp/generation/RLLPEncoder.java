@@ -51,19 +51,20 @@ public class RLLPEncoder {
       itemTypes.put(i, encodeItem(i));
   }
   private Collection<Item> filterItems(List<Item> items) {
+    //TODO: filter unreachable items 
     return items;
   }
   private TypeSpec encodeItem(Item i) {
-    final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(i.rule.lhs);
-    final Collection<Verb> firstOfItem = rllp.analyzer.firstSetOf(i);
-    final TypeSpec.Builder itemType = TypeSpec.classBuilder(itemTypeName(i)) //
+    final Collection<Verb> follow = rllp.analyzer.followSetWO$(i.rule.lhs);
+    final Collection<Verb> first = rllp.analyzer.firstSetOf(i);
+    final TypeSpec.Builder encoding = TypeSpec.classBuilder(itemTypeName(i)) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
-        .addMethods(map(firstOfItem).with(v -> methodOf(i, v)));
-    if (rllp.analyzer.isNullable(i))
-      itemType.addMethods(map(rllp.analyzer.followSetOf(i.rule.lhs)).with(v -> methodOf(i, v)));
-    if (!followOfItem.isEmpty())
-      itemType.addTypeVariables(map(followOfItem).with(v -> typeArg(v)));
-    return itemType.build();
+        .addMethods(map(first).with(v -> methodOf(i, v)));
+    if (rllp.analyzer.isSuffixNullable(i))
+      encoding.addMethods(map(rllp.analyzer.followSetOf(i.rule.lhs)).with(v -> methodOf(i, v)));
+    if (!follow.isEmpty())
+      encoding.addTypeVariables(map(follow).with(v -> typeArg(v)));
+    return encoding.build();
   }
   private MethodSpec methodOf(Item i, Verb v) {
     final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //

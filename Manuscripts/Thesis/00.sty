@@ -11,12 +11,12 @@
 \passOptions{gnuplottex}{subfolder} 
 \passOptions{hyperref}{colorlinks=true,final,allcolors=blue,breaklinks,draft=false} % hyperlinks, including DOIs and URLs in bibliography
 \passOptions{lmodern}{lighttt}
+\passOptions{pdfpages}{final}
 \passOptions{xcolor} {usenames, dvipsnames, table}
 \passOptions{yogi-algorithm}{terse}
 
 % Vim: +,/^\s*$/-1!sort -u
 \usepackage{adjustbox} % Easy size adjustment of tables and figures.
-\usepackage{geometry}
 \usepackage{amsfonts} % AMS fonts
 \usepackage{amsmath} % AMS Mathematics
 \usepackage{amssymb} % Load more math symbols
@@ -29,14 +29,16 @@
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{fontspec}
+\usepackage{geometry}
 \usepackage{gnuplottex}
 \usepackage{graphicx}
 \usepackage{hyperref,cleveref}
 \usepackage{lipsum}
-\usepackage{listings}
 \usepackage{listingsutf8}
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{nth}
+\usepackage{pdfpages}
 \usepackage{pifont}
 \usepackage{quoting}
 \usepackage{syntax}
@@ -212,3 +214,18 @@
 % N.B.: floatpagefraction MUST be less than topfraction !!
 \renewcommand{\dblfloatpagefraction}{0.8} % require fuller float pages
 % remember to use [htp] or [htpb] for placement
+
+
+\makeatletter
+\newcommand*{\cleartoleftpage}{%
+  \clearpage
+    \if@twoside
+    \ifodd\c@page
+      \hbox{}\newpage
+      \if@twocolumn
+        \hbox{}\newpage
+      \fi
+    \fi
+  \fi
+}
+\makeatother

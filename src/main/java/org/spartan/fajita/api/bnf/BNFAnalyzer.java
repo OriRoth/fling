@@ -93,7 +93,7 @@ public class BNFAnalyzer {
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
-  public boolean isNullable(final Item i) {
+  public boolean isSuffixNullable(final Item i) {
     return isNullable(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size()));
   }
   public Collection<Verb> firstSetOf(final Symbol... expression) {

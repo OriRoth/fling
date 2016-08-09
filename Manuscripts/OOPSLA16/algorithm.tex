@@ -112,7 +112,7 @@ in~\cref{algorithm:rll-parser}.
     \STATE{$\Function push(I₁, …, I_ℓ)$} \COMMENT{note, this is a single push operation}
       \CONTINUE\COMMENT{restart with a somewhat deeper stack}
     \FI
-    \STATE{\textbf{assert}~$a$ represents a jump} \COMMENT{$t$ indicates that~$Y \stackrel*⇒ε$}
+    \STATE{\textbf{assert}~$a$ represents a jump} \COMMENT{$t$ indicates that~$Yβ\stackrel*⇒ε$}
     \STATE{$\Function jump(t)$}\COMMENT{pop this, potentially other items}
   \end{algorithmic}
 \end{algorithm}
@@ -209,7 +209,7 @@ Upon jumping to a deep dictionary~$dᵢ$, our generalized~$D$ must be able to do
 a constant time jumps in all stacks in~$s(dᵢ)$.
 
 For this to happen we equip each~$dᵢ$ in the stack~$S₁$ with the correct jump
-pointers into the these stacks.
+pointers into these stacks.
 The value of these jump pointers is set as the top pointers of stacks~$s(t)$ at
 the time~$dᵢ$ was pushed into~$D$.
 
@@ -254,11 +254,11 @@ Before the algorithm for coordinating stacks~$S₀$ and~$S₁$
   to be discussed.
 This problem combines both~$k'$ and~$k^*$ problems.
 
-Consider the legal string \[ s = \cc{program id ; label ; begin end} \] derived
+Consider the legal string \[ s = \cc{program id ; const ; begin end} \] derived
 from the \Pascal BNF fragment (\cref{figure:running}), representing a program
 with no parameters, a single definition of a constant, and a body.
 
-During the \RLLp's parse of~$s$, just after parsing the prefix \cc{program id ; label ;}
+During the \RLLp's parse of~$s$, just after parsing the prefix \cc{program id ; const ;}
 and before reading \cc{begin}, the state of the items stack~$S₀$ is
 \[ \ReplaceInThesis{\scriptsize}{}
   \begin{array}{ll}
@@ -279,8 +279,9 @@ After reading the next input symbol \cc{begin}, the state of the stack ought to 
   \text{.}
 \]
 
-Breaking down the steps a non-realtime \LLp would perform while reading the input symbol \cc{begin}
-we get three steps:
+Breaking down the steps, a non-realtime \LLp would perform three steps before
+reading the input symbol \cc{begin}:
+
 \begin{description}
 
   \item[Popping] since the item at the top of the stack was fully parsed, and
@@ -406,13 +407,13 @@ by~\cref{algorithm:coordination} on our running example defined in \cref{figure:
   \let\oldCc=\cc
   \def\cc#1{{\text{{\scriptsize\oldCc{#1}}\~}}}
   \ReplaceInThesis{\begin{tabular}{m{0.45\linewidth} | >{\centering}m{0.1\linewidth} | m{0.45\linewidth}}}
-  {\begin{tabular}{m{0.50\linewidth} | >{\centering}m{0.12\linewidth} | m{0.43\linewidth}}} 
+  {\begin{tabular}{m{0.50\linewidth} | >{\centering}m{0.12\linewidth} | m{0.43\linewidth}}}
      \toprule
      \normalsize Item~$i$ & \normalsize Terminal~$t$ & \normalsize~$\Function Jumps(i)[t]$ \hfill⏎
      \midrule
 $[\<Program> ::= \cc{program} \~\cc{id} \<Parameters> \cc{;} \!\! · \<Definitions> \<Body> ]$&
 \cc{begin} &
-$ [ \<Body> ::= \cc{begin}·\~\cc{end} ]$ \newline~$[\<Program> ::= \cc{program} \~ \cc{id} \<Parameters> \cc{;} \<Definitions> · \~\<Body> ]$
+$ [ \<Body> ::= \cc{begin}·\~\cc{end} ]$ \newline~$[\<Program> ::= \cc{program} \~\cc{id} \<Parameters> \cc{;} \<Definitions> · \~\<Body> ]$
      \hfill⏎
 $ [ \<Constants> ::= \cc{const} · \<Constant> \<MoreConstants> ]$ &
 \cc{;} &
@@ -427,19 +428,19 @@ $⊥$
 \ReplaceInThesis{\end{table*}}{\end{table}}
 
 The first row of~\cref{table:running-coordination} shows that in case
-\<Program>'s item will be pushed to~$S_0$, the matching push to~$S_1$ will hold
-a jump option on terminal~\cc{begin}, because \cc{begin} is in $\Function
+\<Program>'s item will be pushed to~$S₀$, the matching push to~$S₁$ will hold
+a jump option on terminal~\cc{begin}, because \cc{begin} is in~$\Function
 First(\<Body>)$, this jump operation will conclude by pushing the two items
 in~$\Function Consolidate(i,t)$ to the stack.
 
 The second row demonstrates a similar idea, where if the parse of \<Constant>
 concludes by seeing the terminal \cc{;}, the state of the stack should be
-changed to the state in which \cc{;} was matched ; $\Function
-Consolidate(\cdot,\cdot)$ concludes this state.
+changed to the state in which \cc{;} was matched ;~$\Function
+Consolidate(·,·)$ concludes this state.
 
 The last example in \cref{table:running-coordination} shows that in case a
 terminal~$t$ is not in \[ \Function First(\<Labels> \<Constants> \<Nested>)\]
-(the string following the input item's dot), then the dictionary~$d_i$
+(the string following the input item's dot), then the dictionary~$dᵢ$
 that~$\Function Jumps(i)$ returns, has no mapping for~$t$.
 
 \subsection{Consolidating Push Operations}
@@ -564,12 +565,12 @@ result (the third in the table) is the input item itself, the reason is that
 the rule is currently being parsed when the dot precedes~$\<MoreConstants>$
 because it is yet to be fully parsed.
 
-Upon seeing nonterminal~$\<MoreConstants>$ and terminal~``\cc{;}'' the \LLp would
+Upon seeing nonterminal~$\<MoreConstants>$ and terminal~‟\cc{;}” the \LLp would
 choose rule\[
   \<MoreConstants> ::= \<Constant> \, \<MoreConstants>,
 \] and thus it is added to the result with a dot at the beginning of the rule's right-hand
 side(again, because at this time nothing of the rule was parsed). Now a similar
-decision based on the \LLp's prediction table rule~\[
+decision based on the \LLp's prediction table rule\[
   \<Constant> ::= \cc{;}
 \]
 is chosen. Since this rule revealed the terminal\cc{;} that will match the
@@ -596,7 +597,7 @@ Therefore, the core of the \RLLp generator is
 \begin{algorithm}
   \caption{\label{algorithm:main}
     Compute contents of prediction table (transition function) entry~$Δ[i,t]$
-  for all item~$i∈I$, token~$t ∈Σ$ pairs for which this entry is defined.  }
+  for all item~$i∈I$, token~$t ∈Σ$ pairs for which this entry is defined. }
 
   \begin{algorithmic}
     \FOR[for each item]{$i∈I$}
