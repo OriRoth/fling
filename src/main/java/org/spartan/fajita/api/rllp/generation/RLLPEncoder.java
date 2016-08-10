@@ -28,7 +28,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-public class RLLPEncoder {
+@SuppressWarnings("restriction") public class RLLPEncoder {
   private RLLP rllp;
   private Map<Item, TypeSpec> itemTypes;
   private TypeSpec enclosing;
@@ -50,7 +50,7 @@ public class RLLPEncoder {
     for (Item i : filterItems(items))
       itemTypes.put(i, encodeItem(i));
   }
-  private Collection<Item> filterItems(List<Item> items) {
+  private static Collection<Item> filterItems(List<Item> items) {
     //TODO: filter unreachable items 
     return items;
   }

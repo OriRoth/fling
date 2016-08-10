@@ -1,7 +1,13 @@
 package org.spartan.fajita.api;
 
-import static org.spartan.fajita.api.Main.NT.*;
-import static org.spartan.fajita.api.Main.Term.*;
+import static org.spartan.fajita.api.Main.NT.A;
+import static org.spartan.fajita.api.Main.NT.B;
+import static org.spartan.fajita.api.Main.NT.C;
+import static org.spartan.fajita.api.Main.NT.D;
+import static org.spartan.fajita.api.Main.NT.S;
+import static org.spartan.fajita.api.Main.Term.a;
+import static org.spartan.fajita.api.Main.Term.b;
+import static org.spartan.fajita.api.Main.Term.c;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -139,13 +145,22 @@ public class Main {
   }
 
   static BNF testBNF() {
-    return new BNFBuilder(Term.class, NT.class) //
+    // return PascalFragment.buildBNF();
+    return new BNFBuilder(Term.class, NT.class)//
         .start(S) //
-        .derive(S).to(A).and(D) //
-        .derive(A).to(B) //
-        .derive(B).to(C).and(b) //
-        .derive(C).to(c).orNone() //
-        .derive(D).to(d) //
+        .derive(A).to(a).and(A).orNone() //
+        .derive(S).to(A).and(B)
+        .derive(B).to(c) //
+        .derive(C).toNone() //
+        .derive(D).toNone() //
         .go();
+    // return new BNFBuilder(Term.class, NT.class) //
+    // .start(S) //
+    // .derive(S).to(A).and(D) //
+    // .derive(A).to(B) //
+    // .derive(B).to(C).and(b) //
+    // .derive(C).to(c).orNone() //
+    // .derive(D).to(d) //
+    // .go();
   }
 }

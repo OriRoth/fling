@@ -41,7 +41,7 @@ public class Verb implements Terminal, Comparable<Verb> {
     return true;
   }
   @Override public int hashCode() {
-    final int prime = 31;
+    final int prime = 19;
     int result = 1;
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + ((type == null) ? 0 : type.hashCode());

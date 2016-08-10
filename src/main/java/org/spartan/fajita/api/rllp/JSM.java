@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   Deque<Map<Verb, JSM>> S1;
   private Collection<Verb> verbs;
   private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
+  private Hashtable<SimpleEntry<JSM,Item>,JSM> alreadySeen;
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
     this.verbs = new ArrayDeque<>(verbs);
@@ -24,11 +26,13 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     this.jumpsTable = jumpsTable;
     S0 = new ArrayDeque<>();
     S1 = new ArrayDeque<>();
+    this.alreadySeen = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
     this(fromJSM.verbs, fromJSM.jumpsTable);
     fromJSM.S0.descendingIterator().forEachRemaining(i -> S0.addFirst(i));
     fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
+    alreadySeen = fromJSM.alreadySeen;
   }
   public JSM deepCopy() {
     return new JSM(this);
@@ -49,7 +53,16 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     S1.removeFirst();
     return S0.removeFirst();
   }
+  /**
+   * Pushes item i to S0 and coordinates S1 stack.
+   * @param i
+   */
   public void push(Item i) {
+//    JSM existingJSM = alreadySeen.get(new SimpleEntry<>(this,i));
+//    if (existingJSM != null){
+//      System.out.println("Recursion found!!!!");
+//      load(existingJSM);
+//    }
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
       JSM copy = deepCopy();
@@ -96,4 +109,50 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v))).filter(e -> e.getValue() != null)//
         .collect(Collectors.toList()).iterator();
   }
+
+  /**
+   * hashCode() and equals() functions use S0 field only.
+   * ("jumpsTable" and "verbs" are only used to determine the same BNF is used).
+   * I believe that the JSM is uniquely determined * by S0,
+   * as S1 is internally handled inside the implementation 
+   * of "push()" according to the "jumps" table.
+   */
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((S0 == null) ? 0 : S0.hashCode());
+    result = prime * result + ((jumpsTable == null) ? 0 : jumpsTable.hashCode());
+    result = prime * result + ((verbs == null) ? 0 : verbs.hashCode());
+    return result;
+  }
+  /**
+   * 
+   * @see JSM#hashCode()
+   */
+  @Override public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    JSM other = (JSM) obj;
+    if (S0 == null) {
+      if (other.S0 != null)
+        return false;
+    } else if (!S0.equals(other.S0))
+      return false;
+    if (jumpsTable == null) {
+      if (other.jumpsTable != null)
+        return false;
+    } else if (!jumpsTable.equals(other.jumpsTable))
+      return false;
+    if (verbs == null) {
+      if (other.verbs != null)
+        return false;
+    } else if (!verbs.equals(other.verbs))
+      return false;
+    return true;
+  }
+  
 }
