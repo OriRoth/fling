@@ -38,9 +38,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     return new JSM(this);
   }
   /**
-   * 
-   * @param loadFrom
-   *          the JSM the is loaded into ``this'' instance.
+   * @param loadFrom the JSM the is loaded into ``this'' instance.
    */
   private void load(JSM loadFrom) {
     S0 = loadFrom.S0;
@@ -63,23 +61,28 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
 //      System.out.println("Recursion found!!!!");
 //      load(existingJSM);
 //    }
+    S0.addFirst(i);
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
-      JSM copy = deepCopy();
       // This is the push after jump
-      final Deque<Item> nextConsolidate = jumpsTable.get(i).get(v);
-      nextConsolidate.descendingIterator()//
-          .forEachRemaining(toPush -> copy.push(toPush));
-      partMap.put(v, copy);
+      JSM nextConfiguration = nextConfiguration(jumpTable(i, v));
+      partMap.put(v, nextConfiguration);
     }
     S1.addFirst(partMap);
-    S0.addFirst(i);
+  }
+  private Deque<Item> jumpTable(Item i, Verb v) {
+    return jumpsTable.get(i).get(v);
+  }
+  private JSM nextConfiguration(Deque<Item> deque) {
+    final JSM $ = deepCopy();
+    deque.descendingIterator()//
+        .forEachRemaining((Item i)-> $.push(i));
+    return $;
   }
   /**
    * Jumps to using v's jump stack, returning the result JSM.
    * 
-   * @param v
-   *          the jump stack used
+   * @param v the jump stack used
    */
   public JSM dryJump(Verb v) {
     JSM dest = findJump(v);
@@ -99,8 +102,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   /**
    * Jumps to using v's jump stack, changing the state of the JSM accordingly.
    * 
-   * @param v
-   *          the jump stack used
+   * @param v the jump stack used
    */
   public void jump(Verb v) {
     load(dryJump(v));
