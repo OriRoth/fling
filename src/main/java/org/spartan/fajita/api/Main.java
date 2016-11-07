@@ -22,7 +22,8 @@ public class Main {
   static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class)//
         .start(S) //
-        .derive(S).to(a).and(a).and(S).or(b) //
+        .derive(S).to(a).and(a).and(S)//
+        .or(b) //
         .go();
   }
   public static void apiGenerator(BNF bnf) throws IOException {
@@ -32,7 +33,7 @@ public class Main {
         new File("/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/" + filename + ".java"))) {
       fos.write(code.getBytes(), 0, code.getBytes().length);
       fos.close();
-      System.out.println(filename);
+      System.out.println(filename+" written successfully");
     }
   }
 
