@@ -1,8 +1,8 @@
 package org.spartan.fajita.api;
 
-import static org.spartan.fajita.api.Main.NT.*;
+import static org.spartan.fajita.api.Main.NT.S;
 import static org.spartan.fajita.api.Main.Term.a;
-import static org.spartan.fajita.api.Main.Term.c;
+import static org.spartan.fajita.api.Main.Term.b;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,10 +22,7 @@ public class Main {
   static BNF testBNF() {
     return new BNFBuilder(Term.class, NT.class)//
         .start(S) //
-        .derive(A).to(a).and(A).orNone() //
-        .derive(S).to(A).and(B).derive(B).to(c).and(C) //
-        .derive(C).to(c)// .and(c).and(C).or(b) //
-        .derive(D).toNone() //
+        .derive(S).to(a).and(a).and(S).or(b) //
         .go();
   }
   public static void apiGenerator(BNF bnf) throws IOException {
@@ -37,16 +34,13 @@ public class Main {
       fos.close();
       System.out.println(filename);
     }
-    // lrAutomatonVisualisation(bnf);
-    // JavaFile fluentAPI = ApiGenerator.generate(bnf);
-    // System.out.println(fluentAPI.toString());
   }
 
   static enum Term implements Terminal {
-    a, b, c, d;
+    a, b
   }
 
   static enum NT implements NonTerminal {
-    S, A, B, C, D
+    S
   }
 }

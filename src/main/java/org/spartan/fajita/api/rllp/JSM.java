@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.rllp.JSM.Pair;
 
-public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
+public class JSM implements Iterable<Pair<Verb, JSM>> {
   Deque<Item> S0;
   Deque<Map<Verb, JSM>> S1;
   private Collection<Verb> verbs;
   private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
-  private Hashtable<SimpleEntry<JSM,Item>,JSM> alreadySeen;
+  private Hashtable<Pair<Deque<Item>, Item>, JSM> alreadySeen;
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
     this.verbs = new ArrayDeque<>(verbs);
@@ -53,14 +54,17 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   }
   /**
    * Pushes item i to S0 and coordinates S1 stack.
+   * 
    * @param i
    */
   public void push(Item i) {
-//    JSM existingJSM = alreadySeen.get(new SimpleEntry<>(this,i));
-//    if (existingJSM != null){
-//      System.out.println("Recursion found!!!!");
-//      load(existingJSM);
-//    }
+    JSM existingJSM = alreadySeen.get(new Pair<>(S0, i));
+    if (existingJSM != null) {
+      System.out.println("Recursion found!!!!");
+      load(existingJSM);
+      return;
+    }
+    alreadySeen.put(new Pair<>(S0, i), this);
     S0.addFirst(i);
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
@@ -76,7 +80,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   private JSM nextConfiguration(Deque<Item> deque) {
     final JSM $ = deepCopy();
     deque.descendingIterator()//
-        .forEachRemaining((Item i)-> $.push(i));
+        .forEachRemaining((Item i) -> $.push(i));
     return $;
   }
   /**
@@ -107,17 +111,15 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   public void jump(Verb v) {
     load(dryJump(v));
   }
-  @Override public Iterator<SimpleEntry<Verb, JSM>> iterator() {
-    return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v))).filter(e -> e.getValue() != null)//
+  @Override public Iterator<Pair<Verb, JSM>> iterator() {
+    return verbs.stream().map(v -> new Pair<>(v, findJump(v))).filter(e -> e.getValue() != null)//
         .collect(Collectors.toList()).iterator();
   }
-
   /**
-   * hashCode() and equals() functions use S0 field only.
-   * ("jumpsTable" and "verbs" are only used to determine the same BNF is used).
-   * I believe that the JSM is uniquely determined * by S0,
-   * as S1 is internally handled inside the implementation 
-   * of "push()" according to the "jumps" table.
+   * hashCode() and equals() functions use S0 field only. ("jumpsTable" and
+   * "verbs" are only used to determine the same BNF is used). I believe that
+   * the JSM is uniquely determined * by S0, as S1 is internally handled inside
+   * the implementation of "push()" according to the "jumps" table.
    */
   @Override public int hashCode() {
     final int prime = 31;
@@ -128,7 +130,6 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     return result;
   }
   /**
-   * 
    * @see JSM#hashCode()
    */
   @Override public boolean equals(Object obj) {
@@ -156,5 +157,18 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
       return false;
     return true;
   }
-  
+  @Override public String toString() {
+    return "JSM " + S0.toString();
+  }
+
+  public static class Pair<K, V> extends SimpleEntry<K, V> {
+    private static final long serialVersionUID = -5894898430181423583L;
+
+    public Pair(K key, V value) {
+      super(key, value);
+    }
+    @Override public String toString() {
+      return "(" + getKey().toString() + "," + getValue().toString() + ")";
+    }
+  }
 }

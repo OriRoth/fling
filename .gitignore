@@ -37,6 +37,7 @@ $.*
 *.eho
 *.eml
 *.exe
+*.exrc
 *.fdb_latexmk
 *.fls
 *.glg
@@ -144,3 +145,5 @@ out/
 
 # User defined (add below this line) // vim: +,$!sort -u
 /target/
+To do:
+src/main/java/org/spartan/fajita/api/junk/
