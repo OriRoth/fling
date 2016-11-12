@@ -27,7 +27,8 @@ public class Main {
         .go();
   }
   public static void apiGenerator(BNF bnf) throws IOException {
-    String code = RLLPEncoder.generate(new RLLP(bnf));
+    final RLLP rllp = new RLLP(bnf);
+    String code = RLLPEncoder.generate(rllp);
     String filename = "FluentAPI_" + bnf.hashCode() % 1000;
     try (FileOutputStream fos = new FileOutputStream(
         new File("/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/" + filename + ".java"))) {

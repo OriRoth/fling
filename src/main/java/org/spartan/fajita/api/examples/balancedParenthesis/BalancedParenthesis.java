@@ -14,8 +14,8 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class BalancedParenthesis {
   public static void expressionBuilder() {
-//    new Q0().lp().rp().lp().rp().lp().lp().rp().rp().$();
-//    new Q0().lp().lp().lp().rp().rp().rp().lp().rp().lp().rp().$();
+    // new Q0().lp().rp().lp().rp().lp().lp().rp().rp().$();
+    // new Q0().lp().lp().lp().rp().rp().rp().lp().rp().lp().rp().$();
   }
 
   static enum Term implements Terminal {
@@ -26,12 +26,14 @@ public class BalancedParenthesis {
     B;
   }
 
+  /**
+   * This example does not work because <B> is endable and also not endable.
+   **/
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
         .start(B) //
         .derive(B).to(lp).and(B).and(rp).and(B) //
-        /*        */.orNone()
-        .go();
+        /*        */.orNone().go();
     return bnf;
   }
   public static void main(String[] args) throws IOException {

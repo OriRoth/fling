@@ -5,6 +5,7 @@ import static org.spartan.fajita.api.rllp.generation.GeneratorStrings.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,15 +52,19 @@ import com.squareup.javapoet.TypeVariableName;
       itemTypes.put(i, encodeItem(i));
   }
   private static Collection<Item> filterItems(List<Item> items) {
-    //TODO: filter unreachable items 
+    // TODO: filter unreachable items
     return items;
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> follow = rllp.analyzer.followSetWO$(i.rule.lhs);
     final Collection<Verb> first = rllp.analyzer.firstSetOf(i);
-    final TypeSpec.Builder encoding = TypeSpec.classBuilder(itemTypeName(i)) //
+    final String typ = itemTypeName(i);
+    final TypeSpec.Builder encoding = TypeSpec.classBuilder(typ) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
-        .addMethods(map(first).with(v -> methodOf(i, v)));
+        .addMethods(map(first).with(v -> {
+          final MethodSpec encodedMethods = methodOf(i, v);
+          return encodedMethods;
+        }));
     if (rllp.analyzer.isSuffixNullable(i))
       encoding.addMethods(map(rllp.analyzer.followSetOf(i.rule.lhs)).with(v -> methodOf(i, v)));
     if (!follow.isEmpty())
@@ -67,9 +72,10 @@ import com.squareup.javapoet.TypeVariableName;
     return encoding.build();
   }
   private MethodSpec methodOf(Item i, Verb v) {
+    final TypeName returnTypeOfMethod = returnTypeOfMethod(i, v);
     final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .returns(returnTypeOfMethod(i, v));
+        .returns(returnTypeOfMethod);
     augmentWithParameters(methodSpec, v);
     return methodSpec //
         .build();
@@ -91,9 +97,9 @@ import com.squareup.javapoet.TypeVariableName;
       case ACCEPT:
         return returnTypeOfAccept();
       case JUMP:
-        return returnTypeOfJump((Action.Jump)action);
+        return returnTypeOfJump((Action.Jump) action);
       case PUSH:
-        return returnTypeOfPush((Action.Push)action);
+        return returnTypeOfPush((Action.Push) action);
     }
   }
   private static TypeName returnTypeOfAccept() {
@@ -109,7 +115,12 @@ import com.squareup.javapoet.TypeVariableName;
   }
   private TypeName returnTypeOfPush(Push action) {
     JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
-    action.itemsToPush.descendingIterator().forEachRemaining(i -> jsm.push(i));
+    final Iterator<Item> descIter = action.itemsToPush.descendingIterator();
+    for (; descIter.hasNext();) {
+      final Item next = descIter.next();
+      jsm.push(next);
+    }
+    jsm.makeReadOnly();
     return encodeJSM(jsm);
   }
   private TypeName encodeJSM(JSM jsm) {
