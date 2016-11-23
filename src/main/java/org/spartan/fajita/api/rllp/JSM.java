@@ -23,9 +23,9 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
     this.verbs = new ArrayDeque<>(verbs);
+    this.jumpsTable = jumpsTable;
     verbs.remove(SpecialSymbols.$);
     this.readonly = false;
-    this.jumpsTable = jumpsTable;
     S0 = new ArrayDeque<>();
     S1 = new ArrayDeque<>();
     this.alreadySeen = new Hashtable<>();
@@ -33,9 +33,15 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   private JSM(JSM fromJSM) {
     this(fromJSM.verbs, fromJSM.jumpsTable);
     fromJSM.S0.descendingIterator().forEachRemaining(i -> S0.addFirst(i));
+    //TODO: Maybe... we have to deepcopy the JSMs inside the map too.
+     // maybe they change or something..
     fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
     alreadySeen = fromJSM.alreadySeen;
   }
+  /**
+   * Cannot cause recursion. always finite time.
+   * @return
+   */
   private JSM deepCopy() {
     return new JSM(this);
   }
@@ -67,7 +73,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
       return;
     }
     // BUG: we keep the reference to "this" while "this" keeps changing
-    alreadySeen.put(currentConfig, this);
+    alreadySeen.put(currentConfig, this.deepCopy());
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
       // This is the push after jump
