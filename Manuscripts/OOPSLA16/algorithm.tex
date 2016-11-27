@@ -345,10 +345,10 @@ respect to~$i$, to~$t$'s jump value (type~$J$).
     \FI
     \FOR[symbols that might cause jump in~$Y₁$]{$t∈\Function First(Yⱼ)$}
     \IF[\nth{1} update of key~$t$ in dictionary~$d$?]{$d(t)=⊥$}
-      \STATE{$j = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{the jump address}
+      \STATE{$i_{addr} = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{the jump address}
       % This is the real value of d(t), when considering the ‟Push after jump phenomena”
       \STATE{\bfseries\scriptsize{\texttt{// }\textit{handle the Push after Jump phenomena}}}
-      \STATE{$d(t) = Consolidate(j,t)$} \COMMENT{update~$d(t)$}
+      \STATE{$d(t) = Consolidate(i_{addr},t)$} \COMMENT{update~$d(t)$}
     \FI
     \ENDFOR % Symbols
   \ENDFOR

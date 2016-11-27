@@ -61,6 +61,9 @@ public class RLLP {
     }
     return $;
   }
+  /* This is a very nice code. unfortunately buggy because it was not written as the algorithm said.
+   * * In other words, RTFM!;
+   @formatter=off
   private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
     Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
     for (Item i : items) {
@@ -78,6 +81,30 @@ public class RLLP {
         }
         if ($.get(i).get(v) == null)
           throw new InternalError("Algorithm fault. for some reason, jumps(" + i + ")[" + v + "] is in first, but wasn't updated");
+      }
+    }
+    return $;
+  }
+  */
+  private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
+    Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
+    for (Item i : items) {
+      Map<Verb, Deque<Item>> jumps = calculateJumps(i);
+      $.put(i, jumps);
+    }
+    return $;
+  }
+  private Map<Verb, Deque<Item>> calculateJumps(Item i) {
+    Map<Verb, Deque<Item>> $ = new HashMap<>();
+    for (int j = i.dotIndex + 1; j < i.rule.getChildren().size(); j++) {
+      Item jumpLocation = new Item(i.rule, j);
+      if (j != i.dotIndex + 1)
+        if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j - 1)))
+          break;
+      for (Verb v : analyzer.firstSetOf(i.rule.getChildren().get(j))) {
+        if ($.containsKey(v))
+          continue;
+      $.put(v, consolidate(jumpLocation, v));
       }
     }
     return $;

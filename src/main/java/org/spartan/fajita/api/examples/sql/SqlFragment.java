@@ -1,24 +1,11 @@
 package org.spartan.fajita.api.examples.sql;
 
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.COLOUMNS;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.EXPRESSION;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.OP;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.QUANTIFIER;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.SELECT_STATEMENT;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.TABLES;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.WHERE;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.all;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.column;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.distinct;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.equals;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.from;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.geq;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.leq;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.literal;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.select;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.table;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.where;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.*;
+import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.*;
 
+import java.io.IOException;
+
+import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -30,22 +17,29 @@ public class SqlFragment {
   }
 
   static enum NT implements NonTerminal {
-    SELECT_STATEMENT, QUANTIFIER, COLOUMNS, TABLES, WHERE, EXPRESSION, OP;
+    SELECT_STATEMENT, QUANTIFIER, COLOUMNS, WHERE, EXPRESSION, OP;
   }
 
-  public static void buildBNF() {
+  public static BNF buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
         .start(SELECT_STATEMENT) //
         //
-        .derive(SELECT_STATEMENT).to(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES).and(WHERE) //
-        /*                */.or(select).and(QUANTIFIER).and(COLOUMNS).and(from).and(TABLES) //
-        .derive(QUANTIFIER).to(all).or(distinct) //
-        .derive(COLOUMNS).to(column).or(column).and(COLOUMNS)//
-        .derive(TABLES).to(table).or(table).and(TABLES) //
+        .derive(SELECT_STATEMENT)//
+          .to(select).and(QUANTIFIER).and(column).and(COLOUMNS).and(from).and(table).and(WHERE) //
+        .derive(QUANTIFIER).to(all)
+					.or(distinct) //
+        .derive(COLOUMNS).to(column).and(COLOUMNS)//
+          .orNone()//
         .derive(WHERE).to(where).and(EXPRESSION) //
+          .orNone() //
         .derive(EXPRESSION).to(column).and(OP).and(literal) //
-        .derive(OP).to(equals).or(geq).or(leq) //
+        .derive(OP).to(equals)
+					.or(geq)
+					.or(leq) //
         .go();
-    System.out.println(b);
+    return b;
+  }
+  public static void main(String[] args) throws IOException {
+    Main.apiGenerator(buildBNF());
   }
 }
