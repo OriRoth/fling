@@ -19,7 +19,7 @@ public class GeneratorStrings {
     return TypeVariableName.get(name);
   }
   public static String itemTypeName(final Item i) {
-    return i.rule.lhs + "_" + i.dotIndex + "_" + Math.abs(i.rule.hashCode());
+    return i.rule.lhs + "_" + i.dotIndex + "_" + String.format("%x", i.rule.hashCode());
   }
   public static ClassName itemClass(final Item i){
     return ClassName.get("",itemTypeName(i));

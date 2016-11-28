@@ -72,7 +72,6 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
       load(existingJSM);
       return;
     }
-    // BUG: we keep the reference to "this" while "this" keeps changing
     alreadySeen.put(currentConfig, this.deepCopy());
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {

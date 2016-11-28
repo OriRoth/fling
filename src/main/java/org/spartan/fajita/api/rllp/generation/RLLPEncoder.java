@@ -20,6 +20,7 @@ import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
+import com.javax0.aptools.GetThe;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.MethodSpec.Builder;
@@ -136,7 +137,10 @@ import com.squareup.javapoet.TypeVariableName;
     if (followSet.isEmpty())
       return itemClass(mainType);
     for (Verb v : followSet)
-      typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
+      if (followSet.contains(v))
+        typeArguments.putIfAbsent(v, typeArg(v));
+      else
+        typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
     TypeName[] arguments = new TypeName[followSet.size()];
     int i = 0;
     for (Verb v : followSet)
