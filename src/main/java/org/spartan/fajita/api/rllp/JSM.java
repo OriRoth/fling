@@ -64,7 +64,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
    */
   public void push(Item i) {
     if (readonly)
-      throw new IllegalStateException("Can't load in readonly mode.");
+      throw new IllegalStateException("Can't push in readonly mode.");
     final CompactConfiguration currentConfig = new CompactConfiguration(S0.peekFirst(), i);
     JSM existingJSM = alreadySeen.get(currentConfig);
     if (existingJSM != null) {

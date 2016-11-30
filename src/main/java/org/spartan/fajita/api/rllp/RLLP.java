@@ -98,9 +98,8 @@ public class RLLP {
     Map<Verb, Deque<Item>> $ = new HashMap<>();
     for (int j = i.dotIndex + 1; j < i.rule.getChildren().size(); j++) {
       Item jumpLocation = new Item(i.rule, j);
-      if (j != i.dotIndex + 1)
-        if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j - 1)))
-          break;
+      if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j )))
+        break;
       for (Verb v : analyzer.firstSetOf(i.rule.getChildren().get(j))) {
         if ($.containsKey(v))
           continue;
@@ -233,8 +232,8 @@ public class RLLP {
 
     public static class Push extends Action {
       public final Deque<Item> itemsToPush;
-      private Item i;
-      private Verb v;
+      public final Item i;
+      public final Verb v;
 
       public Push(Item i, Verb v, Deque<Item> deque) {
         this.i = i;

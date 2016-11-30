@@ -9,7 +9,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import static org.spartan.fajita.api.examples.pascal.PascalFragment.NT.*;
 import static org.spartan.fajita.api.examples.pascal.PascalFragment.Term.*;
-
+ 
 public class PascalFragment {
   static enum Term implements Terminal {
     program, begin, end, label, //

@@ -122,18 +122,18 @@ import com.squareup.javapoet.TypeVariableName;
       jsm.push(next);
     }
     jsm.makeReadOnly();
-    return encodeJSM(jsm);
+    return encodeJSM(jsm,action.i);
   }
-  private TypeName encodeJSM(JSM jsm) {
+  private TypeName encodeJSM(JSM jsm, Item context) {
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     if (!jsm.iterator().hasNext()) // no possible jumps
-      return encodeTypeArgumentsMap(jsm.peek(), typeArguments);
+      return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
     for (SimpleEntry<Verb, JSM> e : jsm)
-      typeArguments.put(e.getKey(), encodeJSM(e.getValue()));
-    return encodeTypeArgumentsMap(jsm.peek(), typeArguments);
+      typeArguments.put(e.getKey(), encodeJSM(e.getValue(),context));
+    return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
   }
-  private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments) {
-    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(mainType.rule.lhs);
+  private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
+    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(context.rule.lhs);
     if (followSet.isEmpty())
       return itemClass(mainType);
     for (Verb v : followSet)
