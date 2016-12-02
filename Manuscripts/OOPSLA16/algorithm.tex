@@ -609,7 +609,7 @@ Therefore, the core of the \RLLp generator is
         \IF[$t$ is consumed while parsing~$i$]{$t∈\Function First(Yβ)$}
           \LET{$L$}{$\Function Consolidate(i,t)$}
           \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function push(L)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a push operation}
-        \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$}
+        \ELSIF[$t$ is consumed after parsing~$i$]{$t∈\Function Follow(A)$ and~$\Function Nullable(Yβ)$}
           \STATE{\bfseries\scriptsize{\texttt{// }\textit{Obtain jumps dictionary and store in~$Δ$:}}}
           \LET{$Δ[i,t]$}{$\textcolor{red!70!black}{\texttt{[}}\Function jump(t)\textcolor{red!70!black}{\texttt{]}}$} \COMMENT{a jump operation}
         \FI
