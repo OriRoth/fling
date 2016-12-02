@@ -44,13 +44,14 @@ public class RLLP {
   private Map<Item, Map<Verb, Action>> calculateRLLPredictionTable() {
     Map<Item, Map<Verb, Action>> $ = new HashMap<>();
     for (Item i : items) {
-      if ((!i.readyToReduce()) && i.afterDot().isVerb())
-        continue;
       Map<Verb, Action> currentLine = new HashMap<>();
       $.put(i, currentLine);
       for (Verb v : bnf.getVerbs()) {
         if (analyzer.firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size())).contains(v))
-          currentLine.put(v, new Action.Push(i, v, consolidate(i, v)));
+          if (i.afterDot().isVerb())
+            currentLine.put(v, new Action.Advance(i));
+          else
+            currentLine.put(v, new Action.Push(i, v, consolidate(i, v)));
         else if (analyzer.followSetOf(i.rule.lhs).contains(v)) {
           if (v == SpecialSymbols.$)
             currentLine.put(v, new Action.Accept());
@@ -61,31 +62,6 @@ public class RLLP {
     }
     return $;
   }
-  /* This is a very nice code. unfortunately buggy because it was not written as the algorithm said.
-   * * In other words, RTFM!;
-   @formatter=off
-  private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
-    Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
-    for (Item i : items) {
-      $.put(i, new HashMap<>());
-      if (i.readyToReduce())
-        continue;
-      final List<Symbol> suffix = i.rule.getChildren().subList(i.dotIndex + 1, i.rule.getChildren().size());
-      for (Verb v : analyzer.firstSetOf(suffix)) {
-        for (int j = 0; j < suffix.size(); j++) {
-          Symbol s = suffix.get(j);
-          if (analyzer.firstSetOf(s).contains(v)) {
-            Item jumpLocation = new Item(i.rule, j + i.dotIndex + 1);
-            $.get(i).put(v, consolidate(jumpLocation, v));
-          }
-        }
-        if ($.get(i).get(v) == null)
-          throw new InternalError("Algorithm fault. for some reason, jumps(" + i + ")[" + v + "] is in first, but wasn't updated");
-      }
-    }
-    return $;
-  }
-  */
   private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
     Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
     for (Item i : items) {
@@ -98,12 +74,12 @@ public class RLLP {
     Map<Verb, Deque<Item>> $ = new HashMap<>();
     for (int j = i.dotIndex + 1; j < i.rule.getChildren().size(); j++) {
       Item jumpLocation = new Item(i.rule, j);
-      if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j )))
+      if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j)))
         break;
       for (Verb v : analyzer.firstSetOf(i.rule.getChildren().get(j))) {
         if ($.containsKey(v))
           continue;
-      $.put(v, consolidate(jumpLocation, v));
+        $.put(v, consolidate(jumpLocation, v));
       }
     }
     return $;
@@ -148,7 +124,6 @@ public class RLLP {
       DerivationRule r = llPredict((NonTerminal) Y, v);
       if (r.getChildren().size() == 0) { // r is an epsilon move?
         while ($.peekFirst().advance().readyToReduce())
-          /* || $.peekFirst().readyToReduce() */
           $.removeFirst();
         $.addFirst($.removeFirst().advance());
       } else
@@ -202,7 +177,7 @@ public class RLLP {
 
   public static abstract class Action {
     public static enum ActionType {
-      ACCEPT, PUSH, JUMP;
+      ACCEPT, PUSH, JUMP, ADVANCE;
     }
 
     public static class Accept extends Action {
@@ -245,6 +220,17 @@ public class RLLP {
       }
       @Override public ActionType type() {
         return ActionType.PUSH;
+      }
+    }
+
+    public static class Advance extends Action {
+      public final Item beforeAdvancing;
+
+      public Advance(Item beforeAdvancing) {
+        this.beforeAdvancing = beforeAdvancing;
+      }
+      @Override public ActionType type() {
+        return ActionType.ADVANCE;
       }
     }
   }

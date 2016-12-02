@@ -98,7 +98,6 @@ public class BNFAnalyzer {
   }
   public Collection<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
-    // throw new IllegalArgumentException("Not handling epsilons!!");
     for (Symbol symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))

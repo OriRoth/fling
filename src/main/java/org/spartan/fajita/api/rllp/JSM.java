@@ -33,13 +33,14 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   private JSM(JSM fromJSM) {
     this(fromJSM.verbs, fromJSM.jumpsTable);
     fromJSM.S0.descendingIterator().forEachRemaining(i -> S0.addFirst(i));
-    //TODO: Maybe... we have to deepcopy the JSMs inside the map too.
-     // maybe they change or something..
+    // TODO: Maybe... we have to deepcopy the JSMs inside the map too.
+    // maybe they change or something..
     fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
     alreadySeen = fromJSM.alreadySeen;
   }
   /**
    * Cannot cause recursion. always finite time.
+   * 
    * @return
    */
   private JSM deepCopy() {
@@ -85,12 +86,9 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   private Deque<Item> jumpTable(Item i, Verb v) {
     return jumpsTable.get(i).get(v);
   }
-  private JSM nextConfiguration(Deque<Item> deque) {
+  private JSM nextConfiguration(Deque<Item> toPush) {
     final JSM $ = deepCopy();
-    deque.descendingIterator()//
-        .forEachRemaining((Item i) -> {
-          $.push(i);
-        });
+    toPush.descendingIterator().forEachRemaining(i -> $.push(i));
     $.makeReadOnly();
     return $;
   }
