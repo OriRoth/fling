@@ -47,19 +47,20 @@ public class RLLP {
       Map<Verb, Action> currentLine = new HashMap<>();
       $.put(i, currentLine);
       for (Verb v : bnf.getVerbs()) {
-        if (analyzer.firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size())).contains(v))
+        if (analyzer.firstSetOf(BNFAnalyzer.ruleSuffix(i.rule, i.dotIndex)).contains(v))
           if (i.afterDot().isVerb())
             currentLine.put(v, new Action.Advance(i));
           else
             currentLine.put(v, new Action.Push(i, v, consolidate(i, v)));
-        else if (analyzer.followSetOf(i.rule.lhs).contains(v)) {
+        else if (analyzer.followSetOf(i.rule.lhs).contains(v)
+            && analyzer.isSuffixNullable(i)) {
           if (v == SpecialSymbols.$)
             currentLine.put(v, new Action.Accept());
           else
             currentLine.put(v, new Action.Jump(v));
         }
       }
-    }
+    } 
     return $;
   }
   private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
