@@ -71,9 +71,16 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     if (existingJSM != null) {
       System.out.println("Recursion found!!!!");
       load(existingJSM);
+      /*
+       * The problem here: we are loading a JSM that started a push operation but did not
+       * actually push anything (see line 80 below - we deep copy before the push calculations)
+       * meaning that whenever we got to this line we had some kind of a bug....
+       * This only makes sense because we didn't solve the recursive types problem.
+       * 
+       * Bummer!!!
+       */
       return;
     }
-    alreadySeen.put(currentConfig, this.deepCopy());
     HashMap<Verb, JSM> partMap = new HashMap<>();
     for (Verb v : jumpsTable.get(i).keySet()) {
       // This is the push after jump
@@ -82,6 +89,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     }
     S0.addFirst(i);
     S1.addFirst(partMap);
+    alreadySeen.put(currentConfig, this.deepCopy());
   }
   private Deque<Item> jumpTable(Item i, Verb v) {
     return jumpsTable.get(i).get(v);
