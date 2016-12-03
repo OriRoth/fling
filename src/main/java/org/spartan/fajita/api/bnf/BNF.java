@@ -47,5 +47,44 @@ public final class BNF {
   public List<DerivationRule> getRulesOf(NonTerminal nt) {
     return getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
+  @Override public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((derivationRules == null) ? 0 : derivationRules.hashCode());
+    result = prime * result + ((nonterminals == null) ? 0 : nonterminals.hashCode());
+    result = prime * result + ((startSymbols == null) ? 0 : startSymbols.hashCode());
+    result = prime * result + ((verbs == null) ? 0 : verbs.hashCode());
+    return result;
+  }
+  @Override public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    BNF other = (BNF) obj;
+    if (derivationRules == null) {
+      if (other.derivationRules != null)
+        return false;
+    } else if (!derivationRules.equals(other.derivationRules))
+      return false;
+    if (nonterminals == null) {
+      if (other.nonterminals != null)
+        return false;
+    } else if (!nonterminals.equals(other.nonterminals))
+      return false;
+    if (startSymbols == null) {
+      if (other.startSymbols != null)
+        return false;
+    } else if (!startSymbols.equals(other.startSymbols))
+      return false;
+    if (verbs == null) {
+      if (other.verbs != null)
+        return false;
+    } else if (!verbs.equals(other.verbs))
+      return false;
+    return true;
+  }
 
 }

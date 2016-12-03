@@ -32,7 +32,7 @@ public class PascalFragment {
         .derive(Definitions).to(Labels).and(Constants).and(Nested) //
         .derive(Labels).to(label).and(Label).and(MoreLabels) //
         /*           */.orNone() //
-        .derive(Constants).to(constant).and(Constant).and(Constants) //
+        .derive(Constants).to(constant).and(Constant).and(MoreConstants) //
         /*           */.orNone() //
         .derive(Label).to(semi) //
         .derive(Constant).to(semi)//
