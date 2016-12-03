@@ -126,10 +126,11 @@ import com.squareup.javapoet.TypeVariableName;
   }
   private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(mainType.rule.lhs);
+    final Collection<Verb> contextFollowSet = rllp.analyzer.followSetWO$(context.rule.lhs);
     if (followSet.isEmpty())
       return itemClassName(mainType);
     for (Verb v : followSet)
-      if (followSet.contains(v))
+      if (contextFollowSet.contains(v))
         typeArguments.putIfAbsent(v, verbTypeName(v));
       else
         typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
