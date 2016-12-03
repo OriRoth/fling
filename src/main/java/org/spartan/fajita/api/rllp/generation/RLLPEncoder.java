@@ -3,6 +3,7 @@ package org.spartan.fajita.api.rllp.generation;
 import static org.spartan.fajita.api.rllp.generation.Utilities.*;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Advance;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.MethodSpec.Builder;
@@ -107,21 +109,27 @@ import com.squareup.javapoet.TypeVariableName;
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(next.rule.lhs);
     if (followOfItem.isEmpty())
       return itemClassName(next);
-    return ParameterizedTypeName.get(itemClassName(next), 
-        map(followOfItem).with(v -> verbTypeName(v)).toArray(new TypeName[] {}));
+    return ParameterizedTypeName.get(itemClassName(next), map(followOfItem).with(v -> verbTypeName(v)).toArray(new TypeName[] {}));
   }
   private TypeName returnTypeOfPush(Push action) {
     JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
-    action.itemsToPush.descendingIterator().forEachRemaining(i -> jsm.push(i));
-    jsm.makeReadOnly();
-    return encodeJSM(jsm,action.i);
+    jsm.pushAll(action.itemsToPush);
+    return encodeJSM(jsm, action.i);
   }
   private TypeName encodeJSM(JSM jsm, Item context) {
+    return encodeJSM_recursive_protection(jsm, context, new ArrayList<>());
+  }
+  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context,List<JSM> alreadySeen) {
+    if ( alreadySeen.indexOf(jsm) != -1 ){
+      System.out.println("Recurtion found!!!");
+      return ClassName.get("",errorClass+"2");
+    }
+    alreadySeen.add(jsm);
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     if (!jsm.iterator().hasNext()) // no possible jumps
       return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
     for (SimpleEntry<Verb, JSM> e : jsm)
-      typeArguments.put(e.getKey(), encodeJSM(e.getValue(),context));
+      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), context, alreadySeen));
     return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
   }
   private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
