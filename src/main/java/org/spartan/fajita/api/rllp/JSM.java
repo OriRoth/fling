@@ -18,7 +18,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   Deque<Map<Verb, JSM>> S1;
   private Collection<Verb> verbs;
   private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
-  private Hashtable<JSM.CompactConfiguration, JSM> alreadySeen;
+  private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
@@ -28,7 +28,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     this.readonly = false;
     S0 = new ArrayDeque<>();
     S1 = new ArrayDeque<>();
-    this.alreadySeen = new Hashtable<>();
+    this.configurationCache = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
     this(fromJSM.verbs, fromJSM.jumpsTable);
@@ -36,7 +36,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     // TODO: Maybe... we have to deepcopy the JSMs inside the map too.
     // maybe they change or something..
     fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
-    alreadySeen = fromJSM.alreadySeen;
+    configurationCache = fromJSM.configurationCache;
   }
   /**
    * Cannot cause recursion. always finite time.
@@ -47,16 +47,39 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     return new JSM(this);
   }
   /**
-   * @param loadFrom the JSM the is loaded into ``this'' instance.
+   * @param loadFrom the JSM that is loaded into ``this'' instance.
    */
   private void load(JSM loadFrom) {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");
-    S0 = new ArrayDeque<>(loadFrom.S0);
-    S1 = new ArrayDeque<>(loadFrom.S1);
+    S0 = loadFrom.S0;
+    S1 = loadFrom.S1;
   }
   public Item peek() {
     return S0.getFirst();
+  }
+  /**
+   * Pushes items to the JSM and makes it readonly afterwards
+   * 
+   * @param toPush
+   */
+  public void pushAll(Deque<Item> toPush) {
+    final CompactConfiguration currentConfig = new CompactConfiguration(S0.peekFirst(), toPush);
+    if (!configurationCache.containsKey(currentConfig)) {
+      configurationCache.putIfAbsent(currentConfig, this);
+      toPush.descendingIterator().forEachRemaining(i -> push(i));
+    } else {
+      /* The problem here: we are loading a JSM that started a push operation
+       * but did not actually push anything (see line 80 below - we deep copy
+       * before the push calculations) meaning that whenever we got to this line
+       * we had some kind of a bug.... This only makes sense because we didn't
+       * solve the recursive types problem.
+       * 
+       * Bummer!!! */
+      load(configurationCache.get(currentConfig));
+      System.out.println("Recursion found on config. " + currentConfig.toString());
+    }
+    makeReadOnly();
   }
   /**
    * Pushes item i to S0 and coordinates S1 stack.
@@ -66,38 +89,22 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
   public void push(Item i) {
     if (readonly)
       throw new IllegalStateException("Can't push in readonly mode.");
-    final CompactConfiguration currentConfig = new CompactConfiguration(S0.peekFirst(), i);
-    JSM existingJSM = alreadySeen.get(currentConfig);
-    if (existingJSM != null) {
-      System.out.println("Recursion found!!!!");
-      load(existingJSM);
-      /*
-       * The problem here: we are loading a JSM that started a push operation but did not
-       * actually push anything (see line 80 below - we deep copy before the push calculations)
-       * meaning that whenever we got to this line we had some kind of a bug....
-       * This only makes sense because we didn't solve the recursive types problem.
-       * 
-       * Bummer!!!
-       */
-      return;
-    }
     HashMap<Verb, JSM> partMap = new HashMap<>();
-    for (Verb v : jumpsTable.get(i).keySet()) {
+    for (Verb v : jumpsTable.get(i).keySet())
       // This is the push after jump
-      JSM nextConfiguration = nextConfiguration(jumpTable(i, v));
-      partMap.put(v, nextConfiguration);
-    }
+      partMap.put(v, calculateJumpConfiguration(jumpTable(i, v)));
     S0.addFirst(i);
     S1.addFirst(partMap);
-    alreadySeen.put(currentConfig, this.deepCopy());
   }
   private Deque<Item> jumpTable(Item i, Verb v) {
     return jumpsTable.get(i).get(v);
   }
-  private JSM nextConfiguration(Deque<Item> toPush) {
+  /**
+   * Returns the state of the JSM after pushing all items in "toPush".
+   */
+  private JSM calculateJumpConfiguration(Deque<Item> toPush) {
     final JSM $ = deepCopy();
-    toPush.descendingIterator().forEachRemaining(i -> $.push(i));
-    $.makeReadOnly();
+    $.pushAll(toPush);
     return $;
   }
   public void makeReadOnly() {
@@ -157,7 +164,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     return true;
   }
   @Override public String toString() {
-    return "JSM " + S0.toString();
+    return "JSM.S0: " + S0.toString();
   }
   @Deprecated // This is used only in tests..
   public Item pop() {
@@ -183,20 +190,22 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
 
   public static class CompactConfiguration {
     private Item topOfStack;
-    private Item lookahead;
+    private Deque<Item> toPush;
 
-    public CompactConfiguration(Item topOfStack, Item lookahead) {
+    public CompactConfiguration(Item topOfStack, Deque<Item> toPush) {
       this.topOfStack = topOfStack;
-      this.lookahead = lookahead;
+      this.toPush = toPush;
     }
     @Override public String toString() {
-      return "<" + topOfStack.toString() + ";;" + lookahead.toString() + ">";
+      if ( topOfStack == null)
+        return "< empty stack ;;" + toPush.toString() + ">";
+      return "<" + topOfStack.toString() + ";;" + toPush.toString() + ">";
     }
     @Override public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((topOfStack == null) ? 0 : topOfStack.hashCode());
-      result = prime * result + ((lookahead == null) ? 0 : lookahead.hashCode());
+      result = prime * result + ((toPush == null) ? 0 : toPush.hashCode());
       return result;
     }
     @Override public boolean equals(Object obj) {
@@ -212,10 +221,10 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
           return false;
       } else if (!topOfStack.equals(other.topOfStack))
         return false;
-      if (lookahead == null) {
-        if (other.lookahead != null)
+      if (toPush == null) {
+        if (other.toPush != null)
           return false;
-      } else if (!lookahead.equals(other.lookahead))
+      } else if (!toPush.equals(other.toPush))
         return false;
       return true;
     }
