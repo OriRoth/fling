@@ -117,20 +117,35 @@ import com.squareup.javapoet.TypeVariableName;
     return encodeJSM(jsm, action.i);
   }
   private TypeName encodeJSM(JSM jsm, Item context) {
-    return encodeJSM_recursive_protection(jsm, context, new ArrayList<>());
-  }
-  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context,List<JSM> alreadySeen) {
-    if ( alreadySeen.indexOf(jsm) != -1 ){
-      System.out.println("Recurtion found!!!");
-      return ClassName.get("",errorClass+"2");
+    try {
+      return encodeJSM_recursive_protection(jsm, context, new ArrayList<>());
+    } catch (FoundRecursiveTypeException e) {
+      throw new RuntimeException("Failed to handle recursive JSM: " + e.jsm);
     }
+  }
+  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, List<JSM> alreadySeen) throws FoundRecursiveTypeException {
+    if (alreadySeen.indexOf(jsm) != -1)
+      throw new FoundRecursiveTypeException(jsm);
     alreadySeen.add(jsm);
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
-    if (!jsm.iterator().hasNext()) // no possible jumps
+    if (jsm.legalJumps().isEmpty()) // no possible jumps
       return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
-    for (SimpleEntry<Verb, JSM> e : jsm)
-      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), context, alreadySeen));
+    for (SimpleEntry<Verb, JSM> e : jsm.legalJumps()) {
+      TypeName encodedJSM = null;
+      try {
+        encodedJSM = encodeJSM_recursive_protection(e.getValue(), context, new ArrayList<>(alreadySeen));
+      } catch (FoundRecursiveTypeException exc) {
+        if (!jsm.equals(exc.jsm))
+          throw exc;
+        encodedJSM = encodeRecursiveJSM(jsm, context);
+      }
+      typeArguments.put(e.getKey(), encodedJSM);
+    }
     return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
+  }
+  private static TypeName encodeRecursiveJSM(JSM jsm, Item context) {
+    System.out.println("Recurtion found!!!");
+    return ClassName.get("", "recursive" + errorClass);
   }
   private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(mainType.rule.lhs);
@@ -156,5 +171,14 @@ import com.squareup.javapoet.TypeVariableName;
   }
   public static String generate(RLLP parser) {
     return JavaFile.builder("org.spartan.fajita.api.junk", new RLLPEncoder(parser).enclosing).build().toString();
+  }
+
+  private final class FoundRecursiveTypeException extends Exception {
+    private static final long serialVersionUID = 8456148424675230710L;
+    public final JSM jsm;
+
+    public FoundRecursiveTypeException(JSM jsm) {
+      this.jsm = jsm;
+    }
   }
 }

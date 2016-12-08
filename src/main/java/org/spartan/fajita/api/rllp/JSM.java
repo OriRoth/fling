@@ -2,29 +2,29 @@ package org.spartan.fajita.api.rllp;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
+public class JSM {
   Deque<Item> S0;
   Deque<Map<Verb, JSM>> S1;
-  private Collection<Verb> verbs;
+  private final Collection<Verb> verbs;
   private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
 
   public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
-    this.verbs = new ArrayDeque<>(verbs);
+    this.verbs = new ArrayList<>(verbs);
     this.jumpsTable = jumpsTable;
-    verbs.remove(SpecialSymbols.$);
+    this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
     S0 = new ArrayDeque<>();
     S1 = new ArrayDeque<>();
@@ -65,19 +65,11 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
    */
   public void pushAll(Deque<Item> toPush) {
     final CompactConfiguration currentConfig = new CompactConfiguration(S0.peekFirst(), toPush);
-    if (!configurationCache.containsKey(currentConfig)) {
-      configurationCache.putIfAbsent(currentConfig, this);
-      toPush.descendingIterator().forEachRemaining(i -> push(i));
-    } else {
-      /* The problem here: we are loading a JSM that started a push operation
-       * but did not actually push anything (see line 80 below - we deep copy
-       * before the push calculations) meaning that whenever we got to this line
-       * we had some kind of a bug.... This only makes sense because we didn't
-       * solve the recursive types problem.
-       * 
-       * Bummer!!! */
+    if (configurationCache.containsKey(currentConfig))
       load(configurationCache.get(currentConfig));
-      System.out.println("Recursion found on config. " + currentConfig.toString());
+    else {
+      configurationCache.put(currentConfig, this);
+      toPush.descendingIterator().forEachRemaining(i -> push(i));
     }
     makeReadOnly();
   }
@@ -116,10 +108,10 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
         return partMap.get(v);
     return null;
   }
-  @Override public Iterator<SimpleEntry<Verb, JSM>> iterator() {
+  public Collection<SimpleEntry<Verb, JSM>> legalJumps() {
     return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v)))//
         .filter(e -> e.getValue() != null)//
-        .collect(Collectors.toList()).iterator();
+        .collect(Collectors.toList());
   }
   /**
    * hashCode() and equals() functions use S0 field only. ("jumpsTable" and
@@ -146,11 +138,6 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
     if (getClass() != obj.getClass())
       return false;
     JSM other = (JSM) obj;
-    if (S0 == null) {
-      if (other.S0 != null)
-        return false;
-    } else if (!S0.equals(other.S0))
-      return false;
     if (jumpsTable == null) {
       if (other.jumpsTable != null)
         return false;
@@ -161,6 +148,14 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
         return false;
     } else if (!verbs.equals(other.verbs))
       return false;
+    if (S0 == null) {
+      if (other.S0 != null)
+        return false;
+    } else if (!S0.peekFirst().equals(other.S0.peekFirst()))
+      return false;
+    for (Verb v : verbs)
+      if (findJump(v) != other.findJump(v))
+        return false;
     return true;
   }
   @Override public String toString() {
@@ -197,7 +192,7 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
       this.toPush = toPush;
     }
     @Override public String toString() {
-      if ( topOfStack == null)
+      if (topOfStack == null)
         return "< empty stack ;;" + toPush.toString() + ">";
       return "<" + topOfStack.toString() + ";;" + toPush.toString() + ">";
     }
@@ -224,7 +219,9 @@ public class JSM implements Iterable<SimpleEntry<Verb, JSM>> {
       if (toPush == null) {
         if (other.toPush != null)
           return false;
-      } else if (!toPush.equals(other.toPush))
+        // For some reason Deque class does not implement equals and reference
+        // semantics is used..
+      } else if (!new ArrayList<>(toPush).equals(new ArrayList<>(other.toPush)))
         return false;
       return true;
     }
