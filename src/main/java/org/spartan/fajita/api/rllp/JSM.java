@@ -1,12 +1,11 @@
 package org.spartan.fajita.api.rllp;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,28 +13,28 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
-  Deque<Item> S0;
-  Deque<Map<Verb, JSM>> S1;
+  List<Item> S0;
+  List<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
-  private Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
+  private Map<Item, Map<Verb, List<Item>>> jumpsTable;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
 
-  public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, Deque<Item>>> jumpsTable) {
+  public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, List<Item>>> jumpsTable) {
     this.verbs = new ArrayList<>(verbs);
     this.jumpsTable = jumpsTable;
     this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
-    S0 = new ArrayDeque<>();
-    S1 = new ArrayDeque<>();
+    S0 = new ArrayList<>();
+    S1 = new ArrayList<>();
     this.configurationCache = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
     this(fromJSM.verbs, fromJSM.jumpsTable);
-    fromJSM.S0.descendingIterator().forEachRemaining(i -> S0.addFirst(i));
+    fromJSM.S0.forEach(i -> S0.add(i));
     // TODO: Maybe... we have to deepcopy the JSMs inside the map too.
     // maybe they change or something..
-    fromJSM.S1.descendingIterator().forEachRemaining(partMap -> S1.addFirst(partMap));
+    fromJSM.S1.forEach(partMap -> S1.add(partMap));
     configurationCache = fromJSM.configurationCache;
   }
   /**
@@ -56,20 +55,22 @@ public class JSM {
     S1 = loadFrom.S1;
   }
   public Item peek() {
-    return S0.getFirst();
+    if (S0.isEmpty())
+      return null;
+    return S0.get(S0.size()-1);
   }
   /**
    * Pushes items to the JSM and makes it readonly afterwards
    * 
    * @param toPush
    */
-  public void pushAll(Deque<Item> toPush) {
-    final CompactConfiguration currentConfig = new CompactConfiguration(S0.peekFirst(), toPush);
+  public void pushAll(List<Item> toPush) {
+    final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
     if (configurationCache.containsKey(currentConfig))
       load(configurationCache.get(currentConfig));
     else {
       configurationCache.put(currentConfig, this);
-      toPush.descendingIterator().forEachRemaining(i -> push(i));
+      toPush.forEach(i -> push(i));
     }
     makeReadOnly();
   }
@@ -85,16 +86,16 @@ public class JSM {
     for (Verb v : jumpsTable.get(i).keySet())
       // This is the push after jump
       partMap.put(v, calculateJumpConfiguration(jumpTable(i, v)));
-    S0.addFirst(i);
-    S1.addFirst(partMap);
+    S0.add(i);
+    S1.add(partMap);
   }
-  private Deque<Item> jumpTable(Item i, Verb v) {
+  private List<Item> jumpTable(Item i, Verb v) {
     return jumpsTable.get(i).get(v);
   }
   /**
    * Returns the state of the JSM after pushing all items in "toPush".
    */
-  private JSM calculateJumpConfiguration(Deque<Item> toPush) {
+  private JSM calculateJumpConfiguration(List<Item> toPush) {
     final JSM $ = deepCopy();
     $.pushAll(toPush);
     $.makeReadOnly();
@@ -152,7 +153,7 @@ public class JSM {
     if (S0 == null) {
       if (other.S0 != null)
         return false;
-    } else if (!S0.peekFirst().equals(other.S0.peekFirst()))
+    } else if (!this.peek().equals(other.peek()))
       return false;
     /*
      * TODO: This line might enter infinite recursion... find such case and debug. 
@@ -168,8 +169,8 @@ public class JSM {
   public Item pop() {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");
-    S1.removeFirst();
-    return S0.removeFirst();
+    S1.remove(S1.size()-1);
+    return S0.remove(S0.size()-1);
   }
   /**
    * Jumps to using v's jump stack, changing the state of the JSM accordingly.
@@ -188,9 +189,9 @@ public class JSM {
 
   public static class CompactConfiguration {
     private Item topOfStack;
-    private Deque<Item> toPush;
+    private List<Item> toPush;
 
-    public CompactConfiguration(Item topOfStack, Deque<Item> toPush) {
+    public CompactConfiguration(Item topOfStack, List<Item> toPush) {
       this.topOfStack = topOfStack;
       this.toPush = toPush;
     }
@@ -222,9 +223,7 @@ public class JSM {
       if (toPush == null) {
         if (other.toPush != null)
           return false;
-        // For some reason Deque class does not implement equals and reference
-        // semantics is used..
-      } else if (!new ArrayList<>(toPush).equals(new ArrayList<>(other.toPush)))
+      } else if (!toPush.equals(other.toPush))
         return false;
       return true;
     }

@@ -1,8 +1,6 @@
 package org.spartan.fajita.api.rllp;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,8 @@ public class RLLP {
   public final BNFAnalyzer analyzer;
   public final List<Item> items;
   private final Map<NonTerminal, Map<Verb, DerivationRule>> llPredictionTable;
-  private Map<Item, Map<Verb, Deque<Item>>> consolidationTable;
-  public final Map<Item, Map<Verb, Deque<Item>>> jumpsTable;
+  private Map<Item, Map<Verb, List<Item>>> consolidationTable;
+  public final Map<Item, Map<Verb, List<Item>>> jumpsTable;
   private Map<Item, Map<Verb, Action>> rllPredictionTable;
 
   public RLLP(BNF bnf) {
@@ -63,16 +61,16 @@ public class RLLP {
     } 
     return $;
   }
-  private Map<Item, Map<Verb, Deque<Item>>> calculateJumpsTable() {
-    Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
+  private Map<Item, Map<Verb, List<Item>>> calculateJumpsTable() {
+    Map<Item, Map<Verb, List<Item>>> $ = new HashMap<>();
     for (Item i : items) {
-      Map<Verb, Deque<Item>> jumps = calculateJumps(i);
+      Map<Verb, List<Item>> jumps = calculateJumps(i);
       $.put(i, jumps);
     }
     return $;
   }
-  private Map<Verb, Deque<Item>> calculateJumps(Item i) {
-    Map<Verb, Deque<Item>> $ = new HashMap<>();
+  private Map<Verb, List<Item>> calculateJumps(Item i) {
+    Map<Verb, List<Item>> $ = new HashMap<>();
     for (int j = i.dotIndex + 1; j < i.rule.getChildren().size(); j++) {
       Item jumpLocation = new Item(i.rule, j);
       if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j)))
@@ -85,12 +83,12 @@ public class RLLP {
     }
     return $;
   }
-  private Map<Item, Map<Verb, Deque<Item>>> calculateConsolidateTable() {
-    Map<Item, Map<Verb, Deque<Item>>> $ = new HashMap<>();
+  private Map<Item, Map<Verb, List<Item>>> calculateConsolidateTable() {
+    Map<Item, Map<Verb, List<Item>>> $ = new HashMap<>();
     for (Item i : items) {
-      Map<Verb, Deque<Item>> itemEntry = new HashMap<>();
+      Map<Verb, List<Item>> itemEntry = new HashMap<>();
       for (Verb v : analyzer.firstSetOf(BNFAnalyzer.ruleSuffix(i.rule, i.dotIndex))) {
-        Deque<Item> result = calculateConsolidate(i, v);
+        List<Item> result = calculateConsolidate(i, v);
         itemEntry.put(v, result);
       }
       $.put(i, itemEntry);
@@ -116,23 +114,23 @@ public class RLLP {
     }
     return $;
   }
-  private Deque<Item> calculateConsolidate(Item i, Verb v) {
-    Deque<Item> $ = new ArrayDeque<>();
+  private List<Item> calculateConsolidate(Item i, Verb v) {
+    List<Item> $ = new ArrayList<>();
     Item current_i = i;
     Symbol Y = current_i.afterDot();
     while (!Y.isVerb()) {
-      $.addFirst(current_i);
+      $.add(current_i);
       DerivationRule r = llPredict((NonTerminal) Y, v);
       if (r.getChildren().size() == 0) { // r is an epsilon move?
-        while ($.peekFirst().advance().readyToReduce())
-          $.removeFirst();
-        $.addFirst($.removeFirst().advance());
+        while ($.get($.size()-1).advance().readyToReduce())
+          $.remove($.size()-1);
+        $.add($.remove($.size()-1).advance());
       } else
-        $.push(new Item(r, 0));
-      current_i = $.removeFirst();
+        $.add(new Item(r, 0));
+      current_i = $.remove($.size()-1);
       Y = current_i.afterDot();
     }
-    $.addFirst(current_i.advance());
+    $.add(current_i.advance());
     return $;
   }
   public DerivationRule llPredict(NonTerminal Y, Verb v) {
@@ -144,20 +142,20 @@ public class RLLP {
       throw new IllegalStateException("llPredict( " + Y + " , " + v + " ) does not exist.");
     return $;
   }
-  public Deque<Item> consolidate(Item i, Verb v) {
-    final Map<Verb, Deque<Item>> row = consolidationTable.get(i);
+  public List<Item> consolidate(Item i, Verb v) {
+    final Map<Verb, List<Item>> row = consolidationTable.get(i);
     if (row == null)
       throw new IllegalStateException("consolidate( " + i + " , _ ) does not exist.");
-    final Deque<Item> $ = row.get(v);
+    final List<Item> $ = row.get(v);
     if ($ == null)
       throw new IllegalStateException("consolidate( " + i + " , " + v + " ) does not exist.");
     return $;
   }
-  public Deque<Item> jumps(Item i, Verb v) {
-    final Map<Verb, Deque<Item>> row = jumpsTable.get(i);
+  public List<Item> jumps(Item i, Verb v) {
+    final Map<Verb, List<Item>> row = jumpsTable.get(i);
     if (row == null)
       throw new IllegalStateException("jumps( " + i + " , _ ) does not exist.");
-    final Deque<Item> value = row.get(v);
+    final List<Item> value = row.get(v);
     if (value == null)
       throw new IllegalStateException("jumps( " + i + " , " + v + " ) does not exist.");
     return value;
@@ -207,14 +205,14 @@ public class RLLP {
     }
 
     public static class Push extends Action {
-      public final Deque<Item> itemsToPush;
+      public final List<Item> itemsToPush;
       public final Item i;
       public final Verb v;
 
-      public Push(Item i, Verb v, Deque<Item> deque) {
+      public Push(Item i, Verb v, List<Item> toPush) {
         this.i = i;
         this.v = v;
-        this.itemsToPush = deque;
+        this.itemsToPush = toPush;
       }
       @Override public String toString() {
         return "push( cons(" + i + "," + v + ")";
