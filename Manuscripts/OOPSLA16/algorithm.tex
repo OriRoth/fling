@@ -472,16 +472,16 @@ constant time, irrespective of the length of the consolidated list.
     \WHILE[loop while~$Y$ is a nonterminal]{$Y∉Σ$}
       %\STATE{$\Function print(r)$} \COMMENT{useful for parsing}
       \STATE{$\Function push(L,[X ::=α·Yβ])$}\COMMENT{currently parsing~$Y$}
-      \STATE{$r←δ(Y,t)$} \COMMENT{next rule to apply}
-      \STATE{$[B::=X₁…Xₘ]←r$} \COMMENT{break~$r$ into components}
-      \IF[$δ$ returned an~$ε$-rule]{$X₁…Xₘ=ε$}
+      \STATE{$r←\Function predict(Y,t)$} \COMMENT{next rule to apply}
+      \STATE{$[Y::=X₁…Xₘ]←r$} \COMMENT{break~$r$ into components}
+      \IF[$\Function predict(·,·)$ returned an~$ε$-rule]{$X₁…Xₘ=ε$}
         \WHILE[pop all exhausted rules]{$\Function exhausted(\Function peek(L))$}
           \STATE{$\Function pop(L)$}
         \ENDWHILE
         \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{$Y$ was just fully parsed}
         \STATE{$\Function push(L,[X ::=αY·β])$} \COMMENT{advance the rule}
-      \ELSE[$δ$ returned a non~$ε$-rule]
-        \STATE{$\Function push(L,[B::=·X₁…Xₘ])$} \COMMENT{we now turn to parse~$r$}
+      \ELSE[$\Function predict(·,·)$ returned a non~$ε$-rule]
+        \STATE{$\Function push(L,[Y::=·X₁…Xₘ])$} \COMMENT{we now turn to parse~$r$}
       \FI
       \STATE{$[X::=α·Yβ] ← \Function pop(L)$} \COMMENT{break~$i$ into its components}
     \ENDWHILE
