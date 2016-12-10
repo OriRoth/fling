@@ -3,6 +3,7 @@ package org.spartan.fajita.api.rllp;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -57,7 +58,7 @@ public class JSM {
   public Item peek() {
     if (S0.isEmpty())
       return null;
-    return S0.get(S0.size()-1);
+    return S0.get(S0.size() - 1);
   }
   /**
    * Pushes items to the JSM and makes it readonly afterwards
@@ -79,7 +80,7 @@ public class JSM {
    * 
    * @param i
    */
-  public void push(Item i) {
+  private void push(Item i) {
     if (readonly)
       throw new IllegalStateException("Can't push in readonly mode.");
     HashMap<Verb, JSM> partMap = new HashMap<>();
@@ -105,7 +106,17 @@ public class JSM {
     this.readonly = true;
   }
   private JSM findJump(Verb v) {
-    for (Map<Verb, JSM> partMap : S1)
+    /**
+     * We remove the first item in S1 because each item in S1 is relevant only
+     * when there are other elements on top (meaning the matching item in S0 is
+     * NOT the top of the stack). This makes sense since S1 is only used as jump
+     * information for items that does not know what happen in the depth of the
+     * stack. The top element of S1 is therefore not relevant (and causes error
+     * because it override legal jumps).
+     */
+    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1.subList(0, S1.size() - 1));
+    Collections.reverse(reversed);
+    for (Map<Verb, JSM> partMap : reversed)
       if (partMap.containsKey(v))
         return partMap.get(v);
     return null;
@@ -155,11 +166,10 @@ public class JSM {
         return false;
     } else if (!this.peek().equals(other.peek()))
       return false;
-    /*
-     * TODO: This line might enter infinite recursion... find such case and debug. 
-     */
+    /* TODO: This line might enter infinite recursion... find such case and
+     * debug. */
     if (!legalJumps().equals(other.legalJumps()))
-        return false;
+      return false;
     return true;
   }
   @Override public String toString() {
@@ -169,8 +179,8 @@ public class JSM {
   public Item pop() {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");
-    S1.remove(S1.size()-1);
-    return S0.remove(S0.size()-1);
+    S1.remove(S1.size() - 1);
+    return S0.remove(S0.size() - 1);
   }
   /**
    * Jumps to using v's jump stack, changing the state of the JSM accordingly.

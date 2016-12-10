@@ -1,7 +1,9 @@
 package org.spartan.fajita.api.rllp.generation;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -28,13 +30,33 @@ public class Utilities {
   }
 
   public static class Mapper<T> {
-    private Collection<T> arg;
+    private Collection<T> items;
 
-    Mapper(Collection<T> arg) {
-      this.arg = arg;
+    Mapper(Collection<T> items) {
+      this.items = items;
     }
-    public <S> Collection<S> with(Function<T, S> func) {
-      return arg.stream().map(t -> func.apply(t)).collect(Collectors.toList());
+    public <S> Filter<T, S> with(Function<T, S> func) {
+      return new Filter<>(items, func);
+    }
+  }
+
+  public static class Filter<T, S> implements Iterable<S> {
+    private final Function<T, S> func;
+    private final Collection<T> items;
+
+    public Filter(Collection<T> items, Function<T, S> func) {
+      this.items = items;
+      this.func = func;
+    }
+    public Collection<S> asList(){
+      return items.stream().map(t -> func.apply(t)).collect(Collectors.toList());
+    }
+    @Override public Iterator<S> iterator() {
+      return asList().iterator();
+    }
+    public Collection<S> filter(Predicate<T> pred){
+      items.removeIf(pred);
+      return asList();
     }
   }
 }

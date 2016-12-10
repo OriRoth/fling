@@ -8,9 +8,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 
 import javax.lang.model.element.Modifier;
 
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.rllp.Item;
 import org.spartan.fajita.api.rllp.JSM;
@@ -36,9 +38,13 @@ import com.squareup.javapoet.TypeVariableName;
 
   private RLLPEncoder(RLLP parser) {
     this.rllp = parser;
+    Predicate<Item> startItem = i ->i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0 ;
+    Predicate<Item> dotAfterVerb = i ->  i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
+    Predicate<Item> reachableItem = startItem.or(dotAfterVerb);
+    Predicate<Item> unreachableItem = reachableItem.negate();
     enclosing = TypeSpec.classBuilder(enclosingClass) //
         .addType(addErrorType())//
-        .addTypes(map(rllp.items).with(i -> encodeItem(i))) //
+        .addTypes(map(rllp.items).with(i -> encodeItem(i)).filter(unreachableItem)) //
         .build();
   }
   private static TypeSpec addErrorType() {
@@ -99,7 +105,8 @@ import com.squareup.javapoet.TypeVariableName;
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(next.rule.lhs);
     if (followOfItem.isEmpty())
       return itemClassName(next);
-    return ParameterizedTypeName.get(itemClassName(next), map(followOfItem).with(v -> verbTypeName(v)).toArray(new TypeName[] {}));
+    return ParameterizedTypeName.get(itemClassName(next),
+        map(followOfItem).with(v -> verbTypeName(v)).asList().toArray(new TypeName[] {}));
   }
   private TypeName returnTypeOfPush(Push action) {
     JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
