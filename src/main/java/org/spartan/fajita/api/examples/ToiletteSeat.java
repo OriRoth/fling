@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.examples.toiletteSeat;
+package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat.ToiletteTerminals.*;
-import static org.spartan.fajita.api.examples.toiletteSeat.ToiletteSeat.ToiletteVariables.*;
+import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteTerminals.*;
+import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteVariables.*;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;

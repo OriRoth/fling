@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.examples.pascal;
+package org.spartan.fajita.api.examples;
 
 import java.io.IOException;
 
@@ -7,8 +7,8 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import static org.spartan.fajita.api.examples.pascal.PascalFragment.NT.*;
-import static org.spartan.fajita.api.examples.pascal.PascalFragment.Term.*;
+import static org.spartan.fajita.api.examples.PascalFragment.NT.*;
+import static org.spartan.fajita.api.examples.PascalFragment.Term.*;
  
 public class PascalFragment {
   static enum Term implements Terminal {

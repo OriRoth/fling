@@ -1,8 +1,4 @@
-package org.spartan.fajita.api.examples.balancedParenthesis;
-
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.NT.B;
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.lp;
-import static org.spartan.fajita.api.examples.balancedParenthesis.BalancedParenthesis.Term.rp;
+package org.spartan.fajita.api.examples;
 
 import java.io.IOException;
 
@@ -11,6 +7,9 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+
+import static org.spartan.fajita.api.examples.BalancedParenthesis.Term.*;
+import static org.spartan.fajita.api.examples.BalancedParenthesis.NT.*;
 
 public class BalancedParenthesis {
   public static void expressionBuilder() {
@@ -23,7 +22,7 @@ public class BalancedParenthesis {
   }
 
   static enum NT implements NonTerminal {
-    B;
+    B, S;
   }
 
   /**
@@ -31,7 +30,8 @@ public class BalancedParenthesis {
    **/
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .start(B) //
+        .start(S) //
+        .derive(S).to(B).and(build) //
         .derive(B).to(lp).and(B).and(rp).and(B) //
         /*        */.orNone().go();
     return bnf;

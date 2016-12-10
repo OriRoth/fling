@@ -1,14 +1,14 @@
-package org.spartan.fajita.api.examples.hamcrest;
+package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.ASSERT;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.NT.MATCHER;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.anything;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.assertThat;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.equals_to;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.instance_of;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.not;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.type;
-import static org.spartan.fajita.api.examples.hamcrest.Hamcrest.Term.value;
+import static org.spartan.fajita.api.examples.Hamcrest.NT.ASSERT;
+import static org.spartan.fajita.api.examples.Hamcrest.NT.MATCHER;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.anything;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.assertThat;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.equals_to;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.instance_of;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.not;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.type;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.value;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;

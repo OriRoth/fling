@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.examples.json;
+package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.json.JsonObject.NT.*;
-import static org.spartan.fajita.api.examples.json.JsonObject.Term.*;
+import static org.spartan.fajita.api.examples.JsonObject.NT.*;
+import static org.spartan.fajita.api.examples.JsonObject.Term.*;
 
 import java.io.IOException;
 

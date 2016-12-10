@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.examples.sql;
+package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.sql.SqlFragment.NT.*;
-import static org.spartan.fajita.api.examples.sql.SqlFragment.Term.*;
+import static org.spartan.fajita.api.examples.SqlFragment.NT.*;
+import static org.spartan.fajita.api.examples.SqlFragment.Term.*;
 
 import java.io.IOException;
 

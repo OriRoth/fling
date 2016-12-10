@@ -1,7 +1,7 @@
-package org.spartan.fajita.api.examples.bootstrap;
+package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.NT.*;
-import static org.spartan.fajita.api.examples.bootstrap.BNFBootstrap.Term.*;
+import static org.spartan.fajita.api.examples.BNFBootstrap.NT.*;
+import static org.spartan.fajita.api.examples.BNFBootstrap.Term.*;
 
 import java.io.IOException;
 
@@ -10,7 +10,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-
 public class BNFBootstrap {
   public static void expressionBuilder() {
     // showASTs();
