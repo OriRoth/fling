@@ -97,6 +97,7 @@ public class JSM {
   private JSM calculateJumpConfiguration(Deque<Item> toPush) {
     final JSM $ = deepCopy();
     $.pushAll(toPush);
+    $.makeReadOnly();
     return $;
   }
   public void makeReadOnly() {
@@ -111,7 +112,7 @@ public class JSM {
   public Collection<SimpleEntry<Verb, JSM>> legalJumps() {
     return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v)))//
         .filter(e -> e.getValue() != null)//
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
   /**
    * hashCode() and equals() functions use S0 field only. ("jumpsTable" and
@@ -153,8 +154,10 @@ public class JSM {
         return false;
     } else if (!S0.peekFirst().equals(other.S0.peekFirst()))
       return false;
-    for (Verb v : verbs)
-      if (findJump(v) != other.findJump(v))
+    /*
+     * TODO: This line might enter infinite recursion... find such case and debug. 
+     */
+    if (!legalJumps().equals(other.legalJumps()))
         return false;
     return true;
   }

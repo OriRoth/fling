@@ -5,7 +5,6 @@ import static org.spartan.fajita.api.rllp.generation.Utilities.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,28 +32,18 @@ import com.squareup.javapoet.TypeVariableName;
 
 @SuppressWarnings("restriction") public class RLLPEncoder {
   private RLLP rllp;
-  private Map<Item, TypeSpec> itemTypes;
   private TypeSpec enclosing;
 
   private RLLPEncoder(RLLP parser) {
     this.rllp = parser;
-    itemTypes = new HashMap<>();
-    encodeItems(rllp.items);
     enclosing = TypeSpec.classBuilder(enclosingClass) //
-        .addType(addErrorType()).addTypes(itemTypes.values()) //
+        .addType(addErrorType())//
+        .addTypes(map(rllp.items).with(i -> encodeItem(i))) //
         .build();
   }
   private static TypeSpec addErrorType() {
     return TypeSpec.classBuilder(errorClass)//
         .addModifiers(Modifier.STATIC).build();
-  }
-  private void encodeItems(List<Item> items) {
-    for (Item i : filterItems(items))
-      itemTypes.put(i, encodeItem(i));
-  }
-  private static Collection<Item> filterItems(List<Item> items) {
-    // TODO: filter unreachable items
-    return items;
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(i.rule.lhs);
@@ -62,7 +51,9 @@ import com.squareup.javapoet.TypeVariableName;
     final String typ = itemClassName(i).simpleName();
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(typ) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
+        // Adds push methods
         .addMethods(map(firstSet).with(v -> methodOf(i, v)));
+    // Adds jump methods
     if (rllp.analyzer.isSuffixNullable(i))
       encoding.addMethods(map(rllp.analyzer.followSetOf(i.rule.lhs)).with(v -> methodOf(i, v)));
     if (!followSet.isEmpty())
@@ -70,10 +61,9 @@ import com.squareup.javapoet.TypeVariableName;
     return encoding.build();
   }
   private MethodSpec methodOf(Item i, Verb v) {
-    final TypeName returnTypeOfMethod = returnTypeOfMethod(i, v);
     final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .returns(returnTypeOfMethod);
+        .returns(returnTypeOfMethod(i, v));
     augmentWithParameters(methodSpec, v);
     return methodSpec //
         .build();
@@ -153,7 +143,7 @@ import com.squareup.javapoet.TypeVariableName;
     if (followSet.isEmpty())
       return itemClassName(mainType);
     for (Verb v : followSet)
-      if (contextFollowSet.contains(v))
+      if (contextFollowSet.contains(v) && (mainType.readyToReduce() || rllp.analyzer.isSuffixNullable(mainType.advance())))
         typeArguments.putIfAbsent(v, verbTypeName(v));
       else
         typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
