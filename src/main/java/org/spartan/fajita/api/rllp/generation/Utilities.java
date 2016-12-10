@@ -2,6 +2,7 @@ package org.spartan.fajita.api.rllp.generation;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class Utilities {
       this.items = items;
       this.func = func;
     }
-    public Collection<S> asList(){
+    public List<S> asList(){
       return items.stream().map(t -> func.apply(t)).collect(Collectors.toList());
     }
     @Override public Iterator<S> iterator() {
