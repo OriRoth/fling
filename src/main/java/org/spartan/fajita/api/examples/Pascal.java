@@ -9,7 +9,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import static org.spartan.fajita.api.examples.PascalFragment.NT.*;
 import static org.spartan.fajita.api.examples.PascalFragment.Term.*;
- 
+
 public class PascalFragment {
   static enum Term implements Terminal {
     program, begin, end, label, //
@@ -50,5 +50,20 @@ public class PascalFragment {
   }
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
+  }
+  public static void legal(augS_0_8f39ce2 x) {
+    x.program().id().semi().begin().end().$();
+    x.program().id().pair().semi().begin().end().$();
+    x.program().id().semi().label().semi().begin().end().$();
+    x.program().id().semi().constant().semi().begin().end().$();
+    x.program().id().semi().label().semi().constant().semi().begin().end().$();
+    x.program().id().pair().semi().label().semi().semi().constant().semi().begin().end().$();
+    x.program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
+  }
+  public static void illegal(augS_0_8f39ce2 x) {
+    x.program().program();
+    x.program().id().id();
+    x.program().id().semi().label().constant();
+    x.program().id().semi().constant().semi().$();
   }
 }

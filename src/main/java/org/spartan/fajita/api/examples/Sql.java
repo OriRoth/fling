@@ -25,21 +25,30 @@ public class SqlFragment {
         .start(SELECT_STATEMENT) //
         //
         .derive(SELECT_STATEMENT)//
-          .to(select).and(QUANTIFIER).and(column).and(COLOUMNS).and(from).and(table).and(WHERE) //
-        .derive(QUANTIFIER).to(all)
-					.or(distinct) //
+        .to(select).and(QUANTIFIER).and(column).and(COLOUMNS).and(from).and(table).and(WHERE) //
+        .derive(QUANTIFIER).to(all).or(distinct) //
         .derive(COLOUMNS).to(column).and(COLOUMNS)//
-          .orNone()//
+        .orNone()//
         .derive(WHERE).to(where).and(EXPRESSION) //
-          .orNone() //
+        .orNone() //
         .derive(EXPRESSION).to(column).and(OP).and(literal) //
-        .derive(OP).to(equals)
-					.or(geq)
-					.or(leq) //
+        .derive(OP).to(equals).or(geq).or(leq) //
         .go();
     return b;
   }
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
   }
+  void compiles(augS_0_4b3e6322 x) {
+    x.select().all().column().from().table().$();
+    x.select().distinct().column().column().column().column().from().table().where().column().geq().literal().$();
+    x.select().all().column().column().column().from().table().$();
+    x.select().all().column().from().table().where().column().equals().literal().$();
+  }
+  void doesnt_compile(augS_0_4b3e6322 x) {
+    x.all().$();
+    x.from().$();
+    x.select().from().$();
+    x.select().all().column().from().$();
+  
 }
