@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.examples.JsonObject.NT.*;
-import static org.spartan.fajita.api.examples.JsonObject.Term.*;
+import static org.spartan.fajita.api.examples.Json.NT.*;
+import static org.spartan.fajita.api.examples.Json.Term.*;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public class JsonObject {
+public class Json {
   public static void expressionBuilder() {
     // showASTs();
   }

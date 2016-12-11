@@ -1,5 +1,9 @@
 package org.spartan.fajita.api.examples;
 
+import static org.spartan.fajita.api.examples.BalancedParenthesis.NT.B;
+import static org.spartan.fajita.api.examples.BalancedParenthesis.NT.S;
+import static org.spartan.fajita.api.examples.BalancedParenthesis.Term.*;
+
 import java.io.IOException;
 
 import org.spartan.fajita.api.Main;
@@ -7,9 +11,6 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-
-import static org.spartan.fajita.api.examples.BalancedParenthesis.Term.*;
-import static org.spartan.fajita.api.examples.BalancedParenthesis.NT.*;
 
 public class BalancedParenthesis {
   public static void expressionBuilder() {
@@ -36,6 +37,20 @@ public class BalancedParenthesis {
         /*        */.orNone().go();
     return bnf;
   }
+//  public static void compiles(augS_0_55e605a2 x){
+//    x.build().$();
+//    x.lp()
+//     .rp()
+//     .build().$();
+//    x.lp().lp().lp().lp().lp() //
+//     .rp().rp().rp().rp().rp() //
+//     .build().$();
+//    x.lp()
+//     .rp()
+//     .lp().lp()
+//     .rp().rp()
+//     .build().$();
+//  }
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
   }

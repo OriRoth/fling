@@ -14,15 +14,14 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeVariableName;
 
 public class Utilities {
-  @SuppressWarnings("boxing") public static final String enclosingClass = "Container"
-      + String.format("%x", Math.abs(Long.hashCode(System.currentTimeMillis())));
+  public static final String enclosingClass = "Container" + Long.toHexString(System.currentTimeMillis()%1000);
   public static final TypeVariableName errorClass = TypeVariableName.get("ERROR");
 
   public static TypeVariableName verbTypeName(final Verb verb) {
     return TypeVariableName.get(verb.name());
   }
-  @SuppressWarnings("boxing") public static ClassName itemClassName(final Item i) {
-    final String suffix = String.format("%x", Math.abs(i.rule.hashCode()));
+  public static ClassName itemClassName(final Item i) {
+    final String suffix = Integer.toHexString(Math.abs(i.rule.hashCode())%1000);
     final String itemTypeName = i.rule.lhs + "_" + i.dotIndex + "_" + suffix;
     return ClassName.get("", itemTypeName);
   }
