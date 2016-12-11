@@ -340,20 +340,33 @@ respect to~$i$, to~$t$'s jump value (type~$J$).
   \LET{$[A::=α·Y₁…Yₙ]$}{$i$} \COMMENT{break~$i$ into components}
   \LET{$d$}{$∅$} \COMMENT{initialize return variable}
   \FOR[for all symbols in suffix of~$i$]{$j = 2,…,n$}
-  \IF[continue to build~$d$?]{not~$\Function Nullable(Y₂…Y_{j-1})$}
+    \IF[continue to build~$d$?]{not~$\Function Nullable(Y₂…Y_{j-1})$}
       \BREAK
     \FI
     \FOR[symbols that might cause jump in~$Y₁$]{$t∈\Function First(Yⱼ)$}
-    \IF[\nth{1} update of key~$t$ in dictionary~$d$?]{$d(t)=⊥$}
-      \STATE{$i_{addr} = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{the jump address}
-      % This is the real value of d(t), when considering the ‟Push after jump phenomena”
-      \STATE{\bfseries\scriptsize{\texttt{// }\textit{handle the Push after Jump phenomena}}}
-      \STATE{$d(t) = Consolidate(i_{addr},t)$} \COMMENT{update~$d(t)$}
-    \FI
+      \IF[\nth{1} update of key~$t$ in dictionary~$d$?]{$d(t)=⊥$}
+        \STATE{$i_{addr} = [A::=αY₁…·Yⱼ…Yₙ]$} \COMMENT{the jump address}
+        \STATE{\bfseries\scriptsize{\texttt{// }\textit{handle the Push after Jump phenomena}}}
+        \STATE{$d(t) = Consolidate(i_{addr},t)$} \COMMENT{update~$d(t)$}
+      \FI
     \ENDFOR % Symbols
-  \ENDFOR
+  \ENDFOR % Suffix
+  \IF[Is it possible to jump beyond~$d$?]{not~$\Function Nullable(Y₂…Yₙ)$}
+    \FOR[Don't allow a fallback after this point]{$t∈\Sigma$}
+      \IF[Not a legal jump]{$d(t)=⊥$}
+        \STATE{$d(t) = \textsc{Error}$} 
+      \FI
+    \ENDFOR % Verbs
+  \FI
   \RETURN{$d$}
   \end{algorithmic}
+  \vspace{0.3ex}
+  \hrule
+  \vspace{0.3ex}
+  \begin{itemize}
+    \item \textsc{Error} is a special jump value that causes the \RLLp to reject instantly.
+  \end{itemize}
+   
 \end{algorithm}
 
 Let~$Y₁β= Y₁…Yₙ$ be the suffix denoted by~$i$'s dot.
