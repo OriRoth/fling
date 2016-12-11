@@ -30,7 +30,6 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeVariableName;
 
 @SuppressWarnings("restriction") public class RLLPEncoder {
   private RLLP rllp;
@@ -38,8 +37,8 @@ import com.squareup.javapoet.TypeVariableName;
 
   private RLLPEncoder(RLLP parser) {
     this.rllp = parser;
-    Predicate<Item> startItem = i ->i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0 ;
-    Predicate<Item> dotAfterVerb = i ->  i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
+    Predicate<Item> startItem = i -> i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0;
+    Predicate<Item> dotAfterVerb = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
     Predicate<Item> reachableItem = startItem.or(dotAfterVerb);
     Predicate<Item> unreachableItem = reachableItem.negate();
     enclosing = TypeSpec.classBuilder(enclosingClass) //
@@ -48,7 +47,7 @@ import com.squareup.javapoet.TypeVariableName;
         .build();
   }
   private static TypeSpec addErrorType() {
-    return TypeSpec.classBuilder(errorClass)//
+    return TypeSpec.classBuilder(errorClass.name)//
         .addModifiers(Modifier.STATIC).build();
   }
   private TypeSpec encodeItem(Item i) {
@@ -109,7 +108,7 @@ import com.squareup.javapoet.TypeVariableName;
         map(followOfItem).with(v -> verbTypeName(v)).asList().toArray(new TypeName[] {}));
   }
   private TypeName returnTypeOfPush(Push action) {
-    JSM jsm = new JSM(rllp.bnf.getVerbs(), rllp.jumpsTable);
+    JSM jsm = new JSM(rllp);
     jsm.pushAll(action.itemsToPush);
     return encodeJSM(jsm, action.i);
   }
@@ -121,12 +120,12 @@ import com.squareup.javapoet.TypeVariableName;
     }
   }
   private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, List<JSM> alreadySeen) throws FoundRecursiveTypeException {
+    if (jsm == JSM.JUMP_ERROR)
+      return errorClass;
     if (alreadySeen.indexOf(jsm) != -1)
       throw new FoundRecursiveTypeException(jsm);
     alreadySeen.add(jsm);
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
-    if (jsm.legalJumps().isEmpty()) // no possible jumps
-      return encodeTypeArgumentsMap(jsm.peek(), typeArguments, context);
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps()) {
       TypeName encodedJSM = null;
       try {
@@ -142,7 +141,7 @@ import com.squareup.javapoet.TypeVariableName;
   }
   private static TypeName encodeRecursiveJSM(JSM jsm, Item context) {
     System.out.println("Recurtion found!!!");
-    return ClassName.get("", "recursive" + errorClass);
+    return ClassName.get("", "recursive" + errorClass.name);
   }
   private TypeName encodeTypeArgumentsMap(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(mainType.rule.lhs);
@@ -150,15 +149,9 @@ import com.squareup.javapoet.TypeVariableName;
     if (followSet.isEmpty())
       return itemClassName(mainType);
     for (Verb v : followSet)
-      if (contextFollowSet.contains(v) && (mainType.readyToReduce() || rllp.analyzer.isSuffixNullable(mainType.advance())))
-        typeArguments.putIfAbsent(v, verbTypeName(v));
-      else
-        typeArguments.putIfAbsent(v, TypeVariableName.get(errorClass));
-    TypeName[] arguments = new TypeName[followSet.size()];
-    int i = 0;
-    for (Verb v : followSet)
-      arguments[i++] = typeArguments.get(v);
-    return ParameterizedTypeName.get(itemClassName(mainType), arguments);
+      typeArguments.putIfAbsent(v, (contextFollowSet.contains(v)) ? verbTypeName(v) : errorClass);
+    List<TypeName> sortedArguments = map(followSet).with(v -> typeArguments.get(v)).asList();
+    return ParameterizedTypeName.get(itemClassName(mainType), sortedArguments.toArray(new TypeName[] {}));
   }
   private static TypeName returnTypeOfJump(Jump action) {
     return verbTypeName(action.v);

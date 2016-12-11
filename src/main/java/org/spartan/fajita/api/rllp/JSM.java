@@ -14,16 +14,17 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
+  public static final JSM JUMP_ERROR = null;
   List<Item> S0;
   List<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
-  private Map<Item, Map<Verb, List<Item>>> jumpsTable;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
+  private final RLLP rllp;
 
-  public JSM(Collection<Verb> verbs, Map<Item, Map<Verb, List<Item>>> jumpsTable) {
-    this.verbs = new ArrayList<>(verbs);
-    this.jumpsTable = jumpsTable;
+  public JSM(RLLP rllp) {
+    this.rllp = rllp;
+    this.verbs = new ArrayList<>(rllp.bnf.getVerbs());
     this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
     S0 = new ArrayList<>();
@@ -31,7 +32,7 @@ public class JSM {
     this.configurationCache = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
-    this(fromJSM.verbs, fromJSM.jumpsTable);
+    this(fromJSM.rllp);
     fromJSM.S0.forEach(i -> S0.add(i));
     // TODO: Maybe... we have to deepcopy the JSMs inside the map too.
     // maybe they change or something..
@@ -83,15 +84,14 @@ public class JSM {
   private void push(Item i) {
     if (readonly)
       throw new IllegalStateException("Can't push in readonly mode.");
-    HashMap<Verb, JSM> partMap = new HashMap<>();
-    for (Verb v : jumpsTable.get(i).keySet())
+    HashMap<Verb, JSM> jumpInfo = new HashMap<>();
+    for (Verb v : rllp.legalJumps(i))
       // This is the push after jump
-      partMap.put(v, calculateJumpConfiguration(jumpTable(i, v)));
+      jumpInfo.put(v, calculateJumpConfiguration(rllp.jumps(i, v)));
+    for (Verb v : rllp.illegalJumps(i))
+      jumpInfo.put(v, JSM.JUMP_ERROR);
     S0.add(i);
-    S1.add(partMap);
-  }
-  private List<Item> jumpTable(Item i, Verb v) {
-    return jumpsTable.get(i).get(v);
+    S1.add(jumpInfo);
   }
   /**
    * Returns the state of the JSM after pushing all items in "toPush".
@@ -126,18 +126,11 @@ public class JSM {
         .filter(e -> e.getValue() != null)//
         .collect(Collectors.toSet());
   }
-  /**
-   * hashCode() and equals() functions use S0 field only. ("jumpsTable" and
-   * "verbs" are only used to determine the same BNF is used). I believe that
-   * the JSM is uniquely determined by S0, as S1 is internally handled inside
-   * the implementation of "push()" according to the "jumps" table.
-   */
   @Override public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + ((rllp == null) ? 0 : rllp.hashCode());
     result = prime * result + ((S0 == null) ? 0 : S0.hashCode());
-    result = prime * result + ((jumpsTable == null) ? 0 : jumpsTable.hashCode());
-    result = prime * result + ((verbs == null) ? 0 : verbs.hashCode());
     return result;
   }
   /**
@@ -151,15 +144,7 @@ public class JSM {
     if (getClass() != obj.getClass())
       return false;
     JSM other = (JSM) obj;
-    if (jumpsTable == null) {
-      if (other.jumpsTable != null)
-        return false;
-    } else if (!jumpsTable.equals(other.jumpsTable))
-      return false;
-    if (verbs == null) {
-      if (other.verbs != null)
-        return false;
-    } else if (!verbs.equals(other.verbs))
+    if (rllp != other.rllp)
       return false;
     if (S0 == null) {
       if (other.S0 != null)

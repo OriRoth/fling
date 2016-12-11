@@ -16,7 +16,7 @@ import com.squareup.javapoet.TypeVariableName;
 public class Utilities {
   @SuppressWarnings("boxing") public static final String enclosingClass = "Container"
       + String.format("%x", Math.abs(Long.hashCode(System.currentTimeMillis())));
-  public static final String errorClass = "ERROR";
+  public static final TypeVariableName errorClass = TypeVariableName.get("ERROR");
 
   public static TypeVariableName verbTypeName(final Verb verb) {
     return TypeVariableName.get(verb.name());
@@ -49,13 +49,13 @@ public class Utilities {
       this.items = items;
       this.func = func;
     }
-    public List<S> asList(){
+    public List<S> asList() {
       return items.stream().map(t -> func.apply(t)).collect(Collectors.toList());
     }
     @Override public Iterator<S> iterator() {
       return asList().iterator();
     }
-    public Collection<S> filter(Predicate<T> pred){
+    public Collection<S> filter(Predicate<T> pred) {
       items.removeIf(pred);
       return asList();
     }

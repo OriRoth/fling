@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFAnalyzer;
@@ -15,13 +17,14 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.ll.LLParser;
 
 public class RLLP {
+  static final List<Item> JUMP_ERROR = null;
   public final BNF bnf;
   public final BNFAnalyzer analyzer;
   public final List<Item> items;
   private final Map<NonTerminal, Map<Verb, DerivationRule>> llPredictionTable;
-  private Map<Item, Map<Verb, List<Item>>> consolidationTable;
-  public final Map<Item, Map<Verb, List<Item>>> jumpsTable;
-  private Map<Item, Map<Verb, Action>> rllPredictionTable;
+  private final Map<Item, Map<Verb, List<Item>>> consolidationTable;
+  private final Map<Item, Map<Verb, List<Item>>> jumpsTable;
+  private final Map<Item, Map<Verb, Action>> rllPredictionTable;
 
   public RLLP(BNF bnf) {
     this.bnf = bnf;
@@ -50,15 +53,14 @@ public class RLLP {
             currentLine.put(v, new Action.Advance(i));
           else
             currentLine.put(v, new Action.Push(i, v, consolidate(i, v)));
-        else if (analyzer.followSetOf(i.rule.lhs).contains(v)
-            && analyzer.isSuffixNullable(i)) {
+        else if (analyzer.followSetOf(i.rule.lhs).contains(v) && analyzer.isSuffixNullable(i)) {
           if (v == SpecialSymbols.$)
             currentLine.put(v, new Action.Accept());
           else
             currentLine.put(v, new Action.Jump(v));
         }
       }
-    } 
+    }
     return $;
   }
   private Map<Item, Map<Verb, List<Item>>> calculateJumpsTable() {
@@ -81,6 +83,12 @@ public class RLLP {
         $.put(v, consolidate(jumpLocation, v));
       }
     }
+    if (!i.readyToReduce() && !analyzer.isSuffixNullable(i.advance()))
+      for (Verb v : bnf.getVerbs()) {
+        if (v.equals(SpecialSymbols.$))
+          continue;
+        $.putIfAbsent(v, JUMP_ERROR);
+      }
     return $;
   }
   private Map<Item, Map<Verb, List<Item>>> calculateConsolidateTable() {
@@ -122,12 +130,12 @@ public class RLLP {
       $.add(current_i);
       DerivationRule r = llPredict((NonTerminal) Y, v);
       if (r.getChildren().size() == 0) { // r is an epsilon move?
-        while ($.get($.size()-1).advance().readyToReduce())
-          $.remove($.size()-1);
-        $.add($.remove($.size()-1).advance());
+        while ($.get($.size() - 1).advance().readyToReduce())
+          $.remove($.size() - 1);
+        $.add($.remove($.size() - 1).advance());
       } else
         $.add(new Item(r, 0));
-      current_i = $.remove($.size()-1);
+      current_i = $.remove($.size() - 1);
       Y = current_i.afterDot();
     }
     $.add(current_i.advance());
@@ -159,6 +167,18 @@ public class RLLP {
     if (value == null)
       throw new IllegalStateException("jumps( " + i + " , " + v + " ) does not exist.");
     return value;
+  }
+  public Set<Verb> legalJumps(Item i) {
+    final Map<Verb, List<Item>> row = jumpsTable.get(i);
+    if (row == null)
+      throw new IllegalStateException("jumps( " + i + " , _ ) does not exist.");
+    return row.keySet().stream().filter(key -> row.get(key) != RLLP.JUMP_ERROR).collect(Collectors.toSet());
+  }
+public Set<Verb> illegalJumps(Item i) {
+    final Map<Verb, List<Item>> row = jumpsTable.get(i);
+    if (row == null)
+      throw new IllegalStateException("jumps( " + i + " , _ ) does not exist.");
+    return row.keySet().stream().filter(key -> row.get(key) == RLLP.JUMP_ERROR).collect(Collectors.toSet());
   }
   public Action predict(Item i, Verb v) {
     final Map<Verb, Action> row = rllPredictionTable.get(i);
