@@ -14,7 +14,7 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
-  public static final JSM JUMP_ERROR = null;
+  public static final JSM JAMMED = null;
   List<Item> S0;
   List<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
@@ -34,8 +34,6 @@ public class JSM {
   private JSM(JSM fromJSM) {
     this(fromJSM.rllp);
     fromJSM.S0.forEach(i -> S0.add(i));
-    // TODO: Maybe... we have to deepcopy the JSMs inside the map too.
-    // maybe they change or something..
     fromJSM.S1.forEach(partMap -> S1.add(partMap));
     configurationCache = fromJSM.configurationCache;
   }
@@ -89,7 +87,7 @@ public class JSM {
       // This is the push after jump
       jumpInfo.put(v, calculateJumpConfiguration(rllp.jumps(i, v)));
     for (Verb v : rllp.illegalJumps(i))
-      jumpInfo.put(v, JSM.JUMP_ERROR);
+      jumpInfo.put(v, JSM.JAMMED);
     S0.add(i);
     S1.add(jumpInfo);
   }
