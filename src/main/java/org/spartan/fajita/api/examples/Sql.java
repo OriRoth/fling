@@ -39,16 +39,16 @@ public class Sql {
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
   }
-//  void compiles(augS_0_32a x) {
-//    x.select().all().column().from().table().$();
-//    x.select().distinct().column().column().column().column().from().table().where().column().geq().literal().$();
-//    x.select().all().column().column().column().from().table().$();
-//    x.select().all().column().from().table().where().column().equals().literal().$();
-//  }
-//  void doesnt_compile(augS_0_32a x) {
-//    x.all().$();
-//    x.from().$();
-//    x.select().from().$();
-//    x.select().all().column().from().$();
-//  }
+  // void compiles(augS_0_32a x) {
+  // x.select().all().column().from().table().$();
+  // x.select().distinct().column().column().column().column().from().table().where().column().geq().literal().$();
+  // x.select().all().column().column().column().from().table().$();
+  // x.select().all().column().from().table().where().column().equals().literal().$();
+  // }
+  // void doesnt_compile(augS_0_32a x) {
+  // x.all().$();
+  // x.from().$();
+  // x.select().from().$();
+  // x.select().all().column().from().$();
+  // }
 }
