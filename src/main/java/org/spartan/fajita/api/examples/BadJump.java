@@ -11,7 +11,7 @@ import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
-public class BadJump {
+class BadJump {
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
   }
