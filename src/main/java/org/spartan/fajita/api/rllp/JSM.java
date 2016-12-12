@@ -124,14 +124,11 @@ public class JSM {
   public Collection<SimpleEntry<Verb, JSM>> legalJumps() {
     return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v)))//
         .filter(e -> e.getValue() != null)//
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
   @Override public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((rllp == null) ? 0 : rllp.hashCode());
-    result = prime * result + ((S0 == null) ? 0 : S0.hashCode());
-    return result;
+    throw new UnsupportedOperationException(
+        "Since JSM is highly recursive, and hashCode() and equals() cannot be consistent, hashCode() is not supported");
   }
   /**
    * @see JSM#hashCode()
@@ -223,4 +220,5 @@ public class JSM {
       return true;
     }
   }
+
 }
