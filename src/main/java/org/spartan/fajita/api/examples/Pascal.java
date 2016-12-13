@@ -26,7 +26,8 @@ public class Pascal {
   }
 
   public static BNF buildBNF() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = BNFBuilder.buildBNF(Term.class, NT.class) //
+        .setApiName("Pascal") //
         .start(Program) //
         .derive(Program).to(program).and(id).and(Parameters).and(semi).and(Definitions).and(Body) //
         .derive(Body).to(begin).and(end) //

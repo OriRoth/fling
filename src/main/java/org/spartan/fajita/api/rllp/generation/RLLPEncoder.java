@@ -48,7 +48,8 @@ import com.squareup.javapoet.TypeVariableName;
     Predicate<Item> dotAfterVerb = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
     Predicate<Item> reachableItem = startItem.or(dotAfterVerb);
     Predicate<Item> unreachableItem = reachableItem.negate();
-    enclosing = TypeSpec.classBuilder(enclosingClass) //
+    enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
+        .addModifiers(Modifier.PUBLIC)
         .addType(addErrorType())//
         .addTypes(map(rllp.items).with(i -> encodeItem(i)).filter(unreachableItem)) //
         .addTypes(recursiveTypes) //

@@ -17,7 +17,6 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 
 /**
  * @author Tomer
- *
  */
 public class BNFBuilder {
   private final List<DerivationRule> derivationRules;
@@ -25,6 +24,8 @@ public class BNFBuilder {
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
+  private String ApiName;
+  public static Class<ELLIPS> elipsis = BNFBuilder.ELLIPS.class;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
@@ -83,11 +84,32 @@ public class BNFBuilder {
   List<DerivationRule> getRules() {
     return derivationRules;
   }
-  public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
-    NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
-    newNts[nts.length] = nt;
-    BNFBuilder.this.getStartSymbols().addAll(Arrays.asList(newNts));
-    return new FirstDerive();
+  public String getBNFName() {
+    return this.ApiName;
+  }
+  public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildBNF(
+      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+    BNFBuilder builder = new BNFBuilder(terminalEnum, nonterminalEnum);
+    return builder.new SetSymbols();
+  }
+  void setApiName(String ApiName) {
+    this.ApiName = ApiName;
+  }
+
+  public class SetSymbols {
+    public ApiName setApiName(String name) {
+      BNFBuilder.this.setApiName(name);
+      return new ApiName();
+    }
+  }
+
+  public class ApiName {
+    public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
+      NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
+      newNts[nts.length] = nt;
+      BNFBuilder.this.getStartSymbols().addAll(Arrays.asList(newNts));
+      return new FirstDerive();
+    }
   }
 
   private abstract class Deriver {
@@ -118,7 +140,6 @@ public class BNFBuilder {
    * Class for the state after derive() is called from BNFBuilder
    * 
    * @author Tomer
-   *
    */
   public class InitialDeriver {
     private final NonTerminal lhs;
@@ -128,6 +149,9 @@ public class BNFBuilder {
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
       return new AndDeriver(lhs, new Verb(term, type));
+    }
+    public AndDeriver to(final Terminal term, NonTerminal nestedAPI) {
+      return new AndDeriver(lhs, new Verb(term, nestedAPI));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);
@@ -159,7 +183,6 @@ public class BNFBuilder {
    * Currently deriving a normal rule
    * 
    * @author Tomer
-   *
    */
   public final class AndDeriver extends OrDeriver {
     AndDeriver(final NonTerminal lhs, final NonTerminal child) {
@@ -189,4 +212,7 @@ public class BNFBuilder {
       return new InitialDeriver(nt);
     }
   }
+
+  class ELLIPS {
+    /**/}
 }

@@ -20,7 +20,6 @@ import com.squareup.javapoet.TypeVariableName;
 
 public class Utilities {
   private static Random rnd;
-  public static final String enclosingClass = "Container" + randomHexString();
   public static final TypeVariableName errorClass = TypeVariableName.get("ERROR");
 
   public static TypeVariableName verbTypeName(final Verb verb) {
