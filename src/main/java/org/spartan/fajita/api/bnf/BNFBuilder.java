@@ -84,7 +84,7 @@ public class BNFBuilder {
   List<DerivationRule> getRules() {
     return derivationRules;
   }
-  public String getBNFName() {
+  public String getApiName() {
     return this.ApiName;
   }
   public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildBNF(
@@ -149,9 +149,6 @@ public class BNFBuilder {
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
       return new AndDeriver(lhs, new Verb(term, type));
-    }
-    public AndDeriver to(final Terminal term, NonTerminal nestedAPI) {
-      return new AndDeriver(lhs, new Verb(term, nestedAPI));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);

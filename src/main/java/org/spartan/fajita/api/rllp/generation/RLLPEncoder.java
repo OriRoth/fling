@@ -14,7 +14,6 @@ import java.util.function.Predicate;
 
 import javax.lang.model.element.Modifier;
 
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.rllp.Item;
 import org.spartan.fajita.api.rllp.JSM;
@@ -27,7 +26,6 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.MethodSpec.Builder;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
@@ -38,21 +36,31 @@ import com.squareup.javapoet.TypeVariableName;
   private final TypeSpec enclosing;
   private final Collection<TypeSpec> recursiveTypes;
   private final Map<List<Item>, TypeName> JSMCache;
+  private final Collection<MethodSpec> startMethods;
   private static final ClassName placeholder = ClassName.get("", "placeholder");
+  private final TypeSpec apiReturnType;
 
   private RLLPEncoder(RLLP parser) {
     this.rllp = parser;
     this.recursiveTypes = new ArrayList<>();
     this.JSMCache = new HashMap<>();
-    Predicate<Item> startItem = i -> i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0;
+    this.startMethods = new ArrayList<>();
+    rllp.getStartItems().forEach(i -> getStartMethods(i));//
     Predicate<Item> dotAfterVerb = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
-    Predicate<Item> reachableItem = startItem.or(dotAfterVerb);
-    Predicate<Item> unreachableItem = reachableItem.negate();
+    Predicate<Item> unreachableItem = dotAfterVerb.negate();
+    apiReturnType = apiReturnType();
     enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
-        .addModifiers(Modifier.PUBLIC)
+        .addModifiers(Modifier.PUBLIC) // 
         .addType(addErrorType())//
         .addTypes(map(rllp.items).with(i -> encodeItem(i)).filter(unreachableItem)) //
         .addTypes(recursiveTypes) //
+        .addType(apiReturnType)//
+        .addMethods(startMethods) //
+        .build();
+  }
+  private TypeSpec apiReturnType() {
+    return TypeSpec.classBuilder(rllp.bnf.getApiName() + randomHexString())//
+        .addModifiers(Modifier.STATIC, Modifier.PUBLIC) //
         .build();
   }
   private static TypeSpec addErrorType() {
@@ -60,13 +68,13 @@ import com.squareup.javapoet.TypeVariableName;
         .addModifiers(Modifier.STATIC).build();
   }
   private TypeSpec encodeItem(Item i) {
-    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(i.rule.lhs);
     final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
+    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(i.rule.lhs);
     final String typeName = itemClassName(i).simpleName();
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(typeName) //
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
         // Adds push methods
-        .addMethods(map(firstSet).with(v -> methodOf(i, v)));
+        .addMethods(map(firstSet).with(v -> methodOf(i, v)).asList());
     // Adds jump methods
     if (rllp.analyzer.isSuffixNullable(i))
       encoding.addMethods(map(rllp.analyzer.followSetOf(i.rule.lhs)).with(v -> methodOf(i, v)));
@@ -74,20 +82,26 @@ import com.squareup.javapoet.TypeVariableName;
       encoding.addTypeVariables(map(followSet).with(v -> verbTypeName(v)));
     return encoding.build();
   }
+  private void getStartMethods(Item i) {
+    final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
+    final List<MethodSpec> methods = map(firstSet).with(v -> methodOf(i, v)).asList();
+    for (MethodSpec m : methods)
+      startMethods.add(MethodSpec.methodBuilder(m.name)//
+          .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
+          .addCode("return null;") //
+          .returns(m.returnType) //
+          .build());
+  }
   private MethodSpec methodOf(Item i, Verb v) {
     final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
         .returns(returnTypeOfMethod(i, v));
-    augmentWithParameters(methodSpec, v);
-    return methodSpec //
-        .build();
-  }
-  private static void augmentWithParameters(Builder methodSpec, Verb v) {
     List<Class<?>> classes = v.type.classes;
-    for (int i = 0; i < classes.size(); i++) {
-      Class<?> clazz = classes.get(i);
-      methodSpec.addParameter(ParameterSpec.builder(clazz, "arg" + i).build());
+    for (int i1 = 0; i1 < classes.size(); i1++) {
+      Class<?> clazz = classes.get(i1);
+      methodSpec.addParameter(ParameterSpec.builder(clazz, "arg" + i1).build());
     }
+    return methodSpec.build();
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     final Action action = rllp.predict(i, v);
@@ -104,9 +118,8 @@ import com.squareup.javapoet.TypeVariableName;
         return returnTypeOfPush((Action.Push) action);
     }
   }
-  private static TypeName returnTypeOfAccept() {
-    // TODO:CHANGE TYPE
-    return TypeName.INT;
+  private TypeName returnTypeOfAccept() {
+    return ClassName.get("", apiReturnType.name);
   }
   private TypeName returnTypeOfAdvance(Advance action) {
     final Item next = action.beforeAdvancing.advance();

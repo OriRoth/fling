@@ -41,7 +41,7 @@ public class Utilities {
   public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
     return parameterizedType(ClassName.get("", typename), params);
   }
-  private static String randomHexString() {
+  public static String randomHexString() {
     if (rnd == null)
       rnd = new Random(System.currentTimeMillis());
     return Integer.toHexString(rnd.nextInt(5000));

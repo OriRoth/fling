@@ -10,6 +10,7 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import static org.spartan.fajita.api.junk.Pascal.program;
 
 public class Pascal {
   static enum Term implements Terminal {
@@ -53,19 +54,19 @@ public class Pascal {
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(buildBNF());
   }
-  // public static void legal(augS_0_8a x) {
-  // x.program().id().semi().begin().end().$();
-  // x.program().id().pair().semi().begin().end().$();
-  // x.program().id().semi().label().semi().begin().end().$();
-  // x.program().id().semi().constant().semi().begin().end().$();
-  // x.program().id().semi().label().semi().constant().semi().begin().end().$();
-  // x.program().id().pair().semi().label().semi().semi().constant().semi().begin().end().$();
-  // x.program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
-  // }
-  // public static void illegal(augS_0_8a x) {
-  // x.program().program();
-  // x.program().id().id();
-  // x.program().id().semi().label().constant();
-  // x.program().id().semi().constant().semi().$();
-  // }
+  public static void legal() {
+    program().id().semi().begin().end().$();
+    program().id().pair().semi().begin().end().$();
+    program().id().semi().label().semi().begin().end().$();
+    program().id().semi().constant().semi().begin().end().$();
+    program().id().semi().label().semi().constant().semi().begin().end().$();
+    program().id().pair().semi().label().semi().semi().constant().semi().begin().end().$();
+    program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
+  }
+  public static void illegal() {
+    program().program();
+    program().id().id();
+    program().id().semi().label().constant();
+    program().id().semi().constant().semi().$();
+  }
 }

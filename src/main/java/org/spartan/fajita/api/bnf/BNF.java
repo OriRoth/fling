@@ -13,14 +13,14 @@ public final class BNF {
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
   private final List<DerivationRule> derivationRules;
-  private final String BNFName;
+  private final String apiName;
 
   BNF(final BNFBuilder builder) {
     verbs = builder.getVerbs();
     nonterminals = builder.getNonTerminals();
     derivationRules = builder.getRules();
     startSymbols = builder.getStartSymbols();
-    BNFName = builder.getBNFName();
+    apiName = builder.getApiName();
   }
   public List<NonTerminal> getNonTerminals() {
     return nonterminals;
@@ -31,14 +31,14 @@ public final class BNF {
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;
   }
-  public String getBNFName() {
-    return BNFName;
+  public String getApiName() {
+    return apiName;
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder() //
         .append("Verbs set: " + getVerbs() + "\n") //
         .append("Nonterminals set: " + getNonTerminals() + "\n") //
-        .append("Rules for " + getBNFName() + ":\n");
+        .append("Rules for " + getApiName() + ":\n");
     for (DerivationRule rule : getRules())
       sb.append(rule.toString() + "\n");
     return sb.toString();
