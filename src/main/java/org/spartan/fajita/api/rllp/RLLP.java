@@ -1,6 +1,7 @@
 package org.spartan.fajita.api.rllp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,7 @@ public class RLLP {
       throw new IllegalStateException("jumps( " + i + " , _ ) does not exist.");
     return row.keySet().stream().filter(key -> row.get(key) != RLLP.JUMP_ERROR).collect(Collectors.toSet());
   }
-public Set<Verb> illegalJumps(Item i) {
+  public Set<Verb> illegalJumps(Item i) {
     final Map<Verb, List<Item>> row = jumpsTable.get(i);
     if (row == null)
       throw new IllegalStateException("jumps( " + i + " , _ ) does not exist.");
@@ -189,9 +190,9 @@ public Set<Verb> illegalJumps(Item i) {
       throw new IllegalStateException("predict( " + i + " , " + v + " ) does not exist.");
     return $;
   }
-  public Item getStartItem(Verb initialInput) {
-    return items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0)
-        .filter(i -> analyzer.firstSetOf(i.rule.getChildren()).contains(initialInput)).findAny().get();
+  public Collection<Item> getStartItems() {
+    return items.stream().filter(i -> i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0)
+        .collect(Collectors.toList());
   }
 
   public static abstract class Action {
