@@ -126,11 +126,14 @@ import com.squareup.javapoet.TypeVariableName;
     }
   }
   private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, List<JSM> alreadySeen) throws FoundRecursiveTypeException {
+    if (JSMCache.containsKey(jsm.getS0()))
+      return JSMCache.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
       return errorClass;
     if (alreadySeen.indexOf(jsm) != -1)
       throw new FoundRecursiveTypeException(jsm);
     alreadySeen.add(jsm);
+    TypeName $ = null;
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps()) {
       /* In this Try-Catch we invoke the possibly recursive encoding of the JSM.
@@ -142,11 +145,16 @@ import com.squareup.javapoet.TypeVariableName;
       } catch (FoundRecursiveTypeException exc) {
         if (!jsm.equals(exc.jsm))
           throw exc;
-        return encodeRecursiveJSM(jsm, context, e.getKey());
+        $ = encodeRecursiveJSM(jsm, context, e.getKey());
+        break;
       }
     }
-    List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
-    return parameterizedType(itemClassName(jsm.peek()), params);
+    if ($ == null) {
+      List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
+      $ = parameterizedType(itemClassName(jsm.peek()), params);
+    }
+    JSMCache.put(jsm.getS0(), $);
+    return $;
   }
   private TypeName encodeRecursiveJSM(JSM jsm, Item context, Verb recursiveVerb) {
     Map<Verb, TypeName> typeArguments = new TreeMap<>();

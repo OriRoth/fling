@@ -219,4 +219,8 @@ public class JSM {
     }
   }
 
+  public List<Item> getS0() {
+    return Collections.unmodifiableList(S0);
+  }
+
 }
