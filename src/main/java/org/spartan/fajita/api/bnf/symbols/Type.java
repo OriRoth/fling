@@ -16,14 +16,14 @@ public class Type {
   @Override public String toString() {
     StringBuilder sb = new StringBuilder().append("(");
     if (classes.size() != 0) {
-      classes.forEach(clss -> sb.append(clss.getSimpleName()).append(" X "));
+      classes.forEach(clss -> sb.append(clss.getSimpleName()).append(" * "));
       sb.delete(sb.length() - 3, sb.length());
     }
     sb.append(")");
     return sb.toString();
   }
   @Override public int hashCode() {
-    final int prime = 19;
+    final int prime = 17;
     int result = 1;
     result = prime * result + ((classes == null) ? 0 : classes.hashCode());
     return result;

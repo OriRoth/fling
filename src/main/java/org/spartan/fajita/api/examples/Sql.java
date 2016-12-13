@@ -22,8 +22,8 @@ public class Sql {
 
   public static BNF buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
+        .setApiName("SqlSelect") //
         .start(SELECT_STATEMENT) //
-        //
         .derive(SELECT_STATEMENT)//
         .to(select).and(QUANTIFIER).and(column).and(COLOUMNS).and(from).and(table).and(WHERE) //
         .derive(QUANTIFIER).to(all).or(distinct) //

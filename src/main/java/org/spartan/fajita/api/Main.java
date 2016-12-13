@@ -12,9 +12,9 @@ public class Main {
   public static void apiGenerator(BNF bnf) throws IOException {
     final RLLP rllp = new RLLP(bnf);
     String code = RLLPEncoder.generate(rllp);
-    String filename = "FluentAPI_" + Math.abs(bnf.hashCode() % 1000);
+    String filename = bnf.getApiName() + ".java";
     try (FileOutputStream fos = new FileOutputStream(
-        new File("/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/" + filename + ".java"))) {
+        new File("/home/tomerlevi/fajita/src/main/java/org/spartan/fajita/api/junk/" + filename))) {
       fos.write(code.getBytes(), 0, code.getBytes().length);
       fos.close();
       System.out.println(filename + " written successfully");

@@ -42,7 +42,8 @@ public class Hamcrest {
 
   public static BNF buildBNF() {
     BNF bnf = new BNFBuilder(Term.class, NT.class) //
-        .start(ASSERT) //
+        .setApiName("Hamcrest") //
+				.start(ASSERT) //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
         .derive(MATCHER).to(instance_of).and(type) //
         /*       */.or(anything) //

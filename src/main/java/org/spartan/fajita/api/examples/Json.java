@@ -48,7 +48,8 @@ public class Json {
    */
   public static BNF buildBNF() {
     BNF b = new BNFBuilder(Term.class, NT.class) //
-        .start(START) //
+        .setApiName("Json") //
+				.start(START) //
         .derive(START).to(OBJECT) //
         .derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
         .derive(NEXT).to(ADD).and(NEXT).orNone()//
