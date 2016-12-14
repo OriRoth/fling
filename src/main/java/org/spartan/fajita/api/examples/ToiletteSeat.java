@@ -3,8 +3,8 @@ package org.spartan.fajita.api.examples;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteTerminals.*;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteVariables.*;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -22,7 +22,7 @@ public class ToiletteSeat {
   }
 
   public static BNF buildBNF() {
-    BNF bnf = new BNFBuilder(ToiletteTerminals.class, ToiletteVariables.class).start(Visitors) //
+    BNF bnf = new Fajita(ToiletteTerminals.class, ToiletteVariables.class).start(Visitors) //
         .derive(Visitors) //
         /*                  */.to(Down_Visitors) //
         .derive(Down_Visitors)//

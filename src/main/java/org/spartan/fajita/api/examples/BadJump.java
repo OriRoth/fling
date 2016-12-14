@@ -5,9 +5,9 @@ import static org.spartan.fajita.api.examples.BadJump.Term.*;
 
 import java.io.IOException;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -63,7 +63,7 @@ class BadJump {
   }
 
   public static BNF buildBNF() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .start(S) //
         .derive(S).to(A).and(bad_jump) //
         .derive(A).to(B).and(exit)//

@@ -6,9 +6,9 @@ import static org.spartan.fajita.api.examples.BalancedParenthesis.Term.*;
 
 import java.io.IOException;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -30,7 +30,7 @@ public class BalancedParenthesis {
    * This example does not work because <B> is endable and also not endable.
    **/
   public static BNF buildBNF() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .start(S) //
         .derive(S).to(B).and(build) //
         .derive(B).to(lp).and(B).and(rp).and(B) //

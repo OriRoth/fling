@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -21,7 +22,7 @@ public class FirstSetTest {
   private BNFAnalyzer analyzer;
 
   @Before public void initialize() {
-    bnf = new BNFBuilder(Term.class, NT.class) //
+    bnf = new Fajita(Term.class, NT.class) //
         .start(NT.A) //
         .derive(NT.A).to(Term.a) //
         .derive(NT.B).to(Term.b) //

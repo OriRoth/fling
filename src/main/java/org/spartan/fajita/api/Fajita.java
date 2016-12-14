@@ -1,33 +1,37 @@
-package org.spartan.fajita.api.bnf;
+package org.spartan.fajita.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.rllp.RLLP;
+import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
 
 /**
  * @author Tomer
  */
-public class BNFBuilder {
+public class Fajita {
   private final List<DerivationRule> derivationRules;
   private final List<Terminal> terminals;
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
   private String ApiName;
-  public static Class<ELLIPS> elipsis = BNFBuilder.ELLIPS.class;
+  public static final Class<VARARGS> VARARGS = Fajita.VARARGS.class;
 
-  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> BNFBuilder(final Class<Term> terminalEnum,
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
     terminals = new ArrayList<>(EnumSet.allOf(terminalEnum));
     verbs = new LinkedHashSet<>();
@@ -39,16 +43,16 @@ public class BNFBuilder {
     return getNonTerminals().contains(symb) //
         || terminals.stream().anyMatch(term -> term.name().equals(symb.name()));
   }
-  List<NonTerminal> getNonTerminals() {
+  public List<NonTerminal> getNonTerminals() {
     return nonterminals;
   }
-  Set<Verb> getVerbs() {
+  public Set<Verb> getVerbs() {
     return verbs;
   }
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;
   }
-  private BNFBuilder checkNewRule(final DerivationRule r) {
+  private Fajita checkNewRule(final DerivationRule r) {
     if (!symbolExists(r.lhs))
       throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
     if (derivationRules.contains(r))
@@ -63,42 +67,58 @@ public class BNFBuilder {
   }
   private void validate() {
     validateNonterminals();
-    validateNoRedundant();
-  }
-  private void validateNoRedundant() {
-    // TODO validate no redundant
   }
   private void validateNonterminals() {
     for (NonTerminal nonTerminal : getNonTerminals())
       if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
         throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
   }
-  private BNF finish() {
-    validate();
-    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
-    verbs.add(SpecialSymbols.$);
-    for (NonTerminal startSymbol : getStartSymbols())
-      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
-    return new BNF(BNFBuilder.this);
-  }
-  List<DerivationRule> getRules() {
+  public List<DerivationRule> getRules() {
     return derivationRules;
   }
   public String getApiName() {
     return this.ApiName;
   }
-  public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildBNF(
-      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
-    BNFBuilder builder = new BNFBuilder(terminalEnum, nonterminalEnum);
-    return builder.new SetSymbols();
-  }
   void setApiName(String ApiName) {
     this.ApiName = ApiName;
+  }
+  private void finish() {
+    validate();
+    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
+    verbs.add(SpecialSymbols.$);
+    for (NonTerminal startSymbol : getStartSymbols())
+      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
+    Collection<BNF> bnfs = getAllBNFs();
+    // create an RLLP for each BNF (removed duplications for subAPIs)
+    // generate a code for each RLLP
+    // merge under a single file
+    // write static methods.
+  }
+  private Collection<BNF> getAllBNFs() {
+    ArrayList<BNF> $ = new  ArrayList<>();
+    BNF main = new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
+    // Get all nested verbs/nonterminals/whatever
+    for (Verb v : getVerbs()){
+      // generate BNF for it
+      // ApiName should be deterministically generate-able 
+      
+    }
+    return $;
+  }
+  /* ***************************************************************************
+   * ***************************************************************************
+   * ----------------------- Fluent Interface Of Fajita ------------------------
+   * ***************************************************************************
+   * *************************************************************************** */
+  public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildBNF(
+      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+    Fajita builder = new Fajita(terminalEnum, nonterminalEnum);
+    return builder.new SetSymbols();
   }
 
   public class SetSymbols {
     public ApiName setApiName(String name) {
-      BNFBuilder.this.setApiName(name);
+      Fajita.this.setApiName(name);
       return new ApiName();
     }
   }
@@ -107,7 +127,7 @@ public class BNFBuilder {
     public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
       NonTerminal[] newNts = Arrays.copyOf(nts, nts.length + 1);
       newNts[nts.length] = nt;
-      BNFBuilder.this.getStartSymbols().addAll(Arrays.asList(newNts));
+      Fajita.this.getStartSymbols().addAll(Arrays.asList(newNts));
       return new FirstDerive();
     }
   }
@@ -126,7 +146,7 @@ public class BNFBuilder {
       return new InitialDeriver(newRuleLHS);
     }
     @SuppressWarnings("synthetic-access") public BNF go() {
-      return BNFBuilder.this.finish();
+      return Fajita.this.finish();
     }
     /**
      * Adds a rule to the BnfBuilder host.
@@ -210,6 +230,6 @@ public class BNFBuilder {
     }
   }
 
-  class ELLIPS {
+  class VARARGS {
     /**/}
 }

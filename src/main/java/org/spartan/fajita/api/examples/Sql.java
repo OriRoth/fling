@@ -5,9 +5,9 @@ import static org.spartan.fajita.api.examples.Sql.Term.*;
 
 import java.io.IOException;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -21,7 +21,7 @@ public class Sql {
   }
 
   public static BNF buildBNF() {
-    BNF b = new BNFBuilder(Term.class, NT.class) //
+    BNF b = new Fajita(Term.class, NT.class) //
         .setApiName("SqlSelect") //
         .start(SELECT_STATEMENT) //
         .derive(SELECT_STATEMENT)//

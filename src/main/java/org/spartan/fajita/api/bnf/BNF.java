@@ -1,12 +1,19 @@
 package org.spartan.fajita.api.bnf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.rllp.generation.Utilities;
 
 public final class BNF {
   private final Set<Verb> verbs;
@@ -15,18 +22,42 @@ public final class BNF {
   private final List<DerivationRule> derivationRules;
   private final String apiName;
 
-  BNF(final BNFBuilder builder) {
-    verbs = builder.getVerbs();
-    nonterminals = builder.getNonTerminals();
-    derivationRules = builder.getRules();
-    startSymbols = builder.getStartSymbols();
-    apiName = builder.getApiName();
+  public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
+      Collection<DerivationRule> rules, Collection<NonTerminal> start, String apiName) {
+    this.verbs = new LinkedHashSet<>(verbs);
+    this.nonterminals = new ArrayList<>(nonTerminals);
+    this.derivationRules = new ArrayList<>(rules);
+    this.startSymbols = new ArrayList<>(start);
+    this.apiName = apiName;
   }
   public List<NonTerminal> getNonTerminals() {
     return nonterminals;
   }
   public Set<Verb> getVerbs() {
     return verbs;
+  }
+  public BNF getSubBNF(NonTerminal startNT) {
+    Set<Verb> subVerbs = new LinkedHashSet<>();
+    Set<NonTerminal> subNonTerminals = new LinkedHashSet<>();
+    Set<DerivationRule> subRules = new LinkedHashSet<>();
+    List<NonTerminal> subStart = Arrays.asList(startNT);
+    String subApiName = "Sub" + getApiName() + Utilities.randomHexString();
+    subNonTerminals.add(startNT);
+    boolean change;
+    do {
+      change = false;
+      for (DerivationRule rule : getRules()) {
+        if (subNonTerminals.contains(rule.lhs) && subRules.add(rule)) {
+          change = true;
+          for (Symbol s : rule.getChildren())
+            if (s.isVerb())
+              subVerbs.add((Verb) s);
+            else
+              subNonTerminals.add((NonTerminal) s);
+        }
+      }
+    } while (change);
+    return new BNF(subVerbs, subNonTerminals, subRules, subStart, subApiName);
   }
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;

@@ -5,9 +5,9 @@ import static org.spartan.fajita.api.examples.Pascal.Term.*;
 
 import java.io.IOException;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import static org.spartan.fajita.api.junk.Pascal.program;
@@ -27,7 +27,7 @@ public class Pascal {
   }
 
   public static BNF buildBNF() {
-    BNF bnf = BNFBuilder.buildBNF(Term.class, NT.class) //
+    BNF bnf = Fajita.buildBNF(Term.class, NT.class) //
         .setApiName("Pascal") //
         .start(Program) //
         .derive(Program).to(program).and(id).and(Parameters).and(semi).and(Definitions).and(Body) //

@@ -10,8 +10,8 @@ import static org.spartan.fajita.api.examples.Hamcrest.Term.not;
 import static org.spartan.fajita.api.examples.Hamcrest.Term.type;
 import static org.spartan.fajita.api.examples.Hamcrest.Term.value;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -41,7 +41,7 @@ public class Hamcrest {
   }
 
   public static BNF buildBNF() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .setApiName("Hamcrest") //
 				.start(ASSERT) //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //

@@ -11,9 +11,9 @@ import static org.spartan.fajita.simulator.SimulationTesting.Term.c;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.jlr.JLRRecognizer;
@@ -32,7 +32,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
 
   public void emptyLanguage() {
     System.out.println("Testing regular language : ε ");
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .start(S) //
         .derive(S).toNone() //
         .derive(A).to(a) //
@@ -46,7 +46,7 @@ import org.spartan.fajita.api.jlr.simulator.JLRSimulator;
   }
   @BeforeClass public static void ab_list() {
     System.out.println("Testing regular language: a*b*");
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .start(S) //
         .derive(S).to(A).and(B) //
         .derive(B).to(B).and(b).orNone() // Left recursive

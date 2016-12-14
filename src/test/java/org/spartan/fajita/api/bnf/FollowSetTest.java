@@ -8,6 +8,7 @@ import static org.spartan.fajita.api.bnf.TestUtils.expectedSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
@@ -26,7 +27,7 @@ public class FollowSetTest {
   private BNFAnalyzer analyzer;
 
   @Before public void initialize() {
-    bnf = new BNFBuilder(Term.class, NT.class) //
+    bnf = new Fajita(Term.class, NT.class) //
         .start(NT.S) //
         .derive(NT.S).to(NT.A).or(NT.B).or(NT.AB).or(NT.C) //
         .derive(NT.A).to(Term.a) //

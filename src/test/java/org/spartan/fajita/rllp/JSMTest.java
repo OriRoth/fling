@@ -10,8 +10,8 @@ import java.util.function.Predicate;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -33,7 +33,7 @@ public class JSMTest {
   }
 
   @BeforeClass public static void initBNF() {
-    bnf = new BNFBuilder(Term.class, NT.class) //
+    bnf = new Fajita(Term.class, NT.class) //
         .start(S) //
         .derive(S).to(A).and(D) //
         .derive(A).to(B) //

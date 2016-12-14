@@ -14,7 +14,7 @@ import static automaton.oopsla.SQLFrag.SQLTerminals.lowerThan;
 import static automaton.oopsla.SQLFrag.SQLTerminals.select;
 import static automaton.oopsla.SQLFrag.SQLTerminals.where;
 
-import org.spartan.fajita.api.bnf.BNFBuilder;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -42,7 +42,7 @@ public class SQLFrag {
 
   void defineBNF(){
     // begin{BNF}
-    new BNFBuilder(SQLTerminals.class, SQLNonterminals.class)
+    new Fajita(SQLTerminals.class, SQLNonterminals.class)
       .start(Query)
       .derive(Query).to(select)
                     .and(Quant).and(from,Table.class).and(Where)

@@ -88,7 +88,7 @@ import com.squareup.javapoet.TypeVariableName;
     for (MethodSpec m : methods)
       startMethods.add(MethodSpec.methodBuilder(m.name)//
           .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
-          .addCode("return null;") //
+          .addCode("return null;\n") //
           .returns(m.returnType) //
           .build());
   }

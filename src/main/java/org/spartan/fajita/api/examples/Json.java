@@ -5,9 +5,9 @@ import static org.spartan.fajita.api.examples.Json.Term.*;
 
 import java.io.IOException;
 
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.BNFBuilder;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -47,7 +47,7 @@ public class Json {
    * @return
    */
   public static BNF buildBNF() {
-    BNF b = new BNFBuilder(Term.class, NT.class) //
+    BNF b = new Fajita(Term.class, NT.class) //
         .setApiName("Json") //
 				.start(START) //
         .derive(START).to(OBJECT) //

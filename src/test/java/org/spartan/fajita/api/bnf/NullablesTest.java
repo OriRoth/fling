@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -20,7 +21,7 @@ public class NullablesTest {
   private BNFAnalyzer analyzer;
 
   @Before public void initialize() {
-    BNF bnf = new BNFBuilder(Term.class, NT.class) //
+    BNF bnf = new Fajita(Term.class, NT.class) //
         .start(NT.A) //
         .derive(NT.Nullable).to(NT.A).orNone() //
         .derive(NT.Nullable2).to(NT.Nullable).or(NT.A) //
