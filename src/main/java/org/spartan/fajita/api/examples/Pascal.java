@@ -2,17 +2,18 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Pascal.NT.*;
 import static org.spartan.fajita.api.examples.Pascal.Term.*;
+import static org.spartan.fajita.api.junk.Pascal.program;
 
 import java.io.IOException;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import static org.spartan.fajita.api.junk.Pascal.program;
 
 public class Pascal {
+  private static final String apiName = "Pascal";
+
   static enum Term implements Terminal {
     program, begin, end, label, //
     constant, id, procedure, semi, //
@@ -26,9 +27,9 @@ public class Pascal {
     Nested, Procedure;
   }
 
-  public static BNF buildBNF() {
-    BNF bnf = Fajita.buildBNF(Term.class, NT.class) //
-        .setApiName("Pascal") //
+  public static String buildApi() {
+    return Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName(apiName) //
         .start(Program) //
         .derive(Program).to(program).and(id).and(Parameters).and(semi).and(Definitions).and(Body) //
         .derive(Body).to(begin).and(end) //
@@ -49,10 +50,9 @@ public class Pascal {
         .derive(Parameters).to(pair) //
         /*           */.orNone() //
         .go();
-    return bnf;
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(buildBNF());
+    Main.apiGenerator(apiName, buildApi());
   }
   public static void legal() {
     program().id().semi().begin().end().$();

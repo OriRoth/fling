@@ -45,13 +45,12 @@ import com.squareup.javapoet.TypeVariableName;
     this.rllp = parser;
     this.recursiveTypes = new ArrayList<>();
     this.JSMCache = new HashMap<>();
-    Predicate<Item> dotAfterVerb = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
-    Predicate<Item> unreachableItem = dotAfterVerb.negate();
+    Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
     apiReturnType = apiReturnType();
     enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
         .addType(addErrorType())//
-        .addTypes(rllp.items.stream().filter(unreachableItem).map(i -> encodeItem(i)).collect(Collectors.toList())) //
+        .addTypes(rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList())) //
         .addTypes(recursiveTypes) //
         .addType(apiReturnType)//
         .build();
@@ -200,7 +199,7 @@ import com.squareup.javapoet.TypeVariableName;
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(jsm.peek().rule.lhs);
     final String name = recursiveTypeName(jsm);
     final List<TypeVariableName> recursive_params = followSet.stream() //
-        .filter(v -> v == recursiveVerb) //
+        .filter(v -> v != recursiveVerb) //
         .map(v -> verbTypeName(v)) //
         .collect(Collectors.toList());
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(name) //
@@ -239,5 +238,8 @@ import com.squareup.javapoet.TypeVariableName;
 
   public TypeSpec encode() {
     return enclosing;
+  }
+  public String getApiName() {
+    return rllp.bnf.getApiName();
   }
 }
