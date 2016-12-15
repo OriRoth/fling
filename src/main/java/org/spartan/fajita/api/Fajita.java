@@ -2,22 +2,19 @@ package org.spartan.fajita.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.RLLP;
-import org.spartan.fajita.api.rllp.generation.RLLPEncoder;
 
 /**
  * @author Tomer
@@ -27,8 +24,15 @@ public class Fajita {
   private final List<Terminal> terminals;
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
+  /**
+   * All Nonterminals that start the LL derivation
+   */
   private final List<NonTerminal> startSymbols;
-  private String ApiName;
+  /**
+   * Keeps record of all NonTerminals used as parameters to some other verb.
+   */
+  private final Set<NonTerminal> nestedParameters;
+  private String apiName;
   public static final Class<VARARGS> VARARGS = Fajita.VARARGS.class;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
@@ -38,6 +42,7 @@ public class Fajita {
     nonterminals = new ArrayList<>(EnumSet.allOf(nonterminalEnum));
     derivationRules = new ArrayList<>();
     startSymbols = new ArrayList<>();
+    nestedParameters = new HashSet<>();
   }
   private boolean symbolExists(final Symbol symb) {
     return getNonTerminals().contains(symb) //
@@ -65,6 +70,9 @@ public class Fajita {
     checkNewRule(r);
     getRules().add(r);
   }
+  void addNestedParameter(NonTerminal nested) {
+    this.getNestedParameters().add(nested);
+  }
   private void validate() {
     validateNonterminals();
   }
@@ -77,33 +85,18 @@ public class Fajita {
     return derivationRules;
   }
   public String getApiName() {
-    return this.ApiName;
+    return this.apiName;
   }
-  void setApiName(String ApiName) {
-    this.ApiName = ApiName;
+  void setApiName(String apiName) {
+    this.apiName = apiName;
   }
-  private void finish() {
+  private String finish() {
     validate();
     nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     verbs.add(SpecialSymbols.$);
     for (NonTerminal startSymbol : getStartSymbols())
       addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
-    Collection<BNF> bnfs = getAllBNFs();
-    // create an RLLP for each BNF (removed duplications for subAPIs)
-    // generate a code for each RLLP
-    // merge under a single file
-    // write static methods.
-  }
-  private Collection<BNF> getAllBNFs() {
-    ArrayList<BNF> $ = new  ArrayList<>();
-    BNF main = new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
-    // Get all nested verbs/nonterminals/whatever
-    for (Verb v : getVerbs()){
-      // generate BNF for it
-      // ApiName should be deterministically generate-able 
-      
-    }
-    return $;
+    return FajitaEncoder.encode(this);
   }
   /* ***************************************************************************
    * ***************************************************************************
@@ -114,6 +107,9 @@ public class Fajita {
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
     Fajita builder = new Fajita(terminalEnum, nonterminalEnum);
     return builder.new SetSymbols();
+  }
+  public Set<NonTerminal> getNestedParameters() {
+    return nestedParameters;
   }
 
   public class SetSymbols {
@@ -145,7 +141,7 @@ public class Fajita {
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
-    @SuppressWarnings("synthetic-access") public BNF go() {
+    @SuppressWarnings("synthetic-access") public String go() {
       return Fajita.this.finish();
     }
     /**
@@ -169,6 +165,10 @@ public class Fajita {
     }
     public AndDeriver to(final Terminal term, Class<?>... type) {
       return new AndDeriver(lhs, new Verb(term, type));
+    }
+    public AndDeriver to(final Terminal term, NonTerminal nested) {
+      addNestedParameter(nested);
+      return new AndDeriver(lhs, new Verb(term, nested));
     }
     public AndDeriver to(final NonTerminal nt) {
       return new AndDeriver(lhs, nt);
@@ -218,7 +218,7 @@ public class Fajita {
       symbols.add(new Verb(term, type));
       return this;
     }
-    @Override public BNF go() {
+    @Override public String go() {
       addRuleToBNF();
       return super.go();
     }

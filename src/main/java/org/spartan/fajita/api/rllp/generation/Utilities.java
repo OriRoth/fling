@@ -1,15 +1,12 @@
 package org.spartan.fajita.api.rllp.generation;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.rllp.Item;
 import org.spartan.fajita.api.rllp.JSM;
 
@@ -38,6 +35,9 @@ public class Utilities {
       return type;
     return ParameterizedTypeName.get(type, l.toArray(new TypeName[] {}));
   }
+  public static String getNestedTypeName(NestedType type, BNF bnf) {
+    return bnf.getApiName() + "_" + type.nested.name();
+  }
   public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
     return parameterizedType(ClassName.get("", typename), params);
   }
@@ -48,39 +48,5 @@ public class Utilities {
   }
   public static String recursiveTypeName(JSM jsm) {
     return itemClassName(jsm.peek()).simpleName() + randomHexString() + "_rec_";
-  }
-  public static <T> Mapper<T> map(Collection<T> toMap) {
-    return new Mapper<>(toMap);
-  }
-
-  public static class Mapper<T> {
-    private Collection<T> items;
-
-    Mapper(Collection<T> items) {
-      this.items = new ArrayList<>(items);
-    }
-    public <S> Filter<T, S> with(Function<T, S> func) {
-      return new Filter<>(items, func);
-    }
-  }
-
-  public static class Filter<T, S> implements Iterable<S> {
-    private final Function<T, S> func;
-    private final Collection<T> items;
-
-    public Filter(Collection<T> items, Function<T, S> func) {
-      this.items = items;
-      this.func = func;
-    }
-    public List<S> asList() {
-      return items.stream().map(t -> func.apply(t)).collect(Collectors.toList());
-    }
-    @Override public Iterator<S> iterator() {
-      return asList().iterator();
-    }
-    public List<S> filter(Predicate<T> pred) {
-      items.removeIf(pred);
-      return asList();
-    }
   }
 }

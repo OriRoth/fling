@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -16,23 +15,24 @@ public class RE {
     range, to, oneOf, chars
   }
 
-
   static enum NT implements NonTerminal {
-    RANGE, RANGES, ONE_OF
-    , START
+    RANGE, ONE_OF, START
   }
 
-  public static BNF buildBNF() {
-    BNF b = Fajita.buildBNF(Term.class, NT.class) //
-        .setApiName("Regex") //
+  private static String apiName = "Regex";
+
+  public static String buildAPI() {
+    String api = Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName(apiName) //
         .start(START) //
         .derive(START).to(ONE_OF) //
-        .derive(ONE_OF).to(oneOf, RANGE, RANGES) //
+        .derive(ONE_OF).to(oneOf, RANGE) //
+        .derive(RANGE).to(range, char.class).and(to, char.class) //
         .go();
-    return b;
+    return api;
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(buildBNF());
+    Main.apiGenerator(apiName, buildAPI());
   }
   public static void expressionBuilder() {
     // compiles

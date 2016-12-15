@@ -1,13 +1,13 @@
-package org.spartan.fajita.api.bnf.symbols;
+package org.spartan.fajita.api.bnf.symbols.type;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Type {
+public class ClassesType implements ParameterType{
   public final List<Class<?>> classes;
 
-  public Type(final Class<?>... classes) {
+  public ClassesType(final Class<?>... classes) {
     if (classes.length == 0)
       this.classes = new ArrayList<>();
     else
@@ -33,9 +33,9 @@ public class Type {
       return true;
     if (obj == null)
       return false;
-    if (!(obj instanceof Type))
+    if (!(obj instanceof ClassesType))
       return false;
-    Type other = (Type) obj;
+    ClassesType other = (ClassesType) obj;
     if (classes == null) {
       if (other.classes != null)
         return false;
@@ -44,7 +44,7 @@ public class Type {
     return true;
   }
 
-  public static final Type VOID = new Type();
+  public static final ClassesType VOID = new ClassesType();
 
 //  public String serialize() {
 //    try (ByteArrayOutputStream o = new ByteArrayOutputStream() //

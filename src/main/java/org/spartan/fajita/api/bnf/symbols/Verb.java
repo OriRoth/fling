@@ -1,18 +1,22 @@
 package org.spartan.fajita.api.bnf.symbols;
 
+import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
+import org.spartan.fajita.api.bnf.symbols.type.NestedType;
+import org.spartan.fajita.api.bnf.symbols.type.ParameterType;
+
 public class Verb implements Terminal, Comparable<Verb> {
-  public final Type type;
+  public final ParameterType type;
   private final String name;
 
-  private Verb(String name, Class<?>... type) {
-    this(name, new Type(type));
-  }
-  private Verb(String name, Type t) {
-    this.name = name;
+  private Verb(Terminal terminal , ParameterType t) {
+    this.name = terminal.name();
     this.type = t;
   }
   public Verb(Terminal terminal, Class<?>... type) {
-    this(terminal.name(), type);
+    this(terminal, new ClassesType(type));
+  }
+  public Verb(Terminal terminal, NonTerminal nested) {
+    this(terminal, new NestedType(nested));
   }
   @Override public String toString() {
     return name + type.toString();
