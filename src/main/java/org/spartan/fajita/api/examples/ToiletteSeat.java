@@ -4,11 +4,12 @@ import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteTerminals.*;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteVariables.*;
 
 import org.spartan.fajita.api.Fajita;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class ToiletteSeat {
+  private static final String apiName = "toilette";
+
   public static void expressionBuilder() {
     //
   }
@@ -21,8 +22,10 @@ public class ToiletteSeat {
     Visitors, Down_Visitors, Up_Visitors, Up_Visitor, Down_Visitor, Lowering_Visitor, Raising_Visitor, Action
   }
 
-  public static BNF buildBNF() {
-    BNF bnf = new Fajita(ToiletteTerminals.class, ToiletteVariables.class).start(Visitors) //
+  public static String buildBNF() {
+    return Fajita.buildBNF(ToiletteTerminals.class, ToiletteVariables.class)
+        .setApiName(apiName) //
+        .start(Visitors) //
         .derive(Visitors) //
         /*                  */.to(Down_Visitors) //
         .derive(Down_Visitors)//
@@ -47,6 +50,5 @@ public class ToiletteSeat {
         /*                  */.to(urinate) //
         /*                  */.or(defecate) //
         .go();
-    return bnf;
   }
 }

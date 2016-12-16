@@ -10,24 +10,27 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.generation.Utilities;
+import org.spartan.fajita.api.rllp.generation.NamesCache;
 
 public final class BNF {
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
   private final List<DerivationRule> derivationRules;
-  private final String apiName;
 
   public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
-      Collection<DerivationRule> rules, Collection<NonTerminal> start, String apiName) {
+      Collection<DerivationRule> rules, Collection<NonTerminal> start) {
     this.verbs = new LinkedHashSet<>(verbs);
+    this.verbs.add(SpecialSymbols.$);
     this.nonterminals = new ArrayList<>(nonTerminals);
+    this.nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     this.derivationRules = new ArrayList<>(rules);
     this.startSymbols = new ArrayList<>(start);
-    this.apiName = apiName;
+    this.startSymbols
+        .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
   }
   public List<NonTerminal> getNonTerminals() {
     return nonterminals;
@@ -40,7 +43,6 @@ public final class BNF {
     Set<NonTerminal> subNonTerminals = new LinkedHashSet<>();
     Set<DerivationRule> subRules = new LinkedHashSet<>();
     List<NonTerminal> subStart = Arrays.asList(startNT);
-    String subApiName = "Sub" + getApiName() + Utilities.randomHexString();
     subNonTerminals.add(startNT);
     boolean change;
     do {
@@ -56,13 +58,13 @@ public final class BNF {
         }
       }
     } while (change);
-    return new BNF(subVerbs, subNonTerminals, subRules, subStart, subApiName);
+    return new BNF(subVerbs, subNonTerminals, subRules, subStart);
   }
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;
   }
   public String getApiName() {
-    return apiName;
+    return NamesCache.getApiName(startSymbols.get(0));
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder() //

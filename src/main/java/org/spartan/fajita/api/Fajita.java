@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -92,10 +91,6 @@ public class Fajita {
   }
   private String finish() {
     validate();
-    nonterminals.add(SpecialSymbols.augmentedStartSymbol);
-    verbs.add(SpecialSymbols.$);
-    for (NonTerminal startSymbol : getStartSymbols())
-      addRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(startSymbol));
     return FajitaEncoder.encode(this);
   }
   /* ***************************************************************************

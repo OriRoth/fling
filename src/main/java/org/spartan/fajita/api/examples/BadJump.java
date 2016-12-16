@@ -7,13 +7,14 @@ import java.io.IOException;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 class BadJump {
+  private static final String apiName = "BadJump";
+
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(buildBNF());
+    Main.apiGenerator(apiName, buildBNF());
   }
 
   static class ERROR {
@@ -62,8 +63,9 @@ class BadJump {
     S, A, B;
   }
 
-  public static BNF buildBNF() {
-    BNF bnf = new Fajita(Term.class, NT.class) //
+  public static String buildBNF() {
+    return Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName(apiName) //
         .start(S) //
         .derive(S).to(A).and(bad_jump) //
         .derive(A).to(B).and(exit)//
@@ -75,6 +77,5 @@ class BadJump {
         /*                                                    */
         /*                                                    */
         .go();
-    return bnf;
   }
 }

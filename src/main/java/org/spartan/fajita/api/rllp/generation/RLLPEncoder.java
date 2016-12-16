@@ -1,7 +1,5 @@
 package org.spartan.fajita.api.rllp.generation;
 
-import static org.spartan.fajita.api.rllp.generation.Utilities.*;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +27,7 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
@@ -40,78 +39,65 @@ import com.squareup.javapoet.TypeVariableName;
   private final Map<List<Item>, TypeName> JSMCache;
   private static final ClassName placeholder = ClassName.get("", "placeholder");
   private final TypeSpec apiReturnType;
+  private final NamesCache nameCache;
 
   public RLLPEncoder(RLLP parser) {
     this.rllp = parser;
     this.recursiveTypes = new ArrayList<>();
     this.JSMCache = new HashMap<>();
+    this.nameCache = new NamesCache(rllp.bnf);
     Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
     apiReturnType = apiReturnType();
     enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
-        .addType(addErrorType())//
         .addTypes(rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList())) //
         .addTypes(recursiveTypes) //
         .addType(apiReturnType)//
         .build();
   }
   private TypeSpec apiReturnType() {
-    return TypeSpec.classBuilder(rllp.bnf.getApiName() + randomHexString())//
-        .addModifiers(Modifier.STATIC, Modifier.PUBLIC) //
+    return TypeSpec.classBuilder(nameCache.returnTypeOf$())//
+        .addModifiers(Modifier.PUBLIC) //
         .build();
-  }
-  private static TypeSpec addErrorType() {
-    return TypeSpec.classBuilder(errorClass.name)//
-        .addModifiers(Modifier.STATIC).build();
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(i.rule.lhs);
-    final String typeName = itemClassName(i).simpleName();
+    final String typeName = nameCache.getItemName(i);
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(typeName) //
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
         // Adds push methods
         .addMethods(firstSet.stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
     // Adds jump methods
     if (rllp.analyzer.isSuffixNullable(i))
       encoding.addMethods(rllp.analyzer.followSetOf(i.rule.lhs).stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
     if (!followSet.isEmpty())
-      encoding.addTypeVariables(followSet.stream().map(v -> verbTypeName(v)).collect(Collectors.toList()));
+      encoding.addTypeVariables(
+          followSet.stream().map(v -> TypeVariableName.get(nameCache.verbTypeName(v))).collect(Collectors.toList()));
     return encoding.build();
   }
-  public Collection<MethodSpec> getStaticMethods() {
-    return rllp.getStartItems().stream()//
-        .map(i -> generateStaticMethods(i))//
-        .flatMap(methods -> methods.stream())//
-        .collect(Collectors.toList());//
-  }
-  private Collection<MethodSpec> generateStaticMethods(Item i) {
-    return rllp.analyzer.firstSetOf(i).stream().map(v -> methodOf(i, v))//
-        .map(m -> MethodSpec.methodBuilder(m.name)//
-            .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
-            .addCode("return null;\n") //
-            .returns(m.returnType) //
-            .build()) //
-        .collect(Collectors.toList());
-  }
-  private MethodSpec methodOf(Item i, Verb v) {
-    final MethodSpec.Builder methodSpec = MethodSpec.methodBuilder(v.name()) //
+  public MethodSpec methodOf(Item i, Verb v) {
+    return MethodSpec.methodBuilder(v.name()) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .returns(returnTypeOfMethod(i, v));
-    augmentMethodwithParameters(v, methodSpec);
-    return methodSpec.build();
+        .addParameters(getMethodParameters(v))//
+        .returns(returnTypeOfMethod(i, v))//
+        .build();
   }
-  private void augmentMethodwithParameters(Verb v, final MethodSpec.Builder methodSpec) {
+  private static Collection<ParameterSpec> getMethodParameters(Verb v) {
+    Collection<ParameterSpec> $ = new ArrayList<>();
     if (v.type instanceof ClassesType) {
       List<Class<?>> classes = ((ClassesType) v.type).classes;
-      for (int i1 = 0; i1 < classes.size(); i1++) {
-        Class<?> clazz = classes.get(i1);
-        methodSpec.addParameter(ParameterSpec.builder(clazz, "arg" + i1).build());
-      }
+      for (int i = 0; i < classes.size(); i++)
+        $.add(ParameterSpec.builder(classes.get(i), "arg" + i).build());
     } else if (v.type instanceof NestedType) {
-      methodSpec.addParameter(ClassName.get("", getNestedTypeName((NestedType) v.type, rllp.bnf)), "arg0");
+      NestedType type = (NestedType) v.type;
+      $.add(ParameterSpec
+          .builder(//
+              ClassName.get("", NamesCache.getApiName(type.nested), NamesCache.returnTypeOf$(type.nested)), "arg0")//
+          .build());
     } else
       throw new IllegalArgumentException("Type of verb is unknown");
+    return $;
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     final Action action = rllp.predict(i, v);
@@ -134,8 +120,9 @@ import com.squareup.javapoet.TypeVariableName;
   private TypeName returnTypeOfAdvance(Advance action) {
     final Item next = action.beforeAdvancing.advance();
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(next.rule.lhs);
-    final List<TypeName> params = followOfItem.stream().map(v -> (TypeName) verbTypeName(v)).collect(Collectors.toList());
-    return parameterizedType(itemClassName(next), params);
+    final List<TypeName> params = followOfItem.stream().map(v -> TypeVariableName.get(nameCache.verbTypeName(v)))
+        .collect(Collectors.toList());
+    return RLLPEncoder.parameterizedType(nameCache.getItemName(next), params);
   }
   private TypeName returnTypeOfPush(Push action) {
     JSM jsm = new JSM(rllp);
@@ -153,7 +140,7 @@ import com.squareup.javapoet.TypeVariableName;
     if (JSMCache.containsKey(jsm.getS0()))
       return JSMCache.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
-      return errorClass;
+      return ClassName.get("", NamesCache.errorTypeName);
     if (alreadySeen.indexOf(jsm) != -1)
       throw new FoundRecursiveTypeException(jsm);
     alreadySeen.add(jsm);
@@ -175,7 +162,7 @@ import com.squareup.javapoet.TypeVariableName;
     }
     if ($ == null) {
       List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
-      $ = parameterizedType(itemClassName(jsm.peek()), params);
+      $ = RLLPEncoder.parameterizedType(nameCache.getItemName(jsm.peek()), params);
     }
     JSMCache.put(jsm.getS0(), $);
     return $;
@@ -193,22 +180,23 @@ import com.squareup.javapoet.TypeVariableName;
     TypeSpec recursiveType = generateRecursiveType(jsm, recursiveVerb);
     recursiveTypes.add(recursiveType);
     params.remove(placeholder);
-    return parameterizedType(recursiveType.name, params);
+    return RLLPEncoder.parameterizedType(recursiveType.name, params);
   }
   private TypeSpec generateRecursiveType(JSM jsm, Verb recursiveVerb) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(jsm.peek().rule.lhs);
-    final String name = recursiveTypeName(jsm);
+    final String name = nameCache.getRecursiveTypeName(jsm);
     final List<TypeVariableName> recursive_params = followSet.stream() //
         .filter(v -> v != recursiveVerb) //
-        .map(v -> verbTypeName(v)) //
+        .map(v -> TypeVariableName.get(nameCache.verbTypeName(v))) //
         .collect(Collectors.toList());
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(name) //
-        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.ABSTRACT) //
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
         .addTypeVariables(recursive_params);
     List<TypeName> superclass_params = followSet.stream()
-        .map(v -> (v != recursiveVerb) ? verbTypeName(v) : parameterizedType(name, recursive_params))//
+        .map(v -> (v != recursiveVerb) ? TypeVariableName.get(nameCache.verbTypeName(v))
+            : RLLPEncoder.parameterizedType(name, recursive_params))//
         .collect(Collectors.toList());
-    encoding.superclass(parameterizedType(itemClassName(jsm.peek()), superclass_params));
+    encoding.superclass(RLLPEncoder.parameterizedType(nameCache.getItemName(jsm.peek()), superclass_params));
     return encoding.build();
   }
   private List<TypeName> encodeTypeArguments(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
@@ -217,11 +205,12 @@ import com.squareup.javapoet.TypeVariableName;
     if (followSet.isEmpty())
       return Collections.emptyList();
     for (Verb v : followSet)
-      typeArguments.putIfAbsent(v, (contextFollowSet.contains(v)) ? verbTypeName(v) : errorClass);
+      typeArguments.putIfAbsent(v, (contextFollowSet.contains(v)) ? TypeVariableName.get(nameCache.verbTypeName(v))
+          : TypeVariableName.get(NamesCache.errorTypeName));
     return followSet.stream().map(v -> typeArguments.get(v)).collect(Collectors.toList());
   }
-  private static TypeName returnTypeOfJump(Jump action) {
-    return verbTypeName(action.v);
+  private TypeName returnTypeOfJump(Jump action) {
+    return TypeVariableName.get(nameCache.verbTypeName(action.v));
   }
   @Override public String toString() {
     return enclosing.toString();
@@ -239,7 +228,16 @@ import com.squareup.javapoet.TypeVariableName;
   public TypeSpec encode() {
     return enclosing;
   }
-  public String getApiName() {
-    return rllp.bnf.getApiName();
+  public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
+    final ClassName type = ClassName.get("", typename);
+    List<TypeName> l = new ArrayList<>();
+    for (TypeName param : params)
+      l.add(param);
+    if (l.isEmpty())
+      return type;
+    return ParameterizedTypeName.get(type, l.toArray(new TypeName[] {}));
+  }
+  public RLLP getRLLP() {
+    return rllp;
   }
 }

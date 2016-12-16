@@ -2,6 +2,8 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.RE.NT.*;
 import static org.spartan.fajita.api.examples.RE.Term.*;
+import static org.spartan.fajita.api.junk.Regex.oneOf;
+import static org.spartan.fajita.api.junk.Regex.range;
 
 import java.io.IOException;
 
@@ -36,6 +38,7 @@ public class RE {
   }
   public static void expressionBuilder() {
     // compiles
+    oneOf(range('a').to('z').$()).$();
     // does not compile
   }
 }

@@ -2,16 +2,9 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Hamcrest.NT.ASSERT;
 import static org.spartan.fajita.api.examples.Hamcrest.NT.MATCHER;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.anything;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.assertThat;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.equals_to;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.instance_of;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.not;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.type;
-import static org.spartan.fajita.api.examples.Hamcrest.Term.value;
+import static org.spartan.fajita.api.examples.Hamcrest.Term.*;
 
 import org.spartan.fajita.api.Fajita;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -40,8 +33,8 @@ public class Hamcrest {
     // , MATCHERS;
   }
 
-  public static BNF buildBNF() {
-    BNF bnf = new Fajita(Term.class, NT.class) //
+  public static String buildBNF() {
+    return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName("Hamcrest") //
 				.start(ASSERT) //
         .derive(ASSERT).to(assertThat).and(value).and(MATCHER) //
@@ -53,6 +46,5 @@ public class Hamcrest {
         // .derive(MATCHERS).to(MATCHER)//
         // /* */.or(MATCHER).and(MATCHERS) //
         .go();
-    return bnf;
   }
 }

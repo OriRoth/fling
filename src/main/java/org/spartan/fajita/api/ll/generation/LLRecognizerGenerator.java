@@ -1,9 +1,6 @@
 package org.spartan.fajita.api.ll.generation;
 
-import static org.spartan.fajita.api.ll.generation.GeneratorStrings.basicMethod;
-import static org.spartan.fajita.api.ll.generation.GeneratorStrings.containerClass;
-import static org.spartan.fajita.api.ll.generation.GeneratorStrings.tailParameter;
-import static org.spartan.fajita.api.ll.generation.GeneratorStrings.type;
+import static org.spartan.fajita.api.ll.generation.GeneratorStrings.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-public class LLRecognizerGenerator {
+@SuppressWarnings("restriction") public class LLRecognizerGenerator {
   public static JavaFile generate(BNF bnf) {
     LLRecognizer recognizer = new LLRecognizer(bnf);
     List<TypeSpec> configurationTypes = new ArrayList<>();

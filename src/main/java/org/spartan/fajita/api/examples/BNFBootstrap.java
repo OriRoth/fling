@@ -7,10 +7,12 @@ import java.io.IOException;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+
 public class BNFBootstrap {
+  private static final String apiName = "Bootstrap";
+
   public static void expressionBuilder() {
     // showASTs();
   }
@@ -30,8 +32,9 @@ public class BNFBootstrap {
     Symbol_Sequence //
   }
 
-  public static BNF buildBNF() {
-    BNF b = new Fajita(Term.class, NT.class) //
+  public static String buildBNF() {
+    return Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName(apiName)//
         .start(BNF) //
         .derive(BNF)//
         /**/.to(Header).and(Body).and(Footer) //
@@ -71,9 +74,8 @@ public class BNFBootstrap {
         .derive(Footer)//
         /**/.to(go)//
         .go();
-    return b;
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(buildBNF());
+    Main.apiGenerator(apiName, buildBNF());
   }
 }

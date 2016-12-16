@@ -7,11 +7,12 @@ import java.io.IOException;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class Json {
+  private static final String apiName = "Json";
+
   public static void expressionBuilder() {
     // showASTs();
   }
@@ -46,10 +47,10 @@ public class Json {
    * 
    * @return
    */
-  public static BNF buildBNF() {
-    BNF b = new Fajita(Term.class, NT.class) //
-        .setApiName("Json") //
-				.start(START) //
+  public static String buildBNF() {
+    return Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName(apiName) //
+        .start(START) //
         .derive(START).to(OBJECT) //
         .derive(OBJECT).to(startObject).and(NEXT).and(endObject) //
         .derive(NEXT).to(ADD).and(NEXT).orNone()//
@@ -66,9 +67,8 @@ public class Json {
         .derive(OBJECT_ELEMENT).to(addObject).and(OBJECT) //
         .derive(ARRAY_ELEMENT).to(addArray).and(ARRAY) //
         .go();
-    return b;
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(buildBNF());
+    Main.apiGenerator(apiName, buildBNF());
   }
 }
