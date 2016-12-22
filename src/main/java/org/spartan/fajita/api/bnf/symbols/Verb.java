@@ -8,7 +8,7 @@ public class Verb implements Terminal, Comparable<Verb> {
   public final ParameterType type;
   private final String name;
 
-  private Verb(Terminal terminal , ParameterType t) {
+  public Verb(Terminal terminal, ParameterType t) {
     this.name = terminal.name();
     this.type = t;
   }

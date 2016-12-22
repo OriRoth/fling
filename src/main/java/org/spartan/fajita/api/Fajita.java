@@ -14,6 +14,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 
 /**
  * @author Tomer
@@ -32,7 +33,6 @@ public class Fajita {
    */
   private final Set<NonTerminal> nestedParameters;
   private String apiName;
-  public static final Class<VARARGS> VARARGS = Fajita.VARARGS.class;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
@@ -161,6 +161,9 @@ public class Fajita {
     public AndDeriver to(final Terminal term, Class<?>... type) {
       return new AndDeriver(lhs, new Verb(term, type));
     }
+    public AndDeriver to(final Terminal term, VarArgs varargs) {
+      return new AndDeriver(lhs, new Verb(term, varargs));
+    }
     public AndDeriver to(final Terminal term, NonTerminal nested) {
       addNestedParameter(nested);
       return new AndDeriver(lhs, new Verb(term, nested));
@@ -179,12 +182,20 @@ public class Fajita {
       super(lhs);
     }
     public AndDeriver or(final Terminal term, Class<?>... type) {
-      addRule(lhs, symbols);
-      return new AndDeriver(lhs, new Verb(term, type));
+      return or(new AndDeriver(lhs, new Verb(term, type)));
+    }
+    public AndDeriver or(final Terminal term, VarArgs varargs) {
+      return or(new AndDeriver(lhs, new Verb(term, varargs)));
+    }
+    public AndDeriver or(final Terminal term, NonTerminal nested) {
+      return or(new AndDeriver(lhs, new Verb(term, nested)));
     }
     public AndDeriver or(final NonTerminal nt) {
+      return or(new AndDeriver(lhs, nt));
+    }
+    private AndDeriver or(AndDeriver deriver) {
       addRule(lhs, symbols);
-      return new AndDeriver(lhs, nt);
+      return deriver;
     }
     public OrDeriver orNone() {
       return derive(lhs).toNone();
@@ -197,20 +208,24 @@ public class Fajita {
    * @author Tomer
    */
   public final class AndDeriver extends OrDeriver {
-    AndDeriver(final NonTerminal lhs, final NonTerminal child) {
-      super(lhs);
-      symbols.add(child);
-    }
-    public AndDeriver(NonTerminal lhs, final Verb child) {
+    AndDeriver(final NonTerminal lhs, final Symbol child) {
       super(lhs);
       symbols.add(child);
     }
     public AndDeriver and(final NonTerminal nt) {
-      symbols.add(nt);
-      return this;
+      return and((Symbol) nt);
+    }
+    public AndDeriver and(final Terminal term, VarArgs varargs) {
+      return and(new Verb(term, varargs));
+    }
+    public AndDeriver and(final Terminal term, NonTerminal nested) {
+      return and(new Verb(term, nested));
     }
     public AndDeriver and(final Terminal term, Class<?>... type) {
-      symbols.add(new Verb(term, type));
+      return and(new Verb(term, type));
+    }
+    private AndDeriver and(final Symbol symb) {
+      symbols.add(symb);
       return this;
     }
     @Override public String go() {
@@ -225,6 +240,7 @@ public class Fajita {
     }
   }
 
-  class VARARGS {
-    /**/}
+  public static VarArgs ellipsis(Class<?> clazz) {
+    return new VarArgs(clazz);
+  }
 }

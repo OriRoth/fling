@@ -16,6 +16,7 @@ import javax.lang.model.element.Modifier;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
+import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 import org.spartan.fajita.api.rllp.Item;
 import org.spartan.fajita.api.rllp.JSM;
 import org.spartan.fajita.api.rllp.RLLP;
@@ -77,14 +78,20 @@ import com.squareup.javapoet.TypeVariableName;
     return encoding.build();
   }
   public MethodSpec methodOf(Item i, Verb v) {
-    return MethodSpec.methodBuilder(v.name()) //
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder(v.name());
+    final SimpleEntry<Collection<ParameterSpec>, VarArgs> isVarargsWrapper = getMethodParameters(v);
+    if (isVarargsWrapper.getValue() != null)
+      builder.varargs();
+    Collection<ParameterSpec> params = isVarargsWrapper.getKey();
+    return builder //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .addParameters(getMethodParameters(v))//
+        .addParameters(params)//
         .returns(returnTypeOfMethod(i, v))//
         .build();
   }
-  private static Collection<ParameterSpec> getMethodParameters(Verb v) {
+  private static SimpleEntry<Collection<ParameterSpec>, VarArgs> getMethodParameters(Verb v) {
     Collection<ParameterSpec> $ = new ArrayList<>();
+    VarArgs varargs = null;
     if (v.type instanceof ClassesType) {
       List<Class<?>> classes = ((ClassesType) v.type).classes;
       for (int i = 0; i < classes.size(); i++)
@@ -92,12 +99,14 @@ import com.squareup.javapoet.TypeVariableName;
     } else if (v.type instanceof NestedType) {
       NestedType type = (NestedType) v.type;
       $.add(ParameterSpec
-          .builder(//
-              ClassName.get("", NamesCache.getApiName(type.nested), NamesCache.returnTypeOf$(type.nested)), "arg0")//
-          .build());
+          .builder(ClassName.get("", NamesCache.getApiName(type.nested), NamesCache.returnTypeOf$(type.nested)), "arg0").build());
+    } else if (v.type instanceof VarArgs) {
+      final VarArgs type = (VarArgs) v.type;
+      varargs = type;
+      $.add(ParameterSpec.builder(type.clazz, "arg0").build());
     } else
       throw new IllegalArgumentException("Type of verb is unknown");
-    return $;
+    return new SimpleEntry<>($, varargs);
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     final Action action = rllp.predict(i, v);

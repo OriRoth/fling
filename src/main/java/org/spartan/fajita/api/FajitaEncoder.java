@@ -61,8 +61,9 @@ import com.squareup.javapoet.TypeSpec;
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
             .addParameters(augmentParameter(m.parameters))//
             .addCode("return null;\n") //
-            .returns(ClassName.get(encoder.getRLLP().bnf.getApiName(), m.returnType.toString())).build()) //
-        .collect(Collectors.toList());
+            .returns(ClassName.get(encoder.getRLLP().bnf.getApiName(), m.returnType.toString()))//
+            .build()) //
+        .collect(Collectors.toSet());
   }
   private static Iterable<ParameterSpec> augmentParameter(Iterable<ParameterSpec> parameters){
     return parameters;
