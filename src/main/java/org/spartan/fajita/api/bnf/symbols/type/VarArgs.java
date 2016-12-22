@@ -1,10 +1,12 @@
 package org.spartan.fajita.api.bnf.symbols.type;
 
+import java.lang.reflect.Array;
+
 public class VarArgs implements ParameterType {
   public final Class<?> clazz;
 
-  public VarArgs(Class<?> clazz) {
-    this.clazz = clazz;
+  public <T> VarArgs(Class<T> clazz) {
+    this.clazz = Array.newInstance(clazz, 0).getClass();
   }
   @Override public String toString() {
     return clazz.getSimpleName() + " ...";
