@@ -73,7 +73,7 @@ import com.squareup.javapoet.TypeVariableName;
       encoding.addMethods(rllp.analyzer.followSetOf(i.rule.lhs).stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
     if (!followSet.isEmpty())
       encoding.addTypeVariables(
-          followSet.stream().map(v -> TypeVariableName.get(nameCache.verbTypeName(v))).collect(Collectors.toList()));
+          followSet.stream().map(v -> TypeVariableName.get(NamesCache.verbTypeName(v))).collect(Collectors.toList()));
     return encoding.build();
   }
   public MethodSpec methodOf(Item i, Verb v) {
@@ -120,7 +120,7 @@ import com.squareup.javapoet.TypeVariableName;
   private TypeName returnTypeOfAdvance(Advance action) {
     final Item next = action.beforeAdvancing.advance();
     final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(next.rule.lhs);
-    final List<TypeName> params = followOfItem.stream().map(v -> TypeVariableName.get(nameCache.verbTypeName(v)))
+    final List<TypeName> params = followOfItem.stream().map(v -> TypeVariableName.get(NamesCache.verbTypeName(v)))
         .collect(Collectors.toList());
     return RLLPEncoder.parameterizedType(nameCache.getItemName(next), params);
   }
@@ -178,7 +178,8 @@ import com.squareup.javapoet.TypeVariableName;
     }
     List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
     TypeSpec recursiveType = generateRecursiveType(jsm, recursiveVerb);
-    recursiveTypes.add(recursiveType);
+    if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals(recursiveType.toString())))
+      recursiveTypes.add(recursiveType);
     params.remove(placeholder);
     return RLLPEncoder.parameterizedType(recursiveType.name, params);
   }
@@ -187,13 +188,13 @@ import com.squareup.javapoet.TypeVariableName;
     final String name = nameCache.getRecursiveTypeName(jsm);
     final List<TypeVariableName> recursive_params = followSet.stream() //
         .filter(v -> v != recursiveVerb) //
-        .map(v -> TypeVariableName.get(nameCache.verbTypeName(v))) //
+        .map(v -> TypeVariableName.get(NamesCache.verbTypeName(v))) //
         .collect(Collectors.toList());
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(name) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
         .addTypeVariables(recursive_params);
     List<TypeName> superclass_params = followSet.stream()
-        .map(v -> (v != recursiveVerb) ? TypeVariableName.get(nameCache.verbTypeName(v))
+        .map(v -> (v != recursiveVerb) ? TypeVariableName.get(NamesCache.verbTypeName(v))
             : RLLPEncoder.parameterizedType(name, recursive_params))//
         .collect(Collectors.toList());
     encoding.superclass(RLLPEncoder.parameterizedType(nameCache.getItemName(jsm.peek()), superclass_params));
@@ -205,12 +206,12 @@ import com.squareup.javapoet.TypeVariableName;
     if (followSet.isEmpty())
       return Collections.emptyList();
     for (Verb v : followSet)
-      typeArguments.putIfAbsent(v, (contextFollowSet.contains(v)) ? TypeVariableName.get(nameCache.verbTypeName(v))
+      typeArguments.putIfAbsent(v, (contextFollowSet.contains(v)) ? TypeVariableName.get(NamesCache.verbTypeName(v))
           : TypeVariableName.get(NamesCache.errorTypeName));
     return followSet.stream().map(v -> typeArguments.get(v)).collect(Collectors.toList());
   }
-  private TypeName returnTypeOfJump(Jump action) {
-    return TypeVariableName.get(nameCache.verbTypeName(action.v));
+  private static TypeName returnTypeOfJump(Jump action) {
+    return TypeVariableName.get(NamesCache.verbTypeName(action.v));
   }
   @Override public String toString() {
     return enclosing.toString();
