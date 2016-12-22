@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.rllp.generation;
+package org.spartan.fajita.api.rllp;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -17,9 +17,6 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
-import org.spartan.fajita.api.rllp.Item;
-import org.spartan.fajita.api.rllp.JSM;
-import org.spartan.fajita.api.rllp.RLLP;
 import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Advance;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
@@ -34,12 +31,11 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
 @SuppressWarnings("restriction") public class RLLPEncoder {
-  private final RLLP rllp;
+  public final RLLP rllp;
   private final TypeSpec enclosing;
   private final Collection<TypeSpec> recursiveTypes;
   private final Map<List<Item>, TypeName> JSMCache;
   private static final ClassName placeholder = ClassName.get("", "placeholder");
-  private final TypeSpec apiReturnType;
   private final NamesCache nameCache;
 
   public RLLPEncoder(RLLP parser) {
@@ -48,17 +44,11 @@ import com.squareup.javapoet.TypeVariableName;
     this.JSMCache = new HashMap<>();
     this.nameCache = new NamesCache(rllp.bnf);
     Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
-    apiReturnType = apiReturnType();
     enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
         .addTypes(rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList())) //
         .addTypes(recursiveTypes) //
-        .addType(apiReturnType)//
-        .build();
-  }
-  private TypeSpec apiReturnType() {
-    return TypeSpec.classBuilder(nameCache.returnTypeOf$())//
-        .addModifiers(Modifier.PUBLIC) //
+        .addType(apiReturnType())//
         .build();
   }
   private TypeSpec encodeItem(Item i) {
@@ -87,6 +77,11 @@ import com.squareup.javapoet.TypeVariableName;
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
         .addParameters(params)//
         .returns(returnTypeOfMethod(i, v))//
+        .build();
+  }
+  private TypeSpec apiReturnType() {
+    return TypeSpec.classBuilder(nameCache.returnTypeOf$())//
+        .addModifiers(Modifier.PUBLIC) //
         .build();
   }
   private static SimpleEntry<Collection<ParameterSpec>, VarArgs> getMethodParameters(Verb v) {
@@ -124,7 +119,7 @@ import com.squareup.javapoet.TypeVariableName;
     }
   }
   private TypeName returnTypeOfAccept() {
-    return ClassName.get("", apiReturnType.name);
+    return ClassName.get("", apiReturnType().name);
   }
   private TypeName returnTypeOfAdvance(Advance action) {
     final Item next = action.beforeAdvancing.advance();
@@ -247,7 +242,7 @@ import com.squareup.javapoet.TypeVariableName;
       return type;
     return ParameterizedTypeName.get(type, l.toArray(new TypeName[] {}));
   }
-  public RLLP getRLLP() {
-    return rllp;
+  public String getApiName() {
+    return rllp.bnf.getApiName();
   }
 }

@@ -14,12 +14,11 @@ public class ClassesType implements ParameterType{
       this.classes = new ArrayList<>(Arrays.asList(classes));
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder().append("(");
+    StringBuilder sb = new StringBuilder();
     if (classes.size() != 0) {
       classes.forEach(clss -> sb.append(clss.getSimpleName()).append(" * "));
       sb.delete(sb.length() - 3, sb.length());
     }
-    sb.append(")");
     return sb.toString();
   }
   @Override public int hashCode() {

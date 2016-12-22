@@ -49,7 +49,7 @@ public class Pascal {
         .derive(Procedure).to(procedure).and(id).and(Parameters).and(semi).and(Definitions).and(Body)//
         .derive(Parameters).to(pair) //
         /*           */.orNone() //
-        .go();
+        .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(apiName, buildApi());
@@ -64,9 +64,9 @@ public class Pascal {
     program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
   }
   public static void illegal() {
-//    program().program();
-//    program().id().id();
-//    program().id().semi().label().constant();
-//    program().id().semi().constant().semi().$();
+    // program().program();
+    // program().id().id();
+    // program().id().semi().label().constant();
+    // program().id().semi().constant().semi().$();
   }
 }

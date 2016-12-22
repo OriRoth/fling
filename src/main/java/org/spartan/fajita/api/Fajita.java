@@ -33,6 +33,7 @@ public class Fajita {
    */
   private final Set<NonTerminal> nestedParameters;
   private String apiName;
+  private String packagePath;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
@@ -89,9 +90,16 @@ public class Fajita {
   void setApiName(String apiName) {
     this.apiName = apiName;
   }
-  private String finish() {
+  String finish(String pckg) {
     validate();
+    setPackagePath(pckg);
     return FajitaEncoder.encode(this);
+  }
+  public String getPackagePath() {
+    return packagePath;
+  }
+  public void setPackagePath(String packagePath) {
+    this.packagePath = packagePath;
   }
   /* ***************************************************************************
    * ***************************************************************************
@@ -136,8 +144,8 @@ public class Fajita {
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
-    @SuppressWarnings("synthetic-access") public String go() {
-      return Fajita.this.finish();
+    public String go(String pckg) {
+      return finish(pckg);
     }
     /**
      * Adds a rule to the BnfBuilder host.
@@ -188,6 +196,7 @@ public class Fajita {
       return or(new AndDeriver(lhs, new Verb(term, varargs)));
     }
     public AndDeriver or(final Terminal term, NonTerminal nested) {
+      addNestedParameter(nested);
       return or(new AndDeriver(lhs, new Verb(term, nested)));
     }
     public AndDeriver or(final NonTerminal nt) {
@@ -219,6 +228,7 @@ public class Fajita {
       return and(new Verb(term, varargs));
     }
     public AndDeriver and(final Terminal term, NonTerminal nested) {
+      addNestedParameter(nested);
       return and(new Verb(term, nested));
     }
     public AndDeriver and(final Terminal term, Class<?>... type) {
@@ -228,9 +238,9 @@ public class Fajita {
       symbols.add(symb);
       return this;
     }
-    @Override public String go() {
+    @Override public String go(String pckg) {
       addRuleToBNF();
-      return super.go();
+      return super.go(pckg);
     }
   }
 

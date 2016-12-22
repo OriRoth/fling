@@ -19,7 +19,7 @@ public class Verb implements Terminal, Comparable<Verb> {
     this(terminal, new NestedType(nested));
   }
   @Override public String toString() {
-    return name + type.toString();
+    return name + "("+ type.toString()+")";
   }
   @Override public String name() {
     return name;

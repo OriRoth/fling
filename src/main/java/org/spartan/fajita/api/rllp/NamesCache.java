@@ -1,4 +1,4 @@
-package org.spartan.fajita.api.rllp.generation;
+package org.spartan.fajita.api.rllp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,12 +6,9 @@ import java.util.Map;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.Item;
-import org.spartan.fajita.api.rllp.JSM;
 
 public class NamesCache {
   public static final String errorTypeName = "ERROR";
-  public static String fajitaApiName;
   private final Map<Item, String> itemNames = new HashMap<>();
   private final BNF bnf;
 
@@ -48,6 +45,6 @@ public class NamesCache {
     return returnTypeOf$(bnf.getStartSymbols().get(0));
   }
   public static String getApiName(NonTerminal startNT) {
-    return fajitaApiName + "__" + startNT.name() + "__";
+    return startNT.name();
   }
 }

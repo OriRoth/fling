@@ -8,6 +8,9 @@ public class NestedType implements ParameterType {
   public NestedType(NonTerminal nested) {
     this.nested = nested;
   }
+  @Override public String toString() {
+    return nested.name();
+  }
 
   @Override public int hashCode() {
     final int prime = 31;

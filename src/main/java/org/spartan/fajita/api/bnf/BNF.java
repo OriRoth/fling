@@ -13,7 +13,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.generation.NamesCache;
+import org.spartan.fajita.api.rllp.NamesCache;
 
 public final class BNF {
   private final Set<Verb> verbs;
