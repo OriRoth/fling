@@ -32,7 +32,7 @@ import com.squareup.javapoet.TypeVariableName;
 
 @SuppressWarnings("restriction") public class RLLPEncoder {
   public final RLLP rllp;
-  private final TypeSpec enclosing;
+  private final List<TypeSpec> mainTypes;
   private final Collection<TypeSpec> recursiveTypes;
   private final Map<List<Item>, TypeName> JSMCache;
   private static final ClassName placeholder = ClassName.get("", "placeholder");
@@ -44,12 +44,7 @@ import com.squareup.javapoet.TypeVariableName;
     this.JSMCache = new HashMap<>();
     this.nameCache = new NamesCache(rllp.bnf);
     Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.rule.getChildren().get(i.dotIndex - 1).isVerb();
-    enclosing = TypeSpec.classBuilder(parser.bnf.getApiName()) //
-        .addModifiers(Modifier.PUBLIC) //
-        .addTypes(rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList())) //
-        .addTypes(recursiveTypes) //
-        .addType(apiReturnType())//
-        .build();
+    mainTypes = rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList());
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
@@ -182,7 +177,7 @@ import com.squareup.javapoet.TypeVariableName;
     }
     List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
     TypeSpec recursiveType = generateRecursiveType(jsm, recursiveVerb);
-    if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals(recursiveType.toString())))
+    if (recursiveTypes.isEmpty() || !recursiveTypes.stream().anyMatch(t -> t.toString().equals(recursiveType.toString())))
       recursiveTypes.add(recursiveType);
     params.remove(placeholder);
     return RLLPEncoder.parameterizedType(recursiveType.name, params);
@@ -218,7 +213,7 @@ import com.squareup.javapoet.TypeVariableName;
     return TypeVariableName.get(NamesCache.verbTypeName(action.v));
   }
   @Override public String toString() {
-    return enclosing.toString();
+    return encode().toString();
   }
 
   private final class FoundRecursiveTypeException extends Exception {
@@ -231,7 +226,12 @@ import com.squareup.javapoet.TypeVariableName;
   }
 
   public TypeSpec encode() {
-    return enclosing;
+    return TypeSpec.classBuilder(rllp.bnf.getApiName()) //
+        .addModifiers(Modifier.PUBLIC) //
+        .addTypes(mainTypes) //
+        .addTypes(recursiveTypes) //
+        .addType(apiReturnType())//
+        .build();
   }
   public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
     final ClassName type = ClassName.get("", typename);

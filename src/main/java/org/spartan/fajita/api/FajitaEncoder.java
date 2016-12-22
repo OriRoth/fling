@@ -36,14 +36,14 @@ import com.squareup.javapoet.TypeSpec;
     TypeSpec mainType = TypeSpec.classBuilder(fajita.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
         .addType(addErrorType()) //
-        .addTypes( //
-            encoders.stream() //
-                .map(encoder -> encoder.encode()) //
-                .collect(Collectors.toList())) //
         .addMethods(encoders.stream() //
             .map(encoder -> getStaticMethods(encoder)) //
             .flatMap(methods -> methods.stream()) //
             .collect(Collectors.toList())) //
+        .addTypes( //
+            encoders.stream() //
+                .map(encoder -> encoder.encode()) //
+                .collect(Collectors.toList())) //
         .build(); //
     return JavaFile.builder(fajita.getPackagePath(), mainType).build().toString();
   }
