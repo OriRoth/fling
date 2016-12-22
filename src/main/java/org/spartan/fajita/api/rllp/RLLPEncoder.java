@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ import com.squareup.javapoet.TypeVariableName;
 @SuppressWarnings("restriction") public class RLLPEncoder {
   public final RLLP rllp;
   private final List<TypeSpec> mainTypes;
-  private final Collection<TypeSpec> recursiveTypes;
+  private final List<TypeSpec> recursiveTypes;
   private final Map<List<Item>, TypeName> JSMCache;
   private static final ClassName placeholder = ClassName.get("", "placeholder");
   private final NamesCache nameCache;
@@ -130,19 +132,18 @@ import com.squareup.javapoet.TypeVariableName;
   }
   private TypeName encodeJSM(JSM jsm, Item context) {
     try {
-      return encodeJSM_recursive_protection(jsm, context, new ArrayList<>());
+      return encodeJSM_recursive_protection(jsm, context, new RecursiveProtector());
     } catch (FoundRecursiveTypeException e) {
       throw new RuntimeException("Failed to handle recursive JSM: " + e.jsm);
     }
   }
-  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, List<JSM> alreadySeen) throws FoundRecursiveTypeException {
+  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, RecursiveProtector prot)
+      throws FoundRecursiveTypeException {
     if (JSMCache.containsKey(jsm.getS0()))
       return JSMCache.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
       return ClassName.get("", NamesCache.errorTypeName);
-    if (alreadySeen.indexOf(jsm) != -1)
-      throw new FoundRecursiveTypeException(jsm);
-    alreadySeen.add(jsm);
+    prot.recurse(jsm);
     TypeName $ = null;
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps()) {
@@ -150,12 +151,14 @@ import com.squareup.javapoet.TypeVariableName;
        * When we identify the recurrence of the JSM we throw, and catch only
        * when we get the original occurrence of the recursive JSM. */
       try {
-        TypeName encodedJSM = encodeJSM_recursive_protection(e.getValue(), context, new ArrayList<>(alreadySeen));
+        TypeName encodedJSM = encodeJSM_recursive_protection(e.getValue(), context, prot);
         typeArguments.put(e.getKey(), encodedJSM);
       } catch (FoundRecursiveTypeException exc) {
-        if (!jsm.equals(exc.jsm))
+        prot.unwind();
+        if (jsm != exc.jsm)
           throw exc;
-        $ = encodeRecursiveJSM(jsm, context, e.getKey());
+        prot.updateRecursiveVerb(jsm, e.getKey());
+        $ = encodeRecursiveJSM(jsm, context, prot);
         break;
       }
     }
@@ -166,37 +169,37 @@ import com.squareup.javapoet.TypeVariableName;
     JSMCache.put(jsm.getS0(), $);
     return $;
   }
-  private TypeName encodeRecursiveJSM(JSM jsm, Item context, Verb recursiveVerb) {
+  private TypeName encodeRecursiveJSM(JSM jsm, Item context, RecursiveProtector prot) throws FoundRecursiveTypeException {
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps()) {
-      if (e.getKey().equals(recursiveVerb)) {
+      if (prot.getRecursiveVerbs().contains(e.getKey())) {
         typeArguments.put(e.getKey(), placeholder);
         continue;
       }
-      typeArguments.put(e.getKey(), encodeJSM(e.getValue(), context));
+      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), context, prot));
     }
     List<TypeName> params = encodeTypeArguments(jsm.peek(), typeArguments, context);
-    TypeSpec recursiveType = generateRecursiveType(jsm, recursiveVerb);
-    if (recursiveTypes.isEmpty() || !recursiveTypes.stream().anyMatch(t -> t.toString().equals(recursiveType.toString())))
+    TypeSpec recursiveType = generateRecursiveType(jsm, prot.getRecursiveVerbs());
+    if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals(recursiveType.toString())))
       recursiveTypes.add(recursiveType);
     params.remove(placeholder);
     return RLLPEncoder.parameterizedType(recursiveType.name, params);
   }
-  private TypeSpec generateRecursiveType(JSM jsm, Verb recursiveVerb) {
+  private TypeSpec generateRecursiveType(JSM jsm, Collection<Verb> recursiveVerbs) {
     final Collection<Verb> followSet = rllp.analyzer.followSetWO$(jsm.peek().rule.lhs);
     final String name = nameCache.getRecursiveTypeName(jsm);
-    final List<TypeVariableName> recursive_params = followSet.stream() //
-        .filter(v -> v != recursiveVerb) //
+    final List<TypeVariableName> nonrecursive = followSet.stream() //
+        .filter(v -> !recursiveVerbs.contains(v)) //
         .map(v -> TypeVariableName.get(NamesCache.verbTypeName(v))) //
         .collect(Collectors.toList());
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(name) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .addTypeVariables(recursive_params);
+        .addTypeVariables(nonrecursive);
     List<TypeName> superclass_params = followSet.stream()
-        .map(v -> (v != recursiveVerb) ? TypeVariableName.get(NamesCache.verbTypeName(v))
-            : RLLPEncoder.parameterizedType(name, recursive_params))//
+        .map(v -> (!recursiveVerbs.contains(v)) ? TypeVariableName.get(NamesCache.verbTypeName(v))
+            : parameterizedType(name, nonrecursive))//
         .collect(Collectors.toList());
-    encoding.superclass(RLLPEncoder.parameterizedType(nameCache.getItemName(jsm.peek()), superclass_params));
+    encoding.superclass(parameterizedType(nameCache.getItemName(jsm.peek()), superclass_params));
     return encoding.build();
   }
   private List<TypeName> encodeTypeArguments(Item mainType, Map<Verb, TypeName> typeArguments, Item context) {
@@ -222,6 +225,36 @@ import com.squareup.javapoet.TypeVariableName;
 
     public FoundRecursiveTypeException(JSM jsm) {
       this.jsm = jsm;
+    }
+  }
+
+  private class RecursiveProtector {
+    private final List<JSM> alreadySeen;
+    private JSM recursive;
+    private final Set<Verb> recursiveVerbs;
+
+    public RecursiveProtector() {
+      alreadySeen = new ArrayList<>();
+      recursive = null;
+      recursiveVerbs = new HashSet<>();
+    }
+    public void updateRecursiveVerb(JSM jsm, Verb key) {
+      if (recursive != null && recursive != jsm)
+        throw new IllegalStateException("what?");
+      recursive = jsm;
+      recursiveVerbs.add(key);
+    }
+    void recurse(JSM jsm) throws FoundRecursiveTypeException {
+      int idx = alreadySeen.indexOf(jsm);
+      if (idx != -1)
+        throw new FoundRecursiveTypeException(alreadySeen.get(idx));
+      alreadySeen.add(jsm);
+    }
+    void unwind() {
+      alreadySeen.remove(alreadySeen.size() - 1);
+    }
+    public Collection<Verb> getRecursiveVerbs() {
+      return recursiveVerbs;
     }
   }
 
