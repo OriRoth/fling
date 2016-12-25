@@ -5,8 +5,13 @@ import java.util.Optional;
 import java.util.Stack;
 
 import org.jgrapht.EdgeFactory;
+import org.jgrapht.event.ConnectedComponentTraversalEvent;
+import org.jgrapht.event.EdgeTraversalEvent;
+import org.jgrapht.event.TraversalListener;
+import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.util.VertexPair;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -20,10 +25,10 @@ public class JSMGraph extends DefaultDirectedGraph<JSMVertex, JSMEdge> {
 
   private static final long serialVersionUID = -7987222753212096796L;
 
-  public void calcAndVisualize(JSM _root) {
+  public void calcAndVisualize(JSM _root,String label) {
     this.root = _root;
     calc(_root);
-    visualize();
+    visualize(label);
   }
   public void calc(JSM _root) {
     Stack<VertexPair<JSMVertex>> unhandled = new Stack<>();
@@ -42,8 +47,28 @@ public class JSMGraph extends DefaultDirectedGraph<JSMVertex, JSMEdge> {
       }
     }
   }
-  public void visualize() {
-    new GraphVisualize().visualize(this);
+  public void visualize(String label) {
+    new GraphVisualize().visualize(this,label);
+  }
+  public void dfs(){
+    DepthFirstIterator<JSMVertex, JSMEdge> iter = new DepthFirstIterator<>(this);
+    iter.addTraversalListener(new TraversalListener<JSMVertex, JSMEdge>() {
+      @Override public void vertexTraversed(VertexTraversalEvent<JSMVertex> e) {
+        // TODO Auto-generated method stub
+      }
+      @Override public void vertexFinished(VertexTraversalEvent<JSMVertex> e) {
+        // TODO Auto-generated method stub
+      }
+      @Override public void edgeTraversed(EdgeTraversalEvent<JSMEdge> e) {
+        // TODO Auto-generated method stub
+      }
+      @Override public void connectedComponentStarted(ConnectedComponentTraversalEvent e) {
+
+      }
+      @Override public void connectedComponentFinished(ConnectedComponentTraversalEvent e) {
+        // TODO Auto-generated method stub
+      }
+    });
   }
 }
 
@@ -62,7 +87,8 @@ class JSMVertex {
   @Override public String toString() {
     String items = "";
     List<Item> s0 = jsm.getS0();
-    for (int i = 0; i < s0.size() && i < 2; i++)
+    for (int i = s0.size() - 1; i >= 0; i--)
+      // for (int i = s0.size()-1; i > 0 && i > s0.size()-3; i--)
       items = s0.get(i).toString() + items;
     return items;
   }

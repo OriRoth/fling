@@ -17,15 +17,15 @@ public class Sql {
   }
 
   static enum NT implements NonTerminal {
-    SELECT_STATEMENT, QUANTIFIER, COLOUMNS, WHERE, EXPRESSION, OP;
+    STMNT, QUANTIFIER, COLOUMNS, WHERE, EXPRESSION, OP;
   }
 
   public static String buildBNF() {
     
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
-        .start(SELECT_STATEMENT) //
-        .derive(SELECT_STATEMENT)//
+        .start(STMNT) //
+        .derive(STMNT)//
         .to(select).and(QUANTIFIER).and(column).and(COLOUMNS).and(from).and(table).and(WHERE) //
         .derive(QUANTIFIER).to(all).or(distinct) //
         .derive(COLOUMNS).to(column).and(COLOUMNS)//
@@ -34,7 +34,7 @@ public class Sql {
         .orNone() //
         .derive(EXPRESSION).to(column).and(OP).and(literal) //
         .derive(OP).to(equals).or(geq).or(leq) //
-        .go();
+        .go(Main.packagePath);
     
   }
   public static void main(String[] args) throws IOException {

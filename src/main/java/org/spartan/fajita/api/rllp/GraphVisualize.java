@@ -26,14 +26,14 @@ public class GraphVisualize extends JPanel {
   private static final Dimension DEFAULT_SIZE = new Dimension(1200, 820);
   private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
 
-  public void visualize(JSMGraph g) {
+  public void visualize(JSMGraph g, String label) {
     ListenableDirectedGraph<JSMVertex, JSMEdge> l = new ListenableDirectedGraph<>(g);
     jgAdapter = new JGraphModelAdapter<>(l);
     JGraph jgraph = new JGraph(jgAdapter);
     adjustDisplaySettings(jgraph);
     add(jgraph);
-    JLabel label = new JLabel(g.root.toString(), SwingConstants.CENTER);
-    add(label, 0);
+    JLabel jlabel = new JLabel(label, SwingConstants.CENTER);
+    add(jlabel, 0);
     tabs.addTab("" + tabs.getTabCount(), this);
     setSize(DEFAULT_SIZE);
     int size = g.vertexSet().size();
