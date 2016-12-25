@@ -132,6 +132,7 @@ import com.squareup.javapoet.TypeVariableName;
     return encodeJSM(jsm, action.i, action.v);
   }
   private TypeName encodeJSM(JSM jsm, Item context, Verb v) {
+    new JSMGraph().calcAndVisualize(jsm);
     return encodeJSM_recursive_protection(jsm, context, v, new RecursiveProtector());
   }
   private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, Verb v, RecursiveProtector prot) {
