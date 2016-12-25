@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -131,14 +132,9 @@ import com.squareup.javapoet.TypeVariableName;
     return encodeJSM(jsm, action.i, action.v);
   }
   private TypeName encodeJSM(JSM jsm, Item context, Verb v) {
-    try {
-      return encodeJSM_recursive_protection(jsm, context, v, new RecursiveProtector());
-    } catch (FoundRecursiveTypeException e) {
-      throw new RuntimeException("Failed to handle recursive JSM: " + e.jsm);
-    }
+    return encodeJSM_recursive_protection(jsm, context, v, new RecursiveProtector());
   }
-  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, Verb v, RecursiveProtector prot)
-      throws FoundRecursiveTypeException {
+  private TypeName encodeJSM_recursive_protection(JSM jsm, Item context, Verb v, RecursiveProtector prot) {
     if (JSMCache.containsKey(jsm.getS0()))
       return JSMCache.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
@@ -198,22 +194,13 @@ import com.squareup.javapoet.TypeVariableName;
     return encode().toString();
   }
 
-  private final class FoundRecursiveTypeException extends Exception {
-    private static final long serialVersionUID = 8456148424675230710L;
-    public final JSM jsm;
-
-    public FoundRecursiveTypeException(JSM jsm) {
-      this.jsm = jsm;
-    }
-  }
-
   private class RecursiveProtector {
-    private final List<JSM> alreadySeen;
+    private final Stack<JSM> alreadySeen;
     private JSM recursive;
     private final Set<Verb> recursiveVerbs;
 
     public RecursiveProtector() {
-      alreadySeen = new ArrayList<>();
+      alreadySeen = new Stack<>();
       recursive = null;
       recursiveVerbs = new HashSet<>();
     }
@@ -233,13 +220,13 @@ import com.squareup.javapoet.TypeVariableName;
         updateRecursiveVerb(jsm, v);
         return true;
       }
-      alreadySeen.add(jsm);
+      alreadySeen.push(jsm);
       return false;
     }
     void unwind() {
-      alreadySeen.remove(alreadySeen.size() - 1);
+      alreadySeen.pop();
     }
-    public Collection<Verb> getRecursiveVerbs() {
+    Collection<Verb> getRecursiveVerbs() {
       return recursiveVerbs;
     }
   }
