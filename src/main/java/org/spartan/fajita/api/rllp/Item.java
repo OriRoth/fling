@@ -27,7 +27,10 @@ public class Item {
     return sb.toString();
   }
   public Symbol afterDot(){
-    return rule.getChildren().get(dotIndex);
+    return rule.get(dotIndex);
+  }
+  public Symbol beforeDot(){
+    return rule.get(dotIndex-1);
   }
   public boolean isLegalTransition(final Symbol symb) {
     return ((rule.getChildren().size() > dotIndex) //

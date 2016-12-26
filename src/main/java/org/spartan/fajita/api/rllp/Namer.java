@@ -7,12 +7,12 @@ import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class NamesCache {
+public class Namer {
   public static final String errorTypeName = "ERROR";
   private final Map<Item, String> itemNames = new HashMap<>();
   private final BNF bnf;
 
-  public NamesCache(BNF bnf) {
+  public Namer(BNF bnf) {
     this.bnf = bnf;
   }
   public String getItemName(Item i) {
@@ -25,7 +25,7 @@ public class NamesCache {
     return itemNames.get(i);
   }
   public String getRecursiveTypeName(JSM jsm) {
-    return getItemName(jsm.peek()) + "_rec_";
+    return getItemName(jsm.peek()) + hexifyObject(jsm.getS0()) + "_rec_";
   }
   public static String verbTypeName(final Verb verb) {
     return verb.name();
@@ -35,9 +35,9 @@ public class NamesCache {
 //      rnd = new Random(System.currentTimeMillis());
 //    return Integer.toHexString(rnd.nextInt(5000));
 //  }
-//  private static String hexifyObject(Object o) {
-//    return Integer.toHexString(Math.abs(o.hashCode() % 1000));
-//  }
+  private static String hexifyObject(Object o) {
+    return Integer.toHexString(Math.abs(o.hashCode() % 1000));
+  }
   public static String returnTypeOf$(NonTerminal startNT) {
     return getApiName(startNT) + "_$_";
   }

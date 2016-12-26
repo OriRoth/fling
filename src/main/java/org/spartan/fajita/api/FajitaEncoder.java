@@ -11,7 +11,7 @@ import javax.lang.model.element.Modifier;
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.rllp.Item;
-import org.spartan.fajita.api.rllp.NamesCache;
+import org.spartan.fajita.api.rllp.Namer;
 import org.spartan.fajita.api.rllp.RLLP;
 import org.spartan.fajita.api.rllp.RLLPEncoder;
 
@@ -55,7 +55,7 @@ import com.squareup.javapoet.TypeSpec;
     return $;
   }
   private static TypeSpec addErrorType() {
-    return TypeSpec.classBuilder(NamesCache.errorTypeName).build();
+    return TypeSpec.classBuilder(Namer.errorTypeName).build();
   }
   private Collection<MethodSpec> getStaticMethods(RLLPEncoder encoder) {
     return encoder.rllp.getStartItems().stream()//

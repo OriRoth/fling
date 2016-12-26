@@ -15,7 +15,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
   public static final JSM JAMMED = null;
-  List<Item> S0;
+  // TODO: change S0 and S1 to stacks
+  private List<Item> S0;
   List<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
@@ -36,6 +37,9 @@ public class JSM {
     fromJSM.S0.forEach(i -> S0.add(i));
     fromJSM.S1.forEach(partMap -> S1.add(partMap));
     configurationCache = fromJSM.configurationCache;
+  }
+  public List<Item> getS0() {
+    return Collections.unmodifiableList(S0);
   }
   /**
    * Cannot cause recursion. always finite time.
@@ -67,6 +71,8 @@ public class JSM {
   public void pushAll(List<Item> toPush) {
     final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
     if (configurationCache.containsKey(currentConfig))
+      // TODO: throw the already seen JSM and force the invoker to use the
+      // correct ref.
       load(configurationCache.get(currentConfig));
     else {
       configurationCache.put(currentConfig, this);
@@ -218,9 +224,4 @@ public class JSM {
       return true;
     }
   }
-
-  public List<Item> getS0() {
-    return Collections.unmodifiableList(S0);
-  }
-
 }

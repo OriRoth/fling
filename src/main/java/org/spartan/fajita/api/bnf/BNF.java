@@ -13,7 +13,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.NamesCache;
+import org.spartan.fajita.api.rllp.Namer;
 
 public final class BNF {
   private final Set<Verb> verbs;
@@ -64,7 +64,7 @@ public final class BNF {
     return startSymbols;
   }
   public String getApiName() {
-    return NamesCache.getApiName(startSymbols.get(0));
+    return Namer.getApiName(startSymbols.get(0));
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder() //

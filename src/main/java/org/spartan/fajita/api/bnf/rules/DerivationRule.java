@@ -21,6 +21,7 @@ public class DerivationRule {
       sb.append(symb.toString() + " ");
     return sb.toString();
   }
+  // TODO: change all horrific access to children using the new get() method.
   public List<Symbol> getChildren() {
     return new ArrayList<>(expression);
   }
@@ -30,5 +31,8 @@ public class DerivationRule {
   }
   @Override public int hashCode() {
     return lhs.hashCode() + 7 * getChildren().hashCode();
+  }
+  public Symbol get(int dotIndex) {
+    return getChildren().get(dotIndex);
   }
 }
