@@ -4,6 +4,7 @@ import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteTerminals.*;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteVariables.*;
 
 import org.spartan.fajita.api.Fajita;
+import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -49,6 +50,6 @@ public class ToiletteSeat {
         .derive(Action) //
         /*                  */.to(urinate) //
         /*                  */.or(defecate) //
-        .go();
+        .go(Main.packagePath);
   }
 }

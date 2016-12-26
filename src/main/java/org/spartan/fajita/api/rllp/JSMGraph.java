@@ -60,11 +60,11 @@ class JSMVertex {
     return jsm.equals(((JSMVertex) obj).jsm);
   }
   @Override public String toString() {
-    String items = "";
+    String $ = "";
     List<Item> s0 = jsm.getS0();
     for (int i = s0.size() - 1; i >= 0; i--)
-      items = s0.get(i).toString() + items;
-    return items;
+      $ = $ + s0.get(i).toString() ;
+    return $;
   }
 }
 

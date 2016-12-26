@@ -41,16 +41,16 @@ public class Sql {
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(apiName, buildBNF());
   }
-  void compiles() {
+  static void compiles() {
     select().all().column().from().table().$();
     select().distinct().column().column().column().column().from().table().where().column().geq().literal().$();
     select().all().column().column().column().from().table().$();
     select().all().column().from().table().where().column().equals().literal().$();
   }
   void doesnt_compile() {
-    all().$();
-    from().$();
-    select().from().$();
-    select().all().column().from().$();
+    // all().$();
+    // from().$();
+    // select().from().$();
+    // select().all().column().from().$();
   }
 }

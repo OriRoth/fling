@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
+import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
@@ -26,6 +27,7 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.MethodSpec.Builder;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -39,6 +41,8 @@ import com.squareup.javapoet.TypeVariableName;
   private final Map<List<Item>, TypeName> encodedJSMs;
   private Item mainItem;
   private final Namer namer;
+  // Used for Debugging
+  private final boolean visualize = true;
 
   public RLLPEncoder(RLLP parser) {
     this.rllp = parser;
@@ -65,13 +69,9 @@ import com.squareup.javapoet.TypeVariableName;
   }
   public MethodSpec methodOf(Item i, Verb v) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(v.name());
-    final SimpleEntry<Collection<ParameterSpec>, VarArgs> isVarargsWrapper = getMethodParameters(v);
-    if (isVarargsWrapper.getValue() != null)
-      builder.varargs();
-    Collection<ParameterSpec> params = isVarargsWrapper.getKey();
+    augmentMethodParameters(builder, v);
     return builder //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .addParameters(params)//
         .returns(returnTypeOfMethod(i, v))//
         .build();
   }
@@ -80,24 +80,20 @@ import com.squareup.javapoet.TypeVariableName;
         .addModifiers(Modifier.PUBLIC) //
         .build();
   }
-  private static SimpleEntry<Collection<ParameterSpec>, VarArgs> getMethodParameters(Verb v) {
-    Collection<ParameterSpec> $ = new ArrayList<>();
-    VarArgs varargs = null;
+  private static void augmentMethodParameters(Builder builder, Verb v) {
     if (v.type instanceof ClassesType) {
       List<Class<?>> classes = ((ClassesType) v.type).classes;
       for (int i = 0; i < classes.size(); i++)
-        $.add(ParameterSpec.builder(classes.get(i), "arg" + i).build());
+        builder.addParameter(classes.get(i), "arg" + i);
     } else if (v.type instanceof NestedType) {
-      NestedType type = (NestedType) v.type;
-      $.add(ParameterSpec.builder(ClassName.get("", Namer.getApiName(type.nested), Namer.returnTypeOf$(type.nested)), "arg0")
-          .build());
+      NonTerminal nested = ((NestedType) v.type).nested;
+      builder.addParameter(
+          ParameterSpec.builder(ClassName.get("", Namer.getApiName(nested), Namer.returnTypeOf$(nested)), "arg0").build());
     } else if (v.type instanceof VarArgs) {
-      final VarArgs type = (VarArgs) v.type;
-      varargs = type;
-      $.add(ParameterSpec.builder(type.clazz, "arg0").build());
+      builder.varargs();
+      builder.addParameter(ParameterSpec.builder(((VarArgs) v.type).clazz, "arg0").build());
     } else
       throw new IllegalArgumentException("Type of verb is unknown");
-    return new SimpleEntry<>($, varargs);
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     final Action action = rllp.predict(i, v);
@@ -131,9 +127,11 @@ import com.squareup.javapoet.TypeVariableName;
     return encodeJSM(jsm);
   }
   private TypeName encodeJSM(JSM jsm) {
-    // String label = "encoding " + jsm;
-    // JSMGraph jsmGraph = new JSMGraph();
-    // jsmGraph.calcAndVisualize(jsm, label);
+    if (visualize) {
+      String label = "encoding " + jsm;
+      JSMGraph jsmGraph = new JSMGraph();
+      jsmGraph.calcAndVisualize(jsm, label);
+    }
     return encodeJSM_recursive_protection(jsm, new RecursiveProtector());
   }
   private TypeName encodeJSM_recursive_protection(JSM jsm, RecursiveProtector prot) {
