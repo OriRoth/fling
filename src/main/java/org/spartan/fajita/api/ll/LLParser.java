@@ -31,11 +31,11 @@ public class LLParser {
     for (Symbol nt : bnf.getNonTerminals())
       $.put(nt, new HashMap<>());
     for (DerivationRule d : bnf.getRules())
-      for (Verb v : analyzer.firstSetOf(d.getChildren())) {
-        List<Symbol> result = $.get(d.lhs).put(v, d.getChildren());
+      for (Verb v : analyzer.firstSetOf(d.getRHS())) {
+        List<Symbol> result = $.get(d.lhs).put(v, d.getRHS());
         if (result != null)
           throw new NotLLGrammar(
-              "nonterminal " + d.lhs + " has two rules with intersecting First set : <" + result + "> , <" + d.getChildren() + ">");
+              "nonterminal " + d.lhs + " has two rules with intersecting First set : <" + result + "> , <" + d.getRHS() + ">");
       }
     return $;
   }

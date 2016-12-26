@@ -50,7 +50,7 @@ public final class BNF {
       for (DerivationRule rule : getRules()) {
         if (subNonTerminals.contains(rule.lhs) && subRules.add(rule)) {
           change = true;
-          for (Symbol s : rule.getChildren())
+          for (Symbol s : rule.getRHS())
             if (s.isVerb())
               subVerbs.add((Verb) s);
             else

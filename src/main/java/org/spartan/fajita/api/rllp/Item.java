@@ -15,7 +15,7 @@ public class Item {
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(rule.lhs.toString2() + " ::= ");
-    List<Symbol> expression = rule.getChildren();
+    List<Symbol> expression = rule.getRHS();
     for (int i = 0; i < expression.size(); i++) {
       if (i == dotIndex)
         sb.append("\u00b7");
@@ -26,15 +26,15 @@ public class Item {
       sb.append("\u00b7");
     return sb.toString();
   }
-  public Symbol afterDot(){
+  public Symbol afterDot() {
     return rule.get(dotIndex);
   }
-  public Symbol beforeDot(){
-    return rule.get(dotIndex-1);
+  public Symbol beforeDot() {
+    return rule.get(dotIndex - 1);
   }
   public boolean isLegalTransition(final Symbol symb) {
-    return ((rule.getChildren().size() > dotIndex) //
-        && symb.equals(rule.getChildren().get(dotIndex)));
+    return ((rule.size() > dotIndex) //
+        && symb.equals(rule.get(dotIndex)));
   }
   @Override public int hashCode() {
     final int prime = 31;
@@ -61,10 +61,10 @@ public class Item {
     return true;
   }
   public boolean readyToReduce() {
-    return dotIndex == rule.getChildren().size();
+    return dotIndex == rule.size();
   }
   public Item advance() {
-    if (dotIndex == rule.getChildren().size())
+    if (dotIndex == rule.size())
       throw new IllegalStateException("cannot advance a ready to reduce item");
     return new Item(rule, dotIndex + 1);
   }

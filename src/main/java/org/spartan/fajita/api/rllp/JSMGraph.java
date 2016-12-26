@@ -82,7 +82,7 @@ class JSMEdge extends DefaultEdge {
 
 class JSMEdgeFactory implements EdgeFactory<JSMVertex, JSMEdge> {
   @Override public JSMEdge createEdge(JSMVertex src, JSMVertex dst) {
-    Symbol symb = dst.jsm.peek().rule.getChildren().get(dst.jsm.peek().dotIndex - 1);
+    Symbol symb = dst.jsm.peek().rule.get(dst.jsm.peek().dotIndex - 1);
     if (!symb.isVerb())
       throw new IllegalStateException("cannot jump from " + src.toString() + " \n to \n" + dst.toString());
     return new JSMEdge((Verb) symb);

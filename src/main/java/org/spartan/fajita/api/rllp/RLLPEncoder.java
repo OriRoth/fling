@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -189,24 +187,18 @@ import com.squareup.javapoet.TypeVariableName;
 
   private class RecursiveProtector {
     private final Stack<JSM> alreadySeen;
-    private final List<SimpleEntry<JSM, Set<Verb>>> recursiveVerbs;
+    private final List<JSM> recursiveJSMs;
 
     public RecursiveProtector() {
       alreadySeen = new Stack<>();
-      recursiveVerbs = new ArrayList<>();
+      recursiveJSMs = new ArrayList<>();
     }
     public JSM getMatching(JSM jsm) {
-      for (JSM $ : alreadySeen)
-        if ($.equals(jsm))
-          return $;
-      throw new IllegalArgumentException(
-          jsm.toString() + "Was not yet seen. please call detectRecursion() before calling this method");
-    }
-    private int indexOfJSM(JSM jsm) {
-      for (int i = 0; i < recursiveVerbs.size(); i++)
-        if (recursiveVerbs.get(i).getKey().equals(jsm))
-          return i;
-      return -1;
+      int idx = alreadySeen.indexOf(jsm);
+      if (idx == -1)
+        throw new IllegalArgumentException(
+            jsm.toString() + "Was not yet seen. please call detectRecursion() before calling this method");
+      return alreadySeen.get(idx);
     }
     /**
      * @param jsm - the jsm to check
@@ -215,23 +207,19 @@ import com.squareup.javapoet.TypeVariableName;
     boolean detectRecursion(JSM jsm) {
       int idx = alreadySeen.indexOf(jsm);
       if (idx != -1) {
-        recursionDetected(jsm, idx);
+        recursionDetected(idx);
         return true;
       }
       alreadySeen.push(jsm);
       return false;
     }
-    public Set<Verb> getRecursiveVerbs(JSM jsm) {
-      return recursiveVerbs.get(indexOfJSM(jsm)).getValue();
-    }
-    private void recursionDetected(JSM jsm, int idx) {
+    private void recursionDetected(int idx) {
       JSM orig = alreadySeen.get(idx);
       if (!isRecursive(orig))
-        recursiveVerbs.add(new SimpleEntry<>(orig, new HashSet<>()));
-      recursiveVerbs.get(indexOfJSM(orig)).getValue().add((Verb) jsm.peek().beforeDot());
+        recursiveJSMs.add(orig);
     }
     boolean isRecursive(JSM jsm) {
-      return indexOfJSM(jsm) != -1;
+      return recursiveJSMs.indexOf(jsm) != -1;
     }
   }
 

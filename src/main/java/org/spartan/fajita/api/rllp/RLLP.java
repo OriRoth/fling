@@ -39,7 +39,7 @@ public class RLLP {
   private List<Item> calculateItems() {
     List<Item> $ = new ArrayList<>();
     for (DerivationRule r : bnf.getRules())
-      for (int i = 0; i <= r.getChildren().size(); i++)
+      for (int i = 0; i <= r.size(); i++)
         $.add(new Item(r, i));
     return $;
   }
@@ -74,11 +74,11 @@ public class RLLP {
   }
   private Map<Verb, List<Item>> calculateJumps(Item i) {
     Map<Verb, List<Item>> $ = new HashMap<>();
-    for (int j = i.dotIndex + 1; j < i.rule.getChildren().size(); j++) {
+    for (int j = i.dotIndex + 1; j < i.rule.size(); j++) {
       Item jumpLocation = new Item(i.rule, j);
-      if (!analyzer.isNullable(i.rule.getChildren().subList(i.dotIndex + 1, j)))
+      if (!analyzer.isNullable(i.rule.getRHS().subList(i.dotIndex + 1, j)))
         break;
-      for (Verb v : analyzer.firstSetOf(i.rule.getChildren().get(j))) {
+      for (Verb v : analyzer.firstSetOf(i.rule.get(j))) {
         if ($.containsKey(v))
           continue;
         $.put(v, consolidate(jumpLocation, v));
@@ -115,9 +115,9 @@ public class RLLP {
     for (Symbol nt : bnf.getNonTerminals())
       $.put((NonTerminal) nt, new HashMap<>());
     for (DerivationRule d : bnf.getRules()) {
-      for (Verb v : analyzer.firstSetOf(d.getChildren()))
+      for (Verb v : analyzer.firstSetOf(d.getRHS()))
         addToPredictionTable($, v, d);
-      if (analyzer.isNullable(d.getChildren()))
+      if (analyzer.isNullable(d.getRHS()))
         for (Verb v : analyzer.followSetOf(d.lhs))
           addToPredictionTable($, v, d);
     }
@@ -130,7 +130,7 @@ public class RLLP {
     while (!Y.isVerb()) {
       $.add(current_i);
       DerivationRule r = llPredict((NonTerminal) Y, v);
-      if (r.getChildren().size() == 0) { // r is an epsilon move?
+      if (r.size() == 0) { // r is an epsilon move?
         while ($.get($.size() - 1).advance().readyToReduce())
           $.remove($.size() - 1);
         $.add($.remove($.size() - 1).advance());

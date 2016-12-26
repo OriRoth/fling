@@ -24,8 +24,8 @@ public class LLRecognizer {
     actionTable = createActionTable();
   }
   private void sanitycheck() {
-    if (bnf.getRules().stream().anyMatch(d -> d.getChildren().isEmpty())) // epsilon
-                                                                          // rule
+    if (bnf.getRules().stream().anyMatch(d -> d.size() == 0)) // epsilon
+                                                              // rule
       throw new IllegalArgumentException("I found epsilon rule! shame on you!!!");
   }
   private Map<NonTerminal, Map<Verb, List<Symbol>>> createActionTable() {
@@ -41,7 +41,6 @@ public class LLRecognizer {
     }
     return $;
   }
-
   public boolean recognize(List<Verb> input) {
     Stack<Symbol> stack = new Stack<>();
     stack.push(SpecialSymbols.$);
@@ -61,7 +60,7 @@ public class LLRecognizer {
       }
       if (isError((NonTerminal) top, v))
         return false;
-      List<Symbol> toPush = getPush((NonTerminal) top,v);
+      List<Symbol> toPush = getPush((NonTerminal) top, v);
       for (Symbol x : toPush)
         stack.push(x);
     }
@@ -71,6 +70,6 @@ public class LLRecognizer {
     return actionTable.get(nt).get(v);
   }
   public boolean isError(NonTerminal nt, Verb v) {
-    return ! actionTable.get(nt).containsKey(v);
+    return !actionTable.get(nt).containsKey(v);
   }
 }

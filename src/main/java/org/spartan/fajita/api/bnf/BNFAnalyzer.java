@@ -40,7 +40,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule rule : bnf.getRules())
-        if (rule.getChildren().stream().allMatch(child -> nullables.contains(child)))
+        if (rule.getRHS().stream().allMatch(child -> nullables.contains(child)))
           moreChanges |= nullables.add(rule.lhs);
     } while (moreChanges);
     return nullables;
@@ -55,7 +55,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule dRule : bnf.getRules())
-        for (Symbol symbol : dRule.getChildren()) {
+        for (Symbol symbol : dRule.getRHS()) {
           moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
             break;
@@ -64,7 +64,7 @@ public class BNFAnalyzer {
     return $;
   }
   public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.getChildren().toArray(new Symbol[] {}), index, rule.getChildren().size());
+    return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
   }
   private Map<NonTerminal, Collection<Verb>> calculateFollowSets() {
     Map<NonTerminal, Collection<Verb>> $ = new HashMap<>();
@@ -78,11 +78,11 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule dRule : bnf.getRules())
-        for (int i = 0; i < dRule.getChildren().size(); i++) {
-          if (!dRule.getChildren().get(i).isNonTerminal())
+        for (int i = 0; i < dRule.size(); i++) {
+          if (!dRule.get(i).isNonTerminal())
             continue;
           Symbol subExpression[] = ruleSuffix(dRule, i + 1);
-          Collection<Verb> ntFollowSet = $.get(dRule.getChildren().get(i));
+          Collection<Verb> ntFollowSet = $.get(dRule.get(i));
           moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
           if (isNullable(subExpression))
             moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
@@ -94,7 +94,7 @@ public class BNFAnalyzer {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
   public boolean isSuffixNullable(final Item i) {
-    return isNullable(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size()));
+    return isNullable(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
   }
   public Collection<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
@@ -109,7 +109,7 @@ public class BNFAnalyzer {
     return firstSetOf(expression.toArray(new Symbol[] {}));
   }
   public Collection<Verb> firstSetOf(Item i) {
-    return firstSetOf(i.rule.getChildren().subList(i.dotIndex, i.rule.getChildren().size()));
+    return firstSetOf(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
   }
   public Collection<Verb> followSetWO$(final NonTerminal nt) {
     final Collection<Verb> $ = new ArrayList<>(followSetOf(nt));
@@ -123,14 +123,14 @@ public class BNFAnalyzer {
   }
   public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
     List<Symbol> $ = new ArrayList<>();
-    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getChildren()).contains(v)))
+    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v)))
       return null;
     NonTerminal current = nt;
     while (true) {
       DerivationRule prediction = bnf.getRulesOf(current).stream() //
-          .filter(d -> firstSetOf(d.getChildren()).contains(v)) //
+          .filter(d -> firstSetOf(d.getRHS()).contains(v)) //
           .findAny().get();
-      final List<Symbol> rhs = prediction.getChildren();
+      final List<Symbol> rhs = prediction.getRHS();
       Collections.reverse(rhs);
       Symbol first = rhs.remove(rhs.size() - 1);
       $.addAll(rhs);
@@ -139,7 +139,7 @@ public class BNFAnalyzer {
       current = (NonTerminal) first;
     }
   }
-  public boolean isNullable(List<Symbol> children) {
-    return isNullable(children.toArray(new Symbol[] {}));
+  public boolean isNullable(List<Symbol> expr) {
+    return isNullable(expr.toArray(new Symbol[] {}));
   }
 }

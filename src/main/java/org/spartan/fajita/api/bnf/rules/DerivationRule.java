@@ -21,18 +21,20 @@ public class DerivationRule {
       sb.append(symb.toString() + " ");
     return sb.toString();
   }
-  // TODO: change all horrific access to children using the new get() method.
-  public List<Symbol> getChildren() {
+  public List<Symbol> getRHS() {
     return new ArrayList<>(expression);
   }
   @Override public boolean equals(final Object obj) {
     return obj.getClass() == getClass() && lhs.equals(((DerivationRule) obj).lhs)
-        && getChildren().equals(((DerivationRule) obj).getChildren());
+        && getRHS().equals(((DerivationRule) obj).getRHS());
   }
   @Override public int hashCode() {
-    return lhs.hashCode() + 7 * getChildren().hashCode();
+    return lhs.hashCode() + 7 * getRHS().hashCode();
   }
-  public Symbol get(int dotIndex) {
-    return getChildren().get(dotIndex);
+  public Symbol get(int i) {
+    return getRHS().get(i);
+  }
+  public int size() {
+    return getRHS().size();
   }
 }

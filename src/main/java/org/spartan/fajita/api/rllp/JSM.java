@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -15,9 +16,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
   public static final JSM JAMMED = null;
-  // TODO: change S0 and S1 to stacks
-  private List<Item> S0;
-  List<Map<Verb, JSM>> S1;
+  private Stack<Item> S0;
+  private Stack<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
@@ -28,8 +28,8 @@ public class JSM {
     this.verbs = new ArrayList<>(rllp.bnf.getVerbs());
     this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
-    S0 = new ArrayList<>();
-    S1 = new ArrayList<>();
+    S0 = new Stack<>();
+    S1 = new Stack<>();
     this.configurationCache = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
@@ -61,7 +61,7 @@ public class JSM {
   public Item peek() {
     if (S0.isEmpty())
       return null;
-    return S0.get(S0.size() - 1);
+    return S0.peek();
   }
   /**
    * Pushes items to the JSM and makes it readonly afterwards
@@ -70,14 +70,8 @@ public class JSM {
    */
   public void pushAll(List<Item> toPush) {
     final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
-    if (configurationCache.containsKey(currentConfig))
-      // TODO: throw the already seen JSM and force the invoker to use the
-      // correct ref.
-      load(configurationCache.get(currentConfig));
-    else {
-      configurationCache.put(currentConfig, this);
-      toPush.forEach(i -> push(i));
-    }
+    configurationCache.put(currentConfig, this);
+    toPush.forEach(i -> push(i));
     makeReadOnly();
   }
   /**
@@ -101,6 +95,9 @@ public class JSM {
    * Returns the state of the JSM after pushing all items in "toPush".
    */
   private JSM calculateJumpConfiguration(List<Item> toPush) {
+    final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
+    if (configurationCache.containsKey(currentConfig))
+      return configurationCache.get(currentConfig);
     final JSM $ = deepCopy();
     $.pushAll(toPush);
     $.makeReadOnly();
@@ -165,8 +162,8 @@ public class JSM {
   public Item pop() {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");
-    S1.remove(S1.size() - 1);
-    return S0.remove(S0.size() - 1);
+    S1.pop();
+    return S0.pop();
   }
   /**
    * Jumps to using v's jump stack, changing the state of the JSM accordingly.
