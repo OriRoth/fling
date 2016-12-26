@@ -25,7 +25,7 @@ public class Namer {
     return itemNames.get(i);
   }
   public String getRecursiveTypeName(JSM jsm) {
-    return getItemName(jsm.peek()) + hexifyObject(jsm.getS0()) + "_rec_";
+    return getItemName(jsm.peek()) + "_rec_"+ hexifyObject(jsm.getS0()) ;
   }
   public static String verbTypeName(final Verb verb) {
     return verb.name();

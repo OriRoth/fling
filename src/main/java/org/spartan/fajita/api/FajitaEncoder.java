@@ -55,7 +55,9 @@ import com.squareup.javapoet.TypeSpec;
     return $;
   }
   private static TypeSpec addErrorType() {
-    return TypeSpec.classBuilder(Namer.errorTypeName).build();
+    return TypeSpec.classBuilder(Namer.errorTypeName)//
+        .addModifiers(Modifier.PRIVATE)//
+        .build();
   }
   private Collection<MethodSpec> getStaticMethods(RLLPEncoder encoder) {
     return encoder.rllp.getStartItems().stream()//
@@ -76,6 +78,8 @@ import com.squareup.javapoet.TypeSpec;
         .collect(Collectors.toSet());
   }
   private TypeName augmentFullClassPath(String bnfName, TypeName methodReturnType) {
+    if (methodReturnType.toString().equals(Namer.errorTypeName))
+      return methodReturnType;
     if (!(methodReturnType instanceof ParameterizedTypeName))
       return getFullClassName(bnfName, methodReturnType.toString());
     return augmentFullClassPath(bnfName, (ParameterizedTypeName) methodReturnType);

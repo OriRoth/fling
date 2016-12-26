@@ -58,6 +58,8 @@ public class Pascal {
     program().id().semi().begin().end().$();
     program().id().pair().semi().begin().end().$();
     program().id().semi().label().semi().begin().end().$();
+    program().id().semi().label().semi().semi().begin().end().$();
+    program().id().semi().label().semi().semi().semi().begin().end().$();
     program().id().semi().constant().semi().begin().end().$();
     program().id().semi().label().semi().constant().semi().begin().end().$();
     program().id().pair().semi().label().semi().semi().constant().semi().begin().end().$();

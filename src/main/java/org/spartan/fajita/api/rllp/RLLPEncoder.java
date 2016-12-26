@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ import com.squareup.javapoet.TypeVariableName;
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
-    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(i.rule.lhs);
+    Collection<TypeVariableName> namedFollowSet = mapFollowSetWith(i, v -> TypeVariableName.get(Namer.verbTypeName(v)));
     final String typeName = namer.getItemName(i);
     final TypeSpec.Builder encoding = TypeSpec.classBuilder(typeName) //
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
@@ -59,10 +60,9 @@ import com.squareup.javapoet.TypeVariableName;
         .addMethods(firstSet.stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
     // Adds jump methods
     if (rllp.analyzer.isSuffixNullable(i))
-      encoding.addMethods(rllp.analyzer.followSetOf(i.rule.lhs).stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
-    if (!followSet.isEmpty())
-      encoding.addTypeVariables(
-          followSet.stream().map(v -> TypeVariableName.get(Namer.verbTypeName(v))).collect(Collectors.toList()));
+      encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v), true));
+    if (!namedFollowSet.isEmpty())
+      encoding.addTypeVariables(namedFollowSet);
     return encoding.build();
   }
   public MethodSpec methodOf(Item i, Verb v) {
@@ -91,8 +91,8 @@ import com.squareup.javapoet.TypeVariableName;
         $.add(ParameterSpec.builder(classes.get(i), "arg" + i).build());
     } else if (v.type instanceof NestedType) {
       NestedType type = (NestedType) v.type;
-      $.add(ParameterSpec
-          .builder(ClassName.get("", Namer.getApiName(type.nested), Namer.returnTypeOf$(type.nested)), "arg0").build());
+      $.add(ParameterSpec.builder(ClassName.get("", Namer.getApiName(type.nested), Namer.returnTypeOf$(type.nested)), "arg0")
+          .build());
     } else if (v.type instanceof VarArgs) {
       final VarArgs type = (VarArgs) v.type;
       varargs = type;
@@ -143,47 +143,42 @@ import com.squareup.javapoet.TypeVariableName;
       return encodedJSMs.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
       return ClassName.get("", Namer.errorTypeName);
+    final List<TypeVariableName> namedFollow = mapFollowSetWith(mainItem, v -> TypeVariableName.get(Namer.verbTypeName(v)));
     if (prot.detectRecursion(jsm))
-      return ClassName.get("", namer.getRecursiveTypeName(prot.getMatching(jsm)));
+      return parameterizedType(namer.getRecursiveTypeName(prot.getMatching(jsm)), namedFollow);
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps())
       typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), prot));
     TypeName $;
     final List<TypeName> encodedArguments = encodeTypeArguments(jsm.peek(), typeArguments);
     if (prot.isRecursive(jsm)) {
-      TypeSpec recursiveType = addRecursiveType(jsm, encodedArguments, prot.getRecursiveVerbs(jsm));
-      $ = RLLPEncoder.parameterizedType(recursiveType.name, Collections.emptyList());
+      TypeSpec recursiveType = addRecursiveType(jsm, encodedArguments);
+      $ = parameterizedType(recursiveType.name, namedFollow);
     } else {
-      $ = RLLPEncoder.parameterizedType(namer.getItemName(jsm.peek()), encodedArguments);
+      $ = parameterizedType(namer.getItemName(jsm.peek()), encodedArguments);
     }
     encodedJSMs.put(jsm.getS0(), $);
     return $;
   }
-  private TypeSpec addRecursiveType(JSM jsm, List<TypeName> args, Set<Verb> recursive) {
-    final String name = namer.getRecursiveTypeName(jsm);
-    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(jsm.peek().rule.lhs);
-    final List<Verb> nonrecursive = followSet.stream() //
-        .filter(v -> !recursive.contains(v)) //
-//        .map(v -> TypeVariableName.get(NamesCache.verbTypeName(v))) //
-        .collect(Collectors.toList());
-
-    final TypeSpec.Builder encoding = TypeSpec.classBuilder(name) //
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT); //
-    encoding.superclass(parameterizedType(namer.getItemName(jsm.peek()), args));
-    final TypeSpec $ = encoding.build();
+  private TypeSpec addRecursiveType(JSM jsm, List<TypeName> args) {
+    final TypeSpec $ = TypeSpec.classBuilder(namer.getRecursiveTypeName(jsm)) //
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
+        .addTypeVariables(mapFollowSetWith(mainItem, v -> TypeVariableName.get(Namer.verbTypeName(v)))) //
+        .superclass(parameterizedType(namer.getItemName(jsm.peek()), args))//
+        .build();
     if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals($.toString())))
       recursiveTypes.add($);
     return $;
   }
   private List<TypeName> encodeTypeArguments(Item current, Map<Verb, TypeName> typeArguments) {
-    final Collection<Verb> followSet = rllp.analyzer.followSetWO$(current.rule.lhs);
-    final Collection<Verb> currentFollowSet = rllp.analyzer.followSetWO$(mainItem.rule.lhs);
+    final Collection<Verb> followSet = mapFollowSetWith(current, v -> v);
+    final Collection<Verb> mainFollowSet = mapFollowSetWith(mainItem, v -> v);
     if (followSet.isEmpty())
       return Collections.emptyList();
     for (Verb v : followSet)
-      typeArguments.putIfAbsent(v, (currentFollowSet.contains(v)) ? TypeVariableName.get(Namer.verbTypeName(v))
-          : TypeVariableName.get(Namer.errorTypeName));
-    return followSet.stream().map(v -> typeArguments.get(v)).collect(Collectors.toList());
+      typeArguments.putIfAbsent(v,
+          (mainFollowSet.contains(v)) ? TypeVariableName.get(Namer.verbTypeName(v)) : TypeVariableName.get(Namer.errorTypeName));
+    return mapFollowSetWith(current, v -> typeArguments.get(v));
   }
   private static TypeName returnTypeOfJump(Jump action) {
     return TypeVariableName.get(Namer.verbTypeName(action.v));
@@ -219,7 +214,7 @@ import com.squareup.javapoet.TypeVariableName;
      */
     boolean detectRecursion(JSM jsm) {
       int idx = alreadySeen.indexOf(jsm);
-      if (idx != -1){
+      if (idx != -1) {
         recursionDetected(jsm, idx);
         return true;
       }
@@ -247,6 +242,17 @@ import com.squareup.javapoet.TypeVariableName;
         .addTypes(recursiveTypes) //
         .addType(apiReturnType())//
         .build();
+  }
+  public <T> List<T> mapFollowSetWith(Item i, Function<Verb, T> mapper) {
+    return mapFollowSetWith(i, mapper, false);
+  }
+  public <T> List<T> mapFollowSetWith(Item i, Function<Verb, T> mapper, boolean with$) {
+    Collection<Verb> follow;
+    if (with$)
+      follow = rllp.analyzer.followSetOf(i.rule.lhs);
+    else
+      follow = rllp.analyzer.followSetWO$(i.rule.lhs);
+    return follow.stream().map(mapper).collect(Collectors.toList());
   }
   public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
     final ClassName type = ClassName.get("", typename);
