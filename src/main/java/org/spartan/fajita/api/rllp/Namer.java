@@ -10,7 +10,7 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 public class Namer {
   public static final String errorTypeName = "ERROR";
   private final Map<Item, String> itemNames = new HashMap<>();
-  private final BNF bnf;
+  @SuppressWarnings("unused") private final BNF bnf;
 
   public Namer(BNF bnf) {
     this.bnf = bnf;
@@ -38,13 +38,13 @@ public class Namer {
   private static String hexifyObject(Object o) {
     return Integer.toHexString(Math.abs(o.hashCode() % 1000));
   }
-  public static String returnTypeOf$(NonTerminal startNT) {
-    return getApiName(startNT) + "_$_";
-  }
-  public String returnTypeOf$() {
-    return returnTypeOf$(bnf.getStartSymbols().get(0));
+  public static String returnTypeOf$() {
+    return "ASTNode";
   }
   public static String getApiName(NonTerminal startNT) {
     return startNT.name();
+  }
+  public static String acceptReturnType() {
+    return returnTypeOf$();
   }
 }

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
-import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
@@ -61,8 +61,11 @@ import com.squareup.javapoet.TypeVariableName;
         // Adds push methods
         .addMethods(firstSet.stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
     // Adds jump methods
-    if (rllp.analyzer.isSuffixNullable(i))
-      encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v), true));
+    if (rllp.analyzer.isSuffixNullable(i)) {
+      encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v)));
+      if (rllp.analyzer.followSetOf(i.rule.lhs).contains(SpecialSymbols.$))
+        encoding.superclass(ClassName.get("", Namer.returnTypeOf$()));
+    }
     if (!namedFollowSet.isEmpty())
       encoding.addTypeVariables(namedFollowSet);
     return encoding.build();
@@ -75,20 +78,13 @@ import com.squareup.javapoet.TypeVariableName;
         .returns(returnTypeOfMethod(i, v))//
         .build();
   }
-  private TypeSpec apiReturnType() {
-    return TypeSpec.classBuilder(namer.returnTypeOf$())//
-        .addModifiers(Modifier.PUBLIC) //
-        .build();
-  }
   private static void augmentMethodParameters(Builder builder, Verb v) {
     if (v.type instanceof ClassesType) {
       List<Class<?>> classes = ((ClassesType) v.type).classes;
       for (int i = 0; i < classes.size(); i++)
         builder.addParameter(classes.get(i), "arg" + i);
     } else if (v.type instanceof NestedType) {
-      NonTerminal nested = ((NestedType) v.type).nested;
-      builder.addParameter(
-          ParameterSpec.builder(ClassName.get("", Namer.getApiName(nested), Namer.returnTypeOf$(nested)), "arg0").build());
+      builder.addParameter(ClassName.get("", Namer.returnTypeOf$()), "arg0").build();
     } else if (v.type instanceof VarArgs) {
       builder.varargs();
       builder.addParameter(ParameterSpec.builder(((VarArgs) v.type).clazz, "arg0").build());
@@ -101,7 +97,7 @@ import com.squareup.javapoet.TypeVariableName;
       default:
         throw new IllegalStateException("Action type unknown");
       case ACCEPT:
-        return returnTypeOfAccept();
+        return ClassName.get("", Namer.acceptReturnType());
       case ADVANCE:
         return returnTypeOfAdvance((Action.Advance) action);
       case JUMP:
@@ -109,9 +105,6 @@ import com.squareup.javapoet.TypeVariableName;
       case PUSH:
         return returnTypeOfPush((Action.Push) action);
     }
-  }
-  private TypeName returnTypeOfAccept() {
-    return ClassName.get("", apiReturnType().name);
   }
   private TypeName returnTypeOfAdvance(Advance action) {
     final Item next = action.beforeAdvancing.advance();
@@ -226,7 +219,6 @@ import com.squareup.javapoet.TypeVariableName;
         .addModifiers(Modifier.PUBLIC) //
         .addTypes(mainTypes) //
         .addTypes(recursiveTypes) //
-        .addType(apiReturnType())//
         .build();
   }
   public <T> List<T> mapFollowSetWith(Item i, Function<Verb, T> mapper) {

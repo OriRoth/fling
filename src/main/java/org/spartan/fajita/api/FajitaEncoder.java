@@ -35,7 +35,8 @@ import com.squareup.javapoet.TypeSpec;
         .collect(Collectors.toList());
     TypeSpec mainType = TypeSpec.classBuilder(fajita.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
-        .addType(addErrorType()) //
+        .addType(getErrorType()) //
+        .addType(getASTType()) //
         .addMethods(encoders.stream() //
             .map(encoder -> getStaticMethods(encoder)) //
             .flatMap(methods -> methods.stream()) //
@@ -54,7 +55,12 @@ import com.squareup.javapoet.TypeSpec;
       $.add(main.getSubBNF(nt));
     return $;
   }
-  private static TypeSpec addErrorType() {
+  private static TypeSpec getASTType() {
+    return TypeSpec.classBuilder(Namer.returnTypeOf$())//
+        .addModifiers(Modifier.PUBLIC) //
+        .build();
+  }
+  private static TypeSpec getErrorType() {
     return TypeSpec.classBuilder(Namer.errorTypeName)//
         .addModifiers(Modifier.PRIVATE)//
         .build();
@@ -71,6 +77,7 @@ import com.squareup.javapoet.TypeSpec;
           return MethodSpec.methodBuilder(m.name)//
               .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
               .addParameters(m.parameters)//
+              .varargs(m.varargs) //
               .addCode("return null;\n") //
               .returns(augmentFullClassPath(encoder.rllp.bnf.getApiName(), m.returnType))//
               .build();
