@@ -10,7 +10,7 @@ import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.junk.Regex.BASIC_REG_EXP.BASIC_REG_EXP_$_;
+import org.spartan.fajita.api.junk.Regex.ASTNode;
 
 public class Regex {
   private static final String apiName = "Regex";
@@ -36,7 +36,8 @@ public class Regex {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(BASIC_REG_EXP) //
-        .derive(BASIC_REG_EXP).to(startOfString).and(OPT_RE_EXPRESSION).and(OPT_EOS)/* */.or(RE_EXPRESSION).and(OPT_EOS) //
+        .derive(BASIC_REG_EXP).to(startOfString).and(OPT_RE_EXPRESSION).and(OPT_EOS)//
+        /* */.or(RE_EXPRESSION).and(OPT_EOS) //
         /* */.or(endOfString)//
         .derive(OPT_RE_EXPRESSION).to(RE_EXPRESSION)//
         /* */.orNone()//
@@ -75,8 +76,13 @@ public class Regex {
     Main.apiGenerator(apiName, buildBNF());
   }
   void test() {
-    startOfString().$();
-    endOfString().$();
-    startOfString().endOfString().$();
+    startOfString();
+    endOfString();
+    startOfString().endOfString();
+    // Mac address
+    oneOf(chr('0').to('9').chr('a').to('f'));
+    oneOf(oneOf(alphanumeric()));
+    exactly()
+    group(exzeroOrMore(anyChar()));
   }
 }
