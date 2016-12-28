@@ -2,6 +2,7 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Regex.NT.*;
 import static org.spartan.fajita.api.examples.Regex.Term.*;
+import static org.spartan.fajita.api.junk.Regex.*;
 
 import java.io.IOException;
 
@@ -9,6 +10,7 @@ import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
+import org.spartan.fajita.api.junk.Regex.BASIC_REG_EXP.BASIC_REG_EXP_$_;
 
 public class Regex {
   private static final String apiName = "Regex";
@@ -24,9 +26,9 @@ public class Regex {
 
   static enum NT implements NonTerminal {
     BASIC_REG_EXP//
-    // , SIMPLE_RE , RE_EXPRESSION, OPT_RE_EXPRESSION, OPT_EOS//
-    // , NONDUPL_RE, QUANTIFIER, OPT_QUANTIFIER //
-    // , CHARACTERS//
+    , SIMPLE_RE, RE_EXPRESSION, OPT_RE_EXPRESSION, OPT_EOS//
+    , NONDUPL_RE, QUANTIFIER, OPT_QUANTIFIER //
+    , CHARACTERS//
     , SET, INSIDE_SET, INSIDE_SETS, ONE_OF
   }
 
@@ -34,32 +36,28 @@ public class Regex {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(BASIC_REG_EXP) //
-        // .derive(BASIC_REG_EXP).to(startOfString).and(OPT_RE_EXPRESSION).and(OPT_EOS)
-        // //
-        // /* */.or(RE_EXPRESSION).and(OPT_ErS) //
-        // /* */.or(endOfString)//
-//        .derive(BASIC_REG_EXP).to(SET)//
-        .derive(BASIC_REG_EXP).to(INSIDE_SET)
-        // .derive(OPT_RE_EXPRESSION).to(RE_EXPRESSION)//
-        // /* */.orNone()//
-        // .derive(OPT_EOS).to(endOfString)//
-        // /* */.orNone()//
-        // .derive(RE_EXPRESSION).to(SIMPLE_RE).and(OPT_RE_EXPRESSION) //
-        // .derive(SIMPLE_RE).to(NONDUPL_RE).and(OPT_QUANTIFIER)//
-        // /* */.or(zeroOrMore, NONDUPL_RE)//
-        // /* */.or(moreThanZero, NONDUPL_RE)//
-        // .derive(OPT_QUANTIFIER).to(QUANTIFIER) //
-        // /* */.orNone() //
-        // .derive(QUANTIFIER).to(atLeast, int.class).and(times)//
-        // /* */.or(atMost, int.class).and(times)//
-        // /* */.or(exactly, int.class).and(times)//
-        // /* */.or(times, int.class, int.class)//
-        // .derive(NONDUPL_RE).to(CHARACTERS)//
-        // /* */.or(group, RE_EXPRESSION)//
-        // /* */.or(backref, int.class)//
-        // .derive(CHARACTERS).to(str, String.class)//
-        // /* */.or(anyChar)//
-        // /* */.or(SET)//
+        .derive(BASIC_REG_EXP).to(startOfString).and(OPT_RE_EXPRESSION).and(OPT_EOS)/* */.or(RE_EXPRESSION).and(OPT_EOS) //
+        /* */.or(endOfString)//
+        .derive(OPT_RE_EXPRESSION).to(RE_EXPRESSION)//
+        /* */.orNone()//
+        .derive(OPT_EOS).to(endOfString)//
+        /* */.orNone()//
+        .derive(RE_EXPRESSION).to(SIMPLE_RE).and(OPT_RE_EXPRESSION) //
+        .derive(SIMPLE_RE).to(NONDUPL_RE).and(OPT_QUANTIFIER)//
+        /* */.or(zeroOrMore, NONDUPL_RE)//
+        /* */.or(moreThanZero, NONDUPL_RE)//
+        .derive(OPT_QUANTIFIER).to(QUANTIFIER) //
+        /* */.orNone() //
+        .derive(QUANTIFIER).to(atLeast, int.class).and(times)//
+        /* */.or(atMost, int.class).and(times)//
+        /* */.or(exactly, int.class).and(times)//
+        /* */.or(times, int.class, int.class)//
+        .derive(NONDUPL_RE).to(CHARACTERS)//
+        /* */.or(group, RE_EXPRESSION)//
+        /* */.or(backref, int.class)//
+        .derive(CHARACTERS).to(str, String.class)//
+        /* */.or(anyChar)//
+        /* */.or(SET)//
         .derive(SET).to(oneOf, INSIDE_SET)//
         /* */.or(notOneOf, INSIDE_SET)//
         .derive(INSIDE_SET).to(ONE_OF).and(INSIDE_SETS) //
@@ -67,16 +65,18 @@ public class Regex {
         /* */.orNone() //
         .derive(ONE_OF).to(alphanumeric)//
         /* */.or(alphabetic)//
-        // .or(alphabetic).and(ALPHABETIC)
-        // .derive(ALPHABETIC).to(alphabetic).and(ALPHABETIC)
-        // .orNone()
-        // /* */.or(digit)//
-        // /* */.or(whitespace)//
-        // /* */.or(chars, Fajita.ellipsis(char.class)) //
-        // /* */.or(chr, char.class).and(to, char.class) //
+        /* */.or(digit)//
+        /* */.or(whitespace)//
+        /* */.or(chars, Fajita.ellipsis(char.class)) //
+        /* */.or(chr, char.class).and(to, char.class) //
         .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
     Main.apiGenerator(apiName, buildBNF());
+  }
+  void test() {
+    startOfString().$();
+    endOfString().$();
+    startOfString().endOfString().$();
   }
 }

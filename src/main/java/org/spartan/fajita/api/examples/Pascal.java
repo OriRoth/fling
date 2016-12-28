@@ -66,9 +66,9 @@ public class Pascal {
     program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
   }
   public static void illegal() {
-    // program().program();
-    // program().id().id();
-    // program().id().semi().label().constant();
-    // program().id().semi().constant().semi().$();
+    program().program();
+    program().id().id();
+    program().id().semi().label().constant();
+    program().id().semi().constant().semi().$();
   }
 }

@@ -16,18 +16,26 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class JSM {
   public static final JSM JAMMED = null;
+  /**
+   * If by any chance you change the type of java.util.Stack note that the below
+   * code uses the faulty implementation of the iteration (FIFO instead of LIFO)
+   */
   private Stack<Item> S0;
   private Stack<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
   private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
   private boolean readonly;
+  private boolean recursive;
+  private List<Item> recursiveAddition;
   private final RLLP rllp;
+  private CompactConfiguration currentCompactConfig;
 
   public JSM(RLLP rllp) {
     this.rllp = rllp;
     this.verbs = new ArrayList<>(rllp.bnf.getVerbs());
     this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
+    this.recursive = false;
     S0 = new Stack<>();
     S1 = new Stack<>();
     this.configurationCache = new Hashtable<>();
@@ -37,9 +45,6 @@ public class JSM {
     fromJSM.S0.forEach(i -> S0.add(i));
     fromJSM.S1.forEach(partMap -> S1.add(partMap));
     configurationCache = fromJSM.configurationCache;
-  }
-  public List<Item> getS0() {
-    return Collections.unmodifiableList(S0);
   }
   /**
    * Cannot cause recursion. always finite time.
@@ -64,13 +69,15 @@ public class JSM {
     return S0.peek();
   }
   /**
-   * Pushes items to the JSM and makes it readonly afterwards
+   * Pushes items (in given order) to the JSM and makes it readonly afterwards
    * 
    * @param toPush
    */
   public void pushAll(List<Item> toPush) {
-    final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
-    configurationCache.put(currentConfig, this);
+    if (readonly)
+      throw new IllegalStateException("Can't push in readonly mode.");
+    currentCompactConfig = new CompactConfiguration(this.peek(), toPush);
+    configurationCache.put(currentCompactConfig, this);
     toPush.forEach(i -> push(i));
     makeReadOnly();
   }
@@ -92,19 +99,34 @@ public class JSM {
     S1.add(jumpInfo);
   }
   /**
-   * Returns the state of the JSM after pushing all items in "toPush".
+   * Returns the state of the JSM after pushing all items in "toPush" (in their
+   * given order).
    */
   private JSM calculateJumpConfiguration(List<Item> toPush) {
-    final CompactConfiguration currentConfig = new CompactConfiguration(this.peek(), toPush);
-    if (configurationCache.containsKey(currentConfig))
-      return configurationCache.get(currentConfig);
+    final CompactConfiguration nextConfig = new CompactConfiguration(this.peek(), toPush);
+    if (configurationCache.containsKey(nextConfig)) {
+      final JSM jsm = configurationCache.get(nextConfig);
+      jsm.setRecursive(toPush);
+      return jsm;
+    }
     final JSM $ = deepCopy();
     $.pushAll(toPush);
     $.makeReadOnly();
     return $;
   }
+  public List<Item> getS0() {
+    return Collections.unmodifiableList(S0);
+  }
   public void makeReadOnly() {
     this.readonly = true;
+  }
+  public boolean isRecursive() {
+    return recursive;
+  }
+  private void setRecursive(List<Item> toPush) {
+    recursive = true;
+    recursiveAddition = new ArrayList<>(S0);
+    recursiveAddition.addAll(toPush);
   }
   private JSM findJump(Verb v) {
     /**
@@ -147,13 +169,8 @@ public class JSM {
     if (S0 == null) {
       if (other.S0 != null)
         return false;
-    } else if (!this.peek().equals(other.peek()))
-      return false;
-    /* TODO: This line might enter infinite recursion... find such case and
-     * debug. */
-    if (!legalJumps().equals(other.legalJumps()))
-      return false;
-    return true;
+    }
+    return currentCompactConfig.equals(other.currentCompactConfig);
   }
   @Override public String toString() {
     return "JSM.S0: " + S0.toString();
