@@ -2,15 +2,30 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Regex.NT.*;
 import static org.spartan.fajita.api.examples.Regex.Term.*;
-import static org.spartan.fajita.api.junk.Regex.*;
+import static org.spartan.fajita.api.examples.Regex.Term.anyChar;
+import static org.spartan.fajita.api.examples.Regex.Term.backref;
+import static org.spartan.fajita.api.examples.Regex.Term.endOfString;
+import static org.spartan.fajita.api.examples.Regex.Term.group;
+import static org.spartan.fajita.api.examples.Regex.Term.moreThanZero;
+import static org.spartan.fajita.api.examples.Regex.Term.notOneOf;
+import static org.spartan.fajita.api.examples.Regex.Term.oneOf;
+import static org.spartan.fajita.api.examples.Regex.Term.startOfString;
+import static org.spartan.fajita.api.examples.Regex.Term.str;
+import static org.spartan.fajita.api.examples.Regex.Term.zeroOrMore;
+import static org.spartan.fajita.api.junk.Regex.endOfString;
+import static org.spartan.fajita.api.junk.Regex.group;
+import static org.spartan.fajita.api.junk.Regex.notOneOf;
+import static org.spartan.fajita.api.junk.Regex.startOfString;
+import static org.spartan.fajita.api.junk.Regex.zeroOrMore;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.junk.Regex.BASIC_REG_EXP.BASIC_REG_EXP_$_;
+import org.spartan.fajita.api.junk.InsideSet;
 
 public class Regex {
   private static final String apiName = "Regex";
@@ -25,39 +40,38 @@ public class Regex {
   }
 
   static enum NT implements NonTerminal {
-    BASIC_REG_EXP//
-    , SIMPLE_RE, RE_EXPRESSION, OPT_RE_EXPRESSION, OPT_EOS//
-    , NONDUPL_RE, QUANTIFIER, OPT_QUANTIFIER //
-    , CHARACTERS//
+    ANCHORED//
+    , SIMPLE_RE, RE, OPT_RE, OPT_EOS//
+    , NO_DUPL_RE, QUANTIFIER, OPT_QUANTIFIER //
     , SET, INSIDE_SET, INSIDE_SETS, ONE_OF
   }
 
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
-        .start(BASIC_REG_EXP) //
-        .derive(BASIC_REG_EXP).to(startOfString).and(OPT_RE_EXPRESSION).and(OPT_EOS)/* */.or(RE_EXPRESSION).and(OPT_EOS) //
+        .start(ANCHORED) //
+        .derive(ANCHORED).to(startOfString).and(OPT_RE).and(OPT_EOS)//
+        /* */.or(RE).and(OPT_EOS) //
         /* */.or(endOfString)//
-        .derive(OPT_RE_EXPRESSION).to(RE_EXPRESSION)//
+        .derive(OPT_RE).to(RE)//
         /* */.orNone()//
         .derive(OPT_EOS).to(endOfString)//
         /* */.orNone()//
-        .derive(RE_EXPRESSION).to(SIMPLE_RE).and(OPT_RE_EXPRESSION) //
-        .derive(SIMPLE_RE).to(NONDUPL_RE).and(OPT_QUANTIFIER)//
-        /* */.or(zeroOrMore, NONDUPL_RE)//
-        /* */.or(moreThanZero, NONDUPL_RE)//
+        .derive(RE).to(SIMPLE_RE).and(OPT_RE) //
+        .derive(SIMPLE_RE).to(NO_DUPL_RE).and(OPT_QUANTIFIER)//
+        /* */.or(zeroOrMore, NO_DUPL_RE)//
+        /* */.or(moreThanZero, NO_DUPL_RE)//
         .derive(OPT_QUANTIFIER).to(QUANTIFIER) //
         /* */.orNone() //
         .derive(QUANTIFIER).to(atLeast, int.class).and(times)//
         /* */.or(atMost, int.class).and(times)//
         /* */.or(exactly, int.class).and(times)//
         /* */.or(times, int.class, int.class)//
-        .derive(NONDUPL_RE).to(CHARACTERS)//
-        /* */.or(group, RE_EXPRESSION)//
-        /* */.or(backref, int.class)//
-        .derive(CHARACTERS).to(str, String.class)//
+        .derive(NO_DUPL_RE).to(str, String.class)//
         /* */.or(anyChar)//
         /* */.or(SET)//
+        /* */.or(group, RE)//
+        /* */.or(backref, int.class)//
         .derive(SET).to(oneOf, INSIDE_SET)//
         /* */.or(notOneOf, INSIDE_SET)//
         .derive(INSIDE_SET).to(ONE_OF).and(INSIDE_SETS) //
@@ -72,11 +86,12 @@ public class Regex {
         .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(apiName, buildBNF());
+    Main.apiGenerator(buildBNF());
   }
-  void test() {
-    startOfString().$();
-    endOfString().$();
-    startOfString().endOfString().$();
+  static void test() {
+    startOfString();
+    endOfString();
+    startOfString().endOfString();
+    group(zeroOrMore(notOneOf(InsideSet.whitespace())).str("<"));
   }
 }

@@ -6,6 +6,7 @@ import static org.spartan.fajita.api.examples.Sql.Term.*;
 import static org.spartan.fajita.api.junk.Sql.select;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
@@ -23,7 +24,7 @@ public class Sql {
     STMNT, QUANTIFIER, COLOUMNS, WHERE, EXPRESSION, OP;
   }
 
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(STMNT) //
@@ -39,18 +40,18 @@ public class Sql {
         .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(apiName, buildBNF());
+    Main.apiGenerator(buildBNF());
   }
   static void compiles() {
-    select().all().column().from().table().$();
-    select().distinct().column().column().column().column().from().table().where().column().geq().literal().$();
-    select().all().column().column().column().from().table().$();
-    select().all().column().from().table().where().column().equals().literal().$();
+    select().all().column().from().table();
+    select().distinct().column().column().column().column().from().table().where().column().geq().literal();
+    select().all().column().column().column().from().table();
+    select().all().column().from().table().where().column().equals().literal();
   }
   void doesnt_compile() {
-    // all().$();
-    // from().$();
-    // select().from().$();
-    // select().all().column().from().$();
+    // all();
+    // from();
+    // select().from();
+    // select().all().column().from();
   }
 }

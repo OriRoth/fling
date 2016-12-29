@@ -5,6 +5,7 @@ import static org.spartan.fajita.api.examples.Pascal.Term.*;
 import static org.spartan.fajita.api.junk.Pascal.program;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
@@ -27,7 +28,7 @@ public class Pascal {
     Nested, Procedure;
   }
 
-  public static String buildApi() {
+  public static Map<String, String> buildApi() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(Program) //
@@ -52,7 +53,7 @@ public class Pascal {
         .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(apiName, buildApi());
+    Main.apiGenerator(buildApi());
   }
   public static void legal() {
     program().id().semi().begin().end().$();
@@ -66,9 +67,9 @@ public class Pascal {
     program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
   }
   public static void illegal() {
-    program().program();
-    program().id().id();
-    program().id().semi().label().constant();
-    program().id().semi().constant().semi().$();
+//    program().program();
+//    program().id().id();
+//    program().id().semi().label().constant();
+//    program().id().semi().constant().semi().$();
   }
 }

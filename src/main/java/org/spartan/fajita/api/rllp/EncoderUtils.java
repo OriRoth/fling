@@ -3,17 +3,23 @@ package org.spartan.fajita.api.rllp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.spartan.fajita.api.bnf.BNF;
-import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
-public class Namer {
-  public static final String errorTypeName = "ERROR";
-  private final Map<Item, String> itemNames = new HashMap<>();
-  @SuppressWarnings("unused") private final BNF bnf;
+import com.squareup.javapoet.ClassName;
 
-  public Namer(BNF bnf) {
-    this.bnf = bnf;
+public class EncoderUtils {
+  public static final String finalReturnType = "ASTNode";
+  public static final String error = "ParseError";
+  public static final String utilClass = "Utils";
+  private final Map<Item, String> itemNames = new HashMap<>();
+  private Fajita fajita;
+
+  public EncoderUtils(Fajita fajita) {
+    this.fajita = fajita;
+  }
+  private String utilsPath() {
+    return fajita.getPackagePath() + "." + utilClass;
   }
   public String getItemName(Item i) {
     if (!itemNames.containsKey(i)) {
@@ -38,13 +44,10 @@ public class Namer {
   private static String hexifyObject(Object o) {
     return Integer.toHexString(Math.abs(o.hashCode() % 1000));
   }
-  public static String returnTypeOf$() {
-    return "ASTNode";
+  public ClassName returnTypeOf$() {
+    return ClassName.get(utilsPath(), finalReturnType);
   }
-  public static String getApiName(NonTerminal startNT) {
-    return startNT.name();
-  }
-  public static String acceptReturnType() {
-    return returnTypeOf$();
+  public static ClassName errorType() {
+    return ClassName.get("", error);
   }
 }
