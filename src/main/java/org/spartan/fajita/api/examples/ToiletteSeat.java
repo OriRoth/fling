@@ -3,6 +3,8 @@ package org.spartan.fajita.api.examples;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteTerminals.*;
 import static org.spartan.fajita.api.examples.ToiletteSeat.ToiletteVariables.*;
 
+import java.util.Map;
+
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -23,7 +25,7 @@ public class ToiletteSeat {
     Visitors, Down_Visitors, Up_Visitors, Up_Visitor, Down_Visitor, Lowering_Visitor, Raising_Visitor, Action
   }
 
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(ToiletteTerminals.class, ToiletteVariables.class)
         .setApiName(apiName) //
         .start(Visitors) //

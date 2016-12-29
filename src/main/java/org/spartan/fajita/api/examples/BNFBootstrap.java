@@ -4,6 +4,7 @@ import static org.spartan.fajita.api.examples.BNFBootstrap.NT.*;
 import static org.spartan.fajita.api.examples.BNFBootstrap.Term.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
@@ -11,11 +12,7 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class BNFBootstrap {
-  private static final String apiName = "Bootstrap";
-
-  public static void expressionBuilder() {
-    // showASTs();
-  }
+  private static final String apiName = "FajitaBootstrap";
 
   static enum Term implements Terminal {
     start, derive, with, //
@@ -32,7 +29,7 @@ public class BNFBootstrap {
     Symbol_Sequence //
   }
 
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName)//
         .start(BNF) //
@@ -73,9 +70,9 @@ public class BNFBootstrap {
         /**/.orNone() //
         .derive(Footer)//
         /**/.to(go)//
-        .go();
+        .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(apiName, buildBNF());
+    Main.apiGenerator(buildBNF());
   }
 }

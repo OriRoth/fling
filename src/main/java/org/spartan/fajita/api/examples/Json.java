@@ -4,6 +4,7 @@ import static org.spartan.fajita.api.examples.Json.NT.*;
 import static org.spartan.fajita.api.examples.Json.Term.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
@@ -47,7 +48,7 @@ public class Json {
    * 
    * @return
    */
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(START) //
@@ -66,9 +67,9 @@ public class Json {
         .derive(ELEMENT).to(add) //
         .derive(OBJECT_ELEMENT).to(addObject).and(OBJECT) //
         .derive(ARRAY_ELEMENT).to(addArray).and(ARRAY) //
-        .go();
+        .go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    Main.apiGenerator(apiName, buildBNF());
+    Main.apiGenerator(buildBNF());
   }
 }

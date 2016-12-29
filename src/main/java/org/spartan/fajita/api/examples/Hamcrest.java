@@ -4,7 +4,10 @@ import static org.spartan.fajita.api.examples.Hamcrest.NT.ASSERT;
 import static org.spartan.fajita.api.examples.Hamcrest.NT.MATCHER;
 import static org.spartan.fajita.api.examples.Hamcrest.Term.*;
 
+import java.util.Map;
+
 import org.spartan.fajita.api.Fajita;
+import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
@@ -33,7 +36,7 @@ public class Hamcrest {
     // , MATCHERS;
   }
 
-  public static String buildBNF() {
+  public static Map<String, String> buildBNF() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName("Hamcrest") //
 				.start(ASSERT) //
@@ -45,6 +48,6 @@ public class Hamcrest {
         // /* */.or(any_of).and(MATCHERS) //
         // .derive(MATCHERS).to(MATCHER)//
         // /* */.or(MATCHER).and(MATCHERS) //
-        .go();
+        .go(Main.packagePath);
   }
 }

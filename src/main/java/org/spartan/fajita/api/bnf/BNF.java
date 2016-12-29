@@ -13,16 +13,17 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.api.rllp.Namer;
 
 public final class BNF {
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
   private final List<DerivationRule> derivationRules;
+  private String name;
 
   public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
-      Collection<DerivationRule> rules, Collection<NonTerminal> start) {
+      Collection<DerivationRule> rules, Collection<NonTerminal> start, String name) {
+    this.name = toCamelCase(name);
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
     this.nonterminals = new ArrayList<>(nonTerminals);
@@ -58,13 +59,27 @@ public final class BNF {
         }
       }
     } while (change);
-    return new BNF(subVerbs, subNonTerminals, subRules, subStart);
+    return new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
   }
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;
   }
   public String getApiName() {
-    return Namer.getApiName(startSymbols.get(0));
+    return name;
+  }
+  public static String toCamelCase(String name) {
+    boolean startOfWord = true;
+    String $ = "";
+    for (char c : name.toCharArray()) {
+      if (startOfWord) {
+        startOfWord = false;
+        $ += Character.toUpperCase(c);
+      } else if (c == '_')
+        startOfWord = true;
+      else
+        $ += Character.toLowerCase(c);
+    }
+    return $;
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder() //
