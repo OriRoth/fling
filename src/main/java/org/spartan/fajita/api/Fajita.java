@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
@@ -90,7 +91,7 @@ public class Fajita {
   void setApiName(String apiName) {
     this.apiName = apiName;
   }
-  String finish(String pckg) {
+  Map<String, String> finish(String pckg) {
     validate();
     setPackagePath(pckg);
     return FajitaEncoder.encode(this);
@@ -144,7 +145,7 @@ public class Fajita {
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
-    public String go(String pckg) {
+    public Map<String, String> go(String pckg) {
       return finish(pckg);
     }
     /**
@@ -238,7 +239,7 @@ public class Fajita {
       symbols.add(symb);
       return this;
     }
-    @Override public String go(String pckg) {
+    @Override public Map<String, String> go(String pckg) {
       addRuleToBNF();
       return super.go(pckg);
     }
