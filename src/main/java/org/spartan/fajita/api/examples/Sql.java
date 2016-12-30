@@ -1,9 +1,7 @@
 package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Sql.NT.*;
-
 import static org.spartan.fajita.api.examples.Sql.Term.*;
-import static org.spartan.fajita.api.junk.Sql.select;
 
 import java.io.IOException;
 import java.util.Map;

@@ -2,21 +2,6 @@ package org.spartan.fajita.api.examples;
 
 import static org.spartan.fajita.api.examples.Regex.NT.*;
 import static org.spartan.fajita.api.examples.Regex.Term.*;
-import static org.spartan.fajita.api.examples.Regex.Term.anyChar;
-import static org.spartan.fajita.api.examples.Regex.Term.backref;
-import static org.spartan.fajita.api.examples.Regex.Term.endOfString;
-import static org.spartan.fajita.api.examples.Regex.Term.group;
-import static org.spartan.fajita.api.examples.Regex.Term.moreThanZero;
-import static org.spartan.fajita.api.examples.Regex.Term.notOneOf;
-import static org.spartan.fajita.api.examples.Regex.Term.oneOf;
-import static org.spartan.fajita.api.examples.Regex.Term.startOfString;
-import static org.spartan.fajita.api.examples.Regex.Term.str;
-import static org.spartan.fajita.api.examples.Regex.Term.zeroOrMore;
-import static org.spartan.fajita.api.junk.Regex.endOfString;
-import static org.spartan.fajita.api.junk.Regex.group;
-import static org.spartan.fajita.api.junk.Regex.notOneOf;
-import static org.spartan.fajita.api.junk.Regex.startOfString;
-import static org.spartan.fajita.api.junk.Regex.zeroOrMore;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,7 +10,6 @@ import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
-import org.spartan.fajita.api.junk.InsideSet;
 
 public class Regex {
   private static final String apiName = "Regex";

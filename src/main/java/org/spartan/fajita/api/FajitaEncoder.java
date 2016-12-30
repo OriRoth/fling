@@ -17,11 +17,8 @@ import org.spartan.fajita.api.rllp.Item;
 import org.spartan.fajita.api.rllp.RLLP;
 import org.spartan.fajita.api.rllp.RLLPEncoder;
 
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 @SuppressWarnings("restriction") public class FajitaEncoder {

@@ -44,7 +44,7 @@ import com.squareup.javapoet.TypeVariableName;
   private Item mainItem;
   private final EncoderUtils namer;
   // Used for Debugging
-  private final boolean visualize = false;
+  private final boolean visualize = true;
 
   public RLLPEncoder(RLLP parser, EncoderUtils namer) {
     this.rllp = parser;

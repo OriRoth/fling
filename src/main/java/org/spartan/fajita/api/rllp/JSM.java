@@ -23,28 +23,29 @@ public class JSM {
   private Stack<Item> S0;
   private Stack<Map<Verb, JSM>> S1;
   private final Collection<Verb> verbs;
-  private Hashtable<JSM.CompactConfiguration, JSM> configurationCache;
-  private boolean readonly;
-  private boolean recursive;
-  private List<Item> recursiveAddition;
   private final RLLP rllp;
-  private CompactConfiguration currentCompactConfig;
+  private boolean readonly;
+  //
+  private Hashtable<JSM.CompactConfiguration, JSM> cache;
+  private CompactConfiguration currentConfig;
+  //
+  private List<Item> recursiveAddition;
+  private List<Item> currentlyPushing;
 
   public JSM(RLLP rllp) {
     this.rllp = rllp;
     this.verbs = new ArrayList<>(rllp.bnf.getVerbs());
     this.verbs.remove(SpecialSymbols.$);
     this.readonly = false;
-    this.recursive = false;
     S0 = new Stack<>();
     S1 = new Stack<>();
-    this.configurationCache = new Hashtable<>();
+    this.cache = new Hashtable<>();
   }
   private JSM(JSM fromJSM) {
     this(fromJSM.rllp);
     fromJSM.S0.forEach(i -> S0.add(i));
     fromJSM.S1.forEach(partMap -> S1.add(partMap));
-    configurationCache = fromJSM.configurationCache;
+    cache = fromJSM.cache;
   }
   /**
    * Cannot cause recursion. always finite time.
@@ -64,35 +65,47 @@ public class JSM {
     S1 = loadFrom.S1;
   }
   public Item peek() {
-    if (S0.isEmpty())
+    if (getS0().isEmpty())
       return null;
     return S0.peek();
+  }
+  public void pushAll(List<Item> toPush) {
+    pushAll(toPush, new ArrayList<>());
   }
   /**
    * Pushes items (in given order) to the JSM and makes it readonly afterwards
    * 
    * @param toPush
+   * @param ancestors all the JSM parents of the current, as seen in the
+   *          JSMGraph visualization.
    */
-  public void pushAll(List<Item> toPush) {
+  private void pushAll(List<Item> toPush, List<JSM> ancestors) {
     if (readonly)
       throw new IllegalStateException("Can't push in readonly mode.");
-    currentCompactConfig = new CompactConfiguration(this.peek(), toPush);
-    configurationCache.put(currentCompactConfig, this);
-    toPush.forEach(i -> push(i));
+    ancestors.add(this);
+    currentConfig = new CompactConfiguration(this.peek(), toPush);
+    cache.put(currentConfig, this);
+    currentlyPushing = new ArrayList<>(toPush);
+    while (!currentlyPushing.isEmpty()) {
+      // The order of these two actions matter
+      push(currentlyPushing.get(0), ancestors);
+      currentlyPushing.remove(0);
+    }
     makeReadOnly();
   }
   /**
    * Pushes item i to S0 and coordinates S1 stack.
    * 
    * @param i
+   * @param ancestors
    */
-  private void push(Item i) {
+  private void push(Item i, List<JSM> ancestors) {
     if (readonly)
       throw new IllegalStateException("Can't push in readonly mode.");
     HashMap<Verb, JSM> jumpInfo = new HashMap<>();
     for (Verb v : rllp.legalJumps(i))
       // This is the push after jump
-      jumpInfo.put(v, calculateJumpConfiguration(rllp.jumps(i, v)));
+      jumpInfo.put(v, calculateJumpConfiguration(rllp.jumps(i, v), ancestors));
     for (Verb v : rllp.illegalJumps(i))
       jumpInfo.put(v, JSM.JAMMED);
     S0.add(i);
@@ -102,17 +115,21 @@ public class JSM {
    * Returns the state of the JSM after pushing all items in "toPush" (in their
    * given order).
    */
-  private JSM calculateJumpConfiguration(List<Item> toPush) {
+  private JSM calculateJumpConfiguration(List<Item> toPush, List<JSM> ancestors) {
     final CompactConfiguration nextConfig = new CompactConfiguration(this.peek(), toPush);
-    if (configurationCache.containsKey(nextConfig)) {
-      final JSM jsm = configurationCache.get(nextConfig);
-      jsm.setRecursive(toPush);
+    if (cache.containsKey(nextConfig)) {
+      final JSM jsm = cache.get(nextConfig);
+      if (jsm.isRecursiveInstance(getS0(), nextConfig) && ancestors.contains(jsm))
+        jsm.setRecursive(getS0(), nextConfig);
       return jsm;
     }
     final JSM $ = deepCopy();
-    $.pushAll(toPush);
+    $.pushAll(toPush, new ArrayList<>(ancestors));
     $.makeReadOnly();
     return $;
+  }
+  private boolean isRecursiveInstance(List<Item> currentS0, CompactConfiguration nextConfig) {
+    return !getRecursiveAddition(currentS0, nextConfig.toPush).isEmpty();
   }
   public List<Item> getS0() {
     return Collections.unmodifiableList(S0);
@@ -121,12 +138,30 @@ public class JSM {
     this.readonly = true;
   }
   public boolean isRecursive() {
-    return recursive;
+    return recursiveAddition != null;
   }
-  private void setRecursive(List<Item> toPush) {
-    recursive = true;
-    recursiveAddition = new ArrayList<>(S0);
-    recursiveAddition.addAll(toPush);
+  private void setRecursive(List<Item> currentS0, CompactConfiguration nextConfig) {
+    List<Item> addition = getRecursiveAddition(currentS0, nextConfig.toPush);
+    if (recursiveAddition == null || addition.size() > recursiveAddition.size())
+      recursiveAddition = addition;
+  }
+  private List<Item> getRecursiveAddition(List<Item> s0, List<Item> toPush) {
+    ArrayList<Item> origStack = new ArrayList<>(getS0());
+    origStack.addAll(currentlyPushing);
+    ArrayList<Item> recursiveStack = new ArrayList<>(s0);
+    recursiveStack.addAll(toPush);
+    for (int i = origStack.size() - 1; i >= 0; i--) {
+      final int last = recursiveStack.size() - 1;
+      if (!origStack.get(i).equals(recursiveStack.get(last)))
+        break;
+      recursiveStack.remove(last);
+    }
+    for (int i = 0; i < recursiveStack.size(); i++) {
+      if (!origStack.get(i).equals(recursiveStack.get(0)))
+        break;
+      recursiveStack.remove(0);
+    }
+    return recursiveStack;
   }
   private JSM findJump(Verb v) {
     /**
@@ -166,14 +201,14 @@ public class JSM {
     JSM other = (JSM) obj;
     if (rllp != other.rllp)
       return false;
-    if (S0 == null) {
-      if (other.S0 != null)
+    if (getS0() == null) {
+      if (other.getS0() != null)
         return false;
     }
-    return currentCompactConfig.equals(other.currentCompactConfig);
+    return currentConfig.equals(other.currentConfig);
   }
   @Override public String toString() {
-    return "JSM.S0: " + S0.toString();
+    return "JSM.S0: " + getS0().toString();
   }
   @Deprecated // This is used only in tests..
   public Item pop() {
@@ -198,8 +233,8 @@ public class JSM {
   }
 
   public static class CompactConfiguration {
-    private Item topOfStack;
-    private List<Item> toPush;
+    Item topOfStack;
+    List<Item> toPush;
 
     public CompactConfiguration(Item topOfStack, List<Item> toPush) {
       this.topOfStack = topOfStack;

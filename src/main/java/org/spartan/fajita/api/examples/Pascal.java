@@ -56,20 +56,20 @@ public class Pascal {
     Main.apiGenerator(buildApi());
   }
   public static void legal() {
-    program().id().semi().begin().end().$();
-    program().id().pair().semi().begin().end().$();
-    program().id().semi().label().semi().begin().end().$();
-    program().id().semi().label().semi().semi().begin().end().$();
-    program().id().semi().label().semi().semi().semi().begin().end().$();
-    program().id().semi().constant().semi().begin().end().$();
-    program().id().semi().label().semi().constant().semi().begin().end().$();
-    program().id().pair().semi().label().semi().semi().constant().semi().begin().end().$();
-    program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end().$();
+    program().id().semi().begin().end();
+    program().id().pair().semi().begin().end();
+    program().id().semi().label().semi().begin().end();
+    program().id().semi().label().semi().semi().begin().end();
+    program().id().semi().label().semi().semi().semi().begin().end();
+    program().id().semi().constant().semi().begin().end();
+    program().id().semi().label().semi().constant().semi().begin().end();
+    program().id().pair().semi().label().semi().semi().constant().semi().begin().end();
+    program().id().pair().semi().label().semi().semi().semi().semi().semi().semi().begin().end();
   }
   public static void illegal() {
-//    program().program();
-//    program().id().id();
-//    program().id().semi().label().constant();
-//    program().id().semi().constant().semi().$();
+    // program().program();
+    // program().id().id();
+    // program().id().semi().label().constant();
+    // program().id().semi().constant().semi();
   }
 }
