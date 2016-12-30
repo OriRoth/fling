@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -133,22 +132,26 @@ import com.squareup.javapoet.TypeVariableName;
       JSMGraph jsmGraph = new JSMGraph();
       jsmGraph.calcAndVisualize(jsm, label);
     }
-    return encodeJSM_recursive_protection(jsm, new RecursiveProtector());
+    return encodeJSM_recursive_protection(jsm, new ArrayList<>());
   }
-  private TypeName encodeJSM_recursive_protection(JSM jsm, RecursiveProtector prot) {
+  private TypeName encodeJSM_recursive_protection(JSM jsm, ArrayList<JSM> alreadySeen) {
     if (encodedJSMs.containsKey(jsm.getS0()))
       return encodedJSMs.get(jsm.getS0());
     if (jsm == JSM.JAMMED)
       return EncoderUtils.errorType();
     final List<TypeVariableName> namedFollow = mapFollowSetWith(mainItem, v -> TypeVariableName.get(EncoderUtils.verbTypeName(v)));
-    if (prot.detectRecursion(jsm))
-      return parameterizedType(namer.getRecursiveTypeName(prot.getMatching(jsm)), namedFollow);
+    if (jsm.isRecursive()) {
+      // Second or more times seen
+      if (alreadySeen.contains(jsm))
+        return parameterizedType(namer.getRecursiveTypeName(jsm), namedFollow);
+      alreadySeen.add(jsm);// First time seeing
+    }
     Map<Verb, TypeName> typeArguments = new TreeMap<>();
     for (SimpleEntry<Verb, JSM> e : jsm.legalJumps())
-      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), prot));
+      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), alreadySeen));
     TypeName $;
     final List<TypeName> encodedArguments = encodeTypeArguments(jsm.peek(), typeArguments);
-    if (prot.isRecursive(jsm)) {
+    if (jsm.isRecursive()) {
       TypeSpec recursiveType = addRecursiveType(jsm, encodedArguments);
       $ = parameterizedType(recursiveType.name, namedFollow);
     } else {
@@ -183,51 +186,12 @@ import com.squareup.javapoet.TypeVariableName;
   @Override public String toString() {
     return encode().toString();
   }
-
-  private class RecursiveProtector {
-    private final Stack<JSM> alreadySeen;
-    private final List<JSM> recursiveJSMs;
-
-    public RecursiveProtector() {
-      alreadySeen = new Stack<>();
-      recursiveJSMs = new ArrayList<>();
-    }
-    public JSM getMatching(JSM jsm) {
-      int idx = alreadySeen.indexOf(jsm);
-      if (idx == -1)
-        throw new IllegalArgumentException(
-            jsm.toString() + "Was not yet seen. please call detectRecursion() before calling this method");
-      return alreadySeen.get(idx);
-    }
-    /**
-     * @param jsm - the jsm to check
-     * @returns true if recursion was identified.
-     */
-    boolean detectRecursion(JSM jsm) {
-      int idx = alreadySeen.indexOf(jsm);
-      if (idx != -1) {
-        recursionDetected(idx);
-        return true;
-      }
-      alreadySeen.push(jsm);
-      return false;
-    }
-    private void recursionDetected(int idx) {
-      JSM orig = alreadySeen.get(idx);
-      if (!isRecursive(orig))
-        recursiveJSMs.add(orig);
-    }
-    boolean isRecursive(JSM jsm) {
-      return recursiveJSMs.indexOf(jsm) != -1;
-    }
-  }
-
   public TypeSpec encode() {
     return TypeSpec.classBuilder(rllp.bnf.getApiName()) //
         .addModifiers(Modifier.PUBLIC) //
         .addTypes(mainTypes) //
         .addTypes(recursiveTypes) //
-        .addType(getErrorType()) // 
+        .addType(getErrorType()) //
         .addMethods(staticMethods)//
         .build();
   }
