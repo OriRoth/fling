@@ -10,12 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
+
+import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
 
 /**
  * @author Tomer
@@ -106,7 +109,8 @@ public class Fajita {
    * ***************************************************************************
    * ----------------------- Fluent Interface Of Fajita ------------------------
    * ***************************************************************************
-   * *************************************************************************** */
+   * **************************************************************************
+   * * */
   public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildBNF(
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
     Fajita builder = new Fajita(terminalEnum, nonterminalEnum);
@@ -132,7 +136,7 @@ public class Fajita {
     }
   }
 
-  private abstract class Deriver {
+  public abstract class Deriver {
     protected final NonTerminal lhs;
     protected final ArrayList<Symbol> symbols;
 
@@ -153,6 +157,9 @@ public class Fajita {
      */
     protected void addRuleToBNF() {
       addRule(lhs, symbols);
+    }
+    @Override public String toString() {
+      return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName()).render(ASCII);
     }
   }
 

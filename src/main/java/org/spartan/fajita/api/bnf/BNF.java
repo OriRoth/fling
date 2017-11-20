@@ -135,4 +135,35 @@ public final class BNF {
       return false;
     return true;
   }
+  public String render(BNFRenderer renderer) {
+    StringBuilder $ = new StringBuilder();
+    $.append(renderer.grammarAnte());
+    for (NonTerminal nt : startSymbols)
+      $.append(renderer.startSymbolAnte()).append(nt.name()).append(renderer.startSymbolPost());
+    for (DerivationRule r : derivationRules) {
+      $.append(renderer.ruleAnte());
+      $.append(renderer.headAnte());
+      $.append(renderer.symbolAnte());
+      $.append(r.lhs.name());
+      $.append(renderer.symbolPost());
+      $.append(renderer.headPost());
+      $.append(renderer.bodyAnte());
+      List<Symbol> rhs = r.getRHS();
+      if (rhs.isEmpty())
+        $.append(renderer.termAnte()).append("ε").append(renderer.termPost());
+      else
+        for (Symbol s : rhs) {
+          $.append(renderer.termAnte());
+          if (s.isVerb())
+            $.append(renderer.terminalAnte()).append(s.name()).append(renderer.terminalPost());
+          else if (s instanceof NonTerminal)
+            $.append(renderer.terminalAnte()).append(s.name()).append(renderer.terminalPost());
+          $.append(renderer.termPost());
+        }
+      $.append(renderer.bodyPost());
+      $.append(renderer.rulePost());
+    }
+    $.append(renderer.grammarPost());
+    return $.toString();
+  }
 }
