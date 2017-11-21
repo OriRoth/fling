@@ -161,6 +161,11 @@ public class Fajita {
     @Override public String toString() {
       return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName()).render(ASCII);
     }
+    public BNF go() {
+      if (!symbols.isEmpty())
+        addRuleToBNF();
+      return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
+    }
   }
 
   /**

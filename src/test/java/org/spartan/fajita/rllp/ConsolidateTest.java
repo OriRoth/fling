@@ -7,6 +7,7 @@ import static org.spartan.fajita.rllp.ConsolidateTest.Term.c;
 import static org.spartan.fajita.rllp.ConsolidateTest.Term.d;
 
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.function.Predicate;
 
 import org.junit.BeforeClass;
@@ -32,7 +33,8 @@ import org.spartan.fajita.api.rllp.RLLP;
   private static RLLP rllp;
 
   @BeforeClass public static void init() {
-    bnf = new Fajita(Term.class, NT.class) //
+    bnf = Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName("Test") //
         .start(S) //
         .derive(S).to(A).and(D) //
         .derive(A).to(B) //
@@ -45,7 +47,8 @@ import org.spartan.fajita.api.rllp.RLLP;
   @Test public void testTrivialConsolidation() {
     Item Ditem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 0);
     Item Ditem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
-    Deque<Item> consolidation = rllp.consolidate(Ditem0, new Verb(d));
+    Deque<Item> consolidation = new LinkedList<>();
+    consolidation.addAll(rllp.consolidate(Ditem0, new Verb(d)));
     assertEquals(Ditem1, consolidation.removeFirst());
     assertTrue(consolidation.isEmpty());
   }
@@ -53,9 +56,10 @@ import org.spartan.fajita.api.rllp.RLLP;
     Item Sitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 1);
     Item Ditem = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(d));
-    Deque<Item> consolidation = rllp.consolidate(start, new Verb(d));
-    assertEquals(Ditem, consolidation.removeFirst());
+    Deque<Item> consolidation = new LinkedList<>();
+    consolidation.addAll(rllp.consolidate(start, new Verb(d)));
     assertEquals(Sitem, consolidation.removeFirst());
+    assertEquals(Ditem, consolidation.removeFirst()); // Note: swapped items order--[or]
     assertTrue(consolidation.isEmpty());
   }
   @Test public void testDeepConsolidation() {
@@ -64,11 +68,12 @@ import org.spartan.fajita.api.rllp.RLLP;
     Item Bitem = getAnyMatchingItem(rllp, i -> i.rule.lhs == B && i.dotIndex == 0);
     Item Citem = getAnyMatchingItem(rllp, i -> i.rule.lhs == C && i.dotIndex == 1);
     Item start = rllp.getStartItem(new Verb(c));
-    Deque<Item> consolidation = rllp.consolidate(start, new Verb(c));
-    assertEquals(Citem, consolidation.removeFirst());
-    assertEquals(Bitem, consolidation.removeFirst());
-    assertEquals(Aitem, consolidation.removeFirst());
+    Deque<Item> consolidation = new LinkedList<>();
+    consolidation.addAll(rllp.consolidate(start, new Verb(c)));
     assertEquals(Sitem, consolidation.removeFirst());
+    assertEquals(Aitem, consolidation.removeFirst());
+    assertEquals(Bitem, consolidation.removeFirst());
+    assertEquals(Citem, consolidation.removeFirst()); // Note: swapped items order--[or]
     assertTrue(consolidation.isEmpty());
   }
   static Item getAnyMatchingItem(RLLP parser, Predicate<Item> predicate) {

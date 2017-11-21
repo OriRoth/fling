@@ -5,6 +5,7 @@ import static org.spartan.fajita.rllp.JumpsTest.NT.*;
 import static org.spartan.fajita.rllp.JumpsTest.Term.*;
 
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.function.Predicate;
 
 import org.junit.BeforeClass;
@@ -30,7 +31,8 @@ import org.spartan.fajita.api.rllp.RLLP;
   private static RLLP rllp;
 
   @BeforeClass public static void init() {
-    bnf = new Fajita(Term.class, NT.class) //
+    bnf = Fajita.buildBNF(Term.class, NT.class) //
+        .setApiName("Test") //
         .start(S) //
         .derive(S).to(A).and(B).and(C).and(D) //
         .derive(A).to(a)//
@@ -44,18 +46,20 @@ import org.spartan.fajita.api.rllp.RLLP;
     Item Sitem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 0);
     Item Sitem3 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 3);
     Item Ditem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == D && i.dotIndex == 1);
-    Deque<Item> jumps = rllp.jumps(Sitem0, new Verb(d));
-    assertEquals(Ditem1, jumps.removeFirst());
+    Deque<Item> jumps = new LinkedList<>();
+    jumps.addAll(rllp.jumps(Sitem0, new Verb(d)));
     assertEquals(Sitem3, jumps.removeFirst());
+    assertEquals(Ditem1, jumps.removeFirst()); // Note: swapped items order--[or]
     assertTrue(jumps.isEmpty());
   }
   @Test public void testNarrowJump() {
     Item Sitem0 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 0);
     Item Sitem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == S && i.dotIndex == 1);
     Item Bitem1 = getAnyMatchingItem(rllp, i -> i.rule.lhs == B && i.dotIndex == 1);
-    Deque<Item> jumps = rllp.jumps(Sitem0, new Verb(b));
-    assertEquals(Bitem1, jumps.removeFirst());
+    Deque<Item> jumps = new LinkedList<>();
+    jumps.addAll(rllp.jumps(Sitem0, new Verb(b)));
     assertEquals(Sitem1, jumps.removeFirst());
+    assertEquals(Bitem1, jumps.removeFirst()); // Note: swapped items order--[or]
     assertTrue(jumps.isEmpty());
   }
   @Test(expected = IllegalStateException.class) public void testNoJumps() {

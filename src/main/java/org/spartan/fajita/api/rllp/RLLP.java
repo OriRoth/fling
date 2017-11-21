@@ -194,6 +194,10 @@ public class RLLP {
     return items.stream().filter(i -> i.rule.lhs.equals(SpecialSymbols.augmentedStartSymbol) && i.dotIndex == 0)
         .collect(Collectors.toList());
   }
+  public Item getStartItem(Verb initialInput) {
+    return items.stream().filter(i -> bnf.getStartSymbols().contains(i.rule.lhs) && i.dotIndex == 0)
+        .filter(i -> analyzer.firstSetOf(i.rule.getRHS()).contains(initialInput)).findAny().get();
+  }
 
   public static abstract class Action {
     public static enum ActionType {
