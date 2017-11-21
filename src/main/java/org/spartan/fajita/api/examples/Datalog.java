@@ -12,9 +12,9 @@ import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 
 import static org.spartan.fajita.api.examples.Datalog.Term.*;
 import static org.spartan.fajita.api.examples.Datalog.NT.*;
- import static org.spartan.fajita.api.junk.Datalog.*;
- import static org.spartan.fajita.api.junk.Literal.*;
- import static org.spartan.fajita.api.junk.Literals.*;
+import static org.spartan.fajita.api.junk.Datalog.*;
+import static org.spartan.fajita.api.junk.Literal.*;
+import static org.spartan.fajita.api.junk.Literals.*;
 
 // TODO Roth add OR
 public class Datalog {
@@ -49,12 +49,12 @@ public class Datalog {
     Main.apiGenerator(buildBNF());
   }
   static void test() {
-     fact(name("parent").terms("john", "bob")) //
-     .fact(name("parent").terms("bob", "donald")) //
-     .head(name("ancestor").terms("A", "B")).body( //
-     literal(name("parent").terms("A", "B"))) //
-     .head(name("ancestor").terms("A", "B")).body( //
-     literal(name("parent").terms("A", "C")) //
-     .literal(name("ancestor").terms("C", "B")));
+    fact(name("parent").terms("john", "bob")) //
+        .fact(name("parent").terms("bob", "donald")) //
+        .head(name("ancestor").terms("A", "B")).body( //
+            literal(name("parent").terms("A", "B"))) //
+        .head(name("ancestor").terms("A", "B")).body( //
+            literal(name("parent").terms("A", "C")) //
+                .literal(name("ancestor").terms("C", "B")));
   }
 }
