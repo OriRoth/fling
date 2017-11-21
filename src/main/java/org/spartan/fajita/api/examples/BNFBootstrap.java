@@ -58,7 +58,7 @@ public class BNFBootstrap {
         /**/.or(to, Terminal.class, Class[].class).and(Symbol_Sequence) //
         /**/.or(toNone) //
         .derive(Extra_Conjunctions)//
-        /**/.to(Extra_Conjunctions).and(Extra_Conjunction) //
+        /**/.to(Extra_Conjunction).and(Extra_Conjunctions) //
         /**/.orNone() //
         .derive(Extra_Conjunction)//
         /**/.to(or, NonTerminal.class).and(Symbol_Sequence) //
