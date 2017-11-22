@@ -258,4 +258,14 @@ public class RLLP {
       }
     }
   }
+
+  @Override public String toString() {
+    return "" //
+        + "*** BNF ***\n" + bnf //
+        + "\n*** Items ***\n" + items + "\n" //
+        + "\n*** Consolidation Table ***\n" + consolidationTable + "\n" //
+        + "\n*** Jumps Table ***\n" + jumpsTable + "\n" //
+        + "\n*** LL Prediction Table ***\n" + llPredictionTable + "\n" //
+        + "\n*** RLL Prediction Table ***\n" + rllPredictionTable;
+  }
 }
