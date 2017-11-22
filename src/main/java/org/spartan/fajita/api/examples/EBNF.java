@@ -14,8 +14,8 @@ import static org.spartan.fajita.api.examples.EBNF.NT.*;
 import static org.spartan.fajita.api.examples.EBNF.TestTerm.*;
 import static org.spartan.fajita.api.examples.EBNF.TestNT.*;
 import static org.spartan.fajita.api.junk.Ebnf.*;
-import static org.spartan.fajita.api.junk.Expansion.*;
 import static org.spartan.fajita.api.junk.ExpansionHead.*;
+import static org.spartan.fajita.api.junk.ExpansionHeadExpanded.*;
 
 public class EBNF {
   private static final String apiName = "EBNF";
@@ -25,7 +25,7 @@ public class EBNF {
   }
 
   static enum NT implements NonTerminal {
-    RULES, RULE, EXPANSION, OPTION, REPEAT, EXPANSION_START, EXPANSION_HEAD, EXPANSION_BODY
+    RULES, RULE, EXPANSION, OPTION, REPEAT, EXPANSION_START, EXPANSION_HEAD, EXPANSION_BODY, EXPANSION_HEAD_EXPANDED
   }
 
   public static Map<String, String> buildBNF() {
@@ -36,14 +36,15 @@ public class EBNF {
         .derive(RULE).to(derive, NonTerminal.class).and(EXPANSION_START).and(EXPANSION) //
         .derive(EXPANSION_START).to(to, Symbol.class).or(to, EXPANSION_HEAD) //
         .derive(EXPANSION_HEAD).to(OPTION).or(REPEAT).or(term, Symbol.class) //
+        .derive(EXPANSION_HEAD_EXPANDED).to(EXPANSION_HEAD).and(EXPANSION) //
         .derive(OPTION).to(option, Symbol.class).or(option, EXPANSION_HEAD) //
         .derive(REPEAT).to(repeat, Symbol.class).or(repeat, EXPANSION_HEAD) //
         .derive(EXPANSION).to(EXPANSION_BODY).and(EXPANSION).orNone() //
         .derive(EXPANSION_BODY) //
-        /**/.to(and, Symbol.class).or(and, EXPANSION_HEAD) //
-        /**/.or(or, Symbol.class).or(or, EXPANSION_HEAD) //
-        /**/.or(option, Symbol.class).or(option, EXPANSION_HEAD) //
-        /**/.or(repeat, Symbol.class).or(repeat, EXPANSION_HEAD) //
+        /**/.to(and, Symbol.class).or(and, EXPANSION_HEAD_EXPANDED) //
+        /**/.or(or, Symbol.class).or(or, EXPANSION_HEAD_EXPANDED) //
+        /**/.or(option, Symbol.class).or(option, EXPANSION_HEAD_EXPANDED) //
+        /**/.or(repeat, Symbol.class).or(repeat, EXPANSION_HEAD_EXPANDED) //
         /**/.or(orNone) //
         .go(Main.packagePath);
   }

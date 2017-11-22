@@ -11,6 +11,8 @@ import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
+import static org.spartan.fajita.api.junk.Sql.*;
+
 public class Sql {
   private static final String apiName = "Sql";
 

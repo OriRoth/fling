@@ -41,6 +41,6 @@ public class NestedRecursion {
   static void test() {
     a().b();
     a().a().b().b();
-    // a().a().a().a().b().b().b().b();
+    a().a().a().a().b().b().b().b();
   }
 }
