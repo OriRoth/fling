@@ -73,23 +73,22 @@ public class BNFTransformer<SymbolAug, TerminalAug extends SymbolAug, NonTermina
         Function<NonTerminal, NonTerminalAug> nonTerminalAug, Function<NonTerminal, LHSAug> lhsAug,
         Function<List<SymbolAug>, RHSAug> rhsAug, Supplier<RHSAug> epsilonAug, BiFunction<LHSAug, RHSAug, RuleAug> ruleAug,
         BinaryOperator<RuleAug> ruleConsolidation, Function<List<RuleAug>, BNFAug> bnfAug) {
-      super(x -> x, x -> x, x -> x, x -> x, () -> null,
-          (lhs, rhs) -> new DerivationRule(lhs, rhs != null ? rhs : new LinkedList<>()), rs -> {
-            Map<NonTerminal, List<List<Symbol>>> m1 = new HashMap<>();
-            for (DerivationRule r : rs) {
-              m1.putIfAbsent(r.lhs, new LinkedList<>());
-              m1.get(r.lhs).add(r.getRHS());
-            }
-            List<RuleAug> ras = new LinkedList<>();
-            for (Entry<NonTerminal, List<List<Symbol>>> e : m1.entrySet())
-              e.getValue().stream()
-                  .map(x -> x.stream()
-                      .map(y -> y.isNonTerminal() ? nonTerminalAug.apply((NonTerminal) y) : terminalAug.apply((Terminal) y))
-                      .collect(toList()))
-                  .map(x -> x.isEmpty() ? epsilonAug.get() : rhsAug.apply(x)).map(x -> ruleAug.apply(lhsAug.apply(e.getKey()), x))
-                  .reduce(ruleConsolidation).ifPresent(x -> ras.add(x));
-            return bnfAug.apply(ras);
-          });
+      super(x -> x, x -> x, x -> x, x -> x, () -> new LinkedList<>(), (lhs, rhs) -> new DerivationRule(lhs, rhs), rs -> {
+        Map<NonTerminal, List<List<Symbol>>> m1 = new HashMap<>();
+        for (DerivationRule r : rs) {
+          m1.putIfAbsent(r.lhs, new LinkedList<>());
+          m1.get(r.lhs).add(r.getRHS());
+        }
+        List<RuleAug> ras = new LinkedList<>();
+        for (Entry<NonTerminal, List<List<Symbol>>> e : m1.entrySet())
+          e.getValue().stream()
+              .map(x -> x.stream()
+                  .map(y -> y.isNonTerminal() ? nonTerminalAug.apply((NonTerminal) y) : terminalAug.apply((Terminal) y))
+                  .collect(toList()))
+              .map(x -> x.isEmpty() ? epsilonAug.get() : rhsAug.apply(x)).map(x -> ruleAug.apply(lhsAug.apply(e.getKey()), x))
+              .reduce(ruleConsolidation).ifPresent(x -> ras.add(x));
+        return bnfAug.apply(ras);
+      });
     }
     public static <SymbolAug, TerminalAug extends SymbolAug, NonTerminalAug extends SymbolAug, LHSAug, RHSAug, RuleAug, BNFAug> WithRuleConsolidation<SymbolAug, TerminalAug, NonTerminalAug, LHSAug, RHSAug, RuleAug, BNFAug> transformer(
         Function<Terminal, TerminalAug> terminalAug, Function<NonTerminal, NonTerminalAug> nonTerminalAug,

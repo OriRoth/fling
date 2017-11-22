@@ -123,6 +123,7 @@ public class RLLP {
     }
     return $;
   }
+  // NOTE not exactly as the algorithm specified in the paper--[or]
   private List<Item> calculateConsolidate(Item i, Verb v) {
     List<Item> $ = new ArrayList<>();
     Item current_i = i;
