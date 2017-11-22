@@ -34,7 +34,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-@SuppressWarnings("restriction") public class RLLPEncoder {
+public class RLLPEncoder {
   public final RLLP rllp;
   private final List<TypeSpec> mainTypes;
   private final List<TypeSpec> recursiveTypes;
