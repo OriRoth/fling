@@ -22,7 +22,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-@SuppressWarnings("restriction") public class LLRecognizerGenerator {
+public class LLRecognizerGenerator {
   public static JavaFile generate(BNF bnf) {
     LLRecognizer recognizer = new LLRecognizer(bnf);
     List<TypeSpec> configurationTypes = new ArrayList<>();

@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
+import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.JAMOOS_INTERFACES;
 import static org.spartan.fajita.api.examples.TwoParentsBNF.NT.A;
 import static org.spartan.fajita.api.examples.TwoParentsBNF.NT.B;
 import static org.spartan.fajita.api.examples.TwoParentsBNF.NT.C;
@@ -38,18 +38,11 @@ public class TwoParentsBNF {
         .derive(B).to(C).or(D) //
         .derive(C).to(a) //
         .derive(D).to(a).and(b);
-    // return Fajita.buildBNF(Term.class, NT.class) //
-    // .setApiName(apiName) //
-    // .start(S) //
-    // .derive(S).to(A).or(B) //
-    // .derive(A).to(a) //
-    // .derive(B).to(a).and(b);
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
   }
   public static void main(String[] args) {
     System.out.println(bnf().go().toString(JAMOOS_INTERFACES));
-    // Main.apiGenerator(buildBNF());
   }
 }
