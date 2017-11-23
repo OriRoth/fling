@@ -28,4 +28,17 @@ public class DAG<N> extends HashMap<N, Set<N>> {
   public String circleDetectedMessage(N node, N parent) {
     return "Addition of node " + node + " as the descendant of " + parent + " to the tree creates a circle";
   }
+
+  public static class Tree<N> extends DAG<N> {
+    private static final long serialVersionUID = -4612179429466418896L;
+
+    @Override public boolean add(N node, N parent) {
+      if (containsKey(node) && !get(node).isEmpty() && (get(node).size() > 1 || !get(node).contains(parent)))
+        throw new IllegalArgumentException(moreThanOneParentMessage(node, parent));
+      return super.add(node, parent);
+    }
+    public String moreThanOneParentMessage(N node, N parent) {
+      return "Addition of node " + node + " as the descendant of " + parent + " to the tree creates multiple inheritance";
+    }
+  }
 }

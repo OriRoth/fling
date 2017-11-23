@@ -29,27 +29,27 @@ class $Datalog {
   class RULE {
     /* RULE$1 rule$1;RULE$2 rule$2; */}
 
-  class RULE$2 {
+  class RULE$2 extends RULE {
     LITERAL head;
     BODY body;
   }
 
-  class RULE$1 {
+  class RULE$1 extends RULE {
     LITERAL fact;
   }
 
-  class RULES$1 {
+  class RULES$1 extends RULES {
     RULE rule;
     RULES rules;
   }
 
-  class LITERALS_OR_NONE$2 {
+  class LITERALS_OR_NONE$2 extends LITERALS_OR_NONE {
   }
 
-  class RULES$2 {
+  class RULES$2 extends RULES {
   }
 
-  class LITERALS_OR_NONE$1 {
+  class LITERALS_OR_NONE$1 extends LITERALS_OR_NONE {
     LITERAL literal;
     LITERALS_OR_NONE literals_or_none;
   }
