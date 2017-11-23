@@ -9,7 +9,7 @@ public class VarArgs implements ParameterType {
     this.clazz = Array.newInstance(clazz, 0).getClass();
   }
   @Override public String toString() {
-    return clazz.getSimpleName() + " ...";
+    return clazz.getSimpleName(); // NOTE Roth removed "+ " ...""
   }
   @Override public int hashCode() {
     final int prime = 31;

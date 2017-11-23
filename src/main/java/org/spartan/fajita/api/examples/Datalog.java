@@ -1,6 +1,22 @@
 package org.spartan.fajita.api.examples;
 
-import java.io.IOException;
+import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.JAMOOS_CLASSES;
+import static org.spartan.fajita.api.examples.Datalog.NT.BODY;
+import static org.spartan.fajita.api.examples.Datalog.NT.LITERAL;
+import static org.spartan.fajita.api.examples.Datalog.NT.LITERALS;
+import static org.spartan.fajita.api.examples.Datalog.NT.LITERALS_OR_NONE;
+import static org.spartan.fajita.api.examples.Datalog.NT.RULE;
+import static org.spartan.fajita.api.examples.Datalog.NT.RULES;
+import static org.spartan.fajita.api.examples.Datalog.Term.body;
+import static org.spartan.fajita.api.examples.Datalog.Term.fact;
+import static org.spartan.fajita.api.examples.Datalog.Term.head;
+import static org.spartan.fajita.api.examples.Datalog.Term.literal;
+import static org.spartan.fajita.api.examples.Datalog.Term.name;
+import static org.spartan.fajita.api.examples.Datalog.Term.terms;
+import static org.spartan.fajita.api.junk.Datalog.fact;
+import static org.spartan.fajita.api.junk.Literal.name;
+import static org.spartan.fajita.api.junk.Literals.literal;
+
 import java.util.Map;
 
 import org.spartan.fajita.api.Fajita;
@@ -9,12 +25,6 @@ import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
-
-import static org.spartan.fajita.api.examples.Datalog.Term.*;
-import static org.spartan.fajita.api.examples.Datalog.NT.*;
-import static org.spartan.fajita.api.junk.Datalog.*;
-import static org.spartan.fajita.api.junk.Literal.*;
-import static org.spartan.fajita.api.junk.Literals.*;
 
 // TODO Roth add OR
 public class Datalog {
@@ -28,7 +38,7 @@ public class Datalog {
     RULES, RULE, LITERAL, BODY, LITERALS, LITERALS_OR_NONE
   }
 
-  public static Deriver BNF() {
+  public static Deriver bnf() {
     return Fajita.buildBNF(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(RULES) //
@@ -42,11 +52,11 @@ public class Datalog {
         .derive(LITERAL).to(name, String.class).and(terms, new VarArgs(String.class));
   }
   public static Map<String, String> buildBNF() {
-    return BNF().go(Main.packagePath);
+    return bnf().go(Main.packagePath);
   }
-  public static void main(String[] args) throws IOException {
-    System.out.println(BNF().toString());
-    Main.apiGenerator(buildBNF());
+  public static void main(String[] args) {
+    System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    // Main.apiGenerator(buildBNF());
   }
   static void test() {
     fact(name("parent").terms("john", "bob")) //

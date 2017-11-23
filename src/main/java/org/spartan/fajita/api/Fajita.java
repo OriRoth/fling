@@ -18,8 +18,6 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 
-import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
-
 /**
  * @author Tomer
  */
@@ -158,12 +156,7 @@ public class Fajita {
     protected void addRuleToBNF() {
       addRule(lhs, symbols);
     }
-    @Override public String toString() {
-      return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName()).render(ASCII);
-    }
     public BNF go() {
-      if (!symbols.isEmpty())
-        addRuleToBNF();
       return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
     }
   }
@@ -254,6 +247,10 @@ public class Fajita {
     @Override public Map<String, String> go(String pckg) {
       addRuleToBNF();
       return super.go(pckg);
+    }
+    @Override public BNF go() {
+      addRuleToBNF();
+      return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
     }
   }
 

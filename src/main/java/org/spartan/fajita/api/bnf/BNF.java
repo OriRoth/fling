@@ -1,10 +1,16 @@
 package org.spartan.fajita.api.bnf;
 
+import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.ASCII;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +18,7 @@ import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public final class BNF {
@@ -82,13 +89,10 @@ public final class BNF {
     return $;
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder() //
-        .append("Verbs set: " + getVerbs() + "\n") //
-        .append("Nonterminals set: " + getNonTerminals() + "\n") //
-        .append("Rules for " + getApiName() + ":\n");
-    for (DerivationRule rule : getRules())
-      sb.append(rule.toString() + "\n");
-    return sb.toString();
+    return toString(ASCII);
+  }
+  public String toString(BNFRenderer renderer) {
+    return render(renderer);
   }
   public List<DerivationRule> getRules() {
     return derivationRules;
@@ -135,35 +139,91 @@ public final class BNF {
       return false;
     return true;
   }
-  public String render(BNFRenderer renderer) {
-    StringBuilder $ = new StringBuilder();
-    $.append(renderer.grammarAnte());
-    for (NonTerminal nt : startSymbols)
-      $.append(renderer.startSymbolAnte()).append(nt.name()).append(renderer.startSymbolPost());
+  public Map<NonTerminal, List<List<Symbol>>> regularForm() {
+    Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
     for (DerivationRule r : derivationRules) {
-      $.append(renderer.ruleAnte());
-      $.append(renderer.headAnte());
-      $.append(renderer.symbolAnte());
-      $.append(r.lhs.name());
-      $.append(renderer.symbolPost());
-      $.append(renderer.headPost());
-      $.append(renderer.bodyAnte());
-      List<Symbol> rhs = r.getRHS();
-      if (rhs.isEmpty())
-        $.append(renderer.termAnte()).append("ε").append(renderer.termPost());
-      else
-        for (Symbol s : rhs) {
-          $.append(renderer.termAnte());
-          if (s.isVerb())
-            $.append(renderer.terminalAnte()).append(s.name()).append(renderer.terminalPost());
-          else if (s instanceof NonTerminal)
-            $.append(renderer.terminalAnte()).append(s.name()).append(renderer.terminalPost());
-          $.append(renderer.termPost());
-        }
-      $.append(renderer.bodyPost());
-      $.append(renderer.rulePost());
+      $.putIfAbsent(r.lhs, new LinkedList<>());
+      $.get(r.lhs).add(r.getRHS());
     }
-    $.append(renderer.grammarPost());
+    return $;
+  }
+  public Map<NonTerminal, List<List<Symbol>>> normalizedForm() {
+    Map<NonTerminal, List<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
+    for (Entry<NonTerminal, List<List<Symbol>>> e : rf.entrySet()) {
+      NonTerminal lhs = e.getKey();
+      List<List<Symbol>> rhs = e.getValue();
+      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.size() <= 1)) {
+        $.put(lhs, rhs);
+        continue;
+      }
+      $.put(lhs, new LinkedList<>());
+      for (int i = 0; i < rhs.size(); ++i) {
+        List<Symbol> l = new LinkedList<>();
+        NonTerminal nt = nonTerminal(lhs.name() + "$" + (i + 1));
+        l.add(nt);
+        $.get(lhs).add(l);
+        $.put(nt, new LinkedList<>());
+        if (!rhs.get(i).isEmpty())
+          $.get(nt).add(rhs.get(i));
+      }
+    }
+    assert rf.keySet().stream().allMatch(x -> $.containsKey(x));
+    return $;
+  }
+  public String render(BNFRenderer renderer) {
+    Map<NonTerminal, List<List<Symbol>>> n = renderer.sortRules(renderer.normalizedForm() ? normalizedForm() : regularForm());
+    StringBuilder $ = new StringBuilder();
+    $.append(renderer.grammarAnte(this));
+    for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
+      NonTerminal lhs = r.getKey();
+      List<List<Symbol>> rhs = r.getValue();
+      $.append(renderer.ruleAnte(lhs, rhs));
+      $.append(renderer.headAnte(lhs));
+      $.append(lhs.name());
+      $.append(renderer.headPost(lhs));
+      $.append(renderer.bodyAnte(rhs));
+      boolean clauseBetween = false;
+      for (List<Symbol> clause : r.getValue()) {
+        if (clauseBetween)
+          $.append(renderer.clauseBetween());
+        clauseBetween = true;
+        $.append(renderer.clauseAnte(clause));
+        if (clause.isEmpty())
+          $.append(renderer.epsilonAnte()).append("ε").append(renderer.epsilonPost());
+        else {
+          boolean termBetween = false;
+          for (Symbol s : clause) {
+            if (termBetween)
+              $.append(renderer.termBetween());
+            termBetween = true;
+            if (s.isVerb())
+              $.append(renderer.terminalAnte((Terminal) s)).append(s.name()).append(renderer.terminalPost((Terminal) s));
+            else if (s instanceof NonTerminal)
+              $.append(renderer.symbolAnte((NonTerminal) s)).append(s.name()).append(renderer.symbolPost((NonTerminal) s));
+          }
+        }
+        $.append(renderer.clausePost(clause));
+      }
+      $.append(renderer.bodyPost(rhs));
+      $.append(renderer.rulePost(lhs, rhs));
+    }
+    $.append(renderer.grammarPost(this));
     return $.toString();
+  }
+  private static NonTerminal nonTerminal(String name) {
+    return new NonTerminal() {
+      @Override public String name() {
+        return name;
+      }
+      @Override public String toString() {
+        return name;
+      }
+      @Override public boolean equals(Object obj) {
+        return obj != null && name.equals(obj.toString());
+      }
+      @Override public int hashCode() {
+        return name.hashCode();
+      }
+    };
   }
 }
