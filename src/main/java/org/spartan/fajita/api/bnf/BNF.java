@@ -26,6 +26,7 @@ public final class BNF {
   private final List<NonTerminal> nonterminals;
   private final List<NonTerminal> startSymbols;
   private final List<DerivationRule> derivationRules;
+  private final List<DerivationRule> classDerivationRules;
   private String name;
 
   public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
@@ -36,6 +37,20 @@ public final class BNF {
     this.nonterminals = new ArrayList<>(nonTerminals);
     this.nonterminals.add(SpecialSymbols.augmentedStartSymbol);
     this.derivationRules = new ArrayList<>(rules);
+    this.classDerivationRules = null;
+    this.startSymbols = new ArrayList<>(start);
+    this.startSymbols
+        .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
+  }
+  public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
+      Collection<DerivationRule> rules, Collection<DerivationRule> classRules, Collection<NonTerminal> start, String name) {
+    this.name = toCamelCase(name);
+    this.verbs = new LinkedHashSet<>(verbs);
+    this.verbs.add(SpecialSymbols.$);
+    this.nonterminals = new ArrayList<>(nonTerminals);
+    this.nonterminals.add(SpecialSymbols.augmentedStartSymbol);
+    this.derivationRules = new ArrayList<>(rules);
+    this.classDerivationRules = new ArrayList<>(classRules);
     this.startSymbols = new ArrayList<>(start);
     this.startSymbols
         .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
@@ -139,20 +154,20 @@ public final class BNF {
       return false;
     return true;
   }
-  public Map<NonTerminal, List<List<Symbol>>> regularForm() {
+  public Map<NonTerminal, List<List<Symbol>>> regularForm(boolean classRules) {
     Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
-    for (DerivationRule r : derivationRules) {
+    for (DerivationRule r : classRules ? classDerivationRules : derivationRules) {
       $.putIfAbsent(r.lhs, new LinkedList<>());
       $.get(r.lhs).add(r.getRHS());
     }
     return $;
   }
-  public Map<NonTerminal, List<List<Symbol>>> normalizedForm() {
-    Map<NonTerminal, List<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
+  public Map<NonTerminal, List<List<Symbol>>> normalizedForm(boolean classRules) {
+    Map<NonTerminal, List<List<Symbol>>> rf = regularForm(classRules), $ = new HashMap<>();
     for (Entry<NonTerminal, List<List<Symbol>>> e : rf.entrySet()) {
       NonTerminal lhs = e.getKey();
       List<List<Symbol>> rhs = e.getValue();
-      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.size() <= 1)) {
+      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
         $.put(lhs, rhs);
         continue;
       }
@@ -167,11 +182,11 @@ public final class BNF {
           $.get(nt).add(rhs.get(i));
       }
     }
-    assert rf.keySet().stream().allMatch(x -> $.containsKey(x));
     return $;
   }
   public String render(BNFRenderer renderer) {
-    Map<NonTerminal, List<List<Symbol>>> n = renderer.sortRules(renderer.normalizedForm() ? normalizedForm() : regularForm());
+    Map<NonTerminal, List<List<Symbol>>> n = renderer
+        .sortRules(renderer.normalizedForm() ? normalizedForm(renderer.classRules()) : regularForm(renderer.classRules()));
     StringBuilder $ = new StringBuilder();
     $.append(renderer.grammarAnte(this));
     for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
@@ -181,30 +196,34 @@ public final class BNF {
       $.append(renderer.headAnte(lhs));
       $.append(lhs.name());
       $.append(renderer.headPost(lhs));
-      $.append(renderer.bodyAnte(rhs));
-      boolean clauseBetween = false;
-      for (List<Symbol> clause : r.getValue()) {
-        if (clauseBetween)
-          $.append(renderer.clauseBetween());
-        clauseBetween = true;
-        $.append(renderer.clauseAnte(clause));
-        if (clause.isEmpty())
-          $.append(renderer.epsilonAnte()).append("ε").append(renderer.epsilonPost());
-        else {
-          boolean termBetween = false;
-          for (Symbol s : clause) {
-            if (termBetween)
-              $.append(renderer.termBetween());
-            termBetween = true;
-            if (s.isVerb())
-              $.append(renderer.terminalAnte((Terminal) s)).append(s.name()).append(renderer.terminalPost((Terminal) s));
-            else if (s instanceof NonTerminal)
-              $.append(renderer.symbolAnte((NonTerminal) s)).append(s.name()).append(renderer.symbolPost((NonTerminal) s));
+      if (renderer.visitBody(lhs, rhs)) {
+        $.append(renderer.bodyAnte(rhs));
+        boolean clauseBetween = false;
+        for (List<Symbol> clause : r.getValue()) {
+          if (clauseBetween)
+            $.append(renderer.clauseBetween());
+          clauseBetween = true;
+          $.append(renderer.clauseAnte(clause));
+          if (clause.isEmpty())
+            $.append(renderer.epsilonAnte()).append("ε").append(renderer.epsilonPost());
+          else {
+            boolean termBetween = false;
+            for (Symbol s : clause) {
+              if (termBetween)
+                $.append(renderer.termBetween());
+              termBetween = true;
+              if (s.isVerb())
+                $.append(renderer.terminalAnte((Terminal) s)).append(s.name()).append(renderer.terminalPost((Terminal) s));
+              else if (s instanceof NonTerminal)
+                $.append(renderer.symbolAnte((NonTerminal) s)).append(s.name()).append(renderer.symbolPost((NonTerminal) s));
+              else
+                $.append(renderer.special(s));
+            }
           }
+          $.append(renderer.clausePost(clause));
         }
-        $.append(renderer.clausePost(clause));
+        $.append(renderer.bodyPost(rhs));
       }
-      $.append(renderer.bodyPost(rhs));
       $.append(renderer.rulePost(lhs, rhs));
     }
     $.append(renderer.grammarPost(this));

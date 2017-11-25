@@ -16,6 +16,8 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
+import org.spartan.fajita.api.EFajita.*;
+
 @SuppressWarnings("unused") public interface BNFRenderer {
   // @formatter:off
   default String bodyAnte() {return ε();}
@@ -49,6 +51,7 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
   default String headPost(NonTerminal lhs) {return headPost();}
   default String ruleAnte(NonTerminal lhs, List<List<Symbol>> rhs) {return ruleAnte();}
   default String rulePost(NonTerminal lhs, List<List<Symbol>> rhs) {return rulePost();}
+  default String special(Symbol s) {return termAnte(s) + s.name() + termPost(s);}
   default String symbolAnte(NonTerminal nt) {return termAnte(nt);}
   default String symbolPost(NonTerminal nt) {return termPost(nt);}
   default String termAnte(Symbol s) {return termAnte();}
@@ -58,6 +61,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
   /***/
   default boolean normalizedForm() {return false;}
   default Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {return orig;}
+  default boolean visitBody(NonTerminal lhs, List<List<Symbol>> rhs) {return true;}
+  default boolean classRules() {return false;}
   default String ε() {return "";}
   // @formatter:on
   String NL = System.getProperty("line.separator");
@@ -106,11 +111,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
       @Override public String rulePost() {
         return "}";
       }
-      @Override public String bodyAnte(List<List<Symbol>> rhs) {
-        return !isInheritanceRule(rhs) ? ε() : "/*";
-      }
-      @Override public String bodyPost(List<List<Symbol>> rhs) {
-        return !isInheritanceRule(rhs) ? ε() : "*/";
+      @Override public boolean visitBody(NonTerminal lhs, List<List<Symbol>> rhs) {
+        return !isInheritanceRule(rhs);
       }
       @Override public String termAnte(Symbol s) {
         String verbType;
@@ -129,6 +131,19 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
       @Override public boolean normalizedForm() {
         return true;
       }
+      @Override public boolean classRules() {
+        return true;
+      }
+      @Override public String special(Symbol s) {
+        StringBuilder $ = new StringBuilder();
+        if (s instanceof Optional) {
+          Optional o = (Optional) s;
+          for (Symbol x : o.symbols)
+            // TODO Roth: add namer
+            $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> o;");
+        }
+        return $.toString();
+      }
       @Override public Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {
         inheritance.clear();
         for (Entry<NonTerminal, List<List<Symbol>>> e : orig.entrySet())
@@ -146,9 +161,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
         });
         int a = 0;
         while (!remain.isEmpty()) {
-          remain.entrySet().stream()
-              .filter(
-                  e -> e.getValue().stream().allMatch(c -> c.stream().allMatch(s -> (s instanceof Terminal || $.containsKey(s)))))
+          remain.entrySet().stream().filter(
+              e -> e.getValue().stream().allMatch(c -> c.stream().allMatch(s -> (!(s instanceof NonTerminal) || $.containsKey(s)))))
               .forEach(e -> $.put(e.getKey(), e.getValue()));
           $.keySet().forEach(x -> remain.remove(x));
           break;
@@ -182,11 +196,8 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
       @Override public String rulePost() {
         return "}";
       }
-      @Override public String bodyAnte(List<List<Symbol>> rhs) {
-        return !isInheritanceRule(rhs) ? ε() : "/*";
-      }
-      @Override public String bodyPost(List<List<Symbol>> rhs) {
-        return !isInheritanceRule(rhs) ? ε() : "*/";
+      @Override public boolean visitBody(NonTerminal lhs, List<List<Symbol>> rhs) {
+        return !isInheritanceRule(rhs);
       }
       @Override public String termAnte(Symbol s) {
         String verbType;
@@ -203,6 +214,9 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
         return "*/";
       }
       @Override public boolean normalizedForm() {
+        return true;
+      }
+      @Override public boolean classRules() {
         return true;
       }
       @Override public Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {
