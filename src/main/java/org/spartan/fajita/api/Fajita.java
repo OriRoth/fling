@@ -22,20 +22,20 @@ import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
  * @author Tomer
  */
 public class Fajita {
-  private final List<DerivationRule> derivationRules;
-  private final List<Terminal> terminals;
-  private final Set<Verb> verbs;
-  private final List<NonTerminal> nonterminals;
+  protected final List<DerivationRule> derivationRules;
+  protected final List<Terminal> terminals;
+  protected final Set<Verb> verbs;
+  protected final List<NonTerminal> nonterminals;
   /**
    * All Nonterminals that start the LL derivation
    */
-  private final List<NonTerminal> startSymbols;
+  protected final List<NonTerminal> startSymbols;
   /**
    * Keeps record of all NonTerminals used as parameters to some other verb.
    */
-  private final Set<NonTerminal> nestedParameters;
-  private String apiName;
-  private String packagePath;
+  protected final Set<NonTerminal> nestedParameters;
+  protected String apiName;
+  protected String packagePath;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
@@ -46,7 +46,7 @@ public class Fajita {
     startSymbols = new ArrayList<>();
     nestedParameters = new HashSet<>();
   }
-  private boolean symbolExists(final Symbol symb) {
+  protected boolean symbolExists(final Symbol symb) {
     return getNonTerminals().contains(symb) //
         || terminals.stream().anyMatch(term -> term.name().equals(symb.name()));
   }
@@ -59,7 +59,7 @@ public class Fajita {
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;
   }
-  private Fajita checkNewRule(final DerivationRule r) {
+  protected Fajita checkNewRule(final DerivationRule r) {
     if (!symbolExists(r.lhs))
       throw new IllegalArgumentException(r.lhs.name() + " is undefined.");
     if (derivationRules.contains(r))
@@ -67,18 +67,20 @@ public class Fajita {
     return this;
   }
   void addRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    DerivationRule r = new DerivationRule(lhs, symbols);
-    symbols.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb) v));
+    addRule(new DerivationRule(lhs, symbols));
+  }
+  void addRule(DerivationRule r) {
+    r.getRHS().stream().filter(s -> s.isVerb()).forEach(v -> verbs.add((Verb) v));
     checkNewRule(r);
     getRules().add(r);
   }
   void addNestedParameter(NonTerminal nested) {
     this.getNestedParameters().add(nested);
   }
-  private void validate() {
+  protected void validate() {
     validateNonterminals();
   }
-  private void validateNonterminals() {
+  protected void validateNonterminals() {
     for (NonTerminal nonTerminal : getNonTerminals())
       if ((!getRules().stream().anyMatch(rule -> rule.lhs.equals(nonTerminal))))
         throw new IllegalStateException("nonTerminal " + nonTerminal + " has no rule");
@@ -167,7 +169,7 @@ public class Fajita {
    * @author Tomer
    */
   public class InitialDeriver {
-    private final NonTerminal lhs;
+    protected final NonTerminal lhs;
 
     InitialDeriver(final NonTerminal lhs) {
       this.lhs = lhs;
@@ -208,7 +210,7 @@ public class Fajita {
     public AndDeriver or(final NonTerminal nt) {
       return or(new AndDeriver(lhs, nt));
     }
-    private AndDeriver or(AndDeriver deriver) {
+    protected AndDeriver or(AndDeriver deriver) {
       addRule(lhs, symbols);
       return deriver;
     }
@@ -240,7 +242,7 @@ public class Fajita {
     public AndDeriver and(final Terminal term, Class<?>... type) {
       return and(new Verb(term, type));
     }
-    private AndDeriver and(final Symbol symb) {
+    protected AndDeriver and(final Symbol symb) {
       symbols.add(symb);
       return this;
     }

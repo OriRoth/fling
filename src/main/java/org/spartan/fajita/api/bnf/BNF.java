@@ -210,7 +210,7 @@ public final class BNF {
     $.append(renderer.grammarPost(this));
     return $.toString();
   }
-  private static NonTerminal nonTerminal(String name) {
+  public static NonTerminal nonTerminal(String name) {
     return new NonTerminal() {
       @Override public String name() {
         return name;

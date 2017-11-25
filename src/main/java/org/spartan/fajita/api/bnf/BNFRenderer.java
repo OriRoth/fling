@@ -156,7 +156,7 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
         return $;
       }
       private boolean isInheritanceRule(List<List<Symbol>> rhs) {
-        return rhs.size() > 1 /* rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal */;
+        return rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal;
       }
     },
     JAMOOS_INTERFACES {
@@ -232,7 +232,7 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
         return $;
       }
       private boolean isInheritanceRule(List<List<Symbol>> rhs) {
-        return rhs.size() > 1 /* rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal */;
+        return rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal;
       }
     }
   }

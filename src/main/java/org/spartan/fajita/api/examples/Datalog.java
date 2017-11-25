@@ -1,6 +1,6 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.JAMOOS_CLASSES;
+import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
 import static org.spartan.fajita.api.examples.Datalog.NT.BODY;
 import static org.spartan.fajita.api.examples.Datalog.NT.LITERAL;
 import static org.spartan.fajita.api.examples.Datalog.NT.LITERALS;
@@ -55,6 +55,7 @@ public class Datalog {
     return bnf().go(Main.packagePath);
   }
   public static void main(String[] args) {
+    System.out.println(bnf().go().toString(ASCII));
     System.out.println(bnf().go().toString(JAMOOS_CLASSES));
     // Main.apiGenerator(buildBNF());
   }
