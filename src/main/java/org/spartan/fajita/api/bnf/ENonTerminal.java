@@ -6,7 +6,7 @@ import org.spartan.fajita.api.bnf.symbols.Symbol;
 
 public abstract class ENonTerminal implements Symbol {
   @Override public String name() {
-    return "#"; // Invalid Java identifier
+    return "X";
   }
   public abstract Symbol head();
   public abstract ENonTerminal bind(EFajita builder, NonTerminal lhs);

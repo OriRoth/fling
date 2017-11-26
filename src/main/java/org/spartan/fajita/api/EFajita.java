@@ -6,6 +6,7 @@ import static org.spartan.fajita.api.bnf.BNF.nonTerminal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -192,77 +193,91 @@ public class EFajita extends Fajita {
 
   public static abstract class Head extends ENonTerminal {
     Symbol head;
+    public List<Symbol> symbols;
 
+    public Head(List<Symbol> symbols) {
+      this.symbols = symbols;
+    }
     @Override public Symbol head() {
       return head;
     }
-    @SuppressWarnings("unused") @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
-      return null;
+  }
+
+  public static class Either extends Head {
+    public Either(List<Symbol> symbols) {
+      super(symbols);
+    }
+    @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
+      List<Symbol> $ = builder.solve(lhs, symbols);
+      head = nonTerminal(builder.namer.apply(lhs));
+      for (Symbol s : $)
+        builder.addRawRule((NonTerminal) head, a.singleton.list(s));
+      builder.addClassRule((NonTerminal) head, a.singleton.list(this));
+      return this;
+    }
+    @Override public int hashCode() {
+      // TODO Roth: proper hash code
+      return 0;
+    }
+    @Override public boolean equals(Object o) {
+      return o instanceof Either && new HashSet<>(symbols).equals(new HashSet<>(((Optional) o).symbols));
     }
   }
 
   public static ENonTerminal either(Symbol s1, Symbol s2, Symbol... ss) {
-    return new Head() {
-      @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
-        List<Symbol> $ = builder.solve(lhs, merge(s1, s2, ss));
-        head = nonTerminal(builder.namer.apply(lhs));
-        for (Symbol s : $)
-          builder.addRule((NonTerminal) head, a.singleton.list(s));
-        return this;
-      }
-    };
-  }
-  public static ENonTerminal concat(Symbol s1, Symbol s2, Symbol... ss) {
-    return new Head() {
-      @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
-        head = builder.group(lhs, merge(s1, s2, ss));
-        return this;
-      }
-    };
+    return new Either(merge(s1, s2, ss));
   }
 
   public static class Optional extends Head {
-    public List<Symbol> symbols;
+    public Optional(List<Symbol> symbols) {
+      super(symbols);
+    }
+    @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
+      symbols = symbols.stream().map(x -> x instanceof Terminal && !x.isVerb() ? new Verb((Terminal) x) : x).collect(toList());
+      symbols = builder.solve(lhs, symbols);
+      head = builder.groupRaw(lhs, symbols);
+      if (symbols.size() == 1) {
+        Symbol t = head;
+        head = nonTerminal(builder.namer.apply(lhs));
+        builder.addRawRule((NonTerminal) head, a.singleton.list(t));
+      }
+      builder.addRawRule((NonTerminal) head, an.empty.list());
+      builder.addClassRule((NonTerminal) head, a.singleton.list(this));
+      return this;
+    }
+    @Override public int hashCode() {
+      // TODO Roth: proper hash code
+      return 0;
+    }
+    @Override public boolean equals(Object o) {
+      // TODO Roth: check all symbols have "equals" so that would work
+      return o instanceof Optional && new HashSet<>(symbols).equals(new HashSet<>(((Optional) o).symbols));
+    }
   }
 
   public static ENonTerminal optional(Symbol s, Symbol... ss) {
-    return new Optional() {
-      @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
-        symbols = merge(s, ss).stream().map(x -> x instanceof Terminal && !x.isVerb() ? new Verb((Terminal) x) : x)
-            .collect(toList());
-        head = builder.groupRaw(lhs, symbols);
-        if (symbols.size() == 1) {
-          Symbol t = head;
-          head = nonTerminal(builder.namer.apply(lhs));
-          builder.addRawRule((NonTerminal) head, a.singleton.list(t));
-        }
-        builder.addRawRule((NonTerminal) head, an.empty.list());
-        builder.addClassRule((NonTerminal) head, a.singleton.list(this));
-        return this;
-      }
-    };
+    return new Optional(merge(s, ss));
   }
 
   public static class OneOrMore extends Head {
-    List<Symbol> symbs;
     List<Symbol> separators;
     EFajita builder;
     NonTerminal lhs;
 
-    OneOrMore(Symbol s, Symbol... ss) {
-      symbs = merge(s, ss);
+    public OneOrMore(List<Symbol> symbols) {
+      super(symbols);
     }
     @SuppressWarnings("hiding") @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
       this.builder = builder;
       this.lhs = lhs;
       head = nonTerminal(builder.namer.apply(lhs));
-      symbs = builder.solve(lhs, symbs);
+      symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
-      List<Symbol> $1 = new ArrayList<>(symbs);
+      List<Symbol> $1 = new ArrayList<>(symbols);
       $1.addAll(separators);
       $1.add(head);
       builder.addRule((NonTerminal) head, $1);
-      List<Symbol> $2 = new ArrayList<>(symbs);
+      List<Symbol> $2 = new ArrayList<>(symbols);
       builder.addRule((NonTerminal) head, $2);
       return this;
     }
@@ -273,35 +288,34 @@ public class EFajita extends Fajita {
   }
 
   public static OneOrMore oneOrMore(Symbol s, Symbol... ss) {
-    return new OneOrMore(s, ss);
+    return new OneOrMore(merge(s, ss));
   }
 
   @SuppressWarnings("hiding") public static class NoneOrMore extends Head {
-    List<Symbol> symbs;
     List<Symbol> separators;
     List<Symbol> ifNone;
     EFajita builder;
     NonTerminal lhs;
 
-    NoneOrMore(Symbol s, Symbol... ss) {
-      symbs = merge(s, ss);
+    public NoneOrMore(List<Symbol> symbols) {
+      super(symbols);
     }
     @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
       this.builder = builder;
       this.lhs = lhs;
       head = nonTerminal(builder.namer.apply(lhs));
       NonTerminal head2 = nonTerminal(builder.namer.apply(lhs));
-      symbs = builder.solve(lhs, symbs);
+      symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
       ifNone = ifNone == null ? an.empty.list() : builder.solve(lhs, ifNone);
       builder.addRule((NonTerminal) head, ifNone);
       builder.addRule((NonTerminal) head, a.singleton.list(head2));
-      List<Symbol> $1 = new ArrayList<>(symbs);
+      List<Symbol> $1 = new ArrayList<>(symbols);
       if (separators != null)
         $1.addAll(separators);
       $1.add(head2);
       builder.addRule(head2, $1);
-      List<Symbol> $2 = new ArrayList<>(symbs);
+      List<Symbol> $2 = new ArrayList<>(symbols);
       builder.addRule(head2, $2);
       return this;
     }
@@ -315,6 +329,9 @@ public class EFajita extends Fajita {
     }
 
     public class Separator extends Head {
+      public Separator() {
+        super(null);
+      }
       public ENonTerminal separator(Symbol s, Symbol... ss) {
         NoneOrMore.this.separators = merge(s, ss);
         return NoneOrMore.this;
@@ -325,6 +342,9 @@ public class EFajita extends Fajita {
     }
 
     public class IfNone extends Head {
+      public IfNone() {
+        super(null);
+      }
       public ENonTerminal ifNone(Symbol s, Symbol... ss) {
         NoneOrMore.this.ifNone = merge(s, ss);
         return NoneOrMore.this;
@@ -336,7 +356,7 @@ public class EFajita extends Fajita {
   }
 
   public static NoneOrMore noneOrMore(Symbol s, Symbol... ss) {
-    return new NoneOrMore(s, ss);
+    return new NoneOrMore(merge(s, ss));
   }
   List<Symbol> solve(NonTerminal lhs, List<Symbol> ss) {
     List<Symbol> $ = ss.stream().map(x -> x instanceof EVerb ? ((EVerb) x).bind(this, lhs) : x).collect(toList());

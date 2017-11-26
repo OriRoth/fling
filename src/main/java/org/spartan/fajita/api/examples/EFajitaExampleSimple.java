@@ -3,6 +3,7 @@ package org.spartan.fajita.api.examples;
 import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.NT.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.Term.*;
+import static org.spartan.fajita.api.bnf.symbols.Predefined.*;
 
 import java.util.Map;
 
@@ -27,9 +28,7 @@ public class EFajitaExampleSimple {
     return build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //
-        .specialize(S).into(A, B) //
-        .derive(A).to(attribute(a, optional(B))) //
-        .derive(B).to(attribute(a, optional(A)));
+        .derive(S).to(either(Text, attribute(a, Integer.class)));
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
@@ -37,5 +36,6 @@ public class EFajitaExampleSimple {
   public static void main(String[] args) {
     // System.out.println(bnf().go().toString(ASCII));
     System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    System.out.println(bnf().go().toString(JAMOOS_EITHER));
   }
 }
