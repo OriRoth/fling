@@ -219,7 +219,8 @@ import org.spartan.fajita.api.EFajita.*;
           $.append("class ").append(eitherName(e, counter)).append("{");
           for (Symbol x : e.symbols) {
             String verbType, varName, typeName, capitalName;
-            $.append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+            $.append("private ") //
+                .append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
                 .append(" ") //
                 .append(varName = namer.apply(x).toLowerCase()).append(";");
             $.append("boolean is").append(capitalName = x.name().substring(0, 1).toUpperCase() + x.name().substring(1))

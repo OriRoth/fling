@@ -30,25 +30,6 @@ public class EFajita extends Fajita {
   };
   final List<DerivationRule> classDerivationRules;
 
-  void addClassRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    addClassRule(new DerivationRule(lhs, symbols));
-  }
-  void addClassRule(DerivationRule r) {
-    classDerivationRules.add(r);
-  }
-  void addRawRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    addRawRule(new DerivationRule(lhs, symbols));
-  }
-  void addRawRule(final DerivationRule r) {
-    super.addRule(r);
-  }
-  @Override void addRule(DerivationRule r) {
-    super.addRule(r);
-    addClassRule(r);
-  }
-  @Override void addRule(NonTerminal lhs, List<Symbol> symbols) {
-    addRule(new DerivationRule(lhs, symbols));
-  }
   @Override protected Fajita checkNewRule(final DerivationRule r) {
     if (derivationRules.contains(r))
       throw new IllegalArgumentException("rule " + r + " already exists");
@@ -99,12 +80,14 @@ public class EFajita extends Fajita {
       return new InitialSpecializeDeriver(newRuleLHS);
     }
     public Map<String, String> go(String pckg) {
+      solve();
       return finish(pckg);
     }
     protected void addRuleToBNF() {
       addRule(lhs, symbols);
     }
     public BNF go() {
+      solve();
       return new BNF(getVerbs(), getNonTerminals(), getRules(), getStartSymbols(), getApiName());
     }
   }
@@ -116,9 +99,9 @@ public class EFajita extends Fajita {
       this.lhs = lhs;
     }
     public AndDeriver to(final Symbol s, final Symbol... ss) {
-      AndDeriver $ = new AndDeriver(lhs, solve(lhs, s));
+      AndDeriver $ = new AndDeriver(lhs, s);
       for (Symbol x : ss)
-        $.and(solve(lhs, x));
+        $.and(x);
       return $;
     }
     public OrDeriver toNone() {
@@ -135,9 +118,9 @@ public class EFajita extends Fajita {
     }
     // TODO Roth: allow ENonTerminals?
     public Deriver into(final NonTerminal s, final NonTerminal... ss) {
-      OrDeriver $ = new InitialDeriver(lhs).to(solve(lhs, s));
+      OrDeriver $ = new InitialDeriver(lhs).to(s);
       for (Symbol x : ss)
-        $ = $.or(solve(lhs, x));
+        $ = $.or(x);
       return $;
     }
   }
@@ -147,9 +130,9 @@ public class EFajita extends Fajita {
       super(lhs);
     }
     public AndDeriver or(final Symbol s, Symbol... ss) {
-      AndDeriver $ = new AndDeriver(lhs, solve(lhs, s));
+      AndDeriver $ = new AndDeriver(lhs, s);
       for (Symbol x : ss)
-        $.and(solve(lhs, x));
+        $.and(x);
       return or($);
     }
     private AndDeriver or(AndDeriver deriver) {
@@ -167,17 +150,19 @@ public class EFajita extends Fajita {
       symbols.add(child);
     }
     public AndDeriver and(final Symbol s, Symbol... ss) {
-      symbols.add(solve(lhs, s));
+      symbols.add(s);
       for (Symbol x : ss)
-        symbols.add(solve(lhs, x));
+        symbols.add(x);
       return this;
     }
     @Override public Map<String, String> go(String pckg) {
       addRuleToBNF();
+      solve();
       return super.go(pckg);
     }
     @Override public BNF go() {
       addRuleToBNF();
+      solve();
       return new BNF(getVerbs(), getNonTerminals(), getRules(), classDerivationRules, getStartSymbols(), getApiName());
     }
   }
@@ -211,8 +196,7 @@ public class EFajita extends Fajita {
       List<Symbol> $ = builder.solve(lhs, symbols);
       head = nonTerminal(builder.namer.apply(lhs));
       for (Symbol s : $)
-        builder.addRawRule((NonTerminal) head, a.singleton.list(s));
-      builder.addClassRule((NonTerminal) head, a.singleton.list(this));
+        builder.addRule((NonTerminal) head, a.singleton.list(s));
       return this;
     }
     @Override public int hashCode() {
@@ -235,14 +219,13 @@ public class EFajita extends Fajita {
     @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
       symbols = symbols.stream().map(x -> x instanceof Terminal && !x.isVerb() ? new Verb((Terminal) x) : x).collect(toList());
       symbols = builder.solve(lhs, symbols);
-      head = builder.groupRaw(lhs, symbols);
+      head = builder.group(lhs, symbols);
       if (symbols.size() == 1) {
         Symbol t = head;
         head = nonTerminal(builder.namer.apply(lhs));
-        builder.addRawRule((NonTerminal) head, a.singleton.list(t));
+        builder.addRule((NonTerminal) head, a.singleton.list(t));
       }
-      builder.addRawRule((NonTerminal) head, an.empty.list());
-      builder.addClassRule((NonTerminal) head, a.singleton.list(this));
+      builder.addRule((NonTerminal) head, an.empty.list());
       return this;
     }
     @Override public int hashCode() {
@@ -358,19 +341,29 @@ public class EFajita extends Fajita {
   public static NoneOrMore noneOrMore(Symbol s, Symbol... ss) {
     return new NoneOrMore(merge(s, ss));
   }
-  List<Symbol> solve(NonTerminal lhs, List<Symbol> ss) {
-    List<Symbol> $ = ss.stream().map(x -> x instanceof EVerb ? ((EVerb) x).bind(this, lhs) : x).collect(toList());
-    $.stream().filter(x -> x.isVerb()) //
-        .map(x -> ((Verb) x).type).filter(x -> x instanceof NestedType).map(x -> (NestedType) x)
-        .forEach(x -> nestedParameters.add(solve(lhs, x.nested)));
-    return $.stream().map(x -> x instanceof ENonTerminal ? ((ENonTerminal) x).bind(this, lhs).head() : x)
-        .map(x -> x instanceof Terminal && !(x instanceof Verb) ? new Verb((Terminal) x) : x).collect(toList());
+  Symbol solve(NonTerminal lhs, Symbol s) {
+    Symbol $ = s;
+    if ($ instanceof EVerb)
+      $ = ((EVerb) $).bind(this, lhs);
+    if ($.isVerb()) {
+      ParameterType t = ((Verb) $).type;
+      if (t instanceof NestedType)
+        nestedParameters.add((NonTerminal) solve(lhs, ((NestedType) t).nested));
+    }
+    if ($ instanceof ENonTerminal)
+      $ = ((ENonTerminal) $).bind(this, lhs).head();
+    if ($ instanceof Terminal && !$.isVerb())
+      $ = new Verb((Terminal) $);
+    return $;
   }
-  NonTerminal solve(NonTerminal lhs, NonTerminal s) {
-    return (NonTerminal) solve(lhs, a.singleton.list(s)).get(0);
+  void solve() {
+    classDerivationRules.addAll(new ArrayList<>(derivationRules));
+    derivationRules.clear();
+    for (DerivationRule r : classDerivationRules)
+      derivationRules.add(new DerivationRule(r.lhs, r.getRHS().stream().map(s -> solve(r.lhs, s)).collect(toList())));
   }
-  public Symbol solve(NonTerminal lhs, Symbol s) {
-    return solve(lhs, a.singleton.list(s)).get(0);
+  public List<Symbol> solve(NonTerminal lhs, List<Symbol> ss) {
+    return ss.stream().map(x -> solve(lhs, x)).collect(toList());
   }
   public Symbol group(NonTerminal lhs, List<Symbol> ss) {
     List<Symbol> nss = solve(lhs, ss);
@@ -378,14 +371,6 @@ public class EFajita extends Fajita {
       return nss.get(0);
     NonTerminal $ = nonTerminal(namer.apply(lhs));
     addRule($, nss);
-    return $;
-  }
-  public Symbol groupRaw(NonTerminal lhs, List<Symbol> ss) {
-    List<Symbol> nss = solve(lhs, ss);
-    if (nss.size() == 1)
-      return nss.get(0);
-    NonTerminal $ = nonTerminal(namer.apply(lhs));
-    addRawRule($, nss);
     return $;
   }
   static List<Symbol> merge(Symbol s, Symbol... ss) {
