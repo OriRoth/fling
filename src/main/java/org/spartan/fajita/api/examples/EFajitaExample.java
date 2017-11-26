@@ -28,7 +28,7 @@ public class EFajitaExample {
         .setApiName(apiName) //
         .start(S) //
         .derive(S).to(either(A, B), concat(A, B), C, D) //
-        .derive(A).to(a).and(b, optional(c, d)) //
+        .derive(A).to(a).and(b, optional(attribute(c, E), d)) //
         .derive(B).to(b).or(c, attribute(d, A)) //
         .derive(C).to(oneOrMore(a, b).separator(optional(c))) //
         .derive(D).to(noneOrMore(a).separator(b).ifNone(c)) //

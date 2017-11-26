@@ -13,21 +13,23 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 
 public class EFajitaExampleSimple {
-  private static final String apiName = "EFajitaExample";
+  private static final String apiName = "EFajitaExampleSimple";
 
   static enum Term implements Terminal {
     a
   }
 
   static enum NT implements NonTerminal {
-    S
+    S, A, B
   }
 
   public static Deriver bnf() {
     return build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //
-        .derive(S).to(optional(a));
+        .specialize(S).into(A, B) //
+        .derive(A).to(attribute(a, optional(B))) //
+        .derive(B).to(attribute(a, optional(A)));
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);

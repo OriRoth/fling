@@ -12,10 +12,17 @@ public class Verb implements Terminal, Comparable<Verb> {
     this.name = terminal.name();
     this.type = t;
   }
+  public Verb(String terminal, ParameterType t) {
+    this.name = terminal;
+    this.type = t;
+  }
   public Verb(Terminal terminal, Class<?>... type) {
     this(terminal, new ClassesType(type));
   }
   public Verb(Terminal terminal, NonTerminal nested) {
+    this(terminal, new NestedType(nested));
+  }
+  public Verb(String terminal, NonTerminal nested) {
     this(terminal, new NestedType(nested));
   }
   @Override public String toString() {

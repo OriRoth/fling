@@ -42,6 +42,9 @@ public class ClassesType implements ParameterType {
       return false;
     return true;
   }
+  @Override public boolean isEmpty() {
+    return this == VOID || classes.size() == 1 && classes.get(0).equals(Void.class);
+  }
 
   public static final ClassesType VOID = new ClassesType();
   // public String serialize() {

@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.ENonTerminal;
+import org.spartan.fajita.api.bnf.EVerb;
 import org.spartan.fajita.api.bnf.rules.DerivationRule;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
@@ -35,7 +36,7 @@ public class EFajita extends Fajita {
     classDerivationRules.add(r);
   }
   void addRawRule(final NonTerminal lhs, final List<Symbol> symbols) {
-    super.addRule(lhs, symbols);
+    addRawRule(new DerivationRule(lhs, symbols));
   }
   void addRawRule(final DerivationRule r) {
     super.addRule(r);
@@ -91,6 +92,11 @@ public class EFajita extends Fajita {
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
+    public InitialSpecializeDeriver specialize(final NonTerminal newRuleLHS) {
+      if (!symbols.isEmpty())
+        addRuleToBNF();
+      return new InitialSpecializeDeriver(newRuleLHS);
+    }
     public Map<String, String> go(String pckg) {
       return finish(pckg);
     }
@@ -117,6 +123,21 @@ public class EFajita extends Fajita {
     public OrDeriver toNone() {
       addRule(lhs, Collections.emptyList());
       return new OrDeriver(lhs);
+    }
+  }
+
+  public class InitialSpecializeDeriver {
+    private final NonTerminal lhs;
+
+    InitialSpecializeDeriver(final NonTerminal lhs) {
+      this.lhs = lhs;
+    }
+    // TODO Roth: allow ENonTerminals?
+    public Deriver into(final NonTerminal s, final NonTerminal... ss) {
+      OrDeriver $ = new InitialDeriver(lhs).to(solve(lhs, s));
+      for (Symbol x : ss)
+        $ = $.or(solve(lhs, x));
+      return $;
     }
   }
 
@@ -163,6 +184,9 @@ public class EFajita extends Fajita {
   public class FirstDerive {
     public InitialDeriver derive(final NonTerminal nt) {
       return new InitialDeriver(nt);
+    }
+    public InitialSpecializeDeriver specialize(final NonTerminal nt) {
+      return new InitialSpecializeDeriver(nt);
     }
   }
 
@@ -315,15 +339,17 @@ public class EFajita extends Fajita {
     return new NoneOrMore(s, ss);
   }
   List<Symbol> solve(NonTerminal lhs, List<Symbol> ss) {
-    ss.stream().filter(x -> x.isVerb()).map(x -> ((Verb) x).type).filter(x -> x instanceof NestedType).map(x -> (NestedType) x)
+    List<Symbol> $ = ss.stream().map(x -> x instanceof EVerb ? ((EVerb) x).bind(this, lhs) : x).collect(toList());
+    $.stream().filter(x -> x.isVerb()) //
+        .map(x -> ((Verb) x).type).filter(x -> x instanceof NestedType).map(x -> (NestedType) x)
         .forEach(x -> nestedParameters.add(solve(lhs, x.nested)));
-    return ss.stream().map(x -> x instanceof ENonTerminal ? ((ENonTerminal) x).bind(this, lhs).head() : x)
+    return $.stream().map(x -> x instanceof ENonTerminal ? ((ENonTerminal) x).bind(this, lhs).head() : x)
         .map(x -> x instanceof Terminal && !(x instanceof Verb) ? new Verb((Terminal) x) : x).collect(toList());
   }
   NonTerminal solve(NonTerminal lhs, NonTerminal s) {
     return (NonTerminal) solve(lhs, a.singleton.list(s)).get(0);
   }
-  Symbol solve(NonTerminal lhs, Symbol s) {
+  public Symbol solve(NonTerminal lhs, Symbol s) {
     return solve(lhs, a.singleton.list(s)).get(0);
   }
   public Symbol group(NonTerminal lhs, List<Symbol> ss) {
@@ -361,5 +387,8 @@ public class EFajita extends Fajita {
   }
   public static Verb attribute(Terminal t, NonTerminal nt) {
     return new Verb(t, nt);
+  }
+  public static Verb attribute(Terminal t, ENonTerminal ent) {
+    return new EVerb(t, ent);
   }
 }

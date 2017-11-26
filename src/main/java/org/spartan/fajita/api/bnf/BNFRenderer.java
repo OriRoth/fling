@@ -63,6 +63,7 @@ import org.spartan.fajita.api.EFajita.*;
   default boolean normalizedForm() {return false;}
   default Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {return orig;}
   default boolean visitBody(NonTerminal lhs, List<List<Symbol>> rhs) {return true;}
+  default boolean visitTerminal(Verb s) {return true;}
   default boolean classRules() {return false;}
   default String ε() {return "";}
   // @formatter:on
@@ -141,6 +142,9 @@ import org.spartan.fajita.api.EFajita.*;
       @Override public boolean classRules() {
         return true;
       }
+      @Override public boolean visitTerminal(Verb s) {
+        return !s.type.isEmpty();
+      }
       @Override public String special(Symbol s) {
         StringBuilder $ = new StringBuilder();
         if (s instanceof Optional) {
@@ -148,7 +152,7 @@ import org.spartan.fajita.api.EFajita.*;
           for (Symbol x : o.symbols)
             // TODO Roth: add namer
             $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> ")
-                .append(namer.apply(x)).append(";");
+                .append(namer.apply(x).toLowerCase()).append(";");
         }
         return $.toString();
       }
@@ -231,6 +235,9 @@ import org.spartan.fajita.api.EFajita.*;
       @Override public boolean classRules() {
         return true;
       }
+      @Override public boolean visitTerminal(Verb s) {
+        return !s.type.isEmpty();
+      }
       @Override public String special(Symbol s) {
         StringBuilder $ = new StringBuilder();
         if (s instanceof Optional) {
@@ -238,7 +245,7 @@ import org.spartan.fajita.api.EFajita.*;
           for (Symbol x : o.symbols)
             // TODO Roth: add namer
             $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> ")
-                .append(namer.apply(x)).append(";");
+                .append(namer.apply(x).toLowerCase()).append(";");
         }
         return $.toString();
       }
