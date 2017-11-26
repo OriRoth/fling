@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
@@ -67,6 +68,7 @@ import org.spartan.fajita.api.EFajita.*;
   // @formatter:on
   String NL = System.getProperty("line.separator");
 
+  // TODO Roth: code duplication
   enum builtin implements BNFRenderer {
     ASCII {
       @Override public String clauseBetween() {
@@ -93,6 +95,11 @@ import org.spartan.fajita.api.EFajita.*;
     JAMOOS_CLASSES {
       // TODO Roth: set error message of the tree
       DAG.Tree<NonTerminal> inheritance = new DAG.Tree<>();
+      Map<Symbol, Integer> counter = new HashMap<>();
+      Function<Symbol, String> namer = s -> {
+        counter.putIfAbsent(s, Integer.valueOf(1));
+        return s.name() + counter.put(s, Integer.valueOf(counter.get(s).intValue() + 1));
+      };
 
       @Override public String grammarAnte(BNF bnf) {
         return "" //
@@ -120,7 +127,7 @@ import org.spartan.fajita.api.EFajita.*;
             : ((s.isVerb() ? ("".equals(verbType = ((Verb) s).type.toString()) ? "Void" : verbType) : "Void") + " ");
       }
       @Override public String termPost(Symbol s) {
-        return (s.isNonTerminal() ? " " + s.name().toLowerCase() : "") + ";";
+        return (s.isNonTerminal() ? " " + namer.apply(s).toLowerCase() : "") + ";";
       }
       @Override public String epsilonAnte() {
         return "/*";
@@ -140,7 +147,8 @@ import org.spartan.fajita.api.EFajita.*;
           Optional o = (Optional) s;
           for (Symbol x : o.symbols)
             // TODO Roth: add namer
-            $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> o;");
+            $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> ")
+                .append(namer.apply(x)).append(";");
         }
         return $.toString();
       }
@@ -165,7 +173,6 @@ import org.spartan.fajita.api.EFajita.*;
               e -> e.getValue().stream().allMatch(c -> c.stream().allMatch(s -> (!(s instanceof NonTerminal) || $.containsKey(s)))))
               .forEach(e -> $.put(e.getKey(), e.getValue()));
           $.keySet().forEach(x -> remain.remove(x));
-          break;
         }
         return $;
       }
@@ -176,6 +183,11 @@ import org.spartan.fajita.api.EFajita.*;
     JAMOOS_INTERFACES {
       // TODO Roth: set error message of the tree
       DAG<NonTerminal> inheritance = new DAG<>();
+      Map<Symbol, Integer> counter = new HashMap<>();
+      Function<Symbol, String> namer = s -> {
+        counter.putIfAbsent(s, Integer.valueOf(1));
+        return s.name() + counter.put(s, Integer.valueOf(counter.get(s).intValue() + 1));
+      };
 
       @Override public String grammarAnte(BNF bnf) {
         return "" //
@@ -205,7 +217,7 @@ import org.spartan.fajita.api.EFajita.*;
             : ((s.isVerb() ? ("".equals(verbType = ((Verb) s).type.toString()) ? "Void" : verbType) : "Void")) + " ";
       }
       @Override public String termPost(Symbol s) {
-        return (s.isNonTerminal() ? " " + s.name().toLowerCase() : "") + "();";
+        return (s.isNonTerminal() ? " " + namer.apply(s).toLowerCase() : "") + "();";
       }
       @Override public String epsilonAnte() {
         return "/*";
@@ -218,6 +230,17 @@ import org.spartan.fajita.api.EFajita.*;
       }
       @Override public boolean classRules() {
         return true;
+      }
+      @Override public String special(Symbol s) {
+        StringBuilder $ = new StringBuilder();
+        if (s instanceof Optional) {
+          Optional o = (Optional) s;
+          for (Symbol x : o.symbols)
+            // TODO Roth: add namer
+            $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> ")
+                .append(namer.apply(x)).append(";");
+        }
+        return $.toString();
       }
       @Override public Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {
         inheritance.clear();

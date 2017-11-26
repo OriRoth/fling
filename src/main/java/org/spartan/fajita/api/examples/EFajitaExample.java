@@ -38,7 +38,7 @@ public class EFajitaExample {
     return bnf().go(Main.packagePath);
   }
   public static void main(String[] args) {
-    // System.out.println(bnf().go().toString(ASCII));
+//    System.out.println(bnf().go().toString(ASCII));
     System.out.println(bnf().go().toString(JAMOOS_CLASSES));
   }
 }
