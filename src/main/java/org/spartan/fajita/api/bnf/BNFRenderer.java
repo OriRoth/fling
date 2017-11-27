@@ -214,6 +214,7 @@ import org.spartan.fajita.api.EFajita.*;
       }
     },
     JAMOOS_EITHER {
+      // TODO Roth: set proper type errors
       Map<Object, Integer> counters = new HashMap<>();
       Function<Object, Integer> counter = s -> {
         counters.putIfAbsent(s, Integer.valueOf(1));
@@ -236,61 +237,58 @@ import org.spartan.fajita.api.EFajita.*;
         StringBuilder $ = new StringBuilder("*/");
         if (s instanceof Either) {
           Either e = (Either) s;
-          $.append("class ").append(eitherName(e, counter)).append("{");
+          $.append("static class ").append(eitherName(e, counter)).append("{");
+          List<String> enumContent = an.empty.list();
+          $.append("public Object $;").append("public Tag tag;");
           for (Symbol x : e.symbols) {
-            String verbType, varName, typeName, capitalName;
-            $.append("private ") //
-                .append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
-                .append(" ") //
-                .append(varName = namer.apply(x).toLowerCase()).append(";");
+            String verbType, typeName, capitalName;
             $.append("boolean is").append(capitalName = x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
-                .append("(){return ") //
-                .append(varName).append("==null;}");
-            $.append(typeName).append(" get").append(capitalName).append("(){return ").append(varName).append(";}");
+                .append("(){return Tag.").append(capitalName).append(".equals(tag);}");
+            $.append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                .append(" get").append(capitalName).append("(){return (") //
+                .append(typeName).append(")$;}");
+            enumContent.add(capitalName);
           }
-          $.append("}");
+          $.append("public enum Tag{");
+          for (String x : enumContent)
+            $.append(x).append(",");
+          $.append("}}");
         } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
           NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
               : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
-          $.append("class ").append(eitherName(n, counter)).append("{");
-          String someSymbolVar = null;
-          for (Symbol x : n.symbols) {
-            String verbType, varName, typeName, capitalName;
-            $.append("private ") //
-                .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
-                    + "[]")
-                .append(" ") //
-                .append(varName = namer.apply(x).toLowerCase()).append(";");
-            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
-                .append("(){return ").append(varName).append(";}");
-            someSymbolVar = someSymbolVar != null ? someSymbolVar : varName;
+          if (!n.ifNone.isEmpty()) {
+            $.append("static class ").append(eitherName(n, counter)).append("{public boolean exist;");
+            for (Symbol x : n.symbols) {
+              String verbType, varName, typeName, capitalName;
+              $.append("private ") //
+                  .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                      + "[]")
+                  .append(" ") //
+                  .append(varName = namer.apply(x).toLowerCase()).append(";");
+              $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                  .append("(){return ").append(varName).append(";}");
+            }
+            for (Symbol x : n.separators) {
+              String verbType, varName, typeName, capitalName;
+              $.append("private ") //
+                  .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                      + "[]")
+                  .append(" ") //
+                  .append(varName = namer.apply(x).toLowerCase()).append(";");
+              $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                  .append("(){return ").append(varName).append(";}");
+            }
+            for (Symbol x : n.ifNone) {
+              String verbType, varName, typeName, capitalName;
+              $.append("private ") //
+                  .append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                  .append(" ") //
+                  .append(varName = namer.apply(x).toLowerCase()).append(";");
+              $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                  .append("(){return ").append(varName).append(";}");
+            }
+            $.append("boolean isList(){return exist;}boolean isNone(){return !exist;}}");
           }
-          for (Symbol x : n.separators) {
-            String verbType, varName, typeName, capitalName;
-            $.append("private ") //
-                .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
-                    + "[]")
-                .append(" ") //
-                .append(varName = namer.apply(x).toLowerCase()).append(";");
-            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
-                .append("(){return ").append(varName).append(";}");
-          }
-          String someNoneVar = null;
-          for (Symbol x : n.ifNone) {
-            String verbType, varName, typeName, capitalName;
-            $.append("private ") //
-                .append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
-                .append(" ") //
-                .append(varName = namer.apply(x).toLowerCase()).append(";");
-            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
-                .append("(){return ").append(varName).append(";}");
-            someNoneVar = someNoneVar != null ? someNoneVar : varName;
-          }
-          $.append("boolean isList(){return ") //
-              .append(someSymbolVar).append("!=null;}");
-          $.append("boolean isNone(){return ") //
-              .append(someNoneVar).append("!=null;}");
-          $.append("}");
         }
         return $.append("/*").toString();
       }
