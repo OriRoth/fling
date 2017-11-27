@@ -3,7 +3,6 @@ package org.spartan.fajita.api.examples;
 import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.NT.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.Term.*;
-import static org.spartan.fajita.api.bnf.symbols.Predefined.*;
 
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public class EFajitaExampleSimple {
   private static final String apiName = "EFajitaExampleSimple";
 
   static enum Term implements Terminal {
-    a
+    a, b, c, d, e, f
   }
 
   static enum NT implements NonTerminal {
@@ -28,13 +27,16 @@ public class EFajitaExampleSimple {
     return build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //
-        .derive(S).to(either(Text, attribute(a, S)));
+        .derive(S)
+        .to(noneOrMore(attribute(a, String.class), attribute(b, String.class))
+            .separator(attribute(c, String.class), attribute(d, String.class))
+            .ifNone(attribute(e, String.class), attribute(f, String.class)));
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
   }
   public static void main(String[] args) {
-    System.out.println(bnf().go().toString(ASCII));
+    // System.out.println(bnf().go().toString(ASCII));
     System.out.println(bnf().go().toString(JAMOOS_CLASSES));
     System.out.println(bnf().go().toString(JAMOOS_EITHER));
   }

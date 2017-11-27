@@ -243,7 +243,7 @@ public class EFajita extends Fajita {
   }
 
   public static class OneOrMore extends Head {
-    List<Symbol> separators;
+    public List<Symbol> separators;
     EFajita builder;
     NonTerminal lhs;
 
@@ -268,6 +268,14 @@ public class EFajita extends Fajita {
       this.separators = merge(s, ss);
       return this;
     }
+    @Override public int hashCode() {
+      // TODO Roth: proper hash code
+      return 0;
+    }
+    @Override public boolean equals(Object o) {
+      return o instanceof OneOrMore && new HashSet<>(symbols).equals(new HashSet<>(((OneOrMore) o).symbols))
+          && new HashSet<>(separators).equals(new HashSet<>(((OneOrMore) o).separators));
+    }
   }
 
   public static OneOrMore oneOrMore(Symbol s, Symbol... ss) {
@@ -275,8 +283,8 @@ public class EFajita extends Fajita {
   }
 
   @SuppressWarnings("hiding") public static class NoneOrMore extends Head {
-    List<Symbol> separators;
-    List<Symbol> ifNone;
+    public List<Symbol> separators;
+    public List<Symbol> ifNone;
     EFajita builder;
     NonTerminal lhs;
 
@@ -322,6 +330,9 @@ public class EFajita extends Fajita {
       @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
         return NoneOrMore.this.bind(builder, lhs);
       }
+      public NoneOrMore parent() {
+        return NoneOrMore.this;
+      }
     }
 
     public class IfNone extends Head {
@@ -335,13 +346,16 @@ public class EFajita extends Fajita {
       @Override public ENonTerminal bind(EFajita builder, NonTerminal lhs) {
         return NoneOrMore.this.bind(builder, lhs);
       }
+      public NoneOrMore parent() {
+        return NoneOrMore.this;
+      }
     }
   }
 
   public static NoneOrMore noneOrMore(Symbol s, Symbol... ss) {
     return new NoneOrMore(merge(s, ss));
   }
-  Symbol solve(NonTerminal lhs, Symbol s) {
+  public Symbol solve(NonTerminal lhs, Symbol s) {
     Symbol $ = s;
     if ($ instanceof EVerb)
       $ = ((EVerb) $).bind(this, lhs);

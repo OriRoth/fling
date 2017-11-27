@@ -157,10 +157,30 @@ import org.spartan.fajita.api.EFajita.*;
                 .append(namer.apply(x).toLowerCase()).append(";");
         } else if (s instanceof Either) {
           Either e = (Either) s;
-          $.append("Either");
-          e.symbols.stream().forEach(x -> $.append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1)));
           Integer c = counter.apply("EitherFieldName");
-          return eitherName(e, counter).append(" e" + c + ";").toString();
+          $.append(eitherName(e, counter)).append(" e" + c + ";");
+        } else if (s instanceof OneOrMore) {
+          OneOrMore o = (OneOrMore) s;
+          for (Symbol x : o.symbols)
+            $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append(namer.apply(x).toLowerCase())
+                .append(";");
+          for (Symbol x : o.separators)
+            $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append("s" + namer.apply(x).toLowerCase())
+                .append(";");
+        } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
+          NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
+              : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
+          if (n.ifNone.isEmpty()) {
+            for (Symbol x : n.symbols)
+              $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append(namer.apply(x).toLowerCase())
+                  .append(";");
+            for (Symbol x : n.separators)
+              $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append("s" + namer.apply(x).toLowerCase())
+                  .append(";");
+          } else {
+            Integer c = counter.apply("EitherFieldName");
+            $.append(eitherName(n, counter)).append(" e" + c + ";");
+          }
         }
         return $.toString();
       }
@@ -228,6 +248,48 @@ import org.spartan.fajita.api.EFajita.*;
                 .append(varName).append("==null;}");
             $.append(typeName).append(" get").append(capitalName).append("(){return ").append(varName).append(";}");
           }
+          $.append("}");
+        } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
+          NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
+              : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
+          $.append("class ").append(eitherName(n, counter)).append("{");
+          String someSymbolVar = null;
+          for (Symbol x : n.symbols) {
+            String verbType, varName, typeName, capitalName;
+            $.append("private ") //
+                .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                    + "[]")
+                .append(" ") //
+                .append(varName = namer.apply(x).toLowerCase()).append(";");
+            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                .append("(){return ").append(varName).append(";}");
+            someSymbolVar = someSymbolVar != null ? someSymbolVar : varName;
+          }
+          for (Symbol x : n.separators) {
+            String verbType, varName, typeName, capitalName;
+            $.append("private ") //
+                .append(typeName = (x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                    + "[]")
+                .append(" ") //
+                .append(varName = namer.apply(x).toLowerCase()).append(";");
+            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                .append("(){return ").append(varName).append(";}");
+          }
+          String someNoneVar = null;
+          for (Symbol x : n.ifNone) {
+            String verbType, varName, typeName, capitalName;
+            $.append("private ") //
+                .append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
+                .append(" ") //
+                .append(varName = namer.apply(x).toLowerCase()).append(";");
+            $.append(typeName).append(" get").append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
+                .append("(){return ").append(varName).append(";}");
+            someNoneVar = someNoneVar != null ? someNoneVar : varName;
+          }
+          $.append("boolean isList(){return ") //
+              .append(someSymbolVar).append("!=null;}");
+          $.append("boolean isNone(){return ") //
+              .append(someNoneVar).append("!=null;}");
           $.append("}");
         }
         return $.append("/*").toString();
@@ -344,11 +406,11 @@ import org.spartan.fajita.api.EFajita.*;
       l.isVerb() && ((Verb) l).type.isEmpty()).forEach(e -> tbr.add(e))));
       rs.values().stream().forEach(r -> r.stream().forEach(c -> c.removeAll(tbr)));
     }
-    static StringBuilder eitherName(Either e, Function<Object, Integer> counter) {
+    static String eitherName(Head h, Function<Object, Integer> counter) {
       StringBuilder $ = new StringBuilder("Either");
-      e.symbols.stream().forEach(x -> $.append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1)));
-      Integer c = counter.apply(e);
-      return (c.intValue() == 1 ? $ : $.append(c));
+      h.symbols.stream().forEach(x -> $.append(x.name().substring(0, 1).toUpperCase() + x.name().substring(1)));
+      Integer c = counter.apply(h);
+      return (c.intValue() == 1 ? $ : $.append(c)).toString();
     }
   }
 }
