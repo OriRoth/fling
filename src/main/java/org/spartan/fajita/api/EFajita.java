@@ -157,7 +157,6 @@ public class EFajita extends Fajita {
     }
     @Override public Map<String, String> go(String pckg) {
       addRuleToBNF();
-      solve();
       return super.go(pckg);
     }
     @Override public BNF go() {
@@ -238,7 +237,7 @@ public class EFajita extends Fajita {
     }
   }
 
-  public static ENonTerminal optional(Symbol s, Symbol... ss) {
+  public static ENonTerminal option(Symbol s, Symbol... ss) {
     return new Optional(merge(s, ss));
   }
 
@@ -374,7 +373,15 @@ public class EFajita extends Fajita {
     classDerivationRules.addAll(new ArrayList<>(derivationRules));
     derivationRules.clear();
     for (DerivationRule r : classDerivationRules)
-      derivationRules.add(new DerivationRule(r.lhs, r.getRHS().stream().map(s -> solve(r.lhs, s)).collect(toList())));
+      addRule(new DerivationRule(r.lhs, r.getRHS().stream().map(s -> solve(r.lhs, s)).collect(toList())));
+    for (DerivationRule r : derivationRules) {
+      nonterminals.add(r.lhs);
+      for (Symbol s : r.getRHS())
+        if (s.isNonTerminal())
+          nonterminals.add((NonTerminal) s);
+        else
+          terminals.add((Verb) s);
+    }
   }
   public List<Symbol> solve(NonTerminal lhs, List<Symbol> ss) {
     return ss.stream().map(x -> solve(lhs, x)).collect(toList());

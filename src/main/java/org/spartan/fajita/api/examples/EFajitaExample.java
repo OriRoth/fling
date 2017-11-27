@@ -28,11 +28,11 @@ public class EFajitaExample {
         .setApiName(apiName) //
         .start(S) //
         .derive(S).to(either(A, B), C, D) //
-        .derive(A).to(a).and(b, optional(attribute(c, E), d)) //
+        .derive(A).to(a).and(b, option(attribute(c, E), d)) //
         .derive(B).to(b).or(c, attribute(d, A)) //
-        .derive(C).to(oneOrMore(a, b).separator(optional(c))) //
+        .derive(C).to(oneOrMore(a, b).separator(option(c))) //
         .derive(D).to(noneOrMore(a).separator(b).ifNone(c)) //
-        .derive(E).to(optional(a));
+        .derive(E).to(option(a));
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);

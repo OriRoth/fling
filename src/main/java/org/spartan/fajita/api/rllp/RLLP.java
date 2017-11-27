@@ -43,6 +43,7 @@ public class RLLP {
         $.add(new Item(r, i));
     return $;
   }
+  // NOTE not exactly as the algorithm specified in the paper--[or]
   private Map<Item, Map<Verb, Action>> calculateRLLPredictionTable() {
     Map<Item, Map<Verb, Action>> $ = new HashMap<>();
     for (Item i : items) {
@@ -72,6 +73,7 @@ public class RLLP {
     }
     return $;
   }
+  // NOTE not exactly as the algorithm specified in the paper--[or]
   private Map<Verb, List<Item>> calculateJumps(Item i) {
     Map<Verb, List<Item>> $ = new HashMap<>();
     for (int j = i.dotIndex + 1; j < i.rule.size(); j++) {

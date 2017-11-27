@@ -23,9 +23,9 @@ import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
  */
 public class Fajita {
   protected final List<DerivationRule> derivationRules;
-  protected final List<Terminal> terminals;
+  protected final Set<Terminal> terminals;
   protected final Set<Verb> verbs;
-  protected final List<NonTerminal> nonterminals;
+  protected final Set<NonTerminal> nonterminals;
   /**
    * All Nonterminals that start the LL derivation
    */
@@ -39,9 +39,9 @@ public class Fajita {
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(final Class<Term> terminalEnum,
       final Class<NT> nonterminalEnum) {
-    terminals = new ArrayList<>(EnumSet.allOf(terminalEnum));
+    terminals = new LinkedHashSet<>(EnumSet.allOf(terminalEnum));
     verbs = new LinkedHashSet<>();
-    nonterminals = new ArrayList<>(EnumSet.allOf(nonterminalEnum));
+    nonterminals = new LinkedHashSet<>(EnumSet.allOf(nonterminalEnum));
     derivationRules = new ArrayList<>();
     startSymbols = new ArrayList<>();
     nestedParameters = new HashSet<>();
@@ -50,7 +50,7 @@ public class Fajita {
     return getNonTerminals().contains(symb) //
         || terminals.stream().anyMatch(term -> term.name().equals(symb.name()));
   }
-  public List<NonTerminal> getNonTerminals() {
+  public Set<NonTerminal> getNonTerminals() {
     return nonterminals;
   }
   public Set<Verb> getVerbs() {

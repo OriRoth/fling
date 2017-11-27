@@ -4,6 +4,7 @@ import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.NT.*;
 import static org.spartan.fajita.api.examples.EFajitaExampleSimple.Term.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.spartan.fajita.api.EFajita.*;
@@ -28,16 +29,19 @@ public class EFajitaExampleSimple {
         .setApiName(apiName) //
         .start(S) //
         .derive(S)
-        .to(noneOrMore(attribute(a, String.class), attribute(b, String.class))
-            .separator(attribute(c, String.class), attribute(d, String.class))
-            .ifNone(attribute(e, String.class), attribute(f, String.class)));
+        // .to(noneOrMore(attribute(a, String.class), attribute(b,
+        // String.class))
+        // .separator(attribute(c, String.class), attribute(d, String.class))
+        // .ifNone(attribute(e, String.class), attribute(f, String.class)));
+        .to(option(attribute(a, S)));
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
   }
-  public static void main(String[] args) {
-    // System.out.println(bnf().go().toString(ASCII));
-    System.out.println(bnf().go().toString(JAMOOS_CLASSES));
-    System.out.println(bnf().go().toString(JAMOOS_EITHER));
+  public static void main(String[] args) throws IOException {
+    System.out.println(bnf().go().toString(ASCII));
+    // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    // System.out.println(bnf().go().toString(JAMOOS_EITHER));
+    Main.apiGenerator(buildBNF());
   }
 }
