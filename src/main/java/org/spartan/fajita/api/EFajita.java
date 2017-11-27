@@ -26,7 +26,7 @@ public class EFajita extends Fajita {
   private static Map<NonTerminal, Integer> counter = an.empty.map();
   Function<NonTerminal, String> namer = lhs -> {
     counter.putIfAbsent(lhs, Integer.valueOf(1));
-    return lhs.name() + "$" + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
+    return lhs.name() /* + "$" */ + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
   };
   final List<DerivationRule> classDerivationRules;
 
@@ -253,14 +253,18 @@ public class EFajita extends Fajita {
       this.builder = builder;
       this.lhs = lhs;
       head = nonTerminal(builder.namer.apply(lhs));
+      NonTerminal head2 = nonTerminal(builder.namer.apply(lhs));
       symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
       List<Symbol> $1 = new ArrayList<>(symbols);
       $1.addAll(separators);
-      $1.add(head);
+      $1.add(head2);
       builder.addRule((NonTerminal) head, $1);
-      List<Symbol> $2 = new ArrayList<>(symbols);
-      builder.addRule((NonTerminal) head, $2);
+      List<Symbol> $2 = new ArrayList<>(separators);
+      $2.addAll(symbols);
+      $2.add(head2);
+      builder.addRule(head2, $2);
+      builder.addRule(head2, an.empty.list());
       return this;
     }
     public ENonTerminal separator(Symbol s, Symbol... ss) {
@@ -298,15 +302,16 @@ public class EFajita extends Fajita {
       symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
       ifNone = ifNone == null ? an.empty.list() : builder.solve(lhs, ifNone);
-      builder.addRule((NonTerminal) head, ifNone);
-      builder.addRule((NonTerminal) head, a.singleton.list(head2));
       List<Symbol> $1 = new ArrayList<>(symbols);
-      if (separators != null)
-        $1.addAll(separators);
       $1.add(head2);
-      builder.addRule(head2, $1);
-      List<Symbol> $2 = new ArrayList<>(symbols);
+      builder.addRule((NonTerminal) head, $1);
+      builder.addRule((NonTerminal) head, ifNone);
+      List<Symbol> $2 = an.empty.list();
+      $2.addAll(separators);
+      $2.addAll(symbols);
+      $2.add(head2);
       builder.addRule(head2, $2);
+      builder.addRule(head2, an.empty.list());
       return this;
     }
     public IfNone separator(Symbol s, Symbol... ss) {
