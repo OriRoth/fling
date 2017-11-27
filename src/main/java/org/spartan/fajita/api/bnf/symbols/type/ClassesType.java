@@ -9,7 +9,7 @@ public class ClassesType implements ParameterType {
 
   public ClassesType(final Class<?>... classes) {
     if (classes.length == 0)
-      this.classes = a.singleton.list(Void.class);
+      this.classes = an.empty.list();
     else
       this.classes = new ArrayList<>(Arrays.asList(classes));
   }
