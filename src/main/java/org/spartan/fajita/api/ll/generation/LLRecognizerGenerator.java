@@ -22,7 +22,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-public class LLRecognizerGenerator {
+@SuppressWarnings("restriction") public class LLRecognizerGenerator {
   public static JavaFile generate(BNF bnf) {
     LLRecognizer recognizer = new LLRecognizer(bnf);
     List<TypeSpec> configurationTypes = new ArrayList<>();
@@ -33,8 +33,8 @@ public class LLRecognizerGenerator {
       if (!bnf.getStartSymbols().contains(nt))
         configurationTypes.add(generateNTConfiguration(recognizer, nt));
     TypeSpec.Builder container = TypeSpec.classBuilder(containerClass).addTypes(configurationTypes);
-    ParameterizedTypeName startType = ParameterizedTypeName.get(type("C_"+bnf.getStartSymbols().get(0).name()),type("C_$"));
-    container.addField(FieldSpec.builder(startType, "start",Modifier.PUBLIC,Modifier.STATIC).build());
+    ParameterizedTypeName startType = ParameterizedTypeName.get(type("C_" + bnf.getStartSymbols().get(0).name()), type("C_$"));
+    container.addField(FieldSpec.builder(startType, "start", Modifier.PUBLIC, Modifier.STATIC).build());
     return JavaFile.builder("", container.build()).build();
   }
   private static TypeSpec generateNTConfiguration(LLRecognizer recognizer, NonTerminal nt) {

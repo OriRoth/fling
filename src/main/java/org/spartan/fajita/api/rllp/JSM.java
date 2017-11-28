@@ -2,6 +2,7 @@ package org.spartan.fajita.api.rllp;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,6 +73,9 @@ public class JSM {
   public void pushAll(List<Item> toPush) {
     pushAll(toPush, new ArrayList<>());
   }
+  public void push(Item toPush) {
+    pushAll(Arrays.asList(toPush), new ArrayList<>());
+  }
   /**
    * Pushes items (in given order) to the JSM and makes it readonly afterwards
    * 
@@ -91,7 +95,7 @@ public class JSM {
       push(currentlyPushing.get(0), ancestors);
       currentlyPushing.remove(0);
     }
-    makeReadOnly();
+    // makeReadOnly(); // Commented out--[or]
   }
   /**
    * Pushes item i to S0 and coordinates S1 stack.
@@ -210,7 +214,6 @@ public class JSM {
   @Override public String toString() {
     return "JSM.S0: " + getS0().toString();
   }
-  @Deprecated // This is used only in tests..
   public Item pop() {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");
@@ -222,7 +225,6 @@ public class JSM {
    * 
    * @param v the jump stack used
    */
-  @Deprecated // This is used only in tests..
   public void jump(Verb v) {
     if (readonly)
       throw new IllegalStateException("Can't load in readonly mode.");

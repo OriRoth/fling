@@ -22,6 +22,7 @@ import java.util.Map;
 import org.spartan.fajita.api.Fajita;
 import org.spartan.fajita.api.Fajita.Deriver;
 import org.spartan.fajita.api.Main;
+import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
@@ -30,11 +31,11 @@ import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 public class Datalog {
   private static final String apiName = "Datalog";
 
-  static enum Term implements Terminal {
+  public static enum Term implements Terminal {
     head, body, fact, literal, name, terms
   }
 
-  static enum NT implements NonTerminal {
+  public static enum NT implements NonTerminal {
     RULES, RULE, LITERAL, BODY, LITERALS, LITERALS_OR_NONE
   }
 
@@ -50,6 +51,9 @@ public class Datalog {
         .derive(LITERALS).to(literal, LITERAL).and(LITERALS_OR_NONE) //
         .derive(LITERALS_OR_NONE).to(literal, LITERAL).and(LITERALS_OR_NONE).orNone() //
         .derive(LITERAL).to(name, String.class).and(terms, new VarArgs(String.class));
+  }
+  public static BNF getBNF() {
+    return bnf().go();
   }
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
