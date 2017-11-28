@@ -23,7 +23,7 @@ import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.ParameterType;
 
 public class EFajita extends Fajita {
-  private static Map<NonTerminal, Integer> counter = an.empty.map();
+  private Map<NonTerminal, Integer> counter = an.empty.map();
   Function<NonTerminal, String> namer = lhs -> {
     counter.putIfAbsent(lhs, Integer.valueOf(1));
     return lhs.name() /* + "$" */ + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));

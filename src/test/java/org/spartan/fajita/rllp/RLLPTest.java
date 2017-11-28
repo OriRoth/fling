@@ -1,6 +1,5 @@
 package org.spartan.fajita.rllp;
 
-import static org.spartan.fajita.api.EFajita.attribute;
 import static org.spartan.fajita.api.EFajita.noneOrMore;
 import static org.spartan.fajita.api.EFajita.oneOrMore;
 import static org.spartan.fajita.rllp.RLLPTest.NT.BODY;
@@ -17,6 +16,7 @@ import static org.spartan.fajita.rllp.RLLPTest.Term.terms;
 import org.junit.Test;
 import org.spartan.fajita.api.EFajita;
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.BNFRenderer;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.rllp.RLLPConcrete;
@@ -36,23 +36,24 @@ public class RLLPTest {
         .start(S) //
         .derive(S).to(noneOrMore(RULE)) //
         .derive(RULE) //
-        /**/.to(fact) //
-        /**/.or(head).and(BODY) //
-        .derive(BODY).to(body, oneOrMore(attribute(literal, LITERAL))) //
-        .derive(LITERAL).to(attribute(name), attribute(terms)) //
+        /**/.to(fact, LITERAL) //
+        /**/.or(head, LITERAL, BODY) //
+        .derive(BODY).to(body, oneOrMore(literal, LITERAL)) //
+        .derive(LITERAL).to(name, terms) //
         .go();
   }
 
   RLLPConcrete $ = new RLLPConcrete(bnf());
 
   @Test public void a() {
-    $.consume( //
+    System.out.println(bnf().toString(BNFRenderer.builtin.ASCII));
+    assert $.consume( //
         fact, name, terms, //
         fact, name, terms, //
         head, name, terms, body, //
         /**/literal, name, terms, //
         /**/literal, name, terms, //
         fact, name, terms //
-    );
+    ).accepted();
   }
 }

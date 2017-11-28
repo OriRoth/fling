@@ -3,6 +3,7 @@ package org.spartan.fajita.api.rllp;
 import static org.spartan.fajita.api.bnf.symbols.SpecialSymbols.$;
 
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.rllp.RLLP.Action;
@@ -11,73 +12,83 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
 public class RLLPConcrete {
-  private final BNF bnf;
   private final RLLP rllp;
   private final JSM jsm;
   private boolean accept;
   private boolean reject;
   private boolean initialized;
+  private Symbol startSymbol;
 
   public RLLPConcrete(BNF bnf) {
-    this.bnf = bnf;
     this.rllp = new RLLP(bnf);
     this.jsm = new JSM(rllp);
     accept = false;
     reject = false;
     initialized = false;
   }
-  // NOTE should be according to paper
-  public void consume(Verb t) {
+  // NOTE should be consistent with paper
+  public RLLPConcrete consume(Verb t) {
     if (accept)
       throw new RuntimeException("Parser has already accepted");
     if (reject)
       throw new RuntimeException("Parser has already rejected");
     if (!initialized) {
-      jsm.push(rllp.getStartItem(t));
+      Item i = rllp.getStartItem(t);
+      startSymbol = i.rule.lhs;
+      jsm.push(i);
       initialized = true;
     }
     Item i = jsm.pop();
     if (i.readyToReduce()) {
-      if (!bnf.getStartSymbols().contains(i.rule.lhs)) {
+      if (!startSymbol.equals(i.rule.lhs)) {
         jsm.jump(t);
-        return;
+        return this;
       }
       if ($.equals(t)) {
         accept = true;
-        return;
+        return this;
       }
       reject = true;
-      return;
+      return this;
     }
     if (i.afterDot().isVerb()) {
       if (!i.afterDot().equals(t)) {
         reject = true;
-        return;
+        return this;
       }
       jsm.push(i.advance());
-      return;
+      return this;
     }
     Action a = rllp.predict(i, t);
     if (a == null) {
       reject = true;
-      return;
+      return this;
     }
     if (ActionType.PUSH.equals(a.type())) {
       jsm.pushAll(((Push) a).itemsToPush);
-      return;
+      return this;
     }
     assert ActionType.JUMP.equals(a.type()) : "JSM failure";
     jsm.jump(((Jump) a).v);
+    return this;
   }
-  public void consume(Terminal t) {
-    consume(new Verb(t));
+  public RLLPConcrete consume(Terminal t) {
+    return consume(new Verb(t));
   }
-  public void consume(Verb... ts) {
+  public RLLPConcrete consume(Verb... ts) {
     for (Verb t : ts)
       consume(t);
+    return this;
   }
-  public void consume(Terminal... ts) {
+  public RLLPConcrete consume(Terminal... ts) {
     for (Terminal t : ts)
       consume(t);
+    return this;
+  }
+  public boolean accepted() {
+    return accept;
+  }
+  public boolean rejected() {
+    return reject;
   }
 }
