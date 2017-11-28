@@ -13,9 +13,9 @@ import static org.spartan.fajita.api.examples.Datalog.Term.head;
 import static org.spartan.fajita.api.examples.Datalog.Term.literal;
 import static org.spartan.fajita.api.examples.Datalog.Term.name;
 import static org.spartan.fajita.api.examples.Datalog.Term.terms;
-import static org.spartan.fajita.api.junk.Datalog2.fact;
-import static org.spartan.fajita.api.junk.Literal2.name;
-import static org.spartan.fajita.api.junk.Literals2.literal;
+import static org.spartan.fajita.api.junk.Datalog3.fact;
+import static org.spartan.fajita.api.junk.Literal3.name;
+import static org.spartan.fajita.api.junk.Literals3.literal;
 
 import java.util.Map;
 
@@ -71,6 +71,8 @@ public class Datalog {
             literal(name("parent").terms("A", "B"))) //
         .head(name("ancestor").terms("A", "B")).body( //
             literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B")));
+                .literal(name("ancestor").terms("C", "B"))) //
+        .fact(name("parent").terms("bob", "donald")) //
+    ;
   }
 }

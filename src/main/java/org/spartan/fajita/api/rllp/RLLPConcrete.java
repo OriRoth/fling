@@ -2,6 +2,9 @@ package org.spartan.fajita.api.rllp;
 
 import static org.spartan.fajita.api.bnf.symbols.SpecialSymbols.$;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.spartan.fajita.api.bnf.BNF;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
@@ -21,13 +24,22 @@ public class RLLPConcrete {
 
   public RLLPConcrete(BNF bnf) {
     this.rllp = new RLLP(bnf);
-    this.jsm = getJSM();
+    this.jsm = new JSM(rllp);
     accept = false;
     reject = false;
     initialized = false;
   }
-  public JSM getJSM() {
-    return new JSM(rllp);
+  void push(Item... items) {
+    push(Arrays.asList(items));
+  }
+  void push(List<Item> items) {
+    jsm.pushAll(items);
+  }
+  void jump(Verb v) {
+    jsm.jump(v);
+  }
+  Item pop() {
+    return jsm.pop();
   }
   // NOTE should be consistent with paper
   public RLLPConcrete consume(Verb t) {
@@ -38,13 +50,13 @@ public class RLLPConcrete {
     if (!initialized) {
       Item i = rllp.getStartItem(t);
       startSymbol = i.rule.lhs;
-      jsm.push(i);
+      push(i);
       initialized = true;
     }
-    Item i = jsm.pop();
+    Item i = pop();
     if (i.readyToReduce()) {
       if (!startSymbol.equals(i.rule.lhs)) {
-        jsm.jump(t);
+        jump(t);
         return this;
       }
       if ($.equals(t)) {
@@ -59,7 +71,7 @@ public class RLLPConcrete {
         reject = true;
         return this;
       }
-      jsm.push(i.advance());
+      push(i.advance());
       return this;
     }
     Action a = rllp.predict(i, t);
@@ -68,11 +80,11 @@ public class RLLPConcrete {
       return this;
     }
     if (ActionType.PUSH.equals(a.type())) {
-      jsm.pushAll(((Push) a).itemsToPush);
+      push(((Push) a).itemsToPush);
       return this;
     }
     assert ActionType.JUMP.equals(a.type()) : "JSM failure";
-    jsm.jump(((Jump) a).v);
+    jump(((Jump) a).v);
     return this;
   }
   public RLLPConcrete consume(Terminal t) {
