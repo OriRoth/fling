@@ -12,19 +12,22 @@ import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
 
 public class RLLPConcrete {
-  private final RLLP rllp;
-  private final JSM jsm;
-  private boolean accept;
-  private boolean reject;
-  private boolean initialized;
-  private Symbol startSymbol;
+  protected final RLLP rllp;
+  protected final JSM jsm;
+  protected boolean accept;
+  protected boolean reject;
+  protected boolean initialized;
+  protected Symbol startSymbol;
 
   public RLLPConcrete(BNF bnf) {
     this.rllp = new RLLP(bnf);
-    this.jsm = new JSM(rllp);
+    this.jsm = getJSM();
     accept = false;
     reject = false;
     initialized = false;
+  }
+  public JSM getJSM() {
+    return new JSM(rllp);
   }
   // NOTE should be consistent with paper
   public RLLPConcrete consume(Verb t) {
@@ -86,7 +89,7 @@ public class RLLPConcrete {
     return this;
   }
   public boolean accepted() {
-    return accept;
+    return !reject && (accept || jsm.getS0().stream().allMatch(x -> x.readyToReduce()));
   }
   public boolean rejected() {
     return reject;

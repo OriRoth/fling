@@ -2,16 +2,10 @@ package org.spartan.fajita.rllp;
 
 import static org.spartan.fajita.api.EFajita.noneOrMore;
 import static org.spartan.fajita.api.EFajita.oneOrMore;
-import static org.spartan.fajita.rllp.RLLPTest.NT.BODY;
-import static org.spartan.fajita.rllp.RLLPTest.NT.LITERAL;
-import static org.spartan.fajita.rllp.RLLPTest.NT.RULE;
-import static org.spartan.fajita.rllp.RLLPTest.NT.S;
-import static org.spartan.fajita.rllp.RLLPTest.Term.body;
-import static org.spartan.fajita.rllp.RLLPTest.Term.fact;
-import static org.spartan.fajita.rllp.RLLPTest.Term.head;
-import static org.spartan.fajita.rllp.RLLPTest.Term.literal;
-import static org.spartan.fajita.rllp.RLLPTest.Term.name;
-import static org.spartan.fajita.rllp.RLLPTest.Term.terms;
+import static org.spartan.fajita.rllp.RLLPTest.DatalogNT.*;
+import static org.spartan.fajita.rllp.RLLPTest.DatalogTerm.*;
+import static org.spartan.fajita.rllp.RLLPTest.SimpleNT.*;
+import static org.spartan.fajita.rllp.RLLPTest.SimpleTerm.*;
 
 import org.junit.Test;
 import org.spartan.fajita.api.EFajita;
@@ -21,17 +15,17 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.rllp.RLLPConcrete;
 
-public class RLLPTest {
-  static enum Term implements Terminal {
+@SuppressWarnings("static-method") public class RLLPTest {
+  static enum DatalogTerm implements Terminal {
     head, body, fact, literal, name, terms
   }
 
-  static enum NT implements NonTerminal {
+  static enum DatalogNT implements NonTerminal {
     S, RULE, LITERAL, BODY
   }
 
-  public static BNF bnf() {
-    return EFajita.build(Term.class, NT.class) //
+  public static BNF datalog() {
+    return EFajita.build(DatalogTerm.class, DatalogNT.class) //
         .setApiName("Datalog") //
         .start(S) //
         .derive(S).to(noneOrMore(RULE)) //
@@ -43,11 +37,25 @@ public class RLLPTest {
         .go();
   }
 
-  RLLPConcrete $ = new RLLPConcrete(bnf());
+  static enum SimpleTerm implements Terminal {
+    a, b
+  }
 
+  static enum SimpleNT implements NonTerminal {
+    S1
+  }
+
+  public static BNF simple() {
+    return EFajita.build(SimpleTerm.class, SimpleNT.class) //
+        .setApiName("Simple") //
+        .start(S1) //
+        .derive(S1).to(oneOrMore(a).separator(b)) //
+        .go();
+  }
   @Test public void a() {
-    System.out.println(bnf().toString(BNFRenderer.builtin.ASCII));
-    assert $.consume( //
+    BNF bnf = datalog();
+    // System.out.println(bnf.toString(BNFRenderer.builtin.ASCII));
+    assert new RLLPConcrete(bnf).consume( //
         fact, name, terms, //
         fact, name, terms, //
         head, name, terms, body, //
@@ -55,5 +63,12 @@ public class RLLPTest {
         /**/literal, name, terms, //
         fact, name, terms //
     ).accepted();
+  }
+  @Test public void b() {
+    BNF bnf = simple();
+    System.out.println(bnf.toString(BNFRenderer.builtin.ASCII));
+    new RLLPConcrete(bnf).consume( //
+        a, b, a, b, a, b, a //
+    );
   }
 }

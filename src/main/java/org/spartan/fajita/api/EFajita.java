@@ -257,7 +257,6 @@ public class EFajita extends Fajita {
       symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
       List<Symbol> $1 = new ArrayList<>(symbols);
-      $1.addAll(separators);
       $1.add(head2);
       builder.addRule((NonTerminal) head, $1);
       List<Symbol> $2 = new ArrayList<>(separators);
@@ -298,10 +297,17 @@ public class EFajita extends Fajita {
       this.builder = builder;
       this.lhs = lhs;
       head = nonTerminal(builder.namer.apply(lhs));
-      NonTerminal head2 = nonTerminal(builder.namer.apply(lhs));
       symbols = builder.solve(lhs, symbols);
       separators = separators == null ? an.empty.list() : builder.solve(lhs, separators);
       ifNone = ifNone == null ? an.empty.list() : builder.solve(lhs, ifNone);
+      if (separators.isEmpty() && ifNone.isEmpty()) {
+        List<Symbol> $1 = new ArrayList<>(symbols);
+        $1.add(head);
+        builder.addRule((NonTerminal) head, $1);
+        builder.addRule((NonTerminal) head, an.empty.list());
+        return this;
+      }
+      NonTerminal head2 = nonTerminal(builder.namer.apply(lhs));
       List<Symbol> $1 = new ArrayList<>(symbols);
       $1.add(head2);
       builder.addRule((NonTerminal) head, $1);
