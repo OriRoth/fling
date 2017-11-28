@@ -13,9 +13,9 @@ import static org.spartan.fajita.api.examples.Datalog.Term.head;
 import static org.spartan.fajita.api.examples.Datalog.Term.literal;
 import static org.spartan.fajita.api.examples.Datalog.Term.name;
 import static org.spartan.fajita.api.examples.Datalog.Term.terms;
-import static org.spartan.fajita.api.junk.Datalog.fact;
-import static org.spartan.fajita.api.junk.Literal.name;
-import static org.spartan.fajita.api.junk.Literals.literal;
+import static org.spartan.fajita.api.junk.Datalog2.fact;
+import static org.spartan.fajita.api.junk.Literal2.name;
+import static org.spartan.fajita.api.junk.Literals2.literal;
 
 import java.util.Map;
 
@@ -56,8 +56,9 @@ public class Datalog {
   }
   public static void main(String[] args) {
     System.out.println(bnf().go().toString(ASCII));
-    System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
     // Main.apiGenerator(buildBNF());
+    test();
   }
   static void test() {
     fact(name("parent").terms("john", "bob")) //

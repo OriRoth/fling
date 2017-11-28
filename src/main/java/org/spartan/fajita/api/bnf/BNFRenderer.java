@@ -79,7 +79,7 @@ import org.spartan.fajita.api.EFajita.*;
         return " | ";
       }
       @Override public String headPost() {
-        return " = ";
+        return " ::= ";
       }
       @Override public String rulePost() {
         return NL;
