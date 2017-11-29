@@ -13,7 +13,7 @@ import static org.spartan.fajita.api.examples.EDatalog.Term.name;
 import static org.spartan.fajita.api.examples.EDatalog.Term.terms;
 import static org.spartan.fajita.api.junk.Datalog.fact;
 import static org.spartan.fajita.api.junk.Literal.name;
-import static org.spartan.fajita.api.junk.Literals.literal;
+import static org.spartan.fajita.api.junk.Body1.literal;
 
 import java.io.IOException;
 import java.util.Map;
@@ -55,7 +55,8 @@ public class EDatalog {
   public static void main(String[] args) throws IOException {
     System.out.println(bnf().go().toString(ASCII));
     // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
-    Main.apiGenerator(buildBNF());
+    // Main.apiGenerator(buildBNF());
+    test();
   }
   static void test() {
     fact(name("parent").terms("john", "bob")) //

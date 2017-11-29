@@ -1,10 +1,13 @@
 package org.spartan.fajita.api.rllp;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,9 +16,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
-import javax.sound.sampled.AudioFileFormat.Type;
-
-import static java.util.stream.Collectors.toList;
 
 import org.spartan.fajita.api.EFajitaEncoder;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
@@ -46,6 +46,8 @@ import com.squareup.javapoet.TypeVariableName;
   private final TypeSpec $$$Type;
   private final Collection<MethodSpec> staticMethods;
   private final Map<List<Item>, TypeName> encodedJSMs;
+  private final Map<TypeSpec, List<TypeName>> recArgs = new HashMap<>();
+  private final Map<TypeSpec, String> recSuper = new HashMap<>();
   private Item mainItem;
   private final EEncoderUtils namer;
   // Used for Debugging
@@ -59,7 +61,38 @@ import com.squareup.javapoet.TypeVariableName;
     this.staticMethods = EFajitaEncoder.getStaticMethods(this);
     Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.beforeDot().isVerb();
     mainTypes = rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList());
+    fixRecTypes();
     $$$Type = get$$$Type();
+  }
+  private void fixRecTypes() {
+    List<TypeSpec> old = new LinkedList<>(recursiveTypes);
+    recursiveTypes.clear();
+    for (TypeSpec t : old)
+      recursiveTypes.add(TypeSpec.interfaceBuilder(t.name) //
+          .addMethods(mainTypes.stream() //
+              .filter(y -> y.name.equals(recSuper.get(t))) //
+              .findFirst().map(y -> //
+              y.methodSpecs.stream() //
+                  .map(x -> MethodSpec.methodBuilder(x.name) //
+                      .addParameters(x.parameters) //
+                      .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
+                      .returns(getFixedRecReturnType(x.returnType, y.typeVariables, recArgs.get(t))) //
+                      .build()) //
+                  .collect(toList()))
+              .get()) //
+          .addModifiers(Modifier.PUBLIC) //
+          .build());
+  }
+  private static TypeName getFixedRecReturnType(TypeName r, List<TypeVariableName> vs1, List<TypeName> vs2) {
+    if (r instanceof TypeVariableName)
+      return vs2.get(vs1.indexOf(r));
+    else if (r instanceof ParameterizedTypeName) {
+      ParameterizedTypeName p = (ParameterizedTypeName) r;
+      return parameterizedType(p.rawType.simpleName(), p.typeArguments.stream() //
+          .map(x -> getFixedRecReturnType(x, vs1, vs2)) //
+          .collect(toList()));
+    } else
+      throw new RuntimeException("Class " + r.getClass().getSimpleName() + " not supported in getFixedRecReturnType");
   }
   private TypeSpec encodeItem(Item i) {
     final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
@@ -171,10 +204,11 @@ import com.squareup.javapoet.TypeVariableName;
     final TypeSpec $ = TypeSpec.interfaceBuilder(namer.getRecursiveTypeName(jsm)) //
         .addModifiers(Modifier.PUBLIC) //
         .addTypeVariables(mapFollowSetWith(mainItem, v -> TypeVariableName.get(EEncoderUtils.verbTypeName(v)))) //
-        // .superclass(parameterizedType(namer.getItemName(jsm.peek()), args))//
         .build();
     if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals($.toString())))
       recursiveTypes.add($);
+    recArgs.put($, args);
+    recSuper.put($, namer.getItemName(jsm.peek()));
     return $;
   }
   private List<TypeName> encodeTypeArguments(Item current, Map<Verb, TypeName> typeArguments) {
@@ -243,6 +277,7 @@ import com.squareup.javapoet.TypeVariableName;
     return TypeSpec.classBuilder($$$name) //
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
+        .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethods(ms) //
         .build();
   }
