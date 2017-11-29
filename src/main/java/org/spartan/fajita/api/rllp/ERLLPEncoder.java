@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,10 +20,12 @@ import javax.lang.model.element.Modifier;
 
 import org.spartan.fajita.api.EFajitaEncoder;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
+import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
+import org.spartan.fajita.api.export.FluentAPIRecorder;
 import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Advance;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
@@ -39,8 +42,10 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
 @SuppressWarnings("restriction") public class ERLLPEncoder {
-  public static final String $$$name = "QQQ";
+  public static final String $$$name = "$$$";
+  public static final String $$$nameEscaped = "$$$$$$";
   public final RLLP rllp;
+  private final Set<Terminal> terminals;
   private final List<TypeSpec> mainTypes;
   private final List<TypeSpec> recursiveTypes;
   private final TypeSpec $$$Type;
@@ -53,7 +58,8 @@ import com.squareup.javapoet.TypeVariableName;
   // Used for Debugging
   private final boolean visualize = false;
 
-  public ERLLPEncoder(RLLP parser, EEncoderUtils namer) {
+  public ERLLPEncoder(RLLP parser, EEncoderUtils namer, Set<Terminal> terminals) {
+    this.terminals = terminals;
     this.rllp = parser;
     this.recursiveTypes = new ArrayList<>();
     this.encodedJSMs = new HashMap<>();
@@ -271,14 +277,23 @@ import com.squareup.javapoet.TypeVariableName;
               .addParameters(x.parameters) //
               .varargs(x.varargs) //
               .addModifiers(Modifier.PUBLIC) //
+              .addCode("recordTerminal(" + getTerminalName(x) + ");") //
               .addCode("return this;") //
               .build())
           .collect(toList()));
     return TypeSpec.classBuilder($$$name) //
+        .superclass(FluentAPIRecorder.class) //
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethods(ms) //
         .build();
+  }
+  public String getTerminalName(MethodSpec x) {
+    return getTerminalName(x.name);
+  }
+  public String getTerminalName(String name) {
+    Terminal match = terminals.stream().filter(z -> z.name().equals(name)).findFirst().get();
+    return (match.getClass().getCanonicalName() + "." + match).replaceAll("\\$", "\\$\\$");
   }
 }

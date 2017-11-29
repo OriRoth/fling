@@ -30,11 +30,11 @@ import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 public class EDatalog {
   private static final String apiName = "Datalog";
 
-  static enum Term implements Terminal {
+  public static enum Term implements Terminal {
     head, body, fact, literal, name, terms
   }
 
-  static enum NT implements NonTerminal {
+  public static enum NT implements NonTerminal {
     S, RULE, LITERAL, BODY
   }
 
@@ -55,8 +55,8 @@ public class EDatalog {
   public static void main(String[] args) throws IOException {
     System.out.println(bnf().go().toString(ASCII));
     // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
-    // Main.apiGenerator(buildBNF());
-    test();
+    Main.apiGenerator(buildBNF());
+    // test();
   }
   static void test() {
     fact(name("parent").terms("john", "bob")) //

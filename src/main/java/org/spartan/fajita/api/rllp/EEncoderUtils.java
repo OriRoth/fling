@@ -3,8 +3,8 @@ package org.spartan.fajita.api.rllp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.spartan.fajita.api.ast.ASTNode;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.export.ASTNode;
 
 import com.squareup.javapoet.ClassName;
 

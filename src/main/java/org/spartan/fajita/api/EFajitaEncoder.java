@@ -32,7 +32,7 @@ import com.squareup.javapoet.TypeSpec;
   }
   private Map<String, String> _encode() {
     encoders = getAllBNFs().stream() //
-        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer)) //
+        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer, fajita.terminals)) //
         .collect(Collectors.toList());
     Collection<TypeSpec> types = new ArrayList<>();
     types.addAll(encoders.stream().map(enc -> enc.encode()).collect(Collectors.toList()));
@@ -64,7 +64,10 @@ import com.squareup.javapoet.TypeSpec;
               .addModifiers(Modifier.PUBLIC, Modifier.STATIC) //
               .addParameters(m.parameters)//
               .varargs(m.varargs) //
-              .addCode("return new " + ERLLPEncoder.$$$name + "();\n") //
+              .addCode(
+                  ERLLPEncoder.$$$nameEscaped + " " + ERLLPEncoder.$$$nameEscaped + " = new " + ERLLPEncoder.$$$nameEscaped + "();") //
+              .addCode(ERLLPEncoder.$$$nameEscaped + ".recordTerminal(" + encoder.getTerminalName(m.name) + ");") //
+              .addCode("return " + ERLLPEncoder.$$$nameEscaped + ";") //
               .returns(m.returnType).build();
         }).collect(Collectors.toSet());
   }
