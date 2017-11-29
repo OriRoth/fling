@@ -30,6 +30,11 @@ public class EFajita extends Fajita {
   };
   final List<DerivationRule> classDerivationRules;
 
+  @Override Map<String, String> finish(String pckg) {
+    validate();
+    setPackagePath(pckg);
+    return EFajitaEncoder.encode(this);
+  }
   @Override protected Fajita checkNewRule(final DerivationRule r) {
     if (derivationRules.contains(r))
       throw new IllegalArgumentException("rule " + r + " already exists");
