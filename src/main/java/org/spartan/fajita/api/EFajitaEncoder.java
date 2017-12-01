@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
 import org.spartan.fajita.api.bnf.BNF;
+import org.spartan.fajita.api.bnf.JamoosClassesRenderer;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.rllp.ERLLPEncoder;
 import org.spartan.fajita.api.rllp.EEncoderUtils;
@@ -41,6 +42,8 @@ import com.squareup.javapoet.TypeSpec;
       String content = JavaFile.builder(fajita.getPackagePath(), t).build().toString();
       files.put(t.name + ".java", content);
     }
+    JamoosClassesRenderer jcr = JamoosClassesRenderer.render(fajita.bnf(), fajita.packagePath);
+    files.put(jcr.topClassName + ".java", jcr.topClass);
     return files;
   }
   private Collection<BNF> getAllBNFs() {

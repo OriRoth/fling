@@ -22,7 +22,6 @@ import java.util.Map;
 import org.spartan.fajita.api.EFajita;
 import org.spartan.fajita.api.EFajita.Deriver;
 import org.spartan.fajita.api.Main;
-import org.spartan.fajita.api.bnf.JamoosClassesRenderer;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
@@ -53,12 +52,9 @@ public class EDatalog {
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
   }
-  @SuppressWarnings("unused") public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
-    System.out.println(JamoosClassesRenderer.render(bnf().go(), "org.spartan.fajita.api.junk").topClass);
-    // System.out.println(bnf().go().toString(JAMOOS_EITHER));
-    // Main.apiGenerator(buildBNF());
+    Main.apiGenerator(buildBNF());
     // test();
   }
   static void test() {

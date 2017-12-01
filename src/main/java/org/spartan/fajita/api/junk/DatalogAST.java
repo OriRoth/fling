@@ -10,19 +10,19 @@ public class DatalogAST {
   }
 
   public static class BODY {
-    LITERAL[] body;
+    org.spartan.fajita.api.junk.DatalogAST.LITERAL[] body;
   }
 
   public static class S {
-    RULE[] s1;
+    org.spartan.fajita.api.junk.DatalogAST.RULE[] s1;
   }
 
   public static class RULE$2 extends RULE {
-    LITERAL head;
-    BODY body;
+    org.spartan.fajita.api.junk.DatalogAST.LITERAL head;
+    org.spartan.fajita.api.junk.DatalogAST.BODY body;
   }
 
   public static class RULE$1 extends RULE {
-    LITERAL fact;
+    org.spartan.fajita.api.junk.DatalogAST.LITERAL fact;
   }
 }

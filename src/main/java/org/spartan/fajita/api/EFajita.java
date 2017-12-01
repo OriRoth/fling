@@ -30,6 +30,9 @@ public class EFajita extends Fajita {
   };
   final List<DerivationRule> classDerivationRules;
 
+  public BNF bnf() {
+    return new BNF(getVerbs(), getNonTerminals(), derivationRules, classDerivationRules, getStartSymbols(), getApiName());
+  }
   @Override Map<String, String> finish(String pckg) {
     validate();
     setPackagePath(pckg);

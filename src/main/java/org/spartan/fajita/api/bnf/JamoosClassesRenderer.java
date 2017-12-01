@@ -17,9 +17,11 @@ import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
+import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 
 public class JamoosClassesRenderer {
   BNF bnf;
+  public String topClassName;
   public final String packagePath;
   DAG.Tree<NonTerminal> inheritance = new DAG.Tree<>();
   private List<String> innerClasses = new LinkedList<>();
@@ -35,7 +37,8 @@ public class JamoosClassesRenderer {
   }
   private void parseTopClass() {
     StringBuilder $ = new StringBuilder();
-    $.append("public class " + bnf.getApiName() + "AST {");
+    $.append("package " + packagePath + ";");
+    $.append("public class " + (topClassName = bnf.getApiName() + "AST") + "{");
     parseInnerClasses();
     for (String i : innerClasses)
       $.append(i);
@@ -107,12 +110,15 @@ public class JamoosClassesRenderer {
       Verb v = (Verb) s;
       if (v.type instanceof ClassesType)
         $.addAll(((ClassesType) v.type).classes.stream().map(Class::getName).collect(toList()));
+      else if (v.type instanceof NestedType)
+        $.add(((NestedType) v.type).toString(packagePath, topClassName));
       else
         $.add(v.type.toString());
     } else if (s instanceof NonTerminal)
-      $.add(((NonTerminal) s).name());
+      $.add(((NonTerminal) s).name(packagePath, topClassName));
     return $;
   }
+  // NOTE this method (maybe others too) assume "either" accepts simple symbols
   private String generateEither(Either e) {
     StringBuilder $ = new StringBuilder();
     String name = generateClassName("Either");
@@ -121,8 +127,8 @@ public class JamoosClassesRenderer {
     $.append("public Object $;").append("public Tag tag;");
     for (Symbol x : e.symbols) {
       String verbType, typeName, capitalName;
-      $.append("boolean is").append(capitalName = x.name().substring(0, 1).toUpperCase() + x.name().substring(1))
-          .append("(){return Tag.").append(capitalName).append(".equals(tag);}");
+      $.append("boolean is").append(capitalName = capital(x.name())).append("(){return Tag.").append(capitalName)
+          .append(".equals(tag);}");
       $.append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
           .append(" get").append(capitalName).append("(){return (") //
           .append(typeName).append(")$;}");
