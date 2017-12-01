@@ -16,7 +16,7 @@ public class ClassesType implements ParameterType {
   @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     if (classes.size() != 0) {
-      classes.forEach(clss -> sb.append(clss.getSimpleName()).append(" * "));
+      classes.forEach(clss -> sb.append(clss.getName()).append(" * "));
       sb.delete(sb.length() - 3, sb.length());
     }
     return sb.toString();

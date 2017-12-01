@@ -5,7 +5,7 @@ class $Datalog {
   }
 
   class LITERAL {
-    String name;
+    java.lang.String name;
     String[] terms;
   }
 

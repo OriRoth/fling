@@ -96,7 +96,7 @@ import org.spartan.fajita.api.EFajita.*;
         return TEX.afterTable();
       }
     },
-    JAMOOS_CLASSES {
+    @Deprecated JAMOOS_CLASSES {
       // TODO Roth: set error message of the tree
       DAG.Tree<NonTerminal> inheritance = new DAG.Tree<>();
       Map<Object, Integer> counters = new HashMap<>();
@@ -256,7 +256,7 @@ import org.spartan.fajita.api.EFajita.*;
         return $.toString();
       }
     },
-    JAMOOS_EITHER {
+    @Deprecated JAMOOS_EITHER {
       // TODO Roth: set proper type errors
       Map<Object, Integer> counters = new HashMap<>();
       Function<Object, Integer> counter = s -> {
@@ -336,7 +336,7 @@ import org.spartan.fajita.api.EFajita.*;
         return $.append("/*").toString();
       }
     },
-    JAMOOS_INTERFACES {
+    @Deprecated JAMOOS_INTERFACES {
       // // TODO Roth: set error message of the tree
       // DAG<NonTerminal> inheritance = new DAG<>();
       // Map<Symbol, Integer> counter = new HashMap<>();
