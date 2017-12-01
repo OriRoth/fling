@@ -42,7 +42,7 @@ public class EDatalog {
     return EFajita.build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //
-        .derive(S).to(noneOrMore(RULE)) //
+        .derive(S).to(oneOrMore(RULE)) //
         .derive(RULE) //
         /**/.to(attribute(fact, LITERAL)) //
         /**/.or(attribute(head, LITERAL)).and(BODY) //
@@ -53,9 +53,10 @@ public class EDatalog {
     return bnf().go(Main.packagePath);
   }
   public static void main(String[] args) throws IOException {
-    System.out.println(bnf().go().toString(ASCII));
-    // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
-    Main.apiGenerator(buildBNF());
+    // System.out.println(bnf().go().toString(ASCII));
+    System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    // System.out.println(bnf().go().toString(JAMOOS_EITHER));
+    // Main.apiGenerator(buildBNF());
     // test();
   }
   static void test() {
