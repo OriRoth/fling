@@ -1,19 +1,20 @@
 package org.spartan.fajita.api.examples;
 
-import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.*;
+import static org.spartan.fajita.api.EFajita.attribute;
+import static org.spartan.fajita.api.EFajita.oneOrMore;
 import static org.spartan.fajita.api.examples.EDatalog.NT.BODY;
 import static org.spartan.fajita.api.examples.EDatalog.NT.LITERAL;
-import static org.spartan.fajita.api.examples.EDatalog.NT.S;
 import static org.spartan.fajita.api.examples.EDatalog.NT.RULE;
+import static org.spartan.fajita.api.examples.EDatalog.NT.S;
 import static org.spartan.fajita.api.examples.EDatalog.Term.body;
 import static org.spartan.fajita.api.examples.EDatalog.Term.fact;
 import static org.spartan.fajita.api.examples.EDatalog.Term.head;
 import static org.spartan.fajita.api.examples.EDatalog.Term.literal;
 import static org.spartan.fajita.api.examples.EDatalog.Term.name;
 import static org.spartan.fajita.api.examples.EDatalog.Term.terms;
+import static org.spartan.fajita.api.junk.Body1.literal;
 import static org.spartan.fajita.api.junk.Datalog.fact;
 import static org.spartan.fajita.api.junk.Literal.name;
-import static org.spartan.fajita.api.junk.Body1.literal;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
 import org.spartan.fajita.api.EFajita;
 import org.spartan.fajita.api.EFajita.Deriver;
 import org.spartan.fajita.api.Main;
-import static org.spartan.fajita.api.EFajita.*;
+import org.spartan.fajita.api.bnf.JamoosClassesRenderer;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
@@ -54,7 +55,8 @@ public class EDatalog {
   }
   @SuppressWarnings("unused") public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    // System.out.println(bnf().go().toString(JAMOOS_CLASSES));
+    System.out.println(JamoosClassesRenderer.render(bnf().go(), "org.spartan.fajita.api.junk").topClass);
     // System.out.println(bnf().go().toString(JAMOOS_EITHER));
     // Main.apiGenerator(buildBNF());
     // test();

@@ -44,7 +44,6 @@ public class JamoosClassesRenderer {
   private void parseInnerClasses() {
     Map<NonTerminal, List<List<Symbol>>> n = sortRules(bnf.normalizedForm(true));
     for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
-      StringBuilder $ = new StringBuilder();
       NonTerminal lhs = r.getKey();
       List<List<Symbol>> rhs = r.getValue();
       if (!isInheritanceRule(rhs))
@@ -62,13 +61,14 @@ public class JamoosClassesRenderer {
           .append("{");
       if (!isInheritanceRule(rhs))
         for (Entry<String, String> e : innerClassesFieldTypes.get(lhs.name()).entrySet())
-          $.append(e.getKey()).append(e.getValue()).append(";");
+          $.append(e.getValue()).append(" ").append(e.getKey()).append(";");
       innerClasses.add($.append("}").toString());
     }
   }
   private void parseSymbol(String lhs, Symbol s) {
     innerClassesFieldTypes.putIfAbsent(lhs, new LinkedHashMap<>());
-    for (String t : parseType(lhs, s)) {}
+    for (String t : parseType(lhs, s))
+      innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
   private List<String> parseTypes(String lhs, List<Symbol> ss) {
     return ss.stream().map(x -> parseType(lhs, x)).reduce(new LinkedList<>(), (l1, l2) -> {
@@ -132,7 +132,8 @@ public class JamoosClassesRenderer {
     for (String x : enumContent)
       $.append(x).append(",");
     $.append("}}");
-    return $.toString();
+    innerClasses.add($.toString());
+    return name;
   }
   private String generateEither(NoneOrMore n) {
     StringBuilder $ = new StringBuilder();
@@ -157,7 +158,8 @@ public class JamoosClassesRenderer {
       $.append(type).append(" get").append(capital(type)).append("(){return ").append(varName).append(";}");
     }
     $.append("boolean isList(){return exist;}boolean isNone(){return !exist;}}");
-    return $.toString();
+    innerClasses.add($.toString());
+    return name;
   }
   private String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))
@@ -177,6 +179,12 @@ public class JamoosClassesRenderer {
     innerClassesFieldUsedNames.get(lhs).put(name,
         Integer.valueOf(n = innerClassesFieldUsedNames.get(lhs).get(name).intValue() + 1));
     return name + n;
+  }
+  private String generateFieldName(String lhs, Symbol s) {
+    if (s instanceof ENonTerminal) {
+      return generateFieldName(lhs, ((ENonTerminal) s).head());
+    }
+    return generateFieldName(lhs, s.name().toLowerCase());
   }
   private String generateClassName(String name) {
     if (!innerClassesUsedNames.containsKey(name)) {
@@ -229,5 +237,8 @@ public class JamoosClassesRenderer {
     if (s.length() == 0)
       return s;
     return s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
+  }
+  public static JamoosClassesRenderer render(BNF bnf, String packagePath) {
+    return new JamoosClassesRenderer(bnf, packagePath);
   }
 }
