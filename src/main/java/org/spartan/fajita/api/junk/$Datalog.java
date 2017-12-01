@@ -1,28 +1,28 @@
 package org.spartan.fajita.api.junk;
 
 class $Datalog {
-  static class RULE {
+  class RULE {
   }
 
-  static class LITERAL {
+  class LITERAL {
     String name;
     String[] terms;
   }
 
-  static class BODY {
-    BODY1 body;
+  class BODY {
+    LITERAL[] body;
   }
 
-  static class S {
+  class S {
     RULE[] rule1;
   }
 
-  static class RULE$2 extends RULE {
+  class RULE$2 extends RULE {
     LITERAL head;
     BODY body1;
   }
 
-  static class RULE$1 extends RULE {
+  class RULE$1 extends RULE {
     LITERAL fact;
   }
 }

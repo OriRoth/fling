@@ -104,13 +104,14 @@ import org.spartan.fajita.api.EFajita.*;
         counters.putIfAbsent(s, Integer.valueOf(1));
         return counters.put(s, Integer.valueOf(counters.get(s).intValue() + 1));
       };
-      Function<Symbol, String> namer = s -> {
-        return s.name() + counter.apply(s);
+      Function<Object, String> namer = s -> {
+        String $ = s instanceof Symbol ? ((Symbol) s).name() : s.toString();
+        return $ + counter.apply($);
       };
 
       @Override public String grammarAnte(BNF bnf) {
         return "" //
-            + "package org.spartan.fajita.api.examples;" //
+            + "package org.spartan.fajita.api.junk;" //
             + "class $" + bnf.getApiName() + "{";
       }
       @Override public String grammarPost() {
@@ -152,36 +153,37 @@ import org.spartan.fajita.api.EFajita.*;
         StringBuilder $ = new StringBuilder();
         if (s instanceof Optional) {
           Optional o = (Optional) s;
-          for (Symbol x : o.symbols)
-            $.append("java.util.Optional<").append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("> ")
-                .append(namer.apply(x).toLowerCase()).append(";");
+          for (String x : solveSpecialSymbols(o.symbols))
+            $.append("java.util.Optional<").append(x).append("> ").append(namer.apply(x).toLowerCase()).append(";");
         } else if (s instanceof Either) {
           Either e = (Either) s;
           Integer c = counter.apply("EitherFieldName");
           $.append(eitherName(e, counter)).append(" e" + c + ";");
         } else if (s instanceof OneOrMore) {
           OneOrMore o = (OneOrMore) s;
-          for (Symbol x : o.symbols)
-            $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append(namer.apply(x).toLowerCase())
-                .append(";");
-          for (Symbol x : o.separators)
-            $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append("s" + namer.apply(x).toLowerCase())
-                .append(";");
+          for (String x : solveSpecialSymbols(o.symbols))
+            $.append(x).append("[]").append(namer.apply(x).toLowerCase()).append(";");
+          for (String x : solveSpecialSymbols(o.separators))
+            $.append(x).append("[]").append("s" + namer.apply(x).toLowerCase()).append(";");
         } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
           NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
               : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
           if (n.ifNone.isEmpty()) {
-            for (Symbol x : n.symbols)
-              $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append(namer.apply(x).toLowerCase())
-                  .append(";");
-            for (Symbol x : n.separators)
-              $.append(x.isVerb() ? ((Verb) x).type.toString() : x.name()).append("[]").append("s" + namer.apply(x).toLowerCase())
-                  .append(";");
+            for (String x : solveSpecialSymbols(n.symbols))
+              $.append(x).append("[]").append(namer.apply(x).toLowerCase()).append(";");
+            for (String x : solveSpecialSymbols(n.separators))
+              $.append(x).append("[]").append("s" + namer.apply(x).toLowerCase()).append(";");
           } else {
             Integer c = counter.apply("EitherFieldName");
             $.append(eitherName(n, counter)).append(" e" + c + ";");
           }
-        }
+        } else if (s instanceof EVerb) {
+          EVerb e = (EVerb) s;
+          $.append(solveSpecialSymbol(e.ent)).append(" ").append(e.name()).append(";");
+        } else if (s instanceof Terminal)
+          $.append(terminalAnte()).append(((Terminal) s).name()).append(terminalPost());
+        else if (s instanceof NonTerminal)
+          $.append(symbolAnte()).append(((NonTerminal) s).name()).append(symbolPost());
         return $.toString();
       }
       @Override public Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {
@@ -211,6 +213,47 @@ import org.spartan.fajita.api.EFajita.*;
       }
       private boolean isInheritanceRule(List<List<Symbol>> rhs) {
         return rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal;
+      }
+      private List<String> solveSpecialSymbols(List<Symbol> ss) {
+        return ss.stream().map(x -> solveSpecialSymbol(x)).collect(toList());
+      }
+      private String solveSpecialSymbol(Symbol s) {
+        StringBuilder $ = new StringBuilder();
+        if (s instanceof Optional) {
+          Optional o = (Optional) s;
+          for (String x : solveSpecialSymbols(o.symbols))
+            $.append("java.util.Optional<").append(x).append(">");
+        } else if (s instanceof Either) {
+          Either e = (Either) s;
+          Integer c = counter.apply("EitherFieldName");
+          $.append(eitherName(e, counter));
+        } else if (s instanceof OneOrMore) {
+          OneOrMore o = (OneOrMore) s;
+          for (String x : solveSpecialSymbols(o.symbols))
+            $.append(x).append("[]");
+          for (String x : solveSpecialSymbols(o.separators))
+            $.append(x).append("[]");
+        } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
+          NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
+              : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
+          if (n.ifNone.isEmpty()) {
+            for (String x : solveSpecialSymbols(n.symbols))
+              $.append(x).append("[]");
+            for (String x : solveSpecialSymbols(n.separators))
+              $.append(x).append("[]");
+          } else {
+            Integer c = counter.apply("EitherFieldName");
+            $.append(eitherName(n, counter));
+          }
+        } else if (s instanceof EVerb) {
+          EVerb e = (EVerb) s;
+          $.append(solveSpecialSymbol(e.ent));
+        } else if (s instanceof Verb) {
+          String verbType;
+          $.append("".equals(verbType = ((Verb) s).type.toString()) ? "Void" : verbType);
+        } else if (s instanceof NonTerminal)
+          $.append(((NonTerminal) s).name());
+        return $.toString();
       }
     },
     JAMOOS_EITHER {

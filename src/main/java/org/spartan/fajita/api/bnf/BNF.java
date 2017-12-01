@@ -212,7 +212,7 @@ public final class BNF {
               if (termBetween)
                 $.append(renderer.termBetween());
               termBetween = true;
-              if (s.isVerb() && renderer.visitTerminal((Verb) s))
+              if (s.isVerb() && !(s instanceof EVerb) && renderer.visitTerminal((Verb) s))
                 $.append(renderer.terminalAnte((Terminal) s)).append(s.name()).append(renderer.terminalPost((Terminal) s));
               else if (s instanceof NonTerminal)
                 $.append(renderer.symbolAnte((NonTerminal) s)).append(s.name()).append(renderer.symbolPost((NonTerminal) s));

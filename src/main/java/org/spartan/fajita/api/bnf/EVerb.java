@@ -6,7 +6,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 
 public class EVerb extends Verb {
-  ENonTerminal ent;
+  public ENonTerminal ent;
 
   public EVerb(Terminal terminal, ENonTerminal ent) {
     super(terminal); // TODO Roth: initialize with an error type (?)

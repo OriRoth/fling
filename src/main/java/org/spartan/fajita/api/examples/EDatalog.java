@@ -52,7 +52,7 @@ public class EDatalog {
   public static Map<String, String> buildBNF() {
     return bnf().go(Main.packagePath);
   }
-  public static void main(String[] args) throws IOException {
+  @SuppressWarnings("unused") public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
     System.out.println(bnf().go().toString(JAMOOS_CLASSES));
     // System.out.println(bnf().go().toString(JAMOOS_EITHER));
