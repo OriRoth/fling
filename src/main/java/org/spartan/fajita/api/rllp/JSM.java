@@ -80,8 +80,8 @@ public class JSM {
    * Pushes items (in given order) to the JSM and makes it readonly afterwards
    * 
    * @param toPush
-   * @param ancestors all the JSM parents of the current, as seen in the
-   *          JSMGraph visualization.
+   * @param ancestors all the JSM parents of the current, as seen in the JSMGraph
+   *          visualization.
    */
   private void pushAll(List<Item> toPush, List<JSM> ancestors) {
     if (readonly)
@@ -169,14 +169,15 @@ public class JSM {
   }
   private JSM findJump(Verb v) {
     /**
-     * We remove the first item in S1 because each item in S1 is relevant only
-     * when there are other elements on top (meaning the matching item in S0 is
-     * NOT the top of the stack). This makes sense since S1 is only used as jump
-     * information for items that does not know what happen in the depth of the
-     * stack. The top element of S1 is therefore not relevant (and causes error
-     * because it override legal jumps).
+     * We remove the first item in S1 because each item in S1 is relevant only when
+     * there are other elements on top (meaning the matching item in S0 is NOT the
+     * top of the stack). This makes sense since S1 is only used as jump information
+     * for items that does not know what happen in the depth of the stack. The top
+     * element of S1 is therefore not relevant (and causes error because it override
+     * legal jumps).
      */
-    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1.subList(0, S1.size() - 1));
+    // NOTE commented out--[or]
+    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1/* .subList(0, S1.size() - 1) */);
     Collections.reverse(reversed);
     for (Map<Verb, JSM> partMap : reversed)
       if (partMap.containsKey(v))
