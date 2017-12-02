@@ -49,8 +49,8 @@ public class EDatalog extends Grammar {
   }
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    new EDatalog().generateGrammarFiles(Main.packagePath);
-    // test();
+    // new EDatalog().generateGrammarFiles(Main.packagePath);
+    test();
   }
   static void test() {
     fact(name("parent").terms("john", "bob")) //

@@ -73,4 +73,13 @@ public class ClassesType implements ParameterType {
   // throw new RuntimeException("deserialization of type failed",e);
   // }
   // }
+
+  @Override public boolean accepts(Object... args) {
+    if (args.length != classes.size())
+      return false;
+    for (int i = 0; i < args.length; ++i)
+      if (!classes.get(i).isInstance(args[i]))
+        return false;
+    return true;
+  }
 }

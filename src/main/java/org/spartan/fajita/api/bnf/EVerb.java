@@ -13,6 +13,6 @@ public class EVerb extends Verb {
     this.ent = ent;
   }
   public Verb bind(EFajita builder, NonTerminal lhs) {
-    return new Verb(name(), (NonTerminal) builder.solve(lhs, ent)); // TODO Roth: always a non terminal?
+    return new Verb(terminal, (NonTerminal) builder.solve(lhs, ent)); // TODO Roth: always a non terminal?
   }
 }

@@ -10,9 +10,8 @@ public class FluentAPIRecorder {
   public FluentAPIRecorder(BNF bnf) {
     this.rllp = new RLLPConcrete(bnf);
   }
-  public void recordTerminal(Terminal t) {
-    System.out.println(t);
-    rllp.consume(t);
+  public void recordTerminal(Terminal t, Object... args) {
+    rllp.consume(new RuntimeVerb(t, args));
     assert !rllp.rejected() : "RLLP has rejected...";
   }
 }

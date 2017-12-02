@@ -1,5 +1,7 @@
 package org.spartan.fajita.api;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import org.spartan.fajita.api.rllp.RLLP;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
 @SuppressWarnings("restriction") public class EFajitaEncoder {
@@ -69,12 +72,18 @@ import com.squareup.javapoet.TypeSpec;
               .varargs(m.varargs) //
               .addCode(
                   ERLLPEncoder.$$$nameEscaped + " " + ERLLPEncoder.$$$nameEscaped + " = new " + ERLLPEncoder.$$$nameEscaped + "();") //
-              .addCode(ERLLPEncoder.$$$nameEscaped + ".recordTerminal(" + encoder.getTerminalName(m.name) + ");") //
+              .addCode(ERLLPEncoder.$$$nameEscaped + ".recordTerminal(" + encoder.getTerminalName(m.name)
+                  + getArguments(m.parameters) + ");") //
               .addCode("return " + ERLLPEncoder.$$$nameEscaped + ";") //
               .returns(m.returnType).build();
         }).collect(Collectors.toSet());
   }
   public static Map<String, String> encode(EFajita fajita) {
     return new EFajitaEncoder(fajita)._encode();
+  }
+  public static String getArguments(List<ParameterSpec> ps) {
+    if (ps.isEmpty())
+      return "";
+    return "," + String.join(",", ps.stream().map(x -> x.name).collect(toList()));
   }
 }

@@ -32,4 +32,7 @@ public class VarArgs implements ParameterType {
       return false;
     return true;
   }
+  @Override public boolean accepts(Object... args) {
+    return args.length == 0 || clazz.isInstance(args[0]);
+  }
 }

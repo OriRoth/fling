@@ -286,7 +286,7 @@ import com.squareup.javapoet.TypeVariableName;
               .addParameters(x.parameters) //
               .varargs(x.varargs) //
               .addModifiers(Modifier.PUBLIC) //
-              .addCode("recordTerminal(" + getTerminalName(x) + ");") //
+              .addCode("recordTerminal(" + getTerminalName(x) + EFajitaEncoder.getArguments(x.parameters) + ");") //
               .addCode("return this;") //
               .build())
           .collect(toList()));
