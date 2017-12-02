@@ -16,17 +16,59 @@ public class LLRecognizer {
   public final BNF bnf;
   private final BNFAnalyzer analyzer;
   public final Map<NonTerminal, Map<Verb, List<Symbol>>> actionTable;
+  private Stack<Symbol> stack = new Stack<>();
+  private boolean initialized = false;
+  private boolean accept = false;
+  private boolean reject = false;
 
   public LLRecognizer(final BNF bnf) {
     this.bnf = bnf;
-    sanitycheck();
     analyzer = new BNFAnalyzer(bnf);
     actionTable = createActionTable();
   }
-  private void sanitycheck() {
-    if (bnf.getRules().stream().anyMatch(d -> d.size() == 0)) // epsilon
-                                                              // rule
-      throw new IllegalArgumentException("I found epsilon rule! shame on you!!!");
+  public void consume(Verb t) {
+    if (accept)
+      throw new RuntimeException("Parser has already accepted");
+    if (reject)
+      throw new RuntimeException("Parser has already rejected");
+    if (!initialized) {
+      stack.push(SpecialSymbols.$);
+      stack.push(bnf.getStartSymbols().stream().filter(x -> analyzer.firstSetOf(x).contains(t)).findAny().get());
+      initialized = true;
+    }
+    Symbol top = stack.pop();
+    if (t.equals(SpecialSymbols.$)) {
+      if (top.equals(SpecialSymbols.$))
+        accept = true;
+      else
+        reject = true;
+      return;
+    }
+    if (top.isVerb()) {
+      if (top.equals(t))
+        return;
+      reject = true;
+      return;
+    }
+    if (isError((NonTerminal) top, t)) {
+      reject = true;
+      return;
+    }
+    List<Symbol> toPush = getPush((NonTerminal) top, t);
+    for (Symbol x : toPush)
+      stack.push(x);
+  }
+  public List<Symbol> getPush(NonTerminal nt, Verb v) {
+    return actionTable.get(nt).get(v);
+  }
+  public boolean isError(NonTerminal nt, Verb v) {
+    return !actionTable.get(nt).containsKey(v);
+  }
+  public boolean accepted() {
+    return accept;
+  }
+  public boolean rejected() {
+    return reject;
   }
   private Map<NonTerminal, Map<Verb, List<Symbol>>> createActionTable() {
     Map<NonTerminal, Map<Verb, List<Symbol>>> $ = new HashMap<>();
@@ -40,36 +82,5 @@ public class LLRecognizer {
       $.put(nt, innerMap);
     }
     return $;
-  }
-  public boolean recognize(List<Verb> input) {
-    Stack<Symbol> stack = new Stack<>();
-    stack.push(SpecialSymbols.$);
-    stack.push(bnf.getStartSymbols().stream().findAny().get());
-    input.add(SpecialSymbols.$);
-    for (Verb v : input) {
-      Symbol top = stack.pop();
-      // Accept !
-      if (v.equals(SpecialSymbols.$))
-        return top.equals(SpecialSymbols.$);
-      if (top.isVerb()) {
-        if (top.equals(v))
-          // Match !
-          continue;
-        // Reject !
-        return false;
-      }
-      if (isError((NonTerminal) top, v))
-        return false;
-      List<Symbol> toPush = getPush((NonTerminal) top, v);
-      for (Symbol x : toPush)
-        stack.push(x);
-    }
-    throw new IllegalStateException("Impossible to get here");
-  }
-  public List<Symbol> getPush(NonTerminal nt, Verb v) {
-    return actionTable.get(nt).get(v);
-  }
-  public boolean isError(NonTerminal nt, Verb v) {
-    return !actionTable.get(nt).containsKey(v);
   }
 }

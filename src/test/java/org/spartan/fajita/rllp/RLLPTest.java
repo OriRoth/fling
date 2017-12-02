@@ -17,7 +17,7 @@ import org.spartan.fajita.api.rllp.RLLPConcrete;
 
 @SuppressWarnings("static-method") public class RLLPTest {
   static enum DatalogTerm implements Terminal {
-    head, body, fact, literal, name, terms
+    head, body, fact, literal, name, terms, $
   }
 
   static enum DatalogNT implements NonTerminal {
@@ -25,16 +25,29 @@ import org.spartan.fajita.api.rllp.RLLPConcrete;
   }
 
   public static BNF datalog() {
-    return EFajita.build(DatalogTerm.class, DatalogNT.class) //
+    return EFajita.build(null, DatalogTerm.class, DatalogNT.class) //
         .setApiName("Datalog") //
         .start(S) //
-        .derive(S).to(noneOrMore(RULE)) //
+        .derive(S).to(noneOrMore(RULE), $) //
         .derive(RULE) //
         /**/.to(fact, LITERAL) //
         /**/.or(head, LITERAL, BODY) //
         .derive(BODY).to(body, oneOrMore(literal, LITERAL)) //
         .derive(LITERAL).to(name, terms) //
         .go();
+  }
+  @Test public void a() {
+    BNF bnf = datalog();
+    RLLPConcrete rllp = new RLLPConcrete(bnf);
+    rllp.consume( //
+        fact, name, terms, //
+        fact, name, terms, //
+        head, name, terms, body, //
+        /**/literal, name, terms, //
+        /**/literal, name, terms, //
+        fact, name, terms, $ //
+    );
+    assert rllp.accepted();
   }
 
   static enum SimpleTerm implements Terminal {
@@ -46,23 +59,11 @@ import org.spartan.fajita.api.rllp.RLLPConcrete;
   }
 
   public static BNF simple() {
-    return EFajita.build(SimpleTerm.class, SimpleNT.class) //
+    return EFajita.build(null, SimpleTerm.class, SimpleNT.class) //
         .setApiName("Simple") //
         .start(S1) //
         .derive(S1).to(oneOrMore(a).separator(b)) //
         .go();
-  }
-  @Test public void a() {
-    BNF bnf = datalog();
-    // System.out.println(bnf.toString(BNFRenderer.builtin.ASCII));
-    assert new RLLPConcrete(bnf).consume( //
-        fact, name, terms, //
-        fact, name, terms, //
-        head, name, terms, body, //
-        /**/literal, name, terms, //
-        /**/literal, name, terms, //
-        fact, name, terms //
-    ).accepted();
   }
   @Test public void b() {
     BNF bnf = simple();

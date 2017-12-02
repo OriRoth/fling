@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.spartan.fajita.api.EFajita;
 import org.spartan.fajita.api.EFajita.FajitaBNF;
-import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
