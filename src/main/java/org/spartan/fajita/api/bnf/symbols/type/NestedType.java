@@ -1,6 +1,7 @@
 package org.spartan.fajita.api.bnf.symbols.type;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
+import org.spartan.fajita.api.export.ASTNode;
 
 public class NestedType implements ParameterType {
   public final NonTerminal nested;
@@ -36,6 +37,6 @@ public class NestedType implements ParameterType {
     return true;
   }
   @Override public boolean accepts(Object... args) {
-    return args.length == 1 && nested.equals(args[0]);
+    return args.length == 1 && nested.equals(args[0]) || ASTNode.class.isInstance(args[0]);
   }
 }
