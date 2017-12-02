@@ -21,6 +21,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.ParameterType;
+import org.spartan.fajita.api.export.Grammar;
 
 public class EFajita extends Fajita {
   private Map<NonTerminal, Integer> counter = an.empty.map();
@@ -29,7 +30,14 @@ public class EFajita extends Fajita {
     return lhs.name() /* + "$" */ + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
   };
   final List<DerivationRule> classDerivationRules;
+  Class<? extends Grammar> provider;
 
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> EFajita(Class<? extends Grammar> provider,
+      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+    super(terminalEnum, nonterminalEnum);
+    this.provider = provider;
+    classDerivationRules = an.empty.list();
+  }
   public BNF bnf() {
     return new BNF(getVerbs(), getNonTerminals(), derivationRules, classDerivationRules, getStartSymbols(), getApiName());
   }
@@ -43,14 +51,9 @@ public class EFajita extends Fajita {
       throw new IllegalArgumentException("rule " + r + " already exists");
     return this;
   }
-  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> EFajita(final Class<Term> terminalEnum,
-      final Class<NT> nonterminalEnum) {
-    super(terminalEnum, nonterminalEnum);
-    classDerivationRules = an.empty.list();
-  }
   public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols build(
-      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
-    EFajita builder = new EFajita(terminalEnum, nonterminalEnum);
+      Class<? extends Grammar> provider, final Class<Term> terminalEnum, final Class<NT> nonterminalEnum) {
+    EFajita builder = new EFajita(provider, terminalEnum, nonterminalEnum);
     return builder.new SetSymbols();
   }
 
@@ -69,11 +72,11 @@ public class EFajita extends Fajita {
     }
   }
 
-  public abstract class Deriver {
+  public abstract class FajitaBNF {
     protected final NonTerminal lhs;
     protected final ArrayList<Symbol> symbols;
 
-    public Deriver(final NonTerminal lhs, final Symbol... symbols) {
+    public FajitaBNF(final NonTerminal lhs, final Symbol... symbols) {
       this.lhs = lhs;
       this.symbols = new ArrayList<>(Arrays.asList(symbols));
     }
@@ -125,7 +128,7 @@ public class EFajita extends Fajita {
       this.lhs = lhs;
     }
     // TODO Roth: allow ENonTerminals?
-    public Deriver into(final NonTerminal s, final NonTerminal... ss) {
+    public FajitaBNF into(final NonTerminal s, final NonTerminal... ss) {
       OrDeriver $ = new InitialDeriver(lhs).to(s);
       for (Symbol x : ss)
         $ = $.or(x);
@@ -133,7 +136,7 @@ public class EFajita extends Fajita {
     }
   }
 
-  public class OrDeriver extends Deriver {
+  public class OrDeriver extends FajitaBNF {
     OrDeriver(final NonTerminal lhs) {
       super(lhs);
     }

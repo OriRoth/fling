@@ -7,7 +7,7 @@ import static org.spartan.fajita.api.examples.EFajitaExample.Term.*;
 import java.util.Map;
 
 import static org.spartan.fajita.api.EFajita.*;
-import org.spartan.fajita.api.EFajita.Deriver;
+import org.spartan.fajita.api.EFajita.FajitaBNF;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
@@ -23,7 +23,7 @@ public class EFajitaExample {
     S, A, B, C, D, E
   }
 
-  public static Deriver bnf() {
+  public static FajitaBNF bnf() {
     return build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //

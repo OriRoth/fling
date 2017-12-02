@@ -41,6 +41,9 @@ public class RLLPConcrete {
   Item pop() {
     return jsm.pop();
   }
+  void reduce(@SuppressWarnings("unused") Item i) {
+    //
+  }
   // NOTE should be consistent with paper
   public RLLPConcrete consume(Verb t) {
     if (accept)
@@ -55,6 +58,7 @@ public class RLLPConcrete {
     }
     Item i = pop();
     if (i.readyToReduce()) {
+      reduce(i);
       if (!startSymbol.equals(i.rule.lhs)) {
         jump(t);
         return this;

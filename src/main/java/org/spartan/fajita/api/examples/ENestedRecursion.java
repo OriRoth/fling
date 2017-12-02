@@ -7,7 +7,7 @@ import static org.spartan.fajita.api.junk.Ebalancedparent.*;
 import java.io.IOException;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.EFajita;
-import org.spartan.fajita.api.EFajita.Deriver;
+import org.spartan.fajita.api.EFajita.FajitaBNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.rllp.RLLP;
@@ -23,7 +23,7 @@ public class ENestedRecursion {
     A, B, S
   }
 
-  public static Deriver fajita() {
+  public static FajitaBNF fajita() {
     return EFajita.build(Term.class, NT.class) //
         .setApiName(apiName) //
         .start(S) //

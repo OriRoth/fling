@@ -26,6 +26,7 @@ import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
 import org.spartan.fajita.api.export.FluentAPIRecorder;
+import org.spartan.fajita.api.export.Grammar;
 import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Advance;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
@@ -57,8 +58,10 @@ import com.squareup.javapoet.TypeVariableName;
   private final EEncoderUtils namer;
   // Used for Debugging
   private final boolean visualize = false;
+  private final Class<? extends Grammar> provider;
 
-  public ERLLPEncoder(RLLP parser, EEncoderUtils namer, Set<Terminal> terminals) {
+  public ERLLPEncoder(RLLP parser, EEncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider) {
+    this.provider = provider;
     this.terminals = terminals;
     this.rllp = parser;
     this.recursiveTypes = new ArrayList<>();
@@ -286,6 +289,9 @@ import com.squareup.javapoet.TypeVariableName;
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
+        .addMethod(MethodSpec.constructorBuilder() //
+            .addCode("super(new " + provider.getName() + "().bnf().go());") //
+            .build()) //
         .addMethods(ms) //
         .build();
   }

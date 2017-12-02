@@ -17,19 +17,17 @@ import static org.spartan.fajita.api.junk.Datalog.fact;
 import static org.spartan.fajita.api.junk.Literal.name;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.spartan.fajita.api.EFajita;
-import org.spartan.fajita.api.EFajita.Deriver;
+import org.spartan.fajita.api.EFajita.FajitaBNF;
 import org.spartan.fajita.api.Main;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
+import org.spartan.fajita.api.export.Grammar;
 
 // TODO Roth add OR
-public class EDatalog {
-  private static final String apiName = "Datalog";
-
+public class EDatalog extends Grammar {
   public static enum Term implements Terminal {
     head, body, fact, literal, name, terms
   }
@@ -38,9 +36,9 @@ public class EDatalog {
     S, RULE, LITERAL, BODY
   }
 
-  public static Deriver bnf() {
-    return EFajita.build(Term.class, NT.class) //
-        .setApiName(apiName) //
+  @Override public FajitaBNF bnf() {
+    return EFajita.build(getClass(), Term.class, NT.class) //
+        .setApiName("Datalog") //
         .start(S) //
         .derive(S).to(oneOrMore(RULE)) //
         .derive(RULE) //
@@ -49,12 +47,9 @@ public class EDatalog {
         .derive(BODY).to(attribute(body, oneOrMore(attribute(literal, LITERAL)))) //
         .derive(LITERAL).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
   }
-  public static Map<String, String> buildBNF() {
-    return bnf().go(Main.packagePath);
-  }
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    Main.apiGenerator(buildBNF());
+    new EDatalog().generateGrammarFiles(Main.packagePath);
     // test();
   }
   static void test() {

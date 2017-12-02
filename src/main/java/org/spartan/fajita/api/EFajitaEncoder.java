@@ -27,13 +27,13 @@ import com.squareup.javapoet.TypeSpec;
   List<ERLLPEncoder> encoders;
   private EEncoderUtils namer;
 
-  private EFajitaEncoder(EFajita fajita) {
+  public EFajitaEncoder(EFajita fajita) {
     this.fajita = fajita;
     this.namer = new EEncoderUtils();
   }
   private Map<String, String> _encode() {
     encoders = getAllBNFs().stream() //
-        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer, fajita.terminals)) //
+        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer, fajita.terminals, fajita.provider)) //
         .collect(Collectors.toList());
     Collection<TypeSpec> types = new ArrayList<>();
     types.addAll(encoders.stream().map(enc -> enc.encode()).collect(Collectors.toList()));
