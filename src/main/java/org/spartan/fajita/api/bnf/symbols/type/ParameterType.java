@@ -4,5 +4,5 @@ public interface ParameterType {
   default boolean isEmpty() {
     return false;
   }
-  boolean accepts(Object... args);
+  boolean accepts(Object[] args);
 }

@@ -1,20 +1,23 @@
 package org.spartan.fajita.api.bnf.symbols.type;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class VarArgs implements ParameterType {
+  public final Class<?> aclazz;
   public final Class<?> clazz;
 
   public <T> VarArgs(Class<T> clazz) {
-    this.clazz = Array.newInstance(clazz, 0).getClass();
+    this.aclazz = Array.newInstance(clazz, 0).getClass();
+    this.clazz = clazz;
   }
   @Override public String toString() {
-    return clazz.getTypeName();
+    return aclazz.getTypeName();
   }
   @Override public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+    result = prime * result + ((aclazz == null) ? 0 : aclazz.hashCode());
     return result;
   }
   @Override public boolean equals(Object obj) {
@@ -25,14 +28,14 @@ public class VarArgs implements ParameterType {
     if (getClass() != obj.getClass())
       return false;
     VarArgs other = (VarArgs) obj;
-    if (clazz == null) {
-      if (other.clazz != null)
+    if (aclazz == null) {
+      if (other.aclazz != null)
         return false;
-    } else if (!clazz.equals(other.clazz))
+    } else if (!aclazz.equals(other.aclazz))
       return false;
     return true;
   }
-  @Override public boolean accepts(Object... args) {
-    return args.length == 0 || clazz.isInstance(args[0]);
+  @Override public boolean accepts(Object[] args) {
+    return Arrays.stream(args).allMatch(x -> clazz.isInstance(x));
   }
 }

@@ -14,4 +14,7 @@ public class FluentAPIRecorder {
     ll.consume(new RuntimeVerb(t, args));
     assert !ll.rejected() : "RLLP has rejected...";
   }
+  @Override public String toString() {
+    return ll.ast().toString();
+  }
 }

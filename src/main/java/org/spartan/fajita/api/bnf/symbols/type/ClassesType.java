@@ -74,7 +74,7 @@ public class ClassesType implements ParameterType {
   // }
   // }
 
-  @Override public boolean accepts(Object... args) {
+  @Override public boolean accepts(Object[] args) {
     if (args.length != classes.size())
       return false;
     for (int i = 0; i < args.length; ++i)

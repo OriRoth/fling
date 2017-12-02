@@ -36,7 +36,7 @@ public class NestedType implements ParameterType {
       return false;
     return true;
   }
-  @Override public boolean accepts(Object... args) {
+  @Override public boolean accepts(Object[] args) {
     return args.length == 1 && nested.equals(args[0]) || ASTNode.class.isInstance(args[0]);
   }
 }

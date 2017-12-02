@@ -52,12 +52,12 @@ public class EDatalog extends Grammar {
     test();
   }
   static void test() {
-    fact(name("parent").terms("john", "bob")) //
+    System.out.println(fact(name("parent").terms("john", "bob")) //
         .fact(name("parent").terms("bob", "donald")) //
         .head(name("ancestor").terms("A", "B")).body( //
             literal(name("parent").terms("A", "B"))) //
         .head(name("ancestor").terms("A", "B")).body( //
             literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B")));
+                .literal(name("ancestor").terms("C", "B"))));
   }
 }

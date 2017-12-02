@@ -94,7 +94,7 @@ import com.squareup.javapoet.TypeVariableName;
       builder.addParameter(namer.returnTypeOf$(), "arg0").build();
     } else if (v.type instanceof VarArgs) {
       builder.varargs();
-      builder.addParameter(ParameterSpec.builder(((VarArgs) v.type).clazz, "arg0").build());
+      builder.addParameter(ParameterSpec.builder(((VarArgs) v.type).aclazz, "arg0").build());
     } else
       throw new IllegalArgumentException("Type of verb is unknown");
   }

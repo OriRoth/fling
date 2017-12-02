@@ -14,6 +14,9 @@ public class RuntimeVerb extends Verb {
     this.t = t;
     this.args = args;
   }
+  public Object[] values() {
+    return args;
+  }
   // TODO Roth: set proper hash with respect to Verb
   @Override public int hashCode() {
     return 0;
@@ -33,6 +36,9 @@ public class RuntimeVerb extends Verb {
     return v.type.accepts(args);
   }
   @Override public String name() {
-    return "#";
+    return t.name();
+  }
+  @Override public String toString() {
+    return name() + "(" + Arrays.deepToString(args) + ")";
   }
 }
