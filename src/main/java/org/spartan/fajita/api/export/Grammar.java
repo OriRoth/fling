@@ -1,10 +1,9 @@
 package org.spartan.fajita.api.export;
 
-import org.spartan.fajita.api.Main;
-
 import java.io.IOException;
 
 import org.spartan.fajita.api.EFajita.FajitaBNF;
+import org.spartan.fajita.api.Main;
 
 public abstract class Grammar {
   public abstract FajitaBNF bnf();

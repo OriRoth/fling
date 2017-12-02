@@ -11,6 +11,7 @@ public class FluentAPIRecorder {
     this.rllp = new RLLPConcrete(bnf);
   }
   public void recordTerminal(Terminal t) {
+    System.out.println(t);
     rllp.consume(t);
     assert !rllp.rejected() : "RLLP has rejected...";
   }

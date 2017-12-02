@@ -28,9 +28,11 @@ public final class BNF {
   private final List<DerivationRule> derivationRules;
   private final List<DerivationRule> classDerivationRules;
   private String name;
+  public boolean isSubBNF;
 
   public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
       Collection<DerivationRule> rules, Collection<NonTerminal> start, String name) {
+    isSubBNF = false;
     this.name = toCamelCase(name);
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
@@ -44,6 +46,7 @@ public final class BNF {
   }
   public BNF(Collection<Verb> verbs, Collection<NonTerminal> nonTerminals, //
       Collection<DerivationRule> rules, Collection<DerivationRule> classRules, Collection<NonTerminal> start, String name) {
+    isSubBNF = false;
     this.name = toCamelCase(name);
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
@@ -81,7 +84,9 @@ public final class BNF {
         }
       }
     } while (change);
-    return new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
+    BNF $ = new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
+    $.isSubBNF = true;
+    return $;
   }
   public List<NonTerminal> getStartSymbols() {
     return startSymbols;

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
 import org.spartan.fajita.api.EFajitaEncoder;
+import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
@@ -46,6 +47,7 @@ import com.squareup.javapoet.TypeVariableName;
   public static final String $$$name = "$$$";
   public static final String $$$nameEscaped = "$$$$$$";
   public final RLLP rllp;
+  private final boolean isSubBNF;
   private final Set<Terminal> terminals;
   private final List<TypeSpec> mainTypes;
   private final List<TypeSpec> recursiveTypes;
@@ -60,10 +62,14 @@ import com.squareup.javapoet.TypeVariableName;
   private final boolean visualize = false;
   private final Class<? extends Grammar> provider;
 
-  public ERLLPEncoder(RLLP parser, EEncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider) {
+  public ERLLPEncoder(RLLP parser, EEncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider,
+      boolean isSubBNF) {
     this.provider = provider;
+    this.isSubBNF = isSubBNF;
     this.terminals = terminals;
     this.rllp = parser;
+    if (isSubBNF)
+      assert rllp.bnf.getStartSymbols().size() == 1;
     this.recursiveTypes = new ArrayList<>();
     this.encodedJSMs = new HashMap<>();
     this.namer = namer;
@@ -290,10 +296,18 @@ import com.squareup.javapoet.TypeVariableName;
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethod(MethodSpec.constructorBuilder() //
-            .addCode("super(new " + provider.getName() + "().bnf().go());") //
+            .addCode("super(new " + provider.getName() + "().bnf().go()" + subBNFFix() + ");") //
             .build()) //
         .addMethods(ms) //
         .build();
+  }
+  private String subBNFFix() {
+    if (!isSubBNF)
+      return "";
+    NonTerminal nt = rllp.bnf.getStartSymbols().iterator().next();
+    if (nt instanceof Enum<?>)
+      return ".getSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
+    return ".getSubBNF(org.spartan.fajita.api.bnf.BNF.nonTerminal(\"" + nt + "\"))";
   }
   public String getTerminalName(MethodSpec x) {
     return getTerminalName(x.name);

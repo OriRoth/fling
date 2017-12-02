@@ -33,7 +33,7 @@ import com.squareup.javapoet.TypeSpec;
   }
   private Map<String, String> _encode() {
     encoders = getAllBNFs().stream() //
-        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer, fajita.terminals, fajita.provider)) //
+        .map(bnf -> new ERLLPEncoder(new RLLP(bnf), namer, fajita.terminals, fajita.provider, bnf.isSubBNF)) //
         .collect(Collectors.toList());
     Collection<TypeSpec> types = new ArrayList<>();
     types.addAll(encoders.stream().map(enc -> enc.encode()).collect(Collectors.toList()));
