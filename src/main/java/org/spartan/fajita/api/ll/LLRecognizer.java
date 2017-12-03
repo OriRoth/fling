@@ -15,8 +15,8 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.revision.export.FluentAPIRecorder;
-import org.spartan.fajita.revision.export.RuntimeVerb;
+import org.spartan.fajita.api.export.FluentAPIRecorder;
+import org.spartan.fajita.api.export.RuntimeVerb;
 
 public class LLRecognizer {
   public final BNF bnf;

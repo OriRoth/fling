@@ -63,10 +63,24 @@ public class Verb implements Terminal, Comparable<Verb> {
     return 0;
   }
   public boolean accepts(Object[] args) {
-    if (type.length != args.length)
+    if (type.length == 0)
+      return args.length == 0;
+    ParameterType last = type[type.length - 1];
+    if (!(last instanceof VarArgs)) {
+      if (type.length != args.length)
+        return false;
+      for (int i = 0; i < type.length; ++i)
+        if (!type[i].accepts(args[i]))
+          return false;
+      return true;
+    }
+    if (args.length < type.length - 1)
       return false;
-    for (int i = 0; i < type.length; ++i)
+    for (int i = 0; i < type.length - 1; ++i)
       if (!type[i].accepts(args[i]))
+        return false;
+    for (int i = type.length - 1; i < args.length - 1; ++i)
+      if (!last.accepts(args[i]))
         return false;
     return true;
   }

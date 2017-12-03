@@ -82,7 +82,8 @@ public class LLRecognizer {
       return;
     }
     if (isError(((NonTerminal) top), t)) {
-      reject = true;
+      // Assume epsilon transition, no rejection
+      consume(t);
       return;
     }
     assert mtop.toConsume == -1;
