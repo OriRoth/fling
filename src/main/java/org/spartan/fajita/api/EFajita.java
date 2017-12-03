@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.spartan.fajita.api.bnf.BNF;
@@ -196,6 +197,7 @@ public class EFajita extends Fajita {
     @Override public Symbol head() {
       return head;
     }
+    public abstract Set<Verb> first(Function<Symbol, Set<Verb>> getFirst);
   }
 
   public static class Either extends Head {
@@ -215,6 +217,13 @@ public class EFajita extends Fajita {
     }
     @Override public boolean equals(Object o) {
       return o instanceof Either && new HashSet<>(symbols).equals(new HashSet<>(((Optional) o).symbols));
+    }
+    @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+      return symbols.stream().map(x -> x instanceof Head ? ((Head) x).first(getFirst) : getFirst.apply(x)).reduce(new HashSet<>(),
+          (l1, l2) -> {
+            l1.addAll(l2);
+            return l1;
+          });
     }
   }
 
@@ -245,6 +254,9 @@ public class EFajita extends Fajita {
     @Override public boolean equals(Object o) {
       // TODO Roth: check all symbols have "equals" so that would work
       return o instanceof Optional && new HashSet<>(symbols).equals(new HashSet<>(((Optional) o).symbols));
+    }
+    @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+      return symbols.get(0) instanceof Head ? ((Head) symbols.get(0)).first(getFirst) : getFirst.apply(symbols.get(0));
     }
   }
 
@@ -288,6 +300,9 @@ public class EFajita extends Fajita {
     @Override public boolean equals(Object o) {
       return o instanceof OneOrMore && new HashSet<>(symbols).equals(new HashSet<>(((OneOrMore) o).symbols))
           && new HashSet<>(separators).equals(new HashSet<>(((OneOrMore) o).separators));
+    }
+    @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+      return symbols.get(0) instanceof Head ? ((Head) symbols.get(0)).first(getFirst) : getFirst.apply(symbols.get(0));
     }
   }
 
@@ -339,6 +354,12 @@ public class EFajita extends Fajita {
       NoneOrMore.this.ifNone = merge(s, ss);
       return new Separator();
     }
+    @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+      Set<Verb> $ = symbols.get(0) instanceof Head ? ((Head) symbols.get(0)).first(getFirst) : getFirst.apply(symbols.get(0));
+      if (!ifNone.isEmpty())
+        $.addAll(ifNone.get(0) instanceof Head ? ((Head) ifNone.get(0)).first(getFirst) : getFirst.apply(ifNone.get(0)));
+      return $;
+    }
 
     public class Separator extends Head {
       public Separator() {
@@ -353,6 +374,9 @@ public class EFajita extends Fajita {
       }
       public NoneOrMore parent() {
         return NoneOrMore.this;
+      }
+      @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+        return NoneOrMore.this.first(getFirst);
       }
     }
 
@@ -369,6 +393,9 @@ public class EFajita extends Fajita {
       }
       public NoneOrMore parent() {
         return NoneOrMore.this;
+      }
+      @Override public Set<Verb> first(Function<Symbol, Set<Verb>> getFirst) {
+        return NoneOrMore.this.first(getFirst);
       }
     }
   }

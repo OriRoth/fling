@@ -46,9 +46,13 @@ public class EDatalog extends Grammar {
         .derive(BODY).to(attribute(body, oneOrMore(attribute(literal, LITERAL)))) //
         .derive(LITERAL).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
   }
+  /**
+   * @throws IOException
+   */
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    // new EDatalog().generateGrammarFiles(Main.packagePath);
+    // new
+    // EDatalog().generateGrammarFiles(org.spartan.fajita.api.Main.packagePath);
     test();
   }
   static void test() {

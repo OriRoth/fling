@@ -1,5 +1,6 @@
 package org.spartan.fajita.api.bnf;
 
+import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.api.bnf.BNFRenderer.builtin.ASCII;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 public final class BNF {
   private final Set<Verb> verbs;
   private final List<NonTerminal> nonterminals;
+  private List<NonTerminal> classNonTerminals;
   private final List<NonTerminal> startSymbols;
   private final List<DerivationRule> derivationRules;
   private final List<DerivationRule> classDerivationRules;
@@ -60,6 +62,10 @@ public final class BNF {
   }
   public List<NonTerminal> getNonTerminals() {
     return nonterminals;
+  }
+  public List<NonTerminal> getClassNonTerminals() {
+    return classNonTerminals != null ? classNonTerminals
+        : (classNonTerminals = classDerivationRules.stream().map(x -> x.lhs).collect(toList()));
   }
   public Set<Verb> getVerbs() {
     return verbs;
@@ -117,8 +123,14 @@ public final class BNF {
   public List<DerivationRule> getRules() {
     return derivationRules;
   }
+  public List<DerivationRule> getClassRules() {
+    return classDerivationRules;
+  }
   public List<DerivationRule> getRulesOf(NonTerminal nt) {
     return getRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
+  }
+  public List<DerivationRule> getClassRulesOf(NonTerminal nt) {
+    return getClassRules().stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
   @Override public int hashCode() {
     final int prime = 31;
