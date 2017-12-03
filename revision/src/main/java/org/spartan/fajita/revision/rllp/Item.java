@@ -15,7 +15,7 @@ public class Item {
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(rule.lhs + " ::= ");
-    List<Symbol> expression = rule.rhs;
+    List<Symbol> expression = rule.getRHS();
     for (int i = 0; i < expression.size(); i++) {
       if (i == dotIndex)
         sb.append("\u00b7");

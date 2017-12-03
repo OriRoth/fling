@@ -77,7 +77,7 @@ public class RLLP {
     Map<Verb, List<Item>> $ = new HashMap<>();
     for (int j = i.dotIndex + 1; j < i.rule.size(); j++) {
       Item jumpLocation = new Item(i.rule, j);
-      if (!analyzer.isNullable(i.rule.rhs.subList(i.dotIndex + 1, j)))
+      if (!analyzer.isNullable(i.rule.getRHS().subList(i.dotIndex + 1, j)))
         break;
       for (Verb v : analyzer.firstSetOf(i.rule.get(j))) {
         if ($.containsKey(v))
@@ -116,9 +116,9 @@ public class RLLP {
     for (Symbol nt : bnf.nonTerminals)
       $.put((NonTerminal) nt, new HashMap<>());
     for (DerivationRule d : bnf.derivationRules) {
-      for (Verb v : analyzer.firstSetOf(d.rhs))
+      for (Verb v : analyzer.firstSetOf(d.getRHS()))
         addToPredictionTable($, v, d);
-      if (analyzer.isNullable(d.rhs))
+      if (analyzer.isNullable(d.getRHS()))
         for (Verb v : analyzer.followSetOf(d.lhs))
           addToPredictionTable($, v, d);
     }
@@ -198,7 +198,7 @@ public class RLLP {
   }
   public Item getStartItem(Verb initialInput) {
     return items.stream().filter(i -> bnf.startSymbols.contains(i.rule.lhs) && i.dotIndex == 0)
-        .filter(i -> analyzer.firstSetOf(i.rule.rhs).contains(initialInput)).findAny().get();
+        .filter(i -> analyzer.firstSetOf(i.rule.getRHS()).contains(initialInput)).findAny().get();
   }
 
   public static abstract class Action {

@@ -51,7 +51,7 @@ public final class EBNF {
     Set<DerivationRule> rs = new LinkedHashSet<>();
     for (DerivationRule r : derivationRules) {
       List<Symbol> rhs = new LinkedList<>();
-      for (Symbol s : r.rhs) {
+      for (Symbol s : r.getRHS()) {
         rs.addAll(s.solve(r.lhs, x -> {
           NonTerminal nt = producer.apply(x);
           nts.add(nt);
@@ -67,7 +67,7 @@ public final class EBNF {
     Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
     for (DerivationRule r : derivationRules) {
       $.putIfAbsent(r.lhs, new LinkedList<>());
-      $.get(r.lhs).add(r.rhs);
+      $.get(r.lhs).add(r.getRHS());
     }
     return $;
   }

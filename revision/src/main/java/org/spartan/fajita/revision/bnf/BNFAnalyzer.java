@@ -38,7 +38,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule rule : bnf.derivationRules)
-        if (rule.rhs.stream().allMatch(child -> nullables.contains(child)))
+        if (rule.getRHS().stream().allMatch(child -> nullables.contains(child)))
           moreChanges |= nullables.add(rule.lhs);
     } while (moreChanges);
     return nullables;
@@ -53,7 +53,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule dRule : bnf.derivationRules)
-        for (Symbol symbol : dRule.rhs) {
+        for (Symbol symbol : dRule.getRHS()) {
           moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
             break;
@@ -87,7 +87,7 @@ public class BNFAnalyzer {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
   public boolean isSuffixNullable(final Item i) {
-    return isNullable(i.rule.rhs.subList(i.dotIndex, i.rule.size()));
+    return isNullable(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
   }
   public Collection<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
@@ -102,7 +102,7 @@ public class BNFAnalyzer {
     return firstSetOf(expression.toArray(new Symbol[] {}));
   }
   public Collection<Verb> firstSetOf(Item i) {
-    return firstSetOf(i.rule.rhs.subList(i.dotIndex, i.rule.size()));
+    return firstSetOf(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
   }
   public Collection<Verb> followSetWO$(final NonTerminal nt) {
     final Collection<Verb> $ = new ArrayList<>(followSetOf(nt));
@@ -117,16 +117,16 @@ public class BNFAnalyzer {
       return llClosure.get(nt).get(v);
     llClosure.putIfAbsent(nt, new HashMap<>());
     List<Symbol> $ = new ArrayList<>();
-    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.rhs).contains(v))) {
+    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v))) {
       llClosure.get(nt).put(v, null);
       return null;
     }
     NonTerminal current = nt;
     while (true) {
       DerivationRule prediction = bnf.getRulesOf(current).stream() //
-          .filter(d -> firstSetOf(d.rhs).contains(v)) //
+          .filter(d -> firstSetOf(d.getRHS()).contains(v)) //
           .findAny().get();
-      final List<Symbol> rhs = prediction.rhs;
+      final List<Symbol> rhs = prediction.getRHS();
       Collections.reverse(rhs);
       Symbol first = rhs.remove(rhs.size() - 1);
       $.addAll(rhs);
@@ -141,6 +141,6 @@ public class BNFAnalyzer {
     return isNullable(expr.toArray(new Symbol[] {}));
   }
   public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.rhs.toArray(new Symbol[] {}), index, rule.size());
+    return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
   }
 }

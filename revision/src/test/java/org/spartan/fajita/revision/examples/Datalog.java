@@ -15,8 +15,6 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.name;
 import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
 import static org.spartan.fajita.revision.junk.Datalog.fact;
 import static org.spartan.fajita.revision.junk.LITERAL.name;
-import static org.spartan.fajita.revision.junk.LITERALS.literal;
-import static org.spartan.fajita.revision.junk.BODY.body;
 
 import java.io.IOException;
 
@@ -67,16 +65,16 @@ public class Datalog extends Grammar {
    */
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    new Datalog().generateGrammarFiles();
-    // test();
+    // new Datalog().generateGrammarFiles();
+    test();
   }
   static void test() {
     System.out.println(fact(name("parent").terms("john", "bob")) //
         .fact(name("parent").terms("bob", "donald")) //
-        .head(name("ancestor").terms("A", "B")).body( //
-            literal(name("parent").terms("A", "B"))) //
-        .head(name("ancestor").terms("A", "B")).body( //
-            literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B"))));
+        .head(name("ancestor").terms("A", "B")).body() //
+        /**/.literal(name("parent").terms("A", "B")) //
+        .head(name("ancestor").terms("A", "B")).body() //
+        /**/.literal(name("parent").terms("A", "C")) //
+        /**/.literal(name("ancestor").terms("C", "B")));
   }
 }
