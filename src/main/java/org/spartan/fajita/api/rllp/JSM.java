@@ -176,8 +176,7 @@ public class JSM {
      * element of S1 is therefore not relevant (and causes error because it override
      * legal jumps).
      */
-    // NOTE commented out--[or]
-    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1/* .subList(0, S1.size() - 1) */);
+    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1.subList(0, S1.size() - 1));
     Collections.reverse(reversed);
     for (Map<Verb, JSM> partMap : reversed)
       if (partMap.containsKey(v))

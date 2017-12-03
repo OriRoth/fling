@@ -243,7 +243,7 @@ public final class BNF {
         return name;
       }
       @Override public boolean equals(Object obj) {
-        return obj != null && name.equals(obj.toString());
+        return obj instanceof Symbol && name.equals(((Symbol) obj).name());
       }
       @Override public int hashCode() {
         return name.hashCode();

@@ -59,6 +59,6 @@ public class Verb implements Terminal, Comparable<Verb> {
     return 0;
   }
   @Override public int compareTo(Verb v) {
-    return toString().compareTo(v.toString());
+    return equals(v) ? 0 : 1;
   }
 }
