@@ -140,7 +140,7 @@ public class BNFAnalyzer {
   public boolean isNullable(List<Symbol> expr) {
     return isNullable(expr.toArray(new Symbol[] {}));
   }
-  private static Symbol[] ruleSuffix(DerivationRule rule, int index) {
+  public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
     return Arrays.copyOfRange(rule.rhs.toArray(new Symbol[] {}), index, rule.size());
   }
 }

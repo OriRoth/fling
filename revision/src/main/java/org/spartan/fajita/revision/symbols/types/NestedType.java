@@ -1,12 +1,17 @@
 package org.spartan.fajita.revision.symbols.types;
 
 import org.spartan.fajita.revision.export.ASTNode;
+import org.spartan.fajita.revision.symbols.Extendible;
 import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.Symbol;
 
 public class NestedType implements ParameterType {
-  public final NonTerminal nested;
+  public final Symbol nested;
 
   public NestedType(NonTerminal nested) {
+    this.nested = nested;
+  }
+  public NestedType(Extendible nested) {
     this.nested = nested;
   }
   @Override public String toString() {

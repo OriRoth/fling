@@ -18,6 +18,7 @@ public final class BNF {
   public final Set<NonTerminal> startSymbols;
   public final Set<DerivationRule> derivationRules;
   public final String name;
+  public boolean isSubBNF;
 
   public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<DerivationRule> rules, Set<NonTerminal> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
@@ -29,6 +30,7 @@ public final class BNF {
     this.startSymbols
         .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
     this.name = name;
+    this.isSubBNF = false;
   }
   public BNF getSubBNF(NonTerminal startNT) {
     Set<Verb> subVerbs = new LinkedHashSet<>();
@@ -51,7 +53,9 @@ public final class BNF {
         }
       }
     } while (change);
-    return new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
+    BNF $ = new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
+    $.isSubBNF = true;
+    return $;
   }
   @Override public String toString() {
     // TODO Roth: set BNF toString

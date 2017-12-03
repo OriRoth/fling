@@ -3,10 +3,14 @@ package org.spartan.fajita.revision.symbols;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
+import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.types.ClassType;
+import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
@@ -66,5 +70,12 @@ public class Verb implements Terminal {
       if (!type[i].accepts(args[i]))
         return false;
     return true;
+  }
+  @Override public List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
+    List<DerivationRule> $ = new LinkedList<>();
+    for (ParameterType t : type)
+      if (t instanceof NestedType)
+        $.addAll(((NestedType) t).nested.solve(lhs, producer));
+    return $;
   }
 }
