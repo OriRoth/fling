@@ -23,7 +23,7 @@ import org.spartan.fajita.api.EFajita.FajitaBNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
-import org.spartan.fajita.api.export.Grammar;
+import org.spartan.fajita.revision.export.Grammar;
 
 // TODO Roth add OR
 public class EDatalog extends Grammar {

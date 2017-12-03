@@ -3,7 +3,7 @@ package org.spartan.fajita.api.bnf.symbols;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.ParameterType;
-import org.spartan.fajita.api.export.RuntimeVerb;
+import org.spartan.fajita.revision.export.RuntimeVerb;
 
 public class Verb implements Terminal, Comparable<Verb> {
   public final Terminal terminal;

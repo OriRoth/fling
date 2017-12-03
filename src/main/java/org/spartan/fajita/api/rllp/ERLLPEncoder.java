@@ -26,12 +26,12 @@ import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.ClassesType;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
-import org.spartan.fajita.api.export.FluentAPIRecorder;
-import org.spartan.fajita.api.export.Grammar;
 import org.spartan.fajita.api.rllp.RLLP.Action;
 import org.spartan.fajita.api.rllp.RLLP.Action.Advance;
 import org.spartan.fajita.api.rllp.RLLP.Action.Jump;
 import org.spartan.fajita.api.rllp.RLLP.Action.Push;
+import org.spartan.fajita.revision.export.FluentAPIRecorder;
+import org.spartan.fajita.revision.export.Grammar;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;

@@ -1,7 +1,7 @@
 package org.spartan.fajita.api.bnf.symbols.type;
 
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
-import org.spartan.fajita.api.export.ASTNode;
+import org.spartan.fajita.revision.export.ASTNode;
 
 public class NestedType implements ParameterType {
   public final NonTerminal nested;
