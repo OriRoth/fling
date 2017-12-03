@@ -1,21 +1,24 @@
 package org.spartan.fajita.revision.ast.encoding;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
-import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
+import org.spartan.fajita.revision.symbols.Verb;
+import org.spartan.fajita.revision.symbols.types.ClassType;
+import org.spartan.fajita.revision.symbols.types.NestedType;
+import org.spartan.fajita.revision.symbols.types.ParameterType;
 import org.spartan.fajita.revision.util.DAG;
 
 public class JamoosClassesRenderer {
-  BNF bnf;
+  EBNF ebnf;
   public String topClassName;
   public final String packagePath;
   DAG.Tree<NonTerminal> inheritance = new DAG.Tree<>();
@@ -25,22 +28,28 @@ public class JamoosClassesRenderer {
   public Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new HashMap<>();
   public Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new HashMap<>();
 
-  public JamoosClassesRenderer(BNF bnf, String packagePath) {
-    this.bnf = bnf;
+  public JamoosClassesRenderer(EBNF bnf, String packagePath) {
+    this.ebnf = bnf;
     this.packagePath = packagePath;
-    parseTopClass();
+    // NOTE should correspond to the namer in Fajita
+    Map<NonTerminal, Integer> counter = an.empty.map();
+    Function<NonTerminal, String> namer = lhs -> {
+      counter.putIfAbsent(lhs, Integer.valueOf(1));
+      return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
+    };
+    parseTopClass(x -> NonTerminal.of(namer.apply(x)));
   }
-  private void parseTopClass() {
+  private void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
     StringBuilder $ = new StringBuilder();
     $.append("package " + packagePath + ";");
-    $.append("public class " + (topClassName = bnf.name + "AST") + "{");
-    parseInnerClasses();
+    $.append("public class " + (topClassName = ebnf.name + "AST") + "{");
+    parseInnerClasses(producer);
     for (String i : innerClasses)
       $.append(i);
     topClass = $.append("}").toString();
   }
-  private void parseInnerClasses() {
-    Map<NonTerminal, List<List<Symbol>>> n = sortRules(bnf.normalizedForm(true));
+  private void parseInnerClasses(Function<NonTerminal, NonTerminal> producer) {
+    Map<NonTerminal, List<List<Symbol>>> n = sortRules(ebnf.normalizedForm(producer));
     for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
       List<List<Symbol>> rhs = r.getValue();
@@ -68,100 +77,111 @@ public class JamoosClassesRenderer {
     for (String t : parseType(lhs, s))
       innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
-  private List<String> parseTypes(String lhs, List<Symbol> ss) {
+  @SuppressWarnings("unused") private List<String> parseTypes(String lhs, List<Symbol> ss) {
     return ss.stream().map(x -> parseType(lhs, x)).reduce(new LinkedList<>(), (l1, l2) -> {
       l1.addAll(l2);
       return l1;
     });
   }
-  private List<String> parseType(String lhs, Symbol s) {
+  private List<String> parseType(@SuppressWarnings("unused") String lhs, Symbol s) {
     List<String> $ = new LinkedList<>();
-    if (s instanceof Optional) {
-      Optional o = (Optional) s;
-      for (String x : parseTypes(lhs, o.symbols))
-        $.add("java.util.Optional<" + x + ">");
-    } else if (s instanceof Either)
-      $.add(generateEither((Either) s));
-    else if (s instanceof OneOrMore) {
-      OneOrMore o = (OneOrMore) s;
-      for (String x : parseTypes(lhs, o.symbols))
-        $.add(x + "[]");
-      for (String x : parseTypes(lhs, o.separators))
-        $.add(x + "[]");
-    } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator || s instanceof NoneOrMore.IfNone) {
-      NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
-          : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent() : ((NoneOrMore.IfNone) s).parent();
-      if (n.ifNone.isEmpty()) {
-        for (String x : parseTypes(lhs, n.symbols))
-          $.add(x + "[]");
-        for (String x : parseTypes(lhs, n.separators))
-          $.add(x + "[]");
-      } else
-        $.add(generateEither((NoneOrMore) s));
-    } else if (s instanceof EVerb) {
-      EVerb e = (EVerb) s;
-      $.addAll(parseType(lhs, e.ent));
-    } else if (s instanceof Verb) {
+    // if (s instanceof Optional) {
+    // Optional o = (Optional) s;
+    // for (String x : parseTypes(lhs, o.symbols))
+    // $.add("java.util.Optional<" + x + ">");
+    // } else if (s instanceof Either)
+    // $.add(generateEither((Either) s));
+    // else if (s instanceof OneOrMore) {
+    // OneOrMore o = (OneOrMore) s;
+    // for (String x : parseTypes(lhs, o.symbols))
+    // $.add(x + "[]");
+    // for (String x : parseTypes(lhs, o.separators))
+    // $.add(x + "[]");
+    // } else if (s instanceof NoneOrMore || s instanceof NoneOrMore.Separator
+    // || s instanceof NoneOrMore.IfNone) {
+    // NoneOrMore n = s instanceof NoneOrMore ? (NoneOrMore) s
+    // : s instanceof NoneOrMore.Separator ? ((NoneOrMore.Separator) s).parent()
+    // : ((NoneOrMore.IfNone) s).parent();
+    // if (n.ifNone.isEmpty()) {
+    // for (String x : parseTypes(lhs, n.symbols))
+    // $.add(x + "[]");
+    // for (String x : parseTypes(lhs, n.separators))
+    // $.add(x + "[]");
+    // } else
+    // $.add(generateEither((NoneOrMore) s));
+    // } else if (s instanceof EVerb) {
+    // EVerb e = (EVerb) s;
+    // $.addAll(parseType(lhs, e.ent));
+    // } else //
+    if (s instanceof Verb) {
       Verb v = (Verb) s;
-      if (v.type instanceof ClassesType)
-        $.addAll(((ClassesType) v.type).classes.stream().map(Class::getName).collect(toList()));
-      else if (v.type instanceof NestedType)
-        $.add(((NestedType) v.type).toString(packagePath, topClassName));
-      else
-        $.add(v.type.toString());
+      for (ParameterType t : v.type)
+        if (t instanceof ClassType)
+          $.add(((ClassType) t).clazz.getTypeName());
+        else if (t instanceof NestedType)
+          $.add(((NestedType) t).toString(packagePath, topClassName));
+        else
+          $.add(v.type.toString());
     } else if (s instanceof NonTerminal)
       $.add(((NonTerminal) s).name(packagePath, topClassName));
     return $;
   }
-  // NOTE this method (maybe others too) assume "either" accepts simple symbols
-  private String generateEither(Either e) {
-    StringBuilder $ = new StringBuilder();
-    String name = generateClassName("Either");
-    $.append("static class ").append(name).append("{");
-    List<String> enumContent = an.empty.list();
-    $.append("public Object $;").append("public Tag tag;");
-    for (Symbol x : e.symbols) {
-      String verbType, typeName, capitalName;
-      $.append("boolean is").append(capitalName = capital(x.name())).append("(){return Tag.").append(capitalName)
-          .append(".equals(tag);}");
-      $.append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb) x).type.toString()) ? "Void" : verbType) : "Void")
-          .append(" get").append(capitalName).append("(){return (") //
-          .append(typeName).append(")$;}");
-      enumContent.add(capitalName);
-    }
-    $.append("public enum Tag{");
-    for (String x : enumContent)
-      $.append(x).append(",");
-    $.append("}}");
-    innerClasses.add($.toString());
-    return name;
-  }
-  private String generateEither(NoneOrMore n) {
-    StringBuilder $ = new StringBuilder();
-    String name = generateClassName("Either");
-    $.append("static class ").append(name).append("{public boolean exist;");
-    for (String type : parseTypes(name, n.symbols)) {
-      String varName;
-      $.append("private ").append(type + "[]").append(" ") //
-          .append(varName = generateFieldName(name, type)).append(";");
-      $.append(type).append(" get").append(capital(type)).append("(){return ").append(varName).append(";}");
-    }
-    for (String type : parseTypes(name, n.separators)) {
-      String varName;
-      $.append("private ").append(type + "[]").append(" ") //
-          .append(varName = generateFieldName(name, type)).append(";");
-      $.append(type).append(" get").append(capital(type)).append("(){return ").append(varName).append(";}");
-    }
-    for (String type : parseTypes(name, n.ifNone)) {
-      String varName;
-      $.append("private ").append(type + "[]").append(" ") //
-          .append(varName = generateFieldName(name, type)).append(";");
-      $.append(type).append(" get").append(capital(type)).append("(){return ").append(varName).append(";}");
-    }
-    $.append("boolean isList(){return exist;}boolean isNone(){return !exist;}}");
-    innerClasses.add($.toString());
-    return name;
-  }
+  // // NOTE this method (maybe others too) assume "either" accepts simple
+  // symbols
+  // private String generateEither(Either e) {
+  // StringBuilder $ = new StringBuilder();
+  // String name = generateClassName("Either");
+  // $.append("static class ").append(name).append("{");
+  // List<String> enumContent = an.empty.list();
+  // $.append("public Object $;").append("public Tag tag;");
+  // for (Symbol x : e.symbols) {
+  // String verbType, typeName, capitalName;
+  // $.append("boolean is").append(capitalName =
+  // capital(x.name())).append("(){return Tag.").append(capitalName)
+  // .append(".equals(tag);}");
+  // $.append(typeName = x.isVerb() ? ("".equals(verbType = ((Verb)
+  // x).type.toString()) ? "Void" : verbType) : "Void")
+  // .append(" get").append(capitalName).append("(){return (") //
+  // .append(typeName).append(")$;}");
+  // enumContent.add(capitalName);
+  // }
+  // $.append("public enum Tag{");
+  // for (String x : enumContent)
+  // $.append(x).append(",");
+  // $.append("}}");
+  // innerClasses.add($.toString());
+  // return name;
+  // }
+  // private String generateEither(NoneOrMore n) {
+  // StringBuilder $ = new StringBuilder();
+  // String name = generateClassName("Either");
+  // $.append("static class ").append(name).append("{public boolean exist;");
+  // for (String type : parseTypes(name, n.symbols)) {
+  // String varName;
+  // $.append("private ").append(type + "[]").append(" ") //
+  // .append(varName = generateFieldName(name, type)).append(";");
+  // $.append(type).append(" get").append(capital(type)).append("(){return
+  // ").append(varName).append(";}");
+  // }
+  // for (String type : parseTypes(name, n.separators)) {
+  // String varName;
+  // $.append("private ").append(type + "[]").append(" ") //
+  // .append(varName = generateFieldName(name, type)).append(";");
+  // $.append(type).append(" get").append(capital(type)).append("(){return
+  // ").append(varName).append(";}");
+  // }
+  // for (String type : parseTypes(name, n.ifNone)) {
+  // String varName;
+  // $.append("private ").append(type + "[]").append(" ") //
+  // .append(varName = generateFieldName(name, type)).append(";");
+  // $.append(type).append(" get").append(capital(type)).append("(){return
+  // ").append(varName).append(";}");
+  // }
+  // $.append("boolean isList(){return exist;}boolean isNone(){return
+  // !exist;}}");
+  // innerClasses.add($.toString());
+  // return name;
+  // }
   private String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))
       return name;
@@ -182,12 +202,9 @@ public class JamoosClassesRenderer {
     return name + n;
   }
   private String generateFieldName(String lhs, Symbol s) {
-    if (s instanceof ENonTerminal) {
-      return generateFieldName(lhs, ((ENonTerminal) s).head());
-    }
-    return generateFieldName(lhs, s.name().toLowerCase());
+    return generateFieldName(lhs, s.head().name().toLowerCase());
   }
-  private String generateClassName(String name) {
+  @SuppressWarnings("unused") private String generateClassName(String name) {
     if (!innerClassesUsedNames.containsKey(name)) {
       innerClassesUsedNames.put(name, Integer.valueOf(1));
       return name + 1;
@@ -226,7 +243,7 @@ public class JamoosClassesRenderer {
     rs.keySet().stream().forEach(k -> //
     rs.get(k).stream().forEach(c -> //
     c.stream().filter(l -> //
-    l.isVerb() && ((Verb) l).type.isEmpty()).forEach(e -> tbr.add(e))));
+    l.isVerb() && ((Verb) l).type.length == 0).forEach(e -> tbr.add(e))));
     rs.values().stream().forEach(r -> r.stream().forEach(c -> c.removeAll(tbr)));
   }
   private static boolean isInheritanceRule(List<List<Symbol>> rhs) {
@@ -239,7 +256,7 @@ public class JamoosClassesRenderer {
       return s;
     return s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
   }
-  public static JamoosClassesRenderer render(BNF bnf, String packagePath) {
-    return new JamoosClassesRenderer(bnf, packagePath);
+  public static JamoosClassesRenderer render(EBNF ebnf, String packagePath) {
+    return new JamoosClassesRenderer(ebnf, packagePath);
   }
 }

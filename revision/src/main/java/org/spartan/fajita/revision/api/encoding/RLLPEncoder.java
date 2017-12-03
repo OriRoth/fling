@@ -22,11 +22,20 @@ import org.spartan.fajita.revision.api.encoding.EncoderUtils;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.rllp.Item;
+import org.spartan.fajita.revision.rllp.JSM;
 import org.spartan.fajita.revision.rllp.RLLP;
+import org.spartan.fajita.revision.rllp.RLLP.Action;
+import org.spartan.fajita.revision.rllp.RLLP.Action.Advance;
+import org.spartan.fajita.revision.rllp.RLLP.Action.Jump;
+import org.spartan.fajita.revision.rllp.RLLP.Action.Push;
+import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.types.ClassType;
+import org.spartan.fajita.revision.symbols.types.NestedType;
+import org.spartan.fajita.revision.symbols.types.ParameterType;
+import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -53,8 +62,6 @@ import com.squareup.javapoet.TypeVariableName;
   private final Map<TypeSpec, String> recSuper = new HashMap<>();
   private Item mainItem;
   private final EncoderUtils namer;
-  // Used for Debugging
-  private final boolean visualize = false;
   private final Class<? extends Grammar> provider;
 
   public RLLPEncoder(RLLP parser, EncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider,
@@ -136,17 +143,18 @@ import com.squareup.javapoet.TypeVariableName;
         .build();
   }
   private static void augmentMethodParameters(Builder builder, Verb v) {
-    if (v.type instanceof ClassesType) {
-      List<Class<?>> classes = ((ClassesType) v.type).classes;
-      for (int i = 0; i < classes.size(); i++)
-        builder.addParameter(classes.get(i), "arg" + i);
-    } else if (v.type instanceof NestedType) {
-      builder.addParameter(EncoderUtils.returnTypeOf$(), "arg0").build();
-    } else if (v.type instanceof VarArgs) {
-      builder.varargs();
-      builder.addParameter(ParameterSpec.builder(((VarArgs) v.type).aclazz, "arg0").build());
-    } else
-      throw new IllegalArgumentException("Type of verb is unknown");
+    for (int i = 0; i < v.type.length; ++i) {
+      ParameterType t = v.type[i];
+      if (t instanceof ClassType)
+        builder.addParameter(((ClassType) t).clazz, "arg" + i);
+      else if (t instanceof NestedType)
+        builder.addParameter(EncoderUtils.returnTypeOf$(), "arg" + i).build();
+      else if (t instanceof VarArgs) {
+        builder.varargs();
+        builder.addParameter(ParameterSpec.builder(((VarArgs) t).aclazz, "arg" + i).build());
+      } else
+        throw new IllegalArgumentException("Type of verb is unknown");
+    }
   }
   private TypeName returnTypeOfMethod(Item i, Verb v) {
     final Action action = rllp.predict(i, v);
@@ -177,11 +185,6 @@ import com.squareup.javapoet.TypeVariableName;
     return encodeJSM(jsm);
   }
   private TypeName encodeJSM(JSM jsm) {
-    if (visualize) {
-      String label = "encoding " + jsm;
-      JSMGraph jsmGraph = new JSMGraph();
-      jsmGraph.calcAndVisualize(jsm, label);
-    }
     return encodeJSM_recursive_protection(jsm, new ArrayList<>());
   }
   private TypeName encodeJSM_recursive_protection(JSM jsm, ArrayList<JSM> alreadySeen) {
@@ -238,7 +241,7 @@ import com.squareup.javapoet.TypeVariableName;
     return encode().toString();
   }
   public TypeSpec encode() {
-    return TypeSpec.classBuilder(rllp.bnf.getApiName()) //
+    return TypeSpec.classBuilder(rllp.bnf.name) //
         .addModifiers(Modifier.PUBLIC) //
         .addTypes(mainTypes) //
         .addTypes(recursiveTypes) //
@@ -269,7 +272,7 @@ import com.squareup.javapoet.TypeVariableName;
     return ParameterizedTypeName.get(type, l.toArray(new TypeName[] {}));
   }
   public String getApiName() {
-    return rllp.bnf.getApiName();
+    return rllp.bnf.name;
   }
   private TypeSpec get$$$Type() {
     List<MethodSpec> ms = an.empty.list();
@@ -299,7 +302,7 @@ import com.squareup.javapoet.TypeVariableName;
   private String subBNFFix() {
     if (!isSubBNF)
       return "";
-    NonTerminal nt = rllp.bnf.getStartSymbols().iterator().next();
+    NonTerminal nt = rllp.bnf.startSymbols.iterator().next();
     if (nt instanceof Enum<?>)
       return ".getSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
     return ".getSubBNF(org.spartan.fajita.api.bnf.BNF.nonTerminal(\"" + nt + "\"))";

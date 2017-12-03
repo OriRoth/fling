@@ -1,10 +1,13 @@
 package org.spartan.fajita.revision.bnf;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -59,5 +62,35 @@ public final class EBNF {
       rs.add(new DerivationRule(r.lhs, rhs));
     }
     return new BNF(verbs, nts, rs, startSymbols, name);
+  }
+  public Map<NonTerminal, List<List<Symbol>>> regularForm() {
+    Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
+    for (DerivationRule r : derivationRules) {
+      $.putIfAbsent(r.lhs, new LinkedList<>());
+      $.get(r.lhs).add(r.rhs);
+    }
+    return $;
+  }
+  public Map<NonTerminal, List<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
+    Map<NonTerminal, List<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
+    for (Entry<NonTerminal, List<List<Symbol>>> e : rf.entrySet()) {
+      NonTerminal lhs = e.getKey();
+      List<List<Symbol>> rhs = e.getValue();
+      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
+        $.put(lhs, rhs);
+        continue;
+      }
+      $.put(lhs, new LinkedList<>());
+      for (int i = 0; i < rhs.size(); ++i) {
+        List<Symbol> l = new LinkedList<>();
+        NonTerminal nt = producer.apply(lhs);
+        l.add(nt);
+        $.get(lhs).add(l);
+        $.put(nt, new LinkedList<>());
+        if (!rhs.get(i).isEmpty())
+          $.get(nt).add(rhs.get(i));
+      }
+    }
+    return $;
   }
 }
