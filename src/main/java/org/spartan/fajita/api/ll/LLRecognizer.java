@@ -15,6 +15,7 @@ import org.spartan.fajita.api.bnf.symbols.SpecialSymbols;
 import org.spartan.fajita.api.bnf.symbols.Symbol;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
+import org.spartan.fajita.api.export.FluentAPIRecorder;
 import org.spartan.fajita.api.export.RuntimeVerb;
 
 public class LLRecognizer {
@@ -26,10 +27,11 @@ public class LLRecognizer {
   private boolean initialized = false;
   private boolean accept = false;
   private boolean reject = false;
+  private static final String PP_IDENT = "-";
 
   public LLRecognizer(final BNF bnf) {
     this.bnf = bnf;
-    analyzer = new BNFAnalyzer(bnf);
+    analyzer = new BNFAnalyzer(bnf, true);
     actionTable = createActionTable();
   }
   public void consume(RuntimeVerb t) {
@@ -40,10 +42,23 @@ public class LLRecognizer {
     if (!initialized) {
       stack.push(terminal(SpecialSymbols.$));
       stack.push(bnf.getStartSymbols().stream().filter(x -> analyzer.firstSetOf(x).contains(t)).findAny().get());
-      match.push(nonTerminal(SpecialSymbols.augmentedStartSymbol));
       match.push(nonTerminal((NonTerminal) stack.peek()));
       initialized = true;
     }
+    RuntimeNonTerminal mtop = match.peek();
+    Stack<RuntimeNonTerminal> astToPush = new Stack<>();
+    while (done(mtop)) {
+      do {
+        astToPush.push(mtop);
+        match.pop();
+        mtop = match.peek();
+      } while (done(mtop));
+      do {
+        RuntimeNonTerminal p = astToPush.pop();
+        mtop.interpret(p.nt, p.value);
+      } while (!done(mtop) && !astToPush.isEmpty());
+    }
+    assert astToPush.isEmpty();
     Symbol top = stack.pop();
     if (t.equals(SpecialSymbols.$)) {
       if (top.equals(SpecialSymbols.$))
@@ -53,8 +68,14 @@ public class LLRecognizer {
       return;
     }
     if (top.isVerb()) {
-      if (t.equals(top)) {
-        match.peek().interpret(top, t.values());
+      Verb v = (Verb) top;
+      if (mtop.toConsume == -1 && analyzer.llClosure(mtop.nt, v) == null) {
+        mtop.toConsume = 0;
+        consume(t);
+        return;
+      }
+      if (t.equals(v)) {
+        match.peek().interpret(v, t.values());
         return;
       }
       reject = true;
@@ -64,22 +85,26 @@ public class LLRecognizer {
       reject = true;
       return;
     }
-    RuntimeNonTerminal mtop = match.peek();
+    assert mtop.toConsume == -1;
     mtop.interpret(t.terminal, t.values());
-    while (mtop.value.size() == actionTable.get(mtop.nt).size() && !SpecialSymbols.augmentedStartSymbol.equals(mtop.nt)) {
-      match.pop();
-      match.peek().interpret(mtop.nt, mtop.value);
-      mtop = match.peek();
-    }
     List<Symbol> toPush = getPush((NonTerminal) top, t);
+    mtop.toConsume = toPush.size();
     for (Symbol x : toPush) {
       stack.push(x);
-      if (x.isNonTerminal())
-        match.push(nonTerminal((NonTerminal) x));
     }
+    for (int i = toPush.size() - 1; i >= 0; --i)
+      if (toPush.get(i).isNonTerminal())
+        match.push(nonTerminal((NonTerminal) toPush.get(i)));
+  }
+  private static boolean done(RuntimeNonTerminal mtop) {
+    return mtop.toConsume == 0;
   }
   public Object ast() {
-    return match.get(0).value;
+    while (match.size() > 1) {
+      RuntimeNonTerminal mtop = match.pop();
+      match.peek().interpret(mtop.nt, mtop.value);
+    }
+    return match.get(0);
   }
   public List<Symbol> getPush(NonTerminal nt, Verb v) {
     return actionTable.get(nt).get(v);
@@ -118,7 +143,7 @@ public class LLRecognizer {
   }
 
   public static class RuntimeTerminal implements RuntimeSymbol {
-    Terminal t;
+    final Terminal t;
     Interpretation value;
 
     public RuntimeTerminal(Terminal t) {
@@ -143,13 +168,14 @@ public class LLRecognizer {
       return obj instanceof RuntimeTerminal ? t.equals(((RuntimeTerminal) obj).t) : t.equals(obj);
     }
     @Override public String toString() {
-      return t.toString();
+      return "(" + t.name() + "->" + value + ")";
     }
   }
 
   public static class RuntimeNonTerminal implements RuntimeSymbol {
-    NonTerminal nt;
-    List<Interpretation> value;
+    final NonTerminal nt;
+    final List<Interpretation> value;
+    int toConsume = -1;
 
     public RuntimeNonTerminal(NonTerminal nt) {
       this.nt = nt;
@@ -162,6 +188,9 @@ public class LLRecognizer {
       return false;
     }
     public void interpret(Symbol s, @SuppressWarnings("hiding") Object value) {
+      assert toConsume != 0;
+      if (toConsume > 0)
+        --toConsume;
       this.value.add(new Interpretation(s, value));
     }
     @Override public String name() {
@@ -174,7 +203,7 @@ public class LLRecognizer {
       return obj instanceof RuntimeNonTerminal ? nt.equals(((RuntimeNonTerminal) obj).nt) : nt.equals(obj);
     }
     @Override public String toString() {
-      return nt.toString();
+      return nt.name() + "[" + toConsume + "]" + "->" + value;
     }
   }
 
@@ -185,8 +214,47 @@ public class LLRecognizer {
       super(key, value);
     }
     @Override public String toString() {
-      return "(" + getKey().name() + "->" + (!getValue().getClass().isArray() ? getValue() : Arrays.deepToString((Object[]) getValue()))
-          + ")";
+      return "(" + getKey().name() + "->"
+          + (!getValue().getClass().isArray() ? getValue() : Arrays.deepToString((Object[]) getValue())) + ")";
     }
+  }
+
+  public static String pp(Object o) {
+    return pp(o, 0, false);
+  }
+  @SuppressWarnings({ "unchecked", "rawtypes" }) private static String pp(Object o, int t, boolean inner) {
+    StringBuilder $ = new StringBuilder();
+    if (o instanceof Interpretation) {
+      for (int i = 0; i < t; ++i)
+        $.append(PP_IDENT);
+      Interpretation x = (Interpretation) o;
+      $.append(x.getKey().name()).append("=").append(pp(x.getValue(), t + 1, inner));
+    } else if (o instanceof List) {
+      $.append(pp(((List) o).toArray(new Object[((List) o).size()]), t, inner));
+    } else if (o instanceof Object[]) {
+      Object[] x = (Object[]) o;
+      if (x.length > 0) {
+        // if (!inner)
+        $.append("\n");
+        for (int i = 0; i < x.length - 1; ++i) {
+          $.append(pp(x[i], t + 1, inner));
+          // if (!inner)
+          $.append("\n");
+        }
+        $.append(pp(x[x.length - 1], t + 1, inner));
+      }
+    } else if (o instanceof RuntimeNonTerminal) {
+      RuntimeNonTerminal x = ((RuntimeNonTerminal) o);
+      $.append(x.nt.name()).append("->").append(pp(x.value, t, inner));
+    } else if (o instanceof FluentAPIRecorder) {
+      for (int j = 0; j < t; ++j)
+        $.append(PP_IDENT);
+      $.append(pp(((FluentAPIRecorder) o).ll.ast(), t, true));
+    } else {
+      for (int j = 0; j < t; ++j)
+        $.append(PP_IDENT);
+      $.append(o);
+    }
+    return $.toString();
   }
 }

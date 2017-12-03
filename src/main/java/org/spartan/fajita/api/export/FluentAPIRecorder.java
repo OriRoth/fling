@@ -5,7 +5,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.ll.LLRecognizer;
 
 public class FluentAPIRecorder {
-  private final LLRecognizer ll;
+  public final LLRecognizer ll;
 
   public FluentAPIRecorder(BNF bnf) {
     this.ll = new LLRecognizer(bnf);
@@ -15,6 +15,6 @@ public class FluentAPIRecorder {
     assert !ll.rejected() : "RLLP has rejected...";
   }
   @Override public String toString() {
-    return ll.ast().toString();
+    return LLRecognizer.pp(ll.ast());
   }
 }
