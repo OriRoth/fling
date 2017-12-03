@@ -22,8 +22,7 @@ public class Verb implements Terminal {
     this.terminal = terminal;
     for (int i = 0; i < parameterTypes.length; ++i) {
       Object o = parameterTypes[i];
-      if (!(o instanceof Class<?>) && !(o instanceof ParameterType))
-        throw new IllegalArgumentException("Terminal's parameters should be either ParameterType or Class");
+      // TODO Roth: add parameters check
       if (i < parameterTypes.length - 1 && o instanceof VarArgs)
         throw new IllegalArgumentException("VarArgs can only be the last parameter of a Terminal");
     }
