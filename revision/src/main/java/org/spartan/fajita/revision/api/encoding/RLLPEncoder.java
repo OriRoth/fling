@@ -294,7 +294,7 @@ import com.squareup.javapoet.TypeVariableName;
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethod(MethodSpec.constructorBuilder() //
-            .addCode("super(new " + provider.getName() + "().bnf().go()" + subBNFFix() + ");") //
+            .addCode("super(new " + provider.getName() + "().bnf().bnf()" + subBNFFix() + ");") //
             .build()) //
         .addMethods(ms) //
         .build();

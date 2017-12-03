@@ -14,6 +14,10 @@ public class NestedType implements ParameterType {
   public NestedType(Extendible nested) {
     this.nested = nested;
   }
+  public NestedType(Symbol nested) {
+    assert nested.isExtendible() || nested.isNonTerminal();
+    this.nested = nested;
+  }
   @Override public String toString() {
     return nested.name();
   }

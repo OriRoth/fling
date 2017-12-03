@@ -45,7 +45,7 @@ public class BNFAnalyzer {
   }
   private Map<Symbol, Collection<Verb>> calculateSymbolFirstSet() {
     Map<Symbol, Collection<Verb>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.startSymbols)
+    for (NonTerminal nt : bnf.nonTerminals)
       $.put(nt, new LinkedHashSet<>());
     for (Verb term : bnf.verbs)
       $.put(term, new LinkedHashSet<>(Arrays.asList(term)));
@@ -63,7 +63,7 @@ public class BNFAnalyzer {
   }
   private Map<NonTerminal, Collection<Verb>> calculateFollowSets() {
     Map<NonTerminal, Collection<Verb>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.startSymbols)
+    for (NonTerminal nt : bnf.nonTerminals)
       $.put(nt, new TreeSet<>());
     for (NonTerminal start : bnf.startSymbols)
       $.get(start).add(SpecialSymbols.$);

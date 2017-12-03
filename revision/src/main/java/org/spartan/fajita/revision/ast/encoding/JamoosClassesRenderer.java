@@ -53,10 +53,12 @@ public class JamoosClassesRenderer {
     for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
       List<List<Symbol>> rhs = r.getValue();
-      if (!isInheritanceRule(rhs))
+      if (!isInheritanceRule(rhs)) {
+        innerClassesFieldTypes.putIfAbsent(lhs.name(), new LinkedHashMap<>());
         for (List<Symbol> clause : r.getValue())
           for (Symbol s : clause)
             parseSymbol(lhs.name(), s);
+      }
     }
     for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
       StringBuilder $ = new StringBuilder();
@@ -73,7 +75,6 @@ public class JamoosClassesRenderer {
     }
   }
   private void parseSymbol(String lhs, Symbol s) {
-    innerClassesFieldTypes.putIfAbsent(lhs, new LinkedHashMap<>());
     for (String t : parseType(lhs, s))
       innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
@@ -121,7 +122,7 @@ public class JamoosClassesRenderer {
         else if (t instanceof NestedType)
           $.add(((NestedType) t).toString(packagePath, topClassName));
         else
-          $.add(v.type.toString());
+          $.add(t.toString());
     } else if (s instanceof NonTerminal)
       $.add(((NonTerminal) s).name(packagePath, topClassName));
     return $;

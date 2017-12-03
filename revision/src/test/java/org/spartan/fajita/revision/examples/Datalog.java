@@ -1,15 +1,28 @@
 package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.examples.Datalog.Term.*;
-import static org.spartan.fajita.revision.examples.Datalog.NT.*;
 import static org.spartan.fajita.revision.api.Fajita.attribute;
+import static org.spartan.fajita.revision.examples.Datalog.NT.BODY;
+import static org.spartan.fajita.revision.examples.Datalog.NT.LITERAL;
+import static org.spartan.fajita.revision.examples.Datalog.NT.LITERALS;
+import static org.spartan.fajita.revision.examples.Datalog.NT.RULE;
+import static org.spartan.fajita.revision.examples.Datalog.NT.RULES;
+import static org.spartan.fajita.revision.examples.Datalog.NT.S;
+import static org.spartan.fajita.revision.examples.Datalog.Term.body;
+import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
+import static org.spartan.fajita.revision.examples.Datalog.Term.head;
+import static org.spartan.fajita.revision.examples.Datalog.Term.literal;
+import static org.spartan.fajita.revision.examples.Datalog.Term.name;
+import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
+import static org.spartan.fajita.revision.junk.Datalog.fact;
+import static org.spartan.fajita.revision.junk.LITERAL.name;
+import static org.spartan.fajita.revision.junk.LITERALS.literal;
+import static org.spartan.fajita.revision.junk.BODY.body;
+
+import java.io.IOException;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
-
-import java.io.IOException;
-
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
@@ -40,13 +53,13 @@ public class Datalog extends Grammar {
     // VarArgs(String.class)));
     return Fajita.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
         .start(S) //
-        .derive(S).to(RULES) //
-        .derive(RULES).to(RULE, RULES).or(RULE) //
+        .derive(S).to(RULE, RULES) //
+        .derive(RULES).to(RULE, RULES).orNone() //
         .derive(RULE) //
         /**/.to(attribute(fact, LITERAL)) //
         /**/.or(attribute(head, LITERAL)).and(BODY) //
-        .derive(BODY).to(attribute(body, LITERALS)) //
-        .derive(LITERALS).to(attribute(literal, LITERAL), LITERALS).or(attribute(literal, LITERAL)) //
+        .derive(BODY).to(attribute(body), attribute(literal, LITERAL), LITERALS) //
+        .derive(LITERALS).to(attribute(literal, LITERAL), LITERALS).orNone() //
         .derive(LITERAL).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
   }
   /**

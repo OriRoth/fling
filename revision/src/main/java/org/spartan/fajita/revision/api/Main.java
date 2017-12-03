@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 public class Main {
   public static final String packagePath = "org.spartan.fajita.revision.junk";
-  public static final String projectPath = "/home/ori/Desktop/git/fajita/revision/src/test/java";
+  public static final String projectPath = "/home/ori/Desktop/git/fajita/revision/src/test/java/";
 
   public static void apiGenerator(Map<String, String> files) throws IOException {
     String filePath = projectPath + packagePath.replace('.', '/') + '/';

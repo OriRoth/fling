@@ -108,6 +108,7 @@ public class Fajita {
       return finish();
     }
     protected void addRuleToBNF() {
+      addRule(lhs, rhs);
     }
     public BNF bnf() {
       return Fajita.this.bnf();

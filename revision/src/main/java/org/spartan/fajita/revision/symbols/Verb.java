@@ -14,7 +14,7 @@ import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
-public class Verb implements Terminal {
+public class Verb implements Terminal, Comparable<Verb> {
   public final Terminal terminal;
   public final ParameterType[] type;
 
@@ -26,8 +26,8 @@ public class Verb implements Terminal {
       if (i < parameterTypes.length - 1 && o instanceof VarArgs)
         throw new IllegalArgumentException("VarArgs can only be the last parameter of a Terminal");
     }
-    List<Object> t = Arrays.stream(parameterTypes).map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x) : x)
-        .collect(toList());
+    List<Object> t = Arrays.stream(parameterTypes).map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x)
+        : x instanceof NonTerminal || x instanceof Extendible ? new NestedType((Symbol) x) : x).collect(toList());
     this.type = t.toArray(new ParameterType[t.size()]);
   }
   @Override public String toString() {
@@ -76,5 +76,8 @@ public class Verb implements Terminal {
       if (t instanceof NestedType)
         $.addAll(((NestedType) t).nested.solve(lhs, producer));
     return $;
+  }
+  @Override public int compareTo(Verb v) {
+    return equals(v) ? 0 : terminal.name().compareTo(v.name());
   }
 }
