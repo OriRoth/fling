@@ -21,6 +21,7 @@ import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
+import org.spartan.fajita.revision.symbols.extendibles.OneOrMore;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 
 public class Fajita {
@@ -217,5 +218,8 @@ public class Fajita {
   }
   public static Verb attribute(Terminal terminal, Object... parameterTypes) {
     return new Verb(terminal, parameterTypes);
+  }
+  public static OneOrMore oneOrMore(Symbol s, Symbol... ss) {
+    return new OneOrMore(merge(s, ss));
   }
 }

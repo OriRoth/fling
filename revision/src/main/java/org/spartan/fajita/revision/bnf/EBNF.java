@@ -16,6 +16,8 @@ import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
+import org.spartan.fajita.revision.symbols.types.NestedType;
+import org.spartan.fajita.revision.symbols.types.ParameterType;
 
 public final class EBNF {
   public final Set<Verb> verbs;
@@ -47,21 +49,35 @@ public final class EBNF {
   }
   // NOTE no equals/hashCode
   public BNF toBNF(Function<NonTerminal, NonTerminal> producer) {
-    Set<NonTerminal> nts = new LinkedHashSet<>(nonTerminals);
     Set<DerivationRule> rs = new LinkedHashSet<>();
     for (DerivationRule r : derivationRules) {
       List<Symbol> rhs = new LinkedList<>();
       for (Symbol s : r.getRHS()) {
         rs.addAll(s.solve(r.lhs, x -> {
           NonTerminal nt = producer.apply(x);
-          nts.add(nt);
           return nt;
         }));
         rhs.add(s.head());
       }
       rs.add(new DerivationRule(r.lhs, rhs));
     }
-    return new BNF(verbs, nts, rs, startSymbols, name);
+    Set<NonTerminal> nts = new LinkedHashSet<>();
+    Set<Verb> vs = new LinkedHashSet<>();
+    Set<NonTerminal> ns = new LinkedHashSet<>();
+    for (DerivationRule r : rs) {
+      nts.add(r.lhs);
+      for (Symbol s : r.getRHS()) {
+        assert !s.isExtendible();
+        if (s.isVerb()) {
+          for (ParameterType t : s.asVerb().type)
+            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal())
+              ns.add(((NestedType) t).nested.head().asNonTerminal());
+          vs.add(s.asVerb());
+        } else
+          nts.add(s.asNonTerminal());
+      }
+    }
+    return new BNF(vs, nts, ns, rs, startSymbols, name);
   }
   public Map<NonTerminal, List<List<Symbol>>> regularForm() {
     Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();

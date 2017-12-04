@@ -16,15 +16,18 @@ public final class BNF {
   public final Set<Verb> verbs;
   public final Set<NonTerminal> nonTerminals;
   public final Set<NonTerminal> startSymbols;
+  public final Set<NonTerminal> nestedNonTerminals;
   public final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubBNF;
 
-  public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<DerivationRule> rules, Set<NonTerminal> start, String name) {
+  public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<NonTerminal> nestedNonTerminals, Set<DerivationRule> rules,
+      Set<NonTerminal> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
     this.nonTerminals = new LinkedHashSet<>(nonTerminals);
     this.nonTerminals.add(SpecialSymbols.augmentedStartSymbol);
+    this.nestedNonTerminals = new LinkedHashSet<>(nestedNonTerminals);
     this.derivationRules = new LinkedHashSet<>(rules);
     this.startSymbols = new LinkedHashSet<>(start);
     this.startSymbols
@@ -53,7 +56,8 @@ public final class BNF {
         }
       }
     } while (change);
-    BNF $ = new BNF(subVerbs, subNonTerminals, subRules, subStart, startNT.name());
+    // NOTE sub BNF nested non terminals are invalid
+    BNF $ = new BNF(subVerbs, subNonTerminals, new LinkedHashSet<>(), subRules, subStart, startNT.name());
     $.isSubBNF = true;
     return $;
   }

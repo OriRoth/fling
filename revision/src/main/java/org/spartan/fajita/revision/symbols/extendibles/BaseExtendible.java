@@ -1,6 +1,5 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -31,11 +30,15 @@ import org.spartan.fajita.revision.symbols.Terminal;
     isSolved = true;
     this.lhs = lhs;
     this.producer = producer;
-    return solve();
+    solve();
+    return $;
   }
-  protected abstract List<DerivationRule> solve();
+  protected abstract void solve();
   @Override public String name() {
-    return "#";
+    return "#" + getClass().getSimpleName();
+  }
+  @Override public String toString() {
+    return getClass().getSimpleName() + symbols;
   }
   @Override public boolean isNullable() {
     assert isSolved;
@@ -62,10 +65,5 @@ import org.spartan.fajita.revision.symbols.Terminal;
   }
   protected void addRule(Symbol lhs, List<Symbol> rhs) {
     addRule((NonTerminal) lhs, rhs);
-  }
-  protected static List<Symbol> merge(Symbol s, Symbol... ss) {
-    List<Symbol> $ = a.singleton.list(s);
-    Collections.addAll($, ss);
-    return $;
   }
 }

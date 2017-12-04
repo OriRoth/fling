@@ -305,7 +305,7 @@ import com.squareup.javapoet.TypeVariableName;
     NonTerminal nt = rllp.bnf.startSymbols.iterator().next();
     if (nt instanceof Enum<?>)
       return ".getSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
-    return ".getSubBNF(org.spartan.fajita.api.bnf.BNF.nonTerminal(\"" + nt + "\"))";
+    return ".getSubBNF(" + NonTerminal.class.getTypeName() + ".of(\"" + nt + "\"))";
   }
   public String getTerminalName(MethodSpec x) {
     return getTerminalName(x.name);
