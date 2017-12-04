@@ -32,7 +32,7 @@ public class JamoosClassesRenderer {
     this.ebnf = bnf;
     this.packagePath = packagePath;
     // NOTE should correspond to the namer in Fajita
-    Map<NonTerminal, Integer> counter = an.empty.map();
+    Map<NonTerminal, Integer> counter = new HashMap<>();
     Function<NonTerminal, String> namer = lhs -> {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
       return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
@@ -240,7 +240,7 @@ public class JamoosClassesRenderer {
     return $;
   }
   private static void clearEmptyRules(Map<NonTerminal, List<List<Symbol>>> rs) {
-    List<Symbol> tbr = an.empty.list();
+    List<Symbol> tbr = new LinkedList<>();
     rs.keySet().stream().forEach(k -> //
     rs.get(k).stream().forEach(c -> //
     c.stream().filter(l -> //

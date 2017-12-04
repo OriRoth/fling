@@ -275,7 +275,7 @@ import com.squareup.javapoet.TypeVariableName;
     return rllp.bnf.name;
   }
   private TypeSpec get$$$Type() {
-    List<MethodSpec> ms = an.empty.list();
+    List<MethodSpec> ms = new LinkedList<>();
     for (TypeSpec t : mainTypes)
       ms.addAll(t.methodSpecs.stream() //
           .filter(x -> ms.stream().noneMatch(y -> x.name.equals(y.name) && x.parameters.equals(y.parameters))) //

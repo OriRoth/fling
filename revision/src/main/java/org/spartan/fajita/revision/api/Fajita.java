@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +53,7 @@ public class Fajita {
     this.projectPath = projectPath;
   }
   public BNF bnf() {
-    Map<NonTerminal, Integer> counter = an.empty.map();
+    Map<NonTerminal, Integer> counter = new HashMap<>();
     Function<NonTerminal, String> namer = lhs -> {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
       return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
@@ -453,12 +455,14 @@ public class Fajita {
   // return new NoneOrMore(merge(s, ss));
   // }
   static List<Symbol> merge(Symbol s, Symbol... ss) {
-    List<Symbol> $ = a.singleton.list(s);
+    List<Symbol> $ = new LinkedList<>();
+    $.add(s);
     Collections.addAll($, ss);
     return $;
   }
   static List<Symbol> merge(Symbol s1, Symbol s2, Symbol... ss) {
-    List<Symbol> $ = a.singleton.list(s1);
+    List<Symbol> $ = new LinkedList<>();
+    $.add(s1);
     $.add(s2);
     Collections.addAll($, ss);
     return $;
