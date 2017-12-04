@@ -1,10 +1,27 @@
 package org.spartan.fajita.revision.symbols.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ClassType implements ParameterType {
   public final Class<?> clazz;
+  private static final Map<Class<?>, Class<?>> boxedClasses = new HashMap<>();
+  {
+    boxedClasses.put(int.class, Integer.class);
+    boxedClasses.put(long.class, Long.class);
+    boxedClasses.put(short.class, Short.class);
+    boxedClasses.put(char.class, Character.class);
+    boxedClasses.put(boolean.class, Boolean.class);
+    boxedClasses.put(byte.class, Byte.class);
+    boxedClasses.put(float.class, Float.class);
+    boxedClasses.put(double.class, Double.class);
+    boxedClasses.put(void.class, Void.class); // Oh well... still illegal though
+  }
 
   public ClassType(final Class<?> clazz) {
-    this.clazz = clazz;
+    if (void.class.equals(clazz) || Void.class.equals(clazz))
+      throw new RuntimeException("Cannot use void class as attribute");
+    this.clazz = boxedClasses.getOrDefault(clazz, clazz);
   }
   @Override public String toString() {
     return clazz.getName();
