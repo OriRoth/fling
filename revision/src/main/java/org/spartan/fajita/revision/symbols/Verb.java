@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.export.RuntimeVerb;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;

@@ -11,11 +11,11 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.symbols.Extendible;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public final class EBNF {
   public final Set<Verb> verbs;

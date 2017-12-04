@@ -1,9 +1,9 @@
 package org.spartan.fajita.revision.symbols.types;
 
 import org.spartan.fajita.revision.export.ASTNode;
-import org.spartan.fajita.revision.symbols.Extendible;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public class NestedType implements ParameterType {
   public final Symbol nested;
