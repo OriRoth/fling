@@ -24,7 +24,7 @@ public final class EBNF {
   public final Set<NonTerminal> nonTerminals;
   public final Set<Extendible> extendibles;
   public final Set<NonTerminal> startSymbols;
-  public final Set<DerivationRule> derivationRules;
+  private final Set<DerivationRule> derivationRules;
   public final String name;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
@@ -108,5 +108,8 @@ public final class EBNF {
       }
     }
     return $;
+  }
+  public Set<DerivationRule> rules() {
+    return new LinkedHashSet<>(derivationRules);
   }
 }

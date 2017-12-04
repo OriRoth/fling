@@ -17,7 +17,7 @@ public final class BNF {
   public final Set<NonTerminal> nonTerminals;
   public final Set<NonTerminal> startSymbols;
   public final Set<NonTerminal> nestedNonTerminals;
-  public final Set<DerivationRule> derivationRules;
+  private final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubBNF;
 
@@ -69,4 +69,7 @@ public final class BNF {
     return derivationRules.stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode
+  public Set<DerivationRule> rules() {
+    return new LinkedHashSet<>(derivationRules);
+  }
 }

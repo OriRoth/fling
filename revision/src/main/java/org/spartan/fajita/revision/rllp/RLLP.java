@@ -37,7 +37,7 @@ public class RLLP {
   }
   private List<Item> calculateItems() {
     List<Item> $ = new ArrayList<>();
-    for (DerivationRule r : bnf.derivationRules)
+    for (DerivationRule r : bnf.rules())
       for (int i = 0; i <= r.size(); i++)
         $.add(new Item(r, i));
     return $;
@@ -115,7 +115,7 @@ public class RLLP {
     Map<NonTerminal, Map<Verb, DerivationRule>> $ = new HashMap<>();
     for (Symbol nt : bnf.nonTerminals)
       $.put((NonTerminal) nt, new HashMap<>());
-    for (DerivationRule d : bnf.derivationRules) {
+    for (DerivationRule d : bnf.rules()) {
       for (Verb v : analyzer.firstSetOf(d.getRHS()))
         addToPredictionTable($, v, d);
       if (analyzer.isNullable(d.getRHS()))

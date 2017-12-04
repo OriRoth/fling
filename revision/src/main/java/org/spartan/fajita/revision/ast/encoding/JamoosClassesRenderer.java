@@ -10,8 +10,10 @@ import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
+import org.spartan.fajita.revision.symbols.extendibles.OneOrMore;
 import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
@@ -28,8 +30,8 @@ public class JamoosClassesRenderer {
   public Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new HashMap<>();
   public Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new HashMap<>();
 
-  public JamoosClassesRenderer(EBNF bnf, String packagePath) {
-    this.ebnf = bnf;
+  public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
+    this.ebnf = ebnf;
     this.packagePath = packagePath;
     // NOTE should correspond to the namer in Fajita
     Map<NonTerminal, Integer> counter = an.empty.map();
@@ -75,16 +77,16 @@ public class JamoosClassesRenderer {
     }
   }
   private void parseSymbol(String lhs, Symbol s) {
-    for (String t : parseType(lhs, s))
+    for (String t : parseType(s))
       innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
   @SuppressWarnings("unused") private List<String> parseTypes(String lhs, List<Symbol> ss) {
-    return ss.stream().map(x -> parseType(lhs, x)).reduce(new LinkedList<>(), (l1, l2) -> {
+    return ss.stream().map(x -> parseType(x)).reduce(new LinkedList<>(), (l1, l2) -> {
       l1.addAll(l2);
       return l1;
     });
   }
-  private List<String> parseType(@SuppressWarnings("unused") String lhs, Symbol s) {
+  private List<String> parseType(Symbol s) {
     List<String> $ = new LinkedList<>();
     // if (s instanceof Optional) {
     // Optional o = (Optional) s;
@@ -114,17 +116,24 @@ public class JamoosClassesRenderer {
     // EVerb e = (EVerb) s;
     // $.addAll(parseType(lhs, e.ent));
     // } else //
-    if (s instanceof Verb) {
+    if (s instanceof OneOrMore) {
+      OneOrMore o = (OneOrMore) s;
+      for (Symbol x : o.symbols())
+        for (String q : parseType(x)) // Should be only 1 (?)
+          $.add(q + "[]");
+    } else if (s instanceof Verb) {
       Verb v = (Verb) s;
       for (ParameterType t : v.type)
         if (t instanceof ClassType)
           $.add(((ClassType) t).clazz.getTypeName());
         else if (t instanceof NestedType)
-          $.add(((NestedType) t).toString(packagePath, topClassName));
+          $.addAll(parseType(((NestedType) t).nested));
         else
           $.add(t.toString());
     } else if (s instanceof NonTerminal)
       $.add(((NonTerminal) s).name(packagePath, topClassName));
+    else
+      throw new RuntimeException("Symbol not supported");
     return $;
   }
   // // NOTE this method (maybe others too) assume "either" accepts simple
@@ -216,6 +225,7 @@ public class JamoosClassesRenderer {
   }
   private Map<NonTerminal, List<List<Symbol>>> sortRules(Map<NonTerminal, List<List<Symbol>>> orig) {
     clearEmptyRules(orig);
+    clearAugSRules(orig);
     inheritance.clear();
     for (Entry<NonTerminal, List<List<Symbol>>> e : orig.entrySet())
       if (isInheritanceRule(e.getValue()))
@@ -246,6 +256,9 @@ public class JamoosClassesRenderer {
     c.stream().filter(l -> //
     l.isVerb() && ((Verb) l).type.length == 0).forEach(e -> tbr.add(e))));
     rs.values().stream().forEach(r -> r.stream().forEach(c -> c.removeAll(tbr)));
+  }
+  private static void clearAugSRules(Map<NonTerminal, List<List<Symbol>>> rs) {
+    rs.remove(SpecialSymbols.augmentedStartSymbol);
   }
   private static boolean isInheritanceRule(List<List<Symbol>> rhs) {
     return rhs.size() > 1 || rhs.size() == 1 && rhs.get(0) instanceof NonTerminal;

@@ -37,7 +37,7 @@ public class BNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule rule : bnf.derivationRules)
+      for (DerivationRule rule : bnf.rules())
         if (rule.getRHS().stream().allMatch(child -> nullables.contains(child)))
           moreChanges |= nullables.add(rule.lhs);
     } while (moreChanges);
@@ -52,7 +52,7 @@ public class BNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule dRule : bnf.derivationRules)
+      for (DerivationRule dRule : bnf.rules())
         for (Symbol symbol : dRule.getRHS()) {
           moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
@@ -70,7 +70,7 @@ public class BNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule dRule : bnf.derivationRules)
+      for (DerivationRule dRule : bnf.rules())
         for (int i = 0; i < dRule.size(); i++) {
           if (!dRule.get(i).isNonTerminal())
             continue;
