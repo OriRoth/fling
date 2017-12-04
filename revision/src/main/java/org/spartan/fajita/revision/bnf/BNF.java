@@ -20,6 +20,7 @@ public final class BNF {
   private final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubBNF;
+  public EBNF origin;
 
   public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<NonTerminal> nestedNonTerminals, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {

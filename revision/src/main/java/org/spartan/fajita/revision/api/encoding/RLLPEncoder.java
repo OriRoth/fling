@@ -294,7 +294,7 @@ public class RLLPEncoder {
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethod(MethodSpec.constructorBuilder() //
-            .addCode("super(new " + provider.getName() + "().bnf().bnf()" + subBNFFix() + ");") //
+            .addCode("super(new " + provider.getName() + "().bnf().ebnf()" + subBNFFix() + ");") //
             .build()) //
         .addMethods(ms) //
         .build();

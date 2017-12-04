@@ -59,7 +59,7 @@ public class Datalog {
 
   private static class $$$ extends FluentAPIRecorder implements RULE_1, RULE_1_n1, BODY1_1, BODY2_1, BODY_1, LITERAL_1, LITERAL_2, RULE_1_n1_rec_1e4, RULE_1_rec_3bc {
     $$$() {
-      super(new org.spartan.fajita.revision.examples.Datalog().bnf().bnf());}
+      super(new org.spartan.fajita.revision.examples.Datalog().bnf().ebnf());}
 
     public $$$ fact(ASTNode arg0) {
       recordTerminal(org.spartan.fajita.revision.examples.Datalog.Term.fact,arg0);return this;}

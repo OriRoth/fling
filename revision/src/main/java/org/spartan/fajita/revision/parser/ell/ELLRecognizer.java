@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.parser.llp;
+package org.spartan.fajita.revision.parser.ell;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -8,16 +8,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.RuntimeVerb;
+import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 
-public class LLRecognizer {
+public class ELLRecognizer {
   public final BNF bnf;
   private final BNFAnalyzer analyzer;
   public final Map<NonTerminal, Map<Verb, List<Symbol>>> actionTable;
@@ -28,13 +31,12 @@ public class LLRecognizer {
   private boolean reject = false;
   private static final String PP_IDENT = "-";
 
-  public LLRecognizer(final BNF bnf) {
-    this.bnf = bnf;
+  public ELLRecognizer(final EBNF ebnf) {
+    this.bnf = ebnf.toBNF(Fajita.producer());
     analyzer = new BNFAnalyzer(bnf);
     actionTable = createActionTable();
   }
-  // AST creation does not work well
-  @Deprecated public void consume(RuntimeVerb t) {
+  public void consume(RuntimeVerb t) {
     if (accept)
       throw new RuntimeException("Parser has already accepted");
     if (reject)
@@ -250,7 +252,7 @@ public class LLRecognizer {
     } else if (o instanceof FluentAPIRecorder) {
       for (int j = 0; j < t; ++j)
         $.append(PP_IDENT);
-      $.append(pp(((FluentAPIRecorder) o).ll.ast(), t, true));
+      $.append(pp(((FluentAPIRecorder) o).ell.ast(), t, true));
     } else {
       for (int j = 0; j < t; ++j)
         $.append(PP_IDENT);

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.DerivationRule;
-import org.spartan.fajita.revision.parser.llp.BNFAnalyzer;
+import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;

@@ -26,6 +26,7 @@ public final class EBNF {
   public final Set<NonTerminal> startSymbols;
   private final Set<DerivationRule> derivationRules;
   public final String name;
+  public boolean isSubEBNF;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
@@ -39,6 +40,7 @@ public final class EBNF {
     this.startSymbols
         .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
     this.name = name;
+    this.isSubEBNF = false;
   }
   @Override public String toString() {
     // TODO Roth: set EBNF toString
@@ -77,7 +79,9 @@ public final class EBNF {
           nts.add(s.asNonTerminal());
       }
     }
-    return new BNF(vs, nts, ns, rs, startSymbols, name);
+    BNF $ = new BNF(vs, nts, ns, rs, startSymbols, name);
+    $.origin = this;
+    return $;
   }
   public Map<NonTerminal, List<List<Symbol>>> regularForm() {
     Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
@@ -111,5 +115,33 @@ public final class EBNF {
   }
   public Set<DerivationRule> rules() {
     return new LinkedHashSet<>(derivationRules);
+  }
+  public EBNF getSubBNF(NonTerminal startNT) {
+    Set<Verb> subVerbs = new LinkedHashSet<>();
+    Set<NonTerminal> subNonTerminals = new LinkedHashSet<>();
+    Set<Extendible> subExtendibles = new LinkedHashSet<>();
+    Set<DerivationRule> subRules = new LinkedHashSet<>();
+    Set<NonTerminal> subStart = new LinkedHashSet<>();
+    subStart.add(startNT);
+    subNonTerminals.add(startNT);
+    boolean change;
+    do {
+      change = false;
+      for (DerivationRule r : derivationRules) {
+        if (subNonTerminals.contains(r.lhs) && subRules.add(r)) {
+          change = true;
+          for (Symbol s : r.getRHS())
+            if (s.isVerb())
+              subVerbs.add(s.asVerb());
+            else if (s.isNonTerminal())
+              subNonTerminals.add(s.asNonTerminal());
+            else
+              subExtendibles.add(s.asExtendible());
+        }
+      }
+    } while (change);
+    EBNF $ = new EBNF(subVerbs, subNonTerminals, subExtendibles, subRules, subStart, startNT.name());
+    $.isSubEBNF = true;
+    return $;
   }
 }

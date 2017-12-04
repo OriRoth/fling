@@ -1,20 +1,20 @@
 package org.spartan.fajita.revision.export;
 
-import org.spartan.fajita.revision.bnf.BNF;
-import org.spartan.fajita.revision.parser.llp.LLRecognizer;
+import org.spartan.fajita.revision.bnf.EBNF;
+import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
 import org.spartan.fajita.revision.symbols.Terminal;
 
 public class FluentAPIRecorder {
-  public final LLRecognizer ll;
+  public final ELLRecognizer ell;
 
-  public FluentAPIRecorder(BNF bnf) {
-    this.ll = new LLRecognizer(bnf);
+  public FluentAPIRecorder(EBNF ebnf) {
+    this.ell = new ELLRecognizer(ebnf);
   }
   public void recordTerminal(Terminal t, Object... args) {
-    ll.consume(new RuntimeVerb(t, args));
-    assert !ll.rejected() : "RLLP has rejected...";
+    ell.consume(new RuntimeVerb(t, args));
+    assert !ell.rejected() : "RLLP has rejected...";
   }
   @Override public String toString() {
-    return LLRecognizer.pp(ll.ast());
+    return ELLRecognizer.pp(ell.ast());
   }
 }

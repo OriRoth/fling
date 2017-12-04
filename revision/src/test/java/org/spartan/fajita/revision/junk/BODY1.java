@@ -22,7 +22,7 @@ public class BODY1 {
 
   private static class $$$ extends FluentAPIRecorder implements BODY1_1, BODY2_1 {
     $$$() {
-      super(new org.spartan.fajita.revision.examples.Datalog().bnf().bnf().getSubBNF(org.spartan.fajita.revision.symbols.NonTerminal.of("BODY1")));}
+      super(new org.spartan.fajita.revision.examples.Datalog().bnf().ebnf().getSubBNF(org.spartan.fajita.revision.symbols.NonTerminal.of("BODY1")));}
 
     public $$$ literal(ASTNode arg0) {
       recordTerminal(org.spartan.fajita.revision.examples.Datalog.Term.literal,arg0);return this;}

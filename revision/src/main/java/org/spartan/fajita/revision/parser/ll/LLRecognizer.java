@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.parser.ellp;
+package org.spartan.fajita.revision.parser.ll;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.spartan.fajita.revision.bnf.BNF;
-import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -17,20 +16,19 @@ import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 
-public class ELLRecognizer {
+public class LLRecognizer {
   public final BNF bnf;
-  private final EBNFAnalyzer analyzer;
+  private final BNFAnalyzer analyzer;
   public final Map<NonTerminal, Map<Verb, List<Symbol>>> actionTable;
   private Stack<Symbol> stack = new Stack<>();
   private Stack<RuntimeNonTerminal> match = new Stack<>();
   private boolean initialized = false;
   private boolean accept = false;
   private boolean reject = false;
-  private static final String PP_IDENT = "-";
 
-  public ELLRecognizer(final BNF bnf) {
+  public LLRecognizer(final BNF bnf) {
     this.bnf = bnf;
-    analyzer = new EBNFAnalyzer(bnf);
+    analyzer = new BNFAnalyzer(bnf);
     actionTable = createActionTable();
   }
   // AST creation does not work well
@@ -218,44 +216,5 @@ public class ELLRecognizer {
       return "(" + getKey().name() + "->"
           + (!getValue().getClass().isArray() ? getValue() : Arrays.deepToString((Object[]) getValue())) + ")";
     }
-  }
-
-  public static String pp(Object o) {
-    return pp(o, 0, false);
-  }
-  @SuppressWarnings({ "unchecked", "rawtypes" }) private static String pp(Object o, int t, boolean inner) {
-    StringBuilder $ = new StringBuilder();
-    if (o instanceof Interpretation) {
-      for (int i = 0; i < t; ++i)
-        $.append(PP_IDENT);
-      Interpretation x = (Interpretation) o;
-      $.append(x.getKey().name()).append("=").append(pp(x.getValue(), t + 1, inner));
-    } else if (o instanceof List) {
-      $.append(pp(((List) o).toArray(new Object[((List) o).size()]), t, inner));
-    } else if (o instanceof Object[]) {
-      Object[] x = (Object[]) o;
-      if (x.length > 0) {
-        // if (!inner)
-        $.append("\n");
-        for (int i = 0; i < x.length - 1; ++i) {
-          $.append(pp(x[i], t + 1, inner));
-          // if (!inner)
-          $.append("\n");
-        }
-        $.append(pp(x[x.length - 1], t + 1, inner));
-      }
-    } else if (o instanceof RuntimeNonTerminal) {
-      RuntimeNonTerminal x = ((RuntimeNonTerminal) o);
-      $.append(x.nt.name()).append("->").append(pp(x.value, t, inner));
-    } else if (o instanceof FluentAPIRecorder) {
-      for (int j = 0; j < t; ++j)
-        $.append(PP_IDENT);
-      $.append(pp(((FluentAPIRecorder) o).ll.ast(), t, true));
-    } else {
-      for (int j = 0; j < t; ++j)
-        $.append(PP_IDENT);
-      $.append(o);
-    }
-    return $.toString();
   }
 }

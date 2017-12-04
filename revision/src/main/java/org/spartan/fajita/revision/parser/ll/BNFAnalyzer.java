@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.parser.llp;
+package org.spartan.fajita.revision.parser.ll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
