@@ -70,6 +70,7 @@ public class LLRecognizer {
     if (top.isVerb()) {
       Verb v = (Verb) top;
       if (mtop.toConsume == -1 && analyzer.llClosure(mtop.nt, v) == null) {
+        // Assume epsilon transition, no rejection
         mtop.toConsume = 0;
         consume(t);
         return;
@@ -81,21 +82,20 @@ public class LLRecognizer {
       reject = true;
       return;
     }
-    if (isError(((NonTerminal) top), t)) {
+    if (isError(top.asNonTerminal(), t)) {
       // Assume epsilon transition, no rejection
       consume(t);
       return;
     }
     assert mtop.toConsume == -1;
     mtop.interpret(t.terminal, t.values());
-    List<Symbol> toPush = getPush((NonTerminal) top, t);
+    List<Symbol> toPush = getPush(top.asNonTerminal(), t);
     mtop.toConsume = toPush.size();
     for (Symbol x : toPush) {
       stack.push(x);
+      if (x.isNonTerminal())
+        match.push(nonTerminal(x.asNonTerminal()));
     }
-    for (int i = toPush.size() - 1; i >= 0; --i)
-      if (toPush.get(i).isNonTerminal())
-        match.push(nonTerminal((NonTerminal) toPush.get(i)));
   }
   private static boolean done(RuntimeNonTerminal mtop) {
     return mtop.toConsume == 0;

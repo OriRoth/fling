@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public interface Symbol {
   public String name();

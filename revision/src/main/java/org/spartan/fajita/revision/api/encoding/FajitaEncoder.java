@@ -51,7 +51,7 @@ import com.squareup.javapoet.TypeSpec;
   private Collection<BNF> getAllBNFs() {
     BNF main = fajita.bnf();
     List<BNF> $ = new ArrayList<>(Arrays.asList(main));
-    for (NonTerminal nt : fajita.nonTerminals)
+    for (NonTerminal nt : main.nestedNonTerminals)
       $.add(main.getSubBNF(nt));
     return $;
   }

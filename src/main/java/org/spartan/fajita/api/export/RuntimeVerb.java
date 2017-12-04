@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
-import org.spartan.fajita.revision.export.RuntimeVerb;
 
 public class RuntimeVerb extends Verb {
   Terminal t;

@@ -22,7 +22,7 @@ import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.Verb;
 import org.spartan.fajita.api.bnf.symbols.type.NestedType;
 import org.spartan.fajita.api.bnf.symbols.type.ParameterType;
-import org.spartan.fajita.revision.export.Grammar;
+import org.spartan.fajita.api.export.Grammar;
 
 public class EFajita extends Fajita {
   private Map<NonTerminal, Integer> counter = an.empty.map();

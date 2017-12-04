@@ -23,7 +23,7 @@ import org.spartan.fajita.api.EFajita.FajitaBNF;
 import org.spartan.fajita.api.bnf.symbols.NonTerminal;
 import org.spartan.fajita.api.bnf.symbols.Terminal;
 import org.spartan.fajita.api.bnf.symbols.type.VarArgs;
-import org.spartan.fajita.revision.export.Grammar;
+import org.spartan.fajita.api.export.Grammar;
 
 // TODO Roth add OR
 public class EDatalog extends Grammar {
@@ -50,7 +50,6 @@ public class EDatalog extends Grammar {
    * @throws IOException
    */
   public static void main(String[] args) throws IOException {
-    // System.out.println(bnf().go().toString(ASCII));
     // new
     // EDatalog().generateGrammarFiles(org.spartan.fajita.api.Main.packagePath);
     test();

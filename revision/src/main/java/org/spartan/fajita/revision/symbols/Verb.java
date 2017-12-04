@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.export.RuntimeVerb;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
@@ -90,6 +91,15 @@ public class Verb implements Terminal, Comparable<Verb> {
       if (t instanceof NestedType)
         $.addAll(((NestedType) t).nested.solve(lhs, producer));
     return $;
+  }
+  @Override public Verb head() {
+    Object[] $ = new ParameterType[type.length];
+    for (int i = 0; i < type.length; ++i)
+      if (type[i] instanceof NestedType)
+        $[i] = new NestedType(((NestedType) type[i]).nested.head());
+      else
+        $[i] = type[i];
+    return new Verb(terminal, $);
   }
   @Override public int compareTo(Verb v) {
     return equals(v) ? 0 : terminal.name().compareTo(v.name());
