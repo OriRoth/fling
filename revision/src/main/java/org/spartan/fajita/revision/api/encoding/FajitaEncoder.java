@@ -24,7 +24,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
-@SuppressWarnings("restriction") public class FajitaEncoder {
+public class FajitaEncoder {
   Fajita fajita;
   List<RLLPEncoder> encoders;
   private EncoderUtils namer;

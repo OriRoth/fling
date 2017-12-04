@@ -47,7 +47,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-@SuppressWarnings("restriction") public class RLLPEncoder {
+public class RLLPEncoder {
   public static final String $$$name = "$$$";
   public static final String $$$nameEscaped = "$$$$$$";
   public final RLLP rllp;
