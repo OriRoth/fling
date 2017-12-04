@@ -15,8 +15,8 @@ import javax.lang.model.element.Modifier;
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
 import org.spartan.fajita.revision.bnf.BNF;
-import org.spartan.fajita.revision.rllp.Item;
-import org.spartan.fajita.revision.rllp.RLLP;
+import org.spartan.fajita.revision.parser.rll.Item;
+import org.spartan.fajita.revision.parser.rll.RLLP;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 
 import com.squareup.javapoet.JavaFile;

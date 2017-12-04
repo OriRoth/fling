@@ -53,13 +53,16 @@ public class Fajita {
     this.packagePath = packagePath;
     this.projectPath = projectPath;
   }
-  public BNF bnf() {
+  public static Function<NonTerminal, NonTerminal> producer() {
     Map<NonTerminal, Integer> counter = new HashMap<>();
     Function<NonTerminal, String> namer = lhs -> {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
       return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
     };
-    return ebnf().toBNF(x -> NonTerminal.of(namer.apply(x)));
+    return x -> NonTerminal.of(namer.apply(x));
+  }
+  public BNF bnf() {
+    return ebnf().toBNF(producer());
   }
   public EBNF ebnf() {
     return new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);

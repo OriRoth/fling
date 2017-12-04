@@ -1,7 +1,10 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,7 +19,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
   protected boolean isSolved = false;
   private NonTerminal lhs;
   private Function<NonTerminal, NonTerminal> producer;
-  protected List<DerivationRule> $ = new LinkedList<>();
+  protected List<DerivationRule> solvedSymbols = new LinkedList<>();
 
   public BaseExtendible(List<Symbol> symbols) {
     this.symbols = symbols;
@@ -31,7 +34,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
     this.lhs = lhs;
     this.producer = producer;
     solve();
-    return $;
+    return solvedSymbols;
   }
   protected abstract void solve();
   @Override public String name() {
@@ -40,40 +43,42 @@ import org.spartan.fajita.revision.symbols.Terminal;
   @Override public String toString() {
     return getClass().getSimpleName() + symbols;
   }
-  @Override public boolean isNullable() {
-    assert isSolved;
-    return nullable();
-  }
-  protected abstract boolean nullable();
-  @Override public List<Terminal> firstSet() {
-    assert isSolved;
-    return firsts();
-  }
-  protected abstract List<Terminal> firsts();
   protected NonTerminal nonTerminal() {
     return producer.apply(lhs);
   }
   protected Symbol solve(Symbol s) {
-    $.addAll(s.solve(lhs, producer));
+    solvedSymbols.addAll(s.solve(lhs, producer));
     return s.head();
   }
   protected List<Symbol> solve(List<Symbol> ss) {
     return ss.stream().map(x -> solve(x)).collect(Collectors.toList());
   }
   protected void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    $.add(new DerivationRule(lhs, rhs));
+    solvedSymbols.add(new DerivationRule(lhs, rhs));
   }
   protected void addRule(Symbol lhs, List<Symbol> rhs) {
     addRule((NonTerminal) lhs, rhs);
   }
   public List<Symbol> symbols() {
     assert isSolved;
-    List<Symbol> $ = new LinkedList<>();
-    for (Symbol s : symbols)
-      if (s instanceof BaseExtendible)
-        $.addAll(((BaseExtendible) s).symbols());
-      else
-        $.add(s);
-    return $;
+    return new LinkedList<>(symbols);
   }
+  @Override public boolean updateNullable(Set<Symbol> knownNullables) {
+    if (knownNullables.contains(this))
+      return false;
+    if (isNullable(knownNullables)) {
+      knownNullables.add(this);
+      return true;
+    }
+    return false;
+  }
+  protected abstract boolean isNullable(Set<Symbol> knownNullables);
+  @Override public boolean updateFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
+    Set<Terminal> fs = getFirstSet(nullables, knownFirstSets);
+    if (fs.isEmpty())
+      return false;
+    knownFirstSets.putIfAbsent(this, new HashSet<>());
+    return knownFirstSets.get(this).addAll(fs);
+  }
+  protected abstract Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets);
 }

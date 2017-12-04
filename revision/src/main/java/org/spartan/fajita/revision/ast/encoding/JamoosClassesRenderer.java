@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
+import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -33,13 +34,8 @@ public class JamoosClassesRenderer {
   public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
     this.ebnf = ebnf;
     this.packagePath = packagePath;
-    // NOTE should correspond to the namer in Fajita
-    Map<NonTerminal, Integer> counter = new HashMap<>();
-    Function<NonTerminal, String> namer = lhs -> {
-      counter.putIfAbsent(lhs, Integer.valueOf(1));
-      return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
-    };
-    parseTopClass(x -> NonTerminal.of(namer.apply(x)));
+    // NOTE should correspond to the producer in Fajita
+    parseTopClass(Fajita.producer());
   }
   private void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
     StringBuilder $ = new StringBuilder();
@@ -119,7 +115,7 @@ public class JamoosClassesRenderer {
     if (s instanceof OneOrMore) {
       OneOrMore o = (OneOrMore) s;
       for (Symbol x : o.symbols())
-        for (String q : parseType(x)) // Should be only 1 (?)
+        for (String q : parseType(x))
           $.add(q + "[]");
     } else if (s instanceof Verb) {
       Verb v = (Verb) s;

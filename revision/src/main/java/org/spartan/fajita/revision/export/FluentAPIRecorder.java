@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.export;
 
 import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.parser.llp.LLRecognizer;
 import org.spartan.fajita.revision.symbols.Terminal;
 
 public class FluentAPIRecorder {

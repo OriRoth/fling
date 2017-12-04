@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.rllp;
+package org.spartan.fajita.revision.parser.rll;
 
 import static org.spartan.fajita.revision.symbols.SpecialSymbols.$;
 
@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.spartan.fajita.revision.bnf.BNF;
-import org.spartan.fajita.revision.rllp.RLLP.Action;
-import org.spartan.fajita.revision.rllp.RLLP.Action.ActionType;
-import org.spartan.fajita.revision.rllp.RLLP.Action.Jump;
-import org.spartan.fajita.revision.rllp.RLLP.Action.Push;
+import org.spartan.fajita.revision.parser.rll.RLLP.Action;
+import org.spartan.fajita.revision.parser.rll.RLLP.Action.ActionType;
+import org.spartan.fajita.revision.parser.rll.RLLP.Action.Jump;
+import org.spartan.fajita.revision.parser.rll.RLLP.Action.Push;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;

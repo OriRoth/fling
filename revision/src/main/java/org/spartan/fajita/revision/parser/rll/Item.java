@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.rllp;
+package org.spartan.fajita.revision.parser.rll;
 
 import java.util.List;
 

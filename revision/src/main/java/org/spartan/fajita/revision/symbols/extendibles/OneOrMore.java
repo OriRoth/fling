@@ -1,8 +1,11 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -24,12 +27,17 @@ public class OneOrMore extends BaseExtendible {
     addRule(head2, rhs2);
     addRule(head2, new LinkedList<>());
   }
-  @Override protected boolean nullable() {
-    // TODO Auto-generated method stub
-    return false;
+  @Override public boolean isNullable(Set<Symbol> knownNullables) {
+    return symbols.stream().allMatch(x -> knownNullables.contains(x));
   }
-  @Override protected List<Terminal> firsts() {
-    // TODO Auto-generated method stub
-    return null;
+  @Override public Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
+    Set<Terminal> $ = new HashSet<>();
+    for (Symbol s : symbols) {
+      if (knownFirstSets.containsKey(s))
+        $.addAll(knownFirstSets.get(s));
+      if (!nullables.contains(s))
+        break;
+    }
+    return $;
   }
 }

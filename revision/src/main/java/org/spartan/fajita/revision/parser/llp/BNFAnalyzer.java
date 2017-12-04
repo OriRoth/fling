@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.bnf;
+package org.spartan.fajita.revision.parser.llp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.spartan.fajita.revision.rllp.Item;
+import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.bnf.DerivationRule;
+import org.spartan.fajita.revision.parser.rll.Item;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;

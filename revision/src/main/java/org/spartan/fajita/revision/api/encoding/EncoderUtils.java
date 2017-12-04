@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.spartan.fajita.revision.export.ASTNode;
-import org.spartan.fajita.revision.rllp.Item;
-import org.spartan.fajita.revision.rllp.JSM;
+import org.spartan.fajita.revision.parser.rll.Item;
+import org.spartan.fajita.revision.parser.rll.JSM;
 import org.spartan.fajita.revision.symbols.Verb;
 
 import com.squareup.javapoet.ClassName;

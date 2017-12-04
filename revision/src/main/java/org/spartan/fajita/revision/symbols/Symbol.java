@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
+import org.spartan.fajita.revision.symbols.extendibles.BaseExtendible;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public interface Symbol {
@@ -30,8 +31,8 @@ public interface Symbol {
   public default Terminal asTerminal() {
     return (Terminal) this;
   }
-  public default Extendible asExtendible() {
-    return (Extendible) this;
+  public default BaseExtendible asExtendible() {
+    return (BaseExtendible) this;
   }
   // NOTE applicable only after solve
   default Symbol head() {
