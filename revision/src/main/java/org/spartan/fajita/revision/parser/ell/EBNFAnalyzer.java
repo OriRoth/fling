@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.bnf.EBNF;
-import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
@@ -17,11 +16,13 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public class EBNFAnalyzer {
   public final EBNF ebnf;
+  public final Map<Symbol, Set<List<Symbol>>> normalized;
   private final Set<Symbol> nullableSymbols;
   private final Map<Symbol, Set<Terminal>> baseFirstSets;
 
-  public EBNFAnalyzer(final EBNF ebnf) {
+  public EBNFAnalyzer(final EBNF ebnf, Map<Symbol, Set<List<Symbol>>> normalized) {
     this.ebnf = ebnf;
+    this.normalized = normalized;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
   }
@@ -30,17 +31,18 @@ public class EBNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule rule : ebnf.rules())
-        if (rule.getRHS().stream().allMatch(x -> nullables.contains(x) || //
-            x.isExtendible() && x.asExtendible().updateNullable(nullables)))
-          moreChanges |= nullables.add(rule.lhs);
+      for (Symbol lhs : normalized.keySet())
+        for (List<Symbol> clause : normalized.get(lhs))
+          if (clause.stream().allMatch(x -> nullables.contains(x) || //
+              x.isExtendible() && x.asExtendible().updateNullable(nullables)))
+            moreChanges |= nullables.add(lhs);
     } while (moreChanges);
     return nullables;
   }
   private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
     Map<Symbol, Set<Terminal>> $ = new HashMap<>();
-    for (NonTerminal nt : ebnf.nonTerminals)
-      $.put(nt, new HashSet<>());
+    for (Symbol s : normalized.keySet())
+      $.put(s, new HashSet<>());
     for (Extendible e : ebnf.extendibles)
       $.put(e, new HashSet<>());
     for (Verb term : ebnf.verbs)
@@ -48,13 +50,14 @@ public class EBNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule r : ebnf.rules())
-        for (Symbol s : r.getRHS()) {
-          moreChanges |= s.isExtendible() && s.asExtendible().updateFirstSet(nullableSymbols, $);
-          moreChanges |= $.get(r.lhs).addAll($.getOrDefault(s, new HashSet<>()));
-          if (!isNullable(s))
-            break;
-        }
+      for (Symbol lhs : normalized.keySet())
+        for (List<Symbol> clause : normalized.get(lhs))
+          for (Symbol s : clause) {
+            moreChanges |= s.isExtendible() && s.asExtendible().updateFirstSet(nullableSymbols, $);
+            moreChanges |= $.get(lhs).addAll($.getOrDefault(s, new HashSet<>()));
+            if (!isNullable(s))
+              break;
+          }
     } while (moreChanges);
     return $;
   }

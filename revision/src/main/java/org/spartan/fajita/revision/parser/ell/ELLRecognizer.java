@@ -3,6 +3,7 @@ package org.spartan.fajita.revision.parser.ell;
 import static org.spartan.fajita.revision.parser.ell.EBNFAnalyzer.reject;
 
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,8 @@ import java.util.Stack;
 
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.export.RuntimeVerb;
-import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
-import org.spartan.fajita.revision.symbols.Verb;
-import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public class ELLRecognizer {
   private final Map<Symbol, Set<List<Symbol>>> n;
@@ -24,37 +22,15 @@ public class ELLRecognizer {
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles();
-    a = new EBNFAnalyzer(ebnf);
+    a = new EBNFAnalyzer(ebnf, n);
     stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
   public void consume(RuntimeVerb input) {
+    System.out.println("@@@@@@ " + input);
     stack = stack.match(input);
   }
   public Object ast() {
     return Interpretation.of(stack.current, stack.interpretations);
-  }
-  private List<Symbol> getPush(Symbol s, Verb input) {
-    if (s.isNonTerminal())
-      return getPush(s.asNonTerminal(), input);
-    if (s.isExtendible())
-      return getPush(s.asExtendible(), input);
-    throw reject("should not reach here");
-  }
-  private List<Symbol> getPush(NonTerminal nt, Verb input) {
-    assert n.containsKey(nt) : reject("non terminal " + nt + " not in EBNF");
-    boolean hasEmptyRule = false;
-    for (List<Symbol> ss : n.get(nt)) {
-      if (ss.isEmpty())
-        hasEmptyRule = true;
-      else if (a.firstSetOf(ss).contains(input))
-        return ss;
-    }
-    if (hasEmptyRule)
-      return new LinkedList<>();
-    throw reject("cannot match " + nt + " with " + input);
-  }
-  private List<Symbol> getPush(Extendible e, Verb input) {
-    return getPush(n.get(e).stream().findFirst().get().get(0), input);
   }
 
   @SuppressWarnings("synthetic-access") public class ELLStack {
@@ -75,16 +51,20 @@ public class ELLRecognizer {
       this.parent = parent;
     }
     public ELLStack match(RuntimeVerb input) {
-      System.out.println(generateChildren(input));
-      System.out.println(children);
       if (generateChildren(input) && _match(input))
         return this;
       parent.interpretations.add(Interpretation.of(current, interpretations));
+      parent.children.pop();
       return parent.match(input);
     }
     private boolean generateChildren(RuntimeVerb input) {
       if (children != null)
         return true;
+      if (current.isVerb()) {
+        if (current.equals(input))
+          return true;
+        throw reject();
+      }
       children = new Stack<>();
       boolean hasEmptyRule = false;
       for (List<Symbol> clause : n.get(current)) {
@@ -99,9 +79,20 @@ public class ELLRecognizer {
       return hasEmptyRule;
     }
     private boolean _match(RuntimeVerb input) {
+      if (current.isVerb()) {
+        if (!current.equals(input))
+          throw reject();
+        List<Object> args = new LinkedList<>();
+        Collections.addAll(args, input.args);
+        parent.interpretations.add(Interpretation.of(current, args));
+        parent.children.pop();
+        return true;
+      }
       if (children.isEmpty())
         return false;
       ELLStack c = children.peek();
+      if (!c.generateChildren(input))
+        throw reject();
       if (c._match(input))
         return true;
       if (!a.isNullable(c.current))

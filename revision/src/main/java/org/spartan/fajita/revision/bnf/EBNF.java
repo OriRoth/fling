@@ -101,6 +101,7 @@ public final class EBNF {
     return $;
   }
   public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles() {
+    toBNF(Fajita.producer());
     Map<Symbol, Set<List<Symbol>>> $ = new HashMap<>(regularForm());
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
