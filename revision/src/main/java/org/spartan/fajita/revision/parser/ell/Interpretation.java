@@ -34,7 +34,7 @@ import org.spartan.fajita.revision.symbols.Symbol;
       value.clear();
       for (Object o : t) {
         if (o instanceof FluentAPIRecorder)
-          value.add(((FluentAPIRecorder) o).ast());
+          value.add(((FluentAPIRecorder) o).ell.ast());
         else
           value.add(o);
       }

@@ -129,15 +129,10 @@ public class RLLPEncoder {
       encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v)));
       if (rllp.analyzer.followSetOf(i.rule.lhs).contains(SpecialSymbols.$)) {
         encoding.addSuperinterface(EncoderUtils.returnTypeOf$());
-        System.out.println(ClassName.get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf),
-            rllp.getStartItems().iterator().next().rule.lhs.toString()).withoutAnnotations());
-        System.out.println(packagePath);
-        System.out.println(rllp.bnf.startSymbols.iterator().next());
         if (!isSubBNF)
           encoding.addMethod(MethodSpec.methodBuilder($NAME) //
               .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-              .returns(ClassName.get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf),
-                  rllp.bnf.startSymbols.iterator().next().toString()).withoutAnnotations()) //
+              .returns($ReturnType()) //
               .build());
       }
     }
@@ -306,7 +301,7 @@ public class RLLPEncoder {
               .addCode("return this;") //
               .build())
           .collect(toList()));
-    return TypeSpec.classBuilder($$$name) //
+    TypeSpec.Builder b = TypeSpec.classBuilder($$$name) //
         .superclass(FluentAPIRecorder.class) //
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
@@ -314,8 +309,14 @@ public class RLLPEncoder {
         .addMethod(MethodSpec.constructorBuilder() //
             .addCode("super(new " + provider.getName() + "().bnf().ebnf()" + subBNFFix() + ");") //
             .build()) //
-        .addMethods(ms) //
-        .build();
+        .addMethods(ms);
+    if (!isSubBNF)
+      b.addMethod(MethodSpec.methodBuilder("$") //
+          .addModifiers(Modifier.PUBLIC) //
+          .returns($ReturnType()) //
+          .addCode("return null;") //
+          .build());
+    return b.build();
   }
   private String subBNFFix() {
     if (!isSubBNF)
@@ -331,5 +332,10 @@ public class RLLPEncoder {
   public String getTerminalName(String name) {
     Terminal match = terminals.stream().filter(z -> z.name().equals(name)).findFirst().get();
     return (match.getClass().getCanonicalName() + "." + match).replaceAll("\\$", "\\$\\$");
+  }
+  private TypeName $ReturnType() {
+    return ClassName
+        .get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf), rllp.bnf.startSymbols.iterator().next().toString())
+        .withoutAnnotations();
   }
 }

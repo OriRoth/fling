@@ -62,6 +62,7 @@ public class Datalog extends Grammar {
             literal(name("parent").terms("A", "B"))) //
         .head(name("ancestor").terms("A", "B")).body( //
             literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B"))));
+                .literal(name("ancestor").terms("C", "B"))) //
+        .$());
   }
 }

@@ -81,7 +81,7 @@ public class JamoosClassesRenderer {
         // Fields
         List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
             .collect(toList());
-        $.append(String.join(";", fields));
+        $.append(String.join(";", fields.stream().map(x -> "public " + x).collect(toList())));
         if (!fields.isEmpty())
           $.append(";");
         // Constructor

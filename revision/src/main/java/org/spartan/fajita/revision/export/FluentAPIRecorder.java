@@ -15,15 +15,18 @@ public class FluentAPIRecorder {
     ell.consume(new RuntimeVerb(t, args));
   }
   @Override public String toString() {
-    return ast().toString();
+    return conclude().toString();
   }
   public String toString(int ident) {
-    return ast().toString(ident);
+    return conclude().toString(ident);
   }
   public void fold() {
-    ast();
+    conclude();
   }
-  public Interpretation ast() {
+  public Interpretation conclude() {
     return ell.ast();
+  }
+  public <S> S ast(Class<?> astClass) {
+    return ASTBuilder.build();
   }
 }
