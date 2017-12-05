@@ -14,7 +14,6 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
-import org.spartan.fajita.revision.symbols.extendibles.OneOrMore;
 import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
@@ -112,12 +111,9 @@ public class JamoosClassesRenderer {
     // EVerb e = (EVerb) s;
     // $.addAll(parseType(lhs, e.ent));
     // } else //
-    if (s instanceof OneOrMore) {
-      OneOrMore o = (OneOrMore) s;
-      for (Symbol x : o.symbols())
-        for (String q : parseType(x))
-          $.add(q + "[]");
-    } else if (s instanceof Verb) {
+    if (s.isExtendible())
+      $.addAll(s.asExtendible().parseTypes(this::parseType));
+    else if (s instanceof Verb) {
       Verb v = (Verb) s;
       for (ParameterType t : v.type)
         if (t instanceof ClassType)

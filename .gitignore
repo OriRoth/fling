@@ -147,4 +147,4 @@ out/
 /target/
 To do:
 src/main/java/org/spartan/fajita/api/junk/
-revision/src/main/java/org/spartan/fajita/revision/junk
+revision/src/test/java/org/spartan/fajita/revision/junk/

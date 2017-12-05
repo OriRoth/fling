@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -38,6 +39,13 @@ public class OneOrMore extends BaseExtendible {
       if (!nullables.contains(s))
         break;
     }
+    return $;
+  }
+  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation) {
+    List<String> $ = new LinkedList<>();
+    for (Symbol s : symbols())
+      for (String q : operation.apply(s))
+        $.add(q + "[]");
     return $;
   }
 }
