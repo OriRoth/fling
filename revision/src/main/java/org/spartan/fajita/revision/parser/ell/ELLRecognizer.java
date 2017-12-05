@@ -20,22 +20,18 @@ public class ELLRecognizer {
   private final Map<Symbol, Set<List<Symbol>>> n;
   private final EBNFAnalyzer a;
   private ELLStack stack;
-  private final boolean isSub;
-  private static final String PP_IDENT = "-";
+  private static final String PP_IDENT = "--";
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles();
-    fixAugSRule();
     a = new EBNFAnalyzer(ebnf, n);
-    isSub = ebnf.isSubEBNF;
-    stack = new ELLStack(isSub ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
+    stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
   public void consume(RuntimeVerb input) {
     stack = stack.match(input);
   }
   public Interpretation ast() {
-    if (!isSub)
-      consume(new RuntimeVerb(SpecialSymbols.$));
+    stack = stack.fold();
     return Interpretation.of(stack.current, stack.interpretations);
   }
   @Override public String toString() {
@@ -118,6 +114,21 @@ public class ELLRecognizer {
       children.pop();
       return _match(input);
     }
+    public ELLStack fold() {
+      if (current.isVerb())
+        throw reject("folded on terminal");
+      if (children == null) {
+        if (!a.isNullable(current))
+          throw reject("folded on non nullable");
+      } else
+        while (!children.isEmpty())
+          children.peek().fold();
+      if (parent == null)
+        return this;
+      parent.interpretations.add(Interpretation.of(current, interpretations));
+      parent.children.pop();
+      return parent;
+    }
     @Override public String toString() {
       return current.toString() + (children == null ? "[?]" : children);
     }
@@ -172,9 +183,5 @@ public class ELLRecognizer {
       for (ELLStack c : stack.children)
         $.append(pp(c, ident + 1));
     return $.toString();
-  }
-  private void fixAugSRule() {
-    for (List<Symbol> clause : n.get(SpecialSymbols.augmentedStartSymbol))
-      clause.add(new RuntimeVerb(SpecialSymbols.$));
   }
 }
