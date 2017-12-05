@@ -52,8 +52,8 @@ public class Datalog extends Grammar {
    */
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    // new Datalog().generateGrammarFiles();
-    test();
+    new Datalog().generateGrammarFiles();
+    // test();
   }
   static void test() {
     System.out.println(fact(name("parent").terms("john", "bob")) //

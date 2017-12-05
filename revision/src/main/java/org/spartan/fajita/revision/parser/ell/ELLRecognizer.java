@@ -43,7 +43,6 @@ public class ELLRecognizer {
       throw new RuntimeException("Parser has already rejected");
     if (!initialized) {
       stack.push(terminal(SpecialSymbols.$));
-      System.out.println("@@@@@");
       stack.push(bnf.startSymbols.stream().filter(x -> analyzer.firstSetOf(x).contains(t)).findAny().get());
       match.push(nonTerminal((NonTerminal) stack.peek()));
       initialized = true;
