@@ -21,8 +21,8 @@ import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 
 public class ELLRecognizer {
-  public final BNF bnf;
-  private final BNFAnalyzer analyzer;
+  public final EBNF ebnf;
+  private final EBNFAnalyzer analyzer;
   public final Map<NonTerminal, Map<Verb, List<Symbol>>> actionTable;
   private Stack<Symbol> stack = new Stack<>();
   private Stack<RuntimeNonTerminal> match = new Stack<>();
@@ -32,8 +32,8 @@ public class ELLRecognizer {
   private static final String PP_IDENT = "-";
 
   public ELLRecognizer(final EBNF ebnf) {
-    this.bnf = ebnf.toBNF(Fajita.producer());
-    analyzer = new BNFAnalyzer(bnf);
+    this.ebnf = ebnf;
+    analyzer = new EBNFAnalyzer(ebnf);
     actionTable = createActionTable();
   }
   public void consume(RuntimeVerb t) {

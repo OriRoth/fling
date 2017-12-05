@@ -304,8 +304,8 @@ public class RLLPEncoder {
       return "";
     NonTerminal nt = rllp.bnf.startSymbols.iterator().next();
     if (nt instanceof Enum<?>)
-      return ".getSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
-    return ".getSubBNF(" + NonTerminal.class.getTypeName() + ".of(\"" + nt + "\"))";
+      return ".makeSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
+    return ".makeSubBNF(" + NonTerminal.class.getTypeName() + ".of(\"" + nt + "\"))";
   }
   public String getTerminalName(MethodSpec x) {
     return getTerminalName(x.name);

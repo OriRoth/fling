@@ -59,7 +59,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
   protected void addRule(Symbol lhs, List<Symbol> rhs) {
     addRule((NonTerminal) lhs, rhs);
   }
-  public List<Symbol> symbols() {
+  @Override public List<Symbol> symbols() {
     assert isSolved;
     return new LinkedList<>(symbols);
   }

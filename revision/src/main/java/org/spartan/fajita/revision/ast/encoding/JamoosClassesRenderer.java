@@ -115,7 +115,7 @@ public class JamoosClassesRenderer {
     // } else //
     if (s.isExtendible())
       $.addAll(s.asExtendible().parseTypes(this::parseType));
-    else if (s instanceof Verb) {
+    else if (s.isVerb()) {
       Verb v = (Verb) s;
       for (ParameterType t : v.type)
         if (t instanceof ClassType)
@@ -127,7 +127,7 @@ public class JamoosClassesRenderer {
     } else if (s instanceof NonTerminal)
       $.add(((NonTerminal) s).name(packagePath, topClassName));
     else
-      throw new RuntimeException("Symbol not supported");
+      $.add("Void");
     return $;
   }
   // // NOTE this method (maybe others too) assume "either" accepts simple

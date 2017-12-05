@@ -6,11 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -27,6 +28,9 @@ public final class EBNF {
   private final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubEBNF;
+  // Valid only after toBNF
+  public Map<Symbol, Symbol> nestedSymbolsMapping;
+  public Symbol subHead;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
@@ -55,10 +59,7 @@ public final class EBNF {
     for (DerivationRule r : derivationRules) {
       List<Symbol> rhs = new LinkedList<>();
       for (Symbol s : r.getRHS()) {
-        rs.addAll(s.solve(r.lhs, x -> {
-          NonTerminal nt = producer.apply(x);
-          return nt;
-        }));
+        rs.addAll(s.solve(r.lhs, producer));
         rhs.add(s.head());
       }
       rs.add(new DerivationRule(r.lhs, rhs));
@@ -66,14 +67,19 @@ public final class EBNF {
     Set<NonTerminal> nts = new LinkedHashSet<>();
     Set<Verb> vs = new LinkedHashSet<>();
     Set<NonTerminal> ns = new LinkedHashSet<>();
+    nestedSymbolsMapping = new HashMap<>();
     for (DerivationRule r : rs) {
       nts.add(r.lhs);
       for (Symbol s : r.getRHS()) {
         assert !s.isExtendible();
         if (s.isVerb()) {
           for (ParameterType t : s.asVerb().type)
-            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal())
-              ns.add(((NestedType) t).nested.head().asNonTerminal());
+            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal()) {
+              Symbol nested = ((NestedType) t).nested;
+              NonTerminal nt = nested.head().asNonTerminal();
+              nestedSymbolsMapping.put(nt, nested);
+              ns.add(nt);
+            }
           vs.add(s.asVerb());
         } else
           nts.add(s.asNonTerminal());
@@ -113,35 +119,17 @@ public final class EBNF {
     }
     return $;
   }
+  public EBNF makeSubBNF(String s) {
+    return makeSubBNF(NonTerminal.of(s));
+  }
+  public EBNF makeSubBNF(NonTerminal nt) {
+    if (nestedSymbolsMapping == null)
+      toBNF(Fajita.producer());
+    isSubEBNF = true;
+    subHead = nestedSymbolsMapping.get(nt);
+    return this;
+  }
   public Set<DerivationRule> rules() {
     return new LinkedHashSet<>(derivationRules);
-  }
-  public EBNF getSubBNF(NonTerminal startNT) {
-    Set<Verb> subVerbs = new LinkedHashSet<>();
-    Set<NonTerminal> subNonTerminals = new LinkedHashSet<>();
-    Set<Extendible> subExtendibles = new LinkedHashSet<>();
-    Set<DerivationRule> subRules = new LinkedHashSet<>();
-    Set<NonTerminal> subStart = new LinkedHashSet<>();
-    subStart.add(startNT);
-    subNonTerminals.add(startNT);
-    boolean change;
-    do {
-      change = false;
-      for (DerivationRule r : derivationRules) {
-        if (subNonTerminals.contains(r.lhs) && subRules.add(r)) {
-          change = true;
-          for (Symbol s : r.getRHS())
-            if (s.isVerb())
-              subVerbs.add(s.asVerb());
-            else if (s.isNonTerminal())
-              subNonTerminals.add(s.asNonTerminal());
-            else
-              subExtendibles.add(s.asExtendible());
-        }
-      }
-    } while (change);
-    EBNF $ = new EBNF(subVerbs, subNonTerminals, subExtendibles, subRules, subStart, startNT.name());
-    $.isSubEBNF = true;
-    return $;
   }
 }

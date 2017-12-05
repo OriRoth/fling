@@ -60,6 +60,7 @@ public final class BNF {
     // NOTE sub BNF nested non terminals are invalid
     BNF $ = new BNF(subVerbs, subNonTerminals, new LinkedHashSet<>(), subRules, subStart, startNT.name());
     $.isSubBNF = true;
+    $.origin = origin;
     return $;
   }
   @Override public String toString() {

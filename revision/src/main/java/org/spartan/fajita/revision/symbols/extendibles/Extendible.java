@@ -12,4 +12,5 @@ public interface Extendible extends Symbol {
   boolean updateNullable(Set<Symbol> knownNullables);
   boolean updateFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets);
   List<String> parseTypes(Function<Symbol, List<String>> operation);
+  List<Symbol> symbols();
 }

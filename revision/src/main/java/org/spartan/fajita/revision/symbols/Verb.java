@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.export.RuntimeVerb;
-import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
@@ -26,9 +25,12 @@ public class Verb implements Terminal, Comparable<Verb> {
       // TODO Roth: add parameters check
       if (i < parameterTypes.length - 1 && o instanceof VarArgs)
         throw new IllegalArgumentException("VarArgs can only be the last parameter of a Terminal");
+      if (o instanceof Terminal)
+        throw new IllegalArgumentException("Nested terminals are not yet supported");
     }
-    List<Object> t = Arrays.stream(parameterTypes).map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x)
-        : x instanceof NonTerminal || x instanceof Extendible ? new NestedType((Symbol) x) : x).collect(toList());
+    List<Object> t = Arrays.stream(parameterTypes)
+        .map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x) : x instanceof Symbol ? new NestedType((Symbol) x) : x)
+        .collect(toList());
     this.type = t.toArray(new ParameterType[t.size()]);
   }
   @Override public String toString() {
