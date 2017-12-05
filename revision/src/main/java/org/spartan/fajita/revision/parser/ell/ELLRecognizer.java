@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.spartan.fajita.revision.bnf.EBNF;
+import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -19,18 +20,29 @@ public class ELLRecognizer {
   private final Map<Symbol, Set<List<Symbol>>> n;
   private final EBNFAnalyzer a;
   private ELLStack stack;
+  private final boolean isSub;
+  private static final String PP_IDENT = "-";
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles();
+    fixAugSRule();
     a = new EBNFAnalyzer(ebnf, n);
-    stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
+    isSub = ebnf.isSubEBNF;
+    stack = new ELLStack(isSub ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
   public void consume(RuntimeVerb input) {
-    System.out.println("@@@@@@ " + input);
     stack = stack.match(input);
   }
-  public Object ast() {
+  public Interpretation ast() {
+    if (!isSub)
+      consume(new RuntimeVerb(SpecialSymbols.$));
     return Interpretation.of(stack.current, stack.interpretations);
+  }
+  @Override public String toString() {
+    return ast().toString();
+  }
+  public String toString(int ident) {
+    return ast().toString(ident);
   }
 
   @SuppressWarnings("synthetic-access") public class ELLStack {
@@ -93,30 +105,76 @@ public class ELLRecognizer {
       ELLStack c = children.peek();
       if (!c.generateChildren(input))
         throw reject();
-      if (c._match(input))
+      if (c._match(input)) {
+        if (children.isEmpty() && parent != null) {
+          parent.interpretations.add(Interpretation.of(current, interpretations));
+          parent.children.pop();
+        }
         return true;
-      if (!a.isNullable(c.current))
+      }
+      if (!c.children.isEmpty() && !a.isNullable(c.current))
         throw reject();
-      interpretations.add(Interpretation.of(c.current, null));
+      interpretations.add(Interpretation.of(c.current, c.interpretations));
       children.pop();
       return _match(input);
     }
     @Override public String toString() {
       return current.toString() + (children == null ? "[?]" : children);
     }
+    public ELLStack top() {
+      return parent == null ? this : parent.top();
+    }
   }
 
-  public static class Interpretation extends AbstractMap.SimpleEntry<Symbol, Object> {
+  public static class Interpretation extends AbstractMap.SimpleEntry<Symbol, List<?>> {
     private static final long serialVersionUID = -1984822822971661087L;
 
-    public Interpretation(Symbol symbol, Object value) {
+    public Interpretation(Symbol symbol, List<?> value) {
       super(symbol, value);
     }
     @Override public String toString() {
-      return getKey() + "=" + getValue();
+      return toString(0);
     }
-    public static Interpretation of(Symbol symbol, Object value) {
+    public String toString(int ident) {
+      StringBuilder $ = new StringBuilder();
+      for (int i = 0; i < ident; ++i)
+        $.append(PP_IDENT);
+      $.append(getKey()).append("\n");
+      for (Object o : getValue()) {
+        if (o instanceof Interpretation)
+          $.append(((Interpretation) o).toString(ident + 1));
+        else if (o instanceof FluentAPIRecorder)
+          $.append(((FluentAPIRecorder) o).toString(ident + 1));
+        else {
+          for (int i = 0; i < ident + 1; ++i)
+            $.append(PP_IDENT);
+          $.append(o);
+          $.append("\n");
+        }
+      }
+      return $.toString();
+    }
+    public static Interpretation of(Symbol symbol, List<?> value) {
       return new Interpretation(symbol, value);
     }
+  }
+
+  // TODO Roth: add interpretation to pp
+  @SuppressWarnings("unused") private static String pp(ELLStack stack) {
+    return pp(stack, 0);
+  }
+  private static String pp(ELLStack stack, int ident) {
+    StringBuilder $ = new StringBuilder();
+    for (int i = 0; i < ident; ++i)
+      $.append(PP_IDENT);
+    $.append(stack.current).append("\n");
+    if (stack.children != null)
+      for (ELLStack c : stack.children)
+        $.append(pp(c, ident + 1));
+    return $.toString();
+  }
+  private void fixAugSRule() {
+    for (List<Symbol> clause : n.get(SpecialSymbols.augmentedStartSymbol))
+      clause.add(new RuntimeVerb(SpecialSymbols.$));
   }
 }

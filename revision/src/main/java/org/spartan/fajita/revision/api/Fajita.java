@@ -77,16 +77,23 @@ public class Fajita {
     return builder.new SetSymbols();
   }
   public void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    rhs.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add(v.asVerb()));
-    rhs.stream().filter(s -> s.isExtendible()).forEach(v -> extendibles.add(v.asExtendible()));
-    rhs.stream().filter(s -> s.isVerb())
-        .forEach(s -> Arrays.stream(s.asVerb().type).filter(t -> t instanceof NestedType).forEach(t -> {
-          Symbol nested = ((NestedType) t).nested;
-          nestedParameters.add(nested);
-          if (nested.isExtendible())
-            extendibles.add(nested.asExtendible());
-        }));
+    analyze(rhs);
     derivationRules.add(new DerivationRule(lhs, rhs));
+  }
+  private void analyze(Symbol s) {
+    if (s.isVerb()) {
+      verbs.add(s.asVerb());
+      Arrays.stream(s.asVerb().type).filter(t -> t instanceof NestedType).map(t -> ((NestedType) t).nested).forEach(nested -> {
+        nestedParameters.add(nested);
+        analyze(nested);
+      });
+    } else if (s.isExtendible()) {
+      extendibles.add(s.asExtendible());
+      s.asExtendible().symbols().forEach(this::analyze);
+    }
+  }
+  private void analyze(List<Symbol> rhs) {
+    rhs.forEach(s -> analyze(s));
   }
 
   public class SetSymbols {

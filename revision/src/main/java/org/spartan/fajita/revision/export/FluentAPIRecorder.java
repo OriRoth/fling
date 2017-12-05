@@ -16,4 +16,7 @@ public class FluentAPIRecorder {
   @Override public String toString() {
     return ell.ast().toString();
   }
+  public String toString(int ident) {
+    return ell.ast().toString(ident);
+  }
 }
