@@ -79,8 +79,13 @@ public class Fajita {
   public void addRule(NonTerminal lhs, List<Symbol> rhs) {
     rhs.stream().filter(s -> s.isVerb()).forEach(v -> verbs.add(v.asVerb()));
     rhs.stream().filter(s -> s.isExtendible()).forEach(v -> extendibles.add(v.asExtendible()));
-    rhs.stream().filter(s -> s.isVerb()).forEach(s -> Arrays.stream(s.asVerb().type).filter(t -> t instanceof NestedType)
-        .forEach(t -> nestedParameters.add(((NestedType) t).nested)));
+    rhs.stream().filter(s -> s.isVerb())
+        .forEach(s -> Arrays.stream(s.asVerb().type).filter(t -> t instanceof NestedType).forEach(t -> {
+          Symbol nested = ((NestedType) t).nested;
+          nestedParameters.add(nested);
+          if (nested.isExtendible())
+            extendibles.add(nested.asExtendible());
+        }));
     derivationRules.add(new DerivationRule(lhs, rhs));
   }
 

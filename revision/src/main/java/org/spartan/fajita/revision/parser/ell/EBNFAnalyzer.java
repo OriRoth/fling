@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.bnf.EBNF;
-import org.spartan.fajita.revision.parser.rll.Item;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
@@ -62,9 +61,6 @@ public class EBNFAnalyzer {
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
-  public boolean isSuffixNullable(final Item i) {
-    return isNullable(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
-  }
   public Set<Terminal> firstSetOf(final Symbol... expression) {
     Set<Terminal> $ = new HashSet<>();
     for (Symbol symbol : expression) {
@@ -77,13 +73,16 @@ public class EBNFAnalyzer {
   public Set<Terminal> firstSetOf(final List<Symbol> expression) {
     return firstSetOf(expression.toArray(new Symbol[] {}));
   }
-  public Set<Terminal> firstSetOf(Item i) {
-    return firstSetOf(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
-  }
   public boolean isNullable(List<Symbol> expr) {
     return isNullable(expr.toArray(new Symbol[] {}));
   }
   public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
     return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
+  }
+  public static RuntimeException reject() {
+    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected");
+  }
+  public static RuntimeException reject(String message) {
+    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected: " + message);
   }
 }

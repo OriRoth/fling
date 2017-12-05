@@ -1,69 +1,37 @@
 package org.spartan.fajita.revision.parser.ell;
 
+import static org.spartan.fajita.revision.parser.ell.EBNFAnalyzer.reject;
+
 import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.spartan.fajita.revision.api.Fajita;
-import org.spartan.fajita.revision.bnf.BNF;
-import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.bnf.EBNF;
-import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.RuntimeVerb;
-import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
-import org.spartan.fajita.revision.parser.rll.Item;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
-import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 public class ELLRecognizer {
-  private final EBNF ebnf;
   private final Map<Symbol, Set<List<Symbol>>> n;
   private final EBNFAnalyzer a;
-  private Stack<ERuntimeItem> stack = new Stack<>();
-  private boolean initialized = false;
+  private ELLStack stack;
 
   public ELLRecognizer(final EBNF ebnf) {
-    this.ebnf = ebnf;
-    this.n = ebnf.regularFormWithExtendibles();
-    this.a = new EBNFAnalyzer(ebnf);
-    for (Symbol s : n.keySet())
-      System.out.println(s + " ::= " + n.get(s));
+    n = ebnf.regularFormWithExtendibles();
+    a = new EBNFAnalyzer(ebnf);
+    stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
   public void consume(RuntimeVerb input) {
-    if (!initialized) {
-      stack.push(ERuntimeItem.of(ebnf.startSymbols.stream().filter(x -> a.firstSetOf(x).contains(input)).findAny().get()));
-      initialized = true;
-    }
-    ERuntimeItem topItem = stack.peek();
-    Symbol top = topItem.afterDot();
-    if (top.isVerb()) {
-      Verb v = (Verb) top;
-      if (input.equals(v)) {
-        topItem.advance(input.args);
-        return;
-      }
-      throw reject();
-    }
-    List<Symbol> toPush = getPush(top, input);
-    mtop.toConsume = toPush.size();
-    for (Symbol x : toPush) {
-      stack.push(x);
-      if (x.isNonTerminal())
-        match.push(nonTerminal(x.asNonTerminal()));
-    }
+    stack = stack.match(input);
   }
   public Object ast() {
-    return null;
+    return Interpretation.of(stack.current, stack.interpretations);
   }
   private List<Symbol> getPush(Symbol s, Verb input) {
     if (s.isNonTerminal())
@@ -78,19 +46,86 @@ public class ELLRecognizer {
     for (List<Symbol> ss : n.get(nt)) {
       if (ss.isEmpty())
         hasEmptyRule = true;
-      else if (a.firstSetOf(ss.get(0)).contains(input))
+      else if (a.firstSetOf(ss).contains(input))
         return ss;
     }
     if (hasEmptyRule)
       return new LinkedList<>();
     throw reject("cannot match " + nt + " with " + input);
   }
-  private List<Symbol> getPush(Extendible nt, Verb input) {
+  private List<Symbol> getPush(Extendible e, Verb input) {
+    return getPush(n.get(e).stream().findFirst().get().get(0), input);
   }
-  private static RuntimeException reject() {
-    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected");
+
+  @SuppressWarnings("synthetic-access") public class ELLStack {
+    public ELLStack parent;
+    public Symbol current;
+    public List<Interpretation> interpretations;
+    public Stack<ELLStack> children;
+
+    public ELLStack(Symbol current) {
+      this.current = current;
+      this.interpretations = new LinkedList<>();
+      assert n.containsKey(current) : reject();
+    }
+    public ELLStack(Symbol current, ELLStack parent) {
+      this.current = current;
+      this.interpretations = new LinkedList<>();
+      assert n.containsKey(current) : reject();
+      this.parent = parent;
+    }
+    public ELLStack match(RuntimeVerb input) {
+      System.out.println(generateChildren(input));
+      System.out.println(children);
+      if (generateChildren(input) && _match(input))
+        return this;
+      parent.interpretations.add(Interpretation.of(current, interpretations));
+      return parent.match(input);
+    }
+    private boolean generateChildren(RuntimeVerb input) {
+      if (children != null)
+        return true;
+      children = new Stack<>();
+      boolean hasEmptyRule = false;
+      for (List<Symbol> clause : n.get(current)) {
+        if (clause.isEmpty())
+          hasEmptyRule = true;
+        if (a.firstSetOf(clause).contains(input)) {
+          for (int i = clause.size() - 1; i >= 0; --i)
+            children.push(new ELLStack(clause.get(i), this));
+          return true;
+        }
+      }
+      return hasEmptyRule;
+    }
+    private boolean _match(RuntimeVerb input) {
+      if (children.isEmpty())
+        return false;
+      ELLStack c = children.peek();
+      if (c._match(input))
+        return true;
+      if (!a.isNullable(c.current))
+        throw reject();
+      interpretations.add(Interpretation.of(c.current, null));
+      children.pop();
+      return _match(input);
+    }
+    @Override public String toString() {
+      return current.toString() + (children == null ? "[?]" : children);
+    }
   }
-  private static RuntimeException reject(String message) {
-    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected: " + message);
+
+  public static class Interpretation extends AbstractMap.SimpleEntry<Symbol, Object> {
+    private static final long serialVersionUID = -1984822822971661087L;
+
+    public Interpretation(Symbol symbol, Object value) {
+      super(symbol, value);
+    }
+    @Override public String toString() {
+      return getKey() + "=" + getValue();
+    }
+    public static Interpretation of(Symbol symbol, Object value) {
+      return new Interpretation(symbol, value);
+    }
   }
 }
