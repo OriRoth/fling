@@ -19,7 +19,7 @@ public class NestedType implements ParameterType {
     this.nested = nested;
   }
   @Override public String toString() {
-    return nested.name();
+    return nested.toString();
   }
   public String toString(String packagePath, String topClassName) {
     return packagePath + "." + topClassName + "." + nested.name();

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.api.Fajita;
@@ -48,10 +49,10 @@ public class JamoosClassesRenderer {
     topClass = $.append("}").toString();
   }
   private void parseInnerClasses(Function<NonTerminal, NonTerminal> producer) {
-    Map<NonTerminal, List<List<Symbol>>> n = normalize(ebnf, inheritance, producer);
-    for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
+    Map<NonTerminal, Set<List<Symbol>>> n = normalize(ebnf, inheritance, producer);
+    for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
-      List<List<Symbol>> rhs = r.getValue();
+      Set<List<Symbol>> rhs = r.getValue();
       if (!isInheritanceRule(rhs)) {
         innerClassesFieldTypes.putIfAbsent(lhs.name(), new LinkedHashMap<>());
         for (List<Symbol> clause : r.getValue())
@@ -59,10 +60,10 @@ public class JamoosClassesRenderer {
             parseSymbol(lhs.name(), s);
       }
     }
-    for (Entry<NonTerminal, List<List<Symbol>>> r : n.entrySet()) {
+    for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
       StringBuilder $ = new StringBuilder();
       NonTerminal lhs = r.getKey();
-      List<List<Symbol>> rhs = r.getValue();
+      Set<List<Symbol>> rhs = r.getValue();
       $.append("public static class ") //
           .append(lhs.name()) //
           .append((!inheritance.containsKey(lhs) ? "" : " extends " + inheritance.get(lhs).iterator().next())) //

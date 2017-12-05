@@ -12,9 +12,8 @@ public class FluentAPIRecorder {
   }
   public void recordTerminal(Terminal t, Object... args) {
     ell.consume(new RuntimeVerb(t, args));
-    assert !ell.rejected() : "RLLP has rejected...";
   }
   @Override public String toString() {
-    return ELLRecognizer.pp(ell.ast());
+    return ell.ast().toString();
   }
 }

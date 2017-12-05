@@ -3,6 +3,7 @@ package org.spartan.fajita.revision.bnf;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,44 +92,43 @@ public final class EBNF {
     $.origin = this;
     return $;
   }
-  public Map<NonTerminal, List<List<Symbol>>> regularForm() {
-    Map<NonTerminal, List<List<Symbol>>> $ = new HashMap<>();
+  public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
+    Map<NonTerminal, Set<List<Symbol>>> $ = new HashMap<>();
     for (DerivationRule r : derivationRules) {
-      $.putIfAbsent(r.lhs, new LinkedList<>());
+      $.putIfAbsent(r.lhs, new HashSet<>());
       $.get(r.lhs).add(r.getRHS());
     }
     return $;
   }
-  public Map<Symbol, List<List<Symbol>>> regularFormWithExtendibles() {
-    Map<NonTerminal, List<List<Symbol>>> rf = regularForm();
-    Map<Symbol, List<List<Symbol>>> $ = new HashMap<>(rf);
-    for (List<List<Symbol>> rhs : rf.values())
-      for (List<Symbol> clause : rhs)
-        for (Symbol s : clause)
-          if (s.isExtendible()) {
-            $.put(s, Collections.singletonList(Collections.singletonList(s.asExtendible().head())));
-            
-          }
+  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles() {
+    Map<Symbol, Set<List<Symbol>>> $ = new HashMap<>(regularForm());
+    for (Extendible e : extendibles) {
+      $.put(e, Collections.singleton(Collections.singletonList(e.head())));
+      for (DerivationRule r : e.rawSolution()) {
+        $.putIfAbsent(r.lhs, new HashSet<>());
+        $.get(r.lhs).add(r.getRHS());
+      }
+    }
     return $;
   }
-  public Map<NonTerminal, List<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
-    Map<NonTerminal, List<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
-    for (Entry<NonTerminal, List<List<Symbol>>> e : rf.entrySet()) {
+  public Map<NonTerminal, Set<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
+    Map<NonTerminal, Set<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
+    for (Entry<NonTerminal, Set<List<Symbol>>> e : rf.entrySet()) {
       NonTerminal lhs = e.getKey();
-      List<List<Symbol>> rhs = e.getValue();
+      Set<List<Symbol>> rhs = e.getValue();
       if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
         $.put(lhs, rhs);
         continue;
       }
-      $.put(lhs, new LinkedList<>());
-      for (int i = 0; i < rhs.size(); ++i) {
+      $.put(lhs, new HashSet<>());
+      for (List<Symbol> clause : rhs) {
         List<Symbol> l = new LinkedList<>();
         NonTerminal nt = producer.apply(lhs);
         l.add(nt);
         $.get(lhs).add(l);
-        $.put(nt, new LinkedList<>());
-        if (!rhs.get(i).isEmpty())
-          $.get(nt).add(rhs.get(i));
+        $.put(nt, new HashSet<>());
+        if (!clause.isEmpty())
+          $.get(nt).add(clause);
       }
     }
     return $;
