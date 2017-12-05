@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.api.Fajita;
+import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -21,6 +22,7 @@ import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 import org.spartan.fajita.revision.util.DAG;
+import static java.util.stream.Collectors.toList;
 
 public class JamoosClassesRenderer {
   EBNF ebnf;
@@ -39,10 +41,16 @@ public class JamoosClassesRenderer {
     // NOTE should correspond to the producer in Fajita
     parseTopClass(Fajita.producer());
   }
+  public static String topClassName(EBNF ebnf) {
+    return ebnf.name + "AST";
+  }
+  public static String topClassName(BNF bnf) {
+    return bnf.name + "AST";
+  }
   private void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
     StringBuilder $ = new StringBuilder();
     $.append("package " + packagePath + ";");
-    $.append("public class " + (topClassName = ebnf.name + "AST") + "{");
+    $.append("public class " + (topClassName = topClassName(ebnf)) + "{");
     parseInnerClasses(producer);
     for (String i : innerClasses)
       $.append(i);
@@ -64,13 +72,28 @@ public class JamoosClassesRenderer {
       StringBuilder $ = new StringBuilder();
       NonTerminal lhs = r.getKey();
       Set<List<Symbol>> rhs = r.getValue();
+      // Declaration
       $.append("public static class ") //
           .append(lhs.name()) //
           .append((!inheritance.containsKey(lhs) ? "" : " extends " + inheritance.get(lhs).iterator().next())) //
           .append("{");
-      if (!isInheritanceRule(rhs))
-        for (Entry<String, String> e : innerClassesFieldTypes.get(lhs.name()).entrySet())
-          $.append(e.getValue()).append(" ").append(e.getKey()).append(";");
+      if (!isInheritanceRule(rhs)) {
+        // Fields
+        List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
+            .collect(toList());
+        $.append(String.join(";", fields));
+        if (!fields.isEmpty())
+          $.append(";");
+        // Constructor
+        $.append("public " + lhs.name() + "(") //
+            .append(String.join(",", fields)) //
+            .append("){") //
+            .append(String.join(";", innerClassesFieldTypes.get(lhs.name()).entrySet().stream()
+                .map(e -> "this." + e.getKey() + "=" + e.getKey()).collect(toList())));
+        if (!fields.isEmpty())
+          $.append(";") //
+              .append("}");
+      }
       innerClasses.add($.append("}").toString());
     }
   }

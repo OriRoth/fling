@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
-import org.spartan.fajita.revision.api.encoding.EncoderUtils;
+import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.rll.Item;
@@ -63,9 +63,11 @@ public class RLLPEncoder {
   private Item mainItem;
   private final EncoderUtils namer;
   private final Class<? extends Grammar> provider;
+  private final String packagePath;
+  private static final String $NAME = "$";
 
-  public RLLPEncoder(RLLP parser, EncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider,
-      boolean isSubBNF) {
+  public RLLPEncoder(RLLP parser, EncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider, boolean isSubBNF,
+      String packagePath) {
     this.provider = provider;
     this.isSubBNF = isSubBNF;
     this.terminals = terminals;
@@ -76,6 +78,7 @@ public class RLLPEncoder {
     this.encodedJSMs = new HashMap<>();
     this.namer = namer;
     this.staticMethods = FajitaEncoder.getStaticMethods(this);
+    this.packagePath = packagePath;
     Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.beforeDot().isVerb();
     mainTypes = rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList());
     fixRecTypes();
@@ -108,7 +111,9 @@ public class RLLPEncoder {
       return parameterizedType(p.rawType.simpleName(), p.typeArguments.stream() //
           .map(x -> getFixedRecReturnType(x, vs1, vs2)) //
           .collect(toList()));
-    } else
+    } else if (r instanceof ClassName)
+      return r;
+    else
       throw new RuntimeException("Class " + r.getClass().getSimpleName() + " not supported in getFixedRecReturnType");
   }
   private TypeSpec encodeItem(Item i) {
@@ -122,8 +127,19 @@ public class RLLPEncoder {
     // Adds jump methods
     if (rllp.analyzer.isSuffixNullable(i)) {
       encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v)));
-      if (rllp.analyzer.followSetOf(i.rule.lhs).contains(SpecialSymbols.$))
+      if (rllp.analyzer.followSetOf(i.rule.lhs).contains(SpecialSymbols.$)) {
         encoding.addSuperinterface(EncoderUtils.returnTypeOf$());
+        System.out.println(ClassName.get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf),
+            rllp.getStartItems().iterator().next().rule.lhs.toString()).withoutAnnotations());
+        System.out.println(packagePath);
+        System.out.println(rllp.bnf.startSymbols.iterator().next());
+        if (!isSubBNF)
+          encoding.addMethod(MethodSpec.methodBuilder($NAME) //
+              .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
+              .returns(ClassName.get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf),
+                  rllp.bnf.startSymbols.iterator().next().toString()).withoutAnnotations()) //
+              .build());
+      }
     }
     if (!namedFollowSet.isEmpty())
       encoding.addTypeVariables(namedFollowSet);
@@ -279,6 +295,8 @@ public class RLLPEncoder {
     for (TypeSpec t : mainTypes)
       ms.addAll(t.methodSpecs.stream() //
           .filter(x -> ms.stream().noneMatch(y -> x.name.equals(y.name) && x.parameters.equals(y.parameters))) //
+          // Filters $ methods
+          .filter(x -> !$NAME.equals(x.name)) //
           .map(x -> MethodSpec.methodBuilder(x.name) //
               .returns(TypeVariableName.get($$$name)) //
               .addParameters(x.parameters) //

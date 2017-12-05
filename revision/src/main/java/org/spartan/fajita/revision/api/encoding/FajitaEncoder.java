@@ -35,7 +35,7 @@ public class FajitaEncoder {
   }
   private Map<String, String> _encode() {
     encoders = getAllBNFs().stream() //
-        .map(bnf -> new RLLPEncoder(new RLLP(bnf), namer, fajita.terminals, fajita.provider, bnf.isSubBNF)) //
+        .map(bnf -> new RLLPEncoder(new RLLP(bnf), namer, fajita.terminals, fajita.provider, bnf.isSubBNF, fajita.packagePath)) //
         .collect(Collectors.toList());
     Collection<TypeSpec> types = new ArrayList<>();
     types.addAll(encoders.stream().map(enc -> enc.encode()).collect(Collectors.toList()));
