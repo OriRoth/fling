@@ -47,7 +47,7 @@ public class Item {
       return true;
     if (obj == null)
       return false;
-    if (getClass() != obj.getClass())
+    if (!(obj instanceof Item))
       return false;
     Item other = (Item) obj;
     if (dotIndex != other.dotIndex)

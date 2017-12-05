@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.bnf;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -54,6 +55,7 @@ public final class EBNF {
     return derivationRules.stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode
+  // TODO Roth: use normalized form here
   public BNF toBNF(Function<NonTerminal, NonTerminal> producer) {
     Set<DerivationRule> rs = new LinkedHashSet<>();
     for (DerivationRule r : derivationRules) {
@@ -95,6 +97,18 @@ public final class EBNF {
       $.putIfAbsent(r.lhs, new LinkedList<>());
       $.get(r.lhs).add(r.getRHS());
     }
+    return $;
+  }
+  public Map<Symbol, List<List<Symbol>>> regularFormWithExtendibles() {
+    Map<NonTerminal, List<List<Symbol>>> rf = regularForm();
+    Map<Symbol, List<List<Symbol>>> $ = new HashMap<>(rf);
+    for (List<List<Symbol>> rhs : rf.values())
+      for (List<Symbol> clause : rhs)
+        for (Symbol s : clause)
+          if (s.isExtendible()) {
+            $.put(s, Collections.singletonList(Collections.singletonList(s.asExtendible().head())));
+            
+          }
     return $;
   }
   public Map<NonTerminal, List<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {

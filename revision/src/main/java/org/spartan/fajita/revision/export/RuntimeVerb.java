@@ -7,7 +7,7 @@ import org.spartan.fajita.revision.symbols.Verb;
 
 public class RuntimeVerb extends Verb {
   Terminal t;
-  Object[] args;
+  public Object[] args;
 
   public RuntimeVerb(Terminal t, Object... args) {
     super(t);
