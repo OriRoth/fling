@@ -2,7 +2,6 @@ package org.spartan.fajita.revision.parser.ell;
 
 import static org.spartan.fajita.revision.parser.ell.EBNFAnalyzer.reject;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.spartan.fajita.revision.bnf.EBNF;
-import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -31,8 +29,10 @@ public class ELLRecognizer {
     stack = stack.match(input);
   }
   public Interpretation ast() {
-    stack = stack.fold();
-    return Interpretation.of(stack.current, stack.interpretations);
+    stack = stack.consume$();
+    Interpretation $ = Interpretation.of(stack.current, stack.interpretations);
+    $.foldExtendibles();
+    return $;
   }
   @Override public String toString() {
     return ast().toString();
@@ -114,7 +114,7 @@ public class ELLRecognizer {
       children.pop();
       return _match(input);
     }
-    public ELLStack fold() {
+    public ELLStack consume$() {
       if (current.isVerb())
         throw reject("folded on terminal");
       if (children == null) {
@@ -122,7 +122,7 @@ public class ELLRecognizer {
           throw reject("folded on non nullable");
       } else
         while (!children.isEmpty())
-          children.peek().fold();
+          children.peek().consume$();
       if (parent == null)
         return this;
       parent.interpretations.add(Interpretation.of(current, interpretations));
@@ -131,42 +131,6 @@ public class ELLRecognizer {
     }
     @Override public String toString() {
       return current.toString() + (children == null ? "[?]" : children);
-    }
-    public ELLStack top() {
-      return parent == null ? this : parent.top();
-    }
-  }
-
-  public static class Interpretation extends AbstractMap.SimpleEntry<Symbol, List<?>> {
-    private static final long serialVersionUID = -1984822822971661087L;
-
-    public Interpretation(Symbol symbol, List<?> value) {
-      super(symbol, value);
-    }
-    @Override public String toString() {
-      return toString(0);
-    }
-    public String toString(int ident) {
-      StringBuilder $ = new StringBuilder();
-      for (int i = 0; i < ident; ++i)
-        $.append(PP_IDENT);
-      $.append(getKey()).append("\n");
-      for (Object o : getValue()) {
-        if (o instanceof Interpretation)
-          $.append(((Interpretation) o).toString(ident + 1));
-        else if (o instanceof FluentAPIRecorder)
-          $.append(((FluentAPIRecorder) o).toString(ident + 1));
-        else {
-          for (int i = 0; i < ident + 1; ++i)
-            $.append(PP_IDENT);
-          $.append(o);
-          $.append("\n");
-        }
-      }
-      return $.toString();
-    }
-    public static Interpretation of(Symbol symbol, List<?> value) {
-      return new Interpretation(symbol, value);
     }
   }
 

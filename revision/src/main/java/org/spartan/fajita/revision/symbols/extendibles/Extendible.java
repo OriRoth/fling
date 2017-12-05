@@ -15,4 +15,5 @@ public interface Extendible extends Symbol {
   List<String> parseTypes(Function<Symbol, List<String>> operation);
   List<Symbol> symbols();
   List<DerivationRule> rawSolution();
+  List<?> fold(List<?> t);
 }

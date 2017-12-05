@@ -59,30 +59,32 @@ public final class EBNF {
   // TODO Roth: use normalized form here
   public BNF toBNF(Function<NonTerminal, NonTerminal> producer) {
     Set<DerivationRule> rs = new LinkedHashSet<>();
+    nestedSymbolsMapping = new HashMap<>();
     for (DerivationRule r : derivationRules) {
       List<Symbol> rhs = new LinkedList<>();
       for (Symbol s : r.getRHS()) {
         rs.addAll(s.solve(r.lhs, producer));
         rhs.add(s.head());
+        if (s.isVerb())
+          for (ParameterType t : s.asVerb().type)
+            if (t instanceof NestedType) {
+              Symbol nested = ((NestedType) t).nested;
+              nestedSymbolsMapping.put(nested.head().asNonTerminal(), nested);
+            }
       }
       rs.add(new DerivationRule(r.lhs, rhs));
     }
     Set<NonTerminal> nts = new LinkedHashSet<>();
     Set<Verb> vs = new LinkedHashSet<>();
     Set<NonTerminal> ns = new LinkedHashSet<>();
-    nestedSymbolsMapping = new HashMap<>();
     for (DerivationRule r : rs) {
       nts.add(r.lhs);
       for (Symbol s : r.getRHS()) {
         assert !s.isExtendible();
         if (s.isVerb()) {
           for (ParameterType t : s.asVerb().type)
-            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal()) {
-              Symbol nested = ((NestedType) t).nested;
-              NonTerminal nt = nested.head().asNonTerminal();
-              nestedSymbolsMapping.put(nt, nested);
-              ns.add(nt);
-            }
+            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal())
+              ns.add(((NestedType) t).nested.head().asNonTerminal());
           vs.add(s.asVerb());
         } else
           nts.add(s.asNonTerminal());

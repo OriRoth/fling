@@ -8,17 +8,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 
 public class OneOrMore extends BaseExtendible {
+  private NonTerminal head2;
+
   public OneOrMore(List<Symbol> symbols) {
     super(symbols);
   }
   @Override protected void solve() {
     head = nonTerminal();
-    NonTerminal head2 = nonTerminal();
+    head2 = nonTerminal();
     symbols = solve(symbols);
     List<Symbol> rhs1 = new ArrayList<>(symbols);
     rhs1.add(head2);
@@ -46,6 +49,28 @@ public class OneOrMore extends BaseExtendible {
     for (Symbol s : symbols())
       for (String q : operation.apply(s))
         $.add(q + "[]");
+    return $;
+  }
+  // TODO Roth: check whether some of this can be generalized
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<?> fold(List<?> t) {
+    assert isSolved && head != null && head2 != null && t.size() == 1;
+    Object o = t.get(0);
+    assert o instanceof Interpretation;
+    Interpretation current = (Interpretation) o;
+    assert head.equals(current.symbol) && current.value.size() > 0;
+    List $ = new LinkedList<>();
+    $.addAll(current.value.subList(0, current.value.size() - 1));
+    Object l = current.value.get(current.value.size() - 1);
+    assert l instanceof Interpretation;
+    Interpretation li = (Interpretation) l;
+    assert head2.equals(li.symbol);
+    while (!li.value.isEmpty()) {
+      $.addAll(li.value.subList(0, li.value.size() - 1));
+      Object l2 = li.value.get(li.value.size() - 1);
+      assert l2 instanceof Interpretation;
+      li = (Interpretation) l2;
+      assert head2.equals(li.symbol);
+    }
     return $;
   }
 }
