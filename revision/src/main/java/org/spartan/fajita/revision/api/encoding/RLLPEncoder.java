@@ -307,14 +307,14 @@ public class RLLPEncoder {
         .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
         .addMethod(MethodSpec.constructorBuilder() //
-            .addCode("super(new " + provider.getName() + "().bnf().ebnf()" + subBNFFix() + ");") //
+            .addCode("super(new " + provider.getName() + "().bnf().ebnf()" + subBNFFix() + ",\"" + packagePath + "\");") //
             .build()) //
         .addMethods(ms);
     if (!isSubBNF)
       b.addMethod(MethodSpec.methodBuilder("$") //
           .addModifiers(Modifier.PUBLIC) //
           .returns($ReturnType()) //
-          .addCode("return ast(\"" + packagePath + "." + JamoosClassesRenderer.topClassName(rllp.bnf) + "\");") //
+          .addCode("return ast(\"" + JamoosClassesRenderer.topClassName(rllp.bnf) + "\");") //
           .build());
     return b.build();
   }

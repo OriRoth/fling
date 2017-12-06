@@ -16,13 +16,13 @@ import org.spartan.fajita.revision.symbols.Symbol;
 
 public class ELLRecognizer {
   private final Map<Symbol, Set<List<Symbol>>> n;
-  private final EBNFAnalyzer a;
+  private final EBNFAnalyzer analyzer;
   private ELLStack stack;
   private static final String PP_IDENT = "--";
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles();
-    a = new EBNFAnalyzer(ebnf, n);
+    analyzer = new EBNFAnalyzer(ebnf, n);
     stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
   public void consume(RuntimeVerb input) {
@@ -78,7 +78,7 @@ public class ELLRecognizer {
       for (List<Symbol> clause : n.get(current)) {
         if (clause.isEmpty())
           hasEmptyRule = true;
-        if (a.firstSetOf(clause).contains(input)) {
+        if (analyzer.firstSetOf(clause).contains(input)) {
           for (int i = clause.size() - 1; i >= 0; --i)
             children.push(new ELLStack(clause.get(i), this));
           return true;
@@ -108,7 +108,7 @@ public class ELLRecognizer {
         }
         return true;
       }
-      if (!c.children.isEmpty() && !a.isNullable(c.current))
+      if (!c.children.isEmpty() && !analyzer.isNullable(c.current))
         throw reject();
       interpretations.add(Interpretation.of(c.current, c.interpretations));
       children.pop();
@@ -118,7 +118,7 @@ public class ELLRecognizer {
       if (current.isVerb())
         throw reject("folded on terminal");
       if (children == null) {
-        if (!a.isNullable(current))
+        if (!analyzer.isNullable(current))
           throw reject("folded on non nullable");
       } else
         while (!children.isEmpty())

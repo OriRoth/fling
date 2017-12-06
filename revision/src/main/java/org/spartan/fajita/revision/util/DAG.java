@@ -40,5 +40,14 @@ public class DAG<N> extends HashMap<N, Set<N>> {
     public String moreThanOneParentMessage(N node, N parent) {
       return "Addition of node " + node + " as the descendant of " + parent + " to the tree creates multiple inheritance";
     }
+    public DAG<N> reverse() {
+      DAG<N> $ = new DAG<>();
+      for (N n : keySet())
+        for (N p : get(n)) {
+          $.putIfAbsent(p, new HashSet<>());
+          $.get(p).add(n);
+        }
+      return $;
+    }
   }
 }

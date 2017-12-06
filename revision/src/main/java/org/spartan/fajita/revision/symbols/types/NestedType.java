@@ -1,6 +1,10 @@
 package org.spartan.fajita.revision.symbols.types;
 
+import java.util.List;
+import java.util.function.BiFunction;
+
 import org.spartan.fajita.revision.export.ASTNode;
+import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
@@ -42,5 +46,10 @@ public class NestedType implements ParameterType {
   }
   @Override public boolean accepts(Object arg) {
     return nested.equals(arg) || ASTNode.class.isInstance(arg);
+  }
+  @SuppressWarnings("rawtypes") @Override public Object conclude(Object arg, BiFunction<Object, List, Object> solution) {
+    Interpretation i = (Interpretation) arg;
+    return !nested.isExtendible() ? solution.apply(i.symbol, i.value)
+        : nested.asExtendible().conclude(((Interpretation) arg).value, solution);
   }
 }

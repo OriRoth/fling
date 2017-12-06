@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.bnf.EBNF;
+import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
@@ -25,6 +26,9 @@ public class EBNFAnalyzer {
     this.normalized = normalized;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
+  }
+  public EBNFAnalyzer(Map<NonTerminal, Set<List<Symbol>>> n, Set<NonTerminal> start) {
+    this(recreateEBNF(n, start), new HashMap<>(n));
   }
   private Set<Symbol> calculateNullableSymbols() {
     Set<Symbol> nullables = new HashSet<>();
@@ -87,5 +91,25 @@ public class EBNFAnalyzer {
   }
   public static RuntimeException reject(String message) {
     return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected: " + message);
+  }
+  private static EBNF recreateEBNF(Map<NonTerminal, Set<List<Symbol>>> n, Set<NonTerminal> start) {
+    Set<Verb> vs = new HashSet<>();
+    Set<NonTerminal> nts = new HashSet<>();
+    Set<Extendible> exs = new HashSet<>();
+    Set<DerivationRule> rs = new HashSet<>();
+    for (NonTerminal lhs : n.keySet()) {
+      nts.add(lhs.asNonTerminal());
+      for (List<Symbol> clause : n.get(lhs)) {
+        rs.add(new DerivationRule(lhs.asNonTerminal(), clause));
+        for (Symbol s : clause)
+          if (s.isVerb())
+            vs.add(s.asVerb());
+          else if (s.isExtendible())
+            exs.add(s.asExtendible());
+          else
+            nts.add(s.asNonTerminal());
+      }
+    }
+    return new EBNF(vs, nts, exs, rs, start, "#");
   }
 }

@@ -1,6 +1,9 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +16,6 @@ import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
-
-import static java.util.stream.Collectors.toList;
 
 public class OneOrMore extends BaseExtendible {
   private NonTerminal head2;
@@ -76,8 +77,8 @@ public class OneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object[]> conclude(List<?> values,
-      BiFunction<Object, List<?>, Object> solution) {
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object[]> conclude(List values,
+      BiFunction<Object, List, Object> solution) {
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {
@@ -85,7 +86,11 @@ public class OneOrMore extends BaseExtendible {
         solved.add(new LinkedList<>());
       Interpretation i = (Interpretation) o;
       assert i.symbol.equals(symbols.get(currentSymbol));
-      solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
+      if (i.symbol.isExtendible()) {
+        Object[] x = (Object[]) i.symbol.asExtendible().conclude(i.value, solution).get(0);
+        Collections.addAll(solved.get(currentSymbol), x);
+      } else
+        solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
       ++currentSymbol;
       if (currentSymbol == symbols.size())
         currentSymbol = 0;

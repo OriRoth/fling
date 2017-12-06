@@ -17,5 +17,5 @@ public interface Extendible extends Symbol {
   List<Symbol> symbols();
   List<DerivationRule> rawSolution();
   List<?> fold(List<?> t);
-  List<?> conclude(List<?> values, BiFunction<Object, List<?>, Object> solution);
+  @SuppressWarnings("rawtypes") List<?> conclude(List values, BiFunction<Object, List, Object> solution);
 }
