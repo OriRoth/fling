@@ -23,7 +23,6 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
-// TODO Roth add OR
 public class Datalog extends Grammar {
   public static enum Term implements Terminal {
     head, body, fact, literal, name, terms
