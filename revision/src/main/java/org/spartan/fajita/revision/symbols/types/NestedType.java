@@ -2,6 +2,7 @@ package org.spartan.fajita.revision.symbols.types;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
@@ -50,5 +51,8 @@ public class NestedType implements ParameterType {
   @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
     Interpretation i = (Interpretation) arg;
     return solution.apply(i.symbol, i.value);
+  }
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+    return nested.toClasses(classSolution);
   }
 }

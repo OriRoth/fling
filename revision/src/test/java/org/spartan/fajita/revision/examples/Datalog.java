@@ -34,7 +34,7 @@ public class Datalog extends Grammar {
         .start(DatalogProgram) //
         .derive(DatalogProgram).to(oneOrMore(Rule)) //
         .derive(Rule) //
-        /**/.to(attribute(fact, Literal), attribute(fact, Literal, Literal)) //
+        /**/.to(attribute(fact, Literal)) //
         /**/.or(attribute(head, Literal)).and(Body) //
         .derive(Body).to(attribute(body, oneOrMore(attribute(literal, Literal))))
         //
@@ -45,8 +45,8 @@ public class Datalog extends Grammar {
    */
   public static void main(String[] args) throws IOException {
     // System.out.println(bnf().go().toString(ASCII));
-    new Datalog().generateGrammarFiles();
-    // test();
+    // new Datalog().generateGrammarFiles();
+    test();
   }
   static void test() {
     System.out.println(fact(name("parent").terms("john", "bob")) //

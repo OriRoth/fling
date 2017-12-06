@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.spartan.fajita.revision.symbols.Symbol;
 
@@ -52,5 +53,8 @@ public class ClassType implements ParameterType {
   @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
     assert clazz.isInstance(arg);
     return Collections.singletonList(arg);
+  }
+  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+    return Collections.singletonList(clazz);
   }
 }

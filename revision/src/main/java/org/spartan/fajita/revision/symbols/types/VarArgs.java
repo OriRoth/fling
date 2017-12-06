@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.parser.ell.Interpretation;
@@ -48,5 +49,9 @@ public class VarArgs implements ParameterType {
     for (int i = 0; i < $.length; ++i)
       $[i] = l.get(i);
     return Collections.singletonList($);
+  }
+  // NOTE the returned classes should be duplicated according to input size
+  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+    return Collections.singletonList(clazz);
   }
 }

@@ -107,6 +107,12 @@ public class Verb implements Terminal, Comparable<Verb> {
   @Override public int compareTo(Verb v) {
     return equals(v) ? 0 : terminal.name().compareTo(v.name());
   }
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+    List<Class> $ = new LinkedList<>();
+    for (ParameterType t : type)
+      $.addAll(t.toClasses(classSolution));
+    return $;
+  }
   @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution) {
     assert accepts(args.toArray(new Object[args.size()]));
     List $ = new LinkedList<>();

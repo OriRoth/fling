@@ -89,14 +89,39 @@ public class OneOrMore extends BaseExtendible {
       if (currentSymbol == symbols.size())
         currentSymbol = 0;
     }
+    List<List> processed = processTokens(solved);
+    List<Class> processedClasses = toClasses(classSolution);
+    if (processed.size() != processedClasses.size())
+      throw new AssertionError();
     List<Object[]> $ = new LinkedList<>();
-    System.out.println(values);
-    System.out.println(solved);
-    for (int i = 0; i < symbols.size(); ++i)
-      $.add((Object[]) Array.newInstance(type(classSolution, symbols.get(i)), solved.get(i).size()));
+    for (int i = 0; i < processed.size(); ++i) {
+      $.add((Object[]) Array.newInstance(processedClasses.get(i), processed.get(i).size()));
+      for (int j = 0; j < processed.get(i).size(); ++j)
+        $.get(i)[j] = processed.get(i).get(j);
+    }
     return $;
   }
-  private Class<?> type(Function<Symbol, Class> classSolution, Symbol s) {
-    return null;
+  @SuppressWarnings({ "rawtypes", "unchecked" }) private static List<List> processTokens(List<List> solved) {
+    List<List> $ = new LinkedList<>();
+    for (List l : solved) {
+      List<List> n = new LinkedList();
+      for (Object o : l) {
+        assert o instanceof List;
+        List q = (List) o;
+        for (int i = 0; i < q.size(); ++i) {
+          if (n.size() < i + 1)
+            n.add(new LinkedList<>());
+          n.get(i).add(q.get(i));
+        }
+      }
+      $.addAll(n);
+    }
+    return $;
+  }
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+    List<Class> $ = new LinkedList<>();
+    for (Symbol s : symbols)
+      $.addAll(s.toClasses(classSolution));
+    return $;
   }
 }
