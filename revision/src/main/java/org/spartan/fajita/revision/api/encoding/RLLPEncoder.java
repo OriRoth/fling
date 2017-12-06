@@ -314,7 +314,7 @@ public class RLLPEncoder {
       b.addMethod(MethodSpec.methodBuilder("$") //
           .addModifiers(Modifier.PUBLIC) //
           .returns($ReturnType()) //
-          .addCode("return null;") //
+          .addCode("return ast(\"" + packagePath + "." + JamoosClassesRenderer.topClassName(rllp.bnf) + "\");") //
           .build());
     return b.build();
   }

@@ -6,12 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
+
+import static java.util.stream.Collectors.toList;
 
 public class OneOrMore extends BaseExtendible {
   private NonTerminal head2;
@@ -72,5 +75,21 @@ public class OneOrMore extends BaseExtendible {
       assert head2.equals(li.symbol);
     }
     return $;
+  }
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object[]> conclude(List<?> values,
+      BiFunction<Object, List<?>, Object> solution) {
+    List<List> solved = new LinkedList<>();
+    int currentSymbol = 0;
+    for (Object o : values) {
+      if (solved.size() < currentSymbol + 1)
+        solved.add(new LinkedList<>());
+      Interpretation i = (Interpretation) o;
+      assert i.symbol.equals(symbols.get(currentSymbol));
+      solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
+      ++currentSymbol;
+      if (currentSymbol == symbols.size())
+        currentSymbol = 0;
+    }
+    return solved.stream().map(l -> l.toArray(new Object[l.size()])).collect(toList());
   }
 }

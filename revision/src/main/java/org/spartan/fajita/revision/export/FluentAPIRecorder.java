@@ -26,7 +26,7 @@ public class FluentAPIRecorder {
   public Interpretation conclude() {
     return ell.ast();
   }
-  public <S> S ast(Class<?> astClass) {
-    return ASTBuilder.build();
+  public <S> S ast(String astPath) {
+    return new ASTBuilder(conclude(), astPath).build();
   }
 }
