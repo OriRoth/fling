@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
@@ -30,23 +32,18 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     Interpretation s = (Interpretation) current.value.get(0);
     return (S) instance(clazz(s), s.value);
   }
-  @SuppressWarnings("unchecked") private List build(List value) {
+  @SuppressWarnings("unchecked") private List buildAll(List value) {
     return (List) value.stream().map(this::build).collect(toList());
   }
-  private Object build(Object o) {
+  private List build(Object o) {
     if (o instanceof Interpretation)
       return build((Interpretation) o);
-    return o;
+    return Collections.singletonList(o);
   }
-  private Object build(Interpretation i) {
+  private List build(Interpretation i) {
     return build(i.symbol, i.value);
   }
-  private Object build(Object o, List values) {
-    if (o instanceof Symbol)
-      return build((Symbol) o, values);
-    throw problem();
-  }
-  private Object build(Symbol s, List values) {
+  private List build(Symbol s, List values) {
     if (s.isNonTerminal())
       return build(s.asNonTerminal(), values);
     if (s.isExtendible())
@@ -55,22 +52,23 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
       return build(s.asVerb(), values);
     throw problem();
   }
-  private Object build(NonTerminal nt, List values) {
+  private List build(NonTerminal nt, List values) {
     if (nt == null)
       throw problem();
     if (jamoos.isAbstractNonTerminal(nt))
       return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values)), values);
-    return instance(clazz(nt), values);
+    return Collections.singletonList(instance(clazz(nt), values));
   }
-  private Object build(Extendible e, List values) {
-    return e.conclude(values, this::build);
+  private List build(Extendible e, List values) {
+    return e.conclude(values, this::build, this::clazz);
   }
-  private Object build(Verb v, List values) {
-    List solved = v.conclude(values, this::build);
-    return solved.get(0);
+  private List build(Verb v, List values) {
+    return v.conclude(values, this::build);
   }
   @SuppressWarnings("unchecked") private Object instance(Class<?> c, List values) {
-    List arguments = build(values);
+    List ba = buildAll(values), arguments = new LinkedList();
+    for (Object o : ba)
+      arguments.addAll((List) o);
     try {
       Constructor<?> ctor = c.getConstructors()[0];
       return instance(ctor, arguments.toArray(new Object[arguments.size()]));

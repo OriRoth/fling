@@ -1,11 +1,13 @@
 package org.spartan.fajita.revision.symbols.types;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.parser.ell.Interpretation;
+import org.spartan.fajita.revision.symbols.Symbol;
 
 public class VarArgs implements ParameterType {
   public final Class<?> aclazz;
@@ -37,14 +39,14 @@ public class VarArgs implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return clazz.isInstance(arg);
   }
-  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public Object conclude(Object arg,
-      BiFunction<Object, List, Object> solution) {
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg,
+      BiFunction<Symbol, List, List> solution) {
     List l = (List) ((List) arg).stream()
         .map(x -> !(x instanceof Interpretation) ? x : solution.apply(((Interpretation) x).symbol, ((Interpretation) x).value))
         .collect(Collectors.toList());
     Object[] $ = (Object[]) Array.newInstance(clazz, l.size());
     for (int i = 0; i < $.length; ++i)
       $[i] = l.get(i);
-    return $;
+    return Collections.singletonList($);
   }
 }

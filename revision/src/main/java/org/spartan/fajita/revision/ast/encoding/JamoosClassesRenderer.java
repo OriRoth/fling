@@ -226,21 +226,20 @@ public class JamoosClassesRenderer {
   // }
   private String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))
-      return name;
+      innerClassesFieldUsedNames.put(lhs, new HashMap<>());
     Map<String, Integer> names = innerClassesFieldUsedNames.get(lhs);
     if (!names.containsKey(name)) {
-      names.put(lhs, Integer.valueOf(0));
+      names.put(name, Integer.valueOf(0));
       return name;
     }
-    if (names.get(lhs).intValue() == 0) {
+    if (names.get(name).intValue() == 0) {
       String type = innerClassesFieldTypes.get(lhs).get(name);
       innerClassesFieldTypes.get(lhs).remove(name);
       innerClassesFieldTypes.get(lhs).put(name + "1", type);
-      innerClassesFieldUsedNames.get(lhs).put(name, Integer.valueOf(1));
+      names.put(name, Integer.valueOf(1));
     }
     int nn;
-    innerClassesFieldUsedNames.get(lhs).put(name,
-        Integer.valueOf(nn = innerClassesFieldUsedNames.get(lhs).get(name).intValue() + 1));
+    names.put(name, Integer.valueOf(nn = innerClassesFieldUsedNames.get(lhs).get(name).intValue() + 1));
     return name + nn;
   }
   private String generateFieldName(String lhs, Symbol s) {

@@ -47,9 +47,8 @@ public class NestedType implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return nested.equals(arg) || ASTNode.class.isInstance(arg);
   }
-  @SuppressWarnings("rawtypes") @Override public Object conclude(Object arg, BiFunction<Object, List, Object> solution) {
+  @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
     Interpretation i = (Interpretation) arg;
-    return !nested.isExtendible() ? solution.apply(i.symbol, i.value)
-        : nested.asExtendible().conclude(((Interpretation) arg).value, solution);
+    return solution.apply(i.symbol, i.value);
   }
 }

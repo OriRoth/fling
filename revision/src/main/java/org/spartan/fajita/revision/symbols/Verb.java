@@ -107,7 +107,7 @@ public class Verb implements Terminal, Comparable<Verb> {
   @Override public int compareTo(Verb v) {
     return equals(v) ? 0 : terminal.name().compareTo(v.name());
   }
-  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Object, List, Object> solution) {
+  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution) {
     assert accepts(args.toArray(new Object[args.size()]));
     List $ = new LinkedList<>();
     if (type.length == 0)
@@ -115,13 +115,13 @@ public class Verb implements Terminal, Comparable<Verb> {
     ParameterType last = type[type.length - 1];
     if (!(last instanceof VarArgs)) {
       for (int i = 0; i < type.length; ++i)
-        $.add(type[i].conclude(args.get(i), solution));
+        $.addAll(type[i].conclude(args.get(i), solution));
       return $;
     }
     for (int i = 0; i < type.length - 1; ++i)
       if (!type[i].accepts(args.get(i)))
-        $.add(type[i].conclude(args.get(i), solution));
-    $.add(last.conclude(args.subList(type.length - 1, args.size()), solution));
+        $.addAll(type[i].conclude(args.get(i), solution));
+    $.addAll(last.conclude(args.subList(type.length - 1, args.size()), solution));
     return $;
   }
 }

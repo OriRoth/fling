@@ -1,9 +1,7 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
-import static java.util.stream.Collectors.toList;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +76,7 @@ public class OneOrMore extends BaseExtendible {
     return $;
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object[]> conclude(List values,
-      BiFunction<Object, List, Object> solution) {
+      BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {
@@ -86,15 +84,19 @@ public class OneOrMore extends BaseExtendible {
         solved.add(new LinkedList<>());
       Interpretation i = (Interpretation) o;
       assert i.symbol.equals(symbols.get(currentSymbol));
-      if (i.symbol.isExtendible()) {
-        Object[] x = (Object[]) i.symbol.asExtendible().conclude(i.value, solution).get(0);
-        Collections.addAll(solved.get(currentSymbol), x);
-      } else
-        solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
+      solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
       ++currentSymbol;
       if (currentSymbol == symbols.size())
         currentSymbol = 0;
     }
-    return solved.stream().map(l -> l.toArray(new Object[l.size()])).collect(toList());
+    List<Object[]> $ = new LinkedList<>();
+    System.out.println(values);
+    System.out.println(solved);
+    for (int i = 0; i < symbols.size(); ++i)
+      $.add((Object[]) Array.newInstance(type(classSolution, symbols.get(i)), solved.get(i).size()));
+    return $;
+  }
+  private Class<?> type(Function<Symbol, Class> classSolution, Symbol s) {
+    return null;
   }
 }
