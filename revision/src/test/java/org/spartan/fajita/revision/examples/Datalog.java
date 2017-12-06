@@ -1,13 +1,17 @@
 package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
-import static org.spartan.fajita.revision.examples.Datalog.NT.*;
-import static org.spartan.fajita.revision.examples.Datalog.Term.*;
 import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
-
-import static org.spartan.fajita.revision.junk.Datalog.*;
-import static org.spartan.fajita.revision.junk.Literal.*;
-import static org.spartan.fajita.revision.junk.Body1.*;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Body;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Program;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Literal;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Rule;
+import static org.spartan.fajita.revision.examples.Datalog.Term.body;
+import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
+import static org.spartan.fajita.revision.examples.Datalog.Term.head;
+import static org.spartan.fajita.revision.examples.Datalog.Term.literal;
+import static org.spartan.fajita.revision.examples.Datalog.Term.name;
+import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
 
 import java.io.IOException;
 
@@ -26,13 +30,13 @@ public class Datalog extends Grammar {
   }
 
   public static enum NT implements NonTerminal {
-    DatalogProgram, Rule, Literal, Body
+    Program, Rule, Literal, Body
   }
 
   @Override public FajitaBNF bnf() {
     return Fajita.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
-        .start(DatalogProgram) //
-        .derive(DatalogProgram).to(oneOrMore(Rule)) //
+        .start(Program) //
+        .derive(Program).to(oneOrMore(Rule)) //
         .derive(Rule) //
         /**/.to(attribute(fact, Literal)) //
         /**/.or(attribute(head, Literal)).and(Body) //
@@ -40,22 +44,7 @@ public class Datalog extends Grammar {
         //
         .derive(Literal).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
   }
-  /**
-   * @throws IOException
-   */
   public static void main(String[] args) throws IOException {
-    // System.out.println(bnf().go().toString(ASCII));
-    // new Datalog().generateGrammarFiles();
-    test();
-  }
-  static void test() {
-    System.out.println(fact(name("parent").terms("john", "bob")) //
-        .fact(name("parent").terms("bob", "donald")) //
-        .head(name("ancestor").terms("A", "B")).body( //
-            literal(name("parent").terms("A", "B"))) //
-        .head(name("ancestor").terms("A", "B")).body( //
-            literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B"))) //
-        .$());
+    new Datalog().generateGrammarFiles();
   }
 }
