@@ -6,8 +6,8 @@ import static org.spartan.fajita.revision.junk.Literal.name;
 
 import org.spartan.fajita.revision.junk.DatalogAST.Program;
 
-public class Ancestor implements DatalogProgram {
-  @Override public Program program() {
+public class Ancestor {
+  public static Program program() {
     return fact(name("parent").terms("john", "bob")) //
         .fact(name("parent").terms("bob", "donald")) //
         .head(name("ancestor").terms("A", "B")) //
