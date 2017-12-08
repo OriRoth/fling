@@ -3,11 +3,10 @@ package org.spartan.fajita.revision.examples.usage;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.spartan.fajita.revision.junk.DatalogAST.Clause;
 import org.spartan.fajita.revision.junk.DatalogAST.Literal;
 import org.spartan.fajita.revision.junk.DatalogAST.Program;
 import org.spartan.fajita.revision.junk.DatalogAST.Rule;
-import org.spartan.fajita.revision.junk.DatalogAST.Rule1;
-import org.spartan.fajita.revision.junk.DatalogAST.Rule2;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {
@@ -20,20 +19,17 @@ public class PrintDatalogProgram {
     return $.toString();
   }
   private static String print(Rule r) {
-    if (r instanceof Rule1)
-      return print((Rule1) r);
-    return print((Rule2) r);
-  }
-  private static String print(Rule2 r) {
-    return print(r.fact) + ".";
+    if (r.rule1.is(Literal.class))
+      return print(r.rule1.get(Literal.class)) + ".";
+    return print(r.rule1.get(Clause.class));
   }
   private static String print(Literal fact) {
     return fact.name + "(" + String.join(", ", fact.terms) + ")";
   }
-  private static String print(Rule1 r) {
+  private static String print(Clause c) {
     StringBuilder $ = new StringBuilder();
-    $.append(print(r.head)).append(" :- ");
-    $.append(String.join(", ", Arrays.stream(r.body.body).map(x -> print(x)).collect(Collectors.toList())));
+    $.append(print(c.head)).append(" :- ");
+    $.append(String.join(", ", Arrays.stream(c.body).map(x -> print(x)).collect(Collectors.toList())));
     return $.append(".").toString();
   }
 }

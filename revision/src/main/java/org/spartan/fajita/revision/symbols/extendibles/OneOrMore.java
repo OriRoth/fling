@@ -76,7 +76,7 @@ public class OneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object[]> conclude(List values,
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
@@ -94,11 +94,11 @@ public class OneOrMore extends BaseExtendible {
     List<Class> processedClasses = toClasses(classSolution);
     if (processed.size() != processedClasses.size())
       throw new AssertionError();
-    List<Object[]> $ = new LinkedList<>();
+    List<Object> $ = new LinkedList<>();
     for (int i = 0; i < processed.size(); ++i) {
-      $.add((Object[]) Array.newInstance(processedClasses.get(i).getComponentType(), processed.get(i).size()));
+      $.add(Array.newInstance(processedClasses.get(i).getComponentType(), processed.get(i).size()));
       for (int j = 0; j < processed.get(i).size(); ++j)
-        $.get(i)[j] = processed.get(i).get(j);
+        ((Object[]) $.get(i))[j] = processed.get(i).get(j);
     }
     return $;
   }

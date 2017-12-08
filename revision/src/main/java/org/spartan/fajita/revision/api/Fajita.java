@@ -22,6 +22,7 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
+import org.spartan.fajita.revision.symbols.extendibles.Either;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 import org.spartan.fajita.revision.symbols.extendibles.OneOrMore;
 import org.spartan.fajita.revision.symbols.types.NestedType;
@@ -240,5 +241,8 @@ public class Fajita {
   }
   public static OneOrMore oneOrMore(Symbol s, Symbol... ss) {
     return new OneOrMore(merge(s, ss));
+  }
+  public static Either either(Symbol s1, Symbol s2, Symbol... ss) {
+    return new Either(merge(s1, s2, ss));
   }
 }

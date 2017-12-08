@@ -1,6 +1,6 @@
 package org.spartan.fajita.revision.examples.usage;
 
-import static org.spartan.fajita.revision.junk.Body1.literal;
+import static org.spartan.fajita.revision.junk.Clause1.literal;
 import static org.spartan.fajita.revision.junk.Datalog.fact;
 import static org.spartan.fajita.revision.junk.Literal.name;
 
