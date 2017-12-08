@@ -34,11 +34,6 @@ public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
             : " extends " + String.join(",",
                 inheritance.get(lhs).stream().map(x -> packagePath + "." + topClassName + ".I" + x.name()).collect(toList())))) //
         .append("{");
-    if (!isInheritanceRule(rhs)) {
-      List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
-          .collect(toList());
-      $.append(String.join("", fields.stream().map(x -> "public " + x + "();").collect(toList())));
-    }
     return $.append("}").toString();
   }
   private String parseInnerClass(NonTerminal lhs, Set<List<Symbol>> rhs) {

@@ -17,6 +17,7 @@ import java.util.function.Function;
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.EBNF;
+import org.spartan.fajita.revision.export.AST;
 import org.spartan.fajita.revision.parser.ell.EBNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -52,6 +53,7 @@ public class JamoosClassesRenderer {
     this.inheritance = inheritance;
     this.ebnf = ebnf;
     this.packagePath = packagePath;
+    this.topClassName = topClassName(ebnf);
     // NOTE should correspond to the producer in Fajita
     parseTopClass(Fajita.producer());
   }
@@ -64,7 +66,7 @@ public class JamoosClassesRenderer {
   protected void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
     StringBuilder $ = new StringBuilder();
     $.append("package " + packagePath + ";");
-    $.append("public class " + (topClassName = topClassName(ebnf)) + "{");
+    $.append("public class " + topClassName + " implements " + AST.class.getTypeName() + "{");
     try {
       n = normalize(ebnf, inheritance, producer);
     } catch (@SuppressWarnings("unused") MoreThanOneParent e) {
