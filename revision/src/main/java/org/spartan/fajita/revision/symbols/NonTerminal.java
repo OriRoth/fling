@@ -33,4 +33,7 @@ public interface NonTerminal extends Symbol {
       }
     };
   }
+  public default String iname(String packagePath, String containingClass) {
+    return packagePath + "." + containingClass + ".I" + name();
+  }
 }

@@ -26,25 +26,30 @@ import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 import org.spartan.fajita.revision.util.DAG;
+import org.spartan.fajita.revision.util.DAG.MoreThanOneParent;
 
 public class JamoosClassesRenderer {
   EBNF ebnf;
   public String topClassName;
-  public final String packagePath;
+  protected final String packagePath;
   protected final DAG<NonTerminal> inheritance;
-  DAG<NonTerminal> reversedInheritance;
-  Set<NonTerminal> abstractNonTerminals = new HashSet<>();
-  private List<String> innerClasses = new LinkedList<>();
+  protected DAG<NonTerminal> reversedInheritance;
+  protected Set<NonTerminal> abstractNonTerminals = new HashSet<>();
+  protected List<String> innerClasses = new LinkedList<>();
   public String topClass;
-  public Map<NonTerminal, Map<NonTerminal, List<Symbol>>> concreteClassesMapping = new HashMap<>();
-  public Map<String, Integer> innerClassesUsedNames = new HashMap<>();
-  public Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new HashMap<>();
-  public Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new HashMap<>();
-  private Map<NonTerminal, Set<List<Symbol>>> n;
-  private EBNFAnalyzer analyzer;
+  protected Map<NonTerminal, Map<NonTerminal, List<Symbol>>> concreteClassesMapping = new HashMap<>();
+  protected Map<String, Integer> innerClassesUsedNames = new HashMap<>();
+  protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new HashMap<>();
+  protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new HashMap<>();
+  protected Map<NonTerminal, Set<List<Symbol>>> n;
+  protected EBNFAnalyzer analyzer;
+  private JamoosClassesRenderer actual = this;
 
   public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
-    this.inheritance = new DAG.Tree<>();
+    this(ebnf, packagePath, new DAG.Tree<>());
+  }
+  protected JamoosClassesRenderer(EBNF ebnf, String packagePath, DAG<NonTerminal> inheritance) {
+    this.inheritance = inheritance;
     this.ebnf = ebnf;
     this.packagePath = packagePath;
     // NOTE should correspond to the producer in Fajita
@@ -56,17 +61,17 @@ public class JamoosClassesRenderer {
   public static String topClassName(BNF bnf) {
     return bnf.name + "AST";
   }
-  private void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
+  protected void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
     StringBuilder $ = new StringBuilder();
     $.append("package " + packagePath + ";");
     $.append("public class " + (topClassName = topClassName(ebnf)) + "{");
-    parseInnerClasses(producer);
-    for (String i : innerClasses)
-      $.append(i);
-    topClass = $.append("}").toString();
-  }
-  private void parseInnerClasses(Function<NonTerminal, NonTerminal> producer) {
-    n = normalize(ebnf, inheritance, producer);
+    try {
+      n = normalize(ebnf, inheritance, producer);
+    } catch (@SuppressWarnings("unused") MoreThanOneParent e) {
+      actual = new JamoosInterfacesRenderer(ebnf, packagePath);
+      topClass = actual.topClass;
+      return;
+    }
     for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
       Set<List<Symbol>> rhs = r.getValue();
@@ -78,6 +83,12 @@ public class JamoosClassesRenderer {
       } else
         abstractNonTerminals.add(lhs);
     }
+    parseInnerClasses();
+    for (String i : innerClasses)
+      $.append(i);
+    topClass = $.append("}").toString();
+  }
+  protected void parseInnerClasses() {
     for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
       StringBuilder $ = new StringBuilder();
       NonTerminal lhs = r.getKey();
@@ -85,7 +96,8 @@ public class JamoosClassesRenderer {
       // Declaration
       $.append("public static class ") //
           .append(lhs.name()) //
-          .append((!inheritance.containsKey(lhs) ? "" : " extends " + inheritance.get(lhs).iterator().next())) //
+          .append((!inheritance.containsKey(lhs) ? ""
+              : " extends " + packagePath + "." + topClassName + "." + inheritance.get(lhs).iterator().next())) //
           .append("{");
       if (!isInheritanceRule(rhs)) {
         // Fields
@@ -107,22 +119,22 @@ public class JamoosClassesRenderer {
       innerClasses.add($.append("}").toString());
     }
   }
-  private void parseSymbol(String lhs, Symbol s) {
+  protected void parseSymbol(String lhs, Symbol s) {
     for (String t : parseType(s))
       innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
-  @SuppressWarnings("unused") private List<String> parseTypes(String lhs, List<Symbol> ss) {
+  @SuppressWarnings("unused") protected List<String> parseTypes(String lhs, List<Symbol> ss) {
     return ss.stream().map(x -> parseType(x)).reduce(new LinkedList<>(), (l1, l2) -> {
       l1.addAll(l2);
       return l1;
     });
   }
-  private List<String> parseType(Symbol s) {
+  protected List<String> parseType(Symbol s) {
     List<String> $ = new LinkedList<>();
     if (s.isExtendible())
       $.addAll(s.asExtendible().parseTypes(this::parseType));
     else if (s.isVerb()) {
-      Verb v = (Verb) s;
+      Verb v = s.asVerb();
       for (ParameterType t : v.type)
         if (t instanceof ClassType)
           $.add(((ClassType) t).clazz.getTypeName());
@@ -130,13 +142,13 @@ public class JamoosClassesRenderer {
           $.addAll(parseType(((NestedType) t).nested));
         else
           $.add(t.toString());
-    } else if (s instanceof NonTerminal)
-      $.add(((NonTerminal) s).name(packagePath, topClassName));
+    } else if (s.isNonTerminal())
+      $.add(s.asNonTerminal().name(packagePath, topClassName));
     else
       $.add("Void");
     return $;
   }
-  private String generateFieldName(String lhs, String name) {
+  protected String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))
       innerClassesFieldUsedNames.put(lhs, new HashMap<>());
     Map<String, Integer> names = innerClassesFieldUsedNames.get(lhs);
@@ -154,10 +166,10 @@ public class JamoosClassesRenderer {
     names.put(name, Integer.valueOf(nn = innerClassesFieldUsedNames.get(lhs).get(name).intValue() + 1));
     return name + nn;
   }
-  private String generateFieldName(String lhs, Symbol s) {
+  protected String generateFieldName(String lhs, Symbol s) {
     return generateFieldName(lhs, s.head().name().toLowerCase());
   }
-  @SuppressWarnings("unused") private String generateClassName(String name) {
+  protected String generateClassName(String name) {
     if (!innerClassesUsedNames.containsKey(name)) {
       innerClassesUsedNames.put(name, Integer.valueOf(1));
       return name + 1;
@@ -170,16 +182,19 @@ public class JamoosClassesRenderer {
     return new JamoosClassesRenderer(ebnf, packagePath);
   }
   public boolean isAbstractNonTerminal(NonTerminal nt) {
-    return abstractNonTerminals.contains(nt);
+    return actual.abstractNonTerminals.contains(nt);
   }
   public NonTerminal solveAbstractNonTerminal(NonTerminal nt, Terminal t) {
-    if (reversedInheritance == null)
-      reversedInheritance = inheritance.reverse();
-    if (analyzer == null)
-      analyzer = new EBNFAnalyzer(n, ebnf.startSymbols);
-    for (NonTerminal child : reversedInheritance.get(nt))
-      if (t == null && analyzer.isNullable(child) || t != null && analyzer.firstSetOf(child).contains(t))
-        return abstractNonTerminals.contains(child) ? solveAbstractNonTerminal(child, t) : child;
+    if (actual.reversedInheritance == null)
+      actual.reversedInheritance = actual.inheritance.reverse();
+    if (actual.analyzer == null)
+      actual.analyzer = new EBNFAnalyzer(actual.n, actual.ebnf.startSymbols);
+    for (NonTerminal child : actual.reversedInheritance.get(nt))
+      if (t == null && actual.analyzer.isNullable(child) || t != null && actual.analyzer.firstSetOf(child).contains(t))
+        return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t) : child;
     return null;
+  }
+  public boolean isInterfaces() {
+    return actual instanceof JamoosInterfacesRenderer;
   }
 }

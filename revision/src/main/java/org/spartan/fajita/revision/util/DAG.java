@@ -1,20 +1,20 @@
 package org.spartan.fajita.revision.util;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DAG<N> extends HashMap<N, Set<N>> {
   private static final long serialVersionUID = -5357744620287200470L;
 
   public Set<N> initialize(N node) {
-    return putIfAbsent(node, new HashSet<>());
+    return putIfAbsent(node, new LinkedHashSet<>());
   }
   public boolean add(N node, N parent) {
-    Set<N> reach = new HashSet<>(), seen = new HashSet<>();
+    Set<N> reach = new LinkedHashSet<>(), seen = new LinkedHashSet<>();
     reach.add(parent);
     do {
-      Set<N> current = new HashSet<>(reach);
+      Set<N> current = new LinkedHashSet<>(reach);
       reach.clear();
       for (N n : current)
         if (n.equals(node))
@@ -29,7 +29,7 @@ public class DAG<N> extends HashMap<N, Set<N>> {
     DAG<N> $ = new DAG<>();
     for (N n : keySet())
       for (N p : get(n)) {
-        $.putIfAbsent(p, new HashSet<>());
+        $.putIfAbsent(p, new LinkedHashSet<>());
         $.get(p).add(n);
       }
     return $;
