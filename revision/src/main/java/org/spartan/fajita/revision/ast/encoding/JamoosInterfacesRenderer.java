@@ -3,7 +3,6 @@ package org.spartan.fajita.revision.ast.encoding;
 import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.revision.ast.encoding.ASTUtil.isInheritanceRule;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -19,27 +18,52 @@ public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
   }
   @Override protected void parseInnerClasses() {
     for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
-      StringBuilder $i = new StringBuilder();
       NonTerminal lhs = r.getKey();
       Set<List<Symbol>> rhs = r.getValue();
-      // Declaration
-      $i.append("public static interface I") //
-          .append(lhs.name()) //
-          .append((!inheritance.containsKey(lhs) ? ""
-              : " extends " + String.join(",",
-                  inheritance.get(lhs).stream().map(x -> packagePath + "." + topClassName + ".I" + x.name()).collect(toList())))) //
-          .append("{");
-      if (!isInheritanceRule(rhs)) {
-        // Fields
-        List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
-            .collect(toList());
-        $i.append(String.join("", fields.stream().map(x -> "public " + x + "();").collect(toList())));
-      }
-      innerClasses.add($i.append("}").toString());
+      innerClasses.add(parseInnerInterface(lhs, rhs));
+      innerClasses.add(parseInnerClass(lhs, rhs));
     }
   }
-  @Override protected List<String> parseType(Symbol s) {
-    return s.isNonTerminal() ? Collections.singletonList(s.asNonTerminal().iname(packagePath, topClassName))
-        : super.parseType(s);
+  private String parseInnerInterface(NonTerminal lhs, Set<List<Symbol>> rhs) {
+    StringBuilder $ = new StringBuilder();
+    if (!isInheritanceRule(rhs))
+      return $.toString();
+    $.append("public static interface ") //
+        .append(lhs.name()) //
+        .append((!inheritance.containsKey(lhs) ? ""
+            : " extends " + String.join(",",
+                inheritance.get(lhs).stream().map(x -> packagePath + "." + topClassName + ".I" + x.name()).collect(toList())))) //
+        .append("{");
+    if (!isInheritanceRule(rhs)) {
+      List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
+          .collect(toList());
+      $.append(String.join("", fields.stream().map(x -> "public " + x + "();").collect(toList())));
+    }
+    return $.append("}").toString();
+  }
+  private String parseInnerClass(NonTerminal lhs, Set<List<Symbol>> rhs) {
+    StringBuilder $ = new StringBuilder();
+    if (isInheritanceRule(rhs))
+      return $.toString();
+    $.append("public static class ") //
+        .append(lhs.name()) //
+        .append((!inheritance.containsKey(lhs) ? ""
+            : " implements "
+                + String.join(",", inheritance.get(lhs).stream().map(x -> x.name(packagePath, topClassName)).collect(toList())))) //
+        .append("{");
+    List<String> fields = innerClassesFieldTypes.get(lhs.name()).entrySet().stream().map(e -> e.getValue() + " " + e.getKey())
+        .collect(toList());
+    $.append(String.join(";", fields.stream().map(x -> "public " + x).collect(toList())));
+    if (!fields.isEmpty())
+      $.append(";");
+    $.append("public " + lhs.name() + "(") //
+        .append(String.join(",", fields)) //
+        .append("){") //
+        .append(String.join(";", innerClassesFieldTypes.get(lhs.name()).entrySet().stream()
+            .map(e -> "this." + e.getKey() + "=" + e.getKey()).collect(toList())));
+    if (!fields.isEmpty())
+      $.append(";") //
+          .append("}");
+    return $.append("}").toString();
   }
 }

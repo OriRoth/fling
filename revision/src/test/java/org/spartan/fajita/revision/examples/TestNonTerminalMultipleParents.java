@@ -8,6 +8,7 @@ import static org.spartan.fajita.revision.examples.TestNonTerminalMultipleParent
 import static org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents.NT.S;
 import static org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents.Term.a;
 import static org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents.Term.b;
+import static org.spartan.fajita.revision.junk.TestNonTerminalMultipleParents.*;
 
 import java.io.IOException;
 
@@ -40,9 +41,11 @@ public class TestNonTerminalMultipleParents extends Grammar {
    * @throws IOException
    */
   public static void main(String[] args) throws IOException {
-    new TestNonTerminalMultipleParents().generateGrammarFiles();
-    // test();
+    // new TestNonTerminalMultipleParents().generateGrammarFiles();
+    test();
   }
   public static void test() {
+    a("a1").b("b1").$();
+    b("b2").a("a2").$();
   }
 }

@@ -55,8 +55,11 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
   private List build(NonTerminal nt, List values) {
     if (nt == null)
       throw problem();
-    if (jamoos.isAbstractNonTerminal(nt))
-      return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values)), values);
+    if (jamoos.isAbstractNonTerminal(nt)) {
+      assert values.size() == 1 && values.get(0) instanceof Interpretation;
+      Interpretation i = (Interpretation) values.get(0);
+      return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values)), i.value);
+    }
     return Collections.singletonList(instance(clazz(nt), values));
   }
   private List build(Extendible e, List values) {
