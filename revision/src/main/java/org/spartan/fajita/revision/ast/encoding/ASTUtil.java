@@ -14,15 +14,15 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
-import org.spartan.fajita.revision.util.DAG.Tree;
+import org.spartan.fajita.revision.util.DAG;
 
 public class ASTUtil {
-  public static Map<NonTerminal, Set<List<Symbol>>> normalize(EBNF ebnf, Tree<NonTerminal> inheritance,
+  public static Map<NonTerminal, Set<List<Symbol>>> normalize(EBNF ebnf, DAG<NonTerminal> inheritance,
       Function<NonTerminal, NonTerminal> producer) {
     return sortRules(ebnf.normalizedForm(producer), inheritance);
   }
   private static Map<NonTerminal, Set<List<Symbol>>> sortRules(Map<NonTerminal, Set<List<Symbol>>> orig,
-      Tree<NonTerminal> inheritance) {
+      DAG<NonTerminal> inheritance) {
     clearEmptyRules(orig);
     clearAugSRules(orig);
     inheritance.clear();

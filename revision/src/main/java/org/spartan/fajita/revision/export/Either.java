@@ -12,6 +12,9 @@ public class Either {
   @SuppressWarnings({ "unchecked", "unused" }) public <C> C get(Class<C> c) {
     return (C) $;
   }
+  public Class<?> type() {
+    return $.getClass();
+  }
   @Override public String toString() {
     return $.toString();
   }

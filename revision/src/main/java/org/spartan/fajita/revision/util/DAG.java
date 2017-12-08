@@ -18,15 +18,21 @@ public class DAG<N> extends HashMap<N, Set<N>> {
       reach.clear();
       for (N n : current)
         if (n.equals(node))
-          throw new IllegalArgumentException(circleDetectedMessage(node, parent));
+          throw new CircleDetected(node, parent);
         else if (!seen.contains(n) && containsKey(n))
           get(n).stream().filter(x -> !seen.contains(x)).forEach(x -> reach.add(x));
       seen.addAll(current);
     } while (!reach.isEmpty());
     return get(node).add(parent);
   }
-  public String circleDetectedMessage(N node, N parent) {
-    return "Addition of node " + node + " as the descendant of " + parent + " to the tree creates a circle";
+  public DAG<N> reverse() {
+    DAG<N> $ = new DAG<>();
+    for (N n : keySet())
+      for (N p : get(n)) {
+        $.putIfAbsent(p, new HashSet<>());
+        $.get(p).add(n);
+      }
+    return $;
   }
 
   public static class Tree<N> extends DAG<N> {
@@ -34,20 +40,24 @@ public class DAG<N> extends HashMap<N, Set<N>> {
 
     @Override public boolean add(N node, N parent) {
       if (containsKey(node) && !get(node).isEmpty() && (get(node).size() > 1 || !get(node).contains(parent)))
-        throw new IllegalArgumentException(moreThanOneParentMessage(node, parent));
+        throw new MoreThanOneParent(node, parent);
       return super.add(node, parent);
     }
-    public String moreThanOneParentMessage(N node, N parent) {
-      return "Addition of node " + node + " as the descendant of " + parent + " to the tree creates multiple inheritance";
+  }
+
+  public static class CircleDetected extends IllegalArgumentException {
+    private static final long serialVersionUID = -6758854252723486609L;
+
+    public CircleDetected(Object node, Object parent) {
+      super("Addition of node " + node + " as the descendant of " + parent + " to the tree creates a circle");
     }
-    public DAG<N> reverse() {
-      DAG<N> $ = new DAG<>();
-      for (N n : keySet())
-        for (N p : get(n)) {
-          $.putIfAbsent(p, new HashSet<>());
-          $.get(p).add(n);
-        }
-      return $;
+  }
+
+  public static class MoreThanOneParent extends IllegalArgumentException {
+    private static final long serialVersionUID = 3465683203197637602L;
+
+    public MoreThanOneParent(Object node, Object parent) {
+      super("Addition of node " + node + " as the descendant of " + parent + " to the tree creates multiple inheritance");
     }
   }
 }
