@@ -17,10 +17,11 @@ import org.spartan.fajita.revision.symbols.Terminal;
 @SuppressWarnings("hiding") public abstract class BaseExtendible implements Extendible {
   protected NonTerminal head;
   protected List<Symbol> symbols;
+  protected List<Symbol> solvedSymbols;
   protected boolean isSolved = false;
   private NonTerminal lhs;
   private Function<NonTerminal, NonTerminal> producer;
-  protected List<DerivationRule> solvedSymbols = new LinkedList<>();
+  private List<DerivationRule> solvedRules = new LinkedList<>();
   private List<DerivationRule> rawSolution;
 
   public BaseExtendible(List<Symbol> symbols) {
@@ -36,7 +37,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
     this.lhs = lhs;
     this.producer = producer;
     solve();
-    return solvedSymbols;
+    return solvedRules;
   }
   protected abstract void solve();
   @Override public String name() {
@@ -49,14 +50,14 @@ import org.spartan.fajita.revision.symbols.Terminal;
     return producer.apply(lhs);
   }
   protected Symbol solve(Symbol s) {
-    solvedSymbols.addAll(s.solve(lhs, producer));
+    solvedRules.addAll(s.solve(lhs, producer));
     return s.head();
   }
   protected List<Symbol> solve(List<Symbol> ss) {
     return ss.stream().map(x -> solve(x)).collect(Collectors.toList());
   }
   protected void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    solvedSymbols.add(new DerivationRule(lhs, rhs));
+    solvedRules.add(new DerivationRule(lhs, rhs));
   }
   protected void addRule(Symbol lhs, List<Symbol> rhs) {
     addRule((NonTerminal) lhs, rhs);
@@ -95,7 +96,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
       Set<NonTerminal> current = toConclude;
       seen.addAll(toConclude);
       toConclude = new HashSet<>();
-      for (DerivationRule r : solvedSymbols)
+      for (DerivationRule r : solvedRules)
         if (current.contains(r.lhs)) {
           List<Symbol> rhs = new LinkedList<>();
           for (Symbol s : r.getRHS()) {

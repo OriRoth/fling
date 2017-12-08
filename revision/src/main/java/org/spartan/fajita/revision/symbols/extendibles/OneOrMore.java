@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
@@ -24,11 +25,11 @@ public class OneOrMore extends BaseExtendible {
   @Override protected void solve() {
     head = nonTerminal();
     head2 = nonTerminal();
-    symbols = solve(symbols);
-    List<Symbol> rhs1 = new ArrayList<>(symbols);
+    solvedSymbols = solve(symbols);
+    List<Symbol> rhs1 = new ArrayList<>(solvedSymbols);
     rhs1.add(head2);
     addRule(head, rhs1);
-    List<Symbol> rhs2 = new ArrayList<>(symbols);
+    List<Symbol> rhs2 = new ArrayList<>(solvedSymbols);
     rhs2.add(head2);
     addRule(head2, rhs2);
     addRule(head2, new LinkedList<>());
@@ -48,7 +49,7 @@ public class OneOrMore extends BaseExtendible {
   }
   @Override public List<String> parseTypes(Function<Symbol, List<String>> operation) {
     List<String> $ = new LinkedList<>();
-    for (Symbol s : symbols())
+    for (Symbol s : symbols)
       for (String q : operation.apply(s))
         $.add(q + "[]");
     return $;
@@ -95,7 +96,7 @@ public class OneOrMore extends BaseExtendible {
       throw new AssertionError();
     List<Object[]> $ = new LinkedList<>();
     for (int i = 0; i < processed.size(); ++i) {
-      $.add((Object[]) Array.newInstance(processedClasses.get(i), processed.get(i).size()));
+      $.add((Object[]) Array.newInstance(processedClasses.get(i).getComponentType(), processed.get(i).size()));
       for (int j = 0; j < processed.get(i).size(); ++j)
         $.get(i)[j] = processed.get(i).get(j);
     }
@@ -121,7 +122,7 @@ public class OneOrMore extends BaseExtendible {
   @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
     List<Class> $ = new LinkedList<>();
     for (Symbol s : symbols)
-      $.addAll(s.toClasses(classSolution));
+      $.addAll(s.toClasses(classSolution).stream().map(c -> Array.newInstance(c, 0).getClass()).collect(Collectors.toList()));
     return $;
   }
 }
