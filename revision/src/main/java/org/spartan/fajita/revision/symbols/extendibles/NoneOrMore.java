@@ -13,30 +13,23 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
-import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 
-public class OneOrMore extends BaseExtendible {
-  private NonTerminal head2;
-
-  public OneOrMore(List<Symbol> symbols) {
+public class NoneOrMore extends BaseExtendible {
+  public NoneOrMore(List<Symbol> symbols) {
     super(symbols);
   }
   @Override protected void solve() {
     head = nonTerminal();
-    head2 = nonTerminal();
     solvedSymbols = solve(symbols);
-    List<Symbol> rhs1 = new ArrayList<>(solvedSymbols);
-    rhs1.add(head2);
-    addRule(head, rhs1);
-    List<Symbol> rhs2 = new ArrayList<>(solvedSymbols);
-    rhs2.add(head2);
-    addRule(head2, rhs2);
-    addRule(head2, new LinkedList<>());
+    List<Symbol> rhs = new ArrayList<>(solvedSymbols);
+    rhs.add(head);
+    addRule(head, rhs);
+    addRule(head, new LinkedList<>());
   }
-  @Override public boolean isNullable(Set<Symbol> knownNullables) {
-    return symbols.stream().allMatch(x -> knownNullables.contains(x));
+  @Override public boolean isNullable(@SuppressWarnings("unused") Set<Symbol> knownNullables) {
+    return true;
   }
   @Override public Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
     Set<Terminal> $ = new HashSet<>();
@@ -57,28 +50,27 @@ public class OneOrMore extends BaseExtendible {
   }
   // TODO Roth: check whether some of this can be generalized
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<?> fold(List<?> t) {
-    assert isSolved && head != null && head2 != null && t.size() == 1;
+    assert isSolved && head != null;
+    if (t.isEmpty())
+      return new ArrayList<>();
     Object o = t.get(0);
     assert o instanceof Interpretation;
     Interpretation current = (Interpretation) o;
-    assert head.equals(current.symbol) && current.value.size() > 0;
+    assert head.equals(current.symbol);
     List $ = new LinkedList<>();
-    $.addAll(current.value.subList(0, current.value.size() - 1));
-    Object l = current.value.get(current.value.size() - 1);
-    assert l instanceof Interpretation;
-    Interpretation li = (Interpretation) l;
-    assert head2.equals(li.symbol);
-    while (!li.value.isEmpty()) {
-      $.addAll(li.value.subList(0, li.value.size() - 1));
-      Object l2 = li.value.get(li.value.size() - 1);
+    while (!current.value.isEmpty()) {
+      $.addAll(current.value.subList(0, current.value.size() - 1));
+      Object l2 = current.value.get(current.value.size() - 1);
       assert l2 instanceof Interpretation;
-      li = (Interpretation) l2;
-      assert head2.equals(li.symbol);
+      current = (Interpretation) l2;
+      assert head.equals(current.symbol);
     }
     return $;
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
+    if (ELLRecognizer.SKIP.equals(values))
+      return new ArrayList<>();
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {

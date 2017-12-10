@@ -19,6 +19,11 @@ public class ELLRecognizer {
   private final EBNFAnalyzer analyzer;
   private ELLStack stack;
   private static final String PP_IDENT = "--";
+  public static final List<Object> SKIP = Collections.singletonList(new Object() {
+    @Override public String toString() {
+      return "SKIP";
+    }
+  });
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles();
@@ -74,17 +79,14 @@ public class ELLRecognizer {
         throw reject();
       }
       children = new Stack<>();
-      boolean hasEmptyRule = false;
       for (List<Symbol> clause : n.get(current)) {
-        if (clause.isEmpty())
-          hasEmptyRule = true;
         if (analyzer.firstSetOf(clause).contains(input)) {
           for (int i = clause.size() - 1; i >= 0; --i)
             children.push(new ELLStack(clause.get(i), this));
           return true;
         }
       }
-      return hasEmptyRule;
+      return analyzer.isNullable(current);
     }
     private boolean _match(RuntimeVerb input) {
       if (current.isVerb()) {

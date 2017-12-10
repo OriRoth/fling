@@ -5,10 +5,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
@@ -46,15 +48,17 @@ public class Either extends BaseExtendible {
     assert head.equals(current.symbol);
     return new LinkedList<>(current.value);
   }
-  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List<Object> conclude(List values,
+  @SuppressWarnings({ "unused", "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
+    if (ELLRecognizer.SKIP.equals(values))
+      return Collections.singletonList(Optional.empty());
     assert values.size() == 1 && values.get(0) instanceof Interpretation;
     Interpretation i = (Interpretation) values.get(0);
     List is = solution.apply(i.symbol, i.value);
-    assert is.size() == 1; // Should be true assuming all Extendibles are translated to one field
-    List<Object> $ = new LinkedList<>();
-    $.add(new org.spartan.fajita.revision.export.Either(is.get(0)));
-    return $;
+    is.remove(ELLRecognizer.SKIP); // TODO Roth: verify it works
+    // TODO Roth: deal with none/multiple Either values
+    return Collections.singletonList(new org.spartan.fajita.revision.export.Either(
+        is.isEmpty() ? null : is.size() == 1 ? is.get(0) : is.toArray(new Object[is.size()])));
   }
   @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
     return Collections.singletonList(org.spartan.fajita.revision.export.Either.class);
