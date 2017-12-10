@@ -63,11 +63,6 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     if (nt == null)
       throw problem();
     if (jamoos.isAbstractNonTerminal(nt)) {
-      if (values.isEmpty()) {
-        System.out.println(nt);
-        System.out.println(jamoos.solveAbstractNonTerminal(nt, null));
-        assert false;
-      }
       if (values.isEmpty())
         return build(jamoos.solveAbstractNonTerminal(nt, null), new ArrayList<>());
       assert values.size() == 1 && values.get(0) instanceof Interpretation;

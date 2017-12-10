@@ -130,8 +130,7 @@ public final class EBNF {
         l.add(nt);
         $.get(lhs).add(l);
         $.put(nt, new HashSet<>());
-        if (!clause.isEmpty())
-          $.get(nt).add(clause);
+        $.get(nt).add(clause);
       }
     }
     return $;
