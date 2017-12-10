@@ -44,8 +44,6 @@ public abstract class Grammar {
         b.call, b.with);
   }
   @SuppressWarnings("unused") private static boolean _match(ELLRecognizer ell, Terminal call, Object[] with) {
-    // System.out.println(call);
-    // System.out.println(Arrays.asList(with));
     return false;
   }
 }
