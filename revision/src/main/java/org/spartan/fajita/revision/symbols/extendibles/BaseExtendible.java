@@ -32,7 +32,8 @@ import org.spartan.fajita.revision.symbols.Terminal;
     return head;
   }
   @Override public List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
-    assert !isSolved;
+    if (isSolved)
+      return solvedRules;
     isSolved = true;
     this.lhs = lhs;
     this.producer = producer;

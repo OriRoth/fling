@@ -115,8 +115,8 @@ public class JamoosClassesRenderer {
             .append(String.join(";", innerClassesFieldTypes.get(lhs.name()).entrySet().stream()
                 .map(e -> "this." + e.getKey() + "=" + e.getKey()).collect(toList())));
         if (!fields.isEmpty())
-          $.append(";") //
-              .append("}");
+          $.append(";");
+        $.append("}");
       }
       innerClasses.add($.append("}").toString());
     }
@@ -191,9 +191,11 @@ public class JamoosClassesRenderer {
       actual.reversedInheritance = actual.inheritance.reverse();
     if (actual.analyzer == null)
       actual.analyzer = new EBNFAnalyzer(actual.n, actual.ebnf.startSymbols);
-    for (NonTerminal child : actual.reversedInheritance.get(nt))
+    for (NonTerminal child : actual.reversedInheritance.get(nt)) {
+      System.out.println(child);
       if (t == null && actual.analyzer.isNullable(child) || t != null && actual.analyzer.firstSetOf(child).contains(t))
         return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t) : child;
+    }
     return null;
   }
   public boolean isInterfaces() {

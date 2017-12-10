@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +63,13 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     if (nt == null)
       throw problem();
     if (jamoos.isAbstractNonTerminal(nt)) {
+      if (values.isEmpty()) {
+        System.out.println(nt);
+        System.out.println(jamoos.solveAbstractNonTerminal(nt, null));
+        assert false;
+      }
+      if (values.isEmpty())
+        return build(jamoos.solveAbstractNonTerminal(nt, null), new ArrayList<>());
       assert values.size() == 1 && values.get(0) instanceof Interpretation;
       Interpretation i = (Interpretation) values.get(0);
       return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values)), i.value);
@@ -72,6 +80,8 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     return e.conclude(values, this::build, this::clazz);
   }
   private List build(Verb v, List values) {
+    // System.out.println(v);
+    // System.out.println(values);
     return v.conclude(values, this::build);
   }
   @SuppressWarnings("unchecked") private Object instance(Class<?> c, List values) {

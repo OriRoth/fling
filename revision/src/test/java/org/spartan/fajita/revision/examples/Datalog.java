@@ -1,11 +1,11 @@
 package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
-import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.either;
+import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Clause;
-import static org.spartan.fajita.revision.examples.Datalog.NT.Program;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Literal;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Program;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Rule;
 import static org.spartan.fajita.revision.examples.Datalog.Term.body;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
@@ -13,7 +13,9 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.head;
 import static org.spartan.fajita.revision.examples.Datalog.Term.literal;
 import static org.spartan.fajita.revision.examples.Datalog.Term.name;
 import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
-import static org.spartan.fajita.revision.export.FajitaTesting.*;
+import static org.spartan.fajita.revision.export.testing.ExampleBody.call;
+import static org.spartan.fajita.revision.export.testing.ExampleBody.toConclude;
+import static org.spartan.fajita.revision.export.testing.FajitaTesting.example;
 
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
 import org.spartan.fajita.revision.export.Grammar;
-import org.spartan.fajita.revision.export.FajitaTestingAST.Test;
+import org.spartan.fajita.revision.export.testing.FajitaTestingAST.Test;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
@@ -45,11 +47,12 @@ public class Datalog extends Grammar {
   }
   @Override public Test examples() {
     return example( //
-        call(fact).with(call(name).with("parent"), call(terms).with("John", "Bob")), //
-        call(fact).with(call(name).with("parent"), call(terms).with("Bob", "Mark")) //
+        call(fact).with(Literal) //
     ) //
+        .example( //
+            toConclude(Literal).call(name).with("parent").then(terms).with("John", "Bob"))
         .malexample( //
-            call(fact).with(call(name).with("parent")) //
+            call(fact).with("Fluent APIw have a bright future") //
         ) //
         .$();
   }

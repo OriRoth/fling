@@ -114,7 +114,8 @@ public class Verb implements Terminal, Comparable<Verb> {
     return $;
   }
   @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution) {
-    assert accepts(args.toArray(new Object[args.size()]));
+    // NOTE this assertion might need Verb to deal with Interpretation (?)
+    // assert accepts(args.toArray(new Object[args.size()]));
     List $ = new LinkedList<>();
     if (type.length == 0)
       return $;

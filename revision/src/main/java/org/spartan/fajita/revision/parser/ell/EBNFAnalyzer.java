@@ -87,10 +87,10 @@ public class EBNFAnalyzer {
     return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
   }
   public static RuntimeException reject() {
-    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected");
+    return new ELLRecognizerRejection();
   }
   public static RuntimeException reject(String message) {
-    return new RuntimeException(ELLRecognizer.class.getSimpleName() + " rejected: " + message);
+    return new ELLRecognizerRejection(message);
   }
   private static EBNF recreateEBNF(Map<NonTerminal, Set<List<Symbol>>> n, Set<NonTerminal> start) {
     Set<Verb> vs = new HashSet<>();
@@ -111,5 +111,16 @@ public class EBNFAnalyzer {
       }
     }
     return new EBNF(vs, nts, exs, rs, start, "#");
+  }
+
+  public static class ELLRecognizerRejection extends RuntimeException {
+    private static final long serialVersionUID = 1383359472626586435L;
+
+    public ELLRecognizerRejection() {
+      super(ELLRecognizer.class.getSimpleName() + " rejected");
+    }
+    public ELLRecognizerRejection(String message) {
+      super(ELLRecognizer.class.getSimpleName() + " rejected: " + message);
+    }
   }
 }
