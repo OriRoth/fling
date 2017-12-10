@@ -2,7 +2,6 @@ package org.spartan.fajita.revision.export;
 
 import java.lang.Object;
 import java.lang.SuppressWarnings;
-
 import org.spartan.fajita.revision.symbols.Terminal;
 
 @SuppressWarnings("all") public class FajitaTesting {
@@ -45,14 +44,14 @@ import org.spartan.fajita.revision.symbols.Terminal;
   }
 
   public interface MalExample_1_rec_3c0 {
-    Example_1_rec_331 example(Object[] arg0);
-    MalExample_1_rec_3c0 malexample(Object[] arg0);
+    Example_1_rec_331 example(Object... arg0);
+    MalExample_1_rec_3c0 malexample(Object... arg0);
     FajitaTestingAST.Test $();
   }
 
   public interface Example_1_rec_331 {
-    Example_1_rec_331 example(Object[] arg0);
-    MalExample_1_rec_3c0 malexample(Object[] arg0);
+    Example_1_rec_331 example(Object... arg0);
+    MalExample_1_rec_3c0 malexample(Object... arg0);
     FajitaTestingAST.Test $();
   }
 

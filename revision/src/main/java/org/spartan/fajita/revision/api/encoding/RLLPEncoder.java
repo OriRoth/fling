@@ -96,6 +96,7 @@ public class RLLPEncoder {
                   .map(x -> MethodSpec.methodBuilder(x.name) //
                       .addParameters(x.parameters) //
                       .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
+                      .varargs(x.varargs) //
                       .returns(getFixedRecReturnType(x.returnType, y.typeVariables, recArgs.get(t))) //
                       .build()) //
                   .collect(toList()))
