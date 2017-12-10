@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -26,7 +27,7 @@ public class ELLRecognizer {
   });
 
   public ELLRecognizer(final EBNF ebnf) {
-    n = ebnf.regularFormWithExtendibles();
+    n = ebnf.regularFormWithExtendibles(Fajita.producer());
     analyzer = new EBNFAnalyzer(ebnf, n);
     stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
@@ -86,7 +87,17 @@ public class ELLRecognizer {
           return true;
         }
       }
-      return analyzer.isNullable(current);
+      if (!analyzer.isNullable(current))
+        return false;
+      for (List<Symbol> clause : n.get(current)) {
+        if (analyzer.isNullable(clause)) {
+          for (int i = clause.size() - 1; i >= 0; --i)
+            children.push(new ELLStack(clause.get(i), this));
+          return true;
+        }
+      }
+      assert false : "Should not reach here";
+      return false;
     }
     private boolean _match(RuntimeVerb input) {
       if (current.isVerb()) {
@@ -122,9 +133,17 @@ public class ELLRecognizer {
       if (children == null) {
         if (!analyzer.isNullable(current))
           throw reject("folded on non nullable");
-      } else
-        while (!children.isEmpty())
-          children.peek().consume$();
+        children = new Stack<>();
+        for (List<Symbol> clause : n.get(current)) {
+          if (analyzer.isNullable(clause)) {
+            for (int i = clause.size() - 1; i >= 0; --i)
+              children.push(new ELLStack(clause.get(i), this));
+            break;
+          }
+        }
+      }
+      while (!children.isEmpty())
+        children.peek().consume$();
       if (parent == null)
         return this;
       parent.interpretations.add(Interpretation.of(current, interpretations));

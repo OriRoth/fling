@@ -102,9 +102,9 @@ public final class EBNF {
     }
     return $;
   }
-  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles() {
-    toBNF(Fajita.producer());
-    Map<Symbol, Set<List<Symbol>>> $ = new HashMap<>(regularForm());
+  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(Function<NonTerminal, NonTerminal> producer) {
+    toBNF(producer);
+    Map<Symbol, Set<List<Symbol>>> $ = new HashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
       for (DerivationRule r : e.rawSolution()) {
