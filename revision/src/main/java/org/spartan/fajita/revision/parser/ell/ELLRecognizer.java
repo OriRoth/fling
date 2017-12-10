@@ -67,6 +67,8 @@ public class ELLRecognizer {
     public ELLStack match(RuntimeVerb input) {
       if (generateChildren(input) && _match(input))
         return this;
+      if (parent == null)
+        throw reject();
       parent.interpretations.add(Interpretation.of(current, interpretations));
       parent.children.pop();
       return parent.match(input);

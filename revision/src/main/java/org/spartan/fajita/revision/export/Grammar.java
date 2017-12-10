@@ -1,6 +1,9 @@
 package org.spartan.fajita.revision.export;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
@@ -9,7 +12,9 @@ import org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBody;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleKind;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.MalExample;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.Test;
+import org.spartan.fajita.revision.parser.ell.EBNFAnalyzer.ELLRecognizerRejection;
 import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
+import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 
 public abstract class Grammar {
@@ -43,7 +48,13 @@ public abstract class Grammar {
     return _match(new ELLRecognizer(!b.examplebody1.isPresent() ? bnf().ebnf() : bnf().ebnf().makeSubBNF(b.examplebody1.get())),
         b.call, b.with);
   }
-  @SuppressWarnings("unused") private static boolean _match(ELLRecognizer ell, Terminal call, Object[] with) {
-    return false;
+  private static boolean _match(ELLRecognizer ell, Terminal t, Object[] args) {
+    List<Object> $ = Arrays.stream(args).map(a -> !(a instanceof NonTerminal) ? a : ASTNode.dummy).collect(Collectors.toList());
+    try {
+      ell.consume(new RuntimeVerb(t, $.toArray(new Object[$.size()])));
+      return true;
+    } catch (@SuppressWarnings("unused") ELLRecognizerRejection e) {
+      return false;
+    }
   }
 }
