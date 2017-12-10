@@ -63,7 +63,6 @@ import org.spartan.fajita.revision.symbols.Terminal;
     addRule((NonTerminal) lhs, rhs);
   }
   @Override public List<Symbol> symbols() {
-    assert isSolved;
     return new LinkedList<>(symbols);
   }
   @Override public boolean updateNullable(Set<Symbol> knownNullables) {

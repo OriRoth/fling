@@ -44,6 +44,8 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     return build(i.symbol, i.value);
   }
   private List build(Symbol s, List values) {
+    if (SpecialSymbols.augmentedStartSymbol.equals(s))
+      return buildAugS(values);
     if (s.isNonTerminal())
       return build(s.asNonTerminal(), values);
     if (s.isExtendible())
@@ -51,6 +53,10 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     if (s.isVerb())
       return build(s.asVerb(), values);
     throw problem();
+  }
+  private List buildAugS(List values) {
+    assert values.size() == 1 && values.get(0) instanceof Interpretation;
+    return build((Interpretation) values.get(0));
   }
   private List build(NonTerminal nt, List values) {
     if (nt == null)

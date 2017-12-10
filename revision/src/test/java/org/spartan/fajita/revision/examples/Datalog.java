@@ -44,7 +44,13 @@ public class Datalog extends Grammar {
         .derive(Literal).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
   }
   @Override public Test examples() {
-    return example().$();
+    return example( //
+        call(fact).with(call(name).with("parent"), call(terms).with("John", "Bob")) //
+    ) //
+        .malexample( //
+            call(fact).with(call(name).with("parent")) //
+        ) //
+        .$();
   }
   public static void main(String[] args) throws IOException {
     new Datalog().generateGrammarFiles();

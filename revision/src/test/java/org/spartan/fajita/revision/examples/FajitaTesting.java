@@ -32,7 +32,7 @@ public class FajitaTesting extends Grammar {
   }
 
   @Override public FajitaBNF bnf() {
-    return Fajita.build(getClass(), Term.class, NT.class, "FajitaTesting", Main.packagePath, Main.projectPath) //
+    return Fajita.build(getClass(), Term.class, NT.class, "FajitaTesting", "org.spartan.fajita.revision.export", Main.projectPath) //
         .start(Test, Invocation) //
         .derive(Test).to(oneOrMore(ExampleKind)) //
         .specialize(ExampleKind).into(Example, MalExample) //

@@ -60,7 +60,7 @@ public class ELLRecognizer {
     public ELLStack(Symbol current, ELLStack parent) {
       this.current = current;
       this.interpretations = new LinkedList<>();
-      assert n.containsKey(current) : reject();
+      assert current.isVerb() || n.containsKey(current) : reject();
       this.parent = parent;
     }
     public ELLStack match(RuntimeVerb input) {

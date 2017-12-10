@@ -29,7 +29,6 @@ import org.spartan.fajita.revision.symbols.Symbol;
       value.clear();
       value.addAll(symbol.asExtendible().fold(t));
     } else if (symbol.isVerb()) {
-      assert value.size() == 1;
       List t = new LinkedList(value);
       value.clear();
       for (Object o : t) {
