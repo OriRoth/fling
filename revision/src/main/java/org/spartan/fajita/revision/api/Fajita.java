@@ -37,7 +37,7 @@ public class Fajita {
   public final Set<NonTerminal> startSymbols;
   public final String apiName;
   public final Set<Terminal> terminals;
-  public final Set<Symbol> nestedParameters; // NonTerminal and Extendibles
+  public final Set<Symbol> nestedParameters; // NonTerminal and Extendibles (?)
   public final String packagePath;
   public final String projectPath;
   public Class<? extends Grammar> provider;

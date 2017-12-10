@@ -42,9 +42,9 @@ public class TestNonTerminalMultipleParents extends Grammar {
    */
   public static void main(String[] args) throws IOException {
     // new TestNonTerminalMultipleParents().generateGrammarFiles();
-    test();
+    testing();
   }
-  public static void test() {
+  public static void testing() {
     a("a1").b("b1").$();
     b("b2").a("a2").$();
   }

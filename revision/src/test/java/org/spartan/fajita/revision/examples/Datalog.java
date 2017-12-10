@@ -13,6 +13,7 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.head;
 import static org.spartan.fajita.revision.examples.Datalog.Term.literal;
 import static org.spartan.fajita.revision.examples.Datalog.Term.name;
 import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
+import static org.spartan.fajita.revision.export.FajitaTesting.*;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
 import org.spartan.fajita.revision.export.Grammar;
+import org.spartan.fajita.revision.export.FajitaTestingAST.Test;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
@@ -40,6 +42,9 @@ public class Datalog extends Grammar {
         .derive(Rule).to(either(attribute(fact, Literal), Clause)) //
         .derive(Clause).to(attribute(head, Literal), attribute(body, oneOrMore(attribute(literal, Literal)))) //
         .derive(Literal).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
+  }
+  @Override public Test examples() {
+    return example().$();
   }
   public static void main(String[] args) throws IOException {
     new Datalog().generateGrammarFiles();
