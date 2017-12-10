@@ -42,9 +42,14 @@ public class VarArgs implements ParameterType {
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg,
       BiFunction<Symbol, List, List> solution) {
-    List l = (List) ((List) arg).stream()
-        .map(x -> !(x instanceof Interpretation) ? x : solution.apply(((Interpretation) x).symbol, ((Interpretation) x).value))
-        .collect(Collectors.toList());
+    List l = (List) ((List) arg).stream().map(x -> {
+      // TODO Roth: check whether it make sense
+      if (!(x instanceof Interpretation))
+        return x;
+      List $ = solution.apply(((Interpretation) x).symbol, ((Interpretation) x).value);
+      assert $.size() == 1;
+      return $.get(0);
+    }).collect(Collectors.toList());
     Object[] $ = (Object[]) Array.newInstance(clazz, l.size());
     for (int i = 0; i < $.length; ++i)
       $[i] = l.get(i);

@@ -45,7 +45,8 @@ public class Datalog extends Grammar {
   }
   @Override public Test examples() {
     return example( //
-        call(fact).with(call(name).with("parent"), call(terms).with("John", "Bob")) //
+        call(fact).with(call(name).with("parent"), call(terms).with("John", "Bob")), //
+        call(fact).with(call(name).with("parent"), call(terms).with("Bob", "Mark")) //
     ) //
         .malexample( //
             call(fact).with(call(name).with("parent")) //
