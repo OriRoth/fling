@@ -9,23 +9,23 @@ public class PrintDatalogProgram {
   public static void main(String[] args) {
     System.out.println(print(Ancestor.program()));
   }
-  private static String print(Program program) {
+  public static String print(Program program) {
     StringBuilder $ = new StringBuilder();
     for (Statement s : program.program1)
       $.append(print(s)).append("\n");
     return $.toString();
   }
-  private static String print(Statement r) {
+  public static String print(Statement r) {
     if (r instanceof Fact)
       return print((Fact) r);
     if (r instanceof Rule)
       return print((Rule) r);
     return print((Query) r);
   }
-  private static String print(Fact r) {
+  public static String print(Fact r) {
     return print(r.fact) + ".";
   }
-  private static String print(Rule r) {
+  public static String print(Rule r) {
     StringBuilder $ = new StringBuilder();
     $.append(print(r.rule)).append(" :- ");
     $.append(r.is).append("(").append(String.join(", ", r.by)).append(")");
@@ -34,13 +34,13 @@ public class PrintDatalogProgram {
     $.append(String.join(", ", Arrays.stream(r.rule1).map(x -> print(x)).collect(Collectors.toList())));
     return $.append(".").toString();
   }
-  private static String print(FactExpression e) {
+  public static String print(FactExpression e) {
     return e.that + "(" + String.join(", ", e.by) + ")";
   }
-  private static String print(RuleExpression e) {
+  public static String print(RuleExpression e) {
     return e.and + "(" + String.join(", ", e.by) + ")";
   }
-  private static String print(Query r) {
+  public static String print(Query r) {
     return r.query + "(" + String.join(", ", r.by) + ")?";
   }
 }

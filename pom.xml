@@ -28,5 +28,13 @@
 			<artifactId>javapoet</artifactId>
 			<version>[1.3.0,)</version>
 		</dependency>
+
+		<dependency>
+			<groupId>za.co.wstoop</groupId>
+			<artifactId>jatalog</artifactId>
+			<version>0.9</version>
+			<systemPath>${project.basedir}/lib/jatalog-0.9.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
 	</dependencies>
 </project>

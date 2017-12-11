@@ -14,10 +14,10 @@ public class Ancestor {
         .rule(that("ancestor").by("A", "B")) //
         /**/.is("parent").by("A", "C") //
         /**/.and("ancestor").by("C", "B") //
-        .query("ancestor").by("john", "donald") //
+        .query("ancestor").by("john", "X") //
         .$();
   }
   public static void main(String[] args) {
-    program();
+    RunDatalogProgram.run(program());
   }
 }
