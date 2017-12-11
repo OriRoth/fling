@@ -1,24 +1,23 @@
 package org.spartan.fajita.revision.examples.usage;
 
-import static org.spartan.fajita.revision.junk.Clause1.literal;
-import static org.spartan.fajita.revision.junk.Datalog.fact;
-import static org.spartan.fajita.revision.junk.Literal.name;
+import static org.spartan.fajita.revision.junk.Datalog.*;
+import static org.spartan.fajita.revision.junk.FactExpression.*;
 
 import org.spartan.fajita.revision.junk.DatalogAST.Program;
 
 public class Ancestor {
   public static Program program() {
-    return fact(name("parent").terms("john", "bob")) //
-        .fact(name("parent").terms("bob", "donald")) //
-        .head(name("ancestor").terms("A", "B")) //
-        .body( //
-            literal(name("parent").terms("A", "B")) //
-        ) //
-        .head(name("ancestor").terms("A", "B") //
-        ).body( //
-            literal(name("parent").terms("A", "C")) //
-                .literal(name("ancestor").terms("C", "B")) //
-        ) //
+    return fact(that("parent").by("john", "bob")) //
+        .fact(that("parent").by("bob", "donald")) //
+        .rule(that("ancestor").by("A", "B")) //
+        /**/.is("parent").by("A", "B") //
+        .rule(that("ancestor").by("A", "B")) //
+        /**/.is("parent").by("A", "C") //
+        /**/.and("ancestor").by("C", "B") //
+        .query("ancestor").by("john", "donald") //
         .$();
+  }
+  public static void main(String[] args) {
+    program();
   }
 }

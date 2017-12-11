@@ -3,10 +3,7 @@ package org.spartan.fajita.revision.examples.usage;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.junk.DatalogAST.Clause;
-import org.spartan.fajita.revision.junk.DatalogAST.Literal;
-import org.spartan.fajita.revision.junk.DatalogAST.Program;
-import org.spartan.fajita.revision.junk.DatalogAST.Rule;
+import org.spartan.fajita.revision.junk.DatalogAST.*;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {
@@ -14,22 +11,36 @@ public class PrintDatalogProgram {
   }
   private static String print(Program program) {
     StringBuilder $ = new StringBuilder();
-    for (Rule r : program.program1)
-      $.append(print(r)).append("\n");
+    for (Statement s : program.program1)
+      $.append(print(s)).append("\n");
     return $.toString();
   }
+  private static String print(Statement r) {
+    if (r instanceof Fact)
+      return print((Fact) r);
+    if (r instanceof Rule)
+      return print((Rule) r);
+    return print((Query) r);
+  }
+  private static String print(Fact r) {
+    return print(r.fact) + ".";
+  }
   private static String print(Rule r) {
-    if (r.rule1.is(Literal.class))
-      return print(r.rule1.get(Literal.class)) + ".";
-    return print(r.rule1.get(Clause.class));
-  }
-  private static String print(Literal fact) {
-    return fact.name + "(" + String.join(", ", fact.terms) + ")";
-  }
-  private static String print(Clause c) {
     StringBuilder $ = new StringBuilder();
-    $.append(print(c.head)).append(" :- ");
-    $.append(String.join(", ", Arrays.stream(c.body).map(x -> print(x)).collect(Collectors.toList())));
+    $.append(print(r.rule)).append(" :- ");
+    $.append(r.is).append("(").append(String.join(", ", r.by)).append(")");
+    if (r.rule1.length > 0)
+      $.append(" ");
+    $.append(String.join(", ", Arrays.stream(r.rule1).map(x -> print(x)).collect(Collectors.toList())));
     return $.append(".").toString();
+  }
+  private static String print(FactExpression e) {
+    return e.that + "(" + String.join(", ", e.by) + ")";
+  }
+  private static String print(RuleExpression e) {
+    return e.and + "(" + String.join(", ", e.by) + ")";
+  }
+  private static String print(Query r) {
+    return r.query + "(" + String.join(", ", r.by) + ")?";
   }
 }

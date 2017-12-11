@@ -1,21 +1,24 @@
 package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
-import static org.spartan.fajita.revision.api.Fajita.either;
+import static org.spartan.fajita.revision.api.Fajita.noneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
-import static org.spartan.fajita.revision.examples.Datalog.NT.Clause;
-import static org.spartan.fajita.revision.examples.Datalog.NT.Literal;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Fact;
+import static org.spartan.fajita.revision.examples.Datalog.NT.FactExpression;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Program;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Query;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Rule;
-import static org.spartan.fajita.revision.examples.Datalog.Term.body;
+import static org.spartan.fajita.revision.examples.Datalog.NT.RuleExpression;
+import static org.spartan.fajita.revision.examples.Datalog.NT.Statement;
+import static org.spartan.fajita.revision.examples.Datalog.Term.and;
+import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
-import static org.spartan.fajita.revision.examples.Datalog.Term.head;
-import static org.spartan.fajita.revision.examples.Datalog.Term.literal;
-import static org.spartan.fajita.revision.examples.Datalog.Term.name;
-import static org.spartan.fajita.revision.examples.Datalog.Term.terms;
-import static org.spartan.fajita.revision.export.testing.ExampleBody.call;
-import static org.spartan.fajita.revision.export.testing.ExampleBody.toConclude;
-import static org.spartan.fajita.revision.export.testing.FajitaTesting.example;
+import static org.spartan.fajita.revision.examples.Datalog.Term.is;
+import static org.spartan.fajita.revision.examples.Datalog.Term.query;
+import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
+import static org.spartan.fajita.revision.examples.Datalog.Term.that;
+import static org.spartan.fajita.revision.export.testing.FajitaTesting.*;
+import static org.spartan.fajita.revision.export.testing.ExampleBody.*;
 
 import java.io.IOException;
 
@@ -30,26 +33,34 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 public class Datalog extends Grammar {
   public static enum Term implements Terminal {
-    head, body, fact, literal, name, terms
+    rule, is, fact, that, by, query, and
   }
 
   public static enum NT implements NonTerminal {
-    Program, Rule, Literal, Clause
+    Program, Statement, Rule, Query, Fact, FactExpression, RuleExpression
   }
 
   @Override public FajitaBNF bnf() {
     return Fajita.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
         .start(Program) //
-        .derive(Program).to(oneOrMore(Rule)) //
-        .derive(Rule).to(either(attribute(fact, Literal), Clause)) //
-        .derive(Clause).to(attribute(head, Literal), attribute(body, oneOrMore(attribute(literal, Literal)))) //
-        .derive(Literal).to(attribute(name, String.class), attribute(terms, new VarArgs(String.class)));
+        .derive(Program).to(oneOrMore(Statement)) //
+        .specialize(Statement).into(Rule, Query, Fact) //
+        .derive(Fact).to(attribute(fact, FactExpression)) //
+        .derive(Rule).to( //
+            attribute(rule, FactExpression), //
+            attribute(is, String.class), //
+            attribute(by, new VarArgs(String.class)), //
+            noneOrMore(RuleExpression)) //
+        .derive(FactExpression).to(attribute(that, String.class), attribute(by, new VarArgs(String.class))) //
+        .derive(RuleExpression).to(attribute(and, String.class), attribute(by, new VarArgs(String.class))) //
+        .derive(Query).to(attribute(query, String.class), attribute(by, new VarArgs(String.class))) //
+    ;
   }
   @Override public Test examples() {
     return example( //
-        call(fact).with(Literal)) //
+        call(fact).with(FactExpression)) //
             .example( //
-                toConclude(Literal).call(name).with("parent").then(terms).with("John", "Bob"))
+                toConclude(FactExpression).call(that).with("parent").then(by).with("John", "Bob"))
             .malexample( //
                 call(fact).with("Fluent APIw have a bright future")) //
             .$();
