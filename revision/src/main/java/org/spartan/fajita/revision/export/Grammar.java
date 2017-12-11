@@ -9,6 +9,7 @@ import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.Example;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBody;
+import org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleKind;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.MalExample;
 import org.spartan.fajita.revision.export.testing.FajitaTestingAST.Test;
@@ -46,15 +47,18 @@ public abstract class Grammar {
   }
   private boolean _match(ExampleBody b) {
     return _match(new ELLRecognizer(!b.examplebody1.isPresent() ? bnf().ebnf() : bnf().ebnf().makeSubBNF(b.examplebody1.get())),
-        b.call, b.with);
+        b.call, b.with, b.examplebody2);
   }
-  private static boolean _match(ELLRecognizer ell, Terminal t, Object[] args) {
+  private static boolean _match(ELLRecognizer ell, Terminal t, Object[] args, ExampleBodyNext[] next) {
     List<Object> $ = Arrays.stream(args).map(a -> !(a instanceof NonTerminal) ? a : ASTNode.dummy).collect(Collectors.toList());
     try {
       ell.consume(new RuntimeVerb(t, $.toArray(new Object[$.size()])));
-      return true;
+      return _match(ell, next);
     } catch (@SuppressWarnings("unused") ELLRecognizerRejection e) {
       return false;
     }
+  }
+  private static boolean _match(ELLRecognizer ell, ExampleBodyNext[] next) {
+    return next.length == 0 || _match(ell, next[0].then, next[0].with, Arrays.copyOfRange(next, 1, next.length));
   }
 }
