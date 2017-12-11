@@ -47,14 +47,12 @@ public class Datalog extends Grammar {
   }
   @Override public Test examples() {
     return example( //
-        call(fact).with(Literal) //
-    ) //
-        .example( //
-            toConclude(Literal).call(name).with("parent").then(terms).with("John", "Bob"))
-        .malexample( //
-            call(fact).with("Fluent APIw have a bright future") //
-        ) //
-        .$();
+        call(fact).with(Literal)) //
+            .example( //
+                toConclude(Literal).call(name).with("parent").then(terms).with("John", "Bob"))
+            .malexample( //
+                call(fact).with("Fluent APIw have a bright future")) //
+            .$();
   }
   public static void main(String[] args) throws IOException {
     new Datalog().generateGrammarFiles();
