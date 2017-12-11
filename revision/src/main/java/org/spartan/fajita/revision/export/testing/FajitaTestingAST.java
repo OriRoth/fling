@@ -1,9 +1,6 @@
 package org.spartan.fajita.revision.export.testing;
 
 public class FajitaTestingAST implements org.spartan.fajita.revision.export.AST {
-  public static class ExampleBodyNext {
-  }
-
   public static class ExampleKind {
   }
 
@@ -11,15 +8,25 @@ public class FajitaTestingAST implements org.spartan.fajita.revision.export.AST 
     public java.util.Optional<org.spartan.fajita.revision.symbols.NonTerminal> examplebody1;
     public org.spartan.fajita.revision.symbols.Terminal call;
     public java.lang.Object[] with;
-    public org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext examplebodynext;
+    public org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext[] examplebody2;
 
     public ExampleBody(java.util.Optional<org.spartan.fajita.revision.symbols.NonTerminal> examplebody1,
         org.spartan.fajita.revision.symbols.Terminal call, java.lang.Object[] with,
-        org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext examplebodynext) {
+        org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext[] examplebody2) {
       this.examplebody1 = examplebody1;
       this.call = call;
       this.with = with;
-      this.examplebodynext = examplebodynext;
+      this.examplebody2 = examplebody2;
+    }
+  }
+
+  public static class ExampleBodyNext {
+    public org.spartan.fajita.revision.symbols.Terminal then;
+    public java.lang.Object[] with;
+
+    public ExampleBodyNext(org.spartan.fajita.revision.symbols.Terminal then, java.lang.Object[] with) {
+      this.then = then;
+      this.with = with;
     }
   }
 
@@ -36,24 +43,6 @@ public class FajitaTestingAST implements org.spartan.fajita.revision.export.AST 
 
     public Example(org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBody example) {
       this.example = example;
-    }
-  }
-
-  public static class ExampleBodyNext1 extends org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext {
-    public ExampleBodyNext1() {
-    }
-  }
-
-  public static class ExampleBodyNext2 extends org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext {
-    public org.spartan.fajita.revision.symbols.Terminal then;
-    public java.lang.Object[] with;
-    public org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext examplebodynext;
-
-    public ExampleBodyNext2(org.spartan.fajita.revision.symbols.Terminal then, java.lang.Object[] with,
-        org.spartan.fajita.revision.export.testing.FajitaTestingAST.ExampleBodyNext examplebodynext) {
-      this.then = then;
-      this.with = with;
-      this.examplebodynext = examplebodynext;
     }
   }
 

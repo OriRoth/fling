@@ -24,26 +24,30 @@ import org.spartan.fajita.revision.symbols.Terminal;
   }
 
   public interface ExampleBody_3 extends ASTNode {
-    ExampleBodyNext_1 then(Terminal arg0);
-  }
-
-  public interface ExampleBodyNext_1 {
-    ExampleBodyNext_2 with(Object... arg0);
-  }
-
-  public interface ExampleBodyNext_2 extends ASTNode {
-    ExampleBodyNext_1 then(Terminal arg0);
+    ExampleBodyNext_1<ExampleBodyNext_1<ExampleBodyNext_1_rec_8f>> then(Terminal arg0);
   }
 
   public interface ExampleBody1_1<call> {
     call call(Terminal arg0);
   }
 
+  public interface ExampleBodyNext_1<then> {
+    ExampleBodyNext_2<then> with(Object... arg0);
+  }
+
+  public interface ExampleBodyNext_2<then> extends ASTNode {
+    then then(Terminal arg0);
+  }
+
+  public interface ExampleBodyNext_1_rec_8f {
+    ExampleBodyNext_2<ExampleBodyNext_1_rec_8f> with(Object... arg0);
+  }
+
   private interface ParseError {
   }
 
   private static class $$$ extends FluentAPIRecorder
-      implements ExampleBody_2, ExampleBody_3, ExampleBodyNext_1, ExampleBodyNext_2, ExampleBody1_1 {
+      implements ExampleBody_2, ExampleBody_3, ExampleBody1_1, ExampleBodyNext_1, ExampleBodyNext_2, ExampleBodyNext_1_rec_8f {
     $$$() {
       super(new org.spartan.fajita.revision.examples.FajitaTesting().bnf().ebnf().makeSubBNF(
           org.spartan.fajita.revision.examples.FajitaTesting.NT.ExampleBody), "org.spartan.fajita.revision.export.testing");

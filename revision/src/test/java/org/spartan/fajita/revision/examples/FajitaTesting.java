@@ -2,6 +2,7 @@ package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
 import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
+import static org.spartan.fajita.revision.api.Fajita.noneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.option;
 import static org.spartan.fajita.revision.examples.FajitaTesting.NT.*;
 import static org.spartan.fajita.revision.examples.FajitaTesting.Term.*;
@@ -35,11 +36,9 @@ public class FajitaTesting extends Grammar {
         .derive(ExampleBody).to(option(attribute(toConclude, NonTerminal.class)), //
             attribute(call, Terminal.class), //
             attribute(with, new VarArgs(Object.class)), //
-            ExampleBodyNext) //
+            noneOrMore(ExampleBodyNext)) //
         .derive(ExampleBodyNext).to(attribute(then, Terminal.class), //
-            attribute(with, new VarArgs(Object.class)), //
-            ExampleBodyNext)
-        .orNone();
+            attribute(with, new VarArgs(Object.class)));
   }
   public static void main(String[] args) throws IOException {
     new FajitaTesting().generateGrammarFiles();
