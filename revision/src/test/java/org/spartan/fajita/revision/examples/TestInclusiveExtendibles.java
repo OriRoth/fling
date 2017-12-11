@@ -43,8 +43,8 @@ public class TestInclusiveExtendibles extends Grammar {
    * @throws IOException
    */
   public static void main(String[] args) throws IOException {
-    // new TestInclusiveExtendibles().generateGrammarFiles();
-    testing();
+    new TestInclusiveExtendibles().generateGrammarFiles();
+    // testing();
   }
   @SuppressWarnings("boxing") public static void testing() {
     a("a11").a("a12").c("b1").b(0, "!").$();
