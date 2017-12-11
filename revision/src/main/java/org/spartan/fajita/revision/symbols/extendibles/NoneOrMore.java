@@ -65,17 +65,17 @@ public class NoneOrMore extends BaseExtendible {
       current = (Interpretation) l2;
       assert head.equals(current.symbol);
     }
-    return $;
+    return !$.isEmpty() ? $ : ELLRecognizer.SKIP;
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
-    if (ELLRecognizer.SKIP.equals(values))
-      return new ArrayList<>();
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {
       if (solved.size() < currentSymbol + 1)
         solved.add(new LinkedList<>());
+      if (ELLRecognizer.SKIPO.equals(o))
+        continue;
       Interpretation i = (Interpretation) o;
       assert i.symbol.equals(symbols.get(currentSymbol));
       solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));
@@ -86,9 +86,9 @@ public class NoneOrMore extends BaseExtendible {
     List<List> processed = processTokens(solved);
     List<Class> processedClasses = toClasses(classSolution);
     List<Object> $ = new LinkedList<>();
-    for (int i = 0; i < processed.size(); ++i) {
-      if (ELLRecognizer.SKIP.equals(processed.get(i)))
-        continue;
+    for (int i = 0; i < processedClasses.size(); ++i) {
+      if (processed.size() <= i)
+        processed.add(new ArrayList<>());
       $.add(Array.newInstance(processedClasses.get(i).getComponentType(), processed.get(i).size()));
       for (int j = 0; j < processed.get(i).size(); ++j)
         ((Object[]) $.get(i))[j] = processed.get(i).get(j);
