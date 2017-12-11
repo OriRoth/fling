@@ -20,12 +20,6 @@ public class ELLRecognizer {
   private final EBNFAnalyzer analyzer;
   private ELLStack stack;
   private static final String PP_IDENT = "--";
-  public static final Object SKIPO = new Object() {
-    @Override public String toString() {
-      return "SKIP";
-    }
-  };
-  public static final List<Object> SKIP = Collections.singletonList(SKIPO);
 
   public ELLRecognizer(final EBNF ebnf) {
     n = ebnf.regularFormWithExtendibles(Fajita.producer());

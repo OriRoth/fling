@@ -11,7 +11,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -84,8 +83,6 @@ public class OneOrMore extends BaseExtendible {
     for (Object o : values) {
       if (solved.size() < currentSymbol + 1)
         solved.add(new LinkedList<>());
-      if (ELLRecognizer.SKIPO.equals(o))
-        continue;
       Interpretation i = (Interpretation) o;
       assert i.symbol.equals(symbols.get(currentSymbol));
       solved.get(currentSymbol).add(solution.apply(i.symbol, i.value));

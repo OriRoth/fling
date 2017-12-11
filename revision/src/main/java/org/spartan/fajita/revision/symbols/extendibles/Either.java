@@ -1,6 +1,5 @@
 package org.spartan.fajita.revision.symbols.extendibles;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,7 +9,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.spartan.fajita.revision.parser.ell.ELLRecognizer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
@@ -50,14 +48,9 @@ public class Either extends BaseExtendible {
   }
   @SuppressWarnings({ "unused", "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
-    if (ELLRecognizer.SKIP.equals(values))
-      return new ArrayList<>();
     assert values.size() == 1 && values.get(0) instanceof Interpretation;
     Interpretation i = (Interpretation) values.get(0);
     List is = solution.apply(i.symbol, i.value);
-    // TODO Roth: verify it works
-    while (is.contains(ELLRecognizer.SKIP))
-      is.remove(ELLRecognizer.SKIP);
     // TODO Roth: deal with none/multiple Either values
     return Collections.singletonList(new org.spartan.fajita.revision.export.Either(
         is.isEmpty() ? null : is.size() == 1 ? is.get(0) : is.toArray(new Object[is.size()])));
