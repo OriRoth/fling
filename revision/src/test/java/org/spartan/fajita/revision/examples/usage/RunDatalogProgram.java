@@ -16,7 +16,7 @@ import za.co.wstoop.jatalog.Jatalog;
 
 public class RunDatalogProgram {
   public static final String INPUT_PREFIX = "Jatalog:Fajita$ ";
-  public static final String OUTPUT_PREFIX = "--------------- ";
+  public static final String OUTPUT_PREFIX = "                ---";
 
   public static void main(String[] args) {
     run(Ancestor.program());
