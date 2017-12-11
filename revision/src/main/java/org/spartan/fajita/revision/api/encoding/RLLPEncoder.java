@@ -102,6 +102,7 @@ public class RLLPEncoder {
                   .collect(toList()))
               .get()) //
           .addModifiers(Modifier.PUBLIC) //
+          .addTypeVariables(t.typeVariables) //
           .build());
   }
   private static TypeName getFixedRecReturnType(TypeName r, List<TypeVariableName> vs1, List<TypeName> vs2) {
