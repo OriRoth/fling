@@ -60,8 +60,7 @@ public class ASTUtil {
     rs.remove(SpecialSymbols.augmentedStartSymbol);
   }
   public static boolean isInheritanceRule(Set<List<Symbol>> rhs) {
-    List<Symbol> x;
-    return rhs.size() > 1 || rhs.size() == 1 && (x = rhs.stream().findFirst().get()).size() == 1 && x.get(0).isNonTerminal();
+    return rhs.size() > 1;
   }
   public static String capital(String s) {
     if (s == null)

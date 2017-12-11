@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.api.encoding.FajitaEncoder;
 import org.spartan.fajita.revision.bnf.BNF;
@@ -80,8 +81,10 @@ public class Fajita {
     return builder.new SetSymbols();
   }
   public void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    analyze(rhs);
-    derivationRules.add(new DerivationRule(lhs, rhs));
+    List<Symbol> $ = rhs.stream().map(s -> !s.isTerminal() || s.isVerb() ? s : new Verb(s.asTerminal()))
+        .collect(Collectors.toList());
+    analyze($);
+    derivationRules.add(new DerivationRule(lhs, $));
   }
   private void analyze(Symbol s) {
     if (s.isVerb()) {

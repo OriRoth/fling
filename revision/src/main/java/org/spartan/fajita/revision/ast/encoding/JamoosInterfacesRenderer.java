@@ -57,8 +57,8 @@ public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
         .append(String.join(";", innerClassesFieldTypes.get(lhs.name()).entrySet().stream()
             .map(e -> "this." + e.getKey() + "=" + e.getKey()).collect(toList())));
     if (!fields.isEmpty())
-      $.append(";") //
-          .append("}");
+      $.append(";");
+    $.append("}");
     return $.append("}").toString();
   }
 }
