@@ -19,4 +19,5 @@ public interface Extendible extends Symbol {
   List<?> fold(List<?> t);
   @SuppressWarnings("rawtypes") List<Object> conclude(List values, BiFunction<Symbol, List, List> solution,
       Function<Symbol, Class> classSolution);
+  void fixSymbols(Function<List<Symbol>, List<Symbol>> fix);
 }

@@ -109,8 +109,7 @@ core
 classes
 .depend
 javadoc
-lex.yy.c 
-lib
+lex.yy.c
 .libs
 obj
 out

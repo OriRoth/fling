@@ -27,6 +27,10 @@ import org.spartan.fajita.revision.symbols.Terminal;
   public BaseExtendible(List<Symbol> symbols) {
     this.symbols = symbols;
   }
+  @Override public void fixSymbols(Function<List<Symbol>, List<Symbol>> fix) {
+    assert !isSolved;
+    symbols = fix.apply(symbols);
+  }
   @Override public Symbol head() {
     assert isSolved;
     return head;

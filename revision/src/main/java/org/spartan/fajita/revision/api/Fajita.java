@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.api.encoding.FajitaEncoder;
 import org.spartan.fajita.revision.bnf.BNF;
@@ -81,8 +80,7 @@ public class Fajita {
     return builder.new SetSymbols();
   }
   public void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    List<Symbol> $ = rhs.stream().map(s -> !s.isTerminal() || s.isVerb() ? s : new Verb(s.asTerminal()))
-        .collect(Collectors.toList());
+    List<Symbol> $ = fixRawTerminals(rhs);
     analyze($);
     derivationRules.add(new DerivationRule(lhs, $));
   }
@@ -255,5 +253,18 @@ public class Fajita {
   }
   public static Option option(Symbol s, Symbol... ss) {
     return new Option(merge(s, ss));
+  }
+  private List<Symbol> fixRawTerminals(List<Symbol> rhs) {
+    List<Symbol> $ = new ArrayList<>();
+    for (Symbol s : rhs)
+      if (s.isVerb() || s.isNonTerminal())
+        $.add(s);
+      else if (s.isTerminal())
+        $.add(new Verb(s.asTerminal()));
+      else {
+        s.asExtendible().fixSymbols(this::fixRawTerminals);
+        $.add(s);
+      }
+    return $;
   }
 }
