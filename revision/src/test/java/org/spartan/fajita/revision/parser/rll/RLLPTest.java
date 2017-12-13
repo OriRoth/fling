@@ -6,11 +6,13 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.a;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.b;
+import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
+import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.*;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
+import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
 import org.spartan.fajita.revision.examples.malfunction.TestJumps;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
@@ -27,10 +29,17 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
     );
     assert !rllp.rejected();
   }
-  @Test public void simpleTest() {
+  @Test public void jumps() {
     RLLPConcrete rllp = new RLLPConcrete(new TestJumps().bnf().bnf());
     rllp.consume( //
-        a, b, a, b, b, a //
+        x, y, x, y, y, x //
+    );
+    assert !rllp.rejected();
+  }
+  @Test public void anbn() {
+    RLLPConcrete rllp = new RLLPConcrete(new TestAnBn().bnf().bnf());
+    rllp.consume( //
+        a, a, a, a, a, b, b, b, b, b //
     );
     assert !rllp.rejected();
   }
