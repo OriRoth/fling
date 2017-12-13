@@ -91,7 +91,7 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
   }
   private static Object instance(Constructor<?> ctor, Object[] arguments)
       throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-    return ctor.newInstance(arguments);
+    return ctor.newInstance(ctor.getParameterTypes().length > 0 ? arguments : new Object[0]);
   }
   private Class<?> clazz(String s) {
     try {
