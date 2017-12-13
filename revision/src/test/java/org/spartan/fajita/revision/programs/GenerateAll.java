@@ -17,5 +17,6 @@ public class GenerateAll {
     new TestTwoParentsBNF().generateGrammarFiles();
     new TestAnBn().generateGrammarFiles();
     new TestJumps().generateGrammarFiles();
+    // new TestForceEpsilonMove().generateGrammarFiles();
   }
 }
