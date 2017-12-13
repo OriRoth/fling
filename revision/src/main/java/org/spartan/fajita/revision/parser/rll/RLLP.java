@@ -242,7 +242,7 @@ public class RLLP {
         this.itemsToPush = toPush;
       }
       @Override public String toString() {
-        return "push( cons(" + i + "," + v + ")";
+        return "push(" + i + "," + v + "," + itemsToPush + ")";
       }
       @Override public ActionType type() {
         return ActionType.PUSH;
