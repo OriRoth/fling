@@ -18,7 +18,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 @SuppressWarnings("static-method") public class RLLPTest {
   @Test public void datalog() {
-    RLLPConcrete rllp = new RLLPConcrete(new Datalog().bnf().bnf());
+    RLLPConcrete2 rllp = new RLLPConcrete2(new Datalog().bnf().bnf());
     rllp.consume( //
         attribute(fact, FactExpression), //
         attribute(fact, FactExpression), //
@@ -30,14 +30,14 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
     assert !rllp.rejected();
   }
   @Test public void jumps() {
-    RLLPConcrete rllp = new RLLPConcrete(new TestJumps().bnf().bnf());
+    RLLPConcrete2 rllp = new RLLPConcrete2(new TestJumps().bnf().bnf());
     rllp.consume( //
         x, y, x, y, y, x //
     );
     assert !rllp.rejected();
   }
   @Test public void anbn() {
-    RLLPConcrete rllp = new RLLPConcrete(new TestAnBn().bnf().bnf());
+    RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
     rllp.consume( //
         a, a, a, a, a, b, b, b, b, b //
     );
