@@ -28,6 +28,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
         attribute(fact, FactExpression) //
     );
     assert !rllp.rejected();
+    assert rllp.accepted();
   }
   @Test public void jumps() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestJumps().bnf().bnf());
@@ -35,6 +36,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
         x, y, x, y, y, x //
     );
     assert !rllp.rejected();
+    assert rllp.accepted();
   }
   @Test public void anbn1() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
@@ -42,6 +44,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
         a, a, a, a, a, a, b, b, b, b, b, b //
     );
     assert !rllp.rejected();
+    assert rllp.accepted();
   }
   @Test public void anbn2() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());

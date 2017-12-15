@@ -76,7 +76,7 @@ public class JSM2 implements Cloneable {
     Item currenti = i;
     Set<Verb> seen = new HashSet<>();
     for (int j = 1; j < suffix.size(); ++j) {
-      if (!rllp.analyzer.isNullable(suffix.subList(1, j + 1)))
+      if (!rllp.analyzer.isNullable(suffix.subList(1, j)))
         break;
       currenti = currenti.advance();
       for (Verb v : rllp.analyzer.firstSetOf(suffix.get(j))) {
@@ -104,8 +104,7 @@ public class JSM2 implements Cloneable {
     return $;
   }
   @Override public int hashCode() {
-    // TODO Roth: set a proper hashCode method
-    return 0;
+    return S0.hashCode();
   }
   @Override public boolean equals(Object obj) {
     return obj instanceof JSM2 && S0.equals(((JSM2) obj).S0);

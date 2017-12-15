@@ -1,9 +1,11 @@
 package org.spartan.fajita.revision.parser.rll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.parser.rll.RLLP.Action;
 import org.spartan.fajita.revision.parser.rll.RLLP.Action.ActionType;
 import org.spartan.fajita.revision.parser.rll.RLLP.Action.Jump;
@@ -113,7 +115,18 @@ public class RLLPConcrete2 {
     return this;
   }
   public boolean accepted() {
-    return !reject && (accept || jsm.getS0().stream().allMatch(x -> x.readyToReduce()));
+    if (reject)
+      return false;
+    if (accept)
+      return true;
+    List<Item> $ = jsm.getS0();
+    Collections.reverse($);
+    while (!$.isEmpty() && rllp.analyzer.isNullable(BNFAnalyzer.ruleSuffix($.get(0).rule, $.get(0).dotIndex))) {
+      $.remove(0);
+      if (!$.isEmpty())
+        $.set(0, $.get(0).advance());
+    }
+    return $.isEmpty();
   }
   public boolean rejected() {
     return reject;
