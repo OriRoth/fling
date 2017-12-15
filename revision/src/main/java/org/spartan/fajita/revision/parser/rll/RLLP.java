@@ -98,7 +98,7 @@ public class RLLP {
     for (Item i : items) {
       Map<Verb, List<Item>> itemEntry = new HashMap<>();
       for (Verb v : analyzer.firstSetOf(BNFAnalyzer.ruleSuffix(i.rule, i.dotIndex))) {
-        List<Item> result = calculateConsolidate(i, v);
+        List<Item> result = fixConsolidate(calculateConsolidate(i, v));
         itemEntry.put(v, result);
       }
       $.put(i, itemEntry);
@@ -199,6 +199,18 @@ public class RLLP {
   public Item getStartItem(Verb initialInput) {
     return items.stream().filter(i -> bnf.startSymbols.contains(i.rule.lhs) && i.dotIndex == 0)
         .filter(i -> analyzer.firstSetOf(i.rule.getRHS()).contains(initialInput)).findAny().get();
+  }
+  // TODO Roth: check whether needed and fix in paper
+  private static List<Item> fixConsolidate(List<Item> $) {
+    while (!$.isEmpty() && $.get($.size() - 1).readyToReduce()) {
+      NonTerminal lhs = $.get($.size() - 1).rule.lhs;
+      $.remove($.size() - 1);
+      if (!$.isEmpty()) {
+        assert $.get($.size() - 1).afterDot().equals(lhs);
+        $.set($.size() - 1, $.get($.size() - 1).advance());
+      }
+    }
+    return $;
   }
 
   public static abstract class Action {

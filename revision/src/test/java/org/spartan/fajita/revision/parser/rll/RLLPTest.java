@@ -39,7 +39,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void anbn() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
     rllp.consume( //
-        a, a, a, a, a, b, b, b, b, b //
+        a, a, a, a, a, a, b, b, b, b, b, b //
     );
     assert !rllp.rejected();
   }
