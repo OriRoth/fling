@@ -111,6 +111,33 @@ public class JSM2 implements Cloneable {
     return obj instanceof JSM2 && S0.equals(((JSM2) obj).S0);
   }
   @Override public String toString() {
-    return "JSM:" + S0.toString();
+    return toString(0, null);
+  }
+  private String toString(int ind, Verb v) {
+    StringBuilder $ = new StringBuilder();
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    if (v != null)
+      $.append(v).append(":");
+    $.append(super.toString()).append(" {\n");
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    $.append(" S0: ").append(S0).append("\n");
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    $.append(" S1: (").append(S1.size()).append(")\n");
+    if (!S1.isEmpty())
+      for (Verb x : rllp.bnf.verbs)
+        if (S1.peek().get(x) != null) {
+          for (int i = 0; i < ind; ++i)
+            $.append(" ");
+          $.append("  ").append(x).append(": ").append(S1.peek().get(x).id()).append("\n");
+        }
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    return $.append("}").toString();
+  }
+  private String id() {
+    return super.toString();
   }
 }
