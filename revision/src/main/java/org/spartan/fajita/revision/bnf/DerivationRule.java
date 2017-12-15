@@ -37,4 +37,7 @@ public class DerivationRule {
   public List<Symbol> getRHS() {
     return new LinkedList<>(rhs);
   }
+  public List<Symbol> getRHSSuffix(int from) {
+    return getRHS().subList(from, rhs.size());
+  }
 }

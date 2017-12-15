@@ -5,7 +5,7 @@ import static org.spartan.fajita.revision.api.Fajita.option;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
-import static org.spartan.fajita.revision.junk.TestJumps.a;
+import static org.spartan.fajita.revision.junk.TestJumps.x;
 
 import java.io.IOException;
 
@@ -38,6 +38,6 @@ public class TestJumps extends Grammar {
     // testing();
   }
   public static void testing() {
-    a().b().b().a().b().b().$();
+    x().y().y().x().y().y().$();
   }
 }
