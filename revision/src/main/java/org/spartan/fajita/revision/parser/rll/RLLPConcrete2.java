@@ -47,6 +47,8 @@ public class RLLPConcrete2 {
   }
   // NOTE should be consistent with paper
   public RLLPConcrete2 consume(Verb t) {
+    if (jsm == null)
+      reject = true;
     if (accept)
       throw new RuntimeException("Parser has already accepted");
     if (reject)
@@ -102,7 +104,12 @@ public class RLLPConcrete2 {
   }
   public RLLPConcrete2 consume(Terminal... ts) {
     for (Terminal t : ts)
-      consume(t);
+      try {
+        consume(t);
+      } catch (@SuppressWarnings("unused") RuntimeException e) {
+        assert reject;
+        break;
+      }
     return this;
   }
   public boolean accepted() {
