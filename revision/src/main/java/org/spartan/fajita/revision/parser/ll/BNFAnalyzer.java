@@ -101,7 +101,7 @@ public class BNFAnalyzer {
     return $;
   }
   public Collection<Verb> firstSetOf(final List<Symbol> expression) {
-    return firstSetOf(expression.toArray(new Symbol[] {}));
+    return firstSetOf(expression.toArray(new Symbol[expression.size()]));
   }
   public Collection<Verb> firstSetOf(Item i) {
     return firstSetOf(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
@@ -118,13 +118,18 @@ public class BNFAnalyzer {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))
       return llClosure.get(nt).get(v);
     llClosure.putIfAbsent(nt, new HashMap<>());
-    List<Symbol> $ = new ArrayList<>();
     if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v))) {
       llClosure.get(nt).put(v, null);
       return null;
     }
+    List<Symbol> $ = new ArrayList<>();
     NonTerminal current = nt;
     while (true) {
+      if (bnf.getRulesOf(current).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v))) {
+        assert isNullable(current) && followSetOf(current).contains(v);
+        $.add(nt);
+        return $;
+      }
       DerivationRule prediction = bnf.getRulesOf(current).stream() //
           .filter(d -> firstSetOf(d.getRHS()).contains(v)) //
           .findAny().get();

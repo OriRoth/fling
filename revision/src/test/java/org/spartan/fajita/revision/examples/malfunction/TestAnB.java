@@ -6,6 +6,7 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
+import static org.spartan.fajita.revision.junk.TestAnB.*;
 
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ public class TestAnB extends Grammar {
   @Override public FajitaBNF bnf() {
     return Fajita.build(TestAnB.class, Term.class, NT.class, "TestAnB", Main.packagePath, Main.projectPath).start(S) //
         .derive(S).to(S1, D) //
-        .derive(S1).to(C, S1) //
+        .derive(S1).to(C, S1).orNone() //
         .derive(C).to(c) //
         .derive(D).to(d);
   }
@@ -36,9 +37,9 @@ public class TestAnB extends Grammar {
     new TestAnB().generateGrammarFiles();
   }
   public static void testing() {
-    // c().d().$();
-    // c().c().d().$();
-    // c().c().c().d().$();
-    // c().c().c().c().d().$();
+    c().d().$();
+    c().c().d().$();
+    c().c().c().d().$();
+    c().c().c().c().d().$();
   }
 }
