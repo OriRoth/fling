@@ -1,7 +1,7 @@
 package org.spartan.fajita.revision.examples.malfunction;
 
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.A;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.B;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.C;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.D;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
@@ -22,15 +22,15 @@ public class TestAnB extends Grammar {
   }
 
   public static enum NT implements NonTerminal {
-    S, S1, A, B
+    S, S1, C, D
   }
 
   @Override public FajitaBNF bnf() {
     return Fajita.build(TestAnB.class, Term.class, NT.class, "TestAnB", Main.packagePath, Main.projectPath).start(S) //
-        .derive(S).to(S1, B) //
-        .derive(S1).to(A, S1) //
-        .derive(A).to(c) //
-        .derive(B).to(d);
+        .derive(S).to(S1, D) //
+        .derive(S1).to(C, S1) //
+        .derive(C).to(c) //
+        .derive(D).to(d);
   }
   public static void main(String[] args) throws IOException {
     new TestAnB().generateGrammarFiles();

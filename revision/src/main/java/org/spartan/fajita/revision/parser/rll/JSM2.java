@@ -132,7 +132,7 @@ public class JSM2 implements Cloneable {
     $.append(" S1: (").append(S1.size()).append(")\n");
     if (!S1.isEmpty())
       for (Verb x : rllp.bnf.verbs)
-        if (S1.peek().get(x) != null) {
+        if (S1.peek().get(x) != JAMMED) {
           if (!seen.contains(S1.peek().get(x)))
             $.append(S1.peek().get(x).toString(ind + 2, x, seen));
           else {

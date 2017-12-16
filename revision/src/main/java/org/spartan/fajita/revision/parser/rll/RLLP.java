@@ -270,4 +270,12 @@ public class RLLP {
         + "\n*** LL Prediction Table ***\n" + llPredictionTable + "\n" //
         + "\n*** RLL Prediction Table ***\n" + rllPredictionTable;
   }
+  protected static <T> void debugPrint(String name, Map<Item, Map<Verb, T>> m) {
+    System.out.println(name);
+    for (Item i : m.keySet()) {
+      System.out.println(i);
+      for (Verb v : m.get(i).keySet())
+        System.out.println("  " + v + ": " + m.get(i).get(v));
+    }
+  }
 }
