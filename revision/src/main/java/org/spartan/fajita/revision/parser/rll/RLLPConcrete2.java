@@ -49,6 +49,8 @@ public class RLLPConcrete2 {
   }
   // NOTE should be consistent with paper
   public RLLPConcrete2 consume(Verb t) {
+    System.out.println(jsm);
+    System.out.println(t);
     if (jsm == null)
       reject = true;
     if (accept)
