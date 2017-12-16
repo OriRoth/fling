@@ -115,7 +115,7 @@ public class RLLPConcrete2 {
     return this;
   }
   public boolean accepted() {
-    if (reject)
+    if (reject || jsm == null)
       return false;
     if (accept)
       return true;

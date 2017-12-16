@@ -41,12 +41,20 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void anbn1() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
     rllp.consume( //
-        a, a, a, a, a, a, b, b, b, b, b, b //
+        a, a, b, b //
     );
     assert !rllp.rejected();
     assert rllp.accepted();
   }
   @Test public void anbn2() {
+    RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
+    rllp.consume( //
+        a, a, a, a, a, a, b, b, b, b, b, b //
+    );
+    assert !rllp.rejected();
+    assert rllp.accepted();
+  }
+  @Test public void anbn3() {
     RLLPConcrete2 rllp = new RLLPConcrete2(new TestAnBn().bnf().bnf());
     rllp.consume( //
         a, a, a, a, a, a, b, b, b, b, b, a //

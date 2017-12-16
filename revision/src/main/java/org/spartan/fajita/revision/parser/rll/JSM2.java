@@ -95,6 +95,10 @@ public class JSM2 implements Cloneable {
         }
       }
     }
+    if (suffix.size() > 1 && !rllp.analyzer.isNullable(suffix.subList(1, suffix.size())))
+      for (Verb v : rllp.bnf.verbs)
+        if (!seen.contains(v))
+          m.put(v, JAMMED);
     S1.push(m);
   }
   private Map<Verb, JSM2> emptyMap() {
@@ -110,14 +114,15 @@ public class JSM2 implements Cloneable {
     return obj instanceof JSM2 && S0.equals(((JSM2) obj).S0);
   }
   @Override public String toString() {
-    return toString(0, null);
+    return toString(0, null, new HashSet<>());
   }
-  private String toString(int ind, Verb v) {
+  private String toString(int ind, Verb v, Set<JSM2> seen) {
+    seen.add(this);
     StringBuilder $ = new StringBuilder();
     for (int i = 0; i < ind; ++i)
       $.append(" ");
     if (v != null)
-      $.append(v).append(":");
+      $.append(v).append(": ");
     $.append(super.toString()).append(" {\n");
     for (int i = 0; i < ind; ++i)
       $.append(" ");
@@ -128,13 +133,17 @@ public class JSM2 implements Cloneable {
     if (!S1.isEmpty())
       for (Verb x : rllp.bnf.verbs)
         if (S1.peek().get(x) != null) {
-          for (int i = 0; i < ind; ++i)
-            $.append(" ");
-          $.append("  ").append(x).append(": ").append(S1.peek().get(x).id()).append("\n");
+          if (!seen.contains(S1.peek().get(x)))
+            $.append(S1.peek().get(x).toString(ind + 2, x, seen));
+          else {
+            for (int i = 0; i < ind; ++i)
+              $.append(" ");
+            $.append("  ").append(x).append(": ").append(S1.peek().get(x).id()).append("\n");
+          }
         }
     for (int i = 0; i < ind; ++i)
       $.append(" ");
-    return $.append("}").toString();
+    return $.append("}\n").toString();
   }
   private String id() {
     return super.toString();
