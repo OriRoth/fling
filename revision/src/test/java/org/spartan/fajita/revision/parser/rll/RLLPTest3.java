@@ -6,9 +6,11 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.*;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.*;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
 
@@ -16,6 +18,7 @@ import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
+import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
 import org.spartan.fajita.revision.examples.malfunction.TestJumps;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
@@ -68,6 +71,14 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
     RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnB().bnf().bnf());
     rllp.consume( //
         c, c, c, c, d //
+    );
+    assert !rllp.rejected();
+    assert rllp.accepted();
+  }
+  @Test public void ancdbn() {
+    RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnCDBn().bnf().bnf());
+    rllp.consume( //
+        a1, a1, a1, a1, a1, a1, b1, c1, d1, e1, b1, b1, b1, b1, b1 //
     );
     assert !rllp.rejected();
     assert rllp.accepted();
