@@ -21,5 +21,6 @@ public class GenerateAll {
     new TestJumps().generateGrammarFiles();
     new TestAnB().generateGrammarFiles();
     new TestAnCDBn().generateGrammarFiles();
+    // new Parenthesis().generateGrammarFiles();
   }
 }

@@ -13,9 +13,11 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.*;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.*;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
+import org.spartan.fajita.revision.examples.Parenthesis;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
 import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
@@ -82,5 +84,20 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
     );
     assert !rllp.rejected();
     assert rllp.accepted();
+  }
+  @Test public void parenthesis1() {
+    RLLPConcrete3 rllp = new RLLPConcrete3(new Parenthesis().bnf().bnf());
+    rllp.consume( //
+        push, push, push, pop, pop, push, pop, pop //
+    );
+    assert !rllp.rejected();
+    assert rllp.accepted();
+  }
+  @Test public void parenthesis2() {
+    RLLPConcrete3 rllp = new RLLPConcrete3(new Parenthesis().bnf().bnf());
+    rllp.consume( //
+        push, push, push, pop, pop, pop, pop, push //
+    );
+    assert rllp.rejected();
   }
 }

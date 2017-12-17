@@ -3,7 +3,6 @@ package org.spartan.fajita.revision.parser.rll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,22 +20,18 @@ public class JSM3 implements Cloneable {
   private final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
   private final Stack<Map<Verb, J>> S1;
-  private final Map<List<Symbol>, J> cache;
 
   public JSM3(BNF bnf) {
     this.bnf = bnf;
     this.analyzer = new BNFAnalyzer(bnf);
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
-    this.cache = new LinkedHashMap<>();
-    cache.put(this.S0, J.of(this));
   }
   private JSM3(JSM3 jsm) {
     this.bnf = jsm.bnf;
     this.analyzer = jsm.analyzer;
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
-    this.cache = jsm.cache;
     this.S0.addAll(jsm.S0);
     for (Map<Verb, J> m : jsm.S1)
       this.S1.add(new HashMap<>(m));
@@ -54,18 +49,11 @@ public class JSM3 implements Cloneable {
     JSM3 $ = clone();
     $.S0.pop();
     $.S1.pop();
-    if (cache.containsKey($.getS0())) {
-      J j = cache.get($.getS0());
-      $ = j.address;
-      $ = $.pushAll(j.toPush);
-      return $;
-    }
-    cache.put($.getS0(), J.of($));
     return $;
   }
   public JSM3 jump(Verb v) {
     J j = S1.peek().get(v);
-    JSM3 $ = j.address;
+    JSM3 $ = j.address();
     $ = $.pushAll(j.toPush);
     return $;
   }
@@ -74,16 +62,8 @@ public class JSM3 implements Cloneable {
       return clone();
     List<Symbol> l = getS0();
     l.addAll(items);
-    if (cache.containsKey(l)) {
-      J j = cache.get(l);
-      JSM3 $ = j.address;
-      $.pushJumps(items);
-      cache.put($.getS0(), J.of($));
-      return $;
-    }
     JSM3 $ = clone();
     $.pushJumps(items);
-    cache.put($.getS0(), J.of($));
     return $;
   }
   private void pushJumps(List<Symbol> items) {
@@ -109,7 +89,6 @@ public class JSM3 implements Cloneable {
         m.put(v, j);
         List<Symbol> l = getS0();
         l.addAll(c);
-        cache.put(l, j);
       }
     }
     S1.push(m);
@@ -129,7 +108,7 @@ public class JSM3 implements Cloneable {
   @Override public String toString() {
     return toString(0, null, new HashSet<>(), new ArrayList<>());
   }
-  private String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
+  String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
     seen.add(J.of(this));
     StringBuilder $ = new StringBuilder();
     for (int i = 0; i < ind; ++i)
@@ -151,11 +130,11 @@ public class JSM3 implements Cloneable {
         if (S1.peek().get(x) != JAMMED) {
           J j = S1.peek().get(x);
           if (!seen.contains(j))
-            $.append(j.address.toString(ind + 2, x, seen, j.toPush));
+            $.append(j.address().toString(ind + 2, x, seen, j.toPush));
           else {
             for (int i = 0; i < ind; ++i)
               $.append(" ");
-            $.append("  ").append(x).append(": ").append(j.address.id()).append(" + ").append(j.toPush).append("\n");
+            $.append("  ").append(x).append(": ").append(j.address().id()).append(" + ").append(j.toPush).append("\n");
           }
         }
     for (int i = 0; i < ind; ++i)
@@ -167,7 +146,7 @@ public class JSM3 implements Cloneable {
   }
 
   private static class J {
-    final JSM3 address;
+    private final JSM3 address;
     final List<Symbol> toPush;
 
     J(JSM3 address, List<Symbol> toPush) {
@@ -188,6 +167,12 @@ public class JSM3 implements Cloneable {
     }
     @Override public boolean equals(Object obj) {
       return obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
+    }
+    JSM3 address() {
+      return address/* .clone() */;
+    }
+    @Override public String toString() {
+      return address.toString(0, null, new HashSet<>(), toPush);
     }
   }
 }
