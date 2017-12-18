@@ -15,18 +15,26 @@ import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
 public class JSM3 implements Cloneable {
-  public static final J JAMMED = new J();
-  public static final J UNKNOWN = new J();
-  private final BNF bnf;
-  private final BNFAnalyzer analyzer;
+  public static final JSM3 JAMMED = new JSM3();
+  public static final JSM3 UNKNOWN = new JSM3();
+  final BNF bnf;
+  final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
   private final Stack<Map<Verb, J>> S1;
 
   public JSM3(BNF bnf) {
+    this(bnf, new BNFAnalyzer(bnf));
+  }
+  public JSM3(BNF bnf, BNFAnalyzer analyzer) {
     this.bnf = bnf;
-    this.analyzer = new BNFAnalyzer(bnf);
+    this.analyzer = analyzer;
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
+  }
+  public JSM3(BNF bnf, BNFAnalyzer analyzer, NonTerminal initial) {
+    this(bnf, analyzer);
+    pushJumps(initial);
+    S0.push(initial);
   }
   private JSM3(JSM3 jsm) {
     this.bnf = jsm.bnf;
@@ -36,6 +44,12 @@ public class JSM3 implements Cloneable {
     this.S0.addAll(jsm.S0);
     for (Map<Verb, J> m : jsm.S1)
       this.S1.add(new HashMap<>(m));
+  }
+  private JSM3() {
+    this.bnf = null;
+    this.analyzer = null;
+    this.S0 = null;
+    this.S1 = null;
   }
   @Override public JSM3 clone() {
     return new JSM3(this);
@@ -53,7 +67,13 @@ public class JSM3 implements Cloneable {
     return $;
   }
   public JSM3 jump(Verb v) {
+    if (S1.isEmpty())
+      return JAMMED;
     J j = S1.peek().get(v);
+    if (j == J.JJAMMED)
+      return JAMMED;
+    if (j == J.JUNKNOWN)
+      return UNKNOWN;
     JSM3 $ = j.address;
     $ = $.pushAll(j.toPush);
     return $;
@@ -74,7 +94,7 @@ public class JSM3 implements Cloneable {
     }
   }
   private void pushJumps(Symbol s) {
-    Map<Verb, J> m = S1.isEmpty() ? emptyMap() : new HashMap<>(S1.peek());
+    Map<Verb, J> m = S1.isEmpty() ? emptyMap(s) : new HashMap<>(S1.peek());
     if (s.isVerb()) {
       S1.push(m);
       return;
@@ -84,7 +104,7 @@ public class JSM3 implements Cloneable {
       List<Symbol> c = analyzer.llClosure(nt, v);
       if (c == null) {
         if (!analyzer.followSetOf(nt).contains(v))
-          m.put(v, JAMMED);
+          m.put(v, J.JJAMMED);
       } else {
         J j = J.of(clone(), c);
         m.put(v, j);
@@ -94,20 +114,20 @@ public class JSM3 implements Cloneable {
     }
     S1.push(m);
   }
-  private Map<Verb, J> emptyMap() {
+  private Map<Verb, J> emptyMap(Symbol initial) {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v, JAMMED);
+      $.put(v, initial.isNonTerminal() && analyzer.llClosure(initial.asNonTerminal(), v) != null ? J.JUNKNOWN : J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {
-    return S0.hashCode();
+    return S0 == null ? 1 : S0.hashCode();
   }
   @Override public boolean equals(Object obj) {
     return obj instanceof JSM3 && S0.equals(((JSM3) obj).S0);
   }
   @Override public String toString() {
-    return toString(0, null, new HashSet<>(), new ArrayList<>());
+    return this == JAMMED ? "JAMMED" : this == UNKNOWN ? "UNKNOWN" : toString(0, null, new HashSet<>(), new ArrayList<>());
   }
   String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
     seen.add(J.of(this));
@@ -116,6 +136,8 @@ public class JSM3 implements Cloneable {
       $.append(" ");
     if (v != null)
       $.append(v).append(": ");
+    if (this == JAMMED || this == UNKNOWN)
+      return $.append(toString()).append(" + ").append(toPush).append("\n").toString();
     $.append(super.toString()).append(" {\n");
     for (int i = 0; i < ind; ++i)
       $.append(" ");
@@ -129,11 +151,11 @@ public class JSM3 implements Cloneable {
     if (!S1.isEmpty())
       for (Verb x : bnf.verbs) {
         J j = S1.peek().get(x);
-        if (j == JAMMED) {
+        if (j == J.JJAMMED) {
           for (int i = 0; i < ind; ++i)
             $.append(" ");
           $.append("  ").append(x).append(": JAMMED\n");
-        } else if (j == UNKNOWN) {
+        } else if (j == J.JUNKNOWN) {
           for (int i = 0; i < ind; ++i)
             $.append(" ");
           $.append("  ").append(x).append(": UNKNOWN\n");
@@ -154,8 +176,13 @@ public class JSM3 implements Cloneable {
   private String id() {
     return super.toString();
   }
+  public boolean isEmpty() {
+    return S0.isEmpty();
+  }
 
   private static class J {
+    static final J JJAMMED = new J();
+    static final J JUNKNOWN = new J();
     final JSM3 address;
     final List<Symbol> toPush;
 
@@ -171,21 +198,23 @@ public class JSM3 implements Cloneable {
       return new J(address, toPush);
     }
     static J of(JSM3 address) {
-      return of(address, new ArrayList<>());
+      return address == JAMMED ? JJAMMED : address == UNKNOWN ? JUNKNOWN : of(address, new ArrayList<>());
     }
     @Override public int hashCode() {
       int $ = 1;
+      if (this == JJAMMED || this == JUNKNOWN)
+        return $;
       $ += 31 * address.hashCode();
       $ += 17 * toPush.hashCode();
       return $;
     }
     @Override public boolean equals(Object obj) {
-      return obj == JAMMED ? this == JAMMED
-          : obj == UNKNOWN ? this == UNKNOWN
+      return obj == JJAMMED ? this == JJAMMED
+          : obj == JUNKNOWN ? this == JUNKNOWN
               : obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
     }
     @Override public String toString() {
-      return address.toString(0, null, new HashSet<>(), toPush);
+      return this == JJAMMED ? "JJAMMED" : this == JUNKNOWN ? "JUNKNOWN" : address.toString(0, null, new HashSet<>(), toPush);
     }
   }
 }

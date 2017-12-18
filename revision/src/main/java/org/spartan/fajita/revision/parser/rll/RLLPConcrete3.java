@@ -24,9 +24,15 @@ public class RLLPConcrete3 {
   private BNFAnalyzer analyzer;
 
   public RLLPConcrete3(BNF bnf) {
+    this(bnf, new BNFAnalyzer(bnf));
+  }
+  public RLLPConcrete3(BNF bnf, BNFAnalyzer analyzer) {
+    this(bnf, analyzer, new JSM3(bnf));
+  }
+  private RLLPConcrete3(BNF bnf, BNFAnalyzer analyzer, JSM3 jsm) {
     this.bnf = bnf;
-    this.jsm = new JSM3(bnf);
-    this.analyzer = new BNFAnalyzer(bnf);
+    this.jsm = jsm;
+    this.analyzer = analyzer;
     this.actionTable = createActionTable();
     accept = false;
     reject = false;
@@ -108,6 +114,12 @@ public class RLLPConcrete3 {
   }
   public boolean rejected() {
     return reject;
+  }
+  public static JSM3 next(JSM3 jsm, Verb v) {
+    RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
+    rllp.initialized = true;
+    rllp.consume(v);
+    return rllp.jsm;
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {
     return actionTable.get(nt).get(v);

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.spartan.fajita.revision.api.encoding.FajitaEncoder;
+import org.spartan.fajita.revision.api.encoding.FajitaEncoder3;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.bnf.EBNF;
@@ -71,7 +71,7 @@ public class Fajita {
     return new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
   }
   Map<String, String> finish() {
-    return FajitaEncoder.encode(this);
+    return FajitaEncoder3.encode(this);
   }
   public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols build(
       Class<? extends Grammar> provider, final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName,
