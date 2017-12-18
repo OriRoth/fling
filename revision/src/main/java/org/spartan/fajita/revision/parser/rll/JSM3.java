@@ -15,7 +15,8 @@ import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
 public class JSM3 implements Cloneable {
-  public static final J JAMMED = null;
+  public static final J JAMMED = new J();
+  public static final J UNKNOWN = new J();
   private final BNF bnf;
   private final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
@@ -53,7 +54,7 @@ public class JSM3 implements Cloneable {
   }
   public JSM3 jump(Verb v) {
     J j = S1.peek().get(v);
-    JSM3 $ = j.address();
+    JSM3 $ = j.address;
     $ = $.pushAll(j.toPush);
     return $;
   }
@@ -126,17 +127,26 @@ public class JSM3 implements Cloneable {
       $.append(" ");
     $.append(" S1: (").append(S1.size()).append(")\n");
     if (!S1.isEmpty())
-      for (Verb x : bnf.verbs)
-        if (S1.peek().get(x) != JAMMED) {
-          J j = S1.peek().get(x);
+      for (Verb x : bnf.verbs) {
+        J j = S1.peek().get(x);
+        if (j == JAMMED) {
+          for (int i = 0; i < ind; ++i)
+            $.append(" ");
+          $.append("  ").append(x).append(": JAMMED\n");
+        } else if (j == UNKNOWN) {
+          for (int i = 0; i < ind; ++i)
+            $.append(" ");
+          $.append("  ").append(x).append(": UNKNOWN\n");
+        } else {
           if (!seen.contains(j))
-            $.append(j.address().toString(ind + 2, x, seen, j.toPush));
+            $.append(j.address.toString(ind + 2, x, seen, j.toPush));
           else {
             for (int i = 0; i < ind; ++i)
               $.append(" ");
-            $.append("  ").append(x).append(": ").append(j.address().id()).append(" + ").append(j.toPush).append("\n");
+            $.append("  ").append(x).append(": ").append(j.address.id()).append(" + ").append(j.toPush).append("\n");
           }
         }
+      }
     for (int i = 0; i < ind; ++i)
       $.append(" ");
     return $.append("}\n").toString();
@@ -146,12 +156,16 @@ public class JSM3 implements Cloneable {
   }
 
   private static class J {
-    private final JSM3 address;
+    final JSM3 address;
     final List<Symbol> toPush;
 
     J(JSM3 address, List<Symbol> toPush) {
       this.address = address;
       this.toPush = toPush;
+    }
+    J() {
+      address = null;
+      toPush = null;
     }
     static J of(JSM3 address, List<Symbol> toPush) {
       return new J(address, toPush);
@@ -166,10 +180,9 @@ public class JSM3 implements Cloneable {
       return $;
     }
     @Override public boolean equals(Object obj) {
-      return obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
-    }
-    JSM3 address() {
-      return address/* .clone() */;
+      return obj == JAMMED ? this == JAMMED
+          : obj == UNKNOWN ? this == UNKNOWN
+              : obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
     }
     @Override public String toString() {
       return address.toString(0, null, new HashSet<>(), toPush);
