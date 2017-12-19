@@ -30,12 +30,8 @@ public class TestJumps extends Grammar {
         .start(S) //
         .derive(S).to(x, oneOrMore(y, option(x)));
   }
-  /**
-   * @throws IOException
-   */
   public static void main(String[] args) throws IOException {
     new TestJumps().generateGrammarFiles();
-    // testing();
   }
   public static void testing() {
     x().y().y().x().y().y().$();

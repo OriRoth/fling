@@ -7,6 +7,7 @@ import org.spartan.fajita.revision.examples.usage.Ancestor;
 import org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
+import org.spartan.fajita.revision.examples.malfunction.TestJumps;
 
 @SuppressWarnings("static-method") public class AllTest {
   @Test public void datalog() {
@@ -18,5 +19,6 @@ import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
     TestInclusiveExtendibles.testing();
     TestAnB.testing();
     TestAnBn.testing();
+    TestJumps.testing();
   }
 }
