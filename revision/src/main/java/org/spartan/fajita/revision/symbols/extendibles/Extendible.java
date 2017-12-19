@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
+import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 
@@ -20,4 +21,5 @@ public interface Extendible extends Symbol {
   @SuppressWarnings("rawtypes") List<Object> conclude(List values, BiFunction<Symbol, List, List> solution,
       Function<Symbol, Class> classSolution);
   void fixSymbols(Function<List<Symbol>, List<Symbol>> fix);
+  @Override NonTerminal head();
 }

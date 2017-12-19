@@ -65,6 +65,31 @@ public class RLLPEncoder3 {
     $.append("}");
     topClass = $.toString();
   }
+  // TODO Roth: code duplication in constructors
+  public RLLPEncoder3(Fajita fajita, Symbol nested) {
+    assert nested.isNonTerminal() || nested.isExtendible();
+    topClassName = fajita.apiName;
+    packagePath = fajita.packagePath;
+    topClassPath = packagePath + "." + topClassName;
+    startSymbol = nested.head().asNonTerminal();
+    provider = fajita.provider;
+    bnf = fajita.bnf().getSubBNF(startSymbol);
+    astTopClass = JamoosClassesRenderer.topClassName(bnf);
+    analyzer = new BNFAnalyzer(bnf);
+    namer = new Namer();
+    apiTypes = new ArrayList<>();
+    staticMethods = new ArrayList<>();
+    computeMembers();
+    StringBuilder $ = new StringBuilder();
+    $.append("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+        .append("(\"all\")").append(" public class ").append(topClassName).append("{");
+    for (String s : staticMethods)
+      $.append(s);
+    for (String s : apiTypes)
+      $.append(s);
+    $.append("}");
+    topClass = $.toString();
+  }
   private void computeMembers() {
     new MembersComputer().compute();
   }
@@ -200,7 +225,7 @@ public class RLLPEncoder3 {
       apiTypeNames.add("$");
     }
     private void compute$$$Type() {
-      apiTypes.add(new StringBuilder("private static class $$$ extends ") //
+      StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
           .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
           .append(String.join(",", apiTypeNames)).append("{").append(String.join("", //
               bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
@@ -212,9 +237,11 @@ public class RLLPEncoder3 {
                   .collect(toList()))) //
           .append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
           .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}") //
-          .append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf(),\"" //
-              + packagePath + "\");}")
-          .append("}").toString());
+          .append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
+      if (bnf.isSubBNF)
+        $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() + "." + startSymbol.name()).append("");
+      $.append(",\"" + packagePath + "\");}");
+      apiTypes.add($.append("}").toString());
     }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))

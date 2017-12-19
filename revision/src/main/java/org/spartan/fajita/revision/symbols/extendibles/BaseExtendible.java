@@ -31,7 +31,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
     assert !isSolved;
     symbols = fix.apply(symbols);
   }
-  @Override public Symbol head() {
+  @Override public NonTerminal head() {
     assert isSolved;
     return head;
   }
