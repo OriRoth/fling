@@ -5,7 +5,7 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.NT.B;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
-// import static org.spartan.fajita.revision.junk.TestAnBn.a;
+import static org.spartan.fajita.revision.junk.TestAnBn.a;
 
 import java.io.IOException;
 
@@ -33,11 +33,12 @@ public class TestAnBn extends Grammar {
   }
   public static void main(String[] args) throws IOException {
     new TestAnBn().generateGrammarFiles();
+    // testing();
   }
   public static void testing() {
-    // a().b().$();
-    // a().a().b().b().$();
-    // a().a().a().b().b().b().$();
-    // a().a().a().a().b().b().b().b().$();
+    a().b().$();
+    a().a().b().b().$();
+    a().a().a().b().b().b().$();
+    a().a().a().a().b().b().b().b().$();
   }
 }

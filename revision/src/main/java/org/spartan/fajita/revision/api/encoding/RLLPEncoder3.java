@@ -1,5 +1,6 @@
 package org.spartan.fajita.revision.api.encoding;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.spartan.fajita.revision.parser.rll.JSM3.JAMMED;
 import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
@@ -11,9 +12,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.spartan.fajita.revision.api.Fajita;
+import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
 import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.export.FluentAPIRecorder;
+import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.parser.rll.JSM3;
 import org.spartan.fajita.revision.symbols.NonTerminal;
@@ -24,48 +29,44 @@ import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 
 public class RLLPEncoder3 {
-  public static final String $_TYPE_NAME = "$";
   public final String topClassName;
   public final String topClass;
+  final NonTerminal startSymbol;
+  final String astTopClass;
   final BNF bnf;
   final BNFAnalyzer analyzer;
   final String packagePath;
+  final String topClassPath;
   final Namer namer;
   final List<String> apiTypes;
   final List<String> staticMethods;
-  final List<String> innerTypes;
+  final Class<? extends Grammar> provider;
 
-  public RLLPEncoder3(Fajita fajita) {
+  public RLLPEncoder3(Fajita fajita, NonTerminal start) {
     topClassName = fajita.apiName;
     packagePath = fajita.packagePath;
+    topClassPath = packagePath + "." + topClassName;
+    startSymbol = start;
+    provider = fajita.provider;
     bnf = fajita.bnf();
+    astTopClass = JamoosClassesRenderer.topClassName(bnf);
     analyzer = new BNFAnalyzer(bnf);
     namer = new Namer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
-    innerTypes = new ArrayList<>();
-    computeAPITypes();
-    computeStaticMethods();
-    computeInnerTypes();
+    computeMembers();
     StringBuilder $ = new StringBuilder();
-    $.append("package ").append(packagePath).append(";public class ").append(topClassName).append("{");
+    $.append("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+        .append("(\"all\")").append(" public class ").append(topClassName).append("{");
     for (String s : staticMethods)
       $.append(s);
     for (String s : apiTypes)
       $.append(s);
-    for (String s : innerTypes)
-      $.append(s);
     $.append("}");
     topClass = $.toString();
   }
-  private void computeStaticMethods() {
-    // TODO Auto-generated method stub
-  }
-  private void computeAPITypes() {
-    new APITypesComputer().compute();
-  }
-  private void computeInnerTypes() {
-    // TODO Auto-generated method stub
+  private void computeMembers() {
+    new MembersComputer().compute();
   }
 
   class Namer {
@@ -95,26 +96,32 @@ public class RLLPEncoder3 {
     }
   }
 
-  class APITypesComputer {
+  class MembersComputer {
+    // TODO Roth: check whether sufficient recognition
     private final Map<Symbol, Set<Set<Verb>>> seenTypes = new HashMap<>();
+    private final Set<String> apiTypeNames = new HashSet<>();
 
     public void compute() {
       compute$Type();
       for (NonTerminal nt : bnf.nonTerminals)
         if (!SpecialSymbols.augmentedStartSymbol.equals(nt))
-          compute(new JSM3(bnf, analyzer, nt), null, new HashSet<>());
+          compute(new JSM3(bnf, analyzer, nt), null, new HashSet<>(), v -> namer.name(v));
+      compute$$$Type();
+      computeStaticMethods();
+      computeErrorType();
     }
-    private String compute(JSM3 jsm, Verb origin, Set<Verb> parentLegalJumps) {
+    private String compute(JSM3 jsm, Verb origin, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution) {
       if (jsm == UNKNOWN)
-        return namer.name(origin);
+        return unknownSolution.apply(origin);
       if (jsm.isEmpty()) {
-        return parentLegalJumps.contains(origin) ? namer.name(origin) : $_TYPE_NAME;
+        return parentLegalJumps.contains(origin) ? namer.name(origin) : "$";
       }
       Symbol top = jsm.peek();
       Set<Verb> legalJumps = bnf.verbs.stream().filter(v -> jsm.jump(v) != JAMMED).collect(toSet());
       String $n = namer.name(top, legalJumps);
       if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
         return $n;
+      apiTypeNames.add($n);
       seenTypes.putIfAbsent(top, new HashSet<>());
       seenTypes.get(top).add(legalJumps);
       StringBuilder $ = new StringBuilder("public interface ").append($n);
@@ -126,15 +133,15 @@ public class RLLPEncoder3 {
       }
       $.append("{");
       for (Verb v : bnf.verbs)
-        $.append(computeMethod(jsm, top, v, legalJumps));
+        $.append(computeMethod(jsm, top, v, legalJumps, unknownSolution));
       apiTypes.add($.append("}").toString());
       return $n;
     }
-    private String computeMethod(JSM3 jsm, Symbol top, Verb v, Set<Verb> legalJumps) {
-      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps)
-          : computeMethod(jsm, top.asVerb(), v, legalJumps);
+    private String computeMethod(JSM3 jsm, Symbol top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
+      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution)
+          : computeMethod(jsm, top.asVerb(), v, legalJumps, unknownSolution);
     }
-    private String computeMethod(JSM3 jsm, NonTerminal top, Verb v, Set<Verb> legalJumps) {
+    private String computeMethod(JSM3 jsm, NonTerminal top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("public ");
       List<Symbol> c = analyzer.llClosure(top, v);
       String typeName;
@@ -142,18 +149,18 @@ public class RLLPEncoder3 {
       if (c == null) {
         if (!legalJumps.contains(v))
           return "";
-        typeName = compute(next = jsm.jump(v), v, legalJumps);
+        typeName = compute(next = jsm.jump(v), v, legalJumps, unknownSolution);
       } else
-        typeName = compute(next = jsm.pop().pushAll(c), v, legalJumps);
+        typeName = compute(next = jsm.pop().pushAll(c), v, legalJumps, unknownSolution);
       $.append(typeName);
       if (next != UNKNOWN)
-        $.append(computeTemplates(next, legalJumps));
+        $.append(computeTemplates(next, legalJumps, unknownSolution));
       return $.append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");").toString();
     }
-    private String computeMethod(JSM3 jsm, Verb top, Verb v, Set<Verb> legalJumps) {
-      return !top.equals(v) ? "" : compute(jsm.pop(), v, legalJumps);
+    private String computeMethod(JSM3 jsm, Verb top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
+      return !top.equals(v) ? "" : compute(jsm.pop(), v, legalJumps, unknownSolution);
     }
-    private String computeTemplates(JSM3 next, Set<Verb> parentLegalJumps) {
+    private String computeTemplates(JSM3 next, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution) {
       Set<Verb> nextLegalJumps = bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet());
       if (nextLegalJumps.isEmpty())
         return "";
@@ -162,12 +169,12 @@ public class RLLPEncoder3 {
       JSM3 nextNext;
       Symbol nextTop = next.peek();
       for (Verb nv : nextLegalJumps) {
-        String t = compute(nextNext = next.jump(nv), nv, parentLegalJumps);
+        String t = compute(nextNext = next.jump(nv), nv, parentLegalJumps, unknownSolution);
         if (!nextNext.isEmpty() && nextTop.equals(nextNext.peek()))
-          templates.add(namer.name(nv));
+          templates.add(unknownSolution.apply(nv));
         else {
           // TODO Roth: check whether correct legal jumps
-          t += computeTemplates(nextNext, parentLegalJumps);
+          t += computeTemplates(nextNext, parentLegalJumps, unknownSolution);
           templates.add(t);
         }
       }
@@ -176,14 +183,74 @@ public class RLLPEncoder3 {
     }
     private String parametersEncoding(ParameterType[] type) {
       List<String> $ = new ArrayList<>();
-      for (ParameterType t : type)
-        $.add(t.toString()); // TODO Roth: probably wrong
+      for (int i = 0; i < type.length; ++i)
+        // TODO Roth: probably wrong
+        $.add(type[i].toString() + " arg" + (i + 1));
+      return String.join(",", $);
+    }
+    private String parameterNamesEncoding(ParameterType[] type) {
+      List<String> $ = new ArrayList<>();
+      for (int i = 0; i < type.length; ++i)
+        $.add("arg" + (i + 1));
       return String.join(",", $);
     }
     private void compute$Type() {
-      StringBuilder $ = new StringBuilder("public interface ").append($_TYPE_NAME).append("{");
-      // TODO Roth: fill in $ method
-      apiTypes.add($.append("}").toString());
+      apiTypes.add(new StringBuilder("public interface ").append("$").append("{") //
+          .append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
+      apiTypeNames.add("$");
+    }
+    private void compute$$$Type() {
+      apiTypes.add(new StringBuilder("private static class $$$ extends ") //
+          .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
+          .append(String.join(",", apiTypeNames)).append("{").append(String.join("", //
+              bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
+                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
+                      + parametersEncoding(v.type) + "){recordTerminal(" //
+                      + v.terminal.getClass().getCanonicalName() //
+                      + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
+                      + parameterNamesEncoding(v.type) + ");return this;}")
+                  .collect(toList()))) //
+          .append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
+          .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}") //
+          .append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf(),\"" //
+              + packagePath + "\");}")
+          .append("}").toString());
+    }
+    private void computeStaticMethods() {
+      for (Verb v : analyzer.firstSetOf(startSymbol))
+        computeStaticMethod(v);
+    }
+    private void computeStaticMethod(Verb v) {
+      JSM3 jsm = new JSM3(bnf, analyzer, startSymbol);
+      Symbol top = jsm.peek();
+      Set<Verb> legalJumps = bnf.verbs.stream().filter(x -> jsm.jump(x) != JAMMED).collect(toSet());
+      staticMethods.add(new StringBuilder("public static ") //
+          .append(staticMethodTemplate(jsm, top, legalJumps, v, x -> "ParseError")) //
+          .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
+          .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
+              + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
+              + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
+          .toString());
+    }
+    private String staticMethodTemplate(JSM3 jsm, Symbol top, Set<Verb> legalJumps, Verb origin,
+        Function<Verb, String> unknownSolution) {
+      JSM3 next;
+      if (top.isVerb())
+        next = jsm.pop();
+      else {
+        List<Symbol> c = analyzer.llClosure(top.asNonTerminal(), origin);
+        if (c == null) {
+          if (!legalJumps.contains(origin))
+            assert false : "reachable?";
+          next = jsm.jump(origin);
+        } else
+          next = jsm.pop().pushAll(c);
+      }
+      return namer.name(next.peek(), bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet())) //
+          + computeTemplates(next, legalJumps, unknownSolution);
+    }
+    private void computeErrorType() {
+      apiTypes.add("private interface ParseError{}");
     }
   }
 }

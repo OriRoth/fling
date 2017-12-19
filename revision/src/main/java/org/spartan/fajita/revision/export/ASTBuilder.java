@@ -78,7 +78,7 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     return v.conclude(values, this::build);
   }
   @SuppressWarnings("unchecked") private Object instance(Class<?> c, List values) {
-    List ba = buildAll(values), arguments = new LinkedList();
+    List ba = (List) buildAll(values).stream().filter(x -> x != null).collect(toList()), arguments = new LinkedList();
     for (Object o : ba)
       arguments.addAll((List) o);
     try {

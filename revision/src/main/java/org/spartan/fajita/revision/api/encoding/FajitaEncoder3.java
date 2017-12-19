@@ -14,7 +14,7 @@ public class FajitaEncoder3 {
   }
   private Map<String, String> _encode() {
     Map<String, String> $ = new HashMap<>();
-    RLLPEncoder3 rllpe = new RLLPEncoder3(fajita);
+    RLLPEncoder3 rllpe = new RLLPEncoder3(fajita, fajita.startSymbols.iterator().next());
     $.put(rllpe.topClassName + ".java", rllpe.topClass);
     JamoosClassesRenderer jcr = JamoosClassesRenderer.render(fajita.ebnf(), fajita.packagePath);
     $.put(jcr.topClassName + ".java", jcr.topClass);

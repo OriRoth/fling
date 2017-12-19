@@ -23,7 +23,6 @@ public class ASTUtil {
   }
   private static Map<NonTerminal, Set<List<Symbol>>> sortRules(Map<NonTerminal, Set<List<Symbol>>> orig,
       DAG<NonTerminal> inheritance) {
-    clearEmptyRules(orig);
     clearAugSRules(orig);
     inheritance.clear();
     for (Entry<NonTerminal, Set<List<Symbol>>> e : orig.entrySet())
@@ -48,7 +47,7 @@ public class ASTUtil {
     }
     return $;
   }
-  private static void clearEmptyRules(Map<NonTerminal, Set<List<Symbol>>> rs) {
+  @SuppressWarnings("unused") private static void clearEmptyRules(Map<NonTerminal, Set<List<Symbol>>> rs) {
     List<Symbol> tbr = new LinkedList<>();
     rs.keySet().stream().forEach(k -> //
     rs.get(k).stream().forEach(c -> //
