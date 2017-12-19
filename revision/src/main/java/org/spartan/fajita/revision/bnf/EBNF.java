@@ -97,7 +97,7 @@ public final class EBNF {
   public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
     Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
-      $.putIfAbsent(r.lhs, new HashSet<>());
+      $.putIfAbsent(r.lhs, new LinkedHashSet<>());
       $.get(r.lhs).add(r.getRHS());
     }
     return $;

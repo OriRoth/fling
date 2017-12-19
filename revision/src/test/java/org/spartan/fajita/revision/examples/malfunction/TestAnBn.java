@@ -33,7 +33,6 @@ public class TestAnBn extends Grammar {
   }
   public static void main(String[] args) throws IOException {
     new TestAnBn().generateGrammarFiles();
-    // testing();
   }
   public static void testing() {
     a().b().$();
