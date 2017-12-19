@@ -1,8 +1,7 @@
 package org.spartan.fajita.revision.ast.encoding;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +32,7 @@ public class ASTUtil {
               inheritance.initialize((NonTerminal) s);
               inheritance.add((NonTerminal) s, e.getKey());
             }
-    Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>(), remain = new HashMap<>(orig);
+    Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>(), remain = new LinkedHashMap<>(orig);
     orig.keySet().stream().filter(x -> !inheritance.containsKey(x)).forEach(x -> {
       $.put(x, orig.get(x));
       remain.remove(x);
@@ -48,7 +47,7 @@ public class ASTUtil {
     return $;
   }
   @SuppressWarnings("unused") private static void clearEmptyRules(Map<NonTerminal, Set<List<Symbol>>> rs) {
-    List<Symbol> tbr = new LinkedList<>();
+    List<Symbol> tbr = new ArrayList<>();
     rs.keySet().stream().forEach(k -> //
     rs.get(k).stream().forEach(c -> //
     c.stream().filter(l -> //

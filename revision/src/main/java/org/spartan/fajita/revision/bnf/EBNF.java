@@ -2,8 +2,8 @@ package org.spartan.fajita.revision.bnf;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +59,7 @@ public final class EBNF {
   // TODO Roth: use normalized form here
   public BNF toBNF(Function<NonTerminal, NonTerminal> producer) {
     Set<DerivationRule> rs = new LinkedHashSet<>();
-    nestedSymbolsMapping = new HashMap<>();
+    nestedSymbolsMapping = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
       List<Symbol> rhs = new LinkedList<>();
       for (Symbol s : r.getRHS()) {
@@ -95,7 +95,7 @@ public final class EBNF {
     return $;
   }
   public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
-    Map<NonTerminal, Set<List<Symbol>>> $ = new HashMap<>();
+    Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
       $.putIfAbsent(r.lhs, new HashSet<>());
       $.get(r.lhs).add(r.getRHS());
@@ -104,7 +104,7 @@ public final class EBNF {
   }
   public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(Function<NonTerminal, NonTerminal> producer) {
     toBNF(producer);
-    Map<Symbol, Set<List<Symbol>>> $ = new HashMap<>(normalizedForm(producer));
+    Map<Symbol, Set<List<Symbol>>> $ = new LinkedHashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
       for (DerivationRule r : e.rawSolution()) {
@@ -115,7 +115,7 @@ public final class EBNF {
     return $;
   }
   public Map<NonTerminal, Set<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
-    Map<NonTerminal, Set<List<Symbol>>> rf = regularForm(), $ = new HashMap<>();
+    Map<NonTerminal, Set<List<Symbol>>> rf = regularForm(), $ = new LinkedHashMap<>();
     for (Entry<NonTerminal, Set<List<Symbol>>> e : rf.entrySet()) {
       NonTerminal lhs = e.getKey();
       Set<List<Symbol>> rhs = e.getValue();

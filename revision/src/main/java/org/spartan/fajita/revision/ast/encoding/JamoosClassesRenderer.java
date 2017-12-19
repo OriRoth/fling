@@ -4,9 +4,8 @@ import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.revision.ast.encoding.ASTUtil.isInheritanceRule;
 import static org.spartan.fajita.revision.ast.encoding.ASTUtil.normalize;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +34,13 @@ public class JamoosClassesRenderer {
   protected final String packagePath;
   protected final DAG<NonTerminal> inheritance;
   protected DAG<NonTerminal> reversedInheritance;
-  protected Set<NonTerminal> abstractNonTerminals = new HashSet<>();
+  protected Set<NonTerminal> abstractNonTerminals = new LinkedHashSet<>();
   protected List<String> innerClasses = new LinkedList<>();
   public String topClass;
-  protected Map<NonTerminal, Map<NonTerminal, List<Symbol>>> concreteClassesMapping = new HashMap<>();
-  protected Map<String, Integer> innerClassesUsedNames = new HashMap<>();
-  protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new HashMap<>();
-  protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new HashMap<>();
+  protected Map<NonTerminal, Map<NonTerminal, List<Symbol>>> concreteClassesMapping = new LinkedHashMap<>();
+  protected Map<String, Integer> innerClassesUsedNames = new LinkedHashMap<>();
+  protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new LinkedHashMap<>();
+  protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new LinkedHashMap<>();
   protected Map<NonTerminal, Set<List<Symbol>>> n;
   protected EBNFAnalyzer analyzer;
   private JamoosClassesRenderer actual = this;
@@ -152,7 +151,7 @@ public class JamoosClassesRenderer {
   }
   protected String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))
-      innerClassesFieldUsedNames.put(lhs, new HashMap<>());
+      innerClassesFieldUsedNames.put(lhs, new LinkedHashMap<>());
     Map<String, Integer> names = innerClassesFieldUsedNames.get(lhs);
     if (!names.containsKey(name)) {
       names.put(name, Integer.valueOf(0));

@@ -7,8 +7,8 @@ import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,8 +95,8 @@ public class RLLPEncoder3 {
   }
 
   class Namer {
-    private final Map<Verb, String> verbNames = new HashMap<>();
-    private final Map<Terminal, Integer> terminalCounts = new HashMap<>();
+    private final Map<Verb, String> verbNames = new LinkedHashMap<>();
+    private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
     private final List<Verb> verbsOrder = new ArrayList<>(bnf.verbs);
     {
       Collections.sort(verbsOrder);
@@ -123,23 +123,24 @@ public class RLLPEncoder3 {
 
   class MembersComputer {
     // TODO Roth: check whether sufficient recognition
-    private final Map<Symbol, Set<Set<Verb>>> seenTypes = new HashMap<>();
-    private final Set<String> apiTypeNames = new HashSet<>();
+    private final Map<Symbol, Set<Set<Verb>>> seenTypes = new LinkedHashMap<>();
+    private final Set<String> apiTypeNames = new LinkedHashSet<>();
 
     public void compute() {
       compute$Type();
       for (NonTerminal nt : bnf.nonTerminals)
         if (!SpecialSymbols.augmentedStartSymbol.equals(nt))
-          compute(new JSM3(bnf, analyzer, nt), null, new HashSet<>(), v -> namer.name(v));
+          compute(new JSM3(bnf, analyzer, nt), null, new LinkedHashSet<>(), v -> namer.name(v), v -> namer.name(v));
       compute$$$Type();
       computeStaticMethods();
       computeErrorType();
     }
-    private String compute(JSM3 jsm, Verb origin, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution) {
+    private String compute(JSM3 jsm, Verb origin, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution,
+        Function<Verb, String> emptySolution) {
       if (jsm == UNKNOWN)
         return unknownSolution.apply(origin);
       if (jsm.isEmpty()) {
-        return parentLegalJumps.contains(origin) ? namer.name(origin) : "$";
+        return parentLegalJumps.contains(origin) ? emptySolution.apply(origin) : "$";
       }
       Symbol top = jsm.peek();
       Set<Verb> legalJumps = bnf.verbs.stream().filter(v -> jsm.jump(v) != JAMMED).collect(toSet());
@@ -147,7 +148,7 @@ public class RLLPEncoder3 {
       if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
         return $n;
       apiTypeNames.add($n);
-      seenTypes.putIfAbsent(top, new HashSet<>());
+      seenTypes.putIfAbsent(top, new LinkedHashSet<>());
       seenTypes.get(top).add(legalJumps);
       StringBuilder $ = new StringBuilder("public interface ").append($n);
       if (!legalJumps.isEmpty()) {
@@ -158,15 +159,17 @@ public class RLLPEncoder3 {
       }
       $.append("{");
       for (Verb v : bnf.verbs)
-        $.append(computeMethod(jsm, top, v, legalJumps, unknownSolution));
+        $.append(computeMethod(jsm, top, v, legalJumps, unknownSolution, emptySolution));
       apiTypes.add($.append("}").toString());
       return $n;
     }
-    private String computeMethod(JSM3 jsm, Symbol top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
-      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution)
-          : computeMethod(jsm, top.asVerb(), v, legalJumps, unknownSolution);
+    private String computeMethod(JSM3 jsm, Symbol top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution,
+        Function<Verb, String> emptySolution) {
+      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution)
+          : computeMethod(jsm, top.asVerb(), v, legalJumps, unknownSolution, emptySolution);
     }
-    private String computeMethod(JSM3 jsm, NonTerminal top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
+    private String computeMethod(JSM3 jsm, NonTerminal top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution,
+        Function<Verb, String> emptySolution) {
       StringBuilder $ = new StringBuilder("public ");
       List<Symbol> c = analyzer.llClosure(top, v);
       String typeName;
@@ -174,18 +177,20 @@ public class RLLPEncoder3 {
       if (c == null) {
         if (!legalJumps.contains(v))
           return "";
-        typeName = compute(next = jsm.jump(v), v, legalJumps, unknownSolution);
+        typeName = compute(next = jsm.jump(v), v, legalJumps, unknownSolution, emptySolution);
       } else
-        typeName = compute(next = jsm.pop().pushAll(c), v, legalJumps, unknownSolution);
+        typeName = compute(next = jsm.pop().pushAll(c), v, legalJumps, unknownSolution, emptySolution);
       $.append(typeName);
       if (next != UNKNOWN)
-        $.append(computeTemplates(next, legalJumps, unknownSolution));
+        $.append(computeTemplates(next, legalJumps, unknownSolution, emptySolution));
       return $.append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");").toString();
     }
-    private String computeMethod(JSM3 jsm, Verb top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution) {
-      return !top.equals(v) ? "" : compute(jsm.pop(), v, legalJumps, unknownSolution);
+    private String computeMethod(JSM3 jsm, Verb top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution,
+        Function<Verb, String> emptySolution) {
+      return !top.equals(v) ? "" : compute(jsm.pop(), v, legalJumps, unknownSolution, emptySolution);
     }
-    private String computeTemplates(JSM3 next, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution) {
+    private String computeTemplates(JSM3 next, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution,
+        Function<Verb, String> emptySolution) {
       Set<Verb> nextLegalJumps = bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet());
       if (nextLegalJumps.isEmpty())
         return "";
@@ -194,12 +199,12 @@ public class RLLPEncoder3 {
       JSM3 nextNext;
       Symbol nextTop = next.peek();
       for (Verb nv : nextLegalJumps) {
-        String t = compute(nextNext = next.jump(nv), nv, parentLegalJumps, unknownSolution);
+        String t = compute(nextNext = next.jump(nv), nv, parentLegalJumps, unknownSolution, emptySolution);
         if (!nextNext.isEmpty() && nextTop.equals(nextNext.peek()))
           templates.add(unknownSolution.apply(nv));
         else {
           // TODO Roth: check whether correct legal jumps
-          t += computeTemplates(nextNext, parentLegalJumps, unknownSolution);
+          t += computeTemplates(nextNext, parentLegalJumps, unknownSolution, emptySolution);
           templates.add(t);
         }
       }
@@ -252,7 +257,7 @@ public class RLLPEncoder3 {
       Symbol top = jsm.peek();
       Set<Verb> legalJumps = bnf.verbs.stream().filter(x -> jsm.jump(x) != JAMMED).collect(toSet());
       staticMethods.add(new StringBuilder("public static ") //
-          .append(staticMethodTemplate(jsm, top, legalJumps, v, x -> "ParseError")) //
+          .append(staticMethodTemplate(jsm, top, legalJumps, v, x -> "ParseError", x -> "$")) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
@@ -260,7 +265,7 @@ public class RLLPEncoder3 {
           .toString());
     }
     private String staticMethodTemplate(JSM3 jsm, Symbol top, Set<Verb> legalJumps, Verb origin,
-        Function<Verb, String> unknownSolution) {
+        Function<Verb, String> unknownSolution, Function<Verb, String> emptySolution) {
       JSM3 next;
       if (top.isVerb())
         next = jsm.pop();
@@ -274,7 +279,7 @@ public class RLLPEncoder3 {
           next = jsm.pop().pushAll(c);
       }
       return namer.name(next.peek(), bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet())) //
-          + computeTemplates(next, legalJumps, unknownSolution);
+          + computeTemplates(next, legalJumps, unknownSolution, emptySolution);
     }
     private void computeErrorType() {
       apiTypes.add("private interface ParseError{}");

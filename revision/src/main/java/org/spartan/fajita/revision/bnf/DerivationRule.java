@@ -1,7 +1,6 @@
 package org.spartan.fajita.revision.bnf;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.spartan.fajita.revision.symbols.NonTerminal;
@@ -35,7 +34,7 @@ public class DerivationRule {
     return rhs.size();
   }
   public List<Symbol> getRHS() {
-    return new LinkedList<>(rhs);
+    return new ArrayList<>(rhs);
   }
   public List<Symbol> getRHSSuffix(int from) {
     return getRHS().subList(from, rhs.size());

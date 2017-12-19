@@ -1,6 +1,6 @@
 package org.spartan.fajita.revision.api.encoding;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.spartan.fajita.revision.export.ASTNode;
@@ -12,7 +12,7 @@ import com.squareup.javapoet.ClassName;
 
 public class EncoderUtils {
   public static final String error = "ParseError";
-  private final Map<Item, String> itemNames = new HashMap<>();
+  private final Map<Item, String> itemNames = new LinkedHashMap<>();
 
   private static String utilsPath() {
     return ASTNode.class.getPackage().getName();

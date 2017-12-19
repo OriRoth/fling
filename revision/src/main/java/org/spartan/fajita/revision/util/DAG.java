@@ -1,10 +1,10 @@
 package org.spartan.fajita.revision.util;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class DAG<N> extends HashMap<N, Set<N>> {
+public class DAG<N> extends LinkedHashMap<N, Set<N>> {
   private static final long serialVersionUID = -5357744620287200470L;
 
   public Set<N> initialize(N node) {

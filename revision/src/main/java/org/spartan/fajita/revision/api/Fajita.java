@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,15 +48,15 @@ public class Fajita {
     nonTerminals = new LinkedHashSet<>(EnumSet.allOf(nonterminalEnum));
     derivationRules = new LinkedHashSet<>();
     startSymbols = new LinkedHashSet<>();
-    nestedParameters = new HashSet<>();
-    extendibles = new HashSet<>();
+    nestedParameters = new LinkedHashSet<>();
+    extendibles = new LinkedHashSet<>();
     this.provider = provider;
     this.apiName = apiName;
     this.packagePath = packagePath;
     this.projectPath = projectPath;
   }
   public static Function<NonTerminal, NonTerminal> producer() {
-    Map<NonTerminal, Integer> counter = new HashMap<>();
+    Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
     Function<NonTerminal, String> namer = lhs -> {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
       return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
