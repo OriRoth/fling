@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import org.spartan.fajita.revision.bnf.BNF;
@@ -33,6 +34,9 @@ public class BNFAnalyzer {
     baseFirstSets = calculateSymbolFirstSet();
     followSets = calculateFollowSets();
     llClosure = new HashMap<>();
+    for (NonTerminal nt : bnf.nonTerminals)
+      for (Verb v : bnf.verbs)
+        llClosure(nt, v);
   }
   private Collection<NonTerminal> calculateNullableSymbols() {
     Set<NonTerminal> nullables = new HashSet<>();
@@ -122,26 +126,29 @@ public class BNFAnalyzer {
       llClosure.get(nt).put(v, null);
       return null;
     }
-    List<Symbol> $ = new ArrayList<>();
-    NonTerminal current = nt;
-    while (true) {
-      if (bnf.getRulesOf(current).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v))) {
-        assert isNullable(current) && followSetOf(current).contains(v);
-        $.add(nt);
-        return $;
-      }
-      DerivationRule prediction = bnf.getRulesOf(current).stream() //
-          .filter(d -> firstSetOf(d.getRHS()).contains(v)) //
-          .findAny().get();
-      final List<Symbol> rhs = prediction.getRHS();
-      Collections.reverse(rhs);
-      Symbol first = rhs.remove(rhs.size() - 1);
-      $.addAll(rhs);
-      if (first.isVerb()) {
+    Stack<Symbol> $ = new Stack<>();
+    $.add(nt);
+    outer: for (;;) {
+      if ($.isEmpty()) {
         llClosure.get(nt).put(v, $);
         return $;
       }
-      current = (NonTerminal) first;
+      Symbol current = $.pop();
+      if (current.isVerb()) {
+        assert current.equals(v);
+        llClosure.get(nt).put(v, $);
+        return $;
+      }
+      assert current.isNonTerminal();
+      for (DerivationRule r : bnf.getRulesOf(current.asNonTerminal()))
+        if (firstSetOf(r.getRHS()).contains(v)) {
+          List<Symbol> a = new ArrayList<>(r.getRHS());
+          Collections.reverse(a);
+          for (Symbol s : a)
+            $.push(s);
+          continue outer;
+        }
+      assert isNullable(current);
     }
   }
   public boolean isNullable(List<Symbol> expr) {
