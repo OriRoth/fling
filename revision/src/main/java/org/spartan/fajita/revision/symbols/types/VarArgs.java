@@ -19,6 +19,9 @@ public class VarArgs implements ParameterType {
     this.clazz = clazz;
   }
   @Override public String toString() {
+    return aclazz.getTypeName();
+  }
+  @Override public String toParameterString() {
     return clazz.getTypeName() + "...";
   }
   @Override public int hashCode() {

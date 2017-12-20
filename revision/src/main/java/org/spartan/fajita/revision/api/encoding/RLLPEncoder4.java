@@ -5,7 +5,6 @@ import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.function.Function;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
@@ -24,6 +24,7 @@ import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
+import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 
 public class RLLPEncoder4 {
@@ -123,7 +124,6 @@ public class RLLPEncoder4 {
     // TODO Roth: check whether sufficient recognition
     private final Map<Symbol, Set<Set<Verb>>> seenTypes = new LinkedHashMap<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
-    private final Set<Verb> terminusVerbs = new HashSet<>();
 
     public void compute() {
       if (!bnf.isSubBNF)
@@ -139,14 +139,8 @@ public class RLLPEncoder4 {
         Function<Verb, String> emptySolution) {
       if (jsm == UNKNOWN)
         return unknownSolution.apply(origin);
-      if (jsm.isEmpty()) {
-        if (parentLegalJumps.contains(origin))
-          return emptySolution.apply(origin);
-        if (!bnf.isSubBNF)
-          return "$";
-        terminusVerbs.add(origin);
-        return startSymbol.name();
-      }
+      if (jsm.isEmpty())
+        return parentLegalJumps.contains(origin) ? emptySolution.apply(origin) : !bnf.isSubBNF ? "$" : "$$$";
       Symbol top = jsm.peek();
       Set<Verb> legalJumps = jsm.legalJumps();
       String $n = namer.name(top, legalJumps);
@@ -165,14 +159,14 @@ public class RLLPEncoder4 {
       $.append("{");
       for (Verb v : bnf.verbs)
         $.append(computeMethod(jsm, top, v, legalJumps, unknownSolution, emptySolution));
-      if (top.isNonTerminal() && analyzer.followSetOf(top.asNonTerminal()).contains(SpecialSymbols.$))
+      if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.followSetOf(top.asNonTerminal()).contains(SpecialSymbols.$))
         $.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add($.append("}").toString());
       return $n;
     }
     private String computeMethod(JSM3 jsm, Symbol top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution,
         Function<Verb, String> emptySolution) {
-      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution)
+      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution) //
           : computeMethod(jsm, top.asVerb(), v, legalJumps, unknownSolution, emptySolution);
     }
     private String computeMethod(JSM3 jsm, NonTerminal top, Verb v, Set<Verb> legalJumps, Function<Verb, String> unknownSolution,
@@ -241,7 +235,7 @@ public class RLLPEncoder4 {
     private String parametersEncoding(ParameterType[] type) {
       List<String> $ = new ArrayList<>();
       for (int i = 0; i < type.length; ++i)
-        $.add(type[i].toString() + " arg" + (i + 1));
+        $.add((type[i] instanceof NestedType ? ASTNode.class.getCanonicalName() : type[i].toParameterString()) + " arg" + (i + 1));
       return String.join(",", $);
     }
     private String parameterNamesEncoding(ParameterType[] type) {
@@ -256,12 +250,13 @@ public class RLLPEncoder4 {
       apiTypeNames.add("$");
     }
     private void compute$$$Type() {
+      List<String> superInterfaces = new ArrayList<>(apiTypeNames);
+      superInterfaces.add(ASTNode.class.getCanonicalName());
       StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
           .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
-          .append(String.join(",", apiTypeNames)).append("{").append(String.join("", //
+          .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
               bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
-                  .map(v -> "public " + (!terminusVerbs.contains(v) ? "$$$" : startSymbol.name()) //
-                      + " " + v.terminal.name() + "(" //
+                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
                       + parametersEncoding(v.type) + "){recordTerminal(" //
                       + v.terminal.getClass().getCanonicalName() //
                       + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
