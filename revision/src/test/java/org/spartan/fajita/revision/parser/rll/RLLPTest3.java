@@ -87,10 +87,18 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
     assert !rllp.rejected();
     assert rllp.accepted();
   }
-  @Test public void anbncd() {
+  @Test public void anbncd1() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnBnCD().bnf().bnf());
     rllp.consume( //
         a2, b2 //
+    );
+    assert !rllp.rejected();
+    assert rllp.accepted();
+  }
+  @Test public void anbncd2() {
+    RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnBnCD().bnf().bnf());
+    rllp.consume( //
+        a2, c2, a2, a2, d2, c2, a2, d2, b2, e2, b2, b2, f2, e2, b2, f2 //
     );
     assert !rllp.rejected();
     assert rllp.accepted();

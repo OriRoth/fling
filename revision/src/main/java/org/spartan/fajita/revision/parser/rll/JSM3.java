@@ -106,7 +106,6 @@ public class JSM3 implements Cloneable {
         if (!analyzer.followSetOf(nt).contains(v))
           m.put(v, J.JJAMMED);
       } else {
-        System.out.println(nt + " | " + v + " | " + c);
         J j = J.of(clone(), c);
         m.put(v, j);
         List<Symbol> l = getS0();
