@@ -220,7 +220,7 @@ public class RLLPEncoder4 {
       return computeType(tc);
     }
     private String computeType(JSMTypeComputer tc) {
-      assert !tc.isRecursive(); // TODO Roth: deal with it
+      assert !tc.recFlag; // TODO Roth: deal with it
       StringBuilder $ = new StringBuilder();
       $.append(tc.typeName);
       if (!tc.templates.isEmpty()) {
