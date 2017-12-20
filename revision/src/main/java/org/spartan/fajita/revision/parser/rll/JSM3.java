@@ -3,10 +3,12 @@ package org.spartan.fajita.revision.parser.rll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
@@ -113,6 +115,9 @@ public class JSM3 implements Cloneable {
       }
     }
     S1.push(m);
+  }
+  public Set<Verb> legalJumps() {
+    return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList()));
   }
   private Map<Verb, J> emptyMap(Symbol initial) {
     Map<Verb, J> $ = new HashMap<>();

@@ -1,8 +1,6 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.spartan.fajita.revision.parser.rll.JSM3.JAMMED;
 import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 
 import java.util.ArrayList;
@@ -143,7 +141,7 @@ public class RLLPEncoder3 {
         return parentLegalJumps.contains(origin) ? emptySolution.apply(origin) : "$";
       }
       Symbol top = jsm.peek();
-      Set<Verb> legalJumps = bnf.verbs.stream().filter(v -> jsm.jump(v) != JAMMED).collect(toSet());
+      Set<Verb> legalJumps = jsm.legalJumps();
       String $n = namer.name(top, legalJumps);
       if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
         return $n;
@@ -191,7 +189,7 @@ public class RLLPEncoder3 {
     }
     private String computeTemplates(JSM3 next, Set<Verb> parentLegalJumps, Function<Verb, String> unknownSolution,
         Function<Verb, String> emptySolution) {
-      Set<Verb> nextLegalJumps = bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet());
+      Set<Verb> nextLegalJumps = next.legalJumps();
       if (nextLegalJumps.isEmpty())
         return "";
       StringBuilder $ = new StringBuilder("<");
@@ -255,7 +253,7 @@ public class RLLPEncoder3 {
     private void computeStaticMethod(Verb v) {
       JSM3 jsm = new JSM3(bnf, analyzer, startSymbol);
       Symbol top = jsm.peek();
-      Set<Verb> legalJumps = bnf.verbs.stream().filter(x -> jsm.jump(x) != JAMMED).collect(toSet());
+      Set<Verb> legalJumps = jsm.legalJumps();
       staticMethods.add(new StringBuilder("public static ") //
           .append(staticMethodTemplate(jsm, top, legalJumps, v, x -> "ParseError", x -> "$")) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
@@ -278,7 +276,7 @@ public class RLLPEncoder3 {
         } else
           next = jsm.pop().pushAll(c);
       }
-      return namer.name(next.peek(), bnf.verbs.stream().filter(x -> next.jump(x) != JAMMED).collect(toSet())) //
+      return namer.name(next.peek(), next.legalJumps()) //
           + computeTemplates(next, legalJumps, unknownSolution, emptySolution);
     }
     private void computeErrorType() {
