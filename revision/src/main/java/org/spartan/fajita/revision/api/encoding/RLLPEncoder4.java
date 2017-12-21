@@ -281,8 +281,8 @@ public class RLLPEncoder4 {
       assert top.isNonTerminal();
       Set<Verb> legalJumps = jsm.legalJumps();
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(jsm, top.asNonTerminal(), v, legalJumps, x -> "ParseError",
-              x -> !bnf.isSubBNF ? "$" : startSymbol.name())) //
+          .append(computeType(jsm, top.asNonTerminal(), v, legalJumps, x -> !bnf.isSubBNF ? "$" : "$$$",
+              x -> !bnf.isSubBNF ? "$" : "$$$")) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
