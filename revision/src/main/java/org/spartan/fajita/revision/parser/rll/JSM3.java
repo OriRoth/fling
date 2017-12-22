@@ -3,7 +3,7 @@ package org.spartan.fajita.revision.parser.rll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
@@ -116,13 +117,16 @@ public class JSM3 implements Cloneable {
     }
     S1.push(m);
   }
-  public Set<Verb> legalJumps() {
-    return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList()));
+  public List<Verb> legalJumps() {
+    return new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList()));
   }
   private Map<Verb, J> emptyMap(Symbol initial) {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v, initial.isNonTerminal() && analyzer.llClosure(initial.asNonTerminal(), v) != null ? J.JUNKNOWN : J.JJAMMED);
+      $.put(v,
+          !SpecialSymbols.$.equals(v) && initial.isNonTerminal() && analyzer.followSetOf(initial.asNonTerminal()).contains(v)
+              ? J.JUNKNOWN
+              : J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {

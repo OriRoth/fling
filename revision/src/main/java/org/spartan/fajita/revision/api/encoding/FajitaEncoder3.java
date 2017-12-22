@@ -18,11 +18,11 @@ public class FajitaEncoder3 {
     Map<String, String> $ = new HashMap<>();
     String astTopClass = JamoosClassesRenderer.topClassName(fajita.bnf());
     for (NonTerminal start : fajita.startSymbols) {
-      RLLPEncoder5 rllpe = new RLLPEncoder5(fajita, start, astTopClass);
+      RLLPEncoder6 rllpe = new RLLPEncoder6(fajita, start, astTopClass);
       $.put(rllpe.topClassName + ".java", rllpe.topClass);
     }
     for (Symbol nested : fajita.nestedParameters) {
-      RLLPEncoder5 rllpe = new RLLPEncoder5(fajita, nested, astTopClass);
+      RLLPEncoder6 rllpe = new RLLPEncoder6(fajita, nested, astTopClass);
       $.put(rllpe.topClassName + ".java", rllpe.topClass);
     }
     JamoosClassesRenderer jcr = JamoosClassesRenderer.render(fajita.ebnf(), fajita.packagePath);
