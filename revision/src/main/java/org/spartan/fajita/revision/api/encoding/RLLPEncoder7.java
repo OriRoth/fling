@@ -2,6 +2,7 @@ package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
+import static org.spartan.fajita.revision.parser.rll.JSM3.JAMMED;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,8 +101,8 @@ public class RLLPEncoder7 {
     private final Map<Verb, String> verbNames = new LinkedHashMap<>();
     private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
     private final List<Verb> verbsOrder = new ArrayList<>(bnf.verbs);
-    private Map<JSMTypeComputer, MethodSkeleton> recNames = new LinkedHashMap<>();
-    private int recCount = 0;
+    private final Map<JSMTypeComputer, String> seenRecs = new LinkedHashMap<>();
+    private int recCount;
     {
       Collections.sort(verbsOrder);
     }
@@ -123,10 +124,10 @@ public class RLLPEncoder7 {
           $.append(name(v));
       return $.toString();
     }
-    public MethodSkeleton name(JSMTypeComputer recursive) {
-      if (!recNames.containsKey(recursive))
-        recNames.put(recursive, new MethodSkeleton().append("REC$" + (++recCount) + "$" + recursive.originalTypeName));
-      return recNames.get(recursive);
+    public MethodSkeleton name(JSMTypeComputer recursiveRoot) {
+      if (!seenRecs.containsKey(recursiveRoot))
+        seenRecs.put(recursiveRoot, "REC$" + (++recCount) + "$" + recursiveRoot.typeName);
+      return new MethodSkeleton().append(seenRecs.get(recursiveRoot));
     }
   }
 
@@ -135,7 +136,7 @@ public class RLLPEncoder7 {
     private final Map<Symbol, Set<List<Verb>>> seenTypes = new LinkedHashMap<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
     private final Map<String, MethodSkeleton> apiTypeSkeletons = new LinkedHashMap<>();
-    private final Map<JSMTypeComputer, MethodSkeleton> recNames = new LinkedHashMap<>();
+    private final Set<JSMTypeComputer> seenRecs = new LinkedHashSet<>();
 
     public void compute() {
       if (!bnf.isSubBNF)
@@ -221,7 +222,7 @@ public class RLLPEncoder7 {
       } else
         typeName = compute(next = jsm.pop().pushAll(c), v, baseLegalJumps, unknownSolution, emptySolution);
       JSMTypeComputer tc = new JSMTypeComputer(typeName, jsm, jsm.legalJumps(baseLegalJumps), next, parent);
-      if (next != UNKNOWN && !tc.checkRecursive())
+      if (next != UNKNOWN && !tc.isRecursive())
         computeTemplates(tc, next, baseLegalJumps, unknownSolution, emptySolution);
       return tc;
     }
@@ -241,11 +242,14 @@ public class RLLPEncoder7 {
       for (JSMTypeComputer c : tc.templates)
         computeType(c);
       if (tc.isRecursive()) {
-        tc.originalTypeName = tc.typeName.asSimpleName();
-        tc.setTypeName(tc, namer.name(tc));
-        tc.recFlag = false;
-        if (!recNames.containsKey(tc))
-          recNames.put(tc, namer.name(tc));
+        JSMTypeComputer root = tc.root();
+        tc.typeName = namer.name(root);
+        seenRecs.add(root);
+        tc.templates.clear();
+        assert root.legalJumps.equals(tc.legalJumps);
+        // NOTE can be improved to remove obsolete generics
+        for (Verb v : root.legalJumps)
+          tc.templates.add(new JSMTypeComputer(new MethodSkeleton().append(namer.name(v)), UNKNOWN, new ArrayList<>(), JAMMED));
       }
       $.append(tc.typeName);
       if (!tc.hasTemplates)
@@ -288,24 +292,14 @@ public class RLLPEncoder7 {
       apiTypes.add($.append("}").toString());
     }
     private void computeRecTypes() {
-      for (JSMTypeComputer t : recNames.keySet())
-        // computeRecType(t)
-        ;
+      for (JSMTypeComputer t : seenRecs)
+        computeRecRoot(t);
     }
-    // private void computeRecType(JSMTypeComputer t) {
-    // String n = t.typeName.asSimpleName();
-    // List<Verb> nextLegalJumps = t.nextJSM.legalJumps();
-    // // NOTE verbs of {@link JSM3#legalJumps()} should be deterministically
-    // ordered
-    // Function<Verb, String> solution = v -> !nextLegalJumps.contains(v) ?
-    // "ParseError" : namer.name(v), recursiveSolution = //
-    // v -> !nextLegalJumps.contains(v) ? "ParseError"
-    // : computeType(t.templates.get(nextLegalJumps.indexOf(v))).toString(solution,
-    // solution);
-    // apiTypes.add(apiTypeSkeletons.get(t.originalTypeName).toString(recursiveSolution,
-    // recursiveSolution, n));
-    // apiTypeNames.add(n);
-    // }
+    private void computeRecRoot(JSMTypeComputer t) {
+      String n = t.typeName.asSimpleName();
+      apiTypes.add(apiTypeSkeletons.get(t.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E", n));
+      apiTypeNames.add(n);
+    }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))
         computeStaticMethod(v);
@@ -441,8 +435,6 @@ public class RLLPEncoder7 {
     JSM3 nextJSM;
     private final JSMTypeComputer parent;
     final List<JSMTypeComputer> templates;
-    boolean recFlag;
-    String originalTypeName;
 
     public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM) {
       this(typeName, jsm, legalJumps, nextJSM, null, false);
@@ -460,34 +452,39 @@ public class RLLPEncoder7 {
       this.templates = new ArrayList<>();
       this.hasTemplates = hasTemplates;
     }
-    public boolean checkRecursive() {
-      for (JSMTypeComputer current = parent; current != null; current = current.parent) {
-        if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps)) {
-          current.recFlag = true;
+    public boolean isRecursive() {
+      for (JSMTypeComputer current = parent; current != null; current = current.parent)
+        if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps))
           return true;
-        }
-      }
       return false;
     }
-    public boolean isRecursive() {
-      return recFlag;
+    JSMTypeComputer getRecursiveAncestor() {
+      for (JSMTypeComputer current = parent; current != null; current = current.parent)
+        if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps))
+          return current;
+      return null;
     }
     public boolean hasRecursion() {
-      return recFlag || templates.stream().anyMatch(JSMTypeComputer::hasRecursion);
+      return isRecursive() || templates.stream().anyMatch(JSMTypeComputer::hasRecursion);
     }
-    public void setTypeName(JSMTypeComputer origin, MethodSkeleton newTypeName) {
-      if (jsm.equals(origin.jsm))
-        typeName = newTypeName;
-      templates.stream().forEach(t -> t.setTypeName(origin, newTypeName));
+    public String getRecursionOrigin() {
+      assert !jsm.isEmpty();
+      return namer.name(jsm.peek(), legalJumps);
     }
-    @Override public int hashCode() {
-      return jsm.hashCode() + templates.hashCode();
+    public JSMTypeComputer root() {
+      JSMTypeComputer $ = this;
+      while ($.parent != null)
+        $ = $.parent;
+      return $;
     }
-    @Override public boolean equals(Object obj) {
-      if (!(obj instanceof JSMTypeComputer))
-        return false;
-      JSMTypeComputer other = (JSMTypeComputer) obj;
-      return jsm.equals(other.jsm) && templates.equals(other.templates);
-    }
+    // @Override public int hashCode() {
+    // return jsm.hashCode() + templates.hashCode();
+    // }
+    // @Override public boolean equals(Object obj) {
+    // if (!(obj instanceof JSMTypeComputer))
+    // return false;
+    // JSMTypeComputer other = (JSMTypeComputer) obj;
+    // return jsm.equals(other.jsm) && templates.equals(other.templates);
+    // }
   }
 }
