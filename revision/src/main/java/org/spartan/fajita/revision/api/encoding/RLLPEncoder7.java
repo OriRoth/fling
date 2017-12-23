@@ -147,11 +147,6 @@ public class RLLPEncoder7 {
       computeErrorType();
       compute$$$Type();
     }
-    private void compute$Type() {
-      apiTypes.add(new StringBuilder("public interface ${") //
-          .append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
-      apiTypeNames.add("$");
-    }
     private MethodSkeleton compute(JSM3 jsm, Verb origin, List<Verb> baseLegalJumps, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
       MethodSkeleton $ = new MethodSkeleton();
@@ -250,7 +245,6 @@ public class RLLPEncoder7 {
         seenRecs.add(root);
         tc.templates.clear();
         assert root.legalJumps.equals(tc.legalJumps);
-        // NOTE can be improved to remove obsolete generics
         for (Verb v : root.legalJumpsRecursiveInterface())
           tc.templates
               .add(new JSMTypeComputer(new MethodSkeleton().append(unknownSolution.apply(v)), UNKNOWN, new ArrayList<>(), JAMMED));
@@ -272,28 +266,6 @@ public class RLLPEncoder7 {
       }
       $.append(">");
       return $;
-    }
-    private void compute$$$Type() {
-      List<String> superInterfaces = new ArrayList<>(apiTypeNames);
-      superInterfaces.add(ASTNode.class.getCanonicalName());
-      StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
-          .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
-          .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
-              bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
-                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
-                      + parametersEncoding(v.type) + "){recordTerminal(" //
-                      + v.terminal.getClass().getCanonicalName() //
-                      + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
-                      + parameterNamesEncoding(v.type) + ");return this;}")
-                  .collect(toList())));
-      if (!bnf.isSubBNF)
-        $.append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
-            .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}");
-      $.append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
-      if (bnf.isSubBNF)
-        $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() + "." + startSymbol.name()).append(")");
-      $.append(",\"" + packagePath + "\");}");
-      apiTypes.add($.append("}").toString());
     }
     private void computeRecTypes() {
       for (JSMTypeComputer t : seenRecs)
@@ -343,6 +315,33 @@ public class RLLPEncoder7 {
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
               + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
           .toString());
+    }
+    private void compute$Type() {
+      apiTypes.add(new StringBuilder("public interface ${") //
+          .append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
+      apiTypeNames.add("$");
+    }
+    private void compute$$$Type() {
+      List<String> superInterfaces = new ArrayList<>(apiTypeNames);
+      superInterfaces.add(ASTNode.class.getCanonicalName());
+      StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
+          .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
+          .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
+              bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
+                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
+                      + parametersEncoding(v.type) + "){recordTerminal(" //
+                      + v.terminal.getClass().getCanonicalName() //
+                      + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
+                      + parameterNamesEncoding(v.type) + ");return this;}")
+                  .collect(toList())));
+      if (!bnf.isSubBNF)
+        $.append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
+            .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}");
+      $.append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
+      if (bnf.isSubBNF)
+        $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() + "." + startSymbol.name()).append(")");
+      $.append(",\"" + packagePath + "\");}");
+      apiTypes.add($.append("}").toString());
     }
     private String parametersEncoding(ParameterType[] type) {
       List<String> $ = new ArrayList<>();
