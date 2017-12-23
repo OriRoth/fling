@@ -1,11 +1,12 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
-import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 import static org.spartan.fajita.revision.parser.rll.JSM3.JAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -167,16 +168,16 @@ public class RLLPEncoder7 {
       apiTypeNames.add(n);
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
       seenTypes.get(top).add(legalJumps);
-      MethodSkeleton t = new MethodSkeleton().append("public interface ").appendName(n);
-      t.append("<E");
+      MethodSkeleton t = new MethodSkeleton().append("public interface ");
+      StringBuilder template = new StringBuilder("<E");
       if (!legalJumps.isEmpty()) {
-        t.append(",");
+        template.append(",");
         List<String> templates = new ArrayList<>();
         for (Verb v : legalJumps)
           templates.add(namer.name(v));
-        t.append(String.join(",", templates));
+        template.append(String.join(",", templates));
       }
-      t.append(">{");
+      t.appendName(n + template.append(">")).append("{");
       for (Verb v : bnf.verbs)
         t.append(computeMethod(jsm, top, v, legalJumps, unknownSolution, emptySolution));
       // TODO Roth: verify correctness
@@ -249,7 +250,7 @@ public class RLLPEncoder7 {
         tc.templates.clear();
         assert root.legalJumps.equals(tc.legalJumps);
         // NOTE can be improved to remove obsolete generics
-        for (Verb v : root.legalJumps)
+        for (Verb v : root.legalJumpsRecursiveInterface())
           tc.templates
               .add(new JSMTypeComputer(new MethodSkeleton().append(unknownSolution.apply(v)), UNKNOWN, new ArrayList<>(), JAMMED));
       }
@@ -300,7 +301,17 @@ public class RLLPEncoder7 {
     private boolean computeRecs(JSMTypeComputer current) {
       if (current.isRecursive()) {
         String n = current.typeName.asSimpleName();
-        apiTypes.add(apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E", n));
+        List<Verb> legalJumps = current.root().legalJumpsRecursiveInterface();
+        StringBuilder template = new StringBuilder("<E");
+        if (!legalJumps.isEmpty()) {
+          template.append(",");
+          List<String> templates = new ArrayList<>();
+          for (Verb v : legalJumps)
+            templates.add(namer.name(v));
+          template.append(String.join(",", templates));
+        }
+        apiTypes.add(apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E",
+            n + template.append(">")));
         apiTypeNames.add(n);
         return true;
       }
@@ -385,7 +396,7 @@ public class RLLPEncoder7 {
       types.addAll(other.types);
       return this;
     }
-    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+    String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       StringBuilder $ = new StringBuilder();
       for (int i = 0; i < bones.size(); ++i)
         switch (types.get(i)) {
@@ -399,11 +410,12 @@ public class RLLPEncoder7 {
           case Unknown:
             $.append(unknownSolution.apply((Verb) bones.get(i)));
             break;
+          default:
+            throw new RuntimeException("Incomplete switch statement: " + types.get(i));
         }
       return $.toString();
     }
-    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution,
-        String nameReplacement) {
+    String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution, String nameReplacement) {
       StringBuilder $ = new StringBuilder();
       for (int i = 0; i < bones.size(); ++i)
         switch (types.get(i)) {
@@ -419,6 +431,8 @@ public class RLLPEncoder7 {
           case Unknown:
             $.append(unknownSolution.apply((Verb) bones.get(i)));
             break;
+          default:
+            throw new RuntimeException("Incomplete switch statement: " + types.get(i));
         }
       return $.toString();
     }
@@ -480,6 +494,26 @@ public class RLLPEncoder7 {
       JSMTypeComputer $ = this;
       while ($.parent != null)
         $ = $.parent;
+      return $;
+    }
+    public List<Verb> legalJumpsRecursiveInterface() {
+      Set<Verb> $ = new HashSet<>();
+      for (int i = 0; i < templates.size(); ++i)
+        $.addAll(templates.get(i).legalJumpsRecursiveInterface(legalJumps.get(i)));
+      List<Verb> l = new ArrayList<>(legalJumps);
+      l.retainAll($);
+      return l;
+    }
+    private Set<Verb> legalJumpsRecursiveInterface(Verb location) {
+      Set<Verb> $ = new HashSet<>();
+      if (isRecursive())
+        return $;
+      if (jsm == UNKNOWN) {
+        $.add(location);
+        return $;
+      }
+      for (int i = 0; i < templates.size(); ++i)
+        $.addAll(templates.get(i).legalJumpsRecursiveInterface(legalJumps.get(i)));
       return $;
     }
     // NOTE above algorithm requires native implementations of
