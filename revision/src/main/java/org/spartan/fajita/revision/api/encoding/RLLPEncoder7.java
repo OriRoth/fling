@@ -126,7 +126,7 @@ public class RLLPEncoder7 {
     }
     public MethodSkeleton name(JSMTypeComputer recursiveRoot) {
       if (!seenRecs.containsKey(recursiveRoot))
-        seenRecs.put(recursiveRoot, "REC$" + (++recCount) + "$" + recursiveRoot.typeName);
+        seenRecs.put(recursiveRoot, "REC$" + (++recCount) + "$" + recursiveRoot.typeName.asSimpleName());
       return new MethodSkeleton().append(seenRecs.get(recursiveRoot));
     }
   }
@@ -202,7 +202,8 @@ public class RLLPEncoder7 {
     }
     private MethodSkeleton computeMethod(JSM3 jsm, NonTerminal top, Verb v, List<Verb> baseLegalJumps,
         Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      MethodSkeleton $ = computeType(computeType(jsm, top, v, baseLegalJumps, unknownSolution, emptySolution, null));
+      MethodSkeleton $ = computeType(computeType(jsm, top, v, baseLegalJumps, unknownSolution, emptySolution, null),
+          unknownSolution);
       return $.isEmpty() ? $
           : new MethodSkeleton().append("public ").append($) //
               .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");");
@@ -235,12 +236,12 @@ public class RLLPEncoder7 {
       for (Verb nv : nextLegalJumps)
         tc.templates.add(computeType(next, nextTop.asNonTerminal(), nv, nextLegalJumps, unknownSolution, emptySolution, tc));
     }
-    private MethodSkeleton computeType(JSMTypeComputer tc) {
+    private MethodSkeleton computeType(JSMTypeComputer tc, Function<Verb, String> unknownSolution) {
       MethodSkeleton $ = new MethodSkeleton();
       if (tc == null)
         return $;
       for (JSMTypeComputer c : tc.templates)
-        computeType(c);
+        computeType(c, unknownSolution);
       if (tc.isRecursive()) {
         JSMTypeComputer root = tc.root();
         tc.typeName = namer.name(root);
@@ -249,14 +250,15 @@ public class RLLPEncoder7 {
         assert root.legalJumps.equals(tc.legalJumps);
         // NOTE can be improved to remove obsolete generics
         for (Verb v : root.legalJumps)
-          tc.templates.add(new JSMTypeComputer(new MethodSkeleton().append(namer.name(v)), UNKNOWN, new ArrayList<>(), JAMMED));
+          tc.templates
+              .add(new JSMTypeComputer(new MethodSkeleton().append(unknownSolution.apply(v)), UNKNOWN, new ArrayList<>(), JAMMED));
       }
       $.append(tc.typeName);
       if (!tc.hasTemplates)
         return $;
       List<MethodSkeleton> ts = new ArrayList<>();
       for (JSMTypeComputer c : tc.templates)
-        ts.add(computeType(c));
+        ts.add(computeType(c, unknownSolution));
       $.append("<").appendEmpty();
       if (!ts.isEmpty()) {
         $.append(",");
@@ -293,12 +295,16 @@ public class RLLPEncoder7 {
     }
     private void computeRecTypes() {
       for (JSMTypeComputer t : seenRecs)
-        computeRecRoot(t);
+        computeRecs(t);
     }
-    private void computeRecRoot(JSMTypeComputer t) {
-      String n = t.typeName.asSimpleName();
-      apiTypes.add(apiTypeSkeletons.get(t.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E", n));
-      apiTypeNames.add(n);
+    private void computeRecs(JSMTypeComputer current) {
+      if (current.isRecursive()) {
+        String n = current.typeName.asSimpleName();
+        apiTypes.add(apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E", n));
+        apiTypeNames.add(n);
+      } else
+        for (JSMTypeComputer c : current.templates)
+          computeRecs(c);
     }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))
@@ -319,8 +325,8 @@ public class RLLPEncoder7 {
       };
       Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(computeType(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution, null))
-              .toString(unknownSolution, emptySolution)) //
+          .append(computeType(computeType(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution, null),
+              !bnf.isSubBNF ? x -> "$" : x -> "$$$").toString(unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
