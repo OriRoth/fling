@@ -476,8 +476,18 @@ public class RLLPEncoder7 {
       this.hasTemplates = hasTemplates;
     }
     public boolean isRecursive() {
+      return isRecursiveSingle();
+    }
+    private boolean isRecursiveSingle() {
       for (JSMTypeComputer current = parent; current != null; current = current.parent)
         if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps))
+          return true;
+      return false;
+    }
+    // TODO Roth check whether needed
+    @SuppressWarnings("unused") private boolean isRecursiveDouble() {
+      for (JSMTypeComputer current = parent; current != null; current = current.parent)
+        if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps) && current.isRecursiveSingle())
           return true;
       return false;
     }
