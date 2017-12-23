@@ -315,20 +315,22 @@ public class RLLPEncoder7 {
     }
     private void computeStaticMethod(Verb v) {
       JSM3 base = new JSM3(bnf, analyzer, startSymbol);
-      Symbol top = base.peek();
-      List<Symbol> c = top.isVerb() ? !top.asVerb().equals(v) ? null : new ArrayList<>()
-          : analyzer.llClosure(top.asNonTerminal(), v);
+      Symbol baseTop = base.peek();
+      List<Symbol> c = baseTop.isVerb() ? !baseTop.asVerb().equals(v) ? null : new ArrayList<>()
+          : analyzer.llClosure(baseTop.asNonTerminal(), v);
       if (c == null)
         return;
       JSM3 jsm = base.pop().pushAll(c);
-      List<Verb> legalJumps = jsm.legalJumps(new ArrayList<>());
-      computeType(jsm, top.asNonTerminal(), v, legalJumps, x -> namer.name(x), () -> "E", null);
+      // TODO Roth: verify legalJumps
+      List<Verb> legalJumps = jsm.legalJumps(new ArrayList<>(bnf.verbs));
+      Symbol top = jsm.isEmpty() ? null : jsm.peek();
+      computeType(jsm, top, v, legalJumps, x -> namer.name(x), () -> "E", null);
       Function<Verb, String> unknownSolution = x -> {
         throw new RuntimeException("Unreachable");
       };
       Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(computeType(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution, null),
+          .append(computeType(computeType(jsm, top, v, legalJumps, unknownSolution, emptySolution, null),
               !bnf.isSubBNF ? x -> "$" : x -> "$$$").toString(unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
@@ -451,7 +453,7 @@ public class RLLPEncoder7 {
     public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent) {
       this(typeName, jsm, legalJumps, nextJSM, parent, !nextJSM.isEmpty());
     }
-    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent,
+    private JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent,
         boolean hasTemplates) {
       this.typeName = typeName;
       this.jsm = jsm;
