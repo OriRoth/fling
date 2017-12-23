@@ -314,16 +314,10 @@ public class RLLPEncoder7 {
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      JSM3 base = new JSM3(bnf, analyzer, startSymbol);
-      Symbol baseTop = base.peek();
-      List<Symbol> c = baseTop.isVerb() ? !baseTop.asVerb().equals(v) ? null : new ArrayList<>()
-          : analyzer.llClosure(baseTop.asNonTerminal(), v);
-      if (c == null)
-        return;
-      JSM3 jsm = base.pop().pushAll(c);
+      JSM3 jsm = new JSM3(bnf, analyzer, startSymbol);
+      Symbol top = jsm.peek();
       // TODO Roth: verify legalJumps
       List<Verb> legalJumps = jsm.legalJumps(new ArrayList<>(bnf.verbs));
-      Symbol top = jsm.isEmpty() ? null : jsm.peek();
       computeType(jsm, top, v, legalJumps, x -> namer.name(x), () -> "E", null);
       Function<Verb, String> unknownSolution = x -> {
         throw new RuntimeException("Unreachable");
