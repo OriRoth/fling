@@ -223,7 +223,8 @@ public class RLLPEncoder7 {
         typeName = compute(next = jsm.jump(v), v, baseLegalJumps, unknownSolution, emptySolution);
       } else
         typeName = compute(next = jsm.pop().pushAll(c), v, baseLegalJumps, unknownSolution, emptySolution);
-      JSMTypeComputer tc = new JSMTypeComputer(typeName, jsm, jsm.legalJumps(baseLegalJumps), next, parent);
+      JSMTypeComputer tc = new JSMTypeComputer(typeName, jsm, jsm.legalJumps(baseLegalJumps), next, next.legalJumps(baseLegalJumps),
+          parent);
       if (next != UNKNOWN && !tc.isRecursive())
         computeTemplates(tc, next, baseLegalJumps, unknownSolution, emptySolution);
       return tc;
@@ -452,21 +453,25 @@ public class RLLPEncoder7 {
     final JSM3 jsm;
     final List<Verb> legalJumps;
     JSM3 nextJSM;
+    private final List<Verb> nextLegalJumps;
     private final JSMTypeComputer parent;
     final List<JSMTypeComputer> templates;
 
     public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM) {
-      this(typeName, jsm, legalJumps, nextJSM, null, false);
+      // TODO Roth: verify nextLegalJumps may be null
+      this(typeName, jsm, legalJumps, nextJSM, null, null, false);
     }
-    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent) {
-      this(typeName, jsm, legalJumps, nextJSM, parent, !nextJSM.isEmpty());
+    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, List<Verb> nextLegalJumps,
+        JSMTypeComputer parent) {
+      this(typeName, jsm, legalJumps, nextJSM, nextLegalJumps, parent, !nextJSM.isEmpty());
     }
-    private JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent,
-        boolean hasTemplates) {
+    private JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, List<Verb> nextLegalJumps,
+        JSMTypeComputer parent, boolean hasTemplates) {
       this.typeName = typeName;
       this.jsm = jsm;
       this.legalJumps = legalJumps;
       this.nextJSM = nextJSM;
+      this.nextLegalJumps = nextLegalJumps;
       this.parent = parent;
       this.templates = new ArrayList<>();
       this.hasTemplates = hasTemplates;
@@ -499,8 +504,8 @@ public class RLLPEncoder7 {
     public List<Verb> legalJumpsRecursiveInterface() {
       Set<Verb> $ = new HashSet<>();
       for (int i = 0; i < templates.size(); ++i)
-        $.addAll(templates.get(i).legalJumpsRecursiveInterface(legalJumps.get(i)));
-      List<Verb> l = new ArrayList<>(legalJumps);
+        $.addAll(templates.get(i).legalJumpsRecursiveInterface(nextLegalJumps.get(i)));
+      List<Verb> l = new ArrayList<>(nextLegalJumps);
       l.retainAll($);
       return l;
     }
@@ -513,7 +518,7 @@ public class RLLPEncoder7 {
         return $;
       }
       for (int i = 0; i < templates.size(); ++i)
-        $.addAll(templates.get(i).legalJumpsRecursiveInterface(legalJumps.get(i)));
+        $.addAll(templates.get(i).legalJumpsRecursiveInterface(nextLegalJumps.get(i)));
       return $;
     }
     // NOTE above algorithm requires native implementations of
