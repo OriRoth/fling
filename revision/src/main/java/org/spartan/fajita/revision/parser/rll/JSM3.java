@@ -99,6 +99,7 @@ public class JSM3 implements Cloneable {
   private void pushJumps(Symbol s) {
     Map<Verb, J> m = S1.isEmpty() ? emptyMap(s) : new HashMap<>(S1.peek());
     if (s.isVerb()) {
+      m.put(s.asVerb(), J.of(clone()));
       S1.push(m);
       return;
     }

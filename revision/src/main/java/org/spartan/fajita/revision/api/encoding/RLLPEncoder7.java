@@ -234,7 +234,7 @@ public class RLLPEncoder7 {
         return;
       Symbol nextTop = next.peek();
       for (Verb nv : nextLegalJumps)
-        tc.templates.add(computeType(next, nextTop.asNonTerminal(), nv, nextLegalJumps, unknownSolution, emptySolution, tc));
+        tc.templates.add(computeType(next, nextTop, nv, nextLegalJumps, unknownSolution, emptySolution, tc));
     }
     private MethodSkeleton computeType(JSMTypeComputer tc, Function<Verb, String> unknownSolution) {
       MethodSkeleton $ = new MethodSkeleton();
@@ -297,14 +297,17 @@ public class RLLPEncoder7 {
       for (JSMTypeComputer t : seenRecs)
         computeRecs(t);
     }
-    private void computeRecs(JSMTypeComputer current) {
+    private boolean computeRecs(JSMTypeComputer current) {
       if (current.isRecursive()) {
         String n = current.typeName.asSimpleName();
         apiTypes.add(apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E", n));
         apiTypeNames.add(n);
-      } else
-        for (JSMTypeComputer c : current.templates)
-          computeRecs(c);
+        return true;
+      }
+      for (JSMTypeComputer c : current.templates)
+        if (computeRecs(c))
+          return true;
+      return false;
     }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))
@@ -483,14 +486,7 @@ public class RLLPEncoder7 {
         $ = $.parent;
       return $;
     }
-    // @Override public int hashCode() {
-    // return jsm.hashCode() + templates.hashCode();
-    // }
-    // @Override public boolean equals(Object obj) {
-    // if (!(obj instanceof JSMTypeComputer))
-    // return false;
-    // JSMTypeComputer other = (JSMTypeComputer) obj;
-    // return jsm.equals(other.jsm) && templates.equals(other.templates);
-    // }
+    // NOTE above algorithm requires native implementations of
+    // {@link Object#hashCode} and {@link Object#equals}
   }
 }
