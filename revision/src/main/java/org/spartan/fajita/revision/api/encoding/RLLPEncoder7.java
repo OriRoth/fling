@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
@@ -29,7 +30,7 @@ import org.spartan.fajita.revision.symbols.types.ParameterType;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class RLLPEncoder6 {
+public class RLLPEncoder7 {
   public final String topClassName;
   public final String topClass;
   final NonTerminal startSymbol;
@@ -43,7 +44,7 @@ public class RLLPEncoder6 {
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
 
-  public RLLPEncoder6(Fajita fajita, NonTerminal start, String astTopClass) {
+  public RLLPEncoder7(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
     packagePath = fajita.packagePath;
     topClassPath = packagePath + "." + topClassName;
@@ -67,7 +68,7 @@ public class RLLPEncoder6 {
     topClass = $.toString();
   }
   // TODO Roth: code duplication in constructors
-  public RLLPEncoder6(Fajita fajita, Symbol nested, String astTopClass) {
+  public RLLPEncoder7(Fajita fajita, Symbol nested, String astTopClass) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
     packagePath = fajita.packagePath;
@@ -139,9 +140,6 @@ public class RLLPEncoder6 {
     public void compute() {
       if (!bnf.isSubBNF)
         compute$Type();
-      for (NonTerminal nt : bnf.nonTerminals)
-        if (!SpecialSymbols.augmentedStartSymbol.equals(nt))
-          compute(new JSM3(bnf, analyzer, nt), null, new ArrayList<>(), v -> namer.name(v), v -> namer.name(v));
       computeStaticMethods();
       computeRecTypes();
       computeErrorType();
@@ -152,16 +150,15 @@ public class RLLPEncoder6 {
           .append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
       apiTypeNames.add("$");
     }
-    private MethodSkeleton compute(JSM3 jsm, Verb origin, List<Verb> parentLegalJumps, Function<Verb, String> unknownSolution,
-        Function<Verb, String> emptySolution) {
+    private MethodSkeleton compute(JSM3 jsm, Verb origin, List<Verb> baseLegalJumps, Function<Verb, String> unknownSolution,
+        Supplier<String> emptySolution) {
       MethodSkeleton $ = new MethodSkeleton();
       if (jsm == UNKNOWN)
         return $.appendUnknown(origin);
       if (jsm.isEmpty())
-        return parentLegalJumps.contains(origin) ? $.appendEmpty(origin) //
-            : $.append(!bnf.isSubBNF ? "$" : "$$$");
+        return $.appendEmpty();
       Symbol top = jsm.peek();
-      List<Verb> legalJumps = jsm.legalJumps();
+      List<Verb> legalJumps = jsm.legalJumps(baseLegalJumps);
       String n = namer.name(top, legalJumps);
       $.append(n);
       if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
@@ -170,70 +167,72 @@ public class RLLPEncoder6 {
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
       seenTypes.get(top).add(legalJumps);
       MethodSkeleton t = new MethodSkeleton().append("public interface ").appendName(n);
+      t.append("<E");
       if (!legalJumps.isEmpty()) {
+        t.append(",");
         List<String> templates = new ArrayList<>();
         for (Verb v : legalJumps)
           templates.add(namer.name(v));
-        t.append("<").append(String.join(",", templates)).append(">");
+        t.append(String.join(",", templates));
       }
-      t.append("{");
+      t.append(">{");
       for (Verb v : bnf.verbs)
         t.append(computeMethod(jsm, top, v, legalJumps, unknownSolution, emptySolution));
-      if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.followSetOf(top.asNonTerminal()).contains(SpecialSymbols.$))
+      // TODO Roth: verify correctness
+      if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.followSetOf(top.asNonTerminal()).contains(SpecialSymbols.$)
+          && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypeSkeletons.put(n, t.append("}"));
       apiTypes.add(t.toString(unknownSolution, emptySolution));
       return $;
     }
-    private MethodSkeleton computeMethod(JSM3 jsm, Symbol top, Verb v, List<Verb> legalJumps,
-        Function<Verb, String> unknownSolution, Function<Verb, String> emptySolution) {
-      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution) //
-          : computeMethod(jsm, top.asVerb(), v, legalJumps, unknownSolution, emptySolution);
+    private MethodSkeleton computeMethod(JSM3 jsm, Symbol top, Verb v, List<Verb> baseLegalJumps,
+        Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      return top.isNonTerminal() ? computeMethod(jsm, top.asNonTerminal(), v, baseLegalJumps, unknownSolution, emptySolution) //
+          : computeMethod(jsm, top.asVerb(), v, baseLegalJumps, unknownSolution, emptySolution);
     }
-    private MethodSkeleton computeMethod(JSM3 jsm, Verb top, Verb v, List<Verb> legalJumps, Function<Verb, String> unknownSolution,
-        Function<Verb, String> emptySolution) {
+    private MethodSkeleton computeMethod(JSM3 jsm, Verb top, Verb v, List<Verb> baseLegalJumps,
+        Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       MethodSkeleton $ = new MethodSkeleton();
       return !top.equals(v) ? $
-          : $.append("public ").append(compute(jsm.pop(), v, legalJumps, unknownSolution, emptySolution)) //
+          : $.append("public ").append(compute(jsm.pop(), v, baseLegalJumps, unknownSolution, emptySolution)) //
               .append(" ").append(v.terminal.name()).append("(") //
               .append(parametersEncoding(v.type)).append(");");
     }
-    private MethodSkeleton computeMethod(JSM3 jsm, NonTerminal top, Verb v, List<Verb> legalJumps,
-        Function<Verb, String> unknownSolution, Function<Verb, String> emptySolution) {
-      MethodSkeleton $ = computeType(computeType(jsm, top, v, legalJumps, unknownSolution, emptySolution, null));
+    private MethodSkeleton computeMethod(JSM3 jsm, NonTerminal top, Verb v, List<Verb> baseLegalJumps,
+        Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      MethodSkeleton $ = computeType(computeType(jsm, top, v, baseLegalJumps, unknownSolution, emptySolution, null));
       return $.isEmpty() ? $
           : new MethodSkeleton().append("public ").append($) //
               .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");");
     }
-    public JSMTypeComputer computeType(JSM3 jsm, NonTerminal top, Verb v, List<Verb> legalJumps,
-        Function<Verb, String> unknownSolution, Function<Verb, String> emptySolution, JSMTypeComputer parent) {
-      List<Symbol> c = analyzer.llClosure(top, v);
+    public JSMTypeComputer computeType(JSM3 jsm, Symbol top, Verb v, List<Verb> baseLegalJumps,
+        Function<Verb, String> unknownSolution, Supplier<String> emptySolution, JSMTypeComputer parent) {
+      if (jsm.isEmpty())
+        return new JSMTypeComputer(new MethodSkeleton().appendEmpty(), jsm, baseLegalJumps, null);
+      List<Symbol> c = top.isVerb() ? !top.asVerb().equals(v) ? null : new ArrayList<>()
+          : analyzer.llClosure(top.asNonTerminal(), v);
       MethodSkeleton typeName;
       JSM3 next;
       if (c == null) {
-        if (!legalJumps.contains(v))
+        if (!baseLegalJumps.contains(v))
           return null;
-        typeName = compute(next = jsm.jump(v), v, legalJumps, unknownSolution, unknownSolution);
+        typeName = compute(next = jsm.jump(v), v, baseLegalJumps, unknownSolution, emptySolution);
       } else
-        typeName = compute(next = jsm.pop().pushAll(c), v, legalJumps, unknownSolution, unknownSolution);
-      JSMTypeComputer tc = new JSMTypeComputer(typeName, jsm, next, parent);
+        typeName = compute(next = jsm.pop().pushAll(c), v, baseLegalJumps, unknownSolution, emptySolution);
+      JSMTypeComputer tc = new JSMTypeComputer(typeName, jsm, jsm.legalJumps(baseLegalJumps), next, parent);
       if (next != UNKNOWN && !tc.checkRecursive())
-        computeTemplates(tc, next, x -> legalJumps.contains(x) ? unknownSolution.apply(x) : "ParseError",
-            x -> legalJumps.contains(x) ? emptySolution.apply(x) : "ParseError");
+        computeTemplates(tc, next, baseLegalJumps, unknownSolution, emptySolution);
       return tc;
     }
-    private void computeTemplates(JSMTypeComputer tc, JSM3 next, Function<Verb, String> unknownSolution,
-        Function<Verb, String> emptySolution) {
-      List<Verb> nextLegalJumps = next.legalJumps();
+    private void computeTemplates(JSMTypeComputer tc, JSM3 next, List<Verb> baseLegalJumps, Function<Verb, String> unknownSolution,
+        Supplier<String> emptySolution) {
+      List<Verb> nextLegalJumps = next.legalJumps(baseLegalJumps);
       if (nextLegalJumps.isEmpty())
         return;
       Symbol nextTop = next.peek();
-      for (Verb nv : nextLegalJumps) {
-        if (nextTop.isVerb())
-          tc.templates.add(new JSMTypeComputer(new MethodSkeleton().append(unknownSolution.apply(nv)), next, next.pop(), tc));
-        else
-          tc.templates.add(computeType(next, nextTop.asNonTerminal(), nv, nextLegalJumps, unknownSolution, emptySolution, tc));
-      }
+      for (Verb nv : nextLegalJumps)
+        tc.templates.add(computeType(next, nextTop.asNonTerminal(), nv, nextLegalJumps, unknownSolution, emptySolution, tc));
     }
     private MethodSkeleton computeType(JSMTypeComputer tc) {
       MethodSkeleton $ = new MethodSkeleton();
@@ -249,16 +248,19 @@ public class RLLPEncoder6 {
           recNames.put(tc, namer.name(tc));
       }
       $.append(tc.typeName);
-      if (tc.templates.isEmpty())
+      if (!tc.hasTemplates)
         return $;
       List<MethodSkeleton> ts = new ArrayList<>();
       for (JSMTypeComputer c : tc.templates)
         ts.add(computeType(c));
-      $.append("<");
-      for (int i = 0; i < ts.size(); ++i) {
-        $.append(ts.get(i));
-        if (i != ts.size() - 1)
-          $.append(",");
+      $.append("<").appendEmpty();
+      if (!ts.isEmpty()) {
+        $.append(",");
+        for (int i = 0; i < ts.size(); ++i) {
+          $.append(ts.get(i));
+          if (i != ts.size() - 1)
+            $.append(",");
+        }
       }
       $.append(">");
       return $;
@@ -287,31 +289,44 @@ public class RLLPEncoder6 {
     }
     private void computeRecTypes() {
       for (JSMTypeComputer t : recNames.keySet())
-        computeRecType(t);
+        // computeRecType(t)
+        ;
     }
-    private void computeRecType(JSMTypeComputer t) {
-      String n = t.typeName.asSimpleName();
-      List<Verb> nextLegalJumps = t.nextJSM.legalJumps();
-      // NOTE verbs of {@link JSM3#legalJumps()} should be deterministically ordered
-      Function<Verb, String> solution = v -> !nextLegalJumps.contains(v) ? "ParseError" : namer.name(v), recursiveSolution = //
-          v -> !nextLegalJumps.contains(v) ? "ParseError"
-              : computeType(t.templates.get(nextLegalJumps.indexOf(v))).toString(solution, solution);
-      apiTypes.add(apiTypeSkeletons.get(t.originalTypeName).toString(recursiveSolution, recursiveSolution, n));
-      apiTypeNames.add(n);
-    }
+    // private void computeRecType(JSMTypeComputer t) {
+    // String n = t.typeName.asSimpleName();
+    // List<Verb> nextLegalJumps = t.nextJSM.legalJumps();
+    // // NOTE verbs of {@link JSM3#legalJumps()} should be deterministically
+    // ordered
+    // Function<Verb, String> solution = v -> !nextLegalJumps.contains(v) ?
+    // "ParseError" : namer.name(v), recursiveSolution = //
+    // v -> !nextLegalJumps.contains(v) ? "ParseError"
+    // : computeType(t.templates.get(nextLegalJumps.indexOf(v))).toString(solution,
+    // solution);
+    // apiTypes.add(apiTypeSkeletons.get(t.originalTypeName).toString(recursiveSolution,
+    // recursiveSolution, n));
+    // apiTypeNames.add(n);
+    // }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      JSM3 jsm = new JSM3(bnf, analyzer, startSymbol);
-      Symbol top = jsm.peek();
-      assert top.isNonTerminal();
-      List<Verb> legalJumps = jsm.legalJumps();
-      Function<Verb, String> solution = !bnf.isSubBNF ? x -> "$" : x -> "$$$";
+      JSM3 base = new JSM3(bnf, analyzer, startSymbol);
+      Symbol top = base.peek();
+      List<Symbol> c = top.isVerb() ? !top.asVerb().equals(v) ? null : new ArrayList<>()
+          : analyzer.llClosure(top.asNonTerminal(), v);
+      if (c == null)
+        return;
+      JSM3 jsm = base.pop().pushAll(c);
+      List<Verb> legalJumps = jsm.legalJumps(new ArrayList<>());
+      computeType(jsm, top.asNonTerminal(), v, legalJumps, x -> namer.name(x), () -> "E", null);
+      Function<Verb, String> unknownSolution = x -> {
+        throw new RuntimeException("Unreachable");
+      };
+      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(computeType(jsm, top.asNonTerminal(), v, legalJumps, solution, solution, null)).toString(solution,
-              solution)) //
+          .append(computeType(computeType(jsm, top.asNonTerminal(), v, legalJumps, unknownSolution, emptySolution, null))
+              .toString(unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
@@ -348,8 +363,8 @@ public class RLLPEncoder6 {
       types.add(BoneType.Text);
       return this;
     }
-    MethodSkeleton appendEmpty(Verb v) {
-      bones.add(v);
+    MethodSkeleton appendEmpty() {
+      bones.add(null);
       types.add(BoneType.Empty);
       return this;
     }
@@ -371,8 +386,7 @@ public class RLLPEncoder6 {
       types.addAll(other.types);
       return this;
     }
-    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution,
-        Function<Verb, String> emptySolution) {
+    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       StringBuilder $ = new StringBuilder();
       for (int i = 0; i < bones.size(); ++i)
         switch (types.get(i)) {
@@ -381,7 +395,7 @@ public class RLLPEncoder6 {
             $.append(bones.get(i));
             break;
           case Empty:
-            $.append(emptySolution.apply((Verb) bones.get(i)));
+            $.append(emptySolution.get());
             break;
           case Unknown:
             $.append(unknownSolution.apply((Verb) bones.get(i)));
@@ -389,8 +403,8 @@ public class RLLPEncoder6 {
         }
       return $.toString();
     }
-    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution,
-        Function<Verb, String> emptySolution, String nameReplacement) {
+    @SuppressWarnings("incomplete-switch") String toString(Function<Verb, String> unknownSolution, Supplier<String> emptySolution,
+        String nameReplacement) {
       StringBuilder $ = new StringBuilder();
       for (int i = 0; i < bones.size(); ++i)
         switch (types.get(i)) {
@@ -401,7 +415,7 @@ public class RLLPEncoder6 {
             $.append(nameReplacement);
             break;
           case Empty:
-            $.append(emptySolution.apply((Verb) bones.get(i)));
+            $.append(emptySolution.get());
             break;
           case Unknown:
             $.append(unknownSolution.apply((Verb) bones.get(i)));
@@ -420,28 +434,35 @@ public class RLLPEncoder6 {
   }
 
   class JSMTypeComputer {
+    final boolean hasTemplates;
     MethodSkeleton typeName;
     final JSM3 jsm;
+    final List<Verb> legalJumps;
     JSM3 nextJSM;
     private final JSMTypeComputer parent;
     final List<JSMTypeComputer> templates;
     boolean recFlag;
     String originalTypeName;
 
-    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, JSM3 nextJSM) {
-      this(typeName, jsm, nextJSM, null);
+    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM) {
+      this(typeName, jsm, legalJumps, nextJSM, null, false);
     }
-    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, JSM3 nextJSM, JSMTypeComputer parent) {
+    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent) {
+      this(typeName, jsm, legalJumps, nextJSM, parent, jsm.isEmpty());
+    }
+    public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent,
+        boolean hasTemplates) {
       this.typeName = typeName;
       this.jsm = jsm;
+      this.legalJumps = legalJumps;
       this.nextJSM = nextJSM;
       this.parent = parent;
       this.templates = new ArrayList<>();
+      this.hasTemplates = hasTemplates;
     }
     public boolean checkRecursive() {
       for (JSMTypeComputer current = parent; current != null; current = current.parent) {
-        // TODO Roth: verify comparison
-        if (jsm.peek().equals(current.jsm.peek()) && jsm.legalJumps().equals(current.jsm.legalJumps())) {
+        if (jsm.peek().equals(current.jsm.peek()) && legalJumps.equals(current.legalJumps)) {
           current.recFlag = true;
           return true;
         }

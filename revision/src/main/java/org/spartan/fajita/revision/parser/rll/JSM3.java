@@ -34,7 +34,7 @@ public class JSM3 implements Cloneable {
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
   }
-  public JSM3(BNF bnf, BNFAnalyzer analyzer, NonTerminal initial) {
+  public JSM3(BNF bnf, BNFAnalyzer analyzer, Symbol initial) {
     this(bnf, analyzer);
     pushJumps(initial);
     S0.push(initial);
@@ -117,8 +117,11 @@ public class JSM3 implements Cloneable {
     }
     S1.push(m);
   }
-  public List<Verb> legalJumps() {
-    return new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList()));
+  public List<Verb> legalJumps(List<Verb> baseLegalJumps) {
+    return new LinkedList<>(bnf.verbs.stream().filter(v -> {
+      JSM3 jump = jump(v);
+      return jump != JAMMED && (jump != UNKNOWN && !jump.isEmpty() || baseLegalJumps.contains(v));
+    }).collect(Collectors.toList()));
   }
   private Map<Verb, J> emptyMap(Symbol initial) {
     Map<Verb, J> $ = new HashMap<>();
