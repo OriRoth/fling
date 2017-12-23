@@ -448,7 +448,7 @@ public class RLLPEncoder7 {
       this(typeName, jsm, legalJumps, nextJSM, null, false);
     }
     public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent) {
-      this(typeName, jsm, legalJumps, nextJSM, parent, jsm.isEmpty());
+      this(typeName, jsm, legalJumps, nextJSM, parent, !nextJSM.isEmpty());
     }
     public JSMTypeComputer(MethodSkeleton typeName, JSM3 jsm, List<Verb> legalJumps, JSM3 nextJSM, JSMTypeComputer parent,
         boolean hasTemplates) {
