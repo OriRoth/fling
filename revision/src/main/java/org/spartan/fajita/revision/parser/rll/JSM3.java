@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
@@ -127,10 +126,7 @@ public class JSM3 implements Cloneable {
   private Map<Verb, J> emptyMap(Symbol initial) {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v,
-          !SpecialSymbols.$.equals(v) && initial.isNonTerminal() && analyzer.followSetOf(initial.asNonTerminal()).contains(v)
-              ? J.JUNKNOWN
-              : J.JJAMMED);
+      $.put(v, initial.isNonTerminal() && analyzer.followSetOf(initial.asNonTerminal()).contains(v) ? J.JUNKNOWN : J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {
