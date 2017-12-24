@@ -1,20 +1,29 @@
 package org.spartan.fajita.revision.parser.rll;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
-import static org.spartan.fajita.revision.examples.Datalog.NT.FactExpression;
 import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.pop;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.push;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.*;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.*;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.a2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.b2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.c2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.d2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.e2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.f2;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.a1;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.b1;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.c1;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.d1;
+import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.e1;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
-import static org.spartan.fajita.revision.examples.Parenthesis.Term.*;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
@@ -30,12 +39,16 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void datalog() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new Datalog().bnf().bnf());
     rllp.consume( //
-        attribute(fact, FactExpression), //
-        attribute(fact, FactExpression), //
-        attribute(rule, FactExpression), //
+        attribute(fact, String.class), //
+        attribute(by, new VarArgs(String.class)), //
+        attribute(rule, String.class), //
+        attribute(by, new VarArgs(String.class)), //
         attribute(is, String.class), //
         attribute(by, new VarArgs(String.class)), //
-        attribute(fact, FactExpression) //
+        attribute(is, String.class), //
+        attribute(by, new VarArgs(String.class)), //
+        attribute(fact, String.class), //
+        attribute(by, new VarArgs(String.class)) //
     );
     assert !rllp.rejected();
     assert rllp.accepted();
