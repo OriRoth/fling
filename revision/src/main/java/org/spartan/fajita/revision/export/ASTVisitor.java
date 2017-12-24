@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.spartan.fajita.revision.junk.DatalogAST.Program;
-
 @SuppressWarnings({ "unused", "static-method" }) public class ASTVisitor {
   private final Map<Class<?>, Method> preVisit = new HashMap<>();
   private final Map<Class<?>, Method> visit = new HashMap<>();

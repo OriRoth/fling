@@ -6,6 +6,7 @@ import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -35,23 +36,25 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class RLLPEncoder7 {
   public final String topClassName;
   public final String topClass;
+  public final Map<String, String> apiClasses;
   final NonTerminal startSymbol;
   final String astTopClass;
   final BNF bnf;
   final BNFAnalyzer analyzer;
-  final String packagePath;
+  public final String packagePath;
   final String topClassPath;
   final Namer namer;
   final List<String> apiTypes;
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
   final JSMTypeComputer DUMMY$JUMP = new JSMTypeComputer();
 
   public RLLPEncoder7(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
-    packagePath = fajita.packagePath;
+    packagePath = fajita.packagePath + "." + fajita.apiName.toLowerCase();
     topClassPath = packagePath + "." + topClassName;
+    apiClasses = new HashMap<>();
     startSymbol = start;
     provider = fajita.provider;
     bnf = fajita.bnf();
@@ -70,13 +73,18 @@ public class RLLPEncoder7 {
       $.append(s);
     $.append("}");
     topClass = $.toString();
+    for (String f : apiClasses.keySet())
+      apiClasses.put(f,
+          new StringBuilder("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+              .append("(\"all\")").append(apiClasses.get(f)).toString());
   }
   // TODO Roth: code duplication in constructors
   public RLLPEncoder7(Fajita fajita, Symbol nested, String astTopClass) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
-    packagePath = fajita.packagePath;
+    packagePath = fajita.packagePath + "." + fajita.apiName.toLowerCase();
     topClassPath = packagePath + "." + topClassName;
+    apiClasses = new HashMap<>();
     startSymbol = nested.head().asNonTerminal();
     provider = fajita.provider;
     bnf = fajita.bnf().getSubBNF(startSymbol);
@@ -95,6 +103,10 @@ public class RLLPEncoder7 {
       $.append(s);
     $.append("}");
     topClass = $.toString();
+    for (String f : apiClasses.keySet())
+      apiClasses.put(f,
+          new StringBuilder("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+              .append("(\"all\")").append(apiClasses.get(f)).toString());
   }
   private void computeMembers() {
     new MembersComputer().compute();
@@ -201,7 +213,6 @@ public class RLLPEncoder7 {
         compute$Type();
       computeStaticMethods();
       computeRecTypes();
-      computeErrorType();
       compute$$$Type();
     }
     private MethodSkeleton compute(JSM3 jsm, Verb origin, List<Verb> baseLegalJumps, Function<Verb, String> unknownSolution,
@@ -240,7 +251,8 @@ public class RLLPEncoder7 {
       if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.isNullable(jsm.getS0()) && has$Jump)
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypeSkeletons.put(n, t.append("}"));
-      apiTypes.add(t.toString(unknownSolution, emptySolution));
+      assert !apiClasses.containsKey(n);
+      apiClasses.put(n, t.toString(unknownSolution, emptySolution));
       return $;
     }
     private MethodSkeleton computeMethod(JSM3 jsm, Symbol top, Verb v, List<Verb> baseLegalJumps,
@@ -348,7 +360,8 @@ public class RLLPEncoder7 {
             templates.add(namer.name(v));
           template.append(String.join(",", templates));
         }
-        apiTypes.add(apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E",
+        assert !apiClasses.containsKey(n);
+        apiClasses.put(n, apiTypeSkeletons.get(current.root().typeName.asSimpleName()).toString(x -> namer.name(x), () -> "E",
             n + template.append(">")));
         apiTypeNames.add(n);
         return true;
@@ -386,8 +399,9 @@ public class RLLPEncoder7 {
           .toString());
     }
     private void compute$Type() {
-      apiTypes.add(new StringBuilder("public interface ${") //
-          .append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
+      assert !apiClasses.containsKey("$");
+      apiClasses.put("$", new StringBuilder("public interface ${") //
+          .append(packagePath.toLowerCase() + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
       apiTypeNames.add("$");
     }
     private void compute$$$Type() {
@@ -423,9 +437,6 @@ public class RLLPEncoder7 {
       for (int i = 0; i < type.length; ++i)
         $.add("arg" + (i + 1));
       return String.join(",", $);
-    }
-    private void computeErrorType() {
-      apiTypes.add("private interface ParseError{}");
     }
   }
 

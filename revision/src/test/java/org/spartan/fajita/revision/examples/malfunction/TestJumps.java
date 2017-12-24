@@ -5,7 +5,7 @@ import static org.spartan.fajita.revision.api.Fajita.option;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
 import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
-import static org.spartan.fajita.revision.junk.TestJumps.x;
+import static org.spartan.fajita.revision.junk.testjumps.TestJumps.x;
 
 import java.io.IOException;
 

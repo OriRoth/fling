@@ -6,7 +6,7 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
-import static org.spartan.fajita.revision.junk.TestAnB.*;
+import static org.spartan.fajita.revision.junk.testanb.TestAnB.*;
 
 import java.io.IOException;
 

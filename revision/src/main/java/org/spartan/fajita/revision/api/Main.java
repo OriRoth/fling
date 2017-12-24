@@ -11,11 +11,15 @@ public class Main {
   public static final String projectPath = "/home/ori/Desktop/git/fajita/revision/src/test/java/";
 
   public static void apiGenerator(Map<String, String> files) throws IOException {
-    String filePath = projectPath + packagePath.replace('.', '/') + '/';
+    // TODO Roth: fix hack
+    String filePath = projectPath + packagePath.replace('.', '/') + '/' + files.get("~") + '/';
+    files.remove("~");
     for (Entry<String, String> f : files.entrySet()) {
       final String fname = f.getKey();
       byte[] fileContent = f.getValue().getBytes();
-      try (FileOutputStream fos = new FileOutputStream(new File(filePath + fname))) {
+      File ff = new File(filePath + fname);
+      ff.getParentFile().mkdirs();
+      try (FileOutputStream fos = new FileOutputStream(ff)) {
         fos.write(fileContent, 0, fileContent.length);
         System.out.println(fname + " written successfully");
       }

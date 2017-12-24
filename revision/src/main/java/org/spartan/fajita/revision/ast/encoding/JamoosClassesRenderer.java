@@ -51,7 +51,7 @@ public class JamoosClassesRenderer {
   protected JamoosClassesRenderer(EBNF ebnf, String packagePath, DAG<NonTerminal> inheritance) {
     this.inheritance = inheritance;
     this.ebnf = ebnf;
-    this.packagePath = packagePath;
+    this.packagePath = packagePath + "." + ebnf.name.toLowerCase();
     this.topClassName = topClassName(ebnf);
     // NOTE should correspond to the producer in Fajita
     parseTopClass(Fajita.producer());
