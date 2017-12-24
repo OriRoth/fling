@@ -45,6 +45,7 @@ public class RLLPEncoder7 {
   final List<String> apiTypes;
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
+  public static final boolean DEBUG = true;
 
   public RLLPEncoder7(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
@@ -55,7 +56,7 @@ public class RLLPEncoder7 {
     bnf = fajita.bnf();
     this.astTopClass = astTopClass;
     analyzer = new BNFAnalyzer(bnf);
-    namer = new Namer();
+    namer = DEBUG ? new DebugNamer() : new ThinNamer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
     computeMembers();
@@ -80,7 +81,7 @@ public class RLLPEncoder7 {
     bnf = fajita.bnf().getSubBNF(startSymbol);
     this.astTopClass = astTopClass;
     analyzer = new BNFAnalyzer(bnf);
-    namer = new Namer();
+    namer = DEBUG ? new DebugNamer() : new ThinNamer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
     computeMembers();
@@ -98,17 +99,55 @@ public class RLLPEncoder7 {
     new MembersComputer().compute();
   }
 
-  class Namer {
+  interface Namer {
+    public String name(Verb v);
+    public String name(Symbol s, List<Verb> legalJumps, boolean has$Jump);
+    public MethodSkeleton name(JSMTypeComputer recursiveRoot, boolean has$Jump);
+  }
+
+  class ThinNamer implements Namer {
+    private final Map<Verb, String> verbNames = new LinkedHashMap<>();
+    private final Map<Symbol, Map<List<Verb>, Map<Boolean, String>>> seenTypes = new LinkedHashMap<>();
+    private final Map<JSMTypeComputer, Map<Boolean, String>> seenRecs = new LinkedHashMap<>();
+    private int verbCount;
+    private int typeCount;
+    private int recCount;
+
+    @Override public String name(Verb v) {
+      if (verbNames.containsKey(v))
+        return verbNames.get(v);
+      return "v" + (++verbCount);
+    }
+    @Override public String name(Symbol s, List<Verb> legalJumps, boolean has$Jump) {
+      if (seenTypes.containsKey(s) && seenTypes.get(s).containsKey(legalJumps)
+          && seenTypes.get(s).get(legalJumps).containsKey(Boolean.valueOf(has$Jump)))
+        return seenTypes.get(s).get(legalJumps).get(Boolean.valueOf(has$Jump));
+      seenTypes.putIfAbsent(s, new LinkedHashMap<>());
+      seenTypes.get(s).putIfAbsent(legalJumps, new LinkedHashMap<>());
+      String $ = "T" + (++typeCount);
+      seenTypes.get(s).get(legalJumps).put(Boolean.valueOf(has$Jump), $);
+      return $;
+    }
+    @Override public MethodSkeleton name(JSMTypeComputer recursiveRoot, boolean has$Jump) {
+      if (!seenRecs.containsKey(recursiveRoot) || !seenRecs.get(recursiveRoot).containsKey(Boolean.valueOf(has$Jump))) {
+        seenRecs.putIfAbsent(recursiveRoot, new LinkedHashMap<>());
+        seenRecs.get(recursiveRoot).put(Boolean.valueOf(has$Jump), "R" + (++recCount));
+      }
+      return new MethodSkeleton().append(seenRecs.get(recursiveRoot).get(Boolean.valueOf(has$Jump)));
+    }
+  }
+
+  class DebugNamer implements Namer {
     private final Map<Verb, String> verbNames = new LinkedHashMap<>();
     private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
     private final List<Verb> verbsOrder = new ArrayList<>(bnf.verbs);
-    private final Map<JSMTypeComputer, String> seenRecs = new LinkedHashMap<>();
+    private final Map<JSMTypeComputer, Map<Boolean, String>> seenRecs = new LinkedHashMap<>();
     private int recCount;
     {
       Collections.sort(verbsOrder);
     }
 
-    public String name(Verb v) {
+    @Override public String name(Verb v) {
       if (verbNames.containsKey(v))
         return verbNames.get(v);
       int x;
@@ -118,23 +157,28 @@ public class RLLPEncoder7 {
       verbNames.put(v, $);
       return $;
     }
-    public String name(Symbol s, List<Verb> legalJumps) {
+    @Override public String name(Symbol s, List<Verb> legalJumps, boolean has$Jump) {
       StringBuilder $ = new StringBuilder(s.isNonTerminal() ? s.asNonTerminal().name() : name(s.asVerb())).append("$");
       for (Verb v : verbsOrder)
         if (legalJumps.contains(v))
           $.append(name(v));
+      if (has$Jump)
+        $.append("$");
       return $.toString();
     }
-    public MethodSkeleton name(JSMTypeComputer recursiveRoot) {
-      if (!seenRecs.containsKey(recursiveRoot))
-        seenRecs.put(recursiveRoot, "REC$" + (++recCount) + "$" + recursiveRoot.typeName.asSimpleName());
-      return new MethodSkeleton().append(seenRecs.get(recursiveRoot));
+    @Override public MethodSkeleton name(JSMTypeComputer recursiveRoot, boolean has$Jump) {
+      if (!seenRecs.containsKey(recursiveRoot) || !seenRecs.get(recursiveRoot).containsKey(Boolean.valueOf(has$Jump))) {
+        seenRecs.putIfAbsent(recursiveRoot, new LinkedHashMap<>());
+        seenRecs.get(recursiveRoot).put(Boolean.valueOf(has$Jump),
+            "REC$" + (++recCount) + "$" + recursiveRoot.typeName.asSimpleName());
+      }
+      return new MethodSkeleton().append(seenRecs.get(recursiveRoot).get(Boolean.valueOf(has$Jump)));
     }
   }
 
   class MembersComputer {
     // TODO Roth: check whether sufficient recognition
-    private final Map<Symbol, Set<List<Verb>>> seenTypes = new LinkedHashMap<>();
+    private final Map<Symbol, Map<List<Verb>, Set<Boolean>>> seenTypes = new LinkedHashMap<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
     private final Map<String, MethodSkeleton> apiTypeSkeletons = new LinkedHashMap<>();
     private final Set<JSMTypeComputer> seenRecs = new LinkedHashSet<>();
@@ -156,13 +200,18 @@ public class RLLPEncoder7 {
         return $.appendEmpty();
       Symbol top = jsm.peek();
       List<Verb> legalJumps = jsm.legalJumps(baseLegalJumps);
-      String n = namer.name(top, legalJumps);
+      // TODO Roth: manage $ jumps
+      String n = namer.name(top, legalJumps, true);
       $.append(n);
-      if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
+      // TODO Roth: manage $ jumps
+      if (seenTypes.containsKey(top) && seenTypes.get(top).containsKey(legalJumps)
+          && seenTypes.get(top).get(legalJumps).contains(Boolean.valueOf(true)))
         return $;
       apiTypeNames.add(n);
-      seenTypes.putIfAbsent(top, new LinkedHashSet<>());
-      seenTypes.get(top).add(legalJumps);
+      seenTypes.putIfAbsent(top, new LinkedHashMap<>());
+      seenTypes.get(top).putIfAbsent(legalJumps, new LinkedHashSet<>());
+      // TODO Roth: manage $ jumps
+      seenTypes.get(top).get(legalJumps).add(Boolean.valueOf(true));
       MethodSkeleton t = new MethodSkeleton().append("public interface ");
       StringBuilder template = new StringBuilder("<E");
       if (!legalJumps.isEmpty()) {
@@ -175,9 +224,8 @@ public class RLLPEncoder7 {
       t.appendName(n + template.append(">")).append("{");
       for (Verb v : bnf.verbs)
         t.append(computeMethod(jsm, top, v, legalJumps, unknownSolution, emptySolution));
-      // TODO Roth: verify correctness
-      if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.followSetOf(top.asNonTerminal()).contains(SpecialSymbols.$)
-          && legalJumps.contains(SpecialSymbols.$))
+      // TODO Roth: manage $ jumps
+      if (!bnf.isSubBNF && top.isNonTerminal() && analyzer.isNullable(jsm.getS0()) && true)
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypeSkeletons.put(n, t.append("}"));
       apiTypes.add(t.toString(unknownSolution, emptySolution));
@@ -241,7 +289,8 @@ public class RLLPEncoder7 {
         computeType(c, unknownSolution);
       if (tc.isRecursive()) {
         JSMTypeComputer root = tc.root();
-        tc.typeName = namer.name(root);
+        // TODO Roth: manage $ jumps
+        tc.typeName = namer.name(root, true);
         seenRecs.add(root);
         tc.templates.clear();
         assert root.legalJumps.equals(tc.legalJumps);
@@ -499,10 +548,6 @@ public class RLLPEncoder7 {
     }
     public boolean hasRecursion() {
       return isRecursive() || templates.stream().anyMatch(JSMTypeComputer::hasRecursion);
-    }
-    public String getRecursionOrigin() {
-      assert !jsm.isEmpty();
-      return namer.name(jsm.peek(), legalJumps);
     }
     public JSMTypeComputer root() {
       JSMTypeComputer $ = this;
