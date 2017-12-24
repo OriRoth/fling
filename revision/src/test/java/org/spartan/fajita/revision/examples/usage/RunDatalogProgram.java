@@ -1,6 +1,5 @@
 package org.spartan.fajita.revision.examples.usage;
 
-import org.spartan.fajita.revision.junk.DatalogAST.*;
 import static org.spartan.fajita.revision.examples.usage.PrintDatalogProgram.*;
 
 import java.util.Arrays;
@@ -9,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.spartan.fajita.revision.junk.datalog.DatalogAST.*;
 
 import za.co.wstoop.jatalog.DatalogException;
 import za.co.wstoop.jatalog.Expr;
@@ -39,14 +40,13 @@ public class RunDatalogProgram {
     return run(j, (Query) s);
   }
   private static String run(Jatalog j, Fact f) throws DatalogException {
-    j.fact(f.fact.that, f.fact.by);
+    j.fact(f.fact, f.by);
     return INPUT_PREFIX + print(f);
   }
   private static String run(Jatalog j, Rule r) throws DatalogException {
     List<Expr> $ = new LinkedList<>();
-    $.add(Expr.expr(r.is, r.by));
-    $.addAll(Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, e.by)).collect(Collectors.toList()));
-    j.rule(Expr.expr(r.rule.that, r.rule.by), $.toArray(new Expr[$.size()]));
+    $.addAll(Arrays.stream(r.rule1).map(e -> Expr.expr(e.is, e.by)).collect(Collectors.toList()));
+    j.rule(Expr.expr(r.rule, r.by), $.toArray(new Expr[$.size()]));
     return INPUT_PREFIX + print(r);
   }
   private static String run(Jatalog j, Query q) throws DatalogException {

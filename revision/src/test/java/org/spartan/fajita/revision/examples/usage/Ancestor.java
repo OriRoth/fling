@@ -1,19 +1,18 @@
 package org.spartan.fajita.revision.examples.usage;
 
-import static org.spartan.fajita.revision.junk.Datalog.*;
-import static org.spartan.fajita.revision.junk.FactExpression.*;
+import static org.spartan.fajita.revision.junk.datalog.Datalog.*;
 
-import org.spartan.fajita.revision.junk.DatalogAST.Program;
+import org.spartan.fajita.revision.junk.datalog.DatalogAST.Program;
 
 public class Ancestor {
   public static Program program() {
-    return fact(that("parent").by("john", "bob")) //
-        .fact(that("parent").by("bob", "donald")) //
-        .rule(that("ancestor").by("A", "B")) //
+    return fact("parent").by("john", "bob") //
+        .fact("parent").by("bob", "donald") //
+        .rule("ancestor").by("A", "B") //
         /**/.is("parent").by("A", "B") //
-        .rule(that("ancestor").by("A", "B")) //
+        .rule("ancestor").by("A", "B") //
         /**/.is("parent").by("A", "C") //
-        /**/.and("ancestor").by("C", "B") //
+        /**/.is("ancestor").by("C", "B") //
         .query("ancestor").by("john", "X") //
         .$();
   }

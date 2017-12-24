@@ -3,7 +3,7 @@ package org.spartan.fajita.revision.examples.usage;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.junk.DatalogAST.*;
+import org.spartan.fajita.revision.junk.datalog.DatalogAST.*;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {
@@ -23,24 +23,21 @@ public class PrintDatalogProgram {
     return print((Query) r);
   }
   public static String print(Fact r) {
-    return print(r.fact) + ".";
+    return print(r.fact, r.by) + ".";
   }
   public static String print(Rule r) {
     StringBuilder $ = new StringBuilder();
-    $.append(print(r.rule)).append(" :- ");
-    $.append(r.is).append("(").append(String.join(", ", r.by)).append(")");
-    if (r.rule1.length > 0)
-      $.append(" ");
-    $.append(String.join(", ", Arrays.stream(r.rule1).map(x -> print(x)).collect(Collectors.toList())));
+    $.append(print(r.rule, r.by)).append(" :- ") //
+        .append(String.join(", ", Arrays.stream(r.rule1).map(x -> print(x)).collect(Collectors.toList())));
     return $.append(".").toString();
   }
-  public static String print(FactExpression e) {
-    return e.that + "(" + String.join(", ", e.by) + ")";
-  }
   public static String print(RuleExpression e) {
-    return e.and + "(" + String.join(", ", e.by) + ")";
+    return print(e.is, e.by);
   }
-  public static String print(Query r) {
-    return r.query + "(" + String.join(", ", r.by) + ")?";
+  public static String print(Query q) {
+    return print(q.query, q.by) + "?";
+  }
+  private static String print(String header, String[] literals) {
+    return header + "(" + String.join(",", literals) + ")";
   }
 }

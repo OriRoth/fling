@@ -1,24 +1,21 @@
 package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.attribute;
-import static org.spartan.fajita.revision.api.Fajita.noneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Fact;
-import static org.spartan.fajita.revision.examples.Datalog.NT.FactExpression;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Program;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Query;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Rule;
 import static org.spartan.fajita.revision.examples.Datalog.NT.RuleExpression;
 import static org.spartan.fajita.revision.examples.Datalog.NT.Statement;
-import static org.spartan.fajita.revision.examples.Datalog.Term.and;
 import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.query;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.examples.Datalog.Term.that;
-import static org.spartan.fajita.revision.export.testing.FajitaTesting.*;
-import static org.spartan.fajita.revision.export.testing.ExampleBody.*;
+import static org.spartan.fajita.revision.export.testing.ExampleBody.call;
+import static org.spartan.fajita.revision.export.testing.ExampleBody.toConclude;
+import static org.spartan.fajita.revision.export.testing.FajitaTesting.example;
 
 import java.io.IOException;
 
@@ -33,11 +30,11 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 public class Datalog extends Grammar {
   public static enum Term implements Terminal {
-    rule, is, fact, that, by, query, and
+    rule, is, fact, by, query
   }
 
   public static enum NT implements NonTerminal {
-    Program, Statement, Rule, Query, Fact, FactExpression, RuleExpression
+    Program, Statement, Rule, Query, Fact, RuleExpression
   }
 
   @Override public FajitaBNF bnf() {
@@ -45,24 +42,22 @@ public class Datalog extends Grammar {
         .start(Program) //
         .derive(Program).to(oneOrMore(Statement)) //
         .specialize(Statement).into(Rule, Query, Fact) //
-        .derive(Fact).to(attribute(fact, FactExpression)) //
+        .derive(Fact).to(attribute(fact, String.class), attribute(by, new VarArgs(String.class))) //
         .derive(Rule).to( //
-            attribute(rule, FactExpression), //
-            attribute(is, String.class), //
+            attribute(rule, String.class), //
             attribute(by, new VarArgs(String.class)), //
-            noneOrMore(RuleExpression)) //
-        .derive(FactExpression).to(attribute(that, String.class), attribute(by, new VarArgs(String.class))) //
-        .derive(RuleExpression).to(attribute(and, String.class), attribute(by, new VarArgs(String.class))) //
+            oneOrMore(RuleExpression)) //
+        .derive(RuleExpression).to(attribute(is, String.class), attribute(by, new VarArgs(String.class))) //
         .derive(Query).to(attribute(query, String.class), attribute(by, new VarArgs(String.class))) //
     ;
   }
   @Override public Test examples() {
     return example( //
-        call(fact).with(FactExpression)) //
+        call(fact).with("true")) //
             .example( //
-                toConclude(FactExpression).call(that).with("parent").then(by).with("John", "Bob"))
+                toConclude(Query).call(query).with("parent").then(by).with("X", "Bob"))
             .malexample( //
-                call(fact).with("Fluent APIw have a bright future")) //
+                call(fact).with(/* nothing */)) //
             .$();
   }
   public static void main(String[] args) throws IOException {

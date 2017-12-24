@@ -49,7 +49,6 @@ public class RLLPEncoder7 {
   final Class<? extends Grammar> provider;
   public static final boolean DEBUG = false;
   final JSMTypeComputer DUMMY$JUMP = new JSMTypeComputer();
-  private static final String $REPLACEMENT = "Q";
 
   public RLLPEncoder7(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
@@ -139,7 +138,6 @@ public class RLLPEncoder7 {
       String n = v.isVerb() ? v.asVerb().terminal.name().substring(0, 1) : v.name().substring(0, 1);
       terminalCounts.put(n, Integer.valueOf(x = terminalCounts.getOrDefault(n, Integer.valueOf(0)).intValue() + 1));
       String $ = n + (x == 1 ? "" : Integer.valueOf(x));
-      $ = $.replaceAll("\\$", $REPLACEMENT);
       verbNames.put(v, $);
       return $;
     }
@@ -149,7 +147,7 @@ public class RLLPEncoder7 {
         if (legalJumps.contains(v))
           $.append(name(v));
       if (has$Jump)
-        $.append($REPLACEMENT);
+        $.append("$");
       return $.toString();
     }
     @Override public MethodSkeleton name(JSMTypeComputer recursiveRoot, boolean has$Jump) {
@@ -384,15 +382,15 @@ public class RLLPEncoder7 {
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
         assert SpecialSymbols.$.equals(x);
-        return $REPLACEMENT;
+        return "$";
       } : x -> {
         assert SpecialSymbols.$.equals(x);
         return "$$$";
       };
-      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> $REPLACEMENT : () -> "$$$";
+      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
           .append(computeType(computeType(jsm, top, v, legalJumps, unknownSolution, emptySolution, null),
-              !bnf.isSubBNF ? x -> $REPLACEMENT : x -> "$$$").toString(unknownSolution, emptySolution)) //
+              !bnf.isSubBNF ? x -> "$" : x -> "$$$").toString(unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
@@ -400,10 +398,10 @@ public class RLLPEncoder7 {
           .toString());
     }
     private void compute$Type() {
-      assert !apiClasses.containsKey($REPLACEMENT);
-      apiClasses.put($REPLACEMENT, new StringBuilder("public interface " + $REPLACEMENT + "{") //
+      assert !apiClasses.containsKey("$");
+      apiClasses.put("$", new StringBuilder("public interface ${") //
           .append(packagePath.toLowerCase() + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
-      apiTypeNames.add($REPLACEMENT);
+      apiTypeNames.add("$");
     }
     private void compute$$$Type() {
       List<String> superInterfaces = new ArrayList<>(apiTypeNames);
