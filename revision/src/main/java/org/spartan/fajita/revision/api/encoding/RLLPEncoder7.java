@@ -47,8 +47,9 @@ public class RLLPEncoder7 {
   final List<String> apiTypes;
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
   final JSMTypeComputer DUMMY$JUMP = new JSMTypeComputer();
+  private static final String $REPLACEMENT = "Q";
 
   public RLLPEncoder7(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
@@ -119,44 +120,44 @@ public class RLLPEncoder7 {
   }
 
   class ThinNamer implements Namer {
-    private final Map<Verb, String> verbNames = new LinkedHashMap<>();
-    private final Map<Symbol, Map<List<Verb>, Map<Boolean, String>>> seenTypes = new LinkedHashMap<>();
+    private final Map<Symbol, String> verbNames = new LinkedHashMap<>();
+    private final Map<String, Integer> terminalCounts = new LinkedHashMap<>();
+    private final List<Verb> verbsOrder = new ArrayList<>(bnf.verbs);
     private final Map<JSMTypeComputer, Map<Boolean, String>> seenRecs = new LinkedHashMap<>();
-    private int verbCount;
-    private int typeCount;
-
-    private String getName(int position, boolean capital) {
-      int addition = 0, fixedPosition = position;
-      while (position > 'Z' - 'A') {
-        ++addition;
-        fixedPosition -= 'Z' - 'A' + 1;
-      }
-      String $;
-      if (addition == 0)
-        $ = "" + ((char) ('A' + fixedPosition));
-      else
-        $ = "" + ((char) ('A' + fixedPosition)) + addition;
-      return capital ? $ : $.toLowerCase();
+    private int recCount;
+    {
+      Collections.sort(verbsOrder);
     }
+
     @Override public String name(Verb v) {
-      if (!verbNames.containsKey(v))
-        verbNames.put(v, getName(verbCount++, false));
-      return verbNames.get(v);
+      return name((Symbol) v);
+    }
+    public String name(Symbol v) {
+      if (verbNames.containsKey(v))
+        return verbNames.get(v);
+      int x;
+      String n = v.isVerb() ? v.asVerb().terminal.name().substring(0, 1) : v.name().substring(0, 1);
+      terminalCounts.put(n, Integer.valueOf(x = terminalCounts.getOrDefault(n, Integer.valueOf(0)).intValue() + 1));
+      String $ = n + (x == 1 ? "" : Integer.valueOf(x));
+      $ = $.replaceAll("\\$", $REPLACEMENT);
+      verbNames.put(v, $);
+      return $;
     }
     @Override public String name(Symbol s, List<Verb> legalJumps, boolean has$Jump) {
-      if (seenTypes.containsKey(s) && seenTypes.get(s).containsKey(legalJumps)
-          && seenTypes.get(s).get(legalJumps).containsKey(Boolean.valueOf(has$Jump)))
-        return seenTypes.get(s).get(legalJumps).get(Boolean.valueOf(has$Jump));
-      seenTypes.putIfAbsent(s, new LinkedHashMap<>());
-      seenTypes.get(s).putIfAbsent(legalJumps, new LinkedHashMap<>());
-      String $ = getName(typeCount++, true);
-      seenTypes.get(s).get(legalJumps).put(Boolean.valueOf(has$Jump), $);
-      return $;
+      StringBuilder $ = new StringBuilder(name(s));
+      for (Verb v : verbsOrder)
+        if (legalJumps.contains(v))
+          $.append(name(v));
+      if (has$Jump)
+        $.append($REPLACEMENT);
+      return $.toString();
     }
     @Override public MethodSkeleton name(JSMTypeComputer recursiveRoot, boolean has$Jump) {
       if (!seenRecs.containsKey(recursiveRoot) || !seenRecs.get(recursiveRoot).containsKey(Boolean.valueOf(has$Jump))) {
         seenRecs.putIfAbsent(recursiveRoot, new LinkedHashMap<>());
-        seenRecs.get(recursiveRoot).put(Boolean.valueOf(has$Jump), getName(typeCount++, true));
+        int x = ++recCount;
+        seenRecs.get(recursiveRoot).put(Boolean.valueOf(has$Jump),
+            "R" + (x == 1 ? "" : Integer.valueOf(x)) + recursiveRoot.typeName.asSimpleName());
       }
       return new MethodSkeleton().append(seenRecs.get(recursiveRoot).get(Boolean.valueOf(has$Jump)));
     }
@@ -383,15 +384,15 @@ public class RLLPEncoder7 {
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
         assert SpecialSymbols.$.equals(x);
-        return "$";
+        return $REPLACEMENT;
       } : x -> {
         assert SpecialSymbols.$.equals(x);
         return "$$$";
       };
-      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
+      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> $REPLACEMENT : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
           .append(computeType(computeType(jsm, top, v, legalJumps, unknownSolution, emptySolution, null),
-              !bnf.isSubBNF ? x -> "$" : x -> "$$$").toString(unknownSolution, emptySolution)) //
+              !bnf.isSubBNF ? x -> $REPLACEMENT : x -> "$$$").toString(unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
@@ -399,10 +400,10 @@ public class RLLPEncoder7 {
           .toString());
     }
     private void compute$Type() {
-      assert !apiClasses.containsKey("$");
-      apiClasses.put("$", new StringBuilder("public interface ${") //
+      assert !apiClasses.containsKey($REPLACEMENT);
+      apiClasses.put($REPLACEMENT, new StringBuilder("public interface " + $REPLACEMENT + "{") //
           .append(packagePath.toLowerCase() + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
-      apiTypeNames.add("$");
+      apiTypeNames.add($REPLACEMENT);
     }
     private void compute$$$Type() {
       List<String> superInterfaces = new ArrayList<>(apiTypeNames);
