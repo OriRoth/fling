@@ -2,7 +2,7 @@ package org.spartan.fajita.revision.examples.malfunction;
 
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple.Term.*;
-import static org.spartan.fajita.revision.junk.TestAnBnSimple.*;
+import static org.spartan.fajita.revision.junk.testanbnsimple.TestAnBnSimple.*;
 
 import java.io.IOException;
 
