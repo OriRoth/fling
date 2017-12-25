@@ -124,6 +124,7 @@ public class RLLPEncoder9 {
   class MembersComputer {
     private final Map<Symbol, Set<List<Verb>>> seenTypes = new LinkedHashMap<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
+    private final Set<TypeEncoding> seenRecs = new LinkedHashSet<>();
 
     public void compute() {
       if (!bnf.isSubBNF)
@@ -148,7 +149,7 @@ public class RLLPEncoder9 {
       };
       Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
-          .append(solveType(computeType(jsm, v, unknownSolution, emptySolution))) //
+          .append(solveType(computeType(jsm, v, unknownSolution, emptySolution), unknownSolution, emptySolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
@@ -157,16 +158,20 @@ public class RLLPEncoder9 {
     }
     private TypeEncoding computeType(JSM3 jsm, Verb origin, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
+      return computeType(jsm, origin, unknownSolution, emptySolution, null);
+    }
+    private TypeEncoding computeType(JSM3 jsm, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution,
+        TypeEncoding parent) {
       assert jsm != JAMMED;
       if (jsm == UNKNOWN)
-        return new TypeEncoding(jsm, unknownSolution.apply(origin));
+        return new TypeEncoding(jsm, origin, unknownSolution.apply(origin), parent);
       if (jsm.isEmpty())
-        return new TypeEncoding(jsm, emptySolution.get());
+        return new TypeEncoding(jsm, origin, emptySolution.get(), parent);
       Symbol top = jsm.peek();
       List<Verb> legalJumps = jsm.legalJumps();
       String $ = namer.name(top, legalJumps);
       if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
-        return computeTemplates(new TypeEncoding(jsm, $), jsm, unknownSolution, emptySolution);
+        return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
       seenTypes.get(top).add(legalJumps);
       StringBuilder t = new StringBuilder("public interface ");
@@ -189,16 +194,7 @@ public class RLLPEncoder9 {
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
       apiTypeNames.add($);
-      return computeTemplates(new TypeEncoding(jsm, $), jsm, unknownSolution, emptySolution);
-    }
-    private TypeEncoding computeTemplates(TypeEncoding $, JSM3 jsm, Function<Verb, String> unknownSolution,
-        Supplier<String> emptySolution) {
-      assert jsm != UNKNOWN && !jsm.isEmpty();
-      $.templates.add(computeType(jsm.pop(), null, unknownSolution, emptySolution));
-      for (Verb v : jsm.legalJumps())
-        if (!SpecialSymbols.$.equals(v))
-          $.templates.add(computeType(jsm.jumpReminder(v), v, unknownSolution, emptySolution));
-      return $;
+      return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
     }
     private String computeMethod(JSM3 jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       if (jsm == JAMMED)
@@ -215,21 +211,38 @@ public class RLLPEncoder9 {
           !top.asVerb().equals(v) ? //
               "" //
               : "public E " + v.terminal.name() + "();" //
-          : "public " + solveType(computeType(next, v, unknownSolution, emptySolution)) //
+          : "public " + solveType(computeType(next, v, unknownSolution, emptySolution), unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "();";
     }
-    private String solveType(TypeEncoding t) {
+    private TypeEncoding computeTemplates(TypeEncoding $, JSM3 jsm, Function<Verb, String> unknownSolution,
+        Supplier<String> emptySolution) {
+      if ($.isRecursive())
+        return $;
+      assert jsm != UNKNOWN && !jsm.isEmpty();
+      $.templates.add(computeType(jsm.pop(), null, unknownSolution, emptySolution, $));
+      for (Verb v : jsm.legalJumps())
+        if (!SpecialSymbols.$.equals(v))
+          $.templates.add(computeType(jsm.jumpReminder(v), v, unknownSolution, emptySolution, $));
+      return $;
+    }
+    private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       JSM3 jsm = t.jsm;
       assert jsm != JAMMED;
       if (jsm == UNKNOWN || jsm.isEmpty())
         return t.typeName;
       assert t.templates.size() > 0;
+      if (t.isRecursive())
+        return solveRecursiveType(t, unknownSolution, emptySolution);
       StringBuilder $ = new StringBuilder(namer.name(jsm.peek(), jsm.legalJumps())) //
           .append("<");
       List<String> templates = new ArrayList<>();
       for (TypeEncoding template : t.templates)
-        templates.add(solveType(template));
+        templates.add(solveType(template, unknownSolution, emptySolution));
       return $.append(String.join(",", templates)).append(">").toString();
+    }
+    private String solveRecursiveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      // TODO Auto-generated method stub
+      return null;
     }
     private void compute$Type() {
       apiTypes.add(new StringBuilder("public interface ${") //
@@ -274,13 +287,52 @@ public class RLLPEncoder9 {
 
   class TypeEncoding {
     final JSM3 jsm;
-    final String typeName;
+    final Verb origin;
+    String typeName;
     final List<TypeEncoding> templates;
+    final TypeEncoding parent;
+    TypeEncoding recursionAncestor;
+    private boolean recFlag;
 
-    public TypeEncoding(JSM3 jsm, String typeName) {
+    public TypeEncoding(JSM3 jsm, Verb origin, String typeName, TypeEncoding parent) {
       this.jsm = jsm;
+      this.origin = origin;
       this.typeName = typeName;
       this.templates = new ArrayList<>();
+      this.parent = parent;
+    }
+    boolean isRecursive() {
+      if (recFlag)
+        return recursionAncestor != null;
+      recFlag = true;
+      if (jsm == UNKNOWN || jsm.isEmpty())
+        return false;
+      for (TypeEncoding current = parent; current != null; current = current.parent)
+        if (match(current)) {
+          recursionAncestor = current;
+          return true;
+        }
+      return false;
+    }
+    boolean match(TypeEncoding other) {
+      return jsm.peek().equals(other.jsm.peek()) && jsm.legalJumps().equals(other.jsm.legalJumps());
+    }
+    @Override public int hashCode() {
+      return jsm.hashCode();
+    }
+    @Override public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (!(obj instanceof TypeEncoding))
+        return false;
+      TypeEncoding other = (TypeEncoding) obj;
+      if (!match(other) || isRecursive() ^ other.isRecursive())
+        return false;
+      assert templates.size() == other.templates.size();
+      for (int i = 0; i < templates.size(); ++i)
+        if (!templates.get(i).equals(other.templates.get(i)))
+          return false;
+      return true;
     }
   }
 }
