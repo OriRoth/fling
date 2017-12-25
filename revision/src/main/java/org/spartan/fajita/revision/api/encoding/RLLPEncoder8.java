@@ -147,7 +147,7 @@ public class RLLPEncoder8 {
       return $;
     }
     @Override public String name(Symbol s, List<Verb> legalJumps) {
-      StringBuilder $ = new StringBuilder(s.isNonTerminal() ? s.asNonTerminal().name() : name(s.asVerb())).append("$");
+      StringBuilder $ = new StringBuilder(s.isNonTerminal() ? s.asNonTerminal().name() : name(s.asVerb())).append("_");
       for (Verb v : bnf.verbs)
         if (legalJumps.contains(v))
           $.append(name(v));
@@ -170,7 +170,7 @@ public class RLLPEncoder8 {
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      JSM3 jsm = RLLPConcrete3.next(new JSM3(bnf, analyzer, startSymbol, new ArrayList<>()), v, true);
+      JSM3 jsm = RLLPConcrete3.next(new JSM3(bnf, analyzer, startSymbol, new ArrayList<>()), v, false);
       computeType(jsm, v, x -> namer.name(x), () -> "E");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
@@ -217,7 +217,7 @@ public class RLLPEncoder8 {
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
-          t.append(computeMethod(RLLPConcrete3.next(jsm, v, true).trim(), v, unknownSolution, emptySolution));
+          t.append(computeMethod(jsm.trim(), v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
@@ -243,11 +243,14 @@ public class RLLPEncoder8 {
       if (jsm.isEmpty())
         return "public E " + v.terminal.name() + "();";
       Symbol top = jsm.peek();
+      JSM3 next = RLLPConcrete3.next(jsm, v, false);
+      if (next == JAMMED)
+        return "";
       return top.isVerb() ? //
           !top.asVerb().equals(v) ? //
               "" //
               : "public E " + v.terminal.name() + "();" //
-          : "public " + computeType(RLLPConcrete3.next(jsm, v, true), v, unknownSolution, emptySolution) //
+          : "public " + computeType(next, v, unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "();";
     }
     private void compute$Type() {

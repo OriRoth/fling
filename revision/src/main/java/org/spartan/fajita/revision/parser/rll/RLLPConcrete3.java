@@ -60,12 +60,6 @@ public class RLLPConcrete3 {
   void reduce(@SuppressWarnings("unused") Item i) {
     //
   }
-  public RLLPConcrete3 consume(Verb v) {
-    return consume(v, false);
-  }
-  public RLLPConcrete3 consumeReminder(Verb v) {
-    return consume(v, true);
-  }
   private RLLPConcrete3 consume(Verb v, boolean reminder) {
     if (jsm == null || initialized && jsm.isEmpty())
       reject = true;
@@ -130,10 +124,7 @@ public class RLLPConcrete3 {
   public static JSM3 next(JSM3 jsm, Verb v, boolean reminder) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
     rllp.initialized = true;
-    if (!reminder)
-      rllp.consume(v);
-    else
-      rllp.consumeReminder(v);
+    rllp.consume(v, reminder);
     return rllp.jsm;
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {

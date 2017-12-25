@@ -23,6 +23,7 @@ public class JSM3 implements Cloneable {
   final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
   private final Stack<Map<Verb, J>> S1;
+  private List<Verb> emptyLegalJumps;
 
   public JSM3(BNF bnf) {
     this(bnf, new BNFAnalyzer(bnf));
@@ -32,6 +33,7 @@ public class JSM3 implements Cloneable {
     this.analyzer = analyzer;
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
+    this.emptyLegalJumps = null;
   }
   public JSM3(BNF bnf, BNFAnalyzer analyzer, Symbol initial, List<Verb> baseLegalJumps) {
     this(bnf, analyzer);
@@ -49,12 +51,14 @@ public class JSM3 implements Cloneable {
     this.S0.addAll(jsm.S0);
     for (Map<Verb, J> m : jsm.S1)
       this.S1.add(new HashMap<>(m));
+    this.emptyLegalJumps = jsm.emptyLegalJumps;
   }
   private JSM3() {
     this.bnf = null;
     this.analyzer = null;
     this.S0 = null;
     this.S1 = null;
+    this.emptyLegalJumps = null;
   }
   @Override public JSM3 clone() {
     return new JSM3(this);
@@ -67,13 +71,15 @@ public class JSM3 implements Cloneable {
   }
   public JSM3 pop() {
     JSM3 $ = clone();
+    if (S0.size() == 1)
+      $.emptyLegalJumps = legalJumps();
     $.S0.pop();
     $.S1.pop();
     return $;
   }
   public JSM3 jump(Verb v) {
     if (S1.isEmpty())
-      return JAMMED;
+      return emptyLegalJumps != null && emptyLegalJumps.contains(v) ? UNKNOWN : JAMMED;
     J j = S1.peek().get(v);
     if (j == J.JJAMMED)
       return JAMMED;
@@ -158,7 +164,7 @@ public class JSM3 implements Cloneable {
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v, J.JJAMMED);
+      $.put(v, emptyLegalJumps != null && emptyLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {
