@@ -11,9 +11,7 @@ public class Main {
   public static final String projectPath = "/home/ori/Desktop/git/fajita/revision/src/test/java/";
 
   public static void apiGenerator(Map<String, String> files) throws IOException {
-    // TODO Roth: fix hack
-    String filePath = projectPath + packagePath.replace('.', '/') + '/' + files.get("~") + '/';
-    files.remove("~");
+    String filePath = projectPath + packagePath.replace('.', '/') + '/';
     for (Entry<String, String> f : files.entrySet()) {
       final String fname = f.getKey();
       byte[] fileContent = f.getValue().getBytes();

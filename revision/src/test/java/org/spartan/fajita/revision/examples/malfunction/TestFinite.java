@@ -2,7 +2,7 @@ package org.spartan.fajita.revision.examples.malfunction;
 
 import static org.spartan.fajita.revision.examples.malfunction.TestFinite.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestFinite.Term.*;
-import static org.spartan.fajita.revision.junk.testfinite.TestFinite.*;
+import static org.spartan.fajita.revision.junk.TestFinite.*;
 import static org.spartan.fajita.revision.api.Fajita.*;
 
 import java.io.IOException;

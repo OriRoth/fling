@@ -33,10 +33,13 @@ public class JSM3 implements Cloneable {
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
   }
-  public JSM3(BNF bnf, BNFAnalyzer analyzer, Symbol initial) {
+  public JSM3(BNF bnf, BNFAnalyzer analyzer, Symbol initial, List<Verb> baseLegalJumps) {
     this(bnf, analyzer);
     pushJumps(initial);
     S0.push(initial);
+    for (Verb v : baseLegalJumps)
+      if (S1.peek().get(v) == J.JJAMMED)
+        S1.peek().put(v, J.JUNKNOWN);
   }
   private JSM3(JSM3 jsm) {
     this.bnf = jsm.bnf;
@@ -80,13 +83,37 @@ public class JSM3 implements Cloneable {
     $ = $.pushAll(j.toPush);
     return $;
   }
+  public JSM3 jumpReminder(Verb v) {
+    if (S1.isEmpty())
+      return JAMMED;
+    J j = S1.peek().get(v);
+    if (j == J.JJAMMED)
+      return JAMMED;
+    if (j == J.JUNKNOWN)
+      return UNKNOWN;
+    if (j.toPush.isEmpty())
+      return new JSM3(bnf, analyzer);
+    JSM3 $ = new JSM3(bnf, analyzer, j.toPush.get(0), legalJumps());
+    $ = $.pushAll(j.toPush.subList(1, j.toPush.size()));
+    return $;
+  }
   public JSM3 pushAll(List<Symbol> items) {
     if (items.isEmpty())
       return clone();
-    List<Symbol> l = getS0();
-    l.addAll(items);
     JSM3 $ = clone();
     $.pushJumps(items);
+    return $;
+  }
+  public JSM3 pushAllReminder(List<Symbol> items) {
+    if (items.isEmpty())
+      return new JSM3(bnf, analyzer);
+    if (isEmpty()) {
+      JSM3 $ = new JSM3(bnf, analyzer);
+      $.pushJumps(items);
+      return $;
+    }
+    JSM3 $ = new JSM3(bnf, analyzer, items.get(0), legalJumps());
+    $.pushJumps(items.subList(1, items.size()));
     return $;
   }
   private void pushJumps(List<Symbol> items) {
@@ -96,7 +123,7 @@ public class JSM3 implements Cloneable {
     }
   }
   private void pushJumps(Symbol s) {
-    Map<Verb, J> m = S1.isEmpty() ? emptyMap(s) : new HashMap<>(S1.peek());
+    Map<Verb, J> m = S1.isEmpty() ? emptyMap() : new HashMap<>(S1.peek());
     if (s.isVerb()) {
       m.put(s.asVerb(), J.of(clone()));
       S1.push(m);
@@ -117,16 +144,21 @@ public class JSM3 implements Cloneable {
     }
     S1.push(m);
   }
-  public List<Verb> legalJumps(List<Verb> baseLegalJumps) {
-    return new LinkedList<>(bnf.verbs.stream().filter(v -> {
-      JSM3 jump = jump(v);
-      return jump != JAMMED && (jump != UNKNOWN && !jump.isEmpty() || baseLegalJumps.contains(v));
-    }).collect(Collectors.toList()));
+  // TODO Roth: can be optimized
+  public List<Verb> legalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new LinkedList<>(
+        bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(peek()).contains(v) && jump(v) != JAMMED).collect(Collectors.toList()));
   }
-  private Map<Verb, J> emptyMap(Symbol initial) {
+  public JSM3 trim() {
+    return this == JAMMED || this == UNKNOWN || isEmpty() ? this
+        : new JSM3(bnf, analyzer, peek(),
+            new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList())));
+  }
+  private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v, initial.isNonTerminal() && analyzer.followSetOf(initial.asNonTerminal()).contains(v) ? J.JUNKNOWN : J.JJAMMED);
+      $.put(v, J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {

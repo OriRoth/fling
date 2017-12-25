@@ -38,53 +38,64 @@ public class RLLPConcrete3 {
     reject = false;
     initialized = false;
   }
-  void push(Symbol... items) {
-    push(Arrays.asList(items));
+  void push(boolean reminder, Symbol... items) {
+    push(Arrays.asList(items), reminder);
   }
-  void push(List<Symbol> items) {
-    jsm = jsm.pushAll(items);
+  void push(List<Symbol> items, boolean reminder) {
+    jsm = !reminder ? jsm.pushAll(items) : jsm.pushAllReminder(items);
   }
-  void jump(Verb v) {
-    if (jsm.getS0().isEmpty())
+  void jump(Verb v, boolean reminder) {
+    jsm = !reminder ? jsm.jump(v) : jsm.jumpReminder(v);
+    if (jsm == JSM3.JAMMED || jsm == JSM3.UNKNOWN)
       reject = true;
-    else
-      jsm = jsm.jump(v);
   }
   Symbol pop() {
     Symbol $ = jsm.peek();
     jsm = jsm.pop();
     return $;
   }
+  Symbol peek() {
+    return jsm.peek();
+  }
   void reduce(@SuppressWarnings("unused") Item i) {
     //
   }
   public RLLPConcrete3 consume(Verb v) {
-    if (jsm == null)
+    return consume(v, false);
+  }
+  public RLLPConcrete3 consumeReminder(Verb v) {
+    return consume(v, true);
+  }
+  private RLLPConcrete3 consume(Verb v, boolean reminder) {
+    if (jsm == null || initialized && jsm.isEmpty())
       reject = true;
     if (accept)
       throw new RuntimeException("Parser has already accepted");
     if (reject)
       throw new RuntimeException("Parser has already rejected");
     if (!initialized) {
-      push(bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
+      push(reminder, bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
       initialized = true;
     }
-    Symbol top = pop();
+    Symbol top = peek();
     if (v.equals(SpecialSymbols.$)) {
       if (!top.equals(SpecialSymbols.$))
         reject = true;
+      pop();
       return this;
     }
     if (top.isVerb()) {
       if (!top.equals(v))
         reject = true;
+      pop();
       return this;
     }
     if (isError(top.asNonTerminal(), v)) {
-      jump(v);
+      jump(v, reminder);
       return this;
     }
-    push(getPush(top.asNonTerminal(), v));
+    pop();
+    push(getPush(top.asNonTerminal(), v), reminder);
     return this;
   }
   public RLLPConcrete3 consume(Terminal t) {
@@ -115,10 +126,14 @@ public class RLLPConcrete3 {
   public boolean rejected() {
     return reject;
   }
-  public static JSM3 next(JSM3 jsm, Verb v) {
+  // TODO Roth: optimize action table creation in constructor
+  public static JSM3 next(JSM3 jsm, Verb v, boolean reminder) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
     rllp.initialized = true;
-    rllp.consume(v);
+    if (!reminder)
+      rllp.consume(v);
+    else
+      rllp.consumeReminder(v);
     return rllp.jsm;
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {

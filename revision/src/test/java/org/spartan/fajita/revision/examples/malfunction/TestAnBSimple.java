@@ -3,7 +3,7 @@ package org.spartan.fajita.revision.examples.malfunction;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBSimple.NT.S;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBSimple.NT.S1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBSimple.Term.*;
-import static org.spartan.fajita.revision.junk.testanbsimple.TestAnBSimple.*;
+import static org.spartan.fajita.revision.junk.TestAnBSimple.*;
 
 import java.io.IOException;
 
