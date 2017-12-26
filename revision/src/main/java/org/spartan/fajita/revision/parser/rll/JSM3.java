@@ -77,7 +77,7 @@ public class JSM3 implements Cloneable {
         $.emptyLegalJumps = new ArrayList<>();
       List<Verb> l = legalJumps();
       for (Verb v : l)
-        if ($.emptyLegalJumps.contains(v))
+        if (!$.emptyLegalJumps.contains(v))
           $.emptyLegalJumps.add(v);
     }
     $.S0.pop();
@@ -99,9 +99,12 @@ public class JSM3 implements Cloneable {
   }
   public JSM3 jumpReminder(Verb v) {
     JSM3 jump = jump(v);
-    return jump == JAMMED || jump == UNKNOWN || jump.isEmpty() ? jump
-        : new JSM3(bnf, analyzer, jump.S0.peek(),
-            jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(toList()));
+    if (jump == JAMMED || jump == UNKNOWN || jump.isEmpty())
+      return jump;
+    JSM3 $ = new JSM3(bnf, analyzer, jump.S0.peek(),
+        jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(toList()));
+    $.emptyLegalJumps = new ArrayList<>(emptyLegalJumps);
+    return $;
   }
   public JSM3 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -150,7 +153,7 @@ public class JSM3 implements Cloneable {
     if (this == JAMMED || this == UNKNOWN || isEmpty())
       return this;
     JSM3 $ = new JSM3(bnf, analyzer, peek(), new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
-    $.emptyLegalJumps = emptyLegalJumps;
+    $.emptyLegalJumps = new ArrayList<>(emptyLegalJumps);
     return $;
   }
   private Map<Verb, J> emptyMap() {
