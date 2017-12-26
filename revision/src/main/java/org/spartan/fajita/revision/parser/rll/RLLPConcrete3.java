@@ -60,6 +60,7 @@ public class RLLPConcrete3 {
   void reduce(@SuppressWarnings("unused") Item i) {
     //
   }
+  // TODO Roth: check whether reminder is needed
   private RLLPConcrete3 consume(Verb v, boolean reminder) {
     if (jsm == null || initialized && jsm.isEmpty())
       reject = true;
@@ -121,10 +122,12 @@ public class RLLPConcrete3 {
     return reject;
   }
   // TODO Roth: optimize action table creation in constructor
-  public static JSM3 next(JSM3 jsm, Verb v, boolean reminder) {
+  public static JSM3 next(JSM3 jsm, Verb v, boolean terminus) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
+    if (terminus)
+      jsm.makeTerminus();
     rllp.initialized = true;
-    rllp.consume(v, reminder);
+    rllp.consume(v, false);
     return rllp.jsm;
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {

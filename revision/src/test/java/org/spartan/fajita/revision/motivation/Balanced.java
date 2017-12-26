@@ -3,12 +3,7 @@ package org.spartan.fajita.revision.motivation;
 @SuppressWarnings({ "unchecked", "rawtypes" }) public class Balanced {
   interface S_$<E> {
     Object $();
-    S_c<c_$<S_$<E>>, S_$<E>> o();
-  }
-
-  interface c_$<E> {
-    Object $();
-    E c();
+    S_c<c_<S_$<E>>, S_$<E>> o();
   }
 
   interface S_c<E, c> {
@@ -24,7 +19,7 @@ package org.spartan.fajita.revision.motivation;
     Object $();
   }
 
-  static class $$$ implements S_$, c_, c_$, S_c, $ {
+  static class $$$ implements S_$, c_, S_c, $ {
     @Override public $$$ c() {
       return this;
     }

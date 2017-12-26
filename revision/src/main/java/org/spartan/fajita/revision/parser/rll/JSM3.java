@@ -79,6 +79,7 @@ public class JSM3 implements Cloneable {
     return $;
   }
   public JSM3 jump(Verb v) {
+    assert this != JAMMED && this != UNKNOWN;
     if (S1.isEmpty())
       return emptyLegalJumps != null && emptyLegalJumps.contains(v) ? UNKNOWN : JAMMED;
     J j = S1.peek().get(v);
@@ -91,18 +92,10 @@ public class JSM3 implements Cloneable {
     return $;
   }
   public JSM3 jumpReminder(Verb v) {
-    if (S1.isEmpty())
-      return JAMMED;
-    J j = S1.peek().get(v);
-    if (j == J.JJAMMED)
-      return JAMMED;
-    if (j == J.JUNKNOWN)
-      return UNKNOWN;
-    if (j.toPush.isEmpty())
-      return new JSM3(bnf, analyzer);
-    JSM3 $ = new JSM3(bnf, analyzer, j.toPush.get(0), legalJumps());
-    $ = $.pushAll(j.toPush.subList(1, j.toPush.size()));
-    return $;
+    JSM3 jump = jump(v);
+    return jump == JAMMED || jump == UNKNOWN || jump.isEmpty() ? jump
+        : new JSM3(bnf, analyzer, jump.S0.peek(),
+            jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(Collectors.toList()));
   }
   public JSM3 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -132,6 +125,8 @@ public class JSM3 implements Cloneable {
   private void pushJumps(Symbol s) {
     Map<Verb, J> m = S1.isEmpty() ? emptyMap() : new HashMap<>(S1.peek());
     if (s.isVerb()) {
+      for (Verb v : bnf.verbs)
+        m.put(v, J.JJAMMED);
       m.put(s.asVerb(), J.of(clone()));
       S1.push(m);
       return;
@@ -170,12 +165,10 @@ public class JSM3 implements Cloneable {
   }
   public void makeTerminus() {
     assert S0.size() <= 1;
-    if (isEmpty()) {
-      if (emptyLegalJumps == null)
-        emptyLegalJumps = new ArrayList<>();
+    if (emptyLegalJumps == null)
+      emptyLegalJumps = new ArrayList<>();
+    if (!emptyLegalJumps.contains(SpecialSymbols.$))
       emptyLegalJumps.add(SpecialSymbols.$);
-    } else
-      S1.peek().put(SpecialSymbols.$, J.JUNKNOWN);
   }
   @Override public int hashCode() {
     return S0 == null ? 1 : S0.hashCode();
