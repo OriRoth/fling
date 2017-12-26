@@ -38,11 +38,11 @@ public class RLLPConcrete3 {
     reject = false;
     initialized = false;
   }
-  void push(boolean reminder, Symbol... items) {
-    push(Arrays.asList(items), reminder);
+  void push(Symbol... items) {
+    push(Arrays.asList(items));
   }
-  void push(List<Symbol> items, boolean reminder) {
-    jsm = !reminder ? jsm.pushAll(items) : jsm.pushAllReminder(items);
+  void push(List<Symbol> items) {
+    jsm = jsm.pushAll(items);
   }
   void jump(Verb v, boolean reminder) {
     jsm = !reminder ? jsm.jump(v) : jsm.jumpReminder(v);
@@ -69,7 +69,7 @@ public class RLLPConcrete3 {
     if (reject)
       throw new RuntimeException("Parser has already rejected");
     if (!initialized) {
-      push(reminder, bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
+      push(bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
       initialized = true;
     }
     Symbol top = peek();
@@ -90,7 +90,7 @@ public class RLLPConcrete3 {
       return this;
     }
     pop();
-    push(getPush(top.asNonTerminal(), v), reminder);
+    push(getPush(top.asNonTerminal(), v));
     return this;
   }
   public RLLPConcrete3 consume(Terminal t) {

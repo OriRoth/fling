@@ -110,18 +110,6 @@ public class JSM3 implements Cloneable {
     $.pushJumps(items);
     return $;
   }
-  public JSM3 pushAllReminder(List<Symbol> items) {
-    if (items.isEmpty())
-      return new JSM3(bnf, analyzer);
-    if (isEmpty()) {
-      JSM3 $ = new JSM3(bnf, analyzer);
-      $.pushJumps(items);
-      return $;
-    }
-    JSM3 $ = new JSM3(bnf, analyzer, items.get(0), legalJumps());
-    $.pushJumps(items.subList(1, items.size()));
-    return $;
-  }
   private void pushJumps(List<Symbol> items) {
     for (Symbol s : items) {
       pushJumps(s);
@@ -159,8 +147,11 @@ public class JSM3 implements Cloneable {
         bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
   public JSM3 trim() {
-    return this == JAMMED || this == UNKNOWN || isEmpty() ? this
-        : new JSM3(bnf, analyzer, peek(), new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
+    if (this == JAMMED || this == UNKNOWN || isEmpty())
+      return this;
+    JSM3 $ = new JSM3(bnf, analyzer, peek(), new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
+    $.emptyLegalJumps = emptyLegalJumps;
+    return $;
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
@@ -226,6 +217,11 @@ public class JSM3 implements Cloneable {
           }
         }
       }
+    if (emptyLegalJumps != null) {
+      for (int i = 0; i < ind; ++i)
+        $.append(" ");
+      $.append(" ELJ: ").append(emptyLegalJumps).append("\n");
+    }
     for (int i = 0; i < ind; ++i)
       $.append(" ");
     return $.append("}\n").toString();
