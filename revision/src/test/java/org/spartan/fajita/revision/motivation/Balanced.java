@@ -1,12 +1,13 @@
 package org.spartan.fajita.revision.motivation;
 
 @SuppressWarnings({ "unchecked", "rawtypes" }) public class Balanced {
-  interface S_<E> {
+  interface S_$<E> {
     Object $();
-    S_c<c_<S_<E>>, S_<E>> o();
+    S_c<c_$<S_$<E>>, S_$<E>> o();
   }
 
-  interface c_<E> {
+  interface c_$<E> {
+    Object $();
     E c();
   }
 
@@ -15,11 +16,15 @@ package org.spartan.fajita.revision.motivation;
     c c();
   }
 
+  interface c_<E> {
+    E c();
+  }
+
   interface $ {
     Object $();
   }
 
-  static class $$$ implements S_, c_, S_c, $ {
+  static class $$$ implements S_$, c_, c_$, S_c, $ {
     @Override public $$$ c() {
       return this;
     }
@@ -31,7 +36,7 @@ package org.spartan.fajita.revision.motivation;
     }
   }
 
-  static S_<$> go() {
+  static S_$<$> go() {
     return new $$$();
   }
   public static void main(String[] args) {

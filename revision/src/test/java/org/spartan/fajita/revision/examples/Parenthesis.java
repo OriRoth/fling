@@ -5,6 +5,7 @@ import static org.spartan.fajita.revision.examples.Parenthesis.NT.O;
 import static org.spartan.fajita.revision.examples.Parenthesis.NT.S;
 import static org.spartan.fajita.revision.examples.Parenthesis.Term.pop;
 import static org.spartan.fajita.revision.examples.Parenthesis.Term.push;
+import static org.spartan.fajita.revision.junk.Parenthesis.*;
 
 import java.io.IOException;
 
@@ -34,7 +35,7 @@ public class Parenthesis extends Grammar {
     new Parenthesis().generateGrammarFiles();
   }
   public static void testing() {
-    // push().pop();
-    // push().push().pop().push().pop().pop();
+    push().pop();
+    push().push().pop().push().pop().pop();
   }
 }

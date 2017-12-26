@@ -169,8 +169,13 @@ public class JSM3 implements Cloneable {
     return $;
   }
   public void makeTerminus() {
-    assert S0.size() == 1;
-    S1.peek().put(SpecialSymbols.$, J.JUNKNOWN);
+    assert S0.size() <= 1;
+    if (isEmpty()) {
+      if (emptyLegalJumps == null)
+        emptyLegalJumps = new ArrayList<>();
+      emptyLegalJumps.add(SpecialSymbols.$);
+    } else
+      S1.peek().put(SpecialSymbols.$, J.JUNKNOWN);
   }
   @Override public int hashCode() {
     return S0 == null ? 1 : S0.hashCode();
