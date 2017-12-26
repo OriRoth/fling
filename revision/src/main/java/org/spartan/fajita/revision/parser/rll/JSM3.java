@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
@@ -72,8 +72,14 @@ public class JSM3 implements Cloneable {
   }
   public JSM3 pop() {
     JSM3 $ = clone();
-    if (S0.size() == 1)
-      $.emptyLegalJumps = legalJumps();
+    if (S0.size() == 1) {
+      if ($.emptyLegalJumps == null)
+        $.emptyLegalJumps = new ArrayList<>();
+      List<Verb> l = legalJumps();
+      for (Verb v : l)
+        if ($.emptyLegalJumps.contains(v))
+          $.emptyLegalJumps.add(v);
+    }
     $.S0.pop();
     $.S1.pop();
     return $;
@@ -95,7 +101,7 @@ public class JSM3 implements Cloneable {
     JSM3 jump = jump(v);
     return jump == JAMMED || jump == UNKNOWN || jump.isEmpty() ? jump
         : new JSM3(bnf, analyzer, jump.S0.peek(),
-            jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(Collectors.toList()));
+            jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(toList()));
   }
   public JSM3 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -135,7 +141,7 @@ public class JSM3 implements Cloneable {
     for (Verb v : bnf.verbs) {
       List<Symbol> c = analyzer.llClosure(nt, v);
       if (c == null) {
-        if (!analyzer.followSetOf(nt).contains(v))
+        if (!analyzer.followSetOf(nt).contains(v) || !analyzer.isNullable(nt))
           m.put(v, J.JJAMMED);
       } else {
         J j = J.of(clone(), c);
@@ -150,12 +156,11 @@ public class JSM3 implements Cloneable {
   public List<Verb> legalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
     return new LinkedList<>(
-        bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(peek()).contains(v) && jump(v) != JAMMED).collect(Collectors.toList()));
+        bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
   public JSM3 trim() {
     return this == JAMMED || this == UNKNOWN || isEmpty() ? this
-        : new JSM3(bnf, analyzer, peek(),
-            new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(Collectors.toList())));
+        : new JSM3(bnf, analyzer, peek(), new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
@@ -163,12 +168,14 @@ public class JSM3 implements Cloneable {
       $.put(v, emptyLegalJumps != null && emptyLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
     return $;
   }
-  public void makeTerminus() {
+  public JSM3 makeTerminus() {
     assert S0.size() <= 1;
-    if (emptyLegalJumps == null)
-      emptyLegalJumps = new ArrayList<>();
-    if (!emptyLegalJumps.contains(SpecialSymbols.$))
-      emptyLegalJumps.add(SpecialSymbols.$);
+    JSM3 $ = clone();
+    if ($.emptyLegalJumps == null)
+      $.emptyLegalJumps = new ArrayList<>();
+    if (!$.emptyLegalJumps.contains(SpecialSymbols.$))
+      $.emptyLegalJumps.add(SpecialSymbols.$);
+    return $;
   }
   @Override public int hashCode() {
     return S0 == null ? 1 : S0.hashCode();

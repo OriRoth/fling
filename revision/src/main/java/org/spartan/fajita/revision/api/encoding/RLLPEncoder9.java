@@ -145,7 +145,7 @@ public class RLLPEncoder9 {
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      JSM3 jsm = RLLPConcrete3.next(new JSM3(bnf, analyzer, startSymbol, new ArrayList<>()), v, true);
+      JSM3 jsm = RLLPConcrete3.next(new JSM3(bnf, analyzer, startSymbol, new ArrayList<>()).makeTerminus(), v);
       computeType(jsm, v, x -> namer.name(x), () -> "E");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
@@ -212,7 +212,7 @@ public class RLLPEncoder9 {
       if (jsm.isEmpty())
         return "public E " + v.terminal.name() + "();";
       Symbol top = jsm.peek();
-      JSM3 next = RLLPConcrete3.next(jsm, v, false);
+      JSM3 next = RLLPConcrete3.next(jsm, v);
       if (next == JAMMED)
         return "";
       return top.isVerb() ? //

@@ -94,11 +94,11 @@ public class RLLPConcrete3 {
     return this;
   }
   public RLLPConcrete3 consume(Terminal t) {
-    return consume(new Verb(t));
+    return consume(new Verb(t), false);
   }
   public RLLPConcrete3 consume(Verb... ts) {
     for (Verb t : ts)
-      consume(t);
+      consume(t, false);
     return this;
   }
   public RLLPConcrete3 consume(Terminal... ts) {
@@ -122,10 +122,8 @@ public class RLLPConcrete3 {
     return reject;
   }
   // TODO Roth: optimize action table creation in constructor
-  public static JSM3 next(JSM3 jsm, Verb v, boolean terminus) {
+  public static JSM3 next(JSM3 jsm, Verb v) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
-    if (terminus)
-      jsm.makeTerminus();
     rllp.initialized = true;
     rllp.consume(v, false);
     return rllp.jsm;
