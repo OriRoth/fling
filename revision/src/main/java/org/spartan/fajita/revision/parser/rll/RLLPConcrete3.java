@@ -44,8 +44,8 @@ public class RLLPConcrete3 {
   void push(List<Symbol> items) {
     jsm = jsm.pushAll(items);
   }
-  void jump(Verb v, boolean reminder) {
-    jsm = !reminder ? jsm.jump(v) : jsm.jumpReminder(v);
+  void jump(Verb v) {
+    jsm = jsm.jump(v);
     if (jsm == JSM3.JAMMED || jsm == JSM3.UNKNOWN)
       reject = true;
   }
@@ -61,7 +61,7 @@ public class RLLPConcrete3 {
     //
   }
   // TODO Roth: check whether reminder is needed
-  private RLLPConcrete3 consume(Verb v, boolean reminder) {
+  private RLLPConcrete3 consume(Verb v) {
     if (jsm == null || initialized && jsm.isEmpty())
       reject = true;
     if (accept)
@@ -86,7 +86,7 @@ public class RLLPConcrete3 {
       return this;
     }
     if (isError(top.asNonTerminal(), v)) {
-      jump(v, reminder);
+      jump(v);
       return this;
     }
     pop();
@@ -94,11 +94,11 @@ public class RLLPConcrete3 {
     return this;
   }
   public RLLPConcrete3 consume(Terminal t) {
-    return consume(new Verb(t), false);
+    return consume(new Verb(t));
   }
   public RLLPConcrete3 consume(Verb... ts) {
     for (Verb t : ts)
-      consume(t, false);
+      consume(t);
     return this;
   }
   public RLLPConcrete3 consume(Terminal... ts) {
@@ -125,7 +125,7 @@ public class RLLPConcrete3 {
   public static JSM3 next(JSM3 jsm, Verb v) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
     rllp.initialized = true;
-    rllp.consume(v, false);
+    rllp.consume(v);
     return rllp.jsm;
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {

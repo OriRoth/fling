@@ -197,7 +197,7 @@ public class RLLPEncoder9 {
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
-          t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
+          t.append(computeMethod(jsm.trim(), v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
@@ -230,7 +230,7 @@ public class RLLPEncoder9 {
       $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
       for (Verb v : jsm.legalJumps())
         if (!SpecialSymbols.$.equals(v))
-          $.templates.add(computeType(jsm.jump(v), v, unknownSolution, emptySolution, $));
+          $.templates.add(computeType(jsm.jump(v).trim(), v, unknownSolution, emptySolution, $));
       return $;
     }
     private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
@@ -293,6 +293,7 @@ public class RLLPEncoder9 {
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
+          // NOTE no trimming here
           t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");

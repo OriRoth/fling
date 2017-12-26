@@ -97,17 +97,6 @@ public class JSM3 implements Cloneable {
     $ = $.pushAll(j.toPush);
     return $;
   }
-  public JSM3 jumpReminder(Verb v) {
-    JSM3 jump = jump(v);
-    if (jump == JAMMED || jump == UNKNOWN || jump.isEmpty())
-      return jump;
-    JSM3 $ = new JSM3(bnf, analyzer, jump.S0.peek(),
-        jump.S1.peek().keySet().stream().filter(x -> jump.S1.peek().get(x) != J.JJAMMED).collect(toList()));
-    // TODO Roth: verify empty legal jumps
-    $.emptyLegalJumps = S0.size() == 1 ? new ArrayList<>(emptyLegalJumps)
-        : new ArrayList<>(bnf.verbs.stream().filter(x -> S1.get(S1.size() - 2).get(x) != J.JJAMMED).collect(toList()));
-    return $;
-  }
   public JSM3 pushAll(List<Symbol> items) {
     if (items.isEmpty())
       return clone();
