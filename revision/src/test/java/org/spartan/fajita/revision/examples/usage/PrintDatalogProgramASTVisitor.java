@@ -1,8 +1,8 @@
 package org.spartan.fajita.revision.examples.usage;
 
 import org.spartan.fajita.revision.export.ASTVisitor;
-import org.spartan.fajita.revision.junk.datalog.DatalogAST;
-import org.spartan.fajita.revision.junk.datalog.DatalogAST.Program;
+import org.spartan.fajita.revision.junk.DatalogAST;
+import org.spartan.fajita.revision.junk.DatalogAST.Program;
 
 public class PrintDatalogProgramASTVisitor {
   @SuppressWarnings("unused") public static void main(String[] args) {

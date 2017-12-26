@@ -197,7 +197,7 @@ public class RLLPEncoder9 {
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
-          t.append(computeMethod(jsm.trim(), v, unknownSolution, emptySolution));
+          t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
@@ -271,7 +271,7 @@ public class RLLPEncoder9 {
     }
     private void computeRecursiveType(TypeEncoding te, LinkedHashSet<Verb> ri, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
-      JSM3 jsm = te.root().jsm;
+      JSM3 jsm = te.recursionAncestor.jsm;
       assert jsm != JAMMED && jsm != UNKNOWN && !jsm.isEmpty();
       Symbol top = jsm.peek();
       List<Verb> legalJumps = jsm.legalJumps();
@@ -293,7 +293,6 @@ public class RLLPEncoder9 {
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
-          // NOTE no trimming here
           t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
