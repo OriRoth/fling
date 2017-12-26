@@ -1,9 +1,7 @@
 package org.spartan.fajita.revision.examples.malfunction;
 
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.A;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.A1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.B;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.B1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.C;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.D;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.E;
@@ -31,16 +29,14 @@ public class TestAnBnCD extends Grammar {
   }
 
   public static enum NT implements NonTerminal {
-    S, A, B, C, D, E, F, A1, B1
+    S, A, B, C, D, E, F
   }
 
   @Override public FajitaBNF bnf() {
     return Fajita.build(TestAnBnCD.class, Term.class, NT.class, "TestAnBnCD", Main.packagePath, Main.projectPath).start(S) //
         .derive(S).to(A, S, B).orNone() //
-        .derive(A).to(A1) //
-        .derive(B).to(B1) //
-        .derive(A1).to(C, a2, D) //
-        .derive(B1).to(E, b2, F) //
+        .derive(A).to(C, a2, D) //
+        .derive(B).to(E, b2, F) //
         .derive(C).to(c2).orNone() //
         .derive(D).to(d2).orNone() //
         .derive(E).to(e2).orNone() //
