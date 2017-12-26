@@ -3,7 +3,7 @@ package org.spartan.fajita.revision.examples.usage;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.junk.datalog.DatalogAST.*;
+import org.spartan.fajita.revision.junk.DatalogAST.*;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.junk.datalog.DatalogAST.*;
+import org.spartan.fajita.revision.junk.DatalogAST.*;
 
 import za.co.wstoop.jatalog.DatalogException;
 import za.co.wstoop.jatalog.Expr;

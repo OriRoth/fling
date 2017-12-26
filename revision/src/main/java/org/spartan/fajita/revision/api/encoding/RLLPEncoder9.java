@@ -271,7 +271,7 @@ public class RLLPEncoder9 {
     }
     private void computeRecursiveType(TypeEncoding te, LinkedHashSet<Verb> ri, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
-      JSM3 jsm = te.jsm;
+      JSM3 jsm = te.root().jsm;
       assert jsm != JAMMED && jsm != UNKNOWN && !jsm.isEmpty();
       Symbol top = jsm.peek();
       List<Verb> legalJumps = jsm.legalJumps();

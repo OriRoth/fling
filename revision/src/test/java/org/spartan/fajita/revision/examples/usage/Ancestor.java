@@ -1,8 +1,8 @@
 package org.spartan.fajita.revision.examples.usage;
 
-import static org.spartan.fajita.revision.junk.datalog.Datalog.*;
+import static org.spartan.fajita.revision.junk.Datalog.*;
 
-import org.spartan.fajita.revision.junk.datalog.DatalogAST.Program;
+import org.spartan.fajita.revision.junk.DatalogAST.Program;
 
 public class Ancestor {
   public static Program program() {
