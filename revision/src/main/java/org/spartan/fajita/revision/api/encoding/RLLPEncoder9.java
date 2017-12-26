@@ -230,7 +230,7 @@ public class RLLPEncoder9 {
       $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
       for (Verb v : jsm.legalJumps())
         if (!SpecialSymbols.$.equals(v))
-          $.templates.add(computeType(jsm.jumpReminder(v), v, unknownSolution, emptySolution, $));
+          $.templates.add(computeType(jsm.jump(v), v, unknownSolution, emptySolution, $));
       return $;
     }
     private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
