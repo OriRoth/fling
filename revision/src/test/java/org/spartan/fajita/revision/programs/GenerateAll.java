@@ -3,12 +3,17 @@ package org.spartan.fajita.revision.programs;
 import java.io.IOException;
 
 import org.spartan.fajita.revision.examples.Datalog;
+import org.spartan.fajita.revision.examples.Parenthesis;
+import org.spartan.fajita.revision.examples.ParenthesisSimple;
 import org.spartan.fajita.revision.examples.TestInclusiveExtendibles;
 import org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents;
 import org.spartan.fajita.revision.examples.TestTwoParentsBNF;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
+import org.spartan.fajita.revision.examples.malfunction.TestAnBSimple;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
+import org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple;
 import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
+import org.spartan.fajita.revision.examples.malfunction.TestFinite;
 import org.spartan.fajita.revision.examples.malfunction.TestJumps;
 
 public class GenerateAll {
@@ -18,9 +23,13 @@ public class GenerateAll {
     new TestNonTerminalMultipleParents().generateGrammarFiles();
     new TestTwoParentsBNF().generateGrammarFiles();
     new TestAnBn().generateGrammarFiles();
+    new TestAnBnSimple().generateGrammarFiles();
     new TestJumps().generateGrammarFiles();
     new TestAnB().generateGrammarFiles();
+    new TestAnBSimple().generateGrammarFiles();
     new TestAnCDBn().generateGrammarFiles();
-    // new Parenthesis().generateGrammarFiles();
+    new Parenthesis().generateGrammarFiles();
+    new ParenthesisSimple().generateGrammarFiles();
+    new TestFinite().generateGrammarFiles();
   }
 }
