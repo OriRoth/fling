@@ -99,6 +99,8 @@ public class RLLPEncoder9 {
   class Namer {
     private final Map<Verb, String> verbNames = new LinkedHashMap<>();
     private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
+    private final Map<TypeEncoding, String> recNames = new LinkedHashMap<>();
+    private int recCount;
 
     public String name(Verb v) {
       if (SpecialSymbols.$.equals(v))
@@ -118,6 +120,12 @@ public class RLLPEncoder9 {
         if (legalJumps.contains(v))
           $.append(name(v));
       return $.toString();
+    }
+    public String name(TypeEncoding t) {
+      if (recNames.containsKey(t))
+        return recNames.get(t);
+      recNames.put(t, "R" + (++recCount) + "_" + name(t.jsm.peek(), t.jsm.legalJumps()));
+      return recNames.get(t);
     }
   }
 
@@ -174,7 +182,7 @@ public class RLLPEncoder9 {
         return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
       seenTypes.get(top).add(legalJumps);
-      StringBuilder t = new StringBuilder("public interface ");
+      StringBuilder t = new StringBuilder("public interface ").append($);
       StringBuilder template = new StringBuilder("<E");
       List<String> templates = new ArrayList<>();
       for (Verb v : legalJumps)
@@ -184,7 +192,7 @@ public class RLLPEncoder9 {
         template.append(",");
         template.append(String.join(",", templates));
       }
-      t.append($ + template.append(">{"));
+      t.append(template.append(">{"));
       // TODO Roth: verify verbs
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
@@ -219,7 +227,7 @@ public class RLLPEncoder9 {
       if ($.isRecursive())
         return $;
       assert jsm != UNKNOWN && !jsm.isEmpty();
-      $.templates.add(computeType(jsm.pop(), null, unknownSolution, emptySolution, $));
+      $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
       for (Verb v : jsm.legalJumps())
         if (!SpecialSymbols.$.equals(v))
           $.templates.add(computeType(jsm.jumpReminder(v), v, unknownSolution, emptySolution, $));
@@ -241,8 +249,57 @@ public class RLLPEncoder9 {
       return $.append(String.join(",", templates)).append(">").toString();
     }
     private String solveRecursiveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      // TODO Auto-generated method stub
-      return null;
+      String n = namer.name(t);
+      List<Verb> ri = t.root().recursionInterface();
+      StringBuilder $ = new StringBuilder(n);
+      if (!ri.isEmpty()) {
+        $.append("<");
+        List<String> templates = new ArrayList<>();
+        for (Verb v : ri)
+          if (!SpecialSymbols.$.equals(v))
+            if (SpecialSymbols.empty.equals(v))
+              templates.add("E");
+            else
+              templates.add(namer.name(v));
+        $.append(String.join(",", templates)).append(">");
+      }
+      if (!seenRecs.contains(t)) {
+        seenRecs.add(t);
+        computeRecursiveType(t, ri, unknownSolution, emptySolution);
+      }
+      return $.toString();
+    }
+    private void computeRecursiveType(TypeEncoding te, List<Verb> ri, Function<Verb, String> unknownSolution,
+        Supplier<String> emptySolution) {
+      JSM3 jsm = te.jsm;
+      assert jsm != JAMMED && jsm != UNKNOWN && !jsm.isEmpty();
+      Symbol top = jsm.peek();
+      List<Verb> legalJumps = jsm.legalJumps();
+      String $ = namer.name(te);
+      StringBuilder t = new StringBuilder("public interface ").append($);
+      if (!ri.isEmpty()) {
+        t.append("<");
+        List<String> templates = new ArrayList<>();
+        for (Verb v : ri)
+          if (!SpecialSymbols.$.equals(v))
+            if (SpecialSymbols.empty.equals(v))
+              templates.add("E");
+            else
+              templates.add(namer.name(v));
+        t.append(String.join(",", templates)).append(">");
+      }
+      t.append("{");
+      // TODO Roth: verify verbs
+      for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
+        if (!SpecialSymbols.$.equals(v))
+          // NOTE $ method is built below
+          // NOTE no trimming here
+          t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
+      if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
+        t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
+      apiTypes.add(t.append("}").toString());
+      apiTypeNames.add($);
+      computeTemplates(new TypeEncoding(jsm, null, $, null), jsm, unknownSolution, emptySolution);
     }
     private void compute$Type() {
       apiTypes.add(new StringBuilder("public interface ${") //
@@ -317,8 +374,34 @@ public class RLLPEncoder9 {
     boolean match(TypeEncoding other) {
       return jsm.peek().equals(other.jsm.peek()) && jsm.legalJumps().equals(other.jsm.legalJumps());
     }
+    @SuppressWarnings({ "null", "unused" }) TypeEncoding root() {
+      TypeEncoding next = parent, current = this;
+      while (next != null) {
+        if (next == null)
+          return current;
+        current = next;
+        next = next.parent;
+      }
+      return current;
+    }
+    List<Verb> recursionInterface() {
+      List<Verb> $ = new ArrayList<>();
+      if (isRecursive())
+        return $;
+      if (jsm == UNKNOWN) {
+        $.add(origin);
+        return $;
+      }
+      if (jsm.isEmpty()) {
+        $.add(SpecialSymbols.empty);
+        return $;
+      }
+      for (TypeEncoding t : templates)
+        $.addAll(t.recursionInterface());
+      return $;
+    }
     @Override public int hashCode() {
-      return jsm.hashCode();
+      return jsm == UNKNOWN ? 1 : jsm.isEmpty() ? 3 : jsm.peek().hashCode();
     }
     @Override public boolean equals(Object obj) {
       if (this == obj)

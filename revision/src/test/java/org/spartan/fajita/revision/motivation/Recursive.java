@@ -11,7 +11,7 @@ package org.spartan.fajita.revision.motivation;
   }
 
   interface S2_<E> {
-    S3_y<S2_<E>, R_S3_y<S2_<E>>> y();
+    S3_y<S2_<E>, R_S3_y<E>> y();
   }
 
   interface S3_y<E, y> {
@@ -21,8 +21,8 @@ package org.spartan.fajita.revision.motivation;
   }
 
   interface R_S3_y<E> {
-    E x();
-    R_S3_y<E> y();
+    S2_<E> x();
+    R_S3_y<S2_<E>> y();
     Object $();
   }
 
