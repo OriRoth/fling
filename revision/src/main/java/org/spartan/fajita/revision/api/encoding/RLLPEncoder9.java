@@ -232,7 +232,8 @@ public class RLLPEncoder9 {
       $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
       for (Verb v : jsm.legalJumps())
         if (!SpecialSymbols.$.equals(v))
-          $.templates.add(computeType(jsm.jump(v).trim(), v, unknownSolution, emptySolution, $));
+          // TODO Roth: check whether trimming is needed here
+          $.templates.add(computeType(jsm.jump(v), v, unknownSolution, emptySolution, $));
       return $;
     }
     private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
@@ -374,7 +375,7 @@ public class RLLPEncoder9 {
       return false;
     }
     boolean match(TypeEncoding other) {
-      return jsm.peek().equals(other.jsm.peek()) && jsm.legalJumps().equals(other.jsm.legalJumps());
+      return jsm.getS0().equals(other.jsm.getS0());
     }
     @SuppressWarnings({ "null", "unused" }) TypeEncoding root() {
       TypeEncoding next = parent, current = this;

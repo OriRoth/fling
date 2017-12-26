@@ -50,7 +50,7 @@ public class JSM3 implements Cloneable {
     this.S0.addAll(jsm.S0);
     for (Map<Verb, J> m : jsm.S1)
       this.S1.add(new HashMap<>(m));
-    this.emptyLegalJumps = new ArrayList<>(jsm.emptyLegalJumps);
+    this.emptyLegalJumps = jsm.emptyLegalJumps == null ? null : new ArrayList<>(jsm.emptyLegalJumps);
   }
   private JSM3() {
     this.bnf = null;
