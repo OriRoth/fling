@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
@@ -166,6 +167,10 @@ public class JSM3 implements Cloneable {
     for (Verb v : bnf.verbs)
       $.put(v, emptyLegalJumps != null && emptyLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
     return $;
+  }
+  public void makeTerminus() {
+    assert S0.size() == 1;
+    S1.peek().put(SpecialSymbols.$, J.JUNKNOWN);
   }
   @Override public int hashCode() {
     return S0 == null ? 1 : S0.hashCode();
