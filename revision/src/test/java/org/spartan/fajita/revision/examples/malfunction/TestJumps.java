@@ -34,6 +34,6 @@ public class TestJumps extends Grammar {
     new TestJumps().generateGrammarFiles();
   }
   public static void testing() {
-    x().y().y().x().y().y().$();
+    x().y().y().x().y().x().$();
   }
 }

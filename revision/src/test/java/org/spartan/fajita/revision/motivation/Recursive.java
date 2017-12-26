@@ -7,11 +7,12 @@ package org.spartan.fajita.revision.motivation;
   }
 
   interface S1_<E> {
-    S3_y$<S2_<E>, R_S3_y$<E>> y();
+    S3_y$<S2_$<E>, R_S3_y$<E>> y();
   }
 
-  interface S2_<E> {
-    S3_y$<S2_<E>, R_S3_y$<E>> y();
+  interface S2_$<E> {
+    S3_y$<S2_$<E>, R_S3_y$<E>> y();
+    Object $();
   }
 
   interface S3_y$<E, y> {
@@ -21,8 +22,8 @@ package org.spartan.fajita.revision.motivation;
   }
 
   interface R_S3_y$<E> {
-    S2_<E> x();
-    R_S3_y$<S2_<E>> y();
+    S2_$<E> x();
+    R_S3_y$<S2_$<E>> y();
     Object $();
   }
 
@@ -30,7 +31,7 @@ package org.spartan.fajita.revision.motivation;
     Object $();
   }
 
-  static class $$$ implements S_, S1_, S2_, S3_y$, R_S3_y$ {
+  static class $$$ implements S_, S1_, S2_$, S3_y$, R_S3_y$ {
     @Override public $$$ y() {
       return this;
     }
@@ -46,6 +47,6 @@ package org.spartan.fajita.revision.motivation;
     return new $$$();
   }
   public static void main(String[] args) {
-    go().x().y().x().y().y().y().y().x().y().y().$();
+    go().x().y().x().y().y().y().y().x().y().x().$();
   }
 }
