@@ -17,32 +17,32 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
-public class JSM3 implements Cloneable {
-  public static final JSM3 JAMMED = new JSM3();
-  public static final JSM3 UNKNOWN = new JSM3();
+public class JSM10 implements Cloneable {
+  public static final JSM10 JAMMED = new JSM10();
+  public static final JSM10 UNKNOWN = new JSM10();
   final BNF bnf;
   final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
   private final Stack<Map<Verb, J>> S1;
   private List<Verb> emptyLegalJumps;
 
-  public JSM3(BNF bnf) {
+  public JSM10(BNF bnf) {
     this(bnf, new BNFAnalyzer(bnf));
   }
-  public JSM3(BNF bnf, BNFAnalyzer analyzer) {
+  public JSM10(BNF bnf, BNFAnalyzer analyzer) {
     this.bnf = bnf;
     this.analyzer = analyzer;
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
     this.emptyLegalJumps = null;
   }
-  public JSM3(BNF bnf, BNFAnalyzer analyzer, Symbol initial, List<Verb> emptyLegalJumps) {
+  public JSM10(BNF bnf, BNFAnalyzer analyzer, Symbol initial, List<Verb> emptyLegalJumps) {
     this(bnf, analyzer);
     this.emptyLegalJumps = new ArrayList<>(emptyLegalJumps);
     pushJumps(initial);
     S0.push(initial);
   }
-  private JSM3(JSM3 jsm) {
+  private JSM10(JSM10 jsm) {
     this.bnf = jsm.bnf;
     this.analyzer = jsm.analyzer;
     this.S0 = new Stack<>();
@@ -52,15 +52,15 @@ public class JSM3 implements Cloneable {
       this.S1.add(new HashMap<>(m));
     this.emptyLegalJumps = jsm.emptyLegalJumps == null ? null : new ArrayList<>(jsm.emptyLegalJumps);
   }
-  private JSM3() {
+  private JSM10() {
     this.bnf = null;
     this.analyzer = null;
     this.S0 = null;
     this.S1 = null;
     this.emptyLegalJumps = null;
   }
-  @Override public JSM3 clone() {
-    return new JSM3(this);
+  @Override public JSM10 clone() {
+    return new JSM10(this);
   }
   public List<Symbol> getS0() {
     return new ArrayList<>(S0);
@@ -68,27 +68,27 @@ public class JSM3 implements Cloneable {
   public Symbol peek() {
     return S0.peek();
   }
-  public JSM3 pop() {
-    JSM3 $ = clone();
+  public JSM10 pop() {
+    JSM10 $ = clone();
     $.S0.pop();
     $.S1.pop();
     return $;
   }
-  public JSM3 jump(Verb v) {
+  public JSM10 jump(Verb v) {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
     J j = S1.peek().get(v);
     if (j == J.JJAMMED)
       return JAMMED;
     if (j == J.JUNKNOWN)
       return UNKNOWN;
-    JSM3 $ = j.address;
+    JSM10 $ = j.address;
     $ = $.pushAll(j.toPush);
     return $;
   }
-  public JSM3 pushAll(List<Symbol> items) {
+  public JSM10 pushAll(List<Symbol> items) {
     if (items.isEmpty())
       return clone();
-    JSM3 $ = clone();
+    JSM10 $ = clone();
     $.pushJumps(items);
     return $;
   }
@@ -131,10 +131,10 @@ public class JSM3 implements Cloneable {
   // public List<Verb> globalLegalJumps() {
   // assert this != JAMMED && this != UNKNOWN && !isEmpty();
   // }
-  public JSM3 trim() {
+  public JSM10 trim() {
     if (this == JAMMED || this == UNKNOWN || isEmpty())
       return this;
-    JSM3 $ = new JSM3(bnf, analyzer, S0.peek(),
+    JSM10 $ = new JSM10(bnf, analyzer, S0.peek(),
         new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
     // TODO Roth: verify empty legal jumps
     $.emptyLegalJumps = S0.size() == 1 ? new ArrayList<>(emptyLegalJumps)
@@ -151,7 +151,7 @@ public class JSM3 implements Cloneable {
     return S0 == null ? 1 : S0.hashCode();
   }
   @Override public boolean equals(Object obj) {
-    return obj instanceof JSM3 && S0.equals(((JSM3) obj).S0);
+    return obj instanceof JSM10 && S0.equals(((JSM10) obj).S0);
   }
   @Override public String toString() {
     return this == JAMMED ? "JAMMED" : this == UNKNOWN ? "UNKNOWN" : toString(0, null, new HashSet<>(), new ArrayList<>());
@@ -215,10 +215,10 @@ public class JSM3 implements Cloneable {
   private static class J {
     static final J JJAMMED = new J();
     static final J JUNKNOWN = new J();
-    final JSM3 address;
+    final JSM10 address;
     final List<Symbol> toPush;
 
-    J(JSM3 address, List<Symbol> toPush) {
+    J(JSM10 address, List<Symbol> toPush) {
       this.address = address;
       this.toPush = toPush;
     }
@@ -226,10 +226,10 @@ public class JSM3 implements Cloneable {
       address = null;
       toPush = null;
     }
-    static J of(JSM3 address, List<Symbol> toPush) {
+    static J of(JSM10 address, List<Symbol> toPush) {
       return new J(address, toPush);
     }
-    static J of(JSM3 address) {
+    static J of(JSM10 address) {
       return address == JAMMED ? JJAMMED : address == UNKNOWN ? JUNKNOWN : of(address, new ArrayList<>());
     }
     @Override public int hashCode() {

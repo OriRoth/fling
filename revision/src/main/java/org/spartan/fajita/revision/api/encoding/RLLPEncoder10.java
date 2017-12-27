@@ -1,8 +1,8 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
-import static org.spartan.fajita.revision.parser.rll.JSM3.JAMMED;
-import static org.spartan.fajita.revision.parser.rll.JSM3.UNKNOWN;
+import static org.spartan.fajita.revision.parser.rll.JSM10.JAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM10.UNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
-import org.spartan.fajita.revision.parser.rll.JSM3;
+import org.spartan.fajita.revision.parser.rll.JSM10;
 import org.spartan.fajita.revision.parser.rll.RLLPConcrete3;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -30,7 +30,7 @@ import org.spartan.fajita.revision.symbols.Verb;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
 
-public class RLLPEncoder9 {
+public class RLLPEncoder10 {
   public final String topClassName;
   public final String topClass;
   final NonTerminal startSymbol;
@@ -44,7 +44,7 @@ public class RLLPEncoder9 {
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
 
-  public RLLPEncoder9(Fajita fajita, NonTerminal start, String astTopClass) {
+  public RLLPEncoder10(Fajita fajita, NonTerminal start, String astTopClass) {
     topClassName = fajita.apiName;
     packagePath = fajita.packagePath;
     topClassPath = packagePath + "." + topClassName;
@@ -68,7 +68,7 @@ public class RLLPEncoder9 {
     topClass = $.toString();
   }
   // TODO Roth: code duplication in constructors
-  public RLLPEncoder9(Fajita fajita, Symbol nested, String astTopClass) {
+  public RLLPEncoder10(Fajita fajita, Symbol nested, String astTopClass) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
     packagePath = fajita.packagePath;
@@ -147,7 +147,7 @@ public class RLLPEncoder9 {
     private void computeStaticMethod(Verb v) {
       List<Verb> elj = new ArrayList<>();
       elj.add(SpecialSymbols.$);
-      JSM3 jsm = RLLPConcrete3.next(new JSM3(bnf, analyzer, startSymbol, elj), v);
+      JSM10 jsm = RLLPConcrete3.next(new JSM10(bnf, analyzer, startSymbol, elj), v);
       computeType(jsm, v, x -> namer.name(x), () -> "E");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
@@ -166,11 +166,11 @@ public class RLLPEncoder9 {
               + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
           .toString());
     }
-    private TypeEncoding computeType(JSM3 jsm, Verb origin, Function<Verb, String> unknownSolution,
+    private TypeEncoding computeType(JSM10 jsm, Verb origin, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
       return computeType(jsm, origin, unknownSolution, emptySolution, null);
     }
-    private TypeEncoding computeType(JSM3 jsm, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution,
+    private TypeEncoding computeType(JSM10 jsm, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution,
         TypeEncoding parent) {
       assert jsm != JAMMED;
       if (jsm == UNKNOWN)
@@ -206,7 +206,7 @@ public class RLLPEncoder9 {
       apiTypeNames.add($);
       return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
     }
-    private String computeMethod(JSM3 jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+    private String computeMethod(JSM10 jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       if (jsm == JAMMED)
         return "";
       if (jsm == UNKNOWN)
@@ -214,7 +214,7 @@ public class RLLPEncoder9 {
       if (jsm.isEmpty())
         return "public E " + v.terminal.name() + "();";
       Symbol top = jsm.peek();
-      JSM3 next = RLLPConcrete3.next(jsm, v);
+      JSM10 next = RLLPConcrete3.next(jsm, v);
       if (next == JAMMED)
         return "";
       return top.isVerb() ? //
@@ -224,7 +224,7 @@ public class RLLPEncoder9 {
           : "public " + solveType(computeType(next, v, unknownSolution, emptySolution), unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
     }
-    private TypeEncoding computeTemplates(TypeEncoding $, JSM3 jsm, Function<Verb, String> unknownSolution,
+    private TypeEncoding computeTemplates(TypeEncoding $, JSM10 jsm, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
       if ($.isRecursive())
         return $;
@@ -237,7 +237,7 @@ public class RLLPEncoder9 {
       return $;
     }
     private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      JSM3 jsm = t.jsm;
+      JSM10 jsm = t.jsm;
       assert jsm != JAMMED;
       if (jsm == UNKNOWN || jsm.isEmpty())
         return t.typeName;
@@ -274,7 +274,7 @@ public class RLLPEncoder9 {
     }
     private void computeRecursiveType(TypeEncoding te, LinkedHashSet<Verb> ri, Function<Verb, String> unknownSolution,
         Supplier<String> emptySolution) {
-      JSM3 jsm = te.recursionAncestor.jsm;
+      JSM10 jsm = te.recursionAncestor.jsm;
       assert jsm != JAMMED && jsm != UNKNOWN && !jsm.isEmpty();
       Symbol top = jsm.peek();
       List<Verb> legalJumps = jsm.peekLegalJumps();
@@ -346,7 +346,7 @@ public class RLLPEncoder9 {
   }
 
   class TypeEncoding {
-    final JSM3 jsm;
+    final JSM10 jsm;
     final Verb origin;
     String typeName;
     final List<TypeEncoding> templates;
@@ -354,7 +354,7 @@ public class RLLPEncoder9 {
     TypeEncoding recursionAncestor;
     private boolean recFlag;
 
-    public TypeEncoding(JSM3 jsm, Verb origin, String typeName, TypeEncoding parent) {
+    public TypeEncoding(JSM10 jsm, Verb origin, String typeName, TypeEncoding parent) {
       this.jsm = jsm;
       this.origin = origin;
       this.typeName = typeName;
