@@ -3,9 +3,9 @@ package org.spartan.fajita.revision.examples;
 import static org.spartan.fajita.revision.examples.Parenthesis.NT.C;
 import static org.spartan.fajita.revision.examples.Parenthesis.NT.O;
 import static org.spartan.fajita.revision.examples.Parenthesis.NT.S;
-import static org.spartan.fajita.revision.examples.Parenthesis.Term.pop;
-import static org.spartan.fajita.revision.examples.Parenthesis.Term.push;
-import static org.spartan.fajita.revision.junk.Parenthesis.*;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.o;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.c;
+import static org.spartan.fajita.revision.junk.Parenthesis.o;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
 
 public class Parenthesis extends Grammar {
   public static enum Term implements Terminal {
-    push, pop
+    o, c
   }
 
   public static enum NT implements NonTerminal {
@@ -28,14 +28,14 @@ public class Parenthesis extends Grammar {
   @Override public FajitaBNF bnf() {
     return Fajita.build(Parenthesis.class, Term.class, NT.class, "Parenthesis", Main.packagePath, Main.projectPath).start(S) //
         .derive(S).to(O, S, C, S).orNone() //
-        .derive(O).to(push) //
-        .derive(C).to(pop);
+        .derive(O).to(o) //
+        .derive(C).to(c);
   }
   public static void main(String[] args) throws IOException {
     new Parenthesis().generateGrammarFiles();
   }
   public static void testing() {
-    push().pop();
-    push().push().pop().push().pop().pop();
+    o().c().$();
+    o().o().c().o().c().c().$();
   }
 }

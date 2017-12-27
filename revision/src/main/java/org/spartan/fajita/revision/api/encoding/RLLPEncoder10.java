@@ -383,7 +383,7 @@ public class RLLPEncoder10 {
       return false;
     }
     boolean match(TypeEncoding other) {
-      return jsm.getS0().equals(other.jsm.getS0()) && jsm.allLegalJumps().equals(jsm.allLegalJumps());
+      return jsm.equals(other.jsm);
     }
     @SuppressWarnings({ "null", "unused" }) TypeEncoding root() {
       TypeEncoding next = parent, current = this;

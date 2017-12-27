@@ -165,10 +165,10 @@ public class JSM10 implements Cloneable {
     return $;
   }
   @Override public int hashCode() {
-    return S0 == null ? 1 : S0.hashCode();
+    return (S0 == null ? 1 : S0.hashCode()) * (S1 == null ? 1 : S1.hashCode());
   }
   @Override public boolean equals(Object obj) {
-    return obj instanceof JSM10 && S0.equals(((JSM10) obj).S0);
+    return obj instanceof JSM10 && S0.equals(((JSM10) obj).S0) && S1.equals(((JSM10) obj).S1);
   }
   @Override public String toString() {
     return this == JAMMED ? "JAMMED" : this == UNKNOWN ? "UNKNOWN" : toString(0, null, new HashSet<>(), new ArrayList<>());
