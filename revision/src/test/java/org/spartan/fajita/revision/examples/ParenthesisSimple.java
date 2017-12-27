@@ -32,7 +32,7 @@ public class ParenthesisSimple extends Grammar {
     new ParenthesisSimple().generateGrammarFiles();
   }
   public static void testing() {
-    o().c();
-    o().o().c().o().c().c();
+    o().c().$();
+    o().o().c().o().c().c().$();
   }
 }

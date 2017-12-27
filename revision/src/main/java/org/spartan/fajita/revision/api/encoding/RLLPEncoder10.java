@@ -114,12 +114,12 @@ public class RLLPEncoder10 {
       verbNames.put(v, $);
       return $;
     }
-    public String name(Symbol s, Set<Verb> baseLegalJumps) {
+    public String name(Symbol s, Set<Verb> allLegalJumps) {
       if (s.isVerb())
         return s.asVerb().terminal.name() + "_";
       StringBuilder $ = new StringBuilder(s.isNonTerminal() ? s.asNonTerminal().name() : name(s.asVerb())).append("_");
       for (Verb v : bnf.verbs)
-        if (baseLegalJumps.contains(v))
+        if (allLegalJumps.contains(v))
           $.append(name(v));
       return $.toString();
     }
@@ -180,16 +180,19 @@ public class RLLPEncoder10 {
       if (jsm.isEmpty())
         return new TypeEncoding(jsm, origin, emptySolution.get(), parent);
       Symbol top = jsm.peek();
-      Set<Verb> baseLegalJumps = jsm.baseLegalJumps();
-      String $ = namer.name(top, baseLegalJumps);
-      if (seenTypes.containsKey(top) && seenTypes.get(top).contains(baseLegalJumps))
+      Set<Verb> allLegalJumps = jsm.allLegalJumps();
+      // NOTE contains an optimization for verb as stack top
+      if (top.isVerb())
+        allLegalJumps.clear();
+      String $ = namer.name(top, allLegalJumps);
+      if (seenTypes.containsKey(top) && seenTypes.get(top).contains(allLegalJumps))
         return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
-      seenTypes.get(top).add(baseLegalJumps);
+      seenTypes.get(top).add(allLegalJumps);
       StringBuilder t = new StringBuilder("public interface ").append($);
       StringBuilder template = new StringBuilder("<E");
       List<String> templates = new ArrayList<>();
-      for (Verb v : baseLegalJumps)
+      for (Verb v : allLegalJumps)
         if (!SpecialSymbols.$.equals(v))
           templates.add(namer.name(v));
       if (!templates.isEmpty()) {
@@ -234,9 +237,11 @@ public class RLLPEncoder10 {
         return $;
       assert jsm != UNKNOWN && !jsm.isEmpty();
       $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
-      for (Verb v : jsm.baseLegalJumps())
-        if (!SpecialSymbols.$.equals(v))
-          $.templates.add(computeType(jsm.jump(v), v, unknownSolution, emptySolution, $));
+      // NOTE contains an optimization for verb as stack top
+      if (jsm.peek().isNonTerminal())
+        for (Verb v : jsm.allLegalJumps())
+          if (!SpecialSymbols.$.equals(v))
+            $.templates.add(computeType(jsm.jumpFirstOption(v), v, unknownSolution, emptySolution, $));
       return $;
     }
     private String solveType(TypeEncoding t, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
@@ -247,7 +252,7 @@ public class RLLPEncoder10 {
       assert t.templates.size() > 0;
       if (t.isRecursive())
         return solveRecursiveType(t, unknownSolution, emptySolution);
-      StringBuilder $ = new StringBuilder(namer.name(jsm.peek(), jsm.baseLegalJumps())) //
+      StringBuilder $ = new StringBuilder(namer.name(jsm.peek(), jsm.allLegalJumps())) //
           .append("<");
       List<String> templates = new ArrayList<>();
       for (TypeEncoding template : t.templates)
@@ -378,7 +383,7 @@ public class RLLPEncoder10 {
       return false;
     }
     boolean match(TypeEncoding other) {
-      return jsm.getS0().equals(other.jsm.getS0());
+      return jsm.getS0().equals(other.jsm.getS0()) && jsm.baseLegalJumps().equals(jsm.baseLegalJumps());
     }
     @SuppressWarnings({ "null", "unused" }) TypeEncoding root() {
       TypeEncoding next = parent, current = this;

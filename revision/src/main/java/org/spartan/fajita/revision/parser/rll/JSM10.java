@@ -1,7 +1,6 @@
 package org.spartan.fajita.revision.parser.rll;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +85,10 @@ public class JSM10 implements Cloneable {
     $ = $.pushAll(j.toPush);
     return $;
   }
+  public JSM10 jumpFirstOption(Verb v) {
+    JSM10 jump = jump(v);
+    return jump != JAMMED ? jump : pop().jumpFirstOption(v);
+  }
   public JSM10 pushAll(List<Symbol> items) {
     if (items.isEmpty())
       return this;
@@ -131,17 +134,21 @@ public class JSM10 implements Cloneable {
   }
   public Set<Verb> baseLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
-    return new LinkedHashSet<>(baseLegalJumps);
+    return baseLegalJumps;
+  }
+  public Set<Verb> allLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN;
+    if (isEmpty())
+      return baseLegalJumps();
+    Set<Verb> $ = new LinkedHashSet<>(peekLegalJumps());
+    $.addAll(pop().allLegalJumps());
+    return $;
   }
   // TODO Roth: can be optimized
   public JSM10 trim() {
     if (this == JAMMED || this == UNKNOWN || isEmpty() || S0.size() == 1)
       return this;
-    JSM10 $ = new JSM10(bnf, analyzer);
-    $.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
-    $.baseLegalJumps.addAll(bnf.verbs.stream().filter(v -> S1.get(0).get(v) != J.JJAMMED).collect(toSet()));
-    $.pushAll(S0.subList(1, S0.size()));
-    return $.trim();
+    return new JSM10(bnf, analyzer, S0.peek(), allLegalJumps());
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
@@ -201,7 +208,7 @@ public class JSM10 implements Cloneable {
     if (baseLegalJumps != null) {
       for (int i = 0; i < ind; ++i)
         $.append(" ");
-      $.append(" ELJ: ").append(baseLegalJumps).append("\n");
+      $.append(" BLJ: ").append(baseLegalJumps).append("\n");
     }
     for (int i = 0; i < ind; ++i)
       $.append(" ");
