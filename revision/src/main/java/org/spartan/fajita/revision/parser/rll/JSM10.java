@@ -86,6 +86,8 @@ public class JSM10 implements Cloneable {
     return $;
   }
   public JSM10 jumpFirstOption(Verb v) {
+    if (isEmpty())
+      return baseLegalJumps.contains(v) ? UNKNOWN : JAMMED;
     JSM10 jump = jump(v);
     return jump != JAMMED ? jump : pop().jumpFirstOption(v);
   }
@@ -134,13 +136,19 @@ public class JSM10 implements Cloneable {
   }
   public Set<Verb> baseLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
-    return baseLegalJumps;
+    return new LinkedHashSet<>(baseLegalJumps);
   }
   public Set<Verb> allLegalJumps() {
+    if (isEmpty())
+      return baseLegalJumps();
+    return pop().allLegalJumpsAfterPop();
+  }
+  private Set<Verb> allLegalJumpsAfterPop() {
     assert this != JAMMED && this != UNKNOWN;
     if (isEmpty())
       return baseLegalJumps();
-    Set<Verb> $ = new LinkedHashSet<>(peekLegalJumps());
+    // TODO Roth: can be optimized
+    Set<Verb> $ = new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
     $.addAll(pop().allLegalJumps());
     return $;
   }
