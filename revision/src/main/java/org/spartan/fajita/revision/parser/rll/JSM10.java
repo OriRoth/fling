@@ -1,11 +1,12 @@
 package org.spartan.fajita.revision.parser.rll;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class JSM10 implements Cloneable {
   final BNFAnalyzer analyzer;
   private final Stack<Symbol> S0;
   private final Stack<Map<Verb, J>> S1;
-  private List<Verb> emptyLegalJumps;
+  private Set<Verb> baseLegalJumps;
 
   public JSM10(BNF bnf) {
     this(bnf, new BNFAnalyzer(bnf));
@@ -34,11 +35,11 @@ public class JSM10 implements Cloneable {
     this.analyzer = analyzer;
     this.S0 = new Stack<>();
     this.S1 = new Stack<>();
-    this.emptyLegalJumps = null;
+    this.baseLegalJumps = null;
   }
-  public JSM10(BNF bnf, BNFAnalyzer analyzer, Symbol initial, List<Verb> emptyLegalJumps) {
+  public JSM10(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> emptyLegalJumps) {
     this(bnf, analyzer);
-    this.emptyLegalJumps = new ArrayList<>(emptyLegalJumps);
+    this.baseLegalJumps = new LinkedHashSet<>(emptyLegalJumps);
     pushJumps(initial);
     S0.push(initial);
   }
@@ -50,14 +51,14 @@ public class JSM10 implements Cloneable {
     this.S0.addAll(jsm.S0);
     for (Map<Verb, J> m : jsm.S1)
       this.S1.add(new HashMap<>(m));
-    this.emptyLegalJumps = jsm.emptyLegalJumps == null ? null : new ArrayList<>(jsm.emptyLegalJumps);
+    this.baseLegalJumps = jsm.baseLegalJumps == null ? null : new LinkedHashSet<>(jsm.baseLegalJumps);
   }
   private JSM10() {
     this.bnf = null;
     this.analyzer = null;
     this.S0 = null;
     this.S1 = null;
-    this.emptyLegalJumps = null;
+    this.baseLegalJumps = null;
   }
   @Override public JSM10 clone() {
     return new JSM10(this);
@@ -87,7 +88,7 @@ public class JSM10 implements Cloneable {
   }
   public JSM10 pushAll(List<Symbol> items) {
     if (items.isEmpty())
-      return clone();
+      return this;
     JSM10 $ = clone();
     $.pushJumps(items);
     return $;
@@ -123,28 +124,29 @@ public class JSM10 implements Cloneable {
     S1.push(m);
   }
   // TODO Roth: can be optimized
-  public List<Verb> peekLegalJumps() {
+  public Set<Verb> peekLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return new LinkedList<>(
+    return new LinkedHashSet<>(
         bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(S0.peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
-  // public List<Verb> globalLegalJumps() {
-  // assert this != JAMMED && this != UNKNOWN && !isEmpty();
-  // }
+  public Set<Verb> baseLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
+    return new LinkedHashSet<>(baseLegalJumps);
+  }
+  // TODO Roth: can be optimized
   public JSM10 trim() {
-    if (this == JAMMED || this == UNKNOWN || isEmpty())
+    if (this == JAMMED || this == UNKNOWN || isEmpty() || S0.size() == 1)
       return this;
-    JSM10 $ = new JSM10(bnf, analyzer, S0.peek(),
-        new LinkedList<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList())));
-    // TODO Roth: verify empty legal jumps
-    $.emptyLegalJumps = S0.size() == 1 ? new ArrayList<>(emptyLegalJumps)
-        : new ArrayList<>(bnf.verbs.stream().filter(v -> S1.get(S1.size() - 2).get(v) != J.JJAMMED).collect(toList()));
-    return $;
+    JSM10 $ = new JSM10(bnf, analyzer);
+    $.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
+    $.baseLegalJumps.addAll(bnf.verbs.stream().filter(v -> S1.get(0).get(v) != J.JJAMMED).collect(toSet()));
+    $.pushAll(S0.subList(1, S0.size()));
+    return $.trim();
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
     for (Verb v : bnf.verbs)
-      $.put(v, emptyLegalJumps != null && emptyLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
+      $.put(v, baseLegalJumps != null && baseLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
     return $;
   }
   @Override public int hashCode() {
@@ -196,10 +198,10 @@ public class JSM10 implements Cloneable {
           }
         }
       }
-    if (emptyLegalJumps != null) {
+    if (baseLegalJumps != null) {
       for (int i = 0; i < ind; ++i)
         $.append(" ");
-      $.append(" ELJ: ").append(emptyLegalJumps).append("\n");
+      $.append(" ELJ: ").append(baseLegalJumps).append("\n");
     }
     for (int i = 0; i < ind; ++i)
       $.append(" ");

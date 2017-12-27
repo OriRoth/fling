@@ -114,10 +114,12 @@ public class RLLPEncoder10 {
       verbNames.put(v, $);
       return $;
     }
-    public String name(Symbol s, List<Verb> legalJumps) {
+    public String name(Symbol s, Set<Verb> baseLegalJumps) {
+      if (s.isVerb())
+        return s.asVerb().terminal.name() + "_";
       StringBuilder $ = new StringBuilder(s.isNonTerminal() ? s.asNonTerminal().name() : name(s.asVerb())).append("_");
       for (Verb v : bnf.verbs)
-        if (legalJumps.contains(v))
+        if (baseLegalJumps.contains(v))
           $.append(name(v));
       return $.toString();
     }
@@ -130,7 +132,7 @@ public class RLLPEncoder10 {
   }
 
   class MembersComputer {
-    private final Map<Symbol, Set<List<Verb>>> seenTypes = new LinkedHashMap<>();
+    private final Map<Symbol, Set<Set<Verb>>> seenTypes = new LinkedHashMap<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
     private final Set<TypeEncoding> seenRecs = new LinkedHashSet<>();
 
@@ -145,9 +147,9 @@ public class RLLPEncoder10 {
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      List<Verb> elj = new ArrayList<>();
-      elj.add(SpecialSymbols.$);
-      JSM10 jsm = RLLPConcrete3.next(new JSM10(bnf, analyzer, startSymbol, elj), v);
+      Set<Verb> blj = new LinkedHashSet<>();
+      blj.add(SpecialSymbols.$);
+      JSM10 jsm = RLLPConcrete3.next(new JSM10(bnf, analyzer, startSymbol, blj), v);
       computeType(jsm, v, x -> namer.name(x), () -> "E");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
@@ -178,16 +180,16 @@ public class RLLPEncoder10 {
       if (jsm.isEmpty())
         return new TypeEncoding(jsm, origin, emptySolution.get(), parent);
       Symbol top = jsm.peek();
-      List<Verb> legalJumps = jsm.peekLegalJumps();
-      String $ = namer.name(top, legalJumps);
-      if (seenTypes.containsKey(top) && seenTypes.get(top).contains(legalJumps))
+      Set<Verb> baseLegalJumps = jsm.baseLegalJumps();
+      String $ = namer.name(top, baseLegalJumps);
+      if (seenTypes.containsKey(top) && seenTypes.get(top).contains(baseLegalJumps))
         return computeTemplates(new TypeEncoding(jsm, origin, $, parent), jsm, unknownSolution, emptySolution);
       seenTypes.putIfAbsent(top, new LinkedHashSet<>());
-      seenTypes.get(top).add(legalJumps);
+      seenTypes.get(top).add(baseLegalJumps);
       StringBuilder t = new StringBuilder("public interface ").append($);
       StringBuilder template = new StringBuilder("<E");
       List<String> templates = new ArrayList<>();
-      for (Verb v : legalJumps)
+      for (Verb v : baseLegalJumps)
         if (!SpecialSymbols.$.equals(v))
           templates.add(namer.name(v));
       if (!templates.isEmpty()) {
@@ -195,12 +197,13 @@ public class RLLPEncoder10 {
         template.append(String.join(",", templates));
       }
       t.append(template.append(">{"));
-      // TODO Roth: verify verbs
+      // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
+      // NOTE contains an optimization for verb as stack top
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
+        // NOTE $ method is built below
         if (!SpecialSymbols.$.equals(v))
-          // NOTE $ method is built below
           t.append(computeMethod(jsm.trim(), v, unknownSolution, emptySolution));
-      if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
+      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
       apiTypeNames.add($);
@@ -210,13 +213,14 @@ public class RLLPEncoder10 {
       if (jsm == JAMMED)
         return "";
       if (jsm == UNKNOWN)
-        return "public " + namer.name(v) + " " + v.terminal.name() + "();";
+        return "public " + namer.name(v) + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
       if (jsm.isEmpty())
-        return "public E " + v.terminal.name() + "();";
+        return "public E " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
       Symbol top = jsm.peek();
       JSM10 next = RLLPConcrete3.next(jsm, v);
       if (next == JAMMED)
         return "";
+      // NOTE contains an optimization for verb as stack top
       return top.isVerb() ? //
           !top.asVerb().equals(v) ? //
               "" //
@@ -230,9 +234,8 @@ public class RLLPEncoder10 {
         return $;
       assert jsm != UNKNOWN && !jsm.isEmpty();
       $.templates.add(computeType(jsm.pop(), SpecialSymbols.empty, unknownSolution, emptySolution, $));
-      for (Verb v : jsm.peekLegalJumps())
+      for (Verb v : jsm.baseLegalJumps())
         if (!SpecialSymbols.$.equals(v))
-          // TODO Roth: check whether trimming is needed here
           $.templates.add(computeType(jsm.jump(v), v, unknownSolution, emptySolution, $));
       return $;
     }
@@ -244,7 +247,7 @@ public class RLLPEncoder10 {
       assert t.templates.size() > 0;
       if (t.isRecursive())
         return solveRecursiveType(t, unknownSolution, emptySolution);
-      StringBuilder $ = new StringBuilder(namer.name(jsm.peek(), jsm.peekLegalJumps())) //
+      StringBuilder $ = new StringBuilder(namer.name(jsm.peek(), jsm.baseLegalJumps())) //
           .append("<");
       List<String> templates = new ArrayList<>();
       for (TypeEncoding template : t.templates)
@@ -277,7 +280,6 @@ public class RLLPEncoder10 {
       JSM10 jsm = te.recursionAncestor.jsm;
       assert jsm != JAMMED && jsm != UNKNOWN && !jsm.isEmpty();
       Symbol top = jsm.peek();
-      List<Verb> legalJumps = jsm.peekLegalJumps();
       String $ = namer.name(te);
       StringBuilder t = new StringBuilder("public interface ").append($);
       if (!ri.isEmpty()) {
@@ -292,13 +294,14 @@ public class RLLPEncoder10 {
         t.append(String.join(",", templates)).append(">");
       }
       t.append("{");
-      // TODO Roth: verify verbs
+      // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
+      // NOTE contains an optimization for verb as stack top
       for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
         if (!SpecialSymbols.$.equals(v))
           // NOTE $ method is built below
           // NOTE no trimming here
           t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
-      if (!bnf.isSubBNF && legalJumps.contains(SpecialSymbols.$))
+      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
       apiTypeNames.add($);
