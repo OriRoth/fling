@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
@@ -75,15 +76,11 @@ public class JSM11 implements Cloneable {
     return $;
   }
   public JSM11 jump(Verb v) {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return S1.peek().get(v).asJSM();
+    return jjump(v).asJSM();
   }
-  // TODO Roth: check whether needed
-  public JSM11 jumpFirstOption(Verb v) {
-    if (isEmpty())
-      return baseLegalJumps.contains(v) ? UNKNOWN : JAMMED;
-    JSM11 jump = jump(v);
-    return jump != JAMMED ? jump : pop().jumpFirstOption(v);
+  public J jjump(Verb v) {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return S1.peek().get(v);
   }
   public JSM11 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -123,36 +120,32 @@ public class JSM11 implements Cloneable {
     S1.push(m);
   }
   // TODO Roth: can be optimized
-  // TODO Roth: check whether needed
   public Set<Verb> peekLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
     return new LinkedHashSet<>(
         bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(S0.peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
+  // TODO Roth: can be optimized
+  public Set<Verb> allLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
+  }
   public Set<Verb> baseLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
     return new LinkedHashSet<>(baseLegalJumps);
   }
-  // TODO Roth: check whether needed
-  public Set<Verb> allLegalJumps() {
-    if (isEmpty())
-      return baseLegalJumps();
-    return pop().allLegalJumpsAfterPop();
-  }
-  private Set<Verb> allLegalJumpsAfterPop() {
-    assert this != JAMMED && this != UNKNOWN;
-    if (isEmpty())
-      return baseLegalJumps();
-    // TODO Roth: can be optimized
-    Set<Verb> $ = new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
-    $.addAll(pop().allLegalJumps());
-    return $;
-  }
   // TODO Roth: can be optimized
   public JSM11 trim() {
-    if (this == JAMMED || this == UNKNOWN || isEmpty() || S0.size() == 1)
+    if (this == JAMMED || this == UNKNOWN || size() <= 1)
       return this;
-    return new JSM11(bnf, analyzer, S0.peek(), allLegalJumps());
+    return new JSM11(bnf, analyzer, S0.peek(), pop().allLegalJumps());
+  }
+  public int size() {
+    assert S0.size() == S1.size();
+    return S0.size();
+  }
+  public boolean isTrimmed() {
+    return this != JAMMED && this != UNKNOWN && size() <= 1;
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
@@ -164,7 +157,7 @@ public class JSM11 implements Cloneable {
     return (S0 == null ? 1 : S0.hashCode()) * (S1 == null ? 1 : S1.hashCode());
   }
   @Override public boolean equals(Object obj) {
-    return obj instanceof JSM11 && S0.equals(((JSM11) obj).S0) && S1.equals(((JSM11) obj).S1);
+    return obj instanceof JSM11 && S0.equals(((JSM11) obj).S0) && Objects.equals(baseLegalJumps, ((JSM11) obj).baseLegalJumps);
   }
   @Override public String toString() {
     return this == JAMMED ? "JAMMED" : this == UNKNOWN ? "UNKNOWN" : toString(0, null, new HashSet<>(), new ArrayList<>());
@@ -242,16 +235,23 @@ public class JSM11 implements Cloneable {
       toPush = null;
     }
     public static J of(JSM11 address, List<Symbol> toPush) {
+      assert address != JAMMED && address != UNKNOWN;
       return new J(address, toPush);
     }
     public static J of(JSM11 address) {
       return address == JAMMED ? JJAMMED : address == UNKNOWN ? JUNKNOWN : of(address, new ArrayList<>());
+    }
+    public boolean isEmpty() {
+      return address.isEmpty() && toPush.isEmpty();
     }
     public JSM11 asJSM() {
       return asJSM != null ? asJSM //
           : this == J.JJAMMED ? (asJSM = JAMMED) //
               : this == J.JUNKNOWN ? (asJSM = UNKNOWN) //
                   : (asJSM = address.pushAll(toPush));
+    }
+    public J trim() {
+      return new J(address.trim(), toPush);
     }
     @Override public int hashCode() {
       int $ = 1;

@@ -10,6 +10,7 @@ public class SpecialSymbols {
       return "$";
     }
   };
+  // TODO Roth: check whether needed
   public static final Verb empty = new Verb(new Terminal() {
     @Override public String name() {
       return "~";

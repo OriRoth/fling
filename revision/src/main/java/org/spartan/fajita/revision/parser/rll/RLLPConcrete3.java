@@ -1,5 +1,8 @@
 package org.spartan.fajita.revision.parser.rll;
 
+import static org.spartan.fajita.revision.parser.rll.JSM11.*;
+import static org.spartan.fajita.revision.parser.rll.JSM11.J.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +10,7 @@ import java.util.Map;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
+import org.spartan.fajita.revision.parser.rll.JSM11.J;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -46,7 +50,7 @@ public class RLLPConcrete3 {
   }
   void jump(Verb v) {
     jsm = jsm.jump(v);
-    if (jsm == JSM11.JAMMED || jsm == JSM11.UNKNOWN)
+    if (jsm == JAMMED || jsm == UNKNOWN)
       reject = true;
   }
   Symbol pop() {
@@ -122,11 +126,34 @@ public class RLLPConcrete3 {
     return reject;
   }
   // TODO Roth: optimize action table creation in constructor
+  // NOTE does not support all cases
   public static JSM11 next(JSM11 jsm, Verb v) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
     rllp.initialized = true;
     rllp.consume(v);
     return rllp.jsm;
+  }
+  // NOTE does not support all cases
+  public static J nextj(JSM11 jsm, Verb v) {
+    // TODO Roth: verify empty jsm support is not needed
+    if (JAMMED == jsm || UNKNOWN == jsm || jsm.isEmpty())
+      return JJAMMED;
+    Symbol top = jsm.peek();
+    if (v.equals(SpecialSymbols.$)) {
+      if (!top.equals(SpecialSymbols.$))
+        return JJAMMED;
+      return J.of(jsm.pop());
+    }
+    if (top.isVerb()) {
+      if (!top.equals(v))
+        return JJAMMED;
+      return J.of(jsm.pop());
+    }
+    // TODO Roth: optimize action table creation
+    Map<NonTerminal, Map<Verb, List<Symbol>>> at = new RLLPConcrete3(jsm.bnf, jsm.analyzer).actionTable;
+    if (!at.get(top.asNonTerminal()).containsKey(v))
+      return jsm.jjump(v);
+    return J.of(jsm.pop(), at.get(top.asNonTerminal()).get(v));
   }
   private List<Symbol> getPush(NonTerminal nt, Verb v) {
     return actionTable.get(nt).get(v);
