@@ -15,7 +15,7 @@ import org.spartan.fajita.revision.symbols.Verb;
 
 public class RLLPConcrete3 {
   protected final BNF bnf;
-  protected JSM10 jsm;
+  protected JSM11 jsm;
   protected boolean accept;
   protected boolean reject;
   protected boolean initialized;
@@ -27,9 +27,9 @@ public class RLLPConcrete3 {
     this(bnf, new BNFAnalyzer(bnf));
   }
   public RLLPConcrete3(BNF bnf, BNFAnalyzer analyzer) {
-    this(bnf, analyzer, new JSM10(bnf));
+    this(bnf, analyzer, new JSM11(bnf));
   }
-  private RLLPConcrete3(BNF bnf, BNFAnalyzer analyzer, JSM10 jsm) {
+  private RLLPConcrete3(BNF bnf, BNFAnalyzer analyzer, JSM11 jsm) {
     this.bnf = bnf;
     this.jsm = jsm;
     this.analyzer = analyzer;
@@ -46,7 +46,7 @@ public class RLLPConcrete3 {
   }
   void jump(Verb v) {
     jsm = jsm.jump(v);
-    if (jsm == JSM10.JAMMED || jsm == JSM10.UNKNOWN)
+    if (jsm == JSM11.JAMMED || jsm == JSM11.UNKNOWN)
       reject = true;
   }
   Symbol pop() {
@@ -122,7 +122,7 @@ public class RLLPConcrete3 {
     return reject;
   }
   // TODO Roth: optimize action table creation in constructor
-  public static JSM10 next(JSM10 jsm, Verb v) {
+  public static JSM11 next(JSM11 jsm, Verb v) {
     RLLPConcrete3 rllp = new RLLPConcrete3(jsm.bnf, jsm.analyzer, jsm);
     rllp.initialized = true;
     rllp.consume(v);
