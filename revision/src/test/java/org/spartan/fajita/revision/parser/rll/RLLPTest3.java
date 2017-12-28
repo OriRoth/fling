@@ -5,9 +5,8 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.examples.Parenthesis.Term.pop;
-import static org.spartan.fajita.revision.examples.Parenthesis.Term.push;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.o;
+import static org.spartan.fajita.revision.examples.Parenthesis.Term.c;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
@@ -87,7 +86,10 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void anb1() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnB().bnf().bnf());
     rllp.consume( //
-        c, c, c, c, d //
+        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c, d //
     );
     assert !rllp.rejected();
     assert rllp.accepted();
@@ -119,7 +121,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void parenthesis1() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new Parenthesis().bnf().bnf());
     rllp.consume( //
-        push, push, push, pop, pop, push, pop, pop //
+        o, o, o, c, c, o, c, c //
     );
     assert !rllp.rejected();
     assert rllp.accepted();
@@ -127,7 +129,7 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void parenthesis2() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new Parenthesis().bnf().bnf());
     rllp.consume( //
-        push, push, push, pop, pop, pop, pop, push //
+        o, o, o, c, c, c, c, o //
     );
     assert rllp.rejected();
   }
