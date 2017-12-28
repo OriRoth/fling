@@ -134,7 +134,7 @@ public class RLLPConcrete3 {
     return rllp.jsm;
   }
   // NOTE does not support all cases
-  public static J nextj(JSM11 jsm, Verb v) {
+  public static J jnext(JSM11 jsm, Verb v) {
     // TODO Roth: verify empty jsm support is not needed
     if (JAMMED == jsm || UNKNOWN == jsm || jsm.isEmpty())
       return JJAMMED;

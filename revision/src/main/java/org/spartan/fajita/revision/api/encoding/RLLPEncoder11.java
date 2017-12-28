@@ -129,7 +129,11 @@ public class RLLPEncoder11 {
       $.append("¢").append(names(j.toPush)).append("_");
       if (!j.address.isEmpty() && j.address.peek().isVerb() && j.toPush.isEmpty())
         return $.toString();
-      return $.append(names(j.address.baseLegalJumps())).toString();
+      Set<Verb> blj = j.address.baseLegalJumps();
+      blj.remove(SpecialSymbols.$);
+      if (j.asJSM().peekLegalJumps().contains(SpecialSymbols.$))
+        blj.add(SpecialSymbols.$);
+      return $.append(names(blj)).toString();
     }
   }
 
@@ -150,8 +154,8 @@ public class RLLPEncoder11 {
     private void computeStaticMethod(Verb v) {
       Set<Verb> blj = new LinkedHashSet<>();
       blj.add(SpecialSymbols.$);
-      J j = J.of(RLLPConcrete3.next(new JSM11(bnf, analyzer, startSymbol, blj), v));
-      computeType(j, v, x -> namer.name(x), () -> "E");
+      J j = RLLPConcrete3.jnext(new JSM11(bnf, analyzer, startSymbol, blj), v);
+      computeType(j, v, x -> namer.name(x), () -> "ε");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
         assert SpecialSymbols.$.equals(x);
@@ -218,7 +222,7 @@ public class RLLPEncoder11 {
       if (jsm.isEmpty())
         return "public ε " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
       Symbol top = jsm.peek();
-      J jnext = RLLPConcrete3.nextj(jsm, v);
+      J jnext = RLLPConcrete3.jnext(jsm, v);
       if (JJAMMED == jnext)
         return "";
       // NOTE contains an optimization for verb as stack top

@@ -157,10 +157,13 @@ public class JSM11 implements Cloneable {
     return (S0 == null ? 1 : S0.hashCode()) * (S1 == null ? 1 : S1.hashCode());
   }
   @Override public boolean equals(Object obj) {
-    return obj instanceof JSM11 && S0.equals(((JSM11) obj).S0) && Objects.equals(baseLegalJumps, ((JSM11) obj).baseLegalJumps);
+    return obj instanceof JSM11 && S0.equals(((JSM11) obj).S0) //
+        && Objects.equals(baseLegalJumps, ((JSM11) obj).baseLegalJumps);
   }
   @Override public String toString() {
-    return this == JAMMED ? "JAMMED" : this == UNKNOWN ? "UNKNOWN" : toString(0, null, new HashSet<>(), new ArrayList<>());
+    return this == JAMMED ? "JAMMED"
+        : this == UNKNOWN ? "UNKNOWN" //
+            : toString(0, null, new HashSet<>(), new ArrayList<>());
   }
   String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
     seen.add(J.of(this));
@@ -174,10 +177,7 @@ public class JSM11 implements Cloneable {
     $.append(super.toString()).append(" {\n");
     for (int i = 0; i < ind; ++i)
       $.append(" ");
-    $.append(" S0: ").append(S0);
-    if (!toPush.isEmpty())
-      $.append(" + ").append(toPush);
-    $.append("\n");
+    $.append(" S0: ").append(S0).append(" + ").append(toPush).append("\n");
     for (int i = 0; i < ind; ++i)
       $.append(" ");
     $.append(" S1: (").append(S1.size()).append(")\n");
@@ -267,7 +267,9 @@ public class JSM11 implements Cloneable {
               : obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
     }
     @Override public String toString() {
-      return this == JJAMMED ? "JJAMMED" : this == JUNKNOWN ? "JUNKNOWN" : address.toString(0, null, new HashSet<>(), toPush);
+      return this == JJAMMED ? "JJAMMED"
+          : this == JUNKNOWN ? "JUNKNOWN" //
+              : address.toString(0, null, new HashSet<>(), toPush);
     }
   }
 }
