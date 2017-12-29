@@ -35,6 +35,7 @@ public final class EBNF {
   public Symbol subHead;
   public FajitaProducer beforeSolution;
   public FajitaProducer afterSolution;
+  private BNF bnf;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
@@ -60,6 +61,8 @@ public final class EBNF {
   // NOTE no equals/hashCode
   // TODO Roth: use normalized form here
   public BNF toBNF(FajitaProducer producer) {
+    if (bnf != null)
+      return bnf;
     beforeSolution = producer.clone();
     Set<DerivationRule> rs = new LinkedHashSet<>();
     nestedSymbolsMapping = new LinkedHashMap<>();
@@ -96,7 +99,7 @@ public final class EBNF {
     BNF $ = new BNF(vs, nts, ns, rs, startSymbols, name);
     $.origin = this;
     afterSolution = producer.clone();
-    return $;
+    return bnf = $;
   }
   public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
     Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>();

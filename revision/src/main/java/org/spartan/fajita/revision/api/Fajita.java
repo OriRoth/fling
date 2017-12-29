@@ -40,6 +40,7 @@ public class Fajita {
   public final String packagePath;
   public final String projectPath;
   public Class<? extends Grammar> provider;
+  private EBNF ebnf;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(Class<? extends Grammar> provider,
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
@@ -78,9 +79,11 @@ public class Fajita {
     return ebnf().toBNF(producer());
   }
   public EBNF ebnf() {
-    EBNF $ = new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
-    $.toBNF(new FajitaProducer());
-    return $;
+    if (ebnf != null)
+      return ebnf;
+    ebnf = new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
+    ebnf.toBNF(new FajitaProducer());
+    return ebnf;
   }
   Map<String, String> finish() {
     return FajitaEncoder3.encode(this);
