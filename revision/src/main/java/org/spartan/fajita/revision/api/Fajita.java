@@ -57,7 +57,8 @@ public class Fajita {
   }
 
   public static class FajitaProducer implements Function<NonTerminal, NonTerminal>, Cloneable {
-    Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
+    // TODO Roth: make private
+    public Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
 
     @Override public NonTerminal apply(NonTerminal lhs) {
       counter.putIfAbsent(lhs, Integer.valueOf(1));

@@ -53,7 +53,7 @@ public class JamoosClassesRenderer {
     this.packagePath = packagePath;
     this.topClassName = topClassName(ebnf);
     // NOTE should correspond to the producer in Fajita
-    parseTopClass(ebnf.beforeSolution);
+    parseTopClass(ebnf.afterSolution);
   }
   public static String topClassName(EBNF ebnf) {
     return ebnf.name + "AST";
