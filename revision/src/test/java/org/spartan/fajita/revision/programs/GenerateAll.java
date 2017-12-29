@@ -11,6 +11,7 @@ import org.spartan.fajita.revision.examples.TestTwoParentsBNF;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBSimple;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
+import org.spartan.fajita.revision.examples.malfunction.TestAnBnCD;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple;
 import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
 import org.spartan.fajita.revision.examples.malfunction.TestFinite;
@@ -28,6 +29,7 @@ public class GenerateAll {
     new TestAnB().generateGrammarFiles();
     new TestAnBSimple().generateGrammarFiles();
     new TestAnCDBn().generateGrammarFiles();
+    new TestAnBnCD().generateGrammarFiles();
     new Parenthesis().generateGrammarFiles();
     new ParenthesisSimple().generateGrammarFiles();
     new TestFinite().generateGrammarFiles();

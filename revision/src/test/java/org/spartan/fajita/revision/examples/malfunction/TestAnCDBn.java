@@ -11,6 +11,7 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.b
 import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.c1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.d1;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.e1;
+import static org.spartan.fajita.revision.junk.TestAnCDBn.a1;
 
 import java.io.IOException;
 
@@ -40,9 +41,10 @@ public class TestAnCDBn extends Grammar {
     new TestAnCDBn().generateGrammarFiles();
   }
   public static void testing() {
-    // a().b().$();
-    // a().a().b().b().$();
-    // a().a().a().b().b().b().$();
-    // a().a().a().a().b().b().b().b().$();
+    a1().b1().$();
+    a1().a1().b1().b1().$();
+    a1().a1().a1().b1().b1().b1().$();
+    a1().a1().a1().a1().b1().b1().b1().b1().$();
+    a1().a1().a1().a1().d1().e1().b1().c1().b1().b1().b1().$();
   }
 }

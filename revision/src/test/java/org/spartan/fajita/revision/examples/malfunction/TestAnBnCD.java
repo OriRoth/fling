@@ -13,6 +13,7 @@ import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.c
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.d2;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.e2;
 import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.f2;
+import static org.spartan.fajita.revision.junk.TestAnBnCD.*;
 
 import java.io.IOException;
 
@@ -46,9 +47,10 @@ public class TestAnBnCD extends Grammar {
     new TestAnBnCD().generateGrammarFiles();
   }
   public static void testing() {
-    // a().b().$();
-    // a().a().b().b().$();
-    // a().a().a().b().b().b().$();
-    // a().a().a().a().b().b().b().b().$();
+    a2().b2().$();
+    a2().a2().b2().b2().$();
+    a2().a2().a2().b2().b2().b2().$();
+    a2().a2().a2().a2().b2().b2().b2().b2().$();
+    a2().a2().a2().c2().a2().d2().e2().b2().f2().b2().b2().b2().$();
   }
 }
