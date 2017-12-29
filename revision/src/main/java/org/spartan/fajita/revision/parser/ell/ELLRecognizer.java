@@ -21,7 +21,7 @@ public class ELLRecognizer {
   private static final String PP_IDENT = "--";
 
   public ELLRecognizer(final EBNF ebnf) {
-    n = ebnf.regularFormWithExtendibles(ebnf.beforeSolution);
+    n = ebnf.regularFormWithExtendibles(ebnf.afterSolution());
     analyzer = new EBNFAnalyzer(ebnf, n);
     stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }

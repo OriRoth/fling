@@ -33,8 +33,8 @@ public final class EBNF {
   // Valid only after toBNF
   public Map<Symbol, Symbol> nestedSymbolsMapping;
   public Symbol subHead;
-  public FajitaProducer beforeSolution;
-  public FajitaProducer afterSolution;
+  private FajitaProducer beforeSolution;
+  private FajitaProducer afterSolution;
   private BNF bnf;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
@@ -153,5 +153,11 @@ public final class EBNF {
   }
   public Set<DerivationRule> rules() {
     return new LinkedHashSet<>(derivationRules);
+  }
+  public FajitaProducer beforeSolution() {
+    return beforeSolution.clone();
+  }
+  public FajitaProducer afterSolution() {
+    return afterSolution.clone();
   }
 }
