@@ -1,16 +1,16 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.either;
 import static org.spartan.fajita.revision.api.Fajita.noneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.option;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.NT.A;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.NT.B;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.a1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.b1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.c1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.d1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.e1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.NT.A;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.NT.B;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.NT.S;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.a1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.b1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.c1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.d1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.e1;
 import static org.spartan.fajita.revision.junk.TestAnCDBn.a1;
 
 import java.io.IOException;

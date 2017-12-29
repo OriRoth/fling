@@ -1,11 +1,11 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.C;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.D;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.NT.S1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
+import static org.spartan.fajita.revision.examples.TestAnB.NT.C;
+import static org.spartan.fajita.revision.examples.TestAnB.NT.D;
+import static org.spartan.fajita.revision.examples.TestAnB.NT.S;
+import static org.spartan.fajita.revision.examples.TestAnB.NT.S1;
+import static org.spartan.fajita.revision.examples.TestAnB.Term.c;
+import static org.spartan.fajita.revision.examples.TestAnB.Term.d;
 import static org.spartan.fajita.revision.junk.TestAnB.*;
 
 import java.io.IOException;

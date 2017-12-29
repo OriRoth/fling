@@ -1,9 +1,9 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.examples.malfunction.TestFinite.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestFinite.Term.*;
 import static org.spartan.fajita.revision.junk.TestFinite.*;
 import static org.spartan.fajita.revision.api.Fajita.*;
+import static org.spartan.fajita.revision.examples.TestFinite.NT.S;
+import static org.spartan.fajita.revision.examples.TestFinite.Term.*;
 
 import java.io.IOException;
 

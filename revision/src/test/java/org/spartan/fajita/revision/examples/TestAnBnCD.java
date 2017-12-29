@@ -1,18 +1,18 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.A;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.B;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.C;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.D;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.E;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.F;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.a2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.b2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.c2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.d2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.e2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.f2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.A;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.B;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.C;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.D;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.E;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.F;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.NT.S;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.a2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.b2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.c2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.d2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.e2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.f2;
 import static org.spartan.fajita.revision.junk.TestAnBnCD.*;
 
 import java.io.IOException;

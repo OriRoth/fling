@@ -1,7 +1,7 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnSimple.Term.*;
+import static org.spartan.fajita.revision.examples.TestAnBnSimple.NT.S;
+import static org.spartan.fajita.revision.examples.TestAnBnSimple.Term.*;
 import static org.spartan.fajita.revision.junk.TestAnBnSimple.*;
 
 import java.io.IOException;

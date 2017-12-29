@@ -6,17 +6,17 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.by;
 import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.*;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
+import static org.spartan.fajita.revision.examples.TestAnB.Term.*;
+import static org.spartan.fajita.revision.examples.TestAnBn.Term.a;
+import static org.spartan.fajita.revision.examples.TestAnBn.Term.b;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.x;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.y;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
-import org.spartan.fajita.revision.examples.malfunction.TestAnB;
-import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
-import org.spartan.fajita.revision.examples.malfunction.TestJumps;
+import org.spartan.fajita.revision.examples.TestAnB;
+import org.spartan.fajita.revision.examples.TestAnBn;
+import org.spartan.fajita.revision.examples.TestJumps;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 @SuppressWarnings("static-method") public class RLLPTest2 {

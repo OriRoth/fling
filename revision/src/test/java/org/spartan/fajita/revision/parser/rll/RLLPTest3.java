@@ -6,32 +6,32 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
 import static org.spartan.fajita.revision.examples.Parenthesis.Term.o;
+import static org.spartan.fajita.revision.examples.TestAnB.Term.d;
+import static org.spartan.fajita.revision.examples.TestAnBn.Term.a;
+import static org.spartan.fajita.revision.examples.TestAnBn.Term.b;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.a2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.b2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.c2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.d2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.e2;
+import static org.spartan.fajita.revision.examples.TestAnBnCD.Term.f2;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.a1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.b1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.c1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.d1;
+import static org.spartan.fajita.revision.examples.TestAnCDBn.Term.e1;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.x;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.y;
 import static org.spartan.fajita.revision.examples.Parenthesis.Term.c;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.d;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.a;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBn.Term.b;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.a2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.b2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.c2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.d2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.e2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnBnCD.Term.f2;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.a1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.b1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.c1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.d1;
-import static org.spartan.fajita.revision.examples.malfunction.TestAnCDBn.Term.e1;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
 import org.spartan.fajita.revision.examples.Parenthesis;
-import org.spartan.fajita.revision.examples.malfunction.TestAnB;
-import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
-import org.spartan.fajita.revision.examples.malfunction.TestAnBnCD;
-import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
-import org.spartan.fajita.revision.examples.malfunction.TestJumps;
+import org.spartan.fajita.revision.examples.TestAnB;
+import org.spartan.fajita.revision.examples.TestAnBn;
+import org.spartan.fajita.revision.examples.TestAnBnCD;
+import org.spartan.fajita.revision.examples.TestAnCDBn;
+import org.spartan.fajita.revision.examples.TestJumps;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 @SuppressWarnings("static-method") public class RLLPTest3 {
@@ -86,10 +86,10 @@ import org.spartan.fajita.revision.symbols.types.VarArgs;
   @Test public void anb1() {
     RLLPConcrete3 rllp = new RLLPConcrete3(new TestAnB().bnf().bnf());
     rllp.consume( //
-        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
-        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
-        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c,
-        org.spartan.fajita.revision.examples.malfunction.TestAnB.Term.c, d //
+        org.spartan.fajita.revision.examples.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.TestAnB.Term.c,
+        org.spartan.fajita.revision.examples.TestAnB.Term.c, d //
     );
     assert !rllp.rejected();
     assert rllp.accepted();

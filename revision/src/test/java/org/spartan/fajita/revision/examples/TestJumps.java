@@ -1,10 +1,10 @@
-package org.spartan.fajita.revision.examples.malfunction;
+package org.spartan.fajita.revision.examples;
 
 import static org.spartan.fajita.revision.api.Fajita.oneOrMore;
 import static org.spartan.fajita.revision.api.Fajita.option;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.NT.S;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.x;
-import static org.spartan.fajita.revision.examples.malfunction.TestJumps.Term.y;
+import static org.spartan.fajita.revision.examples.TestJumps.NT.S;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.x;
+import static org.spartan.fajita.revision.examples.TestJumps.Term.y;
 import static org.spartan.fajita.revision.junk.TestJumps.x;
 
 import java.io.IOException;
