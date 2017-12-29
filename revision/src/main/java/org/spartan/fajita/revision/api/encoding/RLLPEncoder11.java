@@ -3,10 +3,10 @@ package org.spartan.fajita.revision.api.encoding;
 import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.revision.parser.rll.JSM11.JAMMED;
 import static org.spartan.fajita.revision.parser.rll.JSM11.UNKNOWN;
-import static org.spartan.fajita.revision.parser.rll.JSM11.J.*;
+import static org.spartan.fajita.revision.parser.rll.JSM11.J.JJAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM11.J.JUNKNOWN;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -127,8 +127,6 @@ public class RLLPEncoder11 {
       if (!j.address.isEmpty())
         $.append(name(j.address.peek()));
       $.append("¢").append(names(j.toPush)).append("_");
-      if (!j.address.isEmpty() && j.address.peek().isVerb() && j.toPush.isEmpty())
-        return $.toString();
       Set<Verb> blj = j.address.baseLegalJumps();
       blj.remove(SpecialSymbols.$);
       if (j.asJSM().peekLegalJumps().contains(SpecialSymbols.$))
@@ -181,16 +179,11 @@ public class RLLPEncoder11 {
       J jpeek = j.toPush.isEmpty() ? j.trim1() : j.trim();
       String $ = namer.name(jpeek);
       JSM11 jsmTemplate = j.toPush.isEmpty() ? j.address.pop() : j.address;
-      boolean peekIsVerb = jpeek.asJSM().peek().isVerb();
       if (apiTypeNames.contains($))
-        return $ + computeTemplates(jsmTemplate, peekIsVerb, unknownSolution, emptySolution);
+        return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
       apiTypeNames.add($);
       JSM11 jsm = jpeek.asJSM();
-      Symbol top = jsm.peek();
       Set<Verb> lj = jpeek.address.baseLegalJumps();
-      // NOTE an optimization for verb as stack top
-      if (top.isVerb())
-        lj.clear();
       StringBuilder t = new StringBuilder("public interface ").append($);
       StringBuilder template = new StringBuilder("<ε");
       List<String> templates = new ArrayList<>();
@@ -204,38 +197,33 @@ public class RLLPEncoder11 {
       }
       t.append(template.append(">{"));
       // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
-      // NOTE contains an optimization for verb as stack top
-      for (Verb v : top.isVerb() ? Arrays.asList(top.asVerb()) : bnf.verbs)
+      for (Verb v : bnf.verbs)
         // NOTE $ method is built below
         if (!SpecialSymbols.$.equals(v))
           t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
       if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
-      return $ + computeTemplates(jsmTemplate, peekIsVerb, unknownSolution, emptySolution);
+      return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
     }
-    private String computeTemplates(JSM11 jsm, boolean parentIsVerb, Function<Verb, String> unknownSolution,
-        Supplier<String> emptySolution) {
+    private String computeTemplates(JSM11 jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       assert JAMMED != jsm && UNKNOWN != jsm;
       StringBuilder $ = new StringBuilder("<");
       List<String> templates = new ArrayList<>();
       if (jsm.isEmpty()) {
         $.append(emptySolution.get());
-        if (!parentIsVerb)
-          for (Verb v : jsm.baseLegalJumps())
-            if (!SpecialSymbols.$.equals(v))
-              templates.add(unknownSolution.apply(v));
+        for (Verb v : jsm.baseLegalJumps())
+          if (!SpecialSymbols.$.equals(v))
+            templates.add(unknownSolution.apply(v));
         if (!templates.isEmpty())
           $.append(",").append(String.join(",", templates));
         return $.append(">").toString();
       }
       // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
       $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
-      // NOTE contains an optimization for verb as stack top
-      if (!parentIsVerb)
-        for (Verb v : jsm.trim().baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
-            templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
+      for (Verb v : jsm.trim().baseLegalJumps())
+        if (!SpecialSymbols.$.equals(v))
+          templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
       if (!templates.isEmpty())
         $.append(",").append(String.join(",", templates));
       return $.append(">").toString();
@@ -251,11 +239,7 @@ public class RLLPEncoder11 {
       J jnext = RLLPConcrete3.jnext(jsm, v);
       if (JJAMMED == jnext)
         return "";
-      // NOTE contains an optimization for verb as stack top
-      return top.isVerb() ? //
-          !top.asVerb().equals(v) ? //
-              "" //
-              : "public ε " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");" //
+      return top.isVerb() && !top.asVerb().equals(v) ? "" //
           : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
     }
