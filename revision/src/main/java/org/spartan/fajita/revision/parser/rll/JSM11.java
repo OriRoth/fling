@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.parser.rll;
 
 import static java.util.stream.Collectors.toList;
+import static org.spartan.fajita.revision.parser.rll.JSM11.J.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +85,14 @@ public class JSM11 implements Cloneable {
   }
   public J jjump(Verb v) {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return !isEmpty() ? S1.peek().get(v) : baseLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED;
+    return !isEmpty() ? S1.peek().get(v) : baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
+  }
+  // TODO Roth: can be optimized
+  public J jjumpFirstAvailable(Verb v) {
+    if (isEmpty())
+      return baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
+    J jjump = jjump(v);
+    return JJAMMED != jjump ? jjump : pop().jjumpFirstAvailable(v);
   }
   public JSM11 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -144,12 +152,14 @@ public class JSM11 implements Cloneable {
       return this;
     return new JSM11(bnf, analyzer, allLegalJumps());
   }
+  // TODO Roth: can be optimized
+  public JSM11 trim1() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new JSM11(bnf, analyzer, S0.peek(), pop().allLegalJumps());
+  }
   public int size() {
     assert S0.size() == S1.size();
     return S0.size();
-  }
-  public boolean isTrimmed() {
-    return this != JAMMED && this != UNKNOWN && isEmpty();
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
@@ -255,7 +265,11 @@ public class JSM11 implements Cloneable {
                   : (asJSM = address.pushAll(toPush));
     }
     public J trim() {
-      return new J(address.trim(), toPush);
+      return address.isEmpty() ? this : new J(address.trim(), toPush);
+    }
+    public J trim1() {
+      assert !address.isEmpty();
+      return new J(address.trim1(), toPush);
     }
     @Override public int hashCode() {
       int $ = 1;

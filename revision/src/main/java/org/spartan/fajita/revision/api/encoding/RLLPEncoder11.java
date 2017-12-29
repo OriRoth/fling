@@ -179,21 +179,22 @@ public class RLLPEncoder11 {
         return unknownSolution.apply(origin);
       if (j.isEmpty())
         return emptySolution.get();
-      J jpeek = j.toPush.isEmpty() ? j : j.trim();
+      J jpeek = j.toPush.isEmpty() ? j.trim1() : j.trim();
       String $ = namer.name(jpeek);
+      JSM11 jsmTemplate = j.toPush.isEmpty() ? j.address.pop() : j.address;
       if (seenTypes.contains(jpeek))
-        return $ + computeTemplates(j.address, unknownSolution, emptySolution);
+        return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
       seenTypes.add(jpeek);
       JSM11 jsm = jpeek.asJSM();
       Symbol top = jsm.peek();
-      Set<Verb> blj = jsm.baseLegalJumps();
+      Set<Verb> lj = jpeek.address.baseLegalJumps();
       // NOTE an optimization for verb as stack top
       if (top.isVerb())
-        blj.clear();
+        lj.clear();
       StringBuilder t = new StringBuilder("public interface ").append($);
       StringBuilder template = new StringBuilder("<ε");
       List<String> templates = new ArrayList<>();
-      for (Verb v : blj)
+      for (Verb v : lj)
         // NOTE an optimization for $ jump
         if (!SpecialSymbols.$.equals(v))
           templates.add(namer.name(v));
@@ -212,7 +213,31 @@ public class RLLPEncoder11 {
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
       apiTypeNames.add($);
-      return $ + computeTemplates(j.address, unknownSolution, emptySolution);
+      return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
+    }
+    private String computeTemplates(JSM11 jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      assert JAMMED != jsm && UNKNOWN != jsm;
+      StringBuilder $ = new StringBuilder("<");
+      List<String> templates = new ArrayList<>();
+      if (jsm.isEmpty()) {
+        $.append(emptySolution.get());
+        for (Verb v : jsm.baseLegalJumps())
+          if (!SpecialSymbols.$.equals(v))
+            templates.add(unknownSolution.apply(v));
+        if (!templates.isEmpty())
+          $.append(",").append(String.join(",", templates));
+        return $.append(">").toString();
+      }
+      // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
+      $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
+      // NOTE contains an optimization for verb as stack top
+      if (jsm.peek().isNonTerminal())
+        for (Verb v : jsm.trim().baseLegalJumps())
+          if (!SpecialSymbols.$.equals(v))
+            templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
+      if (!templates.isEmpty())
+        $.append(",").append(String.join(",", templates));
+      return $.append(">").toString();
     }
     private String computeMethod(JSM11 jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       if (jsm == JAMMED)
@@ -232,30 +257,6 @@ public class RLLPEncoder11 {
               : "public E " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");" //
           : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-    }
-    private String computeTemplates(JSM11 jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      assert JAMMED != jsm && UNKNOWN != jsm;
-      StringBuilder $ = new StringBuilder("<");
-      List<String> templates = new ArrayList<>();
-      if (jsm.isEmpty()) {
-        $.append(emptySolution.get());
-        for (Verb v : jsm.baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
-            templates.add(unknownSolution.apply(v));
-        if (!templates.isEmpty())
-          $.append(",").append(String.join(",", templates));
-        return $.append(">").toString();
-      }
-      // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
-      $.append(computeType(J.of(jsm.pop()), null, unknownSolution, emptySolution));
-      // NOTE contains an optimization for verb as stack top
-      if (jsm.peek().isNonTerminal())
-        for (Verb v : jsm.pop().trim().baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
-            templates.add(computeType(jsm.pop().jjump(v), v, unknownSolution, emptySolution));
-      if (!templates.isEmpty())
-        $.append(",").append(String.join(",", templates));
-      return $.append(">").toString();
     }
     private void compute$Type() {
       apiTypes.add(new StringBuilder("public interface ${") //
