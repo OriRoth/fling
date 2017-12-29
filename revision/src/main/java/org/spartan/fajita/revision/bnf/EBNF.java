@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.api.Fajita;
+import org.spartan.fajita.revision.api.Fajita.FajitaProducer;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -33,6 +33,8 @@ public final class EBNF {
   // Valid only after toBNF
   public Map<Symbol, Symbol> nestedSymbolsMapping;
   public Symbol subHead;
+  public FajitaProducer beforeSolution;
+  public FajitaProducer afterSolution;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
@@ -57,7 +59,8 @@ public final class EBNF {
   }
   // NOTE no equals/hashCode
   // TODO Roth: use normalized form here
-  public BNF toBNF(Function<NonTerminal, NonTerminal> producer) {
+  public BNF toBNF(FajitaProducer producer) {
+    beforeSolution = producer.clone();
     Set<DerivationRule> rs = new LinkedHashSet<>();
     nestedSymbolsMapping = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
@@ -92,6 +95,7 @@ public final class EBNF {
     }
     BNF $ = new BNF(vs, nts, ns, rs, startSymbols, name);
     $.origin = this;
+    afterSolution = producer.clone();
     return $;
   }
   public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
@@ -102,7 +106,7 @@ public final class EBNF {
     }
     return $;
   }
-  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(Function<NonTerminal, NonTerminal> producer) {
+  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(FajitaProducer producer) {
     toBNF(producer);
     Map<Symbol, Set<List<Symbol>>> $ = new LinkedHashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
@@ -139,8 +143,7 @@ public final class EBNF {
     return makeSubBNF(NonTerminal.of(s));
   }
   public EBNF makeSubBNF(NonTerminal nt) {
-    if (nestedSymbolsMapping == null)
-      toBNF(Fajita.producer());
+    assert nestedSymbolsMapping != null;
     isSubEBNF = true;
     subHead = nestedSymbolsMapping.get(nt);
     return this;

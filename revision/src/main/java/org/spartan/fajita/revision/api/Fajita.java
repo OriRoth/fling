@@ -55,19 +55,31 @@ public class Fajita {
     this.packagePath = packagePath;
     this.projectPath = projectPath;
   }
-  public static Function<NonTerminal, NonTerminal> producer() {
+
+  public static class FajitaProducer implements Function<NonTerminal, NonTerminal>, Cloneable {
     Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
-    Function<NonTerminal, String> namer = lhs -> {
+
+    @Override public NonTerminal apply(NonTerminal lhs) {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
-      return lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1));
-    };
-    return x -> NonTerminal.of(namer.apply(x));
+      return NonTerminal.of(lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1)));
+    }
+    @Override public FajitaProducer clone() {
+      FajitaProducer $ = new FajitaProducer();
+      $.counter.putAll(counter);
+      return $;
+    }
+  }
+
+  private static FajitaProducer producer() {
+    return new FajitaProducer();
   }
   public BNF bnf() {
     return ebnf().toBNF(producer());
   }
   public EBNF ebnf() {
-    return new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
+    EBNF $ = new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
+    $.toBNF(new FajitaProducer());
+    return $;
   }
   Map<String, String> finish() {
     return FajitaEncoder3.encode(this);

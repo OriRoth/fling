@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.export.AST;
@@ -54,7 +53,7 @@ public class JamoosClassesRenderer {
     this.packagePath = packagePath;
     this.topClassName = topClassName(ebnf);
     // NOTE should correspond to the producer in Fajita
-    parseTopClass(Fajita.producer());
+    parseTopClass(ebnf.beforeSolution);
   }
   public static String topClassName(EBNF ebnf) {
     return ebnf.name + "AST";

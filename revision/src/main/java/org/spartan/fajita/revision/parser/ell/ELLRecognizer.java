@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.EBNF;
 import org.spartan.fajita.revision.export.RuntimeVerb;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -22,7 +21,7 @@ public class ELLRecognizer {
   private static final String PP_IDENT = "--";
 
   public ELLRecognizer(final EBNF ebnf) {
-    n = ebnf.regularFormWithExtendibles(Fajita.producer());
+    n = ebnf.regularFormWithExtendibles(ebnf.beforeSolution);
     analyzer = new EBNFAnalyzer(ebnf, n);
     stack = new ELLStack(ebnf.isSubEBNF ? ebnf.subHead : SpecialSymbols.augmentedStartSymbol);
   }
