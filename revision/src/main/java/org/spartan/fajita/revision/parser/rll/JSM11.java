@@ -37,9 +37,13 @@ public class JSM11 implements Cloneable {
     this.S1 = new Stack<>();
     this.baseLegalJumps = null;
   }
-  public JSM11(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> emptyLegalJumps) {
+  public JSM11(BNF bnf, BNFAnalyzer analyzer, Set<Verb> baseLegalJumps) {
     this(bnf, analyzer);
-    this.baseLegalJumps = new LinkedHashSet<>(emptyLegalJumps);
+    this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
+  }
+  public JSM11(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> baseLegalJumps) {
+    this(bnf, analyzer);
+    this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
     pushJumps(initial);
     S0.push(initial);
   }
@@ -80,7 +84,7 @@ public class JSM11 implements Cloneable {
   }
   public J jjump(Verb v) {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return S1.peek().get(v);
+    return !isEmpty() ? S1.peek().get(v) : baseLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED;
   }
   public JSM11 pushAll(List<Symbol> items) {
     if (items.isEmpty())
@@ -126,7 +130,7 @@ public class JSM11 implements Cloneable {
         bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(S0.peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
   // TODO Roth: can be optimized
-  public Set<Verb> allLegalJumps() {
+  private Set<Verb> allLegalJumps() {
     assert this != JAMMED && this != UNKNOWN && !isEmpty();
     return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
   }
@@ -136,16 +140,16 @@ public class JSM11 implements Cloneable {
   }
   // TODO Roth: can be optimized
   public JSM11 trim() {
-    if (this == JAMMED || this == UNKNOWN || size() <= 1)
+    if (this == JAMMED || this == UNKNOWN || isEmpty())
       return this;
-    return new JSM11(bnf, analyzer, S0.peek(), pop().allLegalJumps());
+    return new JSM11(bnf, analyzer, allLegalJumps());
   }
   public int size() {
     assert S0.size() == S1.size();
     return S0.size();
   }
   public boolean isTrimmed() {
-    return this != JAMMED && this != UNKNOWN && size() <= 1;
+    return this != JAMMED && this != UNKNOWN && isEmpty();
   }
   private Map<Verb, J> emptyMap() {
     Map<Verb, J> $ = new HashMap<>();
