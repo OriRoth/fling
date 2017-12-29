@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.spartan.fajita.revision.ast.encoding.ASTUtil.isInheritanceRule;
 import static org.spartan.fajita.revision.ast.encoding.ASTUtil.normalize;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -132,7 +133,7 @@ public class JamoosClassesRenderer {
   protected List<String> parseType(Symbol s) {
     List<String> $ = new LinkedList<>();
     if (s.isExtendible())
-      $.addAll(s.asExtendible().parseTypes(this::parseType));
+      $.addAll(s.asExtendible().parseTypes(this::parseType, this::parseTypeForgiving));
     else if (s.isVerb()) {
       Verb v = s.asVerb();
       for (ParameterType t : v.type)
@@ -147,6 +148,9 @@ public class JamoosClassesRenderer {
     else
       $.add("Void");
     return $;
+  }
+  protected List<String> parseTypeForgiving(Symbol s) {
+    return s.isVerb() && s.asVerb().type.length == 0 ? Collections.singletonList("Void") : parseType(s);
   }
   protected String generateFieldName(String lhs, String name) {
     if (!innerClassesFieldUsedNames.containsKey(lhs))

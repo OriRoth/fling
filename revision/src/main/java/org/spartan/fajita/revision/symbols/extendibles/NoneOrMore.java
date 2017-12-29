@@ -40,7 +40,8 @@ public class NoneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation) {
+  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation,
+      @SuppressWarnings("unused") Function<Symbol, List<String>> forgivingOperation) {
     List<String> $ = new LinkedList<>();
     for (Symbol s : symbols)
       for (String q : operation.apply(s))

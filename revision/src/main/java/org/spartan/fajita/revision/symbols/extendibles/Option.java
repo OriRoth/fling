@@ -25,8 +25,9 @@ public class Option extends Either {
   @Override protected boolean isNullable(@SuppressWarnings("unused") Set<Symbol> knownNullables) {
     return true;
   }
-  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation) {
-    return symbols.stream().map(s -> operation.apply(s)).reduce(new LinkedList<>(), (l1, l2) -> {
+  @Override public List<String> parseTypes(@SuppressWarnings("unused") Function<Symbol, List<String>> operation,
+      Function<Symbol, List<String>> forgivingOperation) {
+    return symbols.stream().map(s -> forgivingOperation.apply(s)).reduce(new LinkedList<>(), (l1, l2) -> {
       l1.addAll(l2);
       return l1;
     }).stream().map(s -> Optional.class.getTypeName() + "<" + s + ">").collect(toList());

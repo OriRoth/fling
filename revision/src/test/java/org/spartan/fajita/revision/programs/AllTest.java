@@ -7,6 +7,7 @@ import org.spartan.fajita.revision.examples.TestNonTerminalMultipleParents;
 import org.spartan.fajita.revision.examples.malfunction.TestAnB;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBn;
 import org.spartan.fajita.revision.examples.malfunction.TestAnBnCD;
+import org.spartan.fajita.revision.examples.malfunction.TestAnCDBn;
 import org.spartan.fajita.revision.examples.malfunction.TestJumps;
 import org.spartan.fajita.revision.examples.usage.Ancestor;
 
@@ -22,6 +23,6 @@ import org.spartan.fajita.revision.examples.usage.Ancestor;
     TestAnBn.testing();
     TestJumps.testing();
     TestAnBnCD.testing();
-    // TestAnCDBn.testing();
+    TestAnCDBn.testing();
   }
 }

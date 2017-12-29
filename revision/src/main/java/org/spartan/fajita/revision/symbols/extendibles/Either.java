@@ -35,7 +35,8 @@ public class Either extends BaseExtendible {
     }
     return $;
   }
-  @Override public List<String> parseTypes(@SuppressWarnings("unused") Function<Symbol, List<String>> operation) {
+  @SuppressWarnings("unused") @Override public List<String> parseTypes(Function<Symbol, List<String>> operation,
+      Function<Symbol, List<String>> forgivingOperation) {
     return Collections.singletonList(org.spartan.fajita.revision.export.Either.class.getTypeName());
   }
   @SuppressWarnings("unchecked") @Override public List<?> fold(List<?> t) {
