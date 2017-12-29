@@ -3,7 +3,6 @@ package org.spartan.fajita.revision.symbols.extendibles;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +37,8 @@ public class Option extends Either {
   @SuppressWarnings({ "rawtypes", "unused", "unchecked" }) @Override public List<Object> conclude(List values,
       BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
     if (values.isEmpty())
-      return Collections.singletonList(Optional.empty());
+      return symbols.stream().filter(s -> !s.isVerb() || s.asVerb().type.length > 0) //
+          .map(s -> Optional.empty()).collect(toList());
     assert values.size() == 1 && values.get(0) instanceof Interpretation;
     Interpretation i = (Interpretation) values.get(0);
     List is = solution.apply(i.symbol, i.value);
