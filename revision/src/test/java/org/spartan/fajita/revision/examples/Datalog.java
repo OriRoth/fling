@@ -14,7 +14,6 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.query;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
 import static org.spartan.fajita.revision.export.testing.ExampleBody.call;
-import static org.spartan.fajita.revision.export.testing.ExampleBody.toConclude;
 import static org.spartan.fajita.revision.export.testing.FajitaTesting.example;
 
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class Datalog extends Grammar {
     return example( //
         call(fact).with("true")) //
             .example( //
-                toConclude(Query).call(query).with("parent").then(by).with("X", "Bob"))
+                call(query).with("parent").then(by).with("X", "Bob"))
             .malexample( //
                 call(fact).with(/* nothing */)) //
             .$();
