@@ -138,7 +138,6 @@ public class RLLPEncoder11 {
   }
 
   class MembersComputer {
-    private final Set<J> seenTypes = new LinkedHashSet<>();
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
 
     public void compute() {
@@ -182,9 +181,10 @@ public class RLLPEncoder11 {
       J jpeek = j.toPush.isEmpty() ? j.trim1() : j.trim();
       String $ = namer.name(jpeek);
       JSM11 jsmTemplate = j.toPush.isEmpty() ? j.address.pop() : j.address;
-      if (seenTypes.contains(jpeek))
-        return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
-      seenTypes.add(jpeek);
+      boolean peekIsVerb = jpeek.asJSM().peek().isVerb();
+      if (apiTypeNames.contains($))
+        return $ + computeTemplates(jsmTemplate, peekIsVerb, unknownSolution, emptySolution);
+      apiTypeNames.add($);
       JSM11 jsm = jpeek.asJSM();
       Symbol top = jsm.peek();
       Set<Verb> lj = jpeek.address.baseLegalJumps();
@@ -212,18 +212,19 @@ public class RLLPEncoder11 {
       if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
-      apiTypeNames.add($);
-      return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
+      return $ + computeTemplates(jsmTemplate, peekIsVerb, unknownSolution, emptySolution);
     }
-    private String computeTemplates(JSM11 jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+    private String computeTemplates(JSM11 jsm, boolean parentIsVerb, Function<Verb, String> unknownSolution,
+        Supplier<String> emptySolution) {
       assert JAMMED != jsm && UNKNOWN != jsm;
       StringBuilder $ = new StringBuilder("<");
       List<String> templates = new ArrayList<>();
       if (jsm.isEmpty()) {
         $.append(emptySolution.get());
-        for (Verb v : jsm.baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
-            templates.add(unknownSolution.apply(v));
+        if (!parentIsVerb)
+          for (Verb v : jsm.baseLegalJumps())
+            if (!SpecialSymbols.$.equals(v))
+              templates.add(unknownSolution.apply(v));
         if (!templates.isEmpty())
           $.append(",").append(String.join(",", templates));
         return $.append(">").toString();
@@ -231,7 +232,7 @@ public class RLLPEncoder11 {
       // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
       $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
       // NOTE contains an optimization for verb as stack top
-      if (jsm.peek().isNonTerminal())
+      if (!parentIsVerb)
         for (Verb v : jsm.trim().baseLegalJumps())
           if (!SpecialSymbols.$.equals(v))
             templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
@@ -254,7 +255,7 @@ public class RLLPEncoder11 {
       return top.isVerb() ? //
           !top.asVerb().equals(v) ? //
               "" //
-              : "public E " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");" //
+              : "public ε " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");" //
           : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
               + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
     }
