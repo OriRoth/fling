@@ -32,7 +32,6 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     this.analyzer = analyzer;
   }
   @SuppressWarnings("unchecked") public <S> S build() {
-    System.out.println(current);
     assert current.symbol.equals(SpecialSymbols.augmentedStartSymbol);
     Interpretation s = (Interpretation) current.value.get(0);
     return (S) instance(clazz(s), s.value);
