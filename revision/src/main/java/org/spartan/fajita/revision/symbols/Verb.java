@@ -126,7 +126,6 @@ public class Verb implements Terminal, Comparable<Verb> {
       return $;
     }
     for (int i = 0; i < type.length - 1; ++i)
-      if (!type[i].accepts(args.get(i)))
         $.addAll(type[i].conclude(args.get(i), solution));
     $.addAll(last.conclude(args.subList(type.length - 1, args.size()), solution));
     return $;
