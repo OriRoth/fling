@@ -42,7 +42,6 @@ public class JamoosClassesRenderer {
   protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new LinkedHashMap<>();
   protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new LinkedHashMap<>();
   protected Map<NonTerminal, Set<List<Symbol>>> n;
-  protected EBNFAnalyzer analyzer;
   private JamoosClassesRenderer actual = this;
 
   public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
@@ -188,14 +187,12 @@ public class JamoosClassesRenderer {
   public boolean isAbstractNonTerminal(NonTerminal nt) {
     return actual.abstractNonTerminals.contains(nt);
   }
-  public NonTerminal solveAbstractNonTerminal(NonTerminal nt, Terminal t) {
+  public NonTerminal solveAbstractNonTerminal(NonTerminal nt, Terminal t, EBNFAnalyzer analyzer) {
     if (actual.reversedInheritance == null)
       actual.reversedInheritance = actual.inheritance.reverse();
-    if (actual.analyzer == null)
-      actual.analyzer = new EBNFAnalyzer(actual.n, actual.ebnf.startSymbols);
     for (NonTerminal child : actual.reversedInheritance.get(nt))
-      if (t == null && actual.analyzer.isNullable(child) || t != null && actual.analyzer.firstSetOf(child).contains(t))
-        return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t) : child;
+      if (t == null && analyzer.isNullable(child) || t != null && analyzer.firstSetOf(child).contains(t))
+        return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t, analyzer) : child;
     return null;
   }
   public boolean isInterfaces() {

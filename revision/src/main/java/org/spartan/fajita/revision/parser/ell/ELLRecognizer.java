@@ -16,7 +16,7 @@ import org.spartan.fajita.revision.symbols.Symbol;
 
 public class ELLRecognizer {
   private final Map<Symbol, Set<List<Symbol>>> n;
-  private final EBNFAnalyzer analyzer;
+  public final EBNFAnalyzer analyzer;
   private ELLStack stack;
   private static final String PP_IDENT = "--";
 

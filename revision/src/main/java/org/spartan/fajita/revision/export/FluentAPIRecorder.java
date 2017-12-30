@@ -32,6 +32,6 @@ public class FluentAPIRecorder {
     return ell.ast();
   }
   public <S> S ast(String astClassName) {
-    return new ASTBuilder(conclude(), jamoos, packagePath + "." + astClassName).build();
+    return new ASTBuilder(conclude(), jamoos, packagePath + "." + astClassName, ell.analyzer).build();
   }
 }

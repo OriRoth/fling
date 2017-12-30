@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
+import org.spartan.fajita.revision.parser.ell.EBNFAnalyzer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
@@ -22,11 +23,13 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
   private Interpretation current;
   private final JamoosClassesRenderer jamoos;
   private final String astPath;
+  private final EBNFAnalyzer analyzer;
 
-  public ASTBuilder(Interpretation conclusion, JamoosClassesRenderer jamoos, String astPath) {
+  public ASTBuilder(Interpretation conclusion, JamoosClassesRenderer jamoos, String astPath, EBNFAnalyzer analyzer) {
     this.current = conclusion;
     this.jamoos = jamoos;
     this.astPath = astPath;
+    this.analyzer = analyzer;
   }
   @SuppressWarnings("unchecked") public <S> S build() {
     assert current.symbol.equals(SpecialSymbols.augmentedStartSymbol);
@@ -64,10 +67,10 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
       throw problem();
     if (jamoos.isAbstractNonTerminal(nt)) {
       if (values.isEmpty())
-        return build(jamoos.solveAbstractNonTerminal(nt, null), new ArrayList<>());
+        return build(jamoos.solveAbstractNonTerminal(nt, null, analyzer), new ArrayList<>());
       assert values.size() == 1 && values.get(0) instanceof Interpretation;
       Interpretation i = (Interpretation) values.get(0);
-      return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values)), i.value);
+      return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values), analyzer), i.value);
     }
     return Collections.singletonList(instance(clazz(nt), values));
   }

@@ -19,7 +19,7 @@ public class EBNFAnalyzer {
   public final EBNF ebnf;
   public final Map<Symbol, Set<List<Symbol>>> normalized;
   private final Set<Symbol> nullableSymbols;
-  private final Map<Symbol, Set<Terminal>> baseFirstSets;
+  public final Map<Symbol, Set<Terminal>> baseFirstSets;
 
   public EBNFAnalyzer(final EBNF ebnf, Map<Symbol, Set<List<Symbol>>> normalized) {
     this.ebnf = ebnf;
