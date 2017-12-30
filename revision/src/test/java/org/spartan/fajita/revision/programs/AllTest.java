@@ -2,6 +2,7 @@ package org.spartan.fajita.revision.programs;
 
 import org.junit.Test;
 import org.spartan.fajita.revision.examples.Datalog;
+import org.spartan.fajita.revision.examples.EBNF;
 import org.spartan.fajita.revision.examples.TestAnB;
 import org.spartan.fajita.revision.examples.TestAnBn;
 import org.spartan.fajita.revision.examples.TestAnBnCD;
@@ -24,5 +25,6 @@ import org.spartan.fajita.revision.examples.usage.Ancestor;
     TestJumps.testing();
     TestAnBnCD.testing();
     TestAnCDBn.testing();
+    EBNF.testing();
   }
 }

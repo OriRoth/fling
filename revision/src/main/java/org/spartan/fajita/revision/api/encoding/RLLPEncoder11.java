@@ -195,7 +195,10 @@ public class RLLPEncoder11 {
         template.append(",");
         template.append(String.join(",", templates));
       }
-      t.append(template.append(">{"));
+      t.append(template.append(">"));
+      if (bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
+        t.append(" extends ").append(ASTNode.class.getCanonicalName());
+      t.append("{");
       // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
       for (Verb v : bnf.verbs)
         // NOTE $ method is built below
