@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.spartan.fajita.revision.examples.Datalog;
 import org.spartan.fajita.revision.examples.EBNF;
+import org.spartan.fajita.revision.examples.Exp;
 import org.spartan.fajita.revision.examples.Parenthesis;
 import org.spartan.fajita.revision.examples.ParenthesisSimple;
 import org.spartan.fajita.revision.examples.TestAnB;
@@ -35,5 +36,6 @@ public class GenerateAll {
     new ParenthesisSimple().generateGrammarFiles();
     new TestFinite().generateGrammarFiles();
     new EBNF().generateGrammarFiles();
+    new Exp().generateGrammarFiles();
   }
 }
