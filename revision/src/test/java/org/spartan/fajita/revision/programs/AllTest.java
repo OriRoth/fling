@@ -26,6 +26,6 @@ import org.spartan.fajita.revision.examples.usage.datalog.Ancestor;
     TestJumps.testing();
     TestAnBnCD.testing();
     TestAnCDBn.testing();
-    EBNF.testing();
+    EBNF.main(null);
   }
 }

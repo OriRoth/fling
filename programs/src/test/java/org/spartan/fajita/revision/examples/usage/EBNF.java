@@ -11,7 +11,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
 
 public class EBNF {
-  public static void main(String[] args) {
+  public static void testing() {
     derive("EBNF").to(oneOrMore("Rule")) //
         .derive("Rule").to(attribute("derive", NonTerminal.class).and("To").and(option("ClauseTail"))) //
         .derive("To").to(attribute("to", "Literal")).or(attribute("to", String.class)) //
