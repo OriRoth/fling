@@ -1,6 +1,0 @@
-#!/bin/sh -f
-echo I did not really check this; but this is the general idea
-export BIBINPUTS=~/texmf/bibtex/bib/conferences/:~/texmf/bibtex/bib/definitions/:~/texmf/bibtex/bib/yogi/
-cd ..
-bibtool -x 00.aux -o gil.bib |& grep found
-cp -i gil bib Pack

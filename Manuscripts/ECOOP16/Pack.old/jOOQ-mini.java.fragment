@@ -1,1 +1,0 @@
-.when(header(foo).isEqualTo("bar")).

@@ -1,343 +1,289 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
+import static org.spartan.fajita.revision.parser.rll.JSM.JAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM.UNKNOWN;
+import static org.spartan.fajita.revision.parser.rll.JSM.J.JJAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM.J.JUNKNOWN;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
-import javax.lang.model.element.Modifier;
-
-import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
+import org.spartan.fajita.revision.api.Fajita;
+import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
-import org.spartan.fajita.revision.parser.rll.Item;
+import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.parser.rll.JSM;
-import org.spartan.fajita.revision.parser.rll.RLLP;
-import org.spartan.fajita.revision.parser.rll.RLLP.Action;
-import org.spartan.fajita.revision.parser.rll.RLLP.Action.Advance;
-import org.spartan.fajita.revision.parser.rll.RLLP.Action.Jump;
-import org.spartan.fajita.revision.parser.rll.RLLP.Action.Push;
+import org.spartan.fajita.revision.parser.rll.JSM.J;
+import org.spartan.fajita.revision.parser.rll.RLLPConcrete;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
+import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
-import org.spartan.fajita.revision.symbols.types.ClassType;
 import org.spartan.fajita.revision.symbols.types.NestedType;
 import org.spartan.fajita.revision.symbols.types.ParameterType;
-import org.spartan.fajita.revision.symbols.types.VarArgs;
-
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.MethodSpec.Builder;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeVariableName;
 
 public class RLLPEncoder {
-  public static final String $$$name = "$$$";
-  public static final String $$$nameEscaped = "$$$$$$";
-  public final RLLP rllp;
-  private final boolean isSubBNF;
-  private final Set<Terminal> terminals;
-  private final List<TypeSpec> mainTypes;
-  private final List<TypeSpec> recursiveTypes;
-  private final TypeSpec $$$Type;
-  private final Collection<MethodSpec> staticMethods;
-  private final Map<List<Item>, TypeName> encodedJSMs;
-  private final Map<TypeSpec, List<TypeName>> recArgs = new HashMap<>();
-  private final Map<TypeSpec, String> recSuper = new HashMap<>();
-  private Item mainItem;
-  private final EncoderUtils namer;
-  private final Class<? extends Grammar> provider;
-  private final String packagePath;
-  private static final String $NAME = "$";
+  public final String topClassName;
+  public final String topClass;
+  final NonTerminal startSymbol;
+  final String astTopClass;
+  final BNF bnf;
+  final BNFAnalyzer analyzer;
+  public final String packagePath;
+  final String topClassPath;
+  final Namer namer;
+  final List<String> apiTypes;
+  final List<String> staticMethods;
+  final Class<? extends Grammar> provider;
 
-  public RLLPEncoder(RLLP parser, EncoderUtils namer, Set<Terminal> terminals, Class<? extends Grammar> provider, boolean isSubBNF,
-      String packagePath) {
-    this.provider = provider;
-    this.isSubBNF = isSubBNF;
-    this.terminals = terminals;
-    this.rllp = parser;
-    if (isSubBNF)
-      assert rllp.bnf.startSymbols.size() == 1;
-    this.recursiveTypes = new ArrayList<>();
-    this.encodedJSMs = new HashMap<>();
-    this.namer = namer;
-    this.staticMethods = FajitaEncoder.getStaticMethods(this);
-    this.packagePath = packagePath;
-    Predicate<Item> reachableItem = i -> i.dotIndex != 0 && i.beforeDot().isVerb();
-    mainTypes = rllp.items.stream().filter(reachableItem).map(i -> encodeItem(i)).collect(Collectors.toList());
-    fixRecTypes();
-    $$$Type = get$$$Type();
+  public RLLPEncoder(Fajita fajita, NonTerminal start, String astTopClass) {
+    topClassName = fajita.apiName;
+    packagePath = fajita.packagePath;
+    topClassPath = packagePath + "." + topClassName;
+    startSymbol = start;
+    provider = fajita.provider;
+    bnf = fajita.bnf();
+    this.astTopClass = astTopClass;
+    analyzer = new BNFAnalyzer(bnf);
+    namer = new Namer();
+    apiTypes = new ArrayList<>();
+    staticMethods = new ArrayList<>();
+    computeMembers();
+    StringBuilder $ = new StringBuilder();
+    $.append("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+        .append("(\"all\")").append(" public class ").append(topClassName).append("{");
+    for (String s : staticMethods)
+      $.append(s);
+    for (String s : apiTypes)
+      $.append(s);
+    $.append("}");
+    topClass = $.toString();
   }
-  private void fixRecTypes() {
-    List<TypeSpec> old = new LinkedList<>(recursiveTypes);
-    recursiveTypes.clear();
-    for (TypeSpec t : old)
-      recursiveTypes.add(TypeSpec.interfaceBuilder(t.name) //
-          .addMethods(mainTypes.stream() //
-              .filter(y -> y.name.equals(recSuper.get(t))) //
-              .findFirst().map(y -> //
-              y.methodSpecs.stream() //
-                  .map(x -> MethodSpec.methodBuilder(x.name) //
-                      .addParameters(x.parameters) //
-                      .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-                      .varargs(x.varargs) //
-                      .returns(getFixedRecReturnType(x.returnType, y.typeVariables, recArgs.get(t))) //
-                      .build()) //
-                  .collect(toList()))
-              .get()) //
-          .addModifiers(Modifier.PUBLIC) //
-          .addTypeVariables(t.typeVariables) //
-          .build());
+  // TODO Roth: code duplication in constructors
+  public RLLPEncoder(Fajita fajita, Symbol nested, String astTopClass) {
+    assert nested.isNonTerminal() || nested.isExtendible();
+    topClassName = nested.name();
+    packagePath = fajita.packagePath;
+    topClassPath = packagePath + "." + topClassName;
+    startSymbol = nested.head().asNonTerminal();
+    provider = fajita.provider;
+    bnf = fajita.bnf().getSubBNF(startSymbol);
+    this.astTopClass = astTopClass;
+    analyzer = new BNFAnalyzer(bnf);
+    namer = new Namer();
+    apiTypes = new ArrayList<>();
+    staticMethods = new ArrayList<>();
+    computeMembers();
+    StringBuilder $ = new StringBuilder();
+    $.append("package ").append(packagePath).append(";@").append(SuppressWarnings.class.getCanonicalName()) //
+        .append("(\"all\")").append(" public class ").append(topClassName).append("{");
+    for (String s : staticMethods)
+      $.append(s);
+    for (String s : apiTypes)
+      $.append(s);
+    $.append("}");
+    topClass = $.toString();
   }
-  private static TypeName getFixedRecReturnType(TypeName r, List<TypeVariableName> vs1, List<TypeName> vs2) {
-    if (r instanceof TypeVariableName)
-      return vs2.get(vs1.indexOf(r));
-    else if (r instanceof ParameterizedTypeName) {
-      ParameterizedTypeName p = (ParameterizedTypeName) r;
-      return parameterizedType(p.rawType.simpleName(), p.typeArguments.stream() //
-          .map(x -> getFixedRecReturnType(x, vs1, vs2)) //
-          .collect(toList()));
-    } else if (r instanceof ClassName)
-      return r;
-    else
-      throw new RuntimeException("Class " + r.getClass().getSimpleName() + " not supported in getFixedRecReturnType");
+  private void computeMembers() {
+    new MembersComputer().compute();
   }
-  private TypeSpec encodeItem(Item i) {
-    final Collection<Verb> firstSet = rllp.analyzer.firstSetOf(i);
-    Collection<TypeVariableName> namedFollowSet = mapFollowSetWith(i, v -> TypeVariableName.get(EncoderUtils.verbTypeName(v)));
-    final String typeName = namer.getItemName(i);
-    final TypeSpec.Builder encoding = TypeSpec.interfaceBuilder(typeName) //
-        .addModifiers(Modifier.PUBLIC) //
-        // Adds push methods
-        .addMethods(firstSet.stream().map(v -> methodOf(i, v)).collect(Collectors.toList()));
-    // Adds jump methods
-    if (rllp.analyzer.isSuffixNullable(i)) {
-      encoding.addMethods(mapFollowSetWith(i, v -> methodOf(i, v)));
-      if (rllp.analyzer.followSetOf(i.rule.lhs).contains(SpecialSymbols.$)) {
-        encoding.addSuperinterface(EncoderUtils.returnTypeOf$());
-        if (!isSubBNF)
-          encoding.addMethod(MethodSpec.methodBuilder($NAME) //
-              .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-              .returns($ReturnType()) //
-              .build());
+
+  class Namer {
+    private final Map<Verb, String> verbNames = new LinkedHashMap<>();
+    private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
+
+    public String name(Verb v) {
+      if (SpecialSymbols.$.equals(v))
+        return "$";
+      if (verbNames.containsKey(v))
+        return verbNames.get(v);
+      int x;
+      terminalCounts.put(v.terminal,
+          Integer.valueOf(x = terminalCounts.getOrDefault(v.terminal, Integer.valueOf(0)).intValue() + 1));
+      String $ = v.terminal.name() + x;
+      verbNames.put(v, $);
+      return $;
+    }
+    private String name(Symbol s) {
+      return s.isVerb() ? name(s.asVerb()) : s.asNonTerminal().name();
+    }
+    private String names(Collection<? extends Symbol> ss) {
+      return String.join("", ss.stream().map(s -> name(s)).collect(toList()));
+    }
+    public String name(J j) {
+      assert j != JJAMMED && j != JUNKNOWN && j.address.size() <= 1 && !j.isEmpty();
+      StringBuilder $ = new StringBuilder();
+      if (!j.address.isEmpty())
+        $.append(name(j.address.peek()));
+      $.append("¢").append(names(j.toPush)).append("_");
+      Set<Verb> blj = j.address.baseLegalJumps();
+      blj.remove(SpecialSymbols.$);
+      if (j.asJSM().peekLegalJumps().contains(SpecialSymbols.$))
+        blj.add(SpecialSymbols.$);
+      return $.append(names(blj)).toString();
+    }
+  }
+
+  class MembersComputer {
+    private final Set<String> apiTypeNames = new LinkedHashSet<>();
+
+    public void compute() {
+      if (!bnf.isSubBNF)
+        compute$Type();
+      computeStaticMethods();
+      compute$$$Type();
+    }
+    private void computeStaticMethods() {
+      for (Verb v : analyzer.firstSetOf(startSymbol))
+        computeStaticMethod(v);
+    }
+    private void computeStaticMethod(Verb v) {
+      Set<Verb> blj = new LinkedHashSet<>();
+      blj.add(SpecialSymbols.$);
+      J j = RLLPConcrete.jnext(new JSM(bnf, analyzer, startSymbol, blj), v);
+      computeType(j, v, x -> namer.name(x), () -> "ε");
+      // NOTE should be applicable only for $ jumps
+      Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
+        assert SpecialSymbols.$.equals(x);
+        return "$";
+      } : x -> {
+        assert SpecialSymbols.$.equals(x);
+        return "$$$";
+      };
+      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
+      staticMethods.add(new StringBuilder("public static ") //
+          .append(computeType(j, v, unknownSolution, emptySolution)) //
+          .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
+          .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
+              + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
+              + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
+          .toString());
+    }
+    private String computeType(J j, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      assert j != JJAMMED;
+      if (j == JUNKNOWN)
+        return unknownSolution.apply(origin);
+      if (j.isEmpty())
+        return emptySolution.get();
+      J jpeek = j.toPush.isEmpty() ? j.trim1() : j.trim();
+      String $ = namer.name(jpeek);
+      JSM jsmTemplate = j.toPush.isEmpty() ? j.address.pop() : j.address;
+      if (apiTypeNames.contains($))
+        return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
+      apiTypeNames.add($);
+      JSM jsm = jpeek.asJSM();
+      Set<Verb> lj = jpeek.address.baseLegalJumps();
+      StringBuilder t = new StringBuilder("public interface ").append($);
+      StringBuilder template = new StringBuilder("<ε");
+      List<String> templates = new ArrayList<>();
+      for (Verb v : lj)
+        // NOTE an optimization for $ jump
+        if (!SpecialSymbols.$.equals(v))
+          templates.add(namer.name(v));
+      if (!templates.isEmpty()) {
+        template.append(",");
+        template.append(String.join(",", templates));
       }
+      t.append(template.append(">"));
+      if (bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
+        t.append(" extends ").append(ASTNode.class.getCanonicalName());
+      t.append("{");
+      // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
+      for (Verb v : bnf.verbs)
+        // NOTE $ method is built below
+        if (!SpecialSymbols.$.equals(v))
+          t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
+      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
+        t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
+      apiTypes.add(t.append("}").toString());
+      return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
     }
-    if (!namedFollowSet.isEmpty())
-      encoding.addTypeVariables(namedFollowSet);
-    return encoding.build();
-  }
-  public MethodSpec methodOf(Item i, Verb v) {
-    final MethodSpec.Builder builder = MethodSpec.methodBuilder(v.name());
-    augmentMethodParameters(builder, v);
-    return builder //
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT) //
-        .returns(returnTypeOfMethod(i, v))//
-        .build();
-  }
-  private static TypeSpec getErrorType() {
-    return TypeSpec.interfaceBuilder(EncoderUtils.error)//
-        .addModifiers(Modifier.PRIVATE)//
-        .build();
-  }
-  private static void augmentMethodParameters(Builder builder, Verb v) {
-    for (int i = 0; i < v.type.length; ++i) {
-      ParameterType t = v.type[i];
-      if (t instanceof ClassType)
-        builder.addParameter(((ClassType) t).clazz, "arg" + i);
-      else if (t instanceof NestedType)
-        builder.addParameter(EncoderUtils.returnTypeOf$(), "arg" + i).build();
-      else if (t instanceof VarArgs) {
-        builder.varargs();
-        builder.addParameter(ParameterSpec.builder(((VarArgs) t).aclazz, "arg" + i).build());
-      } else
-        throw new IllegalArgumentException("Type of verb is unknown");
+    private String computeTemplates(JSM jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      assert JAMMED != jsm && UNKNOWN != jsm;
+      StringBuilder $ = new StringBuilder("<");
+      List<String> templates = new ArrayList<>();
+      if (jsm.isEmpty()) {
+        $.append(emptySolution.get());
+        for (Verb v : jsm.baseLegalJumps())
+          if (!SpecialSymbols.$.equals(v))
+            templates.add(unknownSolution.apply(v));
+        if (!templates.isEmpty())
+          $.append(",").append(String.join(",", templates));
+        return $.append(">").toString();
+      }
+      // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
+      $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
+      for (Verb v : jsm.trim().baseLegalJumps())
+        if (!SpecialSymbols.$.equals(v))
+          templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
+      if (!templates.isEmpty())
+        $.append(",").append(String.join(",", templates));
+      return $.append(">").toString();
     }
-  }
-  private TypeName returnTypeOfMethod(Item i, Verb v) {
-    final Action action = rllp.predict(i, v);
-    switch (action.type()) {
-      default:
-        throw new IllegalStateException("Action type unknown");
-      case ACCEPT:
-        return EncoderUtils.returnTypeOf$();
-      case ADVANCE:
-        return returnTypeOfAdvance((Action.Advance) action);
-      case JUMP:
-        return returnTypeOfJump((Action.Jump) action);
-      case PUSH:
-        return returnTypeOfPush((Action.Push) action);
+    private String computeMethod(JSM jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+      if (jsm == JAMMED)
+        return "";
+      if (jsm == UNKNOWN)
+        return "public " + namer.name(v) + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
+      if (jsm.isEmpty())
+        return "public ε " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
+      Symbol top = jsm.peek();
+      J jnext = RLLPConcrete.jnext(jsm, v);
+      if (JJAMMED == jnext)
+        return "";
+      return top.isVerb() && !top.asVerb().equals(v) ? "" //
+          : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
+              + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
     }
-  }
-  private TypeName returnTypeOfAdvance(Advance action) {
-    final Item next = action.beforeAdvancing.advance();
-    final Collection<Verb> followOfItem = rllp.analyzer.followSetWO$(next.rule.lhs);
-    final List<TypeName> params = followOfItem.stream().map(v -> TypeVariableName.get(EncoderUtils.verbTypeName(v)))
-        .collect(Collectors.toList());
-    return RLLPEncoder.parameterizedType(namer.getItemName(next), params);
-  }
-  private TypeName returnTypeOfPush(Push action) {
-    mainItem = action.i;
-    JSM jsm = new JSM(rllp);
-    jsm.pushAll(action.itemsToPush);
-    return encodeJSM(jsm);
-  }
-  private TypeName encodeJSM(JSM jsm) {
-    return encodeJSM_recursive_protection(jsm, new ArrayList<>());
-  }
-  private TypeName encodeJSM_recursive_protection(JSM jsm, ArrayList<JSM> alreadySeen) {
-    if (encodedJSMs.containsKey(jsm.getS0()))
-      return encodedJSMs.get(jsm.getS0());
-    if (jsm == JSM.JAMMED)
-      return EncoderUtils.errorType();
-    final List<TypeVariableName> namedFollow = mapFollowSetWith(mainItem, v -> TypeVariableName.get(EncoderUtils.verbTypeName(v)));
-    if (jsm.isRecursive()) {
-      // Second or more times seen
-      if (alreadySeen.contains(jsm))
-        return parameterizedType(namer.getRecursiveTypeName(jsm), namedFollow);
-      alreadySeen.add(jsm);// First time seeing
+    private void compute$Type() {
+      apiTypes.add(new StringBuilder("public interface ${") //
+          .append(packagePath.toLowerCase() + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
+      apiTypeNames.add("$");
     }
-    Map<Verb, TypeName> typeArguments = new TreeMap<>();
-    for (SimpleEntry<Verb, JSM> e : jsm.legalJumps())
-      typeArguments.put(e.getKey(), encodeJSM_recursive_protection(e.getValue(), alreadySeen));
-    TypeName $;
-    final List<TypeName> encodedArguments = encodeTypeArguments(jsm.peek(), typeArguments);
-    if (jsm.isRecursive()) {
-      TypeSpec recursiveType = addRecursiveType(jsm, encodedArguments);
-      $ = parameterizedType(recursiveType.name, namedFollow);
-    } else {
-      $ = parameterizedType(namer.getItemName(jsm.peek()), encodedArguments);
+    private void compute$$$Type() {
+      List<String> superInterfaces = new ArrayList<>(apiTypeNames);
+      superInterfaces.add(ASTNode.class.getCanonicalName());
+      StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
+          .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
+          .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
+              bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
+                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
+                      + parametersEncoding(v.type) + "){recordTerminal(" //
+                      + v.terminal.getClass().getCanonicalName() //
+                      + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
+                      + parameterNamesEncoding(v.type) + ");return this;}")
+                  .collect(toList())));
+      if (!bnf.isSubBNF)
+        $.append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
+            .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}");
+      $.append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
+      if (bnf.isSubBNF)
+        $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() + "." + startSymbol.name()).append(")");
+      $.append(",\"" + packagePath + "\");}");
+      apiTypes.add($.append("}").toString());
     }
-    encodedJSMs.put(jsm.getS0(), $);
-    return $;
-  }
-  private TypeSpec addRecursiveType(JSM jsm, List<TypeName> args) {
-    final TypeSpec $ = TypeSpec.interfaceBuilder(namer.getRecursiveTypeName(jsm)) //
-        .addModifiers(Modifier.PUBLIC) //
-        .addTypeVariables(mapFollowSetWith(mainItem, v -> TypeVariableName.get(EncoderUtils.verbTypeName(v)))) //
-        .build();
-    if (!recursiveTypes.stream().anyMatch(t -> t.toString().equals($.toString())))
-      recursiveTypes.add($);
-    recArgs.put($, args);
-    recSuper.put($, namer.getItemName(jsm.peek()));
-    return $;
-  }
-  private List<TypeName> encodeTypeArguments(Item current, Map<Verb, TypeName> typeArguments) {
-    final Collection<Verb> followSet = mapFollowSetWith(current, v -> v);
-    final Collection<Verb> mainFollowSet = mapFollowSetWith(mainItem, v -> v);
-    if (followSet.isEmpty())
-      return Collections.emptyList();
-    for (Verb v : followSet)
-      typeArguments.putIfAbsent(v,
-          (mainFollowSet.contains(v)) ? TypeVariableName.get(EncoderUtils.verbTypeName(v)) : EncoderUtils.errorType());
-    return mapFollowSetWith(current, v -> typeArguments.get(v));
-  }
-  private static TypeName returnTypeOfJump(Jump action) {
-    return TypeVariableName.get(EncoderUtils.verbTypeName(action.v));
-  }
-  @Override public String toString() {
-    return encode().toString();
-  }
-  public TypeSpec encode() {
-    return TypeSpec.classBuilder(rllp.bnf.name) //
-        .addModifiers(Modifier.PUBLIC) //
-        .addTypes(mainTypes) //
-        .addTypes(recursiveTypes) //
-        .addType(getErrorType()) //
-        .addType($$$Type) //
-        .addMethods(staticMethods) //
-        .addAnnotation(AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "$S", "all").build()) //
-        .build();
-  }
-  public <T> List<T> mapFollowSetWith(Item i, Function<Verb, T> mapper) {
-    return mapFollowSetWith(i, mapper, false);
-  }
-  public <T> List<T> mapFollowSetWith(Item i, Function<Verb, T> mapper, boolean with$) {
-    Collection<Verb> follow;
-    if (with$)
-      follow = rllp.analyzer.followSetOf(i.rule.lhs);
-    else
-      follow = rllp.analyzer.followSetWO$(i.rule.lhs);
-    return follow.stream().map(mapper).collect(Collectors.toList());
-  }
-  public static TypeName parameterizedType(final String typename, Iterable<? extends TypeName> params) {
-    final ClassName type = ClassName.get("", typename);
-    List<TypeName> l = new ArrayList<>();
-    for (TypeName param : params)
-      l.add(param);
-    if (l.isEmpty())
-      return type;
-    return ParameterizedTypeName.get(type, l.toArray(new TypeName[] {}));
-  }
-  public String getApiName() {
-    return rllp.bnf.name;
-  }
-  private TypeSpec get$$$Type() {
-    List<MethodSpec> ms = new LinkedList<>();
-    for (TypeSpec t : mainTypes)
-      ms.addAll(t.methodSpecs.stream() //
-          .filter(x -> ms.stream().noneMatch(y -> x.name.equals(y.name) && x.parameters.equals(y.parameters))) //
-          // Filters $ methods
-          .filter(x -> !$NAME.equals(x.name)) //
-          .map(x -> MethodSpec.methodBuilder(x.name) //
-              .returns(TypeVariableName.get($$$name)) //
-              .addParameters(x.parameters) //
-              .varargs(x.varargs) //
-              .addModifiers(Modifier.PUBLIC) //
-              .addCode("recordTerminal(" + getTerminalName(x) + FajitaEncoder.getArguments(x.parameters) + ");") //
-              .addCode("return this;") //
-              .build())
-          .collect(toList()));
-    TypeSpec.Builder b = TypeSpec.classBuilder($$$name) //
-        .superclass(FluentAPIRecorder.class) //
-        .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-        .addSuperinterfaces(mainTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
-        .addSuperinterfaces(recursiveTypes.stream().map(x -> TypeVariableName.get(x.name)).collect(toList())) //
-        .addMethod(MethodSpec.constructorBuilder() //
-            .addCode("super(new " + provider.getName() + "().bnf().ebnf()" + subBNFFix() + ",\"" + packagePath + "\");") //
-            .build()) //
-        .addMethods(ms);
-    if (!isSubBNF)
-      b.addMethod(MethodSpec.methodBuilder("$") //
-          .addModifiers(Modifier.PUBLIC) //
-          .returns($ReturnType()) //
-          .addCode("return ast(\"" + JamoosClassesRenderer.topClassName(rllp.bnf) + "\");") //
-          .build());
-    return b.build();
-  }
-  private String subBNFFix() {
-    if (!isSubBNF)
-      return "";
-    NonTerminal nt = rllp.bnf.startSymbols.iterator().next();
-    if (nt instanceof Enum<?>)
-      return ".makeSubBNF(" + nt.getClass().getCanonicalName() + "." + nt + ")";
-    return ".makeSubBNF(" + NonTerminal.class.getTypeName() + ".of(\"" + nt + "\"))";
-  }
-  public String getTerminalName(MethodSpec x) {
-    return getTerminalName(x.name);
-  }
-  public String getTerminalName(String name) {
-    Terminal match = terminals.stream().filter(z -> z.name().equals(name)).findFirst().get();
-    return (match.getClass().getCanonicalName() + "." + match).replaceAll("\\$", "\\$\\$");
-  }
-  private TypeName $ReturnType() {
-    return ClassName
-        .get(packagePath, JamoosClassesRenderer.topClassName(rllp.bnf), rllp.bnf.startSymbols.iterator().next().toString())
-        .withoutAnnotations();
+    private String parametersEncoding(ParameterType[] type) {
+      List<String> $ = new ArrayList<>();
+      for (int i = 0; i < type.length; ++i)
+        $.add((type[i] instanceof NestedType ? ASTNode.class.getCanonicalName() : type[i].toParameterString()) + " arg" + (i + 1));
+      return String.join(",", $);
+    }
+    private String parameterNamesEncoding(ParameterType[] type) {
+      List<String> $ = new ArrayList<>();
+      for (int i = 0; i < type.length; ++i)
+        $.add("arg" + (i + 1));
+      return String.join(",", $);
+    }
   }
 }

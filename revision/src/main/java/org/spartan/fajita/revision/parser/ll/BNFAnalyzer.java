@@ -15,7 +15,6 @@ import java.util.TreeSet;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.DerivationRule;
-import org.spartan.fajita.revision.parser.rll.Item;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -92,9 +91,6 @@ public class BNFAnalyzer {
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
-  public boolean isSuffixNullable(final Item i) {
-    return isNullable(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
-  }
   public Collection<Verb> firstSetOf(final Symbol... expression) {
     List<Verb> $ = new ArrayList<>();
     for (Symbol symbol : expression) {
@@ -106,9 +102,6 @@ public class BNFAnalyzer {
   }
   public Collection<Verb> firstSetOf(final List<Symbol> expression) {
     return firstSetOf(expression.toArray(new Symbol[expression.size()]));
-  }
-  public Collection<Verb> firstSetOf(Item i) {
-    return firstSetOf(i.rule.getRHS().subList(i.dotIndex, i.rule.size()));
   }
   public Collection<Verb> followSetWO$(final NonTerminal nt) {
     final Collection<Verb> $ = new ArrayList<>(followSetOf(nt));

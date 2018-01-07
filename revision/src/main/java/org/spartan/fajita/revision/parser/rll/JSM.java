@@ -1,278 +1,293 @@
 package org.spartan.fajita.revision.parser.rll;
 
-import java.util.AbstractMap.SimpleEntry;
+import static java.util.stream.Collectors.toList;
+import static org.spartan.fajita.revision.parser.rll.JSM.J.*;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
+import org.spartan.fajita.revision.bnf.BNF;
+import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
+import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
-public class JSM {
-  public static final JSM JAMMED = null;
-  /**
-   * If by any chance you change the type of java.util.Stack note that the below
-   * code uses the faulty implementation of the iteration (FIFO instead of LIFO)
-   */
-  private Stack<Item> S0;
-  private Stack<Map<Verb, JSM>> S1;
-  private final Collection<Verb> verbs;
-  private final RLLP rllp;
-  private boolean readonly;
-  //
-  private Hashtable<JSM.CompactConfiguration, JSM> cache;
-  private CompactConfiguration currentConfig;
-  //
-  private List<Item> recursiveAddition;
-  private List<Item> currentlyPushing;
+public class JSM implements Cloneable {
+  public static final JSM JAMMED = new JSM();
+  public static final JSM UNKNOWN = new JSM();
+  final BNF bnf;
+  final BNFAnalyzer analyzer;
+  private final Stack<Symbol> S0;
+  private final Stack<Map<Verb, J>> S1;
+  private Set<Verb> baseLegalJumps;
 
-  public JSM(RLLP rllp) {
-    this.rllp = rllp;
-    this.verbs = new ArrayList<>(rllp.bnf.verbs);
-    this.verbs.remove(SpecialSymbols.$);
-    this.readonly = false;
-    S0 = new Stack<>();
-    S1 = new Stack<>();
-    this.cache = new Hashtable<>();
+  public JSM(BNF bnf) {
+    this(bnf, new BNFAnalyzer(bnf));
   }
-  private JSM(JSM fromJSM) {
-    this(fromJSM.rllp);
-    fromJSM.S0.forEach(i -> S0.add(i));
-    fromJSM.S1.forEach(partMap -> S1.add(partMap));
-    cache = fromJSM.cache;
+  public JSM(BNF bnf, BNFAnalyzer analyzer) {
+    this.bnf = bnf;
+    this.analyzer = analyzer;
+    this.S0 = new Stack<>();
+    this.S1 = new Stack<>();
+    this.baseLegalJumps = null;
   }
-  /**
-   * Cannot cause recursion. always finite time.
-   * 
-   * @return
-   */
-  private JSM deepCopy() {
+  public JSM(BNF bnf, BNFAnalyzer analyzer, Set<Verb> baseLegalJumps) {
+    this(bnf, analyzer);
+    this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
+  }
+  public JSM(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> baseLegalJumps) {
+    this(bnf, analyzer);
+    this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
+    pushJumps(initial);
+    S0.push(initial);
+  }
+  private JSM(JSM jsm) {
+    this.bnf = jsm.bnf;
+    this.analyzer = jsm.analyzer;
+    this.S0 = new Stack<>();
+    this.S1 = new Stack<>();
+    this.S0.addAll(jsm.S0);
+    for (Map<Verb, J> m : jsm.S1)
+      this.S1.add(new HashMap<>(m));
+    this.baseLegalJumps = jsm.baseLegalJumps == null ? null : new LinkedHashSet<>(jsm.baseLegalJumps);
+  }
+  private JSM() {
+    this.bnf = null;
+    this.analyzer = null;
+    this.S0 = null;
+    this.S1 = null;
+    this.baseLegalJumps = null;
+  }
+  @Override public JSM clone() {
     return new JSM(this);
   }
-  /**
-   * @param loadFrom the JSM that is loaded into ``this'' instance.
-   */
-  private void load(JSM loadFrom) {
-    if (readonly)
-      throw new IllegalStateException("Can't load in readonly mode.");
-    S0 = loadFrom.S0;
-    S1 = loadFrom.S1;
+  public List<Symbol> getS0() {
+    return new ArrayList<>(S0);
   }
-  public Item peek() {
-    if (getS0().isEmpty())
-      return null;
+  public Symbol peek() {
     return S0.peek();
   }
-  public void pushAll(List<Item> toPush) {
-    pushAll(toPush, new ArrayList<>());
-  }
-  public void push(Item toPush) {
-    pushAll(Arrays.asList(toPush), new ArrayList<>());
-  }
-  /**
-   * Pushes items (in given order) to the JSM and makes it readonly afterwards
-   * 
-   * @param toPush
-   * @param ancestors all the JSM parents of the current, as seen in the
-   *          JSMGraph visualization.
-   */
-  private void pushAll(List<Item> toPush, List<JSM> ancestors) {
-    if (readonly)
-      throw new IllegalStateException("Can't push in readonly mode.");
-    ancestors.add(this);
-    currentConfig = new CompactConfiguration(this.peek(), toPush);
-    cache.put(currentConfig, this);
-    currentlyPushing = new ArrayList<>(toPush);
-    while (!currentlyPushing.isEmpty()) {
-      // The order of these two actions matter
-      push(currentlyPushing.get(0), ancestors);
-      currentlyPushing.remove(0);
-    }
-    // makeReadOnly(); // Commented out--[or]
-  }
-  /**
-   * Pushes item i to S0 and coordinates S1 stack.
-   * 
-   * @param i
-   * @param ancestors
-   */
-  private void push(Item i, List<JSM> ancestors) {
-    if (readonly)
-      throw new IllegalStateException("Can't push in readonly mode.");
-    HashMap<Verb, JSM> jumpInfo = new HashMap<>();
-    for (Verb v : rllp.legalJumps(i))
-      // This is the push after jump
-      jumpInfo.put(v, calculateJumpConfiguration(rllp.jumps(i, v), ancestors));
-    for (Verb v : rllp.illegalJumps(i))
-      jumpInfo.put(v, JSM.JAMMED);
-    S0.add(i);
-    S1.add(jumpInfo);
-  }
-  /**
-   * Returns the state of the JSM after pushing all items in "toPush" (in their
-   * given order).
-   */
-  private JSM calculateJumpConfiguration(List<Item> toPush, List<JSM> ancestors) {
-    final CompactConfiguration nextConfig = new CompactConfiguration(this.peek(), toPush);
-    if (cache.containsKey(nextConfig)) {
-      final JSM jsm = cache.get(nextConfig);
-      if (jsm.isRecursiveInstance(getS0(), nextConfig) && ancestors.contains(jsm))
-        jsm.setRecursive(getS0(), nextConfig);
-      return jsm;
-    }
-    final JSM $ = deepCopy();
-    $.pushAll(toPush, new ArrayList<>(ancestors));
-    $.makeReadOnly();
+  public JSM pop() {
+    JSM $ = clone();
+    $.S0.pop();
+    $.S1.pop();
     return $;
   }
-  private boolean isRecursiveInstance(List<Item> currentS0, CompactConfiguration nextConfig) {
-    return !getRecursiveAddition(currentS0, nextConfig.toPush).isEmpty();
+  public JSM jump(Verb v) {
+    return jjump(v).asJSM();
   }
-  public List<Item> getS0() {
-    return Collections.unmodifiableList(S0);
+  public J jjump(Verb v) {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return !isEmpty() ? S1.peek().get(v) : baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
   }
-  public void makeReadOnly() {
-    this.readonly = true;
+  // TODO Roth: can be optimized
+  public J jjumpFirstAvailable(Verb v) {
+    if (isEmpty())
+      return baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
+    J jjump = jjump(v);
+    return JJAMMED != jjump ? jjump : pop().jjumpFirstAvailable(v);
   }
-  public boolean isRecursive() {
-    return recursiveAddition != null;
+  public JSM pushAll(List<Symbol> items) {
+    if (items.isEmpty())
+      return this;
+    JSM $ = clone();
+    $.pushJumps(items);
+    return $;
   }
-  private void setRecursive(List<Item> currentS0, CompactConfiguration nextConfig) {
-    List<Item> addition = getRecursiveAddition(currentS0, nextConfig.toPush);
-    if (recursiveAddition == null || addition.size() > recursiveAddition.size())
-      recursiveAddition = addition;
-  }
-  private List<Item> getRecursiveAddition(List<Item> s0, List<Item> toPush) {
-    ArrayList<Item> origStack = new ArrayList<>(getS0());
-    origStack.addAll(currentlyPushing);
-    ArrayList<Item> recursiveStack = new ArrayList<>(s0);
-    recursiveStack.addAll(toPush);
-    for (int i = origStack.size() - 1; i >= 0; i--) {
-      final int last = recursiveStack.size() - 1;
-      if (!origStack.get(i).equals(recursiveStack.get(last)))
-        break;
-      recursiveStack.remove(last);
+  private void pushJumps(List<Symbol> items) {
+    for (Symbol s : items) {
+      pushJumps(s);
+      S0.push(s);
     }
-    for (int i = 0; i < recursiveStack.size(); i++) {
-      if (!origStack.get(i).equals(recursiveStack.get(0)))
-        break;
-      recursiveStack.remove(0);
+  }
+  private void pushJumps(Symbol s) {
+    Map<Verb, J> m = S1.isEmpty() ? emptyMap() : new HashMap<>(S1.peek());
+    if (s.isVerb()) {
+      for (Verb v : bnf.verbs)
+        m.put(v, J.JJAMMED);
+      m.put(s.asVerb(), J.of(clone()));
+      S1.push(m);
+      return;
     }
-    return recursiveStack;
+    NonTerminal nt = s.asNonTerminal();
+    for (Verb v : bnf.verbs) {
+      List<Symbol> c = analyzer.llClosure(nt, v);
+      if (c == null) {
+        if (!analyzer.followSetOf(nt).contains(v) || !analyzer.isNullable(nt))
+          m.put(v, J.JJAMMED);
+      } else {
+        J j = J.of(clone(), c);
+        m.put(v, j);
+        List<Symbol> l = getS0();
+        l.addAll(c);
+      }
+    }
+    S1.push(m);
   }
-  private JSM findJump(Verb v) {
-    /**
-     * We remove the first item in S1 because each item in S1 is relevant only
-     * when there are other elements on top (meaning the matching item in S0 is
-     * NOT the top of the stack). This makes sense since S1 is only used as jump
-     * information for items that does not know what happen in the depth of the
-     * stack. The top element of S1 is therefore not relevant (and causes error
-     * because it override legal jumps).
-     */
-    List<Map<Verb, JSM>> reversed = new ArrayList<>(S1.subList(0, S1.size() - 1));
-    Collections.reverse(reversed);
-    for (Map<Verb, JSM> partMap : reversed)
-      if (partMap.containsKey(v))
-        return partMap.get(v);
-    return null;
+  // TODO Roth: can be optimized
+  public Set<Verb> peekLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new LinkedHashSet<>(
+        bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(S0.peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
   }
-  public Collection<SimpleEntry<Verb, JSM>> legalJumps() {
-    return verbs.stream().map(v -> new SimpleEntry<>(v, findJump(v)))//
-        .filter(e -> e.getValue() != null)//
-        .collect(Collectors.toList());
+  // TODO Roth: can be optimized
+  private Set<Verb> allLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
+  }
+  public Set<Verb> baseLegalJumps() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
+    return new LinkedHashSet<>(baseLegalJumps);
+  }
+  // TODO Roth: can be optimized
+  public JSM trim() {
+    if (this == JAMMED || this == UNKNOWN || isEmpty())
+      return this;
+    return new JSM(bnf, analyzer, allLegalJumps());
+  }
+  // TODO Roth: can be optimized
+  public JSM trim1() {
+    assert this != JAMMED && this != UNKNOWN && !isEmpty();
+    return new JSM(bnf, analyzer, S0.peek(), pop().allLegalJumps());
+  }
+  public int size() {
+    assert S0.size() == S1.size();
+    return S0.size();
+  }
+  private Map<Verb, J> emptyMap() {
+    Map<Verb, J> $ = new HashMap<>();
+    for (Verb v : bnf.verbs)
+      $.put(v, baseLegalJumps != null && baseLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
+    return $;
   }
   @Override public int hashCode() {
-    throw new UnsupportedOperationException(
-        "Since JSM is highly recursive, and hashCode() and equals() cannot be consistent, hashCode() is not supported");
+    return (S0 == null ? 1 : S0.hashCode()) * (S1 == null ? 1 : S1.hashCode());
   }
-  /**
-   * @see JSM#hashCode()
-   */
   @Override public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    JSM other = (JSM) obj;
-    if (rllp != other.rllp)
-      return false;
-    if (getS0() == null) {
-      if (other.getS0() != null)
-        return false;
-    }
-    return currentConfig.equals(other.currentConfig);
+    return obj instanceof JSM && S0.equals(((JSM) obj).S0) //
+        && Objects.equals(baseLegalJumps, ((JSM) obj).baseLegalJumps);
   }
   @Override public String toString() {
-    return "JSM.S0: " + getS0().toString();
+    return this == JAMMED ? "JAMMED"
+        : this == UNKNOWN ? "UNKNOWN" //
+            : toString(0, null, new HashSet<>(), new ArrayList<>());
   }
-  public Item pop() {
-    if (readonly)
-      throw new IllegalStateException("Can't load in readonly mode.");
-    S1.pop();
-    return S0.pop();
+  String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
+    seen.add(J.of(this));
+    StringBuilder $ = new StringBuilder();
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    if (v != null)
+      $.append(v).append(": ");
+    if (this == JAMMED || this == UNKNOWN)
+      return $.append(toString()).append(" + ").append(toPush).append("\n").toString();
+    $.append(super.toString()).append(" {\n");
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    $.append(" S0: ").append(S0).append(" + ").append(toPush).append("\n");
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    $.append(" S1: (").append(S1.size()).append(")\n");
+    if (!S1.isEmpty())
+      for (Verb x : bnf.verbs) {
+        J j = S1.peek().get(x);
+        if (j == J.JJAMMED) {
+          for (int i = 0; i < ind; ++i)
+            $.append(" ");
+          $.append("  ").append(x).append(": JAMMED\n");
+        } else if (j == J.JUNKNOWN) {
+          for (int i = 0; i < ind; ++i)
+            $.append(" ");
+          $.append("  ").append(x).append(": UNKNOWN\n");
+        } else {
+          if (!seen.contains(j))
+            $.append(j.address.toString(ind + 2, x, seen, j.toPush));
+          else {
+            for (int i = 0; i < ind; ++i)
+              $.append(" ");
+            $.append("  ").append(x).append(": ").append(j.address.id()).append(" + ").append(j.toPush).append("\n");
+          }
+        }
+      }
+    if (baseLegalJumps != null) {
+      for (int i = 0; i < ind; ++i)
+        $.append(" ");
+      $.append(" BLJ: ").append(baseLegalJumps).append("\n");
+    }
+    for (int i = 0; i < ind; ++i)
+      $.append(" ");
+    return $.append("}\n").toString();
   }
-  /**
-   * Jumps to using v's jump stack, changing the state of the JSM accordingly.
-   * 
-   * @param v the jump stack used
-   */
-  public void jump(Verb v) {
-    if (readonly)
-      throw new IllegalStateException("Can't load in readonly mode.");
-    JSM dest = findJump(v);
-    if (dest == null)
-      throw new IllegalStateException("The jump stack for verb " + v + " is empty!");
-    load(dest);
+  private String id() {
+    return super.toString();
+  }
+  public boolean isEmpty() {
+    return S0.isEmpty();
   }
 
-  public static class CompactConfiguration {
-    Item topOfStack;
-    List<Item> toPush;
+  public static class J {
+    public static final J JJAMMED = new J();
+    public static final J JUNKNOWN = new J();
+    // NOTE address is cloned
+    public final JSM address;
+    public final List<Symbol> toPush;
+    private JSM asJSM;
 
-    public CompactConfiguration(Item topOfStack, List<Item> toPush) {
-      this.topOfStack = topOfStack;
+    private J(JSM address, List<Symbol> toPush) {
+      this.address = address;
       this.toPush = toPush;
     }
-    @Override public String toString() {
-      if (topOfStack == null)
-        return "< empty stack ;;" + toPush.toString() + ">";
-      return "<" + topOfStack.toString() + ";;" + toPush.toString() + ">";
+    private J() {
+      address = null;
+      toPush = null;
+    }
+    public static J of(JSM address, List<Symbol> toPush) {
+      assert address != JAMMED && address != UNKNOWN;
+      return new J(address, toPush);
+    }
+    public static J of(JSM address) {
+      return address == JAMMED ? JJAMMED : address == UNKNOWN ? JUNKNOWN : of(address, new ArrayList<>());
+    }
+    public boolean isEmpty() {
+      return address.isEmpty() && toPush.isEmpty();
+    }
+    public JSM asJSM() {
+      return asJSM != null ? asJSM //
+          : this == J.JJAMMED ? (asJSM = JAMMED) //
+              : this == J.JUNKNOWN ? (asJSM = UNKNOWN) //
+                  : (asJSM = address.pushAll(toPush));
+    }
+    public J trim() {
+      return address.isEmpty() ? this : new J(address.trim(), toPush);
+    }
+    public J trim1() {
+      assert !address.isEmpty();
+      return new J(address.trim1(), toPush);
     }
     @Override public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((topOfStack == null) ? 0 : topOfStack.hashCode());
-      result = prime * result + ((toPush == null) ? 0 : toPush.hashCode());
-      return result;
+      int $ = 1;
+      if (this == JJAMMED || this == JUNKNOWN)
+        return $;
+      $ += 31 * address.hashCode();
+      $ += 17 * toPush.hashCode();
+      return $;
     }
     @Override public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      CompactConfiguration other = (CompactConfiguration) obj;
-      if (topOfStack == null) {
-        if (other.topOfStack != null)
-          return false;
-      } else if (!topOfStack.equals(other.topOfStack))
-        return false;
-      if (toPush == null) {
-        if (other.toPush != null)
-          return false;
-      } else if (!toPush.equals(other.toPush))
-        return false;
-      return true;
+      return obj == JJAMMED ? this == JJAMMED
+          : obj == JUNKNOWN ? this == JUNKNOWN
+              : obj instanceof J && address.equals(((J) obj).address) && toPush.equals(((J) obj).toPush);
+    }
+    @Override public String toString() {
+      return this == JJAMMED ? "JJAMMED"
+          : this == JUNKNOWN ? "JUNKNOWN" //
+              : address.toString(0, null, new HashSet<>(), toPush);
     }
   }
 }

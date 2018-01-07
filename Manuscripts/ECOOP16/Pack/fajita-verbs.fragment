@@ -1,6 +1,0 @@
-enum BNFTerminals implements Terminal {
-  toNone,orNone,go,// No parameters
-  start,derive // One parameter
-  with, // One parameter, overloaded
-  or,and,to, // One parameter (or more), overloaded, variadic
-  ;

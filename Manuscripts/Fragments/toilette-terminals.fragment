@@ -1,5 +1,0 @@
-enum ToiletteTerminals implements Terminal {
-  male, female,
-  urinate, defecate,
-  lower, raise;
-}
