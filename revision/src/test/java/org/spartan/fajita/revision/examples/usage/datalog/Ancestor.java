@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.examples.usage;
+package org.spartan.fajita.revision.examples.usage.datalog;
 
 import static org.spartan.fajita.revision.junk.Datalog.*;
 

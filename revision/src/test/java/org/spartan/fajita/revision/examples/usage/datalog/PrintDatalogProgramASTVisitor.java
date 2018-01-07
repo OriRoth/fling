@@ -1,4 +1,4 @@
-package org.spartan.fajita.revision.examples.usage;
+package org.spartan.fajita.revision.examples.usage.datalog;
 
 import org.spartan.fajita.revision.export.ASTVisitor;
 import org.spartan.fajita.revision.junk.DatalogAST;

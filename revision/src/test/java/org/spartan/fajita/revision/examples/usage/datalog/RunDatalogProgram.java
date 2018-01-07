@@ -1,6 +1,6 @@
-package org.spartan.fajita.revision.examples.usage;
+package org.spartan.fajita.revision.examples.usage.datalog;
 
-import static org.spartan.fajita.revision.examples.usage.PrintDatalogProgram.*;
+import static org.spartan.fajita.revision.examples.usage.datalog.PrintDatalogProgram.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
