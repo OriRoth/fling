@@ -1,9 +1,6 @@
 rm -rf bin
 rm -rf src
-rm -rf out/classes
 mkdir bin
-mkdir src
-mkdir -p out/classes
 mkdir -p src/test/java/org/spartan/fajita/revision/examples/usage
 cp -r ../target/classes/* bin/
 rm -r bin/org/spartan/fajita/revision/examples/usage/
@@ -13,6 +10,6 @@ target=src/test/java/org/spartan/fajita/revision/examples/usage/$1.java
 rm -rf out/graphs/testcases/$1
 mkdir -p out/graphs/testcases/$1
 echo "" > out/graphs/testcases/$1/$1.csv
-python compilation_testcase.py "out/graphs/testcases/$1/$1.csv" "javac" "javac -J-Xss8m -cp bin/ -d junk/ $target"  "ecj" "ecj -1.8 -cp bin/ -d junk/ $target" # "gcj" "gcj -cp bin/ -d junk/ $target"
+python compilation_testcase.py "out/graphs/testcases/$1/$1.csv" "javac" "javac -cp bin/ -d junk/ $target"  "ecj" "ecj -1.8 -cp bin/ -d junk/ $target" # "gcj" "gcj -cp bin/ -d junk/ $target"
 gnuplot -e "filename='out/graphs/testcases/$1/$1.csv'" bars > out/graphs/testcases/$1/$1.png
 

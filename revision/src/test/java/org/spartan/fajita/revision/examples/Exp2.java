@@ -1,6 +1,5 @@
 package org.spartan.fajita.revision.examples;
 
-import static org.spartan.fajita.revision.api.Fajita.option;
 import static org.spartan.fajita.revision.examples.Exp2.NT.*;
 import static org.spartan.fajita.revision.examples.Exp2.Term.*;
 
@@ -15,21 +14,17 @@ import org.spartan.fajita.revision.symbols.Terminal;
 
 public class Exp2 extends Grammar {
   public static enum Term implements Terminal {
-    a, b
+    a, b, c
   }
 
   public static enum NT implements NonTerminal {
-    S, //
-    A0, A1
+    S
   }
 
   @Override public FajitaBNF bnf() {
     return Fajita.build(Exp2.class, Term.class, NT.class, "Exp2", Main.packagePath, Main.projectPath) //
         .start(S) //
-        .derive(S).to(A0, S, A0).orNone() //
-        .derive(A0)
-        .to(a, option(A1), a, option(A1), a, option(A1), a, option(A1), a, option(A1), a, option(A1), b) //
-        .derive(A1).to(a) //
+        .derive(S).to(a, S, b, S, c).orNone() //
     ;
   }
   public static void main(String[] args) throws IOException {
