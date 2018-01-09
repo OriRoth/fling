@@ -26,7 +26,8 @@ public class Exp extends Grammar {
   }
 
   @Override public FajitaBNF bnf() {
-    return Fajita.build(Exp.class, Term.class, NT.class, "Exp", Main.packagePath, Main.projectPath).start(S) //
+    return Fajita.build(Exp.class, Term.class, NT.class, "Exp", Main.packagePath, Main.projectPath) //
+        .start(S) //
         .derive(S).to(X, S, X).or(d) //
         .derive(X).to(a, X, b).or(c);
   }
