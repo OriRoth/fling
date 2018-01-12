@@ -16,7 +16,6 @@ import java.util.TreeSet;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.symbols.NonTerminal;
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
@@ -24,14 +23,12 @@ public class BNFAnalyzer {
   public final BNF bnf;
   private final Collection<NonTerminal> nullableSymbols;
   private final Map<Symbol, Collection<Verb>> baseFirstSets;
-  private final Map<NonTerminal, Collection<Verb>> followSets;
   private final Map<NonTerminal, Map<Verb, List<Symbol>>> llClosure;
 
   public BNFAnalyzer(final BNF bnf) {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
-    followSets = calculateFollowSets();
     llClosure = new HashMap<>();
     for (NonTerminal nt : bnf.nonTerminals)
       for (Verb v : bnf.verbs)
@@ -66,28 +63,6 @@ public class BNFAnalyzer {
     } while (moreChanges);
     return $;
   }
-  private Map<NonTerminal, Collection<Verb>> calculateFollowSets() {
-    Map<NonTerminal, Collection<Verb>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.nonTerminals)
-      $.put(nt, new TreeSet<>());
-    for (NonTerminal start : bnf.startSymbols)
-      $.get(start).add(SpecialSymbols.$);
-    boolean moreChanges;
-    do {
-      moreChanges = false;
-      for (DerivationRule dRule : bnf.rules())
-        for (int i = 0; i < dRule.size(); i++) {
-          if (!dRule.get(i).isNonTerminal())
-            continue;
-          Symbol subExpression[] = ruleSuffix(dRule, i + 1);
-          Collection<Verb> ntFollowSet = $.get(dRule.get(i));
-          moreChanges |= ntFollowSet.addAll(firstSetOf(subExpression));
-          if (isNullable(subExpression))
-            moreChanges |= ntFollowSet.addAll($.get(dRule.lhs));
-        }
-    } while (moreChanges);
-    return $;
-  }
   public boolean isNullable(final Symbol... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
@@ -102,14 +77,6 @@ public class BNFAnalyzer {
   }
   public Collection<Verb> firstSetOf(final List<Symbol> expression) {
     return firstSetOf(expression.toArray(new Symbol[expression.size()]));
-  }
-  public Collection<Verb> followSetWO$(final NonTerminal nt) {
-    final Collection<Verb> $ = new ArrayList<>(followSetOf(nt));
-    $.remove(SpecialSymbols.$);
-    return $;
-  }
-  public Collection<Verb> followSetOf(final NonTerminal nt) {
-    return followSets.get(nt);
   }
   public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))

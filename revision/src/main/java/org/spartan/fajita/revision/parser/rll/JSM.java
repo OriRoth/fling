@@ -120,7 +120,7 @@ public class JSM implements Cloneable {
     for (Verb v : bnf.verbs) {
       List<Symbol> c = analyzer.llClosure(nt, v);
       if (c == null) {
-        if (!analyzer.followSetOf(nt).contains(v) || !analyzer.isNullable(nt))
+        if (!analyzer.isNullable(nt))
           m.put(v, J.JJAMMED);
       } else {
         J j = J.of(clone(), c);
