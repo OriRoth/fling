@@ -6,6 +6,7 @@ import org.spartan.fajita.revision.examples.Datalog;
 import org.spartan.fajita.revision.examples.EBNF;
 import org.spartan.fajita.revision.examples.Exp;
 import org.spartan.fajita.revision.examples.Exp2;
+import org.spartan.fajita.revision.examples.FajitaTesting;
 import org.spartan.fajita.revision.examples.Parenthesis;
 import org.spartan.fajita.revision.examples.ParenthesisSimple;
 import org.spartan.fajita.revision.examples.Regex;
@@ -41,5 +42,6 @@ public class GenerateAll {
     new Exp().generateGrammarFiles();
     new Exp2().generateGrammarFiles();
     new Regex().generateGrammarFiles();
+    new FajitaTesting().generateGrammarFiles();
   }
 }

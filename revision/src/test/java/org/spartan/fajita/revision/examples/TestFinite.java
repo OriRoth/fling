@@ -24,7 +24,8 @@ public class TestFinite extends Grammar {
   }
 
   @Override public FajitaBNF bnf() {
-    return Fajita.build(TestFinite.class, Term.class, NT.class, "TestFinite", Main.packagePath, Main.projectPath).start(S) //
+    return Fajita.build(TestFinite.class, Term.class, NT.class, "TestFinite", Main.packagePath, Main.projectPath) //
+        .start(S) //
         .derive(S).to(option(m), either(n, o)).orNone();
   }
   public static void main(String[] args) throws IOException {

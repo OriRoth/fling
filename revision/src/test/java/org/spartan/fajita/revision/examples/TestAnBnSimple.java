@@ -23,7 +23,8 @@ public class TestAnBnSimple extends Grammar {
   }
 
   @Override public FajitaBNF bnf() {
-    return Fajita.build(TestAnBnSimple.class, Term.class, NT.class, "TestAnBnSimple", Main.packagePath, Main.projectPath).start(S) //
+    return Fajita.build(TestAnBnSimple.class, Term.class, NT.class, "TestAnBnSimple", Main.packagePath, Main.projectPath) //
+        .start(S) //
         .derive(S).to(g, S, h).orNone();
   }
   public static void main(String[] args) throws IOException {
