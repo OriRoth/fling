@@ -78,6 +78,7 @@ public class BNFAnalyzer {
   public Collection<Verb> firstSetOf(final List<Symbol> expression) {
     return firstSetOf(expression.toArray(new Symbol[expression.size()]));
   }
+  // NOTE This is the "consolidation" algorithm
   public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))
       return llClosure.get(nt).get(v);
