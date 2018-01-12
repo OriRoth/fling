@@ -5,8 +5,10 @@ import java.io.IOException;
 import org.spartan.fajita.revision.examples.Datalog;
 import org.spartan.fajita.revision.examples.EBNF;
 import org.spartan.fajita.revision.examples.Exp;
+import org.spartan.fajita.revision.examples.Exp2;
 import org.spartan.fajita.revision.examples.Parenthesis;
 import org.spartan.fajita.revision.examples.ParenthesisSimple;
+import org.spartan.fajita.revision.examples.Regex;
 import org.spartan.fajita.revision.examples.TestAnB;
 import org.spartan.fajita.revision.examples.TestAnBSimple;
 import org.spartan.fajita.revision.examples.TestAnBn;
@@ -37,5 +39,7 @@ public class GenerateAll {
     new TestFinite().generateGrammarFiles();
     new EBNF().generateGrammarFiles();
     new Exp().generateGrammarFiles();
+    new Exp2().generateGrammarFiles();
+    new Regex().generateGrammarFiles();
   }
 }
