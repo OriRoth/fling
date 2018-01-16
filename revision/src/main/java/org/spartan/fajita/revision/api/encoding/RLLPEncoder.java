@@ -152,7 +152,7 @@ public class RLLPEncoder {
       Set<Verb> blj = new LinkedHashSet<>();
       blj.add(SpecialSymbols.$);
       J j = RLLPConcrete.jnext(new JSM(bnf, analyzer, startSymbol, blj), v);
-      computeType(j, v, x -> namer.name(x), () -> "ε");
+      computeType(j, v, x -> namer.name(x), () -> "ϱ");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
         assert SpecialSymbols.$.equals(x);
@@ -185,7 +185,7 @@ public class RLLPEncoder {
       JSM jsm = jpeek.asJSM();
       Set<Verb> lj = jpeek.address.baseLegalJumps();
       StringBuilder t = new StringBuilder("public interface ").append($);
-      StringBuilder template = new StringBuilder("<ε");
+      StringBuilder template = new StringBuilder("<ϱ");
       List<String> templates = new ArrayList<>();
       for (Verb v : lj)
         // NOTE an optimization for $ jump
@@ -237,7 +237,7 @@ public class RLLPEncoder {
       if (jsm == UNKNOWN)
         return "public " + namer.name(v) + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
       if (jsm.isEmpty())
-        return "public ε " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
+        return "public ϱ " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
       Symbol top = jsm.peek();
       J jnext = RLLPConcrete.jnext(jsm, v);
       if (JJAMMED == jnext)
