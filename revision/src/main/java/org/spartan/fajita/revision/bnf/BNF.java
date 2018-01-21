@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.symbols.NonTerminal;
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
+import org.spartan.fajita.revision.symbols.Constants;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
@@ -25,14 +25,14 @@ public final class BNF {
   public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<NonTerminal> nestedNonTerminals, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
-    this.verbs.add(SpecialSymbols.$);
+    this.verbs.add(Constants.$);
     this.nonTerminals = new LinkedHashSet<>(nonTerminals);
-    this.nonTerminals.add(SpecialSymbols.augmentedStartSymbol);
+    this.nonTerminals.add(Constants.augmentedStartSymbol);
     this.nestedNonTerminals = new LinkedHashSet<>(nestedNonTerminals);
     this.derivationRules = new LinkedHashSet<>(rules);
     this.startSymbols = new LinkedHashSet<>(start);
     this.startSymbols
-        .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
+        .forEach(ss -> derivationRules.add(new DerivationRule(Constants.augmentedStartSymbol, Arrays.asList(ss))));
     this.name = name;
     this.isSubBNF = false;
   }

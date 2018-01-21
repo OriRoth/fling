@@ -1,6 +1,6 @@
 package org.spartan.fajita.revision.symbols;
 
-public class SpecialSymbols {
+public class Constants {
   public static final Verb $ = new Verb(new Terminal() {
     @Override public String name() {
       return "$";
@@ -8,16 +8,6 @@ public class SpecialSymbols {
   }) {
     @Override public String toString() {
       return "$";
-    }
-  };
-  // TODO Roth: check whether needed
-  public static final Verb empty = new Verb(new Terminal() {
-    @Override public String name() {
-      return "~";
-    }
-  }) {
-    @Override public String toString() {
-      return "~";
     }
   };
   public static final NonTerminal augmentedStartSymbol = new NonTerminal() {
@@ -28,4 +18,7 @@ public class SpecialSymbols {
       return name();
     }
   };
+  public static final String epsilon = "ε";
+  public static final String rho = "ϱ";
+  public static final String sigma = "ς";
 }

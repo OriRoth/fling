@@ -13,7 +13,7 @@ import org.spartan.fajita.revision.ast.encoding.JamoosClassesRenderer;
 import org.spartan.fajita.revision.parser.ell.EBNFAnalyzer;
 import org.spartan.fajita.revision.parser.ell.Interpretation;
 import org.spartan.fajita.revision.symbols.NonTerminal;
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
+import org.spartan.fajita.revision.symbols.Constants;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
@@ -32,7 +32,7 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     this.analyzer = analyzer;
   }
   @SuppressWarnings("unchecked") public <S> S build() {
-    assert current.symbol.equals(SpecialSymbols.augmentedStartSymbol);
+    assert current.symbol.equals(Constants.augmentedStartSymbol);
     Interpretation s = (Interpretation) current.value.get(0);
     return (S) instance(clazz(s), s.value);
   }
@@ -48,7 +48,7 @@ import org.spartan.fajita.revision.symbols.extendibles.Extendible;
     return build(i.symbol, i.value);
   }
   private List build(Symbol s, List values) {
-    if (SpecialSymbols.augmentedStartSymbol.equals(s))
+    if (Constants.augmentedStartSymbol.equals(s))
       return buildAugS(values);
     if (s.isNonTerminal())
       return build(s.asNonTerminal(), values);

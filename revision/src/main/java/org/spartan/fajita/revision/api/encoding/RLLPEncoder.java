@@ -26,7 +26,7 @@ import org.spartan.fajita.revision.parser.rll.JSM;
 import org.spartan.fajita.revision.parser.rll.JSM.J;
 import org.spartan.fajita.revision.parser.rll.RLLPConcrete;
 import org.spartan.fajita.revision.symbols.NonTerminal;
-import org.spartan.fajita.revision.symbols.SpecialSymbols;
+import org.spartan.fajita.revision.symbols.Constants;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
@@ -104,7 +104,7 @@ public class RLLPEncoder {
     private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
 
     public String name(Verb v) {
-      if (SpecialSymbols.$.equals(v))
+      if (Constants.$.equals(v))
         return "$";
       if (verbNames.containsKey(v))
         return verbNames.get(v);
@@ -128,9 +128,9 @@ public class RLLPEncoder {
         $.append(name(j.address.peek()));
       $.append("¢").append(names(j.toPush)).append("_");
       Set<Verb> blj = j.address.baseLegalJumps();
-      blj.remove(SpecialSymbols.$);
-      if (j.asJSM().peekLegalJumps().contains(SpecialSymbols.$))
-        blj.add(SpecialSymbols.$);
+      blj.remove(Constants.$);
+      if (j.asJSM().peekLegalJumps().contains(Constants.$))
+        blj.add(Constants.$);
       return $.append(names(blj)).toString();
     }
   }
@@ -150,15 +150,15 @@ public class RLLPEncoder {
     }
     private void computeStaticMethod(Verb v) {
       Set<Verb> blj = new LinkedHashSet<>();
-      blj.add(SpecialSymbols.$);
+      blj.add(Constants.$);
       J j = RLLPConcrete.jnext(new JSM(bnf, analyzer, startSymbol, blj), v);
       computeType(j, v, x -> namer.name(x), () -> "ϱ");
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
-        assert SpecialSymbols.$.equals(x);
+        assert Constants.$.equals(x);
         return "$";
       } : x -> {
-        assert SpecialSymbols.$.equals(x);
+        assert Constants.$.equals(x);
         return "$$$";
       };
       Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
@@ -189,22 +189,22 @@ public class RLLPEncoder {
       List<String> templates = new ArrayList<>();
       for (Verb v : lj)
         // NOTE an optimization for $ jump
-        if (!SpecialSymbols.$.equals(v))
+        if (!Constants.$.equals(v))
           templates.add(namer.name(v));
       if (!templates.isEmpty()) {
         template.append(",");
         template.append(String.join(",", templates));
       }
       t.append(template.append(">"));
-      if (bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
+      if (bnf.isSubBNF && jsm.peekLegalJumps().contains(Constants.$))
         t.append(" extends ").append(ASTNode.class.getCanonicalName());
       t.append("{");
       // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
       for (Verb v : bnf.verbs)
         // NOTE $ method is built below
-        if (!SpecialSymbols.$.equals(v))
+        if (!Constants.$.equals(v))
           t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
-      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
+      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(Constants.$))
         t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add(t.append("}").toString());
       return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
@@ -216,7 +216,7 @@ public class RLLPEncoder {
       if (jsm.isEmpty()) {
         $.append(emptySolution.get());
         for (Verb v : jsm.baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
+          if (!Constants.$.equals(v))
             templates.add(unknownSolution.apply(v));
         if (!templates.isEmpty())
           $.append(",").append(String.join(",", templates));
@@ -225,7 +225,7 @@ public class RLLPEncoder {
       // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
       $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
       for (Verb v : jsm.trim().baseLegalJumps())
-        if (!SpecialSymbols.$.equals(v))
+        if (!Constants.$.equals(v))
           templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
       if (!templates.isEmpty())
         $.append(",").append(String.join(",", templates));
@@ -257,7 +257,7 @@ public class RLLPEncoder {
       StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
           .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
           .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
-              bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
+              bnf.verbs.stream().filter(v -> v != Constants.$) //
                   .map(v -> "public $$$ " + v.terminal.name() + "(" //
                       + parametersEncoding(v.type) + "){recordTerminal(" //
                       + v.terminal.getClass().getCanonicalName() //
