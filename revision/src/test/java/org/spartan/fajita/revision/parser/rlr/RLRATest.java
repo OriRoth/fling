@@ -153,6 +153,24 @@ import org.spartan.fajita.revision.symbols.Terminal;
     assert r.initialize().reject(ts("(i+*(i))"));
     assert r.initialize().reject(ts("i+"));
   }
+  @Test public void test7() {
+    Set<Terminal> terminals = new LinkedHashSet<>();
+    Set<NonTerminal> variables = new LinkedHashSet<>();
+    Set<Rule> rules = new LinkedHashSet<>();
+    Set<NonTerminal> startVariables = new LinkedHashSet<>();
+    startVariables.add(v("S"));
+    terminals.add(t("("));
+    terminals.add(t(")"));
+    variables.add(v("S"));
+    rules.add(Rule.of(v("S"), t("("), v("S"), t(")"), v("S")));
+    rules.add(Rule.of(v("S")));
+    RLRA r = new RLRA(terminals, variables, rules, startVariables);
+    assert r.initialize().accept(ts("()"));
+    assert r.initialize().accept(ts("(()((())))"));
+    assert r.initialize().reject(ts("(()"));
+    assert r.initialize().reject(ts("(()))"));
+    assert r.initialize().reject(ts("(()(())))"));
+  }
   private static NonTerminal v(String name) {
     return NonTerminal.of(name);
   }
