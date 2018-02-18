@@ -13,8 +13,6 @@ import static org.spartan.fajita.revision.examples.Datalog.Term.fact;
 import static org.spartan.fajita.revision.examples.Datalog.Term.is;
 import static org.spartan.fajita.revision.examples.Datalog.Term.query;
 import static org.spartan.fajita.revision.examples.Datalog.Term.rule;
-import static org.spartan.fajita.revision.export.testing.ExampleBody.call;
-import static org.spartan.fajita.revision.export.testing.FajitaTesting.example;
 
 import java.io.IOException;
 
@@ -22,7 +20,6 @@ import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.api.Fajita.FajitaBNF;
 import org.spartan.fajita.revision.api.Main;
 import org.spartan.fajita.revision.export.Grammar;
-import org.spartan.fajita.revision.export.testing.FajitaTestingAST.Test;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.types.VarArgs;
@@ -49,15 +46,6 @@ public class Datalog extends Grammar {
         .derive(RuleExpression).to(attribute(is, String.class), attribute(by, new VarArgs(String.class))) //
         .derive(Query).to(attribute(query, String.class), attribute(by, new VarArgs(String.class))) //
     ;
-  }
-  @Override public Test examples() {
-    return example( //
-        call(fact).with("true")) //
-            .example( //
-                call(query).with("parent").then(by).with("X", "Bob"))
-            .malexample( //
-                call(fact).with(/* nothing */)) //
-            .$();
   }
   public static void main(String[] args) throws IOException {
     new Datalog().generateGrammarFiles();

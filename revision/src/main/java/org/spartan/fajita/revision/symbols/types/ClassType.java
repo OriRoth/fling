@@ -1,13 +1,7 @@
 package org.spartan.fajita.revision.symbols.types;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import org.spartan.fajita.revision.symbols.Symbol;
 
 public class ClassType implements ParameterType {
   public final Class<?> clazz;
@@ -49,12 +43,5 @@ public class ClassType implements ParameterType {
   }
   @Override public boolean accepts(Object arg) {
     return clazz.isInstance(arg);
-  }
-  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
-    assert clazz.isInstance(arg);
-    return Collections.singletonList(arg);
-  }
-  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
-    return Collections.singletonList(clazz);
   }
 }

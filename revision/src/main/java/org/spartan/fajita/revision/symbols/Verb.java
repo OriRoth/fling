@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
@@ -106,28 +105,5 @@ public class Verb implements Terminal, Comparable<Verb> {
   }
   @Override public int compareTo(Verb v) {
     return equals(v) ? 0 : terminal.name().compareTo(v.name());
-  }
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
-    List<Class> $ = new LinkedList<>();
-    for (ParameterType t : type)
-      $.addAll(t.toClasses(classSolution));
-    return $;
-  }
-  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution) {
-    // NOTE this assertion might need Verb to deal with Interpretation (?)
-    // assert accepts(args.toArray(new Object[args.size()]));
-    List $ = new LinkedList<>();
-    if (type.length == 0)
-      return $;
-    ParameterType last = type[type.length - 1];
-    if (!(last instanceof VarArgs)) {
-      for (int i = 0; i < type.length; ++i)
-        $.addAll(type[i].conclude(args.get(i), solution));
-      return $;
-    }
-    for (int i = 0; i < type.length - 1; ++i)
-        $.addAll(type[i].conclude(args.get(i), solution));
-    $.addAll(last.conclude(args.subList(type.length - 1, args.size()), solution));
-    return $;
   }
 }
