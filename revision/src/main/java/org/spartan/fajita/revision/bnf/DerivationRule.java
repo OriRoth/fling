@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.bnf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spartan.fajita.revision.symbols.NonTerminal;
@@ -38,5 +39,8 @@ public class DerivationRule {
   }
   public List<Symbol> getRHSSuffix(int from) {
     return getRHS().subList(from, rhs.size());
+  }
+  public static DerivationRule of(NonTerminal lhs, Symbol... rhs) {
+    return new DerivationRule(lhs, Arrays.asList(rhs));
   }
 }

@@ -7,22 +7,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.parser.rlr.LRP.Action;
 import org.spartan.fajita.revision.parser.rlr.LRP.Item;
-import org.spartan.fajita.revision.parser.rlr.LRP.Rule;
 import org.spartan.fajita.revision.symbols.Constants;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.util.ParserTerminated;
 
 public class RLRA {
-  private final LRP lrp;
+  public final LRP lrp;
   private final Stack<Set<Item>> qs;
   private final Stack<Map<NonTerminal, Map<Terminal, J>>> js;
   public boolean accepted;
   public boolean rejected;
 
-  public RLRA(Set<Terminal> terminals, Set<NonTerminal> variables, Set<Rule> rules, Set<NonTerminal> startVariables) {
+  public RLRA(Set<Terminal> terminals, Set<NonTerminal> variables, Set<DerivationRule> rules, Set<NonTerminal> startVariables) {
     lrp = new LRP(terminals, variables, rules, startVariables);
     qs = new Stack<>();
     js = new Stack<>();
@@ -78,7 +78,7 @@ public class RLRA {
       return;
     }
     if (a.isReduce()) {
-      for (int i = 0; i < a.rule.rhs.size(); ++i) {
+      for (int i = 0; i < a.rule.getRHS().size(); ++i) {
         qs.pop();
         js.pop();
       }
@@ -130,9 +130,9 @@ public class RLRA {
             continue outer;
           }
           assert aa.isReduce();
-          Rule rr = aa.rule;
+          DerivationRule rr = aa.rule;
           vv = rr.lhs;
-          int l = rr.rhs.size();
+          int l = rr.getRHS().size();
           while (l > 0 && !toPush.isEmpty()) {
             --l;
             toPush.pop();

@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
+import static org.spartan.fajita.revision.util.Greek.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,12 +12,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
+import org.spartan.fajita.revision.parser.rlr.LRP.Action;
+import org.spartan.fajita.revision.parser.rlr.LRP.Item;
+import org.spartan.fajita.revision.parser.rlr.RLRA;
+import org.spartan.fajita.revision.parser.rlr.RLRA.J;
 import org.spartan.fajita.revision.symbols.Constants;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -30,6 +36,7 @@ public class RLRAEncoder {
   public final String topClass;
   final NonTerminal startSymbol;
   final BNF bnf;
+  final RLRA rlra;
   public final String packagePath;
   final String topClassPath;
   final Namer namer;
@@ -44,6 +51,8 @@ public class RLRAEncoder {
     startSymbol = start;
     provider = fajita.provider;
     bnf = fajita.bnf();
+    rlra = new RLRA(bnf.verbs.stream().map(x -> x.asTerminal()).collect(Collectors.toSet()), bnf.nonTerminals, bnf.rules(),
+        bnf.startSymbols);
     namer = new Namer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
@@ -67,6 +76,8 @@ public class RLRAEncoder {
     startSymbol = nested.head().asNonTerminal();
     provider = fajita.provider;
     bnf = fajita.bnf().getSubBNF(startSymbol);
+    rlra = new RLRA(bnf.verbs.stream().map(x -> x.asTerminal()).collect(Collectors.toSet()), bnf.nonTerminals, bnf.rules(),
+        bnf.startSymbols);
     namer = new Namer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
@@ -88,6 +99,8 @@ public class RLRAEncoder {
   class Namer {
     private final Map<Verb, String> verbNames = new LinkedHashMap<>();
     private final Map<Terminal, Integer> terminalCounts = new LinkedHashMap<>();
+    private final Map<Set<Item>, String> stateNames = new LinkedHashMap<>();
+    private int stateCount = 0;
 
     public String name(Verb v) {
       if (Constants.$.equals(v))
@@ -101,23 +114,22 @@ public class RLRAEncoder {
       verbNames.put(v, $);
       return $;
     }
-    private String name(Symbol s) {
-      return s.isVerb() ? name(s.asVerb()) : s.asNonTerminal().name();
+    private String name(Set<Item> q) {
+      if (stateNames.containsKey(q))
+        return stateNames.get(q);
+      String $ = koppa + stateCount++;
+      stateNames.put(q, $);
+      return $;
     }
-    private String names(Collection<? extends Symbol> ss) {
+    private String names(Collection<Set<Item>> ss) {
       return String.join("", ss.stream().map(s -> name(s)).collect(toList()));
     }
-    public String name(J j) {
-      assert j != JJAMMED && j != JUNKNOWN && j.address.size() <= 1 && !j.isEmpty();
-      StringBuilder $ = new StringBuilder();
-      if (!j.address.isEmpty())
-        $.append(name(j.address.peek()));
-      $.append("¢").append(names(j.toPush)).append("_");
-      Set<Verb> blj = j.address.baseLegalJumps();
-      blj.remove(Constants.$);
-      if (j.asJSM().peekLegalJumps().contains(Constants.$))
-        blj.add(Constants.$);
-      return $.append(names(blj)).toString();
+    public String name(Set<Item> q, boolean is$) {
+      return name(q) + (is$ ? "$" : "");
+    }
+    public String name(J j, boolean is$) {
+      assert j != null && !j.isAccept;
+      return gamma + names(j.toPush) + (is$ ? "$" : "");
     }
   }
 
@@ -125,38 +137,29 @@ public class RLRAEncoder {
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
 
     public void compute() {
+      namer.name(rlra.lrp.q0, false);
       if (!bnf.isSubBNF)
         compute$Type();
       computeStaticMethods();
       compute$$$Type();
     }
     private void computeStaticMethods() {
-      for (Verb v : analyzer.firstSetOf(startSymbol))
+      for (Verb v : rlra.lrp.first(startSymbol).stream().map(t -> t.asVerb()).collect(toList()))
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      Set<Verb> blj = new LinkedHashSet<>();
-      blj.add(Constants.$);
-      J j = RLLPConcrete.jnext(new JSM(bnf, analyzer, startSymbol, blj), v);
-      computeType(j, v, x -> namer.name(x), () -> "ϱ");
-      // NOTE should be applicable only for $ jumps
-      Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
-        assert Constants.$.equals(x);
-        return "$";
-      } : x -> {
-        assert Constants.$.equals(x);
-        return "$$$";
-      };
-      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
+      Action a = rlra.lrp.action(rlra.lrp.q0, v);
+      Supplier<String> $Solution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
+      computeType(a, v, x -> namer.name(x), $Solution);
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(j, v, unknownSolution, emptySolution)) //
+          .append(computeType(a, v, x -> chi, $Solution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
               + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
           .toString());
     }
-    private String computeType(J j, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+    private String computeType(Action a, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
       assert j != JJAMMED;
       if (j == JUNKNOWN)
         return unknownSolution.apply(origin);
