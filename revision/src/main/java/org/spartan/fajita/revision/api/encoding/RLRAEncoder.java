@@ -1,10 +1,6 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
-import static org.spartan.fajita.revision.parser.rll.JSM.JAMMED;
-import static org.spartan.fajita.revision.parser.rll.JSM.UNKNOWN;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.JJAMMED;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.JUNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,12 +17,8 @@ import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
-import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
-import org.spartan.fajita.revision.parser.rll.JSM;
-import org.spartan.fajita.revision.parser.rll.JSM.J;
-import org.spartan.fajita.revision.parser.rll.RLLPConcrete;
-import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Constants;
+import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.symbols.Verb;
@@ -37,9 +29,7 @@ public class RLRAEncoder {
   public final String topClassName;
   public final String topClass;
   final NonTerminal startSymbol;
-  final String astTopClass;
   final BNF bnf;
-  final BNFAnalyzer analyzer;
   public final String packagePath;
   final String topClassPath;
   final Namer namer;
@@ -47,15 +37,13 @@ public class RLRAEncoder {
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
 
-  public RLRAEncoder(Fajita fajita, NonTerminal start, String astTopClass) {
+  public RLRAEncoder(Fajita fajita, NonTerminal start) {
     topClassName = fajita.apiName;
     packagePath = fajita.packagePath;
     topClassPath = packagePath + "." + topClassName;
     startSymbol = start;
     provider = fajita.provider;
     bnf = fajita.bnf();
-    this.astTopClass = astTopClass;
-    analyzer = new BNFAnalyzer(bnf);
     namer = new Namer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();
@@ -71,7 +59,7 @@ public class RLRAEncoder {
     topClass = $.toString();
   }
   // TODO Roth: code duplication in constructors
-  public RLRAEncoder(Fajita fajita, Symbol nested, String astTopClass) {
+  public RLRAEncoder(Fajita fajita, Symbol nested) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
     packagePath = fajita.packagePath;
@@ -79,8 +67,6 @@ public class RLRAEncoder {
     startSymbol = nested.head().asNonTerminal();
     provider = fajita.provider;
     bnf = fajita.bnf().getSubBNF(startSymbol);
-    this.astTopClass = astTopClass;
-    analyzer = new BNFAnalyzer(bnf);
     namer = new Namer();
     apiTypes = new ArrayList<>();
     staticMethods = new ArrayList<>();

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.DerivationRule;
+import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -19,6 +20,9 @@ public interface Symbol {
   public default boolean isTerminal() {
     return Terminal.class.isAssignableFrom(getClass());
   }
+  public default boolean isExtendible() {
+    return Extendible.class.isAssignableFrom(getClass());
+  }
   public default Verb asVerb() {
     return (Verb) this;
   }
@@ -27,6 +31,9 @@ public interface Symbol {
   }
   public default Terminal asTerminal() {
     return (Terminal) this;
+  }
+  public default Extendible asExtendible() {
+    return (Extendible) this;
   }
   // NOTE applicable only after solve
   default Symbol head() {
