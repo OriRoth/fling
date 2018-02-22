@@ -166,6 +166,7 @@ import org.spartan.fajita.revision.symbols.Terminal;
     rules.add(DerivationRule.of(v("S")));
     RLRA r = new RLRA(terminals, variables, rules, startVariables);
     assert r.initialize().accept(ts("()"));
+    assert r.initialize().accept(ts("(()())"));
     assert r.initialize().accept(ts("(()((())))"));
     assert r.initialize().reject(ts("(()"));
     assert r.initialize().reject(ts("(()))"));
@@ -184,6 +185,9 @@ import org.spartan.fajita.revision.symbols.Terminal;
       }
       @Override public boolean equals(Object obj) {
         return obj instanceof Terminal && name.equals(((Terminal) obj).name());
+      }
+      @Override public String toString() {
+        return name;
       }
     };
   }
