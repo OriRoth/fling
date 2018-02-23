@@ -10,4 +10,5 @@ public interface Greek {
   public static final String phi = "φ";
   public static final String chi = "χ";
   public static final String koppa = "Ϟ";
+  public static final String omega = "ω";
 }

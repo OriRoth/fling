@@ -5,20 +5,20 @@ package org.spartan.fajita.revision.motivation;
  */
 @SuppressWarnings("unused") public class BalancedParanthesis {
   public static void main(String[] args) {
-    l().r().$().α();
-    l().l().r().l().r().r().$().α();
-    l().l().r().l().l().l().r().r().r().r().$().α();
+    l().r().$().ω();
+    l().l().r().l().r().r().$().ω();
+    l().l().r().l().l().l().r().r().r().r().$().ω();
     // l().l().r().$();
     // l().l().r().r().r();
     // l().l().r().l().l().r().r().r().r();
   }
 
   public interface $ {
-    α $();
+    ω $();
   }
 
-  public interface α {
-    void α();
+  public interface ω {
+    void ω();
   }
 
   private interface χ {
@@ -31,7 +31,7 @@ package org.spartan.fajita.revision.motivation;
   }
 
   public interface Ϟ1<S_l_0, S_r_0, S_$_0, S_l_1, S_r_1, S_$_1, S_l_2, S_r_2, S_$_2> {
-    α $();
+    ω $();
   }
 
   public interface Ϟ2<S_l_0, S_r_0, S_$_0, S_l_1, S_r_1, S_$_1, S_l_2, S_r_2, S_$_2> {
@@ -72,7 +72,7 @@ package org.spartan.fajita.revision.motivation;
     S_r_0 r();
   }
 
-  public static Ϟ2<χ, γ_2_4_6<χ, χ, α, χ, χ, χ, χ, χ, χ>, χ, χ, χ, α, χ, χ, χ> l() {
+  public static Ϟ2<χ, γ_2_4_6<χ, χ, ω, χ, χ, χ, χ, χ, χ>, χ, χ, χ, ω, χ, χ, χ> l() {
     return null;
   }
 }
