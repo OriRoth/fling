@@ -114,22 +114,16 @@ public class RLRAEncoder {
       verbNames.put(v, $);
       return $;
     }
-    private String name(Set<Item> q) {
+    public String name(Set<Item> q) {
       if (stateNames.containsKey(q))
         return stateNames.get(q);
       String $ = koppa + stateCount++;
       stateNames.put(q, $);
       return $;
     }
-    private String names(Collection<Set<Item>> ss) {
-      return String.join("", ss.stream().map(s -> name(s)).collect(toList()));
-    }
-    public String name(Set<Item> q, boolean is$) {
-      return name(q) + (is$ ? "$" : "");
-    }
-    public String name(J j, boolean is$) {
-      assert j != null && !j.isAccept;
-      return gamma + names(j.toPush) + (is$ ? "$" : "");
+    public String name(J j) {
+      assert j != null && !j.isAccept && !j.isUnknown();
+      return gamma + String.join("", j.toPush.stream().map(q -> name(q)).collect(toList()));
     }
   }
 
@@ -137,7 +131,6 @@ public class RLRAEncoder {
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
 
     public void compute() {
-      namer.name(rlra.lrp.q0, false);
       if (!bnf.isSubBNF)
         compute$Type();
       computeStaticMethods();

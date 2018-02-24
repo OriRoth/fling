@@ -15,42 +15,62 @@ import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Terminal;
 import org.spartan.fajita.revision.util.ParserTerminated;
 
-public class RLRA {
+public class RLRA implements Cloneable {
   public final LRP lrp;
-  private Stack<Set<Item>> qs;
-  private Stack<Map<NonTerminal, Map<Terminal, J>>> js;
+  private final Stack<Set<Item>> qs;
+  private final Stack<Map<NonTerminal, Map<Terminal, J>>> js;
   public boolean accepted;
   public boolean rejected;
-  private Stack<Map<NonTerminal, Map<Terminal, J>>> ukjs;
 
   public RLRA(Set<Terminal> terminals, Set<NonTerminal> variables, Set<DerivationRule> rules, Set<NonTerminal> startVariables) {
     lrp = new LRP(terminals, variables, rules, startVariables);
     qs = new Stack<>();
     js = new Stack<>();
-    ukjs = new Stack<>();
   }
-  public RLRA(LRP lrp) {
+  private RLRA(LRP lrp) {
     this.lrp = lrp;
-    this.qs = new Stack<>();
-    this.js = new Stack<>();
-    this.ukjs = new Stack<>();
+    qs = new Stack<>();
+    js = new Stack<>();
   }
+  @Override protected RLRA clone() {
+    RLRA $ = new RLRA(lrp);
+    $.qs.addAll(qs);
+    $.js.addAll(js);
+    return $;
+  }
+  /* Structural Interface */
+  public RLRA shift(Set<Item> q) {
+    RLRA $ = clone();
+    $.qs.push(q);
+    $.js.push(jumps());
+    return $;
+  }
+  public J reduce(Terminal t, DerivationRule rule) {
+    int l = rule.getRHS().size() + 1;
+    if (qs.size() < l)
+      return J.unknown(l - qs.size());
+    return js.get(qs.size() - l).get(rule.lhs).get(t);
+  }
+  public RLRA jump(J j) {
+    RLRA $ = clone();
+    for (int i = 0; i < j.toPop; ++i) {
+      $.qs.pop();
+      $.js.pop();
+    }
+    for (Set<Item> qq : j.toPush) {
+      $.qs.push(qq);
+      $.js.push(jumps());
+    }
+    return $;
+  }
+  /* Parsing Interface */
   public RLRA initialize() {
     accepted = rejected = false;
     qs.clear();
     js.clear();
-    push(lrp.q0);
+    qs.push(lrp.q0);
+    js.push(jumps());
     return this;
-  }
-  private void push(Set<Item> q) {
-    js.push(jumps(q));
-    qs.push(q);
-    Stack<Map<NonTerminal, Map<Terminal, J>>> tjs = js;
-    Stack<Set<Item>> tqs = qs;
-    js = new Stack<>();
-    js.addAll(tjs);
-    qs = new Stack<>();
-    qs.addAll(tqs);
   }
   public boolean accept(List<Terminal> ts) {
     List<Terminal> input = new ArrayList<>(ts);
@@ -90,7 +110,8 @@ public class RLRA {
       return;
     }
     if (a.isShift()) {
-      push(a.state);
+      qs.push(a.state);
+      js.push(jumps());
       return;
     }
     if (a.isReduce()) {
@@ -107,18 +128,21 @@ public class RLRA {
         accepted = true;
         return;
       }
-      qs.clear();
-      js.clear();
-      qs.addAll(j.qsAddress);
-      js.addAll(j.jsAddress);
-      for (Set<Item> qq : j.toPush)
-        push(qq);
+      for (int i = 0; i < j.toPop; ++i) {
+        qs.pop();
+        js.pop();
+      }
+      for (Set<Item> qq : j.toPush) {
+        qs.push(qq);
+        js.push(jumps());
+      }
       return;
     }
     throw new RuntimeException("Unreachable");
   }
-  private Map<NonTerminal, Map<Terminal, J>> jumps(Set<Item> q) {
+  private Map<NonTerminal, Map<Terminal, J>> jumps() {
     Map<NonTerminal, Map<Terminal, J>> $ = new LinkedHashMap<>();
+    Set<Item> q = qs.peek();
     for (NonTerminal v : lrp.variables) {
       $.put(v, new LinkedHashMap<>());
       Action a = lrp.action(q, v);
@@ -139,7 +163,7 @@ public class RLRA {
           }
           if (aa.isShift()) {
             toPush.push(aa.state);
-            $.get(v).put(t, J.record(qs, js, toPush));
+            $.get(v).put(t, J.record(0, toPush));
             continue outer;
           }
           assert aa.isReduce();
@@ -151,9 +175,13 @@ public class RLRA {
             toPush.pop();
           }
           if (l > 0) {
-            Map<NonTerminal, Map<Terminal, J>> ms = l <= js.size() ? js.get(js.size() - l) : ukjs.get(ukjs.size() + js.size() - l);
+            if (l > js.size()) {
+              $.get(v).put(t, J.unknown(l - js.size()));
+              continue outer;
+            }
+            Map<NonTerminal, Map<Terminal, J>> ms = js.get(js.size() - l);
             if (ms.get(vv).containsKey(t))
-              $.get(v).put(t, ms.get(vv).get(t));
+              $.get(v).put(t, J.elaborate(ms.get(vv).get(t), l));
             continue outer;
           }
           Action aaa = lrp.action(toPush.isEmpty() ? q : toPush.peek(), vv);
@@ -168,30 +196,46 @@ public class RLRA {
   }
 
   public static class J {
-    public static final J UNKNOWN = new J();
-    public final Stack<Set<Item>> qsAddress;
-    public final Stack<Map<NonTerminal, Map<Terminal, J>>> jsAddress;
+    public final int toPop;
     public final List<Set<Item>> toPush;
     public final boolean isAccept;
+    public final int unknownDepth;
 
-    private J(Stack<Set<Item>> qsAddress, Stack<Map<NonTerminal, Map<Terminal, J>>> jsAddress, List<Set<Item>> toPush) {
-      this.qsAddress = qsAddress;
-      this.jsAddress = jsAddress;
+    private J(int toPop, List<Set<Item>> toPush) {
+      this.toPop = toPop;
       this.toPush = toPush;
       this.isAccept = false;
+      this.unknownDepth = -1;
     }
     private J() {
-      this.qsAddress = null;
-      this.jsAddress = null;
+      this.toPop = -1;
       this.toPush = null;
       this.isAccept = true;
+      this.unknownDepth = -1;
     }
-    public static J record(Stack<Set<Item>> qsAddress, Stack<Map<NonTerminal, Map<Terminal, J>>> jsAddress,
-        List<Set<Item>> toPush) {
-      return new J(qsAddress, jsAddress, toPush);
+    private J(int depth) {
+      this.toPop = -1;
+      this.toPush = null;
+      this.isAccept = false;
+      this.unknownDepth = depth;
+    }
+    public boolean isUnknown() {
+      return unknownDepth > 0;
+    }
+    public static J record(int toPop, List<Set<Item>> toPush) {
+      return new J(toPop, toPush);
+    }
+    public static J elaborate(J j, int moreToPop) {
+      return j.isAccept ? new J() : new J(j.toPop + moreToPop, j.toPush);
     }
     public static J acceptance() {
       return new J();
+    }
+    public static J unknown(int depth) {
+      return new J(depth);
+    }
+    @Override public String toString() {
+      return isAccept ? "(accept)" : "(" + toPop + "," + toPush + ")";
     }
   }
 }
