@@ -42,7 +42,7 @@ public class RLRA implements Cloneable {
   public RLRA shift(Set<Item> q) {
     RLRA $ = clone();
     $.qs.push(q);
-    $.js.push(jumps());
+    $.js.push($.jumps());
     return $;
   }
   public J reduce(Terminal t, DerivationRule rule) {
@@ -67,7 +67,7 @@ public class RLRA implements Cloneable {
     }
     for (Set<Item> qq : j.toPush) {
       $.qs.push(qq);
-      $.js.push(jumps());
+      $.js.push($.jumps());
     }
     return $;
   }
