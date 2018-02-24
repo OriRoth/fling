@@ -185,7 +185,12 @@ public class RLRAEncoder {
         if (j.isUnknown())
           return unknownSolution.apply(r.lhs, originV, Integer.valueOf(j.unknownDepth));
         rlra = rlra.jump(r);
-        name = j.toPush.isEmpty() ? namer.name(rlra.peek()) : namer.name(j);
+        List<Set<Item>> toPush = new ArrayList<>(j.toPush);
+        toPush.add(0, rlra.peek());
+        rlra = rlra.pop();
+        j = J.record(j.toPop, toPush);
+        name = namer.name(j);
+        rlra = rlra.jump(j);
       }
       if (apiTypeNames.contains(name))
         return name + computeTemplates(rlra, unknownSolution);
@@ -202,9 +207,9 @@ public class RLRAEncoder {
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("<");
       @SuppressWarnings("hiding") List<String> templates = new ArrayList<>();
-      for (NonTerminal nt : bnf.nonTerminals)
-        for (Verb v : verbs)
-          for (int i = 0; i < bnf.f; ++i) {
+      for (int i = 0; i < bnf.f; ++i)
+        for (NonTerminal nt : bnf.nonTerminals)
+          for (Verb v : verbs) {
             Action a = lrp.action(rlra.peek(), v);
             if (a.isReject() || a.isShift())
               templates.add(chi);
@@ -248,9 +253,9 @@ public class RLRAEncoder {
 
   private String computeTemplates() {
     List<String> ts = new ArrayList<>();
-    for (NonTerminal nt : bnf.nonTerminals)
-      for (Verb v : verbs)
-        for (int i = 0; i < bnf.f; ++i)
+    for (int i = 0; i < bnf.f; ++i)
+      for (NonTerminal nt : bnf.nonTerminals)
+        for (Verb v : verbs)
           ts.add(namer.name(nt, v, i));
     return "<" + String.join(",", ts) + ">";
   }

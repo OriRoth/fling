@@ -59,6 +59,18 @@ public class RLRA implements Cloneable {
     }
     return $;
   }
+  public RLRA jump(J j) {
+    RLRA $ = clone();
+    for (int i = 0; i < j.toPop; ++i) {
+      $.qs.pop();
+      $.js.pop();
+    }
+    for (Set<Item> qq : j.toPush) {
+      $.qs.push(qq);
+      $.js.push($.jumps());
+    }
+    return $;
+  }
   public RLRA jump(DerivationRule rule, J j) {
     RLRA $ = jump(rule);
     for (int i = 0; i < j.toPop; ++i) {
@@ -77,6 +89,12 @@ public class RLRA implements Cloneable {
       $.qs.remove(0);
       $.js.remove(0);
     }
+    return $;
+  }
+  public RLRA pop() {
+    RLRA $ = clone();
+    $.qs.pop();
+    $.js.pop();
     return $;
   }
   public int size() {
