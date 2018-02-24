@@ -51,9 +51,9 @@ public class RLRA implements Cloneable {
       return J.unknown(l - qs.size());
     return js.get(qs.size() - l).get(rule.lhs).get(t);
   }
-  public RLRA jump(J j) {
+  public RLRA jump(DerivationRule rule, J j) {
     RLRA $ = clone();
-    for (int i = 0; i < j.toPop; ++i) {
+    for (int i = 0; i < j.toPop + rule.getRHS().size(); ++i) {
       $.qs.pop();
       $.js.pop();
     }
@@ -62,6 +62,12 @@ public class RLRA implements Cloneable {
       $.js.push(jumps());
     }
     return $;
+  }
+  public int size() {
+    return qs.size();
+  }
+  public Set<Item> peek() {
+    return qs.peek();
   }
   /* Parsing Interface */
   public RLRA initialize() {

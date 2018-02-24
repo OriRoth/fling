@@ -21,6 +21,7 @@ public final class BNF {
   public final String name;
   public boolean isSubBNF;
   public EBNF origin;
+  public final int f;
 
   public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<NonTerminal> nestedNonTerminals, Set<DerivationRule> rules,
       Set<NonTerminal> start, String name) {
@@ -34,6 +35,11 @@ public final class BNF {
     this.startSymbols.forEach(ss -> derivationRules.add(new DerivationRule(Constants.augmentedStartSymbol, Arrays.asList(ss))));
     this.name = name;
     this.isSubBNF = false;
+    int ff = -1;
+    for (DerivationRule r : rules)
+      if (r.getRHS().size() > ff)
+        ff = r.getRHS().size();
+    this.f = ff - 1;
   }
   public BNF getSubBNF(NonTerminal startNT) {
     Set<Verb> subVerbs = new LinkedHashSet<>();

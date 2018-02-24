@@ -18,8 +18,4 @@ public class Constants {
       return name();
     }
   };
-  public static final String epsilon = "ε";
-  public static final String rho = "ϱ";
-  public static final String sigma = "ς";
-  public static final String alpha = "α";
 }
