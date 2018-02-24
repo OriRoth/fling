@@ -188,7 +188,7 @@ public class RLRAEncoder {
           return omega;
         if (j.isUnknown())
           return namer.name(r.lhs, originV, j.unknownDepth);
-        rlra = rlra.jump(r, j);
+        rlra = rlra.jump(r);
         name = j.toPush.isEmpty() ? namer.name(rlra.peek()) : namer.name(j);
       }
       if (apiTypes.contains(name))
