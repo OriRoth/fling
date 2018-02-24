@@ -71,6 +71,14 @@ public class RLRA implements Cloneable {
     }
     return $;
   }
+  public RLRA trim() {
+    RLRA $ = clone();
+    while ($.size() > 1) {
+      $.qs.remove(0);
+      $.js.remove(0);
+    }
+    return $;
+  }
   public int size() {
     return qs.size();
   }
@@ -207,6 +215,9 @@ public class RLRA implements Cloneable {
       }
     }
     return $;
+  }
+  @Override public String toString() {
+    return qs.toString();
   }
 
   public static class J {

@@ -187,16 +187,16 @@ public class RLRAEncoder {
         rlra = rlra.jump(r);
         name = j.toPush.isEmpty() ? namer.name(rlra.peek()) : namer.name(j);
       }
-      if (apiTypes.contains(name))
+      if (apiTypeNames.contains(name))
         return name + computeTemplates(rlra, unknownSolution);
+      apiTypeNames.add(name);
       StringBuilder $ = new StringBuilder("public interface ").append(name).append(templates).append("{");
       for (Verb v : verbs) {
         Action aa = lrp.action(rlra.peek(), v);
-        $.append("public ").append(computeType(aa, rlra, v, unknownSolution)).append("(") //
+        $.append("public ").append(computeType(aa, rlra.trim(), v, unknownSolution)).append("(") //
             .append(parametersEncoding(v.type)).append(");");
       }
       apiTypes.add($.toString());
-      apiTypeNames.add(name);
       return name + computeTemplates(rlra, unknownSolution);
     }
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
