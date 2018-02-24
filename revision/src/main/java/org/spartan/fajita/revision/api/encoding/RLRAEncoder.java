@@ -12,14 +12,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.bnf.DerivationRule;
-import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.rlr.LRP;
 import org.spartan.fajita.revision.parser.rlr.LRP.Action;
@@ -151,9 +148,8 @@ public class RLRAEncoder {
     private final Set<String> apiTypeNames = new LinkedHashSet<>();
 
     public void compute() {
-      computeMiscTypes();
+      computeConstantTypes();
       computeStaticMethods();
-      compute$$$Type();
     }
     private void computeStaticMethods() {
       for (Verb v : lrp.first(startSymbol).stream().map(t -> t.asVerb()).collect(toList()))
@@ -187,7 +183,7 @@ public class RLRAEncoder {
         if (j.isAccept)
           return omega;
         if (j.isUnknown())
-          return namer.name(r.lhs, originV, j.unknownDepth);
+          return unknownSolution.apply(r.lhs, originV, Integer.valueOf(j.unknownDepth));
         rlra = rlra.jump(r);
         name = j.toPush.isEmpty() ? namer.name(rlra.peek()) : namer.name(j);
       }
@@ -197,50 +193,44 @@ public class RLRAEncoder {
       for (Verb v : verbs) {
         Action aa = lrp.action(rlra.peek(), v);
         $.append("public ").append(computeType(aa, rlra, v, unknownSolution)).append("(") //
-            .append(parameterNamesEncoding(v.type)).append(");");
+            .append(parametersEncoding(v.type)).append(");");
       }
       apiTypes.add($.toString());
       apiTypeNames.add(name);
       return name + computeTemplates(rlra, unknownSolution);
     }
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
-      assert JAMMED != jsm && UNKNOWN != jsm;
       StringBuilder $ = new StringBuilder("<");
-      List<String> templates = new ArrayList<>();
-      if (jsm.isEmpty()) {
-        $.append(emptySolution.get());
-        for (Verb v : jsm.baseLegalJumps())
-          if (!Constants.$.equals(v))
-            templates.add(unknownSolution.apply(v));
-        if (!templates.isEmpty())
-          $.append(",").append(String.join(",", templates));
-        return $.append(">").toString();
-      }
-      // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
-      $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
-      for (Verb v : jsm.trim().baseLegalJumps())
-        if (!Constants.$.equals(v))
-          templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
-      if (!templates.isEmpty())
-        $.append(",").append(String.join(",", templates));
-      return $.append(">").toString();
+      @SuppressWarnings("hiding") List<String> templates = new ArrayList<>();
+      for (NonTerminal nt : bnf.nonTerminals)
+        for (Verb v : verbs)
+          for (int i = 0; i < bnf.f; ++i) {
+            Action a = lrp.action(rlra.peek(), v);
+            if (a.isReject() || a.isShift())
+              templates.add(chi);
+            else if (a.isAccept())
+              templates.add(omega);
+            else {
+              assert a.isReduce();
+              DerivationRule r = a.rule;
+              if (!r.lhs.equals(nt))
+                templates.add(chi);
+              else {
+                J j = rlra.reduce(v, r);
+                if (j == null)
+                  templates.add(chi);
+                else if (j.isAccept)
+                  templates.add(omega);
+                else if (j.isUnknown())
+                  templates.add(unknownSolution.apply(nt, v, Integer.valueOf(j.unknownDepth)));
+                else
+                  templates.add(computeType(a, rlra, v, unknownSolution));
+              }
+            }
+          }
+      return $.append(String.join(",", templates)).append(">").toString();
     }
-    private String computeMethod(JSM jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      if (jsm == JAMMED)
-        return "";
-      if (jsm == UNKNOWN)
-        return "public " + namer.name(v) + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-      if (jsm.isEmpty())
-        return "public ϱ " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-      Symbol top = jsm.peek();
-      J jnext = RLLPConcrete.jnext(jsm, v);
-      if (JJAMMED == jnext)
-        return "";
-      return top.isVerb() && !top.asVerb().equals(v) ? "" //
-          : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
-              + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-    }
-    private void computeMiscTypes() {
+    private void computeConstantTypes() {
       apiTypes.add("public interface ${" + omega + " $();}");
       apiTypeNames.add("$");
       apiTypes.add("public interface " + omega + "{void " + omega + "();}");
@@ -248,43 +238,10 @@ public class RLRAEncoder {
       apiTypes.add("private interface " + chi + "{}");
       apiTypeNames.add(chi);
     }
-    private void compute$$$Type() {
-      // List<String> superInterfaces = new ArrayList<>(apiTypeNames);
-      // superInterfaces.add(ASTNode.class.getCanonicalName());
-      // StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
-      // .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
-      // .append(String.join(",", superInterfaces)).append("{").append(String.join("",
-      // //
-      // bnf.verbs.stream().filter(v -> v != Constants.$) //
-      // .map(v -> "public $$$ " + v.terminal.name() + "(" //
-      // + parametersEncoding(v.type) + "){recordTerminal(" //
-      // + v.terminal.getClass().getCanonicalName() //
-      // + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
-      // + parameterNamesEncoding(v.type) + ");return this;}")
-      // .collect(toList())));
-      // if (!bnf.isSubBNF)
-      // $.append("public ").append(packagePath + "." + astTopClass + "." +
-      // startSymbol.name()) //
-      // .append(" $(){return ast(" + packagePath + "." + astTopClass +
-      // ".class.getSimpleName());}");
-      // $.append("$$$(){super(new " + provider.getCanonicalName() +
-      // "().bnf().ebnf()");
-      // if (bnf.isSubBNF)
-      // $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() +
-      // "." + startSymbol.name()).append(")");
-      // $.append(",\"" + packagePath + "\");}");
-      // apiTypes.add($.append("}").toString());
-    }
     private String parametersEncoding(ParameterType[] type) {
       List<String> $ = new ArrayList<>();
       for (int i = 0; i < type.length; ++i)
-        $.add((type[i] instanceof NestedType ? ASTNode.class.getCanonicalName() : type[i].toParameterString()) + " arg" + (i + 1));
-      return String.join(",", $);
-    }
-    private String parameterNamesEncoding(ParameterType[] type) {
-      List<String> $ = new ArrayList<>();
-      for (int i = 0; i < type.length; ++i)
-        $.add("arg" + (i + 1));
+        $.add((type[i] instanceof NestedType ? Object.class.getCanonicalName() : type[i].toParameterString()) + " arg" + (i + 1));
       return String.join(",", $);
     }
   }

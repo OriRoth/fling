@@ -1,6 +1,5 @@
 package org.spartan.fajita.revision.symbols.types;
 
-import org.spartan.fajita.revision.export.ASTNode;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.Symbol;
 
@@ -37,6 +36,6 @@ public class NestedType implements ParameterType {
     return nested.equals(other.nested);
   }
   @Override public boolean accepts(Object arg) {
-    return nested.equals(arg) || ASTNode.class.isInstance(arg);
+    return nested.equals(arg);
   }
 }
