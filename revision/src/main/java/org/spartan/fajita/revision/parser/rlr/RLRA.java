@@ -269,7 +269,7 @@ public class RLRA implements Cloneable {
       return new J(toPop, toPush);
     }
     public static J elaborate(J j, int moreToPop) {
-      return j.isAccept ? new J() : new J(j.toPop + moreToPop, j.toPush);
+      return j.isAccept ? new J() : j.isUnknown() ? j : new J(j.toPop + moreToPop, j.toPush);
     }
     public static J acceptance() {
       return new J();

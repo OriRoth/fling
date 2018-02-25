@@ -35,8 +35,8 @@ public class ParenthesisSimple extends Grammar {
     l().r().$().ω();
     l().l().r().l().r().r().$().ω();
     l().l().r().l().l().l().r().r().r().r().$().ω();
-    // l().l().r().$();
-    // l().l().r().r().r();
-    // l().l().r().l().l().r().r().r().r();
+    l().l().r().$();
+    l().l().r().r().r();
+    l().l().r().l().l().r().r().r().r();
   }
 }

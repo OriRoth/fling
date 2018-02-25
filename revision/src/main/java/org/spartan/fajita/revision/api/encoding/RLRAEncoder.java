@@ -160,12 +160,16 @@ public class RLRAEncoder {
       Action a = lrp.action(lrp.q0, v);
       computeType(a, rlra, v, (nt, vv, d) -> namer.name(nt, vv, d.intValue()));
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(a, rlra, v, (nt, vv, d) -> chi)) //
+          .append(computeType(a, rlra, v, //
+              (nt, vv, d) -> Constants.$.equals(vv) && d.intValue() == 1 ? omega : chi)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
           .append("){return null;}") //
           .toString());
     }
-    private String computeType(Action a, RLRA rlra, Verb originV, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
+    private String computeType(Action a, RLRA dirty, Verb originV,
+        TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
+      RLRA clean = null;
+      RLRA templateReady = null;
       if (a.isReject())
         return chi;
       if (a.isAccept())
@@ -174,65 +178,81 @@ public class RLRAEncoder {
       if (a.isShift()) {
         Set<Item> q = a.state;
         name = namer.name(q);
-        rlra = rlra.shift(q);
+        dirty = dirty.shift(q);
+        clean = dirty.trim();
+        templateReady = dirty;
       } else if (a.isReduce()) {
         DerivationRule r = a.rule;
-        J j = rlra.reduce(originV, r);
+        J j = dirty.reduce(originV, r);
         if (j == null)
           return chi;
         if (j.isAccept)
           return omega;
         if (j.isUnknown())
           return unknownSolution.apply(r.lhs, originV, Integer.valueOf(j.unknownDepth));
-        rlra = rlra.jump(r);
+        dirty = dirty.jump(r);
         List<Set<Item>> toPush = new ArrayList<>(j.toPush);
-        toPush.add(0, rlra.peek());
-        rlra = rlra.pop();
+        toPush.add(0, dirty.peek());
+        dirty = dirty.pop();
         j = J.record(j.toPop, toPush);
         name = namer.name(j);
-        rlra = rlra.jump(j);
+        dirty = dirty.jump(j);
+        clean = empty;
+        for (Set<Item> q : toPush)
+          clean = clean.shift(q);
+        templateReady = dirty;
+        for (int i = 0; i < toPush.size(); ++i)
+          templateReady = templateReady.pop();
       }
       if (apiTypeNames.contains(name))
-        return name + computeTemplates(rlra, unknownSolution);
+        return name + computeTemplates(templateReady, unknownSolution);
       apiTypeNames.add(name);
       StringBuilder $ = new StringBuilder("public interface ").append(name).append(templates).append("{");
       for (Verb v : verbs) {
-        Action aa = lrp.action(rlra.peek(), v);
-        $.append("public ").append(computeType(aa, rlra.trim(), v, unknownSolution)).append("(") //
-            .append(parametersEncoding(v.type)).append(");");
+        Action aa = lrp.action(dirty.peek(), v);
+        $.append("public ").append(computeType(aa, clean, v, unknownSolution)).append(" ") //
+            .append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");");
       }
-      apiTypes.add($.toString());
-      return name + computeTemplates(rlra, unknownSolution);
+      apiTypes.add($.append("}").toString());
+      return name + computeTemplates(templateReady, unknownSolution);
     }
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("<");
       @SuppressWarnings("hiding") List<String> templates = new ArrayList<>();
-      for (int i = 0; i < bnf.f; ++i)
+      for (int i = 0; i < bnf.f; ++i) {
         for (NonTerminal nt : bnf.nonTerminals)
-          for (Verb v : verbs) {
-            Action a = lrp.action(rlra.peek(), v);
-            if (a.isReject() || a.isShift())
-              templates.add(chi);
-            else if (a.isAccept())
-              templates.add(omega);
-            else {
-              assert a.isReduce();
-              DerivationRule r = a.rule;
-              if (!r.lhs.equals(nt))
+          if (!Constants.augmentedStartSymbol.equals(nt))
+            for (Verb v : verbs) {
+              if (rlra.size() == 0) {
+                templates.add(unknownSolution.apply(nt, v, Integer.valueOf(i)));
+                continue;
+              }
+              Action a = lrp.action(rlra.peek(), v);
+              if (a.isReject() || a.isShift())
                 templates.add(chi);
+              else if (a.isAccept())
+                templates.add(omega);
               else {
-                J j = rlra.reduce(v, r);
-                if (j == null)
+                assert a.isReduce();
+                DerivationRule r = a.rule;
+                if (!r.lhs.equals(nt))
                   templates.add(chi);
-                else if (j.isAccept)
-                  templates.add(omega);
-                else if (j.isUnknown())
-                  templates.add(unknownSolution.apply(nt, v, Integer.valueOf(j.unknownDepth)));
-                else
-                  templates.add(computeType(a, rlra, v, unknownSolution));
+                else {
+                  J j = rlra.reduce(v, r);
+                  if (j == null)
+                    templates.add(chi);
+                  else if (j.isAccept)
+                    templates.add(omega);
+                  else if (j.isUnknown())
+                    templates.add(unknownSolution.apply(nt, v, Integer.valueOf(j.unknownDepth)));
+                  else
+                    templates.add(computeType(a, rlra, v, unknownSolution));
+                }
               }
             }
-          }
+        if (rlra.size() > 0)
+          rlra = rlra.pop();
+      }
       return $.append(String.join(",", templates)).append(">").toString();
     }
     private void computeConstantTypes() {
@@ -255,8 +275,9 @@ public class RLRAEncoder {
     List<String> ts = new ArrayList<>();
     for (int i = 0; i < bnf.f; ++i)
       for (NonTerminal nt : bnf.nonTerminals)
-        for (Verb v : verbs)
-          ts.add(namer.name(nt, v, i));
+        if (!Constants.augmentedStartSymbol.equals(nt))
+          for (Verb v : verbs)
+            ts.add(namer.name(nt, v, i));
     return "<" + String.join(",", ts) + ">";
   }
 }

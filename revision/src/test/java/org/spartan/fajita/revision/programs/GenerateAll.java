@@ -35,7 +35,7 @@ public class GenerateAll {
     // new TestAnBSimple().generateGrammarFiles();
     // new TestAnCDBn().generateGrammarFiles();
     // new TestAnBnCD().generateGrammarFiles();
-    // new Parenthesis().generateGrammarFiles();
+    new Parenthesis().generateGrammarFiles();
     new ParenthesisSimple().generateGrammarFiles();
     // new TestFinite().generateGrammarFiles();
     // new EBNF().generateGrammarFiles();
