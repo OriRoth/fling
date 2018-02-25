@@ -172,6 +172,29 @@ import org.spartan.fajita.revision.symbols.Terminal;
     assert r.initialize().reject(ts("(()))"));
     assert r.initialize().reject(ts("(()(())))"));
   }
+  @Test public void test8() {
+    Set<Terminal> terminals = new LinkedHashSet<>();
+    Set<NonTerminal> variables = new LinkedHashSet<>();
+    Set<DerivationRule> rules = new LinkedHashSet<>();
+    Set<NonTerminal> startVariables = new LinkedHashSet<>();
+    startVariables.add(v("S"));
+    terminals.add(t("("));
+    terminals.add(t(")"));
+    variables.add(v("S"));
+    variables.add(v("L"));
+    variables.add(v("R"));
+    rules.add(DerivationRule.of(v("S"), v("L"), v("S"), v("R"), v("S")));
+    rules.add(DerivationRule.of(v("S")));
+    rules.add(DerivationRule.of(v("L"), t("(")));
+    rules.add(DerivationRule.of(v("R"), t(")")));
+    RLRA r = new RLRA(terminals, variables, rules, startVariables);
+    assert r.initialize().accept(ts("()"));
+    assert r.initialize().accept(ts("(()())"));
+    assert r.initialize().accept(ts("(()((())))"));
+    assert r.initialize().reject(ts("(()"));
+    assert r.initialize().reject(ts("(()))"));
+    assert r.initialize().reject(ts("(()(())))"));
+  }
   private static NonTerminal v(String name) {
     return NonTerminal.of(name);
   }

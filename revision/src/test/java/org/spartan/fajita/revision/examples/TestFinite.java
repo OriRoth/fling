@@ -32,9 +32,11 @@ public class TestFinite extends Grammar {
     new TestFinite().generateGrammarFiles();
   }
   public static void testing() {
-    n().$();
-    m().n().$();
-    o().$();
-    m().o().$();
+    n().$().ω();
+    m().n().$().ω();
+    o().$().ω();
+    m().o().$().ω();
+    m().m();
+    n().n();
   }
 }
