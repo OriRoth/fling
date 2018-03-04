@@ -219,7 +219,8 @@ public class RLRAEncoder {
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("<");
       @SuppressWarnings("hiding") List<String> templates = new ArrayList<>();
-      for (int i = 0; i <= bnf.f; ++i) {
+      rlra = rlra.pop();
+      for (int i = 1; i <= bnf.f; ++i) {
         for (NonTerminal nt : bnf.nonTerminals)
           if (!Constants.augmentedStartSymbol.equals(nt))
             for (Verb v : verbs) {
@@ -273,7 +274,7 @@ public class RLRAEncoder {
 
   private String computeTemplates() {
     List<String> ts = new ArrayList<>();
-    for (int i = 0; i <= bnf.f; ++i)
+    for (int i = 1; i <= bnf.f; ++i)
       for (NonTerminal nt : bnf.nonTerminals)
         if (!Constants.augmentedStartSymbol.equals(nt))
           for (Verb v : verbs)
