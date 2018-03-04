@@ -210,7 +210,8 @@ public class RLRAEncoder {
       StringBuilder $ = new StringBuilder("public interface ").append(name).append(templates).append("{");
       for (Verb v : verbs) {
         Action aa = lrp.action(dirty.peek(), v);
-        $.append("public ").append(computeType(aa, clean, v, unknownSolution)).append(" ") //
+        computeType(aa, clean, v, unknownSolution);
+        $.append("public ").append(computeType(aa, dirty, v, unknownSolution)).append(" ") //
             .append(v.terminal.name()).append("(").append(parametersEncoding(v.type)).append(");");
       }
       apiTypes.add($.append("}").toString());
@@ -219,7 +220,8 @@ public class RLRAEncoder {
     private String computeTemplates(RLRA rlra, TriFunction<NonTerminal, Verb, Integer, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("<");
       @SuppressWarnings("hiding") List<String> templates = new ArrayList<>();
-      rlra = rlra.pop();
+      if (rlra.size() > 0)
+        rlra = rlra.pop();
       for (int i = 1; i <= bnf.f; ++i) {
         for (NonTerminal nt : bnf.nonTerminals)
           if (!Constants.augmentedStartSymbol.equals(nt))

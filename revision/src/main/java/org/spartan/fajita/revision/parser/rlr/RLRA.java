@@ -103,6 +103,9 @@ public class RLRA implements Cloneable {
   public Set<Item> peek() {
     return qs.peek();
   }
+  public J peekJ(NonTerminal nt, Terminal t) {
+    return js.peek().get(nt).get(t);
+  }
   /* Parsing Interface */
   public RLRA initialize() {
     accepted = rejected = false;

@@ -35,7 +35,11 @@ public class Parenthesis extends Grammar {
     new Parenthesis().generateGrammarFiles();
   }
   public static void testing() {
-    o().c().$();
-    o().o().c().o().c().c().$();
+    o().c().$().ω();
+    o().o().c().o().c().c().$().ω();
+    o().o().c().o().o().o().c().c().c().c().$().ω();
+    o().o().c().$();
+    o().o().c().c().c();
+    o().o().c().o().o().c().c().c().c();
   }
 }
