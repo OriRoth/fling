@@ -10,14 +10,6 @@ which implement a compile-time parser of the given language.
 
 Let us define a Datalog grammar, in Java, using *fling*'s interface:
 ```Java
-// Datalog grammar terminals
-public static enum Term implements Terminal {
-  rule, is, fact, by, query
-}
-// Datalog grammar non-terminals
-public static enum NT implements NonTerminal {
-  Program, Statement, Rule, Query, Fact, RuleExpression
-}
 // Datalog grammar defined in BNF
 public FlingBNF bnf() {
   return Fling.build(getClass(), Term.class, NT.class, "Datalog",
@@ -35,7 +27,15 @@ public FlingBNF bnf() {
   ;
 }
 ```
-After *fling* has created the fluent interfaces supporting Datalog, a simple Datalog program can be written in Java by
+After *fling* has created the fluent interfaces supporting Datalog, a simple Datalog program...
+```Datalog
+parent(john, bob)
+parent(bob, donald)
+ancestor(A, B) := parent(A, B)
+ancestor(A, B) := parent(A, C), ancestor(C, B)
+ancestor(john, X)?
+```
+...can be written in Java by
 method-chaining:
 ```Java
 public class Ancestor {
