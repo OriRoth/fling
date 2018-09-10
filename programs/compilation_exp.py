@@ -3,8 +3,8 @@ import timeit
 import sys
 import shutil
 
-code = 'package org.spartan.fajita.revision.examples.usage;\n\
-import static org.spartan.fajita.revision.junk.Exp2.a;\n\
+code = 'package roth.ori.fling.examples.usage;\n\
+import static roth.ori.fling.junk.Exp2.a;\n\
 public class Exp2 {\n\
   public static void main(String[] args) {\n\
     System.out.println(\n\

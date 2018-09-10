@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.spartan</groupId>
-	<artifactId>fajita</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>fling</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>fajita</name>
@@ -16,11 +16,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-
-	<build>
-		<sourceDirectory>${project.basedir}/revision/src/main/java</sourceDirectory>
-		<testSourceDirectory>${project.basedir}/revision/src/test/java</testSourceDirectory>
-	</build>
 
 	<dependencies>
 		<dependency>
