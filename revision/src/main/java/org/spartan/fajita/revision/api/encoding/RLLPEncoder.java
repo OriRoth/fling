@@ -195,14 +195,11 @@ public class RLLPEncoder {
         // NOTE $ method is built below
         if (!SpecialSymbols.$.equals(verb))
           if (pushedJSM.jump(verb) != JAMMED)
-            $.append(computeMethod(toPush, baseLegalJumps, verb, unknownSolution));
+            $.append("public " + computeType(toPush, baseLegalJumps, verb, unknownSolution) //
+                + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");");
       if (!bnf.isSubBNF && pushedJSM.jump(SpecialSymbols.$) != JAMMED)
         $.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add($.append("}").toString());
-    }
-    private String computeMethod(List<Symbol> toPush, Set<Verb> baseLegalJumps, Verb verb, Function<Verb, String> unknownSolution) {
-      return "public " + computeType(toPush, baseLegalJumps, verb, unknownSolution) //
-          + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
     }
     private void compute$Type() {
       apiTypes.add(new StringBuilder("public interface ${") //
