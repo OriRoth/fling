@@ -24,24 +24,24 @@ import org.spartan.fajita.revision.examples.TestTwoParentsBNF;
 
 public class GenerateAll {
   public static void main(String[] args) throws IOException {
-    new Datalog().generateGrammarFiles();
-    new TestInclusiveExtendibles().generateGrammarFiles();
-    new TestNonTerminalMultipleParents().generateGrammarFiles();
-    new TestTwoParentsBNF().generateGrammarFiles();
-    new TestAnBn().generateGrammarFiles();
-    new TestAnBnSimple().generateGrammarFiles();
-    new TestJumps().generateGrammarFiles();
-    new TestAnB().generateGrammarFiles();
-    new TestAnBSimple().generateGrammarFiles();
-    new TestAnCDBn().generateGrammarFiles();
-    new TestAnBnCD().generateGrammarFiles();
-    new Parenthesis().generateGrammarFiles();
+    // new Datalog().generateGrammarFiles();
+    // new TestInclusiveExtendibles().generateGrammarFiles();
+    // new TestNonTerminalMultipleParents().generateGrammarFiles();
+    // new TestTwoParentsBNF().generateGrammarFiles();
+    // new TestAnBn().generateGrammarFiles();
+    // new TestAnBnSimple().generateGrammarFiles();
+    // new TestJumps().generateGrammarFiles();
+    // new TestAnB().generateGrammarFiles();
+    // new TestAnBSimple().generateGrammarFiles();
+    // new TestAnCDBn().generateGrammarFiles();
+    // new TestAnBnCD().generateGrammarFiles();
+    // new Parenthesis().generateGrammarFiles();
     new ParenthesisSimple().generateGrammarFiles();
-    new TestFinite().generateGrammarFiles();
-    new EBNF().generateGrammarFiles();
-    new Exp().generateGrammarFiles();
-    new Exp2().generateGrammarFiles();
-    new Regex().generateGrammarFiles();
-    new FajitaTesting().generateGrammarFiles();
+    // new TestFinite().generateGrammarFiles();
+    // new EBNF().generateGrammarFiles();
+    // new Exp().generateGrammarFiles();
+    // new Exp2().generateGrammarFiles();
+    // new Regex().generateGrammarFiles();
+    // new FajitaTesting().generateGrammarFiles();
   }
 }

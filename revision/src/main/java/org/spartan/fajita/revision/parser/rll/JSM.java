@@ -1,42 +1,42 @@
 package org.spartan.fajita.revision.parser.rll;
 
-import static java.util.stream.Collectors.toList;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.*;
+import static java.util.stream.Collectors.toSet;
+import static org.spartan.fajita.revision.parser.rll.JSM.J.JJAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM.J.JUNKNOWN;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Function;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
-import org.spartan.fajita.revision.symbols.NonTerminal;
+import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Verb;
 
 public class JSM implements Cloneable {
   public static final JSM JAMMED = new JSM();
   public static final JSM UNKNOWN = new JSM();
+  public static final JSM ACCEPT = UNKNOWN;
   final BNF bnf;
   final BNFAnalyzer analyzer;
-  private final Stack<Symbol> S0;
-  private final Stack<Map<Verb, J>> S1;
+  private final Stack<Map<Verb, J>> stack;
   private Set<Verb> baseLegalJumps;
 
-  public JSM(BNF bnf) {
-    this(bnf, new BNFAnalyzer(bnf));
-  }
-  public JSM(BNF bnf, BNFAnalyzer analyzer) {
+  private JSM(BNF bnf, BNFAnalyzer analyzer) {
     this.bnf = bnf;
     this.analyzer = analyzer;
-    this.S0 = new Stack<>();
-    this.S1 = new Stack<>();
-    this.baseLegalJumps = null;
+    this.stack = new Stack<>();
+    this.baseLegalJumps = new LinkedHashSet<>();
   }
   public JSM(BNF bnf, BNFAnalyzer analyzer, Set<Verb> baseLegalJumps) {
     this(bnf, analyzer);
@@ -45,133 +45,74 @@ public class JSM implements Cloneable {
   public JSM(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> baseLegalJumps) {
     this(bnf, analyzer);
     this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
-    pushJumps(initial);
-    S0.push(initial);
+    this.stack.addAll(clone().push(initial).stack);
   }
   private JSM(JSM jsm) {
     this.bnf = jsm.bnf;
     this.analyzer = jsm.analyzer;
-    this.S0 = new Stack<>();
-    this.S1 = new Stack<>();
-    this.S0.addAll(jsm.S0);
-    for (Map<Verb, J> m : jsm.S1)
-      this.S1.add(new HashMap<>(m));
-    this.baseLegalJumps = jsm.baseLegalJumps == null ? null : new LinkedHashSet<>(jsm.baseLegalJumps);
+    this.stack = new Stack<>();
+    for (Map<Verb, J> m : jsm.stack)
+      this.stack.add(new HashMap<>(m));
+    this.baseLegalJumps = new LinkedHashSet<>(jsm.baseLegalJumps);
   }
   private JSM() {
     this.bnf = null;
     this.analyzer = null;
-    this.S0 = null;
-    this.S1 = null;
+    this.stack = null;
     this.baseLegalJumps = null;
   }
   @Override public JSM clone() {
     return new JSM(this);
   }
-  public List<Symbol> getS0() {
-    return new ArrayList<>(S0);
-  }
-  public Symbol peek() {
-    return S0.peek();
-  }
-  public JSM pop() {
-    JSM $ = clone();
-    $.S0.pop();
-    $.S1.pop();
+  public static Set<Verb> initialBaseLegalJumps() {
+    Set<Verb> $ = new LinkedHashSet<>();
+    $.add(SpecialSymbols.$);
     return $;
   }
-  public JSM jump(Verb v) {
-    return jjump(v).asJSM();
-  }
-  public J jjump(Verb v) {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return !isEmpty() ? S1.peek().get(v) : baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
-  }
-  // TODO Roth: can be optimized
-  public J jjumpFirstAvailable(Verb v) {
-    if (isEmpty())
-      return baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED;
-    J jjump = jjump(v);
-    return JJAMMED != jjump ? jjump : pop().jjumpFirstAvailable(v);
-  }
-  public JSM pushAll(List<Symbol> items) {
-    if (items.isEmpty())
-      return this;
+  private JSM push(Symbol symbol) {
     JSM $ = clone();
-    $.pushJumps(items);
+    Map<Verb, J> newDictionary = new LinkedHashMap<>();
+    Function<Verb, J> jumpSolution = stack.isEmpty() ? v -> baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED
+        : v -> stack.peek().get(v);
+    for (Verb verb : bnf.verbs)
+      if (analyzer.firstSetOf(symbol).contains(verb))
+        newDictionary.put(verb, J.of(this, symbol.isVerb() ? new ArrayList<>() : analyzer.llClosure(symbol.asNonTerminal(), verb)));
+      else if (!analyzer.isNullable(symbol))
+        newDictionary.put(verb, JJAMMED);
+      else
+        newDictionary.put(verb, jumpSolution.apply(verb));
+    $.stack.push(newDictionary);
     return $;
   }
-  private void pushJumps(List<Symbol> items) {
-    for (Symbol s : items) {
-      pushJumps(s);
-      S0.push(s);
-    }
+  public JSM push(Collection<Symbol> symbols) {
+    JSM $ = clone();
+    for (Symbol symbol : symbols)
+      $ = $.push(symbol);
+    return $;
   }
-  private void pushJumps(Symbol s) {
-    Map<Verb, J> m = S1.isEmpty() ? emptyMap() : new HashMap<>(S1.peek());
-    if (s.isVerb()) {
-      for (Verb v : bnf.verbs)
-        m.put(v, J.JJAMMED);
-      m.put(s.asVerb(), J.of(clone()));
-      S1.push(m);
-      return;
-    }
-    NonTerminal nt = s.asNonTerminal();
-    for (Verb v : bnf.verbs) {
-      List<Symbol> c = analyzer.llClosure(nt, v);
-      if (c == null) {
-        if (!analyzer.isNullable(nt))
-          m.put(v, J.JJAMMED);
-      } else {
-        J j = J.of(clone(), c);
-        m.put(v, j);
-        List<Symbol> l = getS0();
-        l.addAll(c);
-      }
-    }
-    S1.push(m);
+  public JSM jump(Verb verb) {
+    return jjump(verb).asJSM();
   }
-  // TODO Roth: can be optimized
-  public Set<Verb> peekLegalJumps() {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return new LinkedHashSet<>(
-        bnf.verbs.stream().filter(v -> !analyzer.firstSetOf(S0.peek()).contains(v) && jump(v) != JAMMED).collect(toList()));
-  }
-  // TODO Roth: can be optimized
-  private Set<Verb> allLegalJumps() {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return new LinkedHashSet<>(bnf.verbs.stream().filter(v -> jump(v) != JAMMED).collect(toList()));
+  public J jjump(Verb verb) {
+    assert this != JAMMED && this != UNKNOWN;
+    return !isEmpty() ? stack.peek().get(verb) : baseLegalJumps.contains(verb) ? JUNKNOWN : JJAMMED;
   }
   public Set<Verb> baseLegalJumps() {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty() && baseLegalJumps != null;
+    assert this != JAMMED && this != UNKNOWN && baseLegalJumps != null;
     return new LinkedHashSet<>(baseLegalJumps);
   }
-  // TODO Roth: can be optimized
   public JSM trim() {
     if (this == JAMMED || this == UNKNOWN || isEmpty())
       return this;
-    return new JSM(bnf, analyzer, allLegalJumps());
+    return new JSM(bnf, analyzer,
+        stack.peek().keySet().stream().filter(verb -> stack.peek().get(verb) != JJAMMED).collect(toSet()));
   }
-  // TODO Roth: can be optimized
-  public JSM trim1() {
-    assert this != JAMMED && this != UNKNOWN && !isEmpty();
-    return new JSM(bnf, analyzer, S0.peek(), pop().allLegalJumps());
-  }
-  public int size() {
-    assert S0.size() == S1.size();
-    return S0.size();
-  }
-  private Map<Verb, J> emptyMap() {
-    Map<Verb, J> $ = new HashMap<>();
-    for (Verb v : bnf.verbs)
-      $.put(v, baseLegalJumps != null && baseLegalJumps.contains(v) ? J.JUNKNOWN : J.JJAMMED);
-    return $;
-  }
+  // TODO Roth: generate hash code
   @Override public int hashCode() {
-    return (S0 == null ? 1 : S0.hashCode()) * (S1 == null ? 1 : S1.hashCode());
+    return stack.hashCode();
   }
   @Override public boolean equals(Object obj) {
-    return obj instanceof JSM && S0.equals(((JSM) obj).S0) //
+    return obj instanceof JSM && stack.equals(((JSM) obj).stack) //
         && Objects.equals(baseLegalJumps, ((JSM) obj).baseLegalJumps);
   }
   @Override public String toString() {
@@ -191,13 +132,10 @@ public class JSM implements Cloneable {
     $.append(super.toString()).append(" {\n");
     for (int i = 0; i < ind; ++i)
       $.append(" ");
-    $.append(" S0: ").append(S0).append(" + ").append(toPush).append("\n");
-    for (int i = 0; i < ind; ++i)
-      $.append(" ");
-    $.append(" S1: (").append(S1.size()).append(")\n");
-    if (!S1.isEmpty())
+    $.append(" stack: (").append(stack.size()).append(")\n");
+    if (!stack.isEmpty())
       for (Verb x : bnf.verbs) {
-        J j = S1.peek().get(x);
+        J j = stack.peek().get(x);
         if (j == J.JJAMMED) {
           for (int i = 0; i < ind; ++i)
             $.append(" ");
@@ -207,9 +145,10 @@ public class JSM implements Cloneable {
             $.append(" ");
           $.append("  ").append(x).append(": UNKNOWN\n");
         } else {
-          if (!seen.contains(j))
+          if (!seen.contains(j)) {
+            seen.add(j);
             $.append(j.address.toString(ind + 2, x, seen, j.toPush));
-          else {
+          } else {
             for (int i = 0; i < ind; ++i)
               $.append(" ");
             $.append("  ").append(x).append(": ").append(j.address.id()).append(" + ").append(j.toPush).append("\n");
@@ -223,18 +162,19 @@ public class JSM implements Cloneable {
     }
     for (int i = 0; i < ind; ++i)
       $.append(" ");
-    return $.append("}\n").toString();
+    return $.append("} + ").append(toPush).append("\n").toString();
   }
   private String id() {
     return super.toString();
   }
   public boolean isEmpty() {
-    return S0.isEmpty();
+    return stack.isEmpty();
   }
 
   public static class J {
     public static final J JJAMMED = new J();
     public static final J JUNKNOWN = new J();
+    public static final J JACCEPT = JUNKNOWN;
     // NOTE address is cloned
     public final JSM address;
     public final List<Symbol> toPush;
@@ -262,20 +202,19 @@ public class JSM implements Cloneable {
       return asJSM != null ? asJSM //
           : this == J.JJAMMED ? (asJSM = JAMMED) //
               : this == J.JUNKNOWN ? (asJSM = UNKNOWN) //
-                  : (asJSM = address.pushAll(toPush));
+                  : (asJSM = address.push(toPush));
     }
     public J trim() {
-      return address.isEmpty() ? this : new J(address.trim(), toPush);
+      return new J(address.trim(), toPush);
     }
-    public J trim1() {
-      assert !address.isEmpty();
-      return new J(address.trim1(), toPush);
+    @SuppressWarnings("synthetic-access") public Set<Verb> baseLegalJumps() {
+      return address.trim().baseLegalJumps;
     }
     @Override public int hashCode() {
       int $ = 1;
       if (this == JJAMMED || this == JUNKNOWN)
         return $;
-      $ += 31 * address.hashCode();
+      // $ += 31 * address.hashCode();
       $ += 17 * toPush.hashCode();
       return $;
     }

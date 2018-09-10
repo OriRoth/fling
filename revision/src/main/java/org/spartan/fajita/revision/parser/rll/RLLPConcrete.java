@@ -1,17 +1,11 @@
 package org.spartan.fajita.revision.parser.rll;
 
-import static org.spartan.fajita.revision.parser.rll.JSM.*;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.spartan.fajita.revision.parser.rll.JSM.ACCEPT;
+import static org.spartan.fajita.revision.parser.rll.JSM.JAMMED;
+import static org.spartan.fajita.revision.parser.rll.JSM.UNKNOWN;
 
 import org.spartan.fajita.revision.bnf.BNF;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
-import org.spartan.fajita.revision.parser.rll.JSM.J;
-import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
 import org.spartan.fajita.revision.symbols.Terminal;
@@ -24,74 +18,54 @@ public class RLLPConcrete {
   protected boolean reject;
   protected boolean initialized;
   protected Symbol startSymbol;
-  private Map<NonTerminal, Map<Verb, List<Symbol>>> actionTable;
   private BNFAnalyzer analyzer;
 
   public RLLPConcrete(BNF bnf) {
     this(bnf, new BNFAnalyzer(bnf));
   }
   public RLLPConcrete(BNF bnf, BNFAnalyzer analyzer) {
-    this(bnf, analyzer, new JSM(bnf));
-  }
-  private RLLPConcrete(BNF bnf, BNFAnalyzer analyzer, JSM jsm) {
     this.bnf = bnf;
-    this.jsm = jsm;
+    this.jsm = null;
     this.analyzer = analyzer;
-    this.actionTable = createActionTable();
     accept = false;
     reject = false;
     initialized = false;
-  }
-  void push(Symbol... items) {
-    push(Arrays.asList(items));
-  }
-  void push(List<Symbol> items) {
-    jsm = jsm.pushAll(items);
   }
   void jump(Verb v) {
     jsm = jsm.jump(v);
     if (jsm == JAMMED || jsm == UNKNOWN)
       reject = true;
   }
-  Symbol pop() {
-    Symbol $ = jsm.peek();
-    jsm = jsm.pop();
-    return $;
-  }
-  Symbol peek() {
-    return jsm.peek();
-  }
-  // TODO Roth: check whether reminder is needed
-  private RLLPConcrete consume(Verb v) {
-    if (jsm == null || initialized && jsm.isEmpty())
+  private RLLPConcrete consume(Verb verb) {
+    if (!initialized) {
+      jsm = new JSM(bnf, analyzer,
+          bnf.startSymbols.stream().filter(s -> analyzer.firstSetOf(s.asNonTerminal()).contains(verb)).findAny().get(),
+          JSM.initialBaseLegalJumps());
+      initialized = true;
+    }
+    assert jsm != null && verb != null;
+    if (initialized && jsm.isEmpty()) {
       reject = true;
+      return this;
+    }
     if (accept)
       throw new RuntimeException("Parser has already accepted");
     if (reject)
       throw new RuntimeException("Parser has already rejected");
-    if (!initialized) {
-      push(bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
-      initialized = true;
-    }
-    Symbol top = peek();
-    if (v.equals(SpecialSymbols.$)) {
-      if (!top.equals(SpecialSymbols.$))
+    JSM $ = jsm.jump(verb);
+    if (verb.equals(SpecialSymbols.$)) {
+      if ($ != ACCEPT)
         reject = true;
-      pop();
+      else
+        accept = true;
       return this;
     }
-    if (top.isVerb()) {
-      if (!top.equals(v))
-        reject = true;
-      pop();
+    assert $ != UNKNOWN && $ != ACCEPT;
+    if ($ == JAMMED) {
+      reject = true;
       return this;
     }
-    if (isError(top.asNonTerminal(), v)) {
-      jump(v);
-      return this;
-    }
-    pop();
-    push(getPush(top.asNonTerminal(), v));
+    jsm = $;
     return this;
   }
   public RLLPConcrete consume(Terminal t) {
@@ -117,58 +91,9 @@ public class RLLPConcrete {
       return false;
     if (accept)
       return true;
-    return jsm.getS0().stream().allMatch(s -> analyzer.isNullable(s));
+    return jsm.jump(SpecialSymbols.$) == ACCEPT;
   }
   public boolean rejected() {
     return reject;
-  }
-  // TODO Roth: optimize action table creation in constructor
-  // NOTE does not support all cases
-  public static JSM next(JSM jsm, Verb v) {
-    RLLPConcrete rllp = new RLLPConcrete(jsm.bnf, jsm.analyzer, jsm);
-    rllp.initialized = true;
-    rllp.consume(v);
-    return rllp.jsm;
-  }
-  // NOTE does not support all cases
-  public static J jnext(JSM jsm, Verb v) {
-    // TODO Roth: verify empty jsm support is not needed
-    if (JAMMED == jsm || UNKNOWN == jsm || jsm.isEmpty())
-      return JJAMMED;
-    Symbol top = jsm.peek();
-    if (v.equals(SpecialSymbols.$)) {
-      if (!top.equals(SpecialSymbols.$))
-        return JJAMMED;
-      return J.of(jsm.pop());
-    }
-    if (top.isVerb()) {
-      if (!top.equals(v))
-        return JJAMMED;
-      return J.of(jsm.pop());
-    }
-    // TODO Roth: optimize action table creation
-    Map<NonTerminal, Map<Verb, List<Symbol>>> at = new RLLPConcrete(jsm.bnf, jsm.analyzer).actionTable;
-    if (!at.get(top.asNonTerminal()).containsKey(v))
-      return jsm.jjump(v);
-    return J.of(jsm.pop(), at.get(top.asNonTerminal()).get(v));
-  }
-  private List<Symbol> getPush(NonTerminal nt, Verb v) {
-    return actionTable.get(nt).get(v);
-  }
-  private boolean isError(NonTerminal nt, Verb v) {
-    return !actionTable.get(nt).containsKey(v);
-  }
-  private Map<NonTerminal, Map<Verb, List<Symbol>>> createActionTable() {
-    Map<NonTerminal, Map<Verb, List<Symbol>>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.nonTerminals) {
-      Map<Verb, List<Symbol>> innerMap = new HashMap<>();
-      for (Verb v : bnf.verbs) {
-        List<Symbol> closure = analyzer.llClosure(nt, v);
-        if (closure != null)
-          innerMap.put(v, closure);
-      }
-      $.put(nt, innerMap);
-    }
-    return $;
   }
 }

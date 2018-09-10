@@ -1,6 +1,7 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
+import static org.spartan.fajita.revision.parser.rll.JSM.ACCEPT;
 import static org.spartan.fajita.revision.parser.rll.JSM.JAMMED;
 import static org.spartan.fajita.revision.parser.rll.JSM.UNKNOWN;
 import static org.spartan.fajita.revision.parser.rll.JSM.J.JJAMMED;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.spartan.fajita.revision.api.Fajita;
 import org.spartan.fajita.revision.bnf.BNF;
@@ -24,7 +24,6 @@ import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.parser.rll.JSM;
 import org.spartan.fajita.revision.parser.rll.JSM.J;
-import org.spartan.fajita.revision.parser.rll.RLLPConcrete;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -121,17 +120,9 @@ public class RLLPEncoder {
     private String names(Collection<? extends Symbol> ss) {
       return String.join("", ss.stream().map(s -> name(s)).collect(toList()));
     }
-    public String name(J j) {
-      assert j != JJAMMED && j != JUNKNOWN && j.address.size() <= 1 && !j.isEmpty();
-      StringBuilder $ = new StringBuilder();
-      if (!j.address.isEmpty())
-        $.append(name(j.address.peek()));
-      $.append("¢").append(names(j.toPush)).append("_");
-      Set<Verb> blj = j.address.baseLegalJumps();
-      blj.remove(SpecialSymbols.$);
-      if (j.asJSM().peekLegalJumps().contains(SpecialSymbols.$))
-        blj.add(SpecialSymbols.$);
-      return $.append(names(blj)).toString();
+    public String name(Collection<Symbol> toPush, Set<Verb> legalJumps) {
+      assert toPush != null && legalJumps != null;
+      return new StringBuilder("π_").append(names(toPush)).append("_").append(names(legalJumps)).toString();
     }
   }
 
@@ -142,123 +133,102 @@ public class RLLPEncoder {
       if (!bnf.isSubBNF)
         compute$Type();
       computeStaticMethods();
-      compute$$$Type();
+      computeΛType();
     }
     private void computeStaticMethods() {
       for (Verb v : analyzer.firstSetOf(startSymbol))
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      Set<Verb> blj = new LinkedHashSet<>();
-      blj.add(SpecialSymbols.$);
-      J j = RLLPConcrete.jnext(new JSM(bnf, analyzer, startSymbol, blj), v);
-      computeType(j, v, x -> namer.name(x), () -> "ϱ");
+      List<Symbol> toPush = new ArrayList<>();
+      toPush.add(startSymbol);
+      Set<Verb> baseLegalJumps = JSM.initialBaseLegalJumps();
+      computeType(toPush, baseLegalJumps, v, x -> namer.name(x));
       // NOTE should be applicable only for $ jumps
       Function<Verb, String> unknownSolution = !bnf.isSubBNF ? x -> {
         assert SpecialSymbols.$.equals(x);
         return "$";
       } : x -> {
         assert SpecialSymbols.$.equals(x);
-        return "$$$";
+        return "Λ";
       };
-      Supplier<String> emptySolution = !bnf.isSubBNF ? () -> "$" : () -> "$$$";
       staticMethods.add(new StringBuilder("public static ") //
-          .append(computeType(j, v, unknownSolution, emptySolution)) //
+          .append(computeType(toPush, baseLegalJumps, v, unknownSolution)) //
           .append(" ").append(v.terminal.name()).append("(").append(parametersEncoding(v.type)) //
-          .append("){").append("$$$ $$$ = new $$$();$$$.recordTerminal(" //
+          .append("){").append("Λ Λ = new Λ();Λ.recordTerminal(" //
               + v.terminal.getClass().getCanonicalName() + "." + v.terminal.name() //
-              + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return $$$;}") //
+              + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return Λ;}") //
           .toString());
     }
-    private String computeType(J j, Verb origin, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      assert j != JJAMMED;
-      if (j == JUNKNOWN)
+    private String computeType(List<Symbol> toPush, Set<Verb> baseLegalJumps, Verb origin, Function<Verb, String> unknownSolution) {
+      if (toPush.isEmpty()) {
+        assert baseLegalJumps.contains(origin);
         return unknownSolution.apply(origin);
-      if (j.isEmpty())
-        return emptySolution.get();
-      J jpeek = j.toPush.isEmpty() ? j.trim1() : j.trim();
-      String $ = namer.name(jpeek);
-      JSM jsmTemplate = j.toPush.isEmpty() ? j.address.pop() : j.address;
-      if (apiTypeNames.contains($))
-        return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
-      apiTypeNames.add($);
-      JSM jsm = jpeek.asJSM();
-      Set<Verb> lj = jpeek.address.baseLegalJumps();
-      StringBuilder t = new StringBuilder("public interface ").append($);
-      StringBuilder template = new StringBuilder("<ϱ");
-      List<String> templates = new ArrayList<>();
-      for (Verb v : lj)
-        // NOTE an optimization for $ jump
-        if (!SpecialSymbols.$.equals(v))
-          templates.add(namer.name(v));
-      if (!templates.isEmpty()) {
-        template.append(",");
-        template.append(String.join(",", templates));
       }
-      t.append(template.append(">"));
-      if (bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
-        t.append(" extends ").append(ASTNode.class.getCanonicalName());
-      t.append("{");
-      // NOTE further filtering is done in {@link RLLPEncoder#computeMethod}
-      for (Verb v : bnf.verbs)
+      Symbol firstToPush = toPush.get(0);
+      List<Symbol> restToPush = new ArrayList<>(toPush);
+      restToPush.remove(0);
+      if (analyzer.firstSetOf(firstToPush).contains(origin)) {
+        List<Symbol> newToPush = firstToPush.isTerminal() ? new ArrayList<>()
+            : analyzer.llClosure(firstToPush.asNonTerminal(), origin);
+        Set<Verb> newBaseLegalJumps = new JSM(bnf, analyzer, baseLegalJumps).push(restToPush).trim().baseLegalJumps();
+        String typeName = namer.name(newToPush, newBaseLegalJumps);
+        if (!apiTypeNames.contains(typeName)) {
+          apiTypeNames.add(typeName);
+          createType(typeName, newToPush, newBaseLegalJumps, unknownSolution);
+        }
+        if (baseLegalJumps.isEmpty() || baseLegalJumps.size() == 1 && baseLegalJumps.contains(SpecialSymbols.$))
+          return typeName;
+        return typeName + "<" + String.join(",", baseLegalJumps.stream().filter(verb -> verb != SpecialSymbols.$)
+            .map(verb -> computeType(restToPush, baseLegalJumps, verb, unknownSolution)).collect(toList())) + ">";
+      }
+      assert analyzer.isNullable(firstToPush);
+      return computeType(restToPush, baseLegalJumps, origin, unknownSolution);
+    }
+    private void createType(String typeName, List<Symbol> toPush, Set<Verb> baseLegalJumps,
+        Function<Verb, String> unknownSolution) {
+      StringBuilder $ = new StringBuilder("public interface ").append(typeName);
+      if (!baseLegalJumps.isEmpty() && (baseLegalJumps.size() != 1 || !baseLegalJumps.contains(SpecialSymbols.$)))
+        $.append("<").append(
+            String.join(",", baseLegalJumps.stream().filter(verb -> verb != SpecialSymbols.$).map(namer::name).collect(toList())))
+            .append(">");
+      $.append("{");
+      JSM pushedJSM = new JSM(bnf, analyzer, baseLegalJumps).push(toPush);
+      for (Verb verb : bnf.verbs)
         // NOTE $ method is built below
-        if (!SpecialSymbols.$.equals(v))
-          t.append(computeMethod(jsm, v, unknownSolution, emptySolution));
-      if (!bnf.isSubBNF && jsm.peekLegalJumps().contains(SpecialSymbols.$))
-        t.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
-      apiTypes.add(t.append("}").toString());
-      return $ + computeTemplates(jsmTemplate, unknownSolution, emptySolution);
+        if (!SpecialSymbols.$.equals(verb))
+          $.append(computeMethod(pushedJSM, verb, unknownSolution));
+      if (!bnf.isSubBNF && pushedJSM.jump(SpecialSymbols.$) == ACCEPT)
+        $.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
+      apiTypes.add($.append("}").toString());
     }
-    private String computeTemplates(JSM jsm, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
-      assert JAMMED != jsm && UNKNOWN != jsm;
-      StringBuilder $ = new StringBuilder("<");
-      List<String> templates = new ArrayList<>();
-      if (jsm.isEmpty()) {
-        $.append(emptySolution.get());
-        for (Verb v : jsm.baseLegalJumps())
-          if (!SpecialSymbols.$.equals(v))
-            templates.add(unknownSolution.apply(v));
-        if (!templates.isEmpty())
-          $.append(",").append(String.join(",", templates));
-        return $.append(">").toString();
-      }
-      // NOTE can send null as origin verb as sent J cannot be JUNKNOWN
-      $.append(computeType(J.of(jsm), null, unknownSolution, emptySolution));
-      for (Verb v : jsm.trim().baseLegalJumps())
-        if (!SpecialSymbols.$.equals(v))
-          templates.add(computeType(jsm.jjumpFirstAvailable(v), v, unknownSolution, emptySolution));
-      if (!templates.isEmpty())
-        $.append(",").append(String.join(",", templates));
-      return $.append(">").toString();
-    }
-    private String computeMethod(JSM jsm, Verb v, Function<Verb, String> unknownSolution, Supplier<String> emptySolution) {
+    private String computeMethod(JSM jsm, Verb verb, Function<Verb, String> unknownSolution) {
       if (jsm == JAMMED)
         return "";
       if (jsm == UNKNOWN)
-        return "public " + namer.name(v) + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-      if (jsm.isEmpty())
-        return "public ϱ " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
-      Symbol top = jsm.peek();
-      J jnext = RLLPConcrete.jnext(jsm, v);
-      if (JJAMMED == jnext)
+        return "public " + namer.name(verb) + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
+      J jnext = jsm.jjump(verb);
+      if (jnext == JJAMMED)
         return "";
-      return top.isVerb() && !top.asVerb().equals(v) ? "" //
-          : "public " + computeType(jnext, v, unknownSolution, emptySolution) //
-              + " " + v.terminal.name() + "(" + parametersEncoding(v.type) + ");";
+      if (jnext == JUNKNOWN)
+        return "public " + namer.name(verb) //
+            + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
+      return "public " + computeType(jnext.toPush, jnext.address.trim().baseLegalJumps(), verb, unknownSolution) //
+          + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
     }
     private void compute$Type() {
       apiTypes.add(new StringBuilder("public interface ${") //
           .append(packagePath.toLowerCase() + "." + astTopClass + "." + startSymbol.name()).append(" $();}").toString());
       apiTypeNames.add("$");
     }
-    private void compute$$$Type() {
+    private void computeΛType() {
       List<String> superInterfaces = new ArrayList<>(apiTypeNames);
       superInterfaces.add(ASTNode.class.getCanonicalName());
-      StringBuilder $ = new StringBuilder("private static class $$$ extends ") //
+      StringBuilder $ = new StringBuilder("private static class Λ extends ") //
           .append(FluentAPIRecorder.class.getCanonicalName()).append(" implements ") //
           .append(String.join(",", superInterfaces)).append("{").append(String.join("", //
               bnf.verbs.stream().filter(v -> v != SpecialSymbols.$) //
-                  .map(v -> "public $$$ " + v.terminal.name() + "(" //
+                  .map(v -> "public Λ " + v.terminal.name() + "(" //
                       + parametersEncoding(v.type) + "){recordTerminal(" //
                       + v.terminal.getClass().getCanonicalName() //
                       + "." + v.terminal.name() + (v.type.length == 0 ? "" : ",") //
@@ -267,7 +237,7 @@ public class RLLPEncoder {
       if (!bnf.isSubBNF)
         $.append("public ").append(packagePath + "." + astTopClass + "." + startSymbol.name()) //
             .append(" $(){return ast(" + packagePath + "." + astTopClass + ".class.getSimpleName());}");
-      $.append("$$$(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
+      $.append("Λ(){super(new " + provider.getCanonicalName() + "().bnf().ebnf()");
       if (bnf.isSubBNF)
         $.append(".makeSubBNF(").append(startSymbol.getClass().getCanonicalName() + "." + startSymbol.name()).append(")");
       $.append(",\"" + packagePath + "\");}");
