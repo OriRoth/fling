@@ -187,6 +187,8 @@ public class RLLPEncoder {
         $.append("<").append(
             String.join(",", baseLegalJumps.stream().filter(verb -> verb != SpecialSymbols.$).map(namer::name).collect(toList())))
             .append(">");
+      if (bnf.isSubBNF && baseLegalJumps.contains(SpecialSymbols.$))
+        $.append(" extends ").append(ASTNode.class.getCanonicalName());
       $.append("{");
       JSM pushedJSM = new JSM(bnf, analyzer, baseLegalJumps).push(toPush);
       for (Verb verb : bnf.verbs)
