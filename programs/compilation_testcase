@@ -1,12 +1,12 @@
 rm -rf bin
 rm -rf src
 mkdir bin
-mkdir -p src/test/java/org/spartan/fajita/revision/examples/usage
+mkdir -p src/test/java/org/spartan/fling/revision/examples/usage
 cp -r ../target/classes/* bin/
-rm -r bin/org/spartan/fajita/revision/examples/usage/
-cp ../revision/src/test/java/org/spartan/fajita/revision/examples/usage/$1.java src/test/java/org/spartan/fajita/revision/examples/usage/
+rm -r bin/org/spartan/fling/revision/examples/usage/
+cp ../revision/src/test/java/org/spartan/fling/revision/examples/usage/$1.java src/test/java/org/spartan/fling/revision/examples/usage/
 
-target=src/test/java/org/spartan/fajita/revision/examples/usage/$1.java
+target=src/test/java/org/spartan/fling/revision/examples/usage/$1.java
 rm -rf out/graphs/testcases/$1
 mkdir -p out/graphs/testcases/$1
 echo "" > out/graphs/testcases/$1/$1.csv

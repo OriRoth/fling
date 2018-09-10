@@ -144,6 +144,4 @@ out/
 
 # User defined (add below this line) // vim: +,$!sort -u
 /target/
-To do:
-src/main/java/org/spartan/fajita/api/junk/
-revision/src/test/java/org/spartan/fajita/revision/junk/
+src/test/java/roth/ori/fling/junk/

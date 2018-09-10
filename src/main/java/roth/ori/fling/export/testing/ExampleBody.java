@@ -8,12 +8,12 @@ import roth.ori.fling.symbols.Terminal;
 @SuppressWarnings("all") public class ExampleBody {
   public static ExampleBody_2 call(Terminal arg0) {
     $$$ $$$ = new $$$();
-    $$$.recordTerminal(FajitaTesting.Term.call, arg0);
+    $$$.recordTerminal(FlingTesting.Term.call, arg0);
     return $$$;
   }
   public static ExampleBody1_1<ExampleBody_2> toConclude(NonTerminal arg0) {
     $$$ $$$ = new $$$();
-    $$$.recordTerminal(FajitaTesting.Term.toConclude, arg0);
+    $$$.recordTerminal(FlingTesting.Term.toConclude, arg0);
     return $$$;
   }
 
@@ -47,19 +47,19 @@ import roth.ori.fling.symbols.Terminal;
   private static class $$$ extends FluentAPIRecorder
       implements ExampleBody_2, ExampleBody_3, ExampleBody1_1, ExampleBodyNext_1, ExampleBodyNext_2, ExampleBodyNext_1_rec_8f {
     $$$() {
-      super(new FajitaTesting().bnf().ebnf().makeSubBNF(
-          FajitaTesting.NT.ExampleBody), "roth.ori.fling.export.testing");
+      super(new FlingTesting().bnf().ebnf().makeSubBNF(
+          FlingTesting.NT.ExampleBody), "roth.ori.fling.export.testing");
     }
     public $$$ with(Object... arg0) {
-      recordTerminal(FajitaTesting.Term.with, arg0);
+      recordTerminal(FlingTesting.Term.with, arg0);
       return this;
     }
     public $$$ then(Terminal arg0) {
-      recordTerminal(FajitaTesting.Term.then, arg0);
+      recordTerminal(FlingTesting.Term.then, arg0);
       return this;
     }
     public $$$ call(Terminal arg0) {
-      recordTerminal(FajitaTesting.Term.call, arg0);
+      recordTerminal(FlingTesting.Term.call, arg0);
       return this;
     }
   }

@@ -52,7 +52,7 @@ public class JamoosClassesRenderer {
     this.ebnf = ebnf;
     this.packagePath = packagePath;
     this.topClassName = topClassName(ebnf);
-    // NOTE should correspond to the producer in Fajita
+    // NOTE should correspond to the producer in Fling
     parseTopClass(ebnf.afterSolution());
   }
   public static String topClassName(EBNF ebnf) {

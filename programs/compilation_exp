@@ -1,11 +1,11 @@
 rm -rf bin
 rm -rf src
 mkdir bin
-mkdir -p src/test/java/org/spartan/fajita/revision/examples/usage
+mkdir -p src/test/java/org/spartan/fling/revision/examples/usage
 cp -r ../target/classes/* bin/
-rm -r bin/org/spartan/fajita/revision/examples/usage/
+rm -r bin/org/spartan/fling/revision/examples/usage/
 
-target=src/test/java/org/spartan/fajita/revision/examples/usage/Exp2.java
+target=src/test/java/org/spartan/fling/revision/examples/usage/Exp2.java
 rm -rf out/graphs/testcases/Exp2
 mkdir -p out/graphs/testcases/Exp2
 echo "" > $target

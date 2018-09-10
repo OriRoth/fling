@@ -18,8 +18,8 @@ import static roth.ori.fling.examples.EBNF.Term.to;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -35,27 +35,27 @@ public class EBNF extends Grammar {
     EBNF, Rule, ClauseTail, Literal, To, AndOr
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(getClass(), Term.class, NT.class, "EBNF", Main.packagePath, Main.projectPath) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(getClass(), Term.class, NT.class, "EBNF", Main.packagePath, Main.projectPath) //
         .start(EBNF) //
-        .derive(EBNF).to(Fajita.oneOrMore(Rule)) //
-        .derive(Rule).to(Fajita.attribute(derive, String.class), To, Fajita.option(ClauseTail)) //
-        .derive(To).to(Fajita.attribute(to, Literal)) //
-        /**/.or(Fajita.attribute(to, String.class)) //
-        .derive(ClauseTail).to(Fajita.noneOrMore(AndOr)) //
-        .derive(AndOr).to(Fajita.either(Fajita.attribute(and, Literal), Fajita.attribute(or, Literal))) //
-        /**/.or(Fajita.either(Fajita.attribute(and, String.class), Fajita.attribute(or, String.class))) //
-        .derive(Literal).to(Fajita.attribute(oneOrMore, Literal), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(oneOrMore, String.class), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(noneOrMore, Literal), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(noneOrMore, String.class), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(option, Literal), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(option, String.class), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(either, Literal, Literal), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(either, Literal, String.class), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(either, String.class, Literal), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(either, String.class, String.class), Fajita.option(ClauseTail)) //
-        /**/.or(Fajita.attribute(attribute, String.class, new VarArgs(Object.class)), Fajita.option(ClauseTail)) //
+        .derive(EBNF).to(Fling.oneOrMore(Rule)) //
+        .derive(Rule).to(Fling.attribute(derive, String.class), To, Fling.option(ClauseTail)) //
+        .derive(To).to(Fling.attribute(to, Literal)) //
+        /**/.or(Fling.attribute(to, String.class)) //
+        .derive(ClauseTail).to(Fling.noneOrMore(AndOr)) //
+        .derive(AndOr).to(Fling.either(Fling.attribute(and, Literal), Fling.attribute(or, Literal))) //
+        /**/.or(Fling.either(Fling.attribute(and, String.class), Fling.attribute(or, String.class))) //
+        .derive(Literal).to(Fling.attribute(oneOrMore, Literal), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(oneOrMore, String.class), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(noneOrMore, Literal), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(noneOrMore, String.class), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(option, Literal), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(option, String.class), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(either, Literal, Literal), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(either, Literal, String.class), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(either, String.class, Literal), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(either, String.class, String.class), Fling.option(ClauseTail)) //
+        /**/.or(Fling.attribute(attribute, String.class, new VarArgs(Object.class)), Fling.option(ClauseTail)) //
     ;
   }
   public static void main(String[] args) throws IOException {

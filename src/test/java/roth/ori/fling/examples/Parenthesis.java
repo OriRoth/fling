@@ -9,8 +9,8 @@ import static roth.ori.fling.junk.Parenthesis.o;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -25,8 +25,8 @@ public class Parenthesis extends Grammar {
     S, O, C
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(Parenthesis.class, Term.class, NT.class, "Parenthesis", Main.packagePath, Main.projectPath).start(S) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(Parenthesis.class, Term.class, NT.class, "Parenthesis", Main.packagePath, Main.projectPath).start(S) //
         .derive(S).to(O, S, C, S).orNone() //
         .derive(O).to(o) //
         .derive(C).to(c);

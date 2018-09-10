@@ -1,8 +1,8 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fajita.either;
-import static roth.ori.fling.api.Fajita.noneOrMore;
-import static roth.ori.fling.api.Fajita.option;
+import static roth.ori.fling.api.Fling.either;
+import static roth.ori.fling.api.Fling.noneOrMore;
+import static roth.ori.fling.api.Fling.option;
 import static roth.ori.fling.examples.TestAnCDBn.NT.A;
 import static roth.ori.fling.examples.TestAnCDBn.NT.B;
 import static roth.ori.fling.examples.TestAnCDBn.NT.S;
@@ -15,8 +15,8 @@ import static roth.ori.fling.junk.TestAnCDBn.a1;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -31,8 +31,8 @@ public class TestAnCDBn extends Grammar {
     S, A, B, C, D
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(TestAnCDBn.class, Term.class, NT.class, "TestAnCDBn", Main.packagePath, Main.projectPath).start(S) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(TestAnCDBn.class, Term.class, NT.class, "TestAnCDBn", Main.packagePath, Main.projectPath).start(S) //
         .derive(S).to(A, S, noneOrMore(either(c1, d1), option(e1)), B).orNone() //
         .derive(A).to(a1) //
         .derive(B).to(b1);

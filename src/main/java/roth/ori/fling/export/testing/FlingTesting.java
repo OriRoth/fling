@@ -1,24 +1,24 @@
 package roth.ori.fling.export.testing;
 
-import static roth.ori.fling.api.Fajita.attribute;
-import static roth.ori.fling.api.Fajita.noneOrMore;
-import static roth.ori.fling.api.Fajita.oneOrMore;
-import static roth.ori.fling.api.Fajita.option;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.Example;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.ExampleBody;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.ExampleBodyNext;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.ExampleKind;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.MalExample;
-import static roth.ori.fling.export.testing.FajitaTesting.NT.Test;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.call;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.example;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.malexample;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.then;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.toConclude;
-import static roth.ori.fling.export.testing.FajitaTesting.Term.with;
+import static roth.ori.fling.api.Fling.attribute;
+import static roth.ori.fling.api.Fling.noneOrMore;
+import static roth.ori.fling.api.Fling.oneOrMore;
+import static roth.ori.fling.api.Fling.option;
+import static roth.ori.fling.export.testing.FlingTesting.NT.Example;
+import static roth.ori.fling.export.testing.FlingTesting.NT.ExampleBody;
+import static roth.ori.fling.export.testing.FlingTesting.NT.ExampleBodyNext;
+import static roth.ori.fling.export.testing.FlingTesting.NT.ExampleKind;
+import static roth.ori.fling.export.testing.FlingTesting.NT.MalExample;
+import static roth.ori.fling.export.testing.FlingTesting.NT.Test;
+import static roth.ori.fling.export.testing.FlingTesting.Term.call;
+import static roth.ori.fling.export.testing.FlingTesting.Term.example;
+import static roth.ori.fling.export.testing.FlingTesting.Term.malexample;
+import static roth.ori.fling.export.testing.FlingTesting.Term.then;
+import static roth.ori.fling.export.testing.FlingTesting.Term.toConclude;
+import static roth.ori.fling.export.testing.FlingTesting.Term.with;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.export.FluentAPIRecorder;
@@ -27,7 +27,7 @@ import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
 
-@SuppressWarnings("all") public class FajitaTesting extends Grammar {
+@SuppressWarnings("all") public class FlingTesting extends Grammar {
   public enum Term implements Terminal {
     example, malexample, call, with, toConclude, then
   }
@@ -36,8 +36,8 @@ import roth.ori.fling.symbols.types.VarArgs;
     Test, ExampleKind, Example, MalExample, ExampleBody, ExampleBodyNext
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(getClass(), Term.class, NT.class, "FajitaTesting", Main.packagePath, Main.projectPath) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(getClass(), Term.class, NT.class, "FlingTesting", Main.packagePath, Main.projectPath) //
         .start(Test) //
         .derive(Test).to(oneOrMore(ExampleKind)) //
         .specialize(ExampleKind).into(Example, MalExample) //
@@ -66,13 +66,13 @@ import roth.ori.fling.symbols.types.VarArgs;
   public interface Example_1<example, malexample> extends ASTNode {
     example example(ASTNode arg0);
     malexample malexample(ASTNode arg0);
-    FajitaTestingAST.Test $();
+    FlingTestingAST.Test $();
   }
 
   public interface MalExample_1<example, malexample> extends ASTNode {
     example example(ASTNode arg0);
     malexample malexample(ASTNode arg0);
-    FajitaTestingAST.Test $();
+    FlingTestingAST.Test $();
   }
 
   public interface ExampleBody1_1<call> {
@@ -98,13 +98,13 @@ import roth.ori.fling.symbols.types.VarArgs;
   public interface MalExample_1_rec_167 {
     Example_1_rec_3a4 example(ASTNode arg0);
     MalExample_1_rec_167 malexample(ASTNode arg0);
-    FajitaTestingAST.Test $();
+    FlingTestingAST.Test $();
   }
 
   public interface Example_1_rec_3a4 {
     Example_1_rec_3a4 example(ASTNode arg0);
     MalExample_1_rec_167 malexample(ASTNode arg0);
-    FajitaTestingAST.Test $();
+    FlingTestingAST.Test $();
   }
 
   public interface ExampleBodyNext_1_rec_8f {
@@ -117,7 +117,7 @@ import roth.ori.fling.symbols.types.VarArgs;
   private static class $$$ extends FluentAPIRecorder implements Example_1, MalExample_1, ExampleBody1_1, ExampleBody_2,
       ExampleBody_3, ExampleBodyNext_1, ExampleBodyNext_2, MalExample_1_rec_167, Example_1_rec_3a4, ExampleBodyNext_1_rec_8f {
     $$$() {
-      super(new FajitaTesting().bnf().ebnf(), "roth.ori.fling.export.testing");
+      super(new FlingTesting().bnf().ebnf(), "roth.ori.fling.export.testing");
     }
     public $$$ example(ASTNode arg0) {
       recordTerminal(Term.example, arg0);
@@ -139,8 +139,8 @@ import roth.ori.fling.symbols.types.VarArgs;
       recordTerminal(Term.then, arg0);
       return this;
     }
-    public FajitaTestingAST.Test $() {
-      return ast("FajitaTestingAST");
+    public FlingTestingAST.Test $() {
+      return ast("FlingTestingAST");
     }
   }
 }

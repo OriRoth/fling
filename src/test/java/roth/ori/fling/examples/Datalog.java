@@ -1,7 +1,7 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fajita.attribute;
-import static roth.ori.fling.api.Fajita.oneOrMore;
+import static roth.ori.fling.api.Fling.attribute;
+import static roth.ori.fling.api.Fling.oneOrMore;
 import static roth.ori.fling.examples.Datalog.NT.Fact;
 import static roth.ori.fling.examples.Datalog.NT.Program;
 import static roth.ori.fling.examples.Datalog.NT.Query;
@@ -14,15 +14,15 @@ import static roth.ori.fling.examples.Datalog.Term.is;
 import static roth.ori.fling.examples.Datalog.Term.query;
 import static roth.ori.fling.examples.Datalog.Term.rule;
 import static roth.ori.fling.export.testing.ExampleBody.call;
-import static roth.ori.fling.export.testing.FajitaTesting.example;
+import static roth.ori.fling.export.testing.FlingTesting.example;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.export.testing.FajitaTestingAST.Test;
+import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
@@ -36,8 +36,8 @@ public class Datalog extends Grammar {
     Program, Statement, Rule, Query, Fact, RuleExpression
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
         .start(Program) //
         .derive(Program).to(oneOrMore(Statement)) //
         .specialize(Statement).into(Rule, Query, Fact) //

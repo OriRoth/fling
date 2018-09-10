@@ -6,8 +6,8 @@ import static roth.ori.fling.junk.TestAnBnSimple.*;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -22,8 +22,8 @@ public class TestAnBnSimple extends Grammar {
     S
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(TestAnBnSimple.class, Term.class, NT.class, "TestAnBnSimple", Main.packagePath, Main.projectPath) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(TestAnBnSimple.class, Term.class, NT.class, "TestAnBnSimple", Main.packagePath, Main.projectPath) //
         .start(S) //
         .derive(S).to(g, S, h).orNone();
   }

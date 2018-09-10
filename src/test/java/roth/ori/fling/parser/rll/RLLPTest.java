@@ -1,6 +1,6 @@
 package roth.ori.fling.parser.rll;
 
-import static roth.ori.fling.api.Fajita.attribute;
+import static roth.ori.fling.api.Fling.attribute;
 import static roth.ori.fling.examples.Datalog.Term.by;
 import static roth.ori.fling.examples.Datalog.Term.fact;
 import static roth.ori.fling.examples.Datalog.Term.is;

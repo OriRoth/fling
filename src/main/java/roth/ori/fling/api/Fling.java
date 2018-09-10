@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import roth.ori.fling.api.encoding.FajitaEncoder;
+import roth.ori.fling.api.encoding.FlingEncoder;
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.bnf.EBNF;
@@ -28,7 +28,7 @@ import roth.ori.fling.symbols.extendibles.OneOrMore;
 import roth.ori.fling.symbols.extendibles.Option;
 import roth.ori.fling.symbols.types.NestedType;
 
-public class Fajita {
+public class Fling {
   public final Set<DerivationRule> derivationRules;
   public final Set<Verb> verbs;
   public final Set<NonTerminal> nonTerminals;
@@ -42,7 +42,7 @@ public class Fajita {
   public Class<? extends Grammar> provider;
   private EBNF ebnf;
 
-  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fajita(Class<? extends Grammar> provider,
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fling(Class<? extends Grammar> provider,
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
     terminals = new LinkedHashSet<>(EnumSet.allOf(terminalEnum));
     verbs = new LinkedHashSet<>();
@@ -57,7 +57,7 @@ public class Fajita {
     this.projectPath = projectPath;
   }
 
-  public static class FajitaProducer implements Function<NonTerminal, NonTerminal>, Cloneable {
+  public static class FlingProducer implements Function<NonTerminal, NonTerminal>, Cloneable {
     // TODO Roth: make private
     public Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
 
@@ -65,15 +65,15 @@ public class Fajita {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
       return NonTerminal.of(lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1)));
     }
-    @Override public FajitaProducer clone() {
-      FajitaProducer $ = new FajitaProducer();
+    @Override public FlingProducer clone() {
+      FlingProducer $ = new FlingProducer();
       $.counter.putAll(counter);
       return $;
     }
   }
 
-  private static FajitaProducer producer() {
-    return new FajitaProducer();
+  private static FlingProducer producer() {
+    return new FlingProducer();
   }
   public BNF bnf() {
     return ebnf().toBNF(producer());
@@ -82,16 +82,16 @@ public class Fajita {
     if (ebnf != null)
       return ebnf;
     ebnf = new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
-    ebnf.toBNF(new FajitaProducer());
+    ebnf.toBNF(new FlingProducer());
     return ebnf;
   }
   Map<String, String> finish() {
-    return FajitaEncoder.encode(this);
+    return FlingEncoder.encode(this);
   }
   public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols build(
       Class<? extends Grammar> provider, final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName,
       String packagePath, String projectPath) {
-    Fajita builder = new Fajita(provider, terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
+    Fling builder = new Fling(provider, terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
     return builder.new SetSymbols();
   }
   public void addRule(NonTerminal lhs, List<Symbol> rhs) {
@@ -117,17 +117,17 @@ public class Fajita {
 
   public class SetSymbols {
     public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
-      Fajita.this.startSymbols.add(nt);
-      Collections.addAll(Fajita.this.startSymbols, nts);
+      Fling.this.startSymbols.add(nt);
+      Collections.addAll(Fling.this.startSymbols, nts);
       return new FirstDerive();
     }
   }
 
-  public abstract class FajitaBNF {
+  public abstract class FlingBNF {
     protected final NonTerminal lhs;
     protected final ArrayList<Symbol> rhs;
 
-    public FajitaBNF(final NonTerminal lhs, final Symbol... rhs) {
+    public FlingBNF(final NonTerminal lhs, final Symbol... rhs) {
       this.lhs = lhs;
       this.rhs = new ArrayList<>(Arrays.asList(rhs));
     }
@@ -148,10 +148,10 @@ public class Fajita {
       addRule(lhs, rhs);
     }
     public BNF bnf() {
-      return Fajita.this.bnf();
+      return Fling.this.bnf();
     }
     public EBNF ebnf() {
-      return Fajita.this.ebnf();
+      return Fling.this.ebnf();
     }
   }
 
@@ -180,7 +180,7 @@ public class Fajita {
       this.lhs = lhs;
     }
     // TODO Roth: allow ENonTerminals?
-    public FajitaBNF into(final NonTerminal s, final NonTerminal... ss) {
+    public FlingBNF into(final NonTerminal s, final NonTerminal... ss) {
       OrDeriver $ = new InitialDeriver(lhs).to(s);
       for (Symbol x : ss)
         $ = $.or(x);
@@ -188,7 +188,7 @@ public class Fajita {
     }
   }
 
-  public class OrDeriver extends FajitaBNF {
+  public class OrDeriver extends FlingBNF {
     OrDeriver(final NonTerminal lhs) {
       super(lhs);
     }

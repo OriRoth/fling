@@ -6,7 +6,7 @@ import roth.ori.fling.examples.Datalog;
 import roth.ori.fling.examples.EBNF;
 import roth.ori.fling.examples.Exp;
 import roth.ori.fling.examples.Exp2;
-import roth.ori.fling.examples.FajitaTesting;
+import roth.ori.fling.examples.FlingTesting;
 import roth.ori.fling.examples.Parenthesis;
 import roth.ori.fling.examples.ParenthesisSimple;
 import roth.ori.fling.examples.Regex;
@@ -42,6 +42,6 @@ public class GenerateAll {
     new Exp().generateGrammarFiles();
     new Exp2().generateGrammarFiles();
     new Regex().generateGrammarFiles();
-    new FajitaTesting().generateGrammarFiles();
+    new FlingTesting().generateGrammarFiles();
   }
 }

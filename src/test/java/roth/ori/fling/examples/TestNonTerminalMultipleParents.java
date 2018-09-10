@@ -1,6 +1,6 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fajita.attribute;
+import static roth.ori.fling.api.Fling.attribute;
 import static roth.ori.fling.examples.TestNonTerminalMultipleParents.NT.A;
 import static roth.ori.fling.examples.TestNonTerminalMultipleParents.NT.B;
 import static roth.ori.fling.examples.TestNonTerminalMultipleParents.NT.C;
@@ -12,8 +12,8 @@ import static roth.ori.fling.junk.TestNonTerminalMultipleParents.*;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -28,8 +28,8 @@ public class TestNonTerminalMultipleParents extends Grammar {
     S, A, B, C, D
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(getClass(), Term.class, NT.class, "TestNonTerminalMultipleParents", Main.packagePath, Main.projectPath) //
+  @Override public FlingBNF bnf() {
+    return Fling.build(getClass(), Term.class, NT.class, "TestNonTerminalMultipleParents", Main.packagePath, Main.projectPath) //
         .start(S) //
         .derive(S).to(A, B) //
         .specialize(A).into(C, D) //

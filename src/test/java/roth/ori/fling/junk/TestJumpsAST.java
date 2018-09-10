@@ -1,1 +1,0 @@
-package roth.ori.fling.junk;public class TestJumpsAST implements roth.ori.fling.export.AST{public static class S{public java.util.Optional<Void>[] s1;public S(java.util.Optional<Void>[] s1){this.s1=s1;}}}

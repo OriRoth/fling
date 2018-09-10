@@ -7,8 +7,8 @@ import static roth.ori.fling.junk.ParenthesisSimple.o;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -23,8 +23,8 @@ public class ParenthesisSimple extends Grammar {
     S
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(ParenthesisSimple.class, Term.class, NT.class, "ParenthesisSimple", Main.packagePath, Main.projectPath)
+  @Override public FlingBNF bnf() {
+    return Fling.build(ParenthesisSimple.class, Term.class, NT.class, "ParenthesisSimple", Main.packagePath, Main.projectPath)
         .start(S) //
         .derive(S).to(o, S, c, S).orNone();
   }

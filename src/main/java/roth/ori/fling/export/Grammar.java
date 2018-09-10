@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
-import roth.ori.fling.export.testing.FajitaTestingAST.Example;
-import roth.ori.fling.export.testing.FajitaTestingAST.ExampleBody;
-import roth.ori.fling.export.testing.FajitaTestingAST.ExampleBodyNext;
-import roth.ori.fling.export.testing.FajitaTestingAST.ExampleKind;
-import roth.ori.fling.export.testing.FajitaTestingAST.MalExample;
-import roth.ori.fling.export.testing.FajitaTestingAST.Test;
+import roth.ori.fling.export.testing.FlingTestingAST.Example;
+import roth.ori.fling.export.testing.FlingTestingAST.ExampleBody;
+import roth.ori.fling.export.testing.FlingTestingAST.ExampleBodyNext;
+import roth.ori.fling.export.testing.FlingTestingAST.ExampleKind;
+import roth.ori.fling.export.testing.FlingTestingAST.MalExample;
+import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.parser.ell.EBNFAnalyzer.ELLRecognizerRejection;
 import roth.ori.fling.parser.ell.ELLRecognizer;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 
 public abstract class Grammar {
-  public abstract FajitaBNF bnf();
+  public abstract FlingBNF bnf();
   @SuppressWarnings("static-method") public Test examples() {
     return new Test(new ExampleKind[] {});
   }

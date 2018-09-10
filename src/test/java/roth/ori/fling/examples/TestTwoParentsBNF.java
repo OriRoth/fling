@@ -10,8 +10,8 @@ import static roth.ori.fling.examples.TestTwoParentsBNF.Term.b;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fajita;
-import roth.ori.fling.api.Fajita.FajitaBNF;
+import roth.ori.fling.api.Fling;
+import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
@@ -26,8 +26,8 @@ public class TestTwoParentsBNF extends Grammar {
     S, A, B, C, D
   }
 
-  @Override public FajitaBNF bnf() {
-    return Fajita.build(TestTwoParentsBNF.class, Term.class, NT.class, "TestTwoParentsBNF", Main.packagePath, Main.projectPath)
+  @Override public FlingBNF bnf() {
+    return Fling.build(TestTwoParentsBNF.class, Term.class, NT.class, "TestTwoParentsBNF", Main.packagePath, Main.projectPath)
         .start(S) //
         .derive(S).to(A).and(B) //
         .derive(A).to(C).or(D) //

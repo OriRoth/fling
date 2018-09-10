@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import roth.ori.fling.api.Fajita;
+import roth.ori.fling.api.Fling;
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.export.FluentAPIRecorder;
@@ -41,13 +41,13 @@ public class RLLPEncoder {
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
 
-  public RLLPEncoder(Fajita fajita, NonTerminal start, String astTopClass) {
-    topClassName = fajita.apiName;
-    packagePath = fajita.packagePath;
+  public RLLPEncoder(Fling fling, NonTerminal start, String astTopClass) {
+    topClassName = fling.apiName;
+    packagePath = fling.packagePath;
     topClassPath = packagePath + "." + topClassName;
     startSymbol = start;
-    provider = fajita.provider;
-    bnf = fajita.bnf();
+    provider = fling.provider;
+    bnf = fling.bnf();
     this.astTopClass = astTopClass;
     analyzer = new BNFAnalyzer(bnf);
     namer = new Namer();
@@ -65,14 +65,14 @@ public class RLLPEncoder {
     topClass = $.toString();
   }
   // TODO Roth: code duplication in constructors
-  public RLLPEncoder(Fajita fajita, Symbol nested, String astTopClass) {
+  public RLLPEncoder(Fling fling, Symbol nested, String astTopClass) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
-    packagePath = fajita.packagePath;
+    packagePath = fling.packagePath;
     topClassPath = packagePath + "." + topClassName;
     startSymbol = nested.head().asNonTerminal();
-    provider = fajita.provider;
-    bnf = fajita.bnf().getSubBNF(startSymbol);
+    provider = fling.provider;
+    bnf = fling.bnf().getSubBNF(startSymbol);
     this.astTopClass = astTopClass;
     analyzer = new BNFAnalyzer(bnf);
     namer = new Namer();

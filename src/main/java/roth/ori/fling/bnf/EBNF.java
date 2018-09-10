@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import roth.ori.fling.api.Fajita.FajitaProducer;
+import roth.ori.fling.api.Fling.FlingProducer;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.Symbol;
@@ -33,8 +33,8 @@ public final class EBNF {
   // Valid only after toBNF
   public Map<Symbol, Symbol> nestedSymbolsMapping;
   public Symbol subHead;
-  private FajitaProducer beforeSolution;
-  private FajitaProducer afterSolution;
+  private FlingProducer beforeSolution;
+  private FlingProducer afterSolution;
   private BNF bnf;
 
   public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
@@ -60,7 +60,7 @@ public final class EBNF {
   }
   // NOTE no equals/hashCode
   // TODO Roth: use normalized form here
-  public BNF toBNF(FajitaProducer producer) {
+  public BNF toBNF(FlingProducer producer) {
     if (bnf != null)
       return bnf;
     beforeSolution = producer.clone();
@@ -109,7 +109,7 @@ public final class EBNF {
     }
     return $;
   }
-  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(FajitaProducer producer) {
+  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(FlingProducer producer) {
     toBNF(producer);
     Map<Symbol, Set<List<Symbol>>> $ = new LinkedHashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
@@ -154,10 +154,10 @@ public final class EBNF {
   public Set<DerivationRule> rules() {
     return new LinkedHashSet<>(derivationRules);
   }
-  public FajitaProducer beforeSolution() {
+  public FlingProducer beforeSolution() {
     return beforeSolution.clone();
   }
-  public FajitaProducer afterSolution() {
+  public FlingProducer afterSolution() {
     return afterSolution.clone();
   }
 }

@@ -25,11 +25,11 @@ for name, command in zip(*[iter(sys.argv[2:])]*2):
   out = open(output,'w+')
   out.write('x,y')
   for i in xrange(1,1+int(sys.argv[1])):
-    f = open('src/test/java/org/spartan/fajita/revision/examples/usage/Exp2.java','w+')
+    f = open('src/test/java/org/spartan/fling/revision/examples/usage/Exp2.java','w+')
     f.write(n_invocations(i))
     f.close()
     current = [timeit.timeit(r'os.system("%s")' %(command,),'import os',number=1)]
     out.write(',\n%i,%f' %(i,current[0]))
-    os.remove('src/test/java/org/spartan/fajita/revision/examples/usage/Exp2.java')
+    os.remove('src/test/java/org/spartan/fling/revision/examples/usage/Exp2.java')
   out.close()
 
