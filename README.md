@@ -1,14 +1,14 @@
-# fling
+# Fling
 
-*fling* (**fl**uent **in**terfaces **g**enerator) is a parser generator.
-Instead of generating the code of a real-time parser, *fling* generates Java fluent interfaces,
+*Fling* (**fl**uent **in**terfaces **g**enerator) is a parser generator.
+Instead of generating the code of a real-time parser, *Fling* generates Java fluent interfaces,
 which implement a compile-time parser of the given language.
 
-*fling* accepts, currently, *LL(1)* (left-to-right, leftmost, using 1 lookahead token) grammars.
+*Fling* accepts, currently, *LL(1)* (left-to-right, leftmost, using 1 lookahead token) grammars.
 
 ## Example
 
-Let us define a Datalog grammar, in Java, using *fling*'s interface:
+Let us define a Datalog grammar, in Java, using *Fling*'s interface:
 ```Java
 // Datalog grammar defined in BNF
 public FlingBNF bnf() {
@@ -27,7 +27,7 @@ public FlingBNF bnf() {
   ;
 }
 ```
-After *fling* has created the fluent interfaces supporting Datalog, a simple Datalog program...
+After *Fling* has created the fluent interfaces supporting Datalog, a simple Datalog program...
 ```Datalog
 parent(john, bob)
 parent(bob, donald)
