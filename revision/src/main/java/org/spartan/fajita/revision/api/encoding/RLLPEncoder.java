@@ -1,11 +1,7 @@
 package org.spartan.fajita.revision.api.encoding;
 
 import static java.util.stream.Collectors.toList;
-import static org.spartan.fajita.revision.parser.rll.JSM.ACCEPT;
 import static org.spartan.fajita.revision.parser.rll.JSM.JAMMED;
-import static org.spartan.fajita.revision.parser.rll.JSM.UNKNOWN;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.JJAMMED;
-import static org.spartan.fajita.revision.parser.rll.JSM.J.JUNKNOWN;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +19,6 @@ import org.spartan.fajita.revision.export.FluentAPIRecorder;
 import org.spartan.fajita.revision.export.Grammar;
 import org.spartan.fajita.revision.parser.ll.BNFAnalyzer;
 import org.spartan.fajita.revision.parser.rll.JSM;
-import org.spartan.fajita.revision.parser.rll.JSM.J;
 import org.spartan.fajita.revision.symbols.NonTerminal;
 import org.spartan.fajita.revision.symbols.SpecialSymbols;
 import org.spartan.fajita.revision.symbols.Symbol;
@@ -165,9 +160,9 @@ public class RLLPEncoder {
         assert baseLegalJumps.contains(origin);
         return unknownSolution.apply(origin);
       }
-      Symbol firstToPush = toPush.get(0);
+      Symbol firstToPush = toPush.get(toPush.size() - 1);
       List<Symbol> restToPush = new ArrayList<>(toPush);
-      restToPush.remove(0);
+      restToPush.remove(toPush.size() - 1);
       if (analyzer.firstSetOf(firstToPush).contains(origin)) {
         List<Symbol> newToPush = firstToPush.isTerminal() ? new ArrayList<>()
             : analyzer.llClosure(firstToPush.asNonTerminal(), origin);
@@ -177,9 +172,9 @@ public class RLLPEncoder {
           apiTypeNames.add(typeName);
           createType(typeName, newToPush, newBaseLegalJumps, unknownSolution);
         }
-        if (baseLegalJumps.isEmpty() || baseLegalJumps.size() == 1 && baseLegalJumps.contains(SpecialSymbols.$))
+        if (newBaseLegalJumps.isEmpty() || newBaseLegalJumps.size() == 1 && newBaseLegalJumps.contains(SpecialSymbols.$))
           return typeName;
-        return typeName + "<" + String.join(",", baseLegalJumps.stream().filter(verb -> verb != SpecialSymbols.$)
+        return typeName + "<" + String.join(",", newBaseLegalJumps.stream().filter(verb -> verb != SpecialSymbols.$)
             .map(verb -> computeType(restToPush, baseLegalJumps, verb, unknownSolution)).collect(toList())) + ">";
       }
       assert analyzer.isNullable(firstToPush);
@@ -197,23 +192,14 @@ public class RLLPEncoder {
       for (Verb verb : bnf.verbs)
         // NOTE $ method is built below
         if (!SpecialSymbols.$.equals(verb))
-          $.append(computeMethod(pushedJSM, verb, unknownSolution));
-      if (!bnf.isSubBNF && pushedJSM.jump(SpecialSymbols.$) == ACCEPT)
+          if (pushedJSM.jump(verb) != JAMMED)
+            $.append(computeMethod(toPush, baseLegalJumps, verb, unknownSolution));
+      if (!bnf.isSubBNF && pushedJSM.jump(SpecialSymbols.$) != JAMMED)
         $.append(packagePath + "." + astTopClass + "." + startSymbol.name()).append(" $();");
       apiTypes.add($.append("}").toString());
     }
-    private String computeMethod(JSM jsm, Verb verb, Function<Verb, String> unknownSolution) {
-      if (jsm == JAMMED)
-        return "";
-      if (jsm == UNKNOWN)
-        return "public " + namer.name(verb) + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
-      J jnext = jsm.jjump(verb);
-      if (jnext == JJAMMED)
-        return "";
-      if (jnext == JUNKNOWN)
-        return "public " + namer.name(verb) //
-            + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
-      return "public " + computeType(jnext.toPush, jnext.address.trim().baseLegalJumps(), verb, unknownSolution) //
+    private String computeMethod(List<Symbol> toPush, Set<Verb> baseLegalJumps, Verb verb, Function<Verb, String> unknownSolution) {
+      return "public " + computeType(toPush, baseLegalJumps, verb, unknownSolution) //
           + " " + verb.terminal.name() + "(" + parametersEncoding(verb.type) + ");";
     }
     private void compute$Type() {
