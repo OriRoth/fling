@@ -7,8 +7,6 @@ import java.util.function.Function;
 import org.spartan.fajita.revision.bnf.DerivationRule;
 import org.spartan.fajita.revision.symbols.extendibles.Extendible;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 public interface Symbol {
   public String name();
   public default boolean isVerb() {
@@ -43,6 +41,6 @@ public interface Symbol {
     return new LinkedList<>();
   }
   @SuppressWarnings({ "rawtypes", "unused" }) default List<Class> toClasses(Function<Symbol, Class> classSolution) {
-    throw new NotImplementedException();
+    throw new UnsupportedOperationException();
   }
 }
