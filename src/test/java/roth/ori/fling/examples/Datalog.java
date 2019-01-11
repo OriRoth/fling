@@ -1,24 +1,26 @@
 package roth.ori.fling.examples;
 
 import static roth.ori.fling.api.Fling.attribute;
-import static roth.ori.fling.api.Fling.oneOrMore;
 import static roth.ori.fling.api.Fling.noneOrMore;
-import static roth.ori.fling.examples.Datalog.NT.Fact;
-import static roth.ori.fling.examples.Datalog.NT.Program;
-import static roth.ori.fling.examples.Datalog.NT.Query;
-import static roth.ori.fling.examples.Datalog.NT.Rule;
-import static roth.ori.fling.examples.Datalog.NT.FollowingAtom;
-import static roth.ori.fling.examples.Datalog.NT.Statement;
-import static roth.ori.fling.examples.Datalog.Term.and;
-import static roth.ori.fling.examples.Datalog.Term.fact;
-import static roth.ori.fling.examples.Datalog.Term.infer;
-import static roth.ori.fling.examples.Datalog.Term.of;
-import static roth.ori.fling.examples.Datalog.Term.query;
-import static roth.ori.fling.examples.Datalog.Term.when;
+import static roth.ori.fling.api.Fling.oneOrMore;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Fact;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.FollowingAtom;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Program;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Query;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Rule;
+import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Statement;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.and;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.fact;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.infer;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.of;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.query;
+import static roth.ori.fling.examples.Datalog.DatalogTerminals.when;
 import static roth.ori.fling.export.testing.ExampleBody.call;
 import static roth.ori.fling.export.testing.FlingTesting.example;
+import static roth.ori.fling.symbols.types.VarArgs.varargs;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
@@ -26,36 +28,58 @@ import roth.ori.fling.export.Grammar;
 import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
-import static roth.ori.fling.symbols.types.VarArgs.varargs;
 
 public class Datalog extends Grammar {
   private static final String PACKAGE_PATH = Main.packagePath;
   private static final String PROJECT_PATH = Main.projectPath;
 
-  public enum Term implements Terminal {
+  public enum DatalogTerminals implements Terminal {
     infer, fact, query, of, and, when
   }
 
-  public enum NT implements NonTerminal {
+  public enum DatalogNonTerminals implements NonTerminal {
     Program, Statement, Rule, Query, Fact, FollowingAtom
   }
 
+  public interface Term {
+    String entityName();
+  }
+  public interface Literal extends Term {}
+  public interface Variable extends Term {}
+
+  public static Literal l(String l) {
+    return new Literal() {
+      @Override public String entityName() {
+        return l;
+      }
+    };
+  }
+  public static Variable v(String v) {
+    return new Variable() {
+      @Override public String entityName() {
+        return v;
+      }
+    };
+  }
+  public static String[] entityNames(Term[] terms) {
+    return Arrays.stream(terms).map(Term::entityName).toArray(String[]::new);
+  }
   @Override public FlingBNF bnf() {
-    return buildFlingBNF(Term.class, NT.class, "Datalog", PACKAGE_PATH, PROJECT_PATH) //
+    return buildFlingBNF(DatalogTerminals.class, DatalogNonTerminals.class, "Datalog", PACKAGE_PATH, PROJECT_PATH) //
         .start(Program) //
         .derive(Program).to(oneOrMore(Statement)) //
         .specialize(Statement).into(Fact, Query, Rule) //
         .derive(Fact).to(attribute(fact, String.class), attribute(of, varargs(String.class))) //
-        .derive(Query).to(attribute(query, String.class), attribute(of, varargs(String.class))) //
+        .derive(Query).to(attribute(query, String.class), attribute(of, varargs(Term.class))) //
         .derive(Rule).to( //
             attribute(infer, String.class), //
-            attribute(of, varargs(String.class)), //
+            attribute(of, varargs(Term.class)), //
             attribute(when, String.class), //
-            attribute(of, varargs(String.class)), //
+            attribute(of, varargs(Term.class)), //
             noneOrMore(FollowingAtom)) //
         .derive(FollowingAtom).to( //
             attribute(and, String.class), //
-            attribute(of, varargs(String.class)));
+            attribute(of, varargs(Term.class)));
   }
   @Override public Test examples() {
     return example(call(fact).with("true")) //

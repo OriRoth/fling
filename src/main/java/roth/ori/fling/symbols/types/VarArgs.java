@@ -22,10 +22,10 @@ public class VarArgs implements ParameterType {
     return new VarArgs(clazz);
   }
   @Override public String toString() {
-    return aclazz.getTypeName();
+    return aclazz.getCanonicalName();
   }
   @Override public String toParameterString() {
-    return clazz.getTypeName() + "...";
+    return clazz.getCanonicalName() + "...";
   }
   @Override public int hashCode() {
     final int prime = 31;

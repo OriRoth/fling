@@ -17,6 +17,7 @@ import roth.ori.fling.junk.DatalogAST.Rule;
 import za.co.wstoop.jatalog.DatalogException;
 import za.co.wstoop.jatalog.Expr;
 import za.co.wstoop.jatalog.Jatalog;
+import static roth.ori.fling.examples.Datalog.entityNames;
 
 public class RunDatalogProgram {
   public static final String INPUT_PREFIX = "Jatalog:Fling$ ";
@@ -49,13 +50,13 @@ public class RunDatalogProgram {
         return true;
       }
       public boolean visit(Rule r) throws DatalogException {
-        j.rule(Expr.expr(r.infer, r.of1), getExprRightHandSide(r));
+        j.rule(Expr.expr(r.infer, entityNames(r.of1)), getExprRightHandSide(r));
         print(r);
         return true;
       }
       public boolean visit(Query q) throws DatalogException {
         print(q);
-        print(j.query(Expr.expr(q.query, q.of)));
+        print(j.query(Expr.expr(q.query, entityNames(q.of))));
         return true;
       }
     };
@@ -64,8 +65,8 @@ public class RunDatalogProgram {
     datalogRunner().startVisit(p);
   }
   static Expr[] getExprRightHandSide(Rule r) {
-    List<Expr> when = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, e.of)).collect(Collectors.toList());
-    when.add(Expr.expr(r.when, r.of2));
+    List<Expr> when = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, entityNames(e.of))).collect(Collectors.toList());
+    when.add(Expr.expr(r.when, entityNames(r.of2)));
     Expr[] whenx = when.toArray(new Expr[when.size()]);
     return whenx;
   }

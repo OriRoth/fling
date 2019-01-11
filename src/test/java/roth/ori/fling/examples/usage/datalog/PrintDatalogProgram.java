@@ -3,6 +3,8 @@ package roth.ori.fling.examples.usage.datalog;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import roth.ori.fling.examples.Datalog.Term;
+import static roth.ori.fling.examples.Datalog.entityNames;
 import roth.ori.fling.junk.DatalogAST.Fact;
 import roth.ori.fling.junk.DatalogAST.Program;
 import roth.ori.fling.junk.DatalogAST.Query;
@@ -31,14 +33,17 @@ public class PrintDatalogProgram {
     return printAtom(q.query, q.of, "?");
   }
   public static String print(Rule r) {
-    return String.format("%s(%s) :- %s(%s)%s.", r.infer, String.join(",", r.of1), r.when, String.join(",", r.of2),
-        r.rule1.length == 0 ? ""
+    return String.format("%s(%s) :- %s(%s)%s.", r.infer, String.join(",", entityNames(r.of1)), r.when,
+        String.join(",", entityNames(r.of2)), r.rule1.length == 0 ? ""
             : " & " + Arrays.stream(r.rule1).map(PrintDatalogProgram::print).collect(Collectors.joining(" & ")));
   }
   public static String print(FollowingAtom a) {
     return printAtom(a.and, a.of, "");
   }
-  private static String printAtom(String header, String[] literals, String suffix) {
-    return String.format("%s(%s)%s", header, String.join(",", literals), suffix);
+  private static String printAtom(String header, Term[] terms, String suffix) {
+    return printAtom(header, entityNames(terms), suffix);
+  }
+  private static String printAtom(String header, String[] entityNames, String suffix) {
+    return String.format("%s(%s)%s", header, String.join(",", entityNames), suffix);
   }
 }
