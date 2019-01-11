@@ -7,7 +7,7 @@ import roth.ori.fling.junk.DatalogAST.Fact;
 import roth.ori.fling.junk.DatalogAST.Program;
 import roth.ori.fling.junk.DatalogAST.Query;
 import roth.ori.fling.junk.DatalogAST.Rule;
-import roth.ori.fling.junk.DatalogAST.RuleTail;
+import roth.ori.fling.junk.DatalogAST.FollowingAtom;
 import roth.ori.fling.junk.DatalogAST.Statement;
 
 public class PrintDatalogProgram {
@@ -35,8 +35,8 @@ public class PrintDatalogProgram {
         r.rule1.length == 0 ? ""
             : " & " + Arrays.stream(r.rule1).map(PrintDatalogProgram::print).collect(Collectors.joining(" & ")));
   }
-  public static String print(RuleTail t) {
-    return printAtom(t.and, t.of, "");
+  public static String print(FollowingAtom a) {
+    return printAtom(a.and, a.of, "");
   }
   private static String printAtom(String header, String[] literals, String suffix) {
     return String.format("%s(%s)%s", header, String.join(",", literals), suffix);

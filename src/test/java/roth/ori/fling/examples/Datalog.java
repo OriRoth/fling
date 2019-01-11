@@ -7,7 +7,7 @@ import static roth.ori.fling.examples.Datalog.NT.Fact;
 import static roth.ori.fling.examples.Datalog.NT.Program;
 import static roth.ori.fling.examples.Datalog.NT.Query;
 import static roth.ori.fling.examples.Datalog.NT.Rule;
-import static roth.ori.fling.examples.Datalog.NT.RuleTail;
+import static roth.ori.fling.examples.Datalog.NT.FollowingAtom;
 import static roth.ori.fling.examples.Datalog.NT.Statement;
 import static roth.ori.fling.examples.Datalog.Term.and;
 import static roth.ori.fling.examples.Datalog.Term.fact;
@@ -37,7 +37,7 @@ public class Datalog extends Grammar {
   }
 
   public enum NT implements NonTerminal {
-    Program, Statement, Rule, Query, Fact, RuleTail
+    Program, Statement, Rule, Query, Fact, FollowingAtom
   }
 
   @Override public FlingBNF bnf() {
@@ -52,8 +52,8 @@ public class Datalog extends Grammar {
             attribute(of, new VarArgs(String.class)), //
             attribute(when, String.class), //
             attribute(of, new VarArgs(String.class)), //
-            noneOrMore(RuleTail)) //
-        .derive(RuleTail).to( //
+            noneOrMore(FollowingAtom)) //
+        .derive(FollowingAtom).to( //
             attribute(and, String.class), //
             attribute(of, new VarArgs(String.class)));
   }

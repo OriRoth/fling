@@ -49,9 +49,7 @@ public class RunDatalogProgram {
         return true;
       }
       public boolean visit(Rule r) throws DatalogException {
-        List<Expr> rightHandSide = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, e.of)).collect(Collectors.toList());
-        rightHandSide.add(Expr.expr(r.when, r.of2));
-        j.rule(Expr.expr(r.infer, r.of1), rightHandSide.toArray(new Expr[rightHandSide.size()]));
+        j.rule(Expr.expr(r.infer, r.of1), getExprRightHandSide(r));
         print(r);
         return true;
       }
@@ -64,5 +62,11 @@ public class RunDatalogProgram {
   }
   public static void run(Program p) {
     datalogRunner().startVisit(p);
+  }
+  static Expr[] getExprRightHandSide(Rule r) {
+    List<Expr> when = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, e.of)).collect(Collectors.toList());
+    when.add(Expr.expr(r.when, r.of2));
+    Expr[] whenx = when.toArray(new Expr[when.size()]);
+    return whenx;
   }
 }
