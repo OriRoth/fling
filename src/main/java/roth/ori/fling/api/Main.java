@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 public class Main {
   public static final String packagePath = "roth.ori.fling.junk";
-  public static final String projectPath = "/home/ori/git/fling/src/test/java/";
+  public static final String projectPath = "./src/test/java/";
 
   public static void apiGenerator(Map<String, String> files) throws IOException {
     String filePath = projectPath + packagePath.replace('.', '/') + '/';
