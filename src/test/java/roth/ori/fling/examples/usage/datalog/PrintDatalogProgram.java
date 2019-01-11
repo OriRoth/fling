@@ -3,17 +3,19 @@ package roth.ori.fling.examples.usage.datalog;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import roth.ori.fling.junk.DatalogAST.*;
+import roth.ori.fling.junk.DatalogAST.Fact;
+import roth.ori.fling.junk.DatalogAST.Program;
+import roth.ori.fling.junk.DatalogAST.Query;
+import roth.ori.fling.junk.DatalogAST.Rule;
+import roth.ori.fling.junk.DatalogAST.RuleTail;
+import roth.ori.fling.junk.DatalogAST.Statement;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {
     System.out.println(print(Ancestor.program()));
   }
   public static String print(Program program) {
-    StringBuilder $ = new StringBuilder();
-    for (Statement s : program.program1)
-      $.append(print(s)).append("\n");
-    return $.toString();
+    return Arrays.stream(program.program1).map(PrintDatalogProgram::print).collect(Collectors.joining("\n"));
   }
   public static String print(Statement r) {
     if (r instanceof Fact)
@@ -23,21 +25,20 @@ public class PrintDatalogProgram {
     return print((Query) r);
   }
   public static String print(Fact r) {
-    return print(r.fact, r.by) + ".";
-  }
-  public static String print(Rule r) {
-    StringBuilder $ = new StringBuilder();
-    $.append(print(r.rule, r.by)).append(" :- ") //
-        .append(String.join(", ", Arrays.stream(r.rule1).map(x -> print(x)).collect(Collectors.toList())));
-    return $.append(".").toString();
-  }
-  public static String print(RuleExpression e) {
-    return print(e.is, e.by);
+    return printAtom(r.fact, r.of, ".");
   }
   public static String print(Query q) {
-    return print(q.query, q.by) + "?";
+    return printAtom(q.query, q.of, "?");
   }
-  private static String print(String header, String[] literals) {
-    return header + "(" + String.join(",", literals) + ")";
+  public static String print(Rule r) {
+    return String.format("%s(%s) :- %s(%s)%s.", r.infer, String.join(",", r.of1), r.when, String.join(",", r.of2),
+        r.rule1.length == 0 ? ""
+            : " & " + Arrays.stream(r.rule1).map(PrintDatalogProgram::print).collect(Collectors.joining(" & ")));
+  }
+  public static String print(RuleTail t) {
+    return printAtom(t.and, t.of, "");
+  }
+  private static String printAtom(String header, String[] literals, String suffix) {
+    return String.format("%s(%s)%s", header, String.join(",", literals), suffix);
   }
 }

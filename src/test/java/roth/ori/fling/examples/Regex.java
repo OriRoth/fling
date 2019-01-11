@@ -17,7 +17,6 @@ import static roth.ori.fling.examples.Regex.Term.re;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;

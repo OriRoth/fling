@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import roth.ori.fling.export.ASTVisitor;
 import roth.ori.fling.junk.DatalogAST;
@@ -30,7 +31,7 @@ public class RunDatalogProgram {
   static void print(Query q) {
     System.out.println(INPUT_PREFIX + PrintDatalogProgram.print(q));
   }
-  static void output(Collection<Map<String, String>> jatalogResult) {
+  static void print(Collection<Map<String, String>> jatalogResult) {
     List<Map<String, String>> $ = new ArrayList<>();
     for (Map<String, String> map : jatalogResult)
       $.add(new LinkedHashMap<>(map));
@@ -43,18 +44,20 @@ public class RunDatalogProgram {
     Jatalog j = new Jatalog();
     return new ASTVisitor(DatalogAST.class) {
       public boolean visit(Fact f) throws DatalogException {
-        j.fact(f.fact, f.by);
+        j.fact(f.fact, f.of);
         print(f);
         return true;
       }
       public boolean visit(Rule r) throws DatalogException {
-        j.rule(Expr.expr(r.rule, r.by), Arrays.stream(r.rule1).map(e -> Expr.expr(e.is, e.by)).toArray(Expr[]::new));
+        List<Expr> rightHandSide = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, e.of)).collect(Collectors.toList());
+        rightHandSide.add(Expr.expr(r.when, r.of2));
+        j.rule(Expr.expr(r.infer, r.of1), rightHandSide.toArray(new Expr[rightHandSide.size()]));
         print(r);
         return true;
       }
       public boolean visit(Query q) throws DatalogException {
         print(q);
-        output(j.query(Expr.expr(q.query, q.by)));
+        print(j.query(Expr.expr(q.query, q.of)));
         return true;
       }
     };

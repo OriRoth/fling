@@ -160,9 +160,11 @@ public class JamoosClassesRenderer {
       return name;
     }
     if (names.get(name).intValue() == 0) {
-      String type = innerClassesFieldTypes.get(lhs).get(name);
-      innerClassesFieldTypes.get(lhs).remove(name);
-      innerClassesFieldTypes.get(lhs).put(name + "1", type);
+      LinkedHashMap<String, String> fixedFields = new LinkedHashMap<>();
+      for (Entry<String, String> field : innerClassesFieldTypes.get(lhs).entrySet())
+        fixedFields.put(field.getKey() + (name.equals(field.getKey()) ? "1" : ""), field.getValue());
+      innerClassesFieldTypes.get(lhs).clear();
+      innerClassesFieldTypes.get(lhs).putAll(fixedFields);
       names.put(name, Integer.valueOf(1));
     }
     int nn;

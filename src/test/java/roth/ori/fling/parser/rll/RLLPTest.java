@@ -1,10 +1,6 @@
 package roth.ori.fling.parser.rll;
 
-import static roth.ori.fling.api.Fling.attribute;
-import static roth.ori.fling.examples.Datalog.Term.by;
-import static roth.ori.fling.examples.Datalog.Term.fact;
-import static roth.ori.fling.examples.Datalog.Term.is;
-import static roth.ori.fling.examples.Datalog.Term.rule;
+import static roth.ori.fling.examples.Parenthesis.Term.c;
 import static roth.ori.fling.examples.Parenthesis.Term.o;
 import static roth.ori.fling.examples.TestAnB.Term.d;
 import static roth.ori.fling.examples.TestAnBn.Term.a;
@@ -22,36 +18,17 @@ import static roth.ori.fling.examples.TestAnCDBn.Term.d1;
 import static roth.ori.fling.examples.TestAnCDBn.Term.e1;
 import static roth.ori.fling.examples.TestJumps.Term.x;
 import static roth.ori.fling.examples.TestJumps.Term.y;
-import static roth.ori.fling.examples.Parenthesis.Term.c;
 
 import org.junit.Test;
-import roth.ori.fling.examples.Datalog;
+
 import roth.ori.fling.examples.Parenthesis;
 import roth.ori.fling.examples.TestAnB;
 import roth.ori.fling.examples.TestAnBn;
 import roth.ori.fling.examples.TestAnBnCD;
 import roth.ori.fling.examples.TestAnCDBn;
 import roth.ori.fling.examples.TestJumps;
-import roth.ori.fling.symbols.types.VarArgs;
 
 @SuppressWarnings("static-method") public class RLLPTest {
-  @Test public void datalog() {
-    RLLPConcrete rllp = new RLLPConcrete(new Datalog().bnf().bnf());
-    rllp.consume( //
-        attribute(fact, String.class), //
-        attribute(by, new VarArgs(String.class)), //
-        attribute(rule, String.class), //
-        attribute(by, new VarArgs(String.class)), //
-        attribute(is, String.class), //
-        attribute(by, new VarArgs(String.class)), //
-        attribute(is, String.class), //
-        attribute(by, new VarArgs(String.class)), //
-        attribute(fact, String.class), //
-        attribute(by, new VarArgs(String.class)) //
-    );
-    assert !rllp.rejected();
-    assert rllp.accepted();
-  }
   @Test public void jumps() {
     RLLPConcrete rllp = new RLLPConcrete(new TestJumps().bnf().bnf());
     rllp.consume( //
@@ -86,9 +63,7 @@ import roth.ori.fling.symbols.types.VarArgs;
   @Test public void anb1() {
     RLLPConcrete rllp = new RLLPConcrete(new TestAnB().bnf().bnf());
     rllp.consume( //
-        roth.ori.fling.examples.TestAnB.Term.c,
-        roth.ori.fling.examples.TestAnB.Term.c,
-        roth.ori.fling.examples.TestAnB.Term.c,
+        roth.ori.fling.examples.TestAnB.Term.c, roth.ori.fling.examples.TestAnB.Term.c, roth.ori.fling.examples.TestAnB.Term.c,
         roth.ori.fling.examples.TestAnB.Term.c, d //
     );
     assert !rllp.rejected();

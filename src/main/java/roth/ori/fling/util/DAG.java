@@ -10,7 +10,7 @@ public class DAG<N> extends LinkedHashMap<N, Set<N>> {
   public Set<N> initialize(N node) {
     return putIfAbsent(node, new LinkedHashSet<>());
   }
-  public boolean add(N node, N parent) {
+  @SuppressWarnings("null") public boolean add(N node, N parent) {
     Set<N> reach = new LinkedHashSet<>(), seen = new LinkedHashSet<>();
     reach.add(parent);
     do {

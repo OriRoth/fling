@@ -25,7 +25,6 @@ import roth.ori.fling.parser.rll.RLLPTest;
     t.anbncd1();
     t.anbncd2();
     t.ancdbn();
-    t.datalog();
     t.jumps();
     t.parenthesis1();
     t.parenthesis2();
