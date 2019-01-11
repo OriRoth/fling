@@ -26,7 +26,7 @@ import roth.ori.fling.export.Grammar;
 import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
-import roth.ori.fling.symbols.types.VarArgs;
+import static roth.ori.fling.symbols.types.VarArgs.varargs;
 
 public class Datalog extends Grammar {
   private static final String PACKAGE_PATH = Main.packagePath;
@@ -45,17 +45,17 @@ public class Datalog extends Grammar {
         .start(Program) //
         .derive(Program).to(oneOrMore(Statement)) //
         .specialize(Statement).into(Fact, Query, Rule) //
-        .derive(Fact).to(attribute(fact, String.class), attribute(of, new VarArgs(String.class))) //
-        .derive(Query).to(attribute(query, String.class), attribute(of, new VarArgs(String.class))) //
+        .derive(Fact).to(attribute(fact, String.class), attribute(of, varargs(String.class))) //
+        .derive(Query).to(attribute(query, String.class), attribute(of, varargs(String.class))) //
         .derive(Rule).to( //
             attribute(infer, String.class), //
-            attribute(of, new VarArgs(String.class)), //
+            attribute(of, varargs(String.class)), //
             attribute(when, String.class), //
-            attribute(of, new VarArgs(String.class)), //
+            attribute(of, varargs(String.class)), //
             noneOrMore(FollowingAtom)) //
         .derive(FollowingAtom).to( //
             attribute(and, String.class), //
-            attribute(of, new VarArgs(String.class)));
+            attribute(of, varargs(String.class)));
   }
   @Override public Test examples() {
     return example(call(fact).with("true")) //

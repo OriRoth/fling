@@ -18,6 +18,9 @@ public class VarArgs implements ParameterType {
     this.aclazz = Array.newInstance(clazz, 0).getClass();
     this.clazz = clazz;
   }
+  public static <T> VarArgs varargs(Class<T> clazz) {
+    return new VarArgs(clazz);
+  }
   @Override public String toString() {
     return aclazz.getTypeName();
   }
