@@ -25,6 +25,9 @@ import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 
 public class Regex extends Grammar {
+  private static final String PACKAGE_PATH = Main.packagePath;
+  private static final String PROJECT_PATH = Main.projectPath;
+
   public static enum Term implements Terminal {
     re, exactly, and, or, option, noneOrMore, oneOrMore, either, anyChar, anyDigit
   }
@@ -34,7 +37,7 @@ public class Regex extends Grammar {
   }
 
   @Override public FlingBNF bnf() {
-    return Fling.build(getClass(), Term.class, NT.class, "Regex", Main.packagePath, Main.projectPath) //
+    return buildFlingBNF(Term.class, NT.class, "Regex", PACKAGE_PATH, PROJECT_PATH) //
         .start(Expression) //
         .derive(Expression).to(re, RE) //
         .derive(RE).to(attribute(exactly, String.class), Tail) //

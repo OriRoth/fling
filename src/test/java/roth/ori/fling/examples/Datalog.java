@@ -18,7 +18,6 @@ import static roth.ori.fling.export.testing.FlingTesting.example;
 
 import java.io.IOException;
 
-import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
@@ -28,16 +27,19 @@ import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
 
 public class Datalog extends Grammar {
-  public static enum Term implements Terminal {
+  private static final String PACKAGE_PATH = Main.packagePath;
+  private static final String PROJECT_PATH = Main.projectPath;
+  
+  public enum Term implements Terminal {
     rule, is, fact, by, query
   }
 
-  public static enum NT implements NonTerminal {
+  public enum NT implements NonTerminal {
     Program, Statement, Rule, Query, Fact, RuleExpression
   }
 
   @Override public FlingBNF bnf() {
-    return Fling.build(getClass(), Term.class, NT.class, "Datalog", Main.packagePath, Main.projectPath) //
+    return buildFlingBNF(Term.class, NT.class, "Datalog", PACKAGE_PATH, PROJECT_PATH) //
         .start(Program) //
         .derive(Program).to(oneOrMore(Statement)) //
         .specialize(Statement).into(Rule, Query, Fact) //

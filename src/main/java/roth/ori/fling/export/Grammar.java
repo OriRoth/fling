@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
+import roth.ori.fling.api.Fling.SetSymbols;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.testing.FlingTestingAST.Example;
 import roth.ori.fling.export.testing.FlingTestingAST.ExampleBody;
@@ -19,6 +21,10 @@ import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 
 public abstract class Grammar {
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildFlingBNF(
+      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
+    return Fling.build(getClass(), terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
+  }
   public abstract FlingBNF bnf();
   @SuppressWarnings("static-method") public Test examples() {
     return new Test(new ExampleKind[] {});
