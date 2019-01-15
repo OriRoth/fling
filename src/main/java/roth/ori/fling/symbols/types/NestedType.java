@@ -48,7 +48,8 @@ public class NestedType implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return nested.equals(arg) || ASTNode.class.isInstance(arg);
   }
-  @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
+  @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution,
+      @SuppressWarnings("unused") String astPath) {
     Interpretation i = (Interpretation) arg;
     return solution.apply(i.symbol, i.value);
   }

@@ -1,7 +1,7 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fling.oneOrMore;
 import static roth.ori.fling.api.Fling.noneOrMore;
+import static roth.ori.fling.api.Fling.oneOrMore;
 import static roth.ori.fling.examples.Datalog.Symbols.AdditionalClause;
 import static roth.ori.fling.examples.Datalog.Symbols.Bodyless;
 import static roth.ori.fling.examples.Datalog.Symbols.Fact;
@@ -23,15 +23,12 @@ import static roth.ori.fling.examples.Datalog.Terminals.of;
 import static roth.ori.fling.examples.Datalog.Terminals.query;
 import static roth.ori.fling.examples.Datalog.Terminals.v;
 import static roth.ori.fling.examples.Datalog.Terminals.when;
-import static roth.ori.fling.export.testing.ExampleBody.call;
-import static roth.ori.fling.export.testing.FlingTesting.example;
 
 import java.io.IOException;
 
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.Terminal;
 
@@ -64,14 +61,7 @@ public class Datalog extends Grammar {
         derive(AdditionalClause).to(and.with(String), of.many(Term)). //
         derive(Term).to(l.with(String)).or(v.with(String));
   }
-  @Override public Test examples() {
-    return example(call(fact).with("true")) //
-        .example( //
-            call(query).with("parent").then(of).with("X", "Bob"))
-        .malexample( //
-            call(fact).with(/* nothing */)) //
-        .$();
-  }
+  // TODO Roth: recreate examples
   public static void main(String[] args) throws IOException {
     new Datalog().generateGrammarFiles();
   }

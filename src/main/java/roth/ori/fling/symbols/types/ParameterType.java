@@ -8,7 +8,8 @@ import roth.ori.fling.symbols.Symbol;
 
 public interface ParameterType {
   boolean accepts(Object arg);
-  @SuppressWarnings("rawtypes") List conclude(Object arg, BiFunction<Symbol, List, List> solution);
+  // TODO Roth: parameter "astPath" is a HACK
+  @SuppressWarnings("rawtypes") List conclude(Object arg, BiFunction<Symbol, List, List> solution, String astPath);
   @SuppressWarnings("rawtypes") List<Class> toClasses(Function<Symbol, Class> classSolution);
   default String toParameterString() {
     return toString();

@@ -21,6 +21,7 @@ import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.extendibles.Extendible;
 import roth.ori.fling.symbols.types.NestedType;
 import roth.ori.fling.symbols.types.ParameterType;
+import roth.ori.fling.symbols.types.VarArgs;
 
 public final class EBNF {
   public final Set<Verb> verbs;
@@ -76,6 +77,9 @@ public final class EBNF {
             if (t instanceof NestedType) {
               Symbol nested = ((NestedType) t).nested;
               nestedSymbolsMapping.put(nested.head().asNonTerminal(), nested);
+            } else if (t instanceof VarArgs) {
+              NonTerminal nested = ((VarArgs) t).nt;
+              nestedSymbolsMapping.put(nested, nested);
             }
       }
       rs.add(new DerivationRule(r.lhs, rhs));
@@ -91,6 +95,8 @@ public final class EBNF {
           for (ParameterType t : s.asVerb().type)
             if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal())
               ns.add(((NestedType) t).nested.head().asNonTerminal());
+            else if (t instanceof VarArgs && ((VarArgs) t).nt != null)
+              ns.add(((VarArgs) t).nt);
           vs.add(s.asVerb());
         } else
           nts.add(s.asNonTerminal());

@@ -113,7 +113,8 @@ public class Verb implements Terminal, Comparable<Verb> {
       $.addAll(t.toClasses(classSolution));
     return $;
   }
-  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution) {
+  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution,
+      String astPath) {
     // NOTE this assertion might need Verb to deal with Interpretation (?)
     // assert accepts(args.toArray(new Object[args.size()]));
     List $ = new LinkedList<>();
@@ -122,12 +123,12 @@ public class Verb implements Terminal, Comparable<Verb> {
     ParameterType last = type[type.length - 1];
     if (!(last instanceof VarArgs)) {
       for (int i = 0; i < type.length; ++i)
-        $.addAll(type[i].conclude(args.get(i), solution));
+        $.addAll(type[i].conclude(args.get(i), solution, astPath));
       return $;
     }
     for (int i = 0; i < type.length - 1; ++i)
-        $.addAll(type[i].conclude(args.get(i), solution));
-    $.addAll(last.conclude(args.subList(type.length - 1, args.size()), solution));
+      $.addAll(type[i].conclude(args.get(i), solution, astPath));
+    $.addAll(last.conclude(args.subList(type.length - 1, args.size()), solution, astPath));
     return $;
   }
 }

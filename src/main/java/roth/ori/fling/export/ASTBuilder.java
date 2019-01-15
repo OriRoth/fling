@@ -72,13 +72,16 @@ import roth.ori.fling.symbols.extendibles.Extendible;
       Interpretation i = (Interpretation) values.get(0);
       return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values), analyzer), i.value);
     }
+    // TODO Roth: not forgiving for nonterminals receiving themselves
+    if (values.size() == 1 && values.get(0) instanceof Interpretation && nt.equals(((Interpretation) values.get(0)).symbol))
+      return build(nt, ((Interpretation) values.get(0)).value);
     return Collections.singletonList(instance(clazz(nt), values));
   }
   private List build(Extendible e, List values) {
     return e.conclude(values, this::build, this::clazz);
   }
   private List build(Verb v, List values) {
-    return v.conclude(values, this::build);
+    return v.conclude(values, this::build, astPath);
   }
   @SuppressWarnings("unchecked") private Object instance(Class<?> c, List values) {
     List ba = (List) buildAll(values).stream().filter(x -> x != null).collect(toList()), arguments = new LinkedList();
@@ -89,6 +92,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
       return instance(ctor, arguments.toArray(new Object[arguments.size()]));
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
         | SecurityException e) {
+      e.printStackTrace();
       throw new RuntimeException(e);
     }
   }

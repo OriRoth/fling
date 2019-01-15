@@ -10,14 +10,16 @@ import java.util.stream.Collectors;
 
 import roth.ori.fling.export.ASTVisitor;
 import roth.ori.fling.junk.DatalogAST;
+import roth.ori.fling.junk.DatalogAST.Bodyless;
 import roth.ori.fling.junk.DatalogAST.Fact;
 import roth.ori.fling.junk.DatalogAST.Program;
 import roth.ori.fling.junk.DatalogAST.Query;
 import roth.ori.fling.junk.DatalogAST.Rule;
+import roth.ori.fling.junk.DatalogAST.Term;
+import roth.ori.fling.junk.DatalogAST.WithBody;
 import za.co.wstoop.jatalog.DatalogException;
 import za.co.wstoop.jatalog.Expr;
 import za.co.wstoop.jatalog.Jatalog;
-import static roth.ori.fling.examples.Datalog.entityNames;
 
 public class RunDatalogProgram {
   public static final String INPUT_PREFIX = "Jatalog:Fling$ ";
@@ -49,14 +51,19 @@ public class RunDatalogProgram {
         print(f);
         return true;
       }
-      public boolean visit(Rule r) throws DatalogException {
-        j.rule(Expr.expr(r.infer, entityNames(r.of1)), getExprRightHandSide(r));
+      public boolean visit(Bodyless r) throws DatalogException {
+        j.rule(Expr.expr(r.always, toStringArray(r.of)));
+        print(r);
+        return true;
+      }
+      public boolean visit(WithBody r) throws DatalogException {
+        j.rule(Expr.expr(r.rulehead.infer, toStringArray(r.rulehead.of)), getExprRightHandSide(r));
         print(r);
         return true;
       }
       public boolean visit(Query q) throws DatalogException {
         print(q);
-        print(j.query(Expr.expr(q.query, entityNames(q.of))));
+        print(j.query(Expr.expr(q.query, toStringArray(q.of))));
         return true;
       }
     };
@@ -64,10 +71,17 @@ public class RunDatalogProgram {
   public static void run(Program p) {
     datalogRunner().startVisit(p);
   }
-  static Expr[] getExprRightHandSide(Rule r) {
-    List<Expr> when = Arrays.stream(r.rule1).map(e -> Expr.expr(e.and, entityNames(e.of))).collect(Collectors.toList());
-    when.add(Expr.expr(r.when, entityNames(r.of2)));
+  static Expr[] getExprRightHandSide(WithBody r) {
+    List<Expr> when = Arrays.stream(r.rulebody.rulebody1).map(ac -> Expr.expr(ac.and, toStringArray(ac.of)))
+        .collect(Collectors.toList());
+    when.add(Expr.expr(r.rulebody.firstclause.when, toStringArray(r.rulebody.firstclause.of)));
     Expr[] whenx = when.toArray(new Expr[when.size()]);
     return whenx;
+  }
+  static String[] toStringArray(Term[] terms) {
+    String[] $ = new String[terms.length];
+    for (int i = 0; i < terms.length; ++i)
+      $[i] = PrintDatalogProgram.print(terms[i]);
+    return $;
   }
 }

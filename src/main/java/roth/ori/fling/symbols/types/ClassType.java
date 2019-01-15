@@ -50,7 +50,7 @@ public class ClassType implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return clazz.isInstance(arg);
   }
-  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution) {
+  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution, String astPath) {
     assert clazz.isInstance(arg);
     return Collections.singletonList(arg);
   }

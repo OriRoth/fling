@@ -56,21 +56,8 @@ public class VarArgs implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return clazz != null ? clazz.isInstance(arg) : nt.equals(arg) || ASTNode.class.isInstance(arg);
   }
-  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg,
-      BiFunction<Symbol, List, List> solution) {
-    if (nt != null) {
-      List l = (List) ((List) arg).stream().map(x -> {
-        // TODO Roth: check whether it make sense
-        if (!(x instanceof Interpretation))
-          return x;
-        Interpretation i = (Interpretation) x;
-        List $ = solution.apply(i.symbol, i.value);
-        assert $.size() == 1;
-        return $.get(0);
-      }).collect(Collectors.toList());
-      // TODO Roth: complete
-      throw new RuntimeException();
-    }
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution,
+      String astPath) {
     List l = (List) ((List) arg).stream().map(x -> {
       // TODO Roth: check whether it make sense
       if (!(x instanceof Interpretation))
@@ -79,7 +66,14 @@ public class VarArgs implements ParameterType {
       assert $.size() == 1;
       return $.get(0);
     }).collect(Collectors.toList());
-    Object[] $ = (Object[]) Array.newInstance(clazz, l.size());
+    Object[] $;
+    try {
+      // TODO Roth: getting nonterminal class name through HACKs
+      $ = clazz != null ? (Object[]) Array.newInstance(clazz, l.size())
+          : (Object[]) Array.newInstance(Class.forName(astPath + "$" + nt.name()), l.size());
+    } catch (NegativeArraySizeException | ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
     for (int i = 0; i < $.length; ++i)
       $[i] = l.get(i);
     return Collections.singletonList($);
