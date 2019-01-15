@@ -144,4 +144,3 @@ out/
 
 # User defined (add below this line) // vim: +,$!sort -u
 /target/
-src/test/java/roth/ori/fling/junk/
