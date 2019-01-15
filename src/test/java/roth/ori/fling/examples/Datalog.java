@@ -1,26 +1,32 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fling.attribute;
-import static roth.ori.fling.api.Fling.noneOrMore;
 import static roth.ori.fling.api.Fling.oneOrMore;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Fact;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.FollowingAtom;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Program;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Query;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Rule;
-import static roth.ori.fling.examples.Datalog.DatalogNonTerminals.Statement;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.and;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.fact;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.infer;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.of;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.query;
-import static roth.ori.fling.examples.Datalog.DatalogTerminals.when;
+import static roth.ori.fling.api.Fling.noneOrMore;
+import static roth.ori.fling.examples.Datalog.Symbols.AdditionalClause;
+import static roth.ori.fling.examples.Datalog.Symbols.Bodyless;
+import static roth.ori.fling.examples.Datalog.Symbols.Fact;
+import static roth.ori.fling.examples.Datalog.Symbols.FirstClause;
+import static roth.ori.fling.examples.Datalog.Symbols.Program;
+import static roth.ori.fling.examples.Datalog.Symbols.Query;
+import static roth.ori.fling.examples.Datalog.Symbols.Rule;
+import static roth.ori.fling.examples.Datalog.Symbols.RuleBody;
+import static roth.ori.fling.examples.Datalog.Symbols.RuleHead;
+import static roth.ori.fling.examples.Datalog.Symbols.Statement;
+import static roth.ori.fling.examples.Datalog.Symbols.Term;
+import static roth.ori.fling.examples.Datalog.Symbols.WithBody;
+import static roth.ori.fling.examples.Datalog.Terminals.always;
+import static roth.ori.fling.examples.Datalog.Terminals.and;
+import static roth.ori.fling.examples.Datalog.Terminals.fact;
+import static roth.ori.fling.examples.Datalog.Terminals.infer;
+import static roth.ori.fling.examples.Datalog.Terminals.l;
+import static roth.ori.fling.examples.Datalog.Terminals.of;
+import static roth.ori.fling.examples.Datalog.Terminals.query;
+import static roth.ori.fling.examples.Datalog.Terminals.v;
+import static roth.ori.fling.examples.Datalog.Terminals.when;
 import static roth.ori.fling.export.testing.ExampleBody.call;
 import static roth.ori.fling.export.testing.FlingTesting.example;
-import static roth.ori.fling.symbols.types.VarArgs.varargs;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
@@ -33,53 +39,30 @@ public class Datalog extends Grammar {
   private static final String PACKAGE_PATH = Main.packagePath;
   private static final String PROJECT_PATH = Main.projectPath;
 
-  public enum DatalogTerminals implements Terminal {
-    infer, fact, query, of, and, when
+  public enum Terminals implements Terminal {
+    infer, fact, query, of, and, when, always, v, l
   }
 
-  public enum DatalogNonTerminals implements NonTerminal {
-    Program, Statement, Rule, Query, Fact, FollowingAtom
+  public enum Symbols implements NonTerminal {
+    Program, Statement, Rule, Query, Fact, Bodyless, WithBody, RuleHead, RuleBody, FirstClause, AdditionalClause, Term
   }
 
-  public interface Term {
-    String entityName();
-  }
-  public interface Literal extends Term {}
-  public interface Variable extends Term {}
-
-  public static Literal l(String l) {
-    return new Literal() {
-      @Override public String entityName() {
-        return l;
-      }
-    };
-  }
-  public static Variable v(String v) {
-    return new Variable() {
-      @Override public String entityName() {
-        return v;
-      }
-    };
-  }
-  public static String[] entityNames(Term[] terms) {
-    return Arrays.stream(terms).map(Term::entityName).toArray(String[]::new);
-  }
   @Override public FlingBNF bnf() {
-    return buildFlingBNF(DatalogTerminals.class, DatalogNonTerminals.class, "Datalog", PACKAGE_PATH, PROJECT_PATH) //
-        .start(Program) //
-        .derive(Program).to(oneOrMore(Statement)) //
-        .specialize(Statement).into(Fact, Query, Rule) //
-        .derive(Fact).to(attribute(fact, String.class), attribute(of, varargs(String.class))) //
-        .derive(Query).to(attribute(query, String.class), attribute(of, varargs(Term.class))) //
-        .derive(Rule).to( //
-            attribute(infer, String.class), //
-            attribute(of, varargs(Term.class)), //
-            attribute(when, String.class), //
-            attribute(of, varargs(Term.class)), //
-            noneOrMore(FollowingAtom)) //
-        .derive(FollowingAtom).to( //
-            attribute(and, String.class), //
-            attribute(of, varargs(Term.class)));
+    Class<String> String = String.class;
+    return buildFlingBNF(Terminals.class, Symbols.class, "Datalog", PACKAGE_PATH, PROJECT_PATH). //
+        start(Program). //
+        derive(Program).to(oneOrMore(Statement)). //
+        specialize(Statement).into(Fact, Query, Rule). //
+        derive(Fact).to(fact.with(String), of.many(String)). //
+        derive(Query).to(query.with(String), of.many(Term)). //
+        specialize(Rule).into(Bodyless, WithBody). //
+        derive(Bodyless).to(always.with(String), of.many(Term)). //
+        derive(WithBody).to(RuleHead, RuleBody). //
+        derive(RuleHead).to(infer.with(String), of.many(Term)). //
+        derive(RuleBody).to(FirstClause, noneOrMore(AdditionalClause)). //
+        derive(FirstClause).to(when.with(String), of.many(Term)). //
+        derive(AdditionalClause).to(and.with(String), of.many(Term)). //
+        derive(Term).to(l.with(String)).or(v.with(String));
   }
   @Override public Test examples() {
     return example(call(fact).with("true")) //

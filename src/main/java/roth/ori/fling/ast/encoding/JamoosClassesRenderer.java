@@ -25,6 +25,7 @@ import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.types.ClassType;
 import roth.ori.fling.symbols.types.NestedType;
 import roth.ori.fling.symbols.types.ParameterType;
+import roth.ori.fling.symbols.types.VarArgs;
 import roth.ori.fling.util.DAG;
 import roth.ori.fling.util.DAG.MoreThanOneParent;
 
@@ -140,7 +141,10 @@ public class JamoosClassesRenderer {
           $.add(((ClassType) t).clazz.getTypeName());
         else if (t instanceof NestedType)
           $.addAll(parseType(((NestedType) t).nested));
-        else
+        else if (t instanceof VarArgs) {
+          VarArgs va = (VarArgs) t;
+          $.add(va.nt == null ? va.toString() : va.nt.name(packagePath, topClassName) + "[]");
+        } else
           $.add(t.toString());
     } else if (s.isNonTerminal())
       $.add(s.asNonTerminal().name(packagePath, topClassName));

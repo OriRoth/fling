@@ -26,6 +26,7 @@ import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.types.NestedType;
 import roth.ori.fling.symbols.types.ParameterType;
+import roth.ori.fling.symbols.types.VarArgs;
 
 public class RLLPEncoder {
   public final String topClassName;
@@ -231,7 +232,10 @@ public class RLLPEncoder {
     private String parametersEncoding(ParameterType[] type) {
       List<String> $ = new ArrayList<>();
       for (int i = 0; i < type.length; ++i)
-        $.add((type[i] instanceof NestedType ? ASTNode.class.getCanonicalName() : type[i].toParameterString()) + " arg" + (i + 1));
+        $.add((type[i] instanceof NestedType ? ASTNode.class.getCanonicalName()
+            : (type[i] instanceof VarArgs) && ((VarArgs) type[i]).nt != null ? ASTNode.class.getCanonicalName() + "..."
+                : type[i].toParameterString())
+            + " arg" + (i + 1));
       return String.join(",", $);
     }
     private String parameterNamesEncoding(ParameterType[] type) {

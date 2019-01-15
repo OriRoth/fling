@@ -1,7 +1,8 @@
 package roth.ori.fling.examples.usage.datalog;
 
-import static roth.ori.fling.junk.Datalog.*;
-import static roth.ori.fling.examples.Datalog.*;
+import static roth.ori.fling.junk.Datalog.fact;
+import static roth.ori.fling.junk.Term.l;
+import static roth.ori.fling.junk.Term.v;
 
 import roth.ori.fling.junk.DatalogAST.Program;
 

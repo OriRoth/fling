@@ -3,14 +3,17 @@ package roth.ori.fling.examples.usage.datalog;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import roth.ori.fling.examples.Datalog.Term;
-import static roth.ori.fling.examples.Datalog.entityNames;
+import roth.ori.fling.junk.DatalogAST.AdditionalClause;
+import roth.ori.fling.junk.DatalogAST.Bodyless;
 import roth.ori.fling.junk.DatalogAST.Fact;
 import roth.ori.fling.junk.DatalogAST.Program;
 import roth.ori.fling.junk.DatalogAST.Query;
 import roth.ori.fling.junk.DatalogAST.Rule;
-import roth.ori.fling.junk.DatalogAST.FollowingAtom;
 import roth.ori.fling.junk.DatalogAST.Statement;
+import roth.ori.fling.junk.DatalogAST.Term;
+import roth.ori.fling.junk.DatalogAST.Term1;
+import roth.ori.fling.junk.DatalogAST.Term2;
+import roth.ori.fling.junk.DatalogAST.WithBody;
 
 public class PrintDatalogProgram {
   public static void main(String[] args) {
@@ -33,15 +36,34 @@ public class PrintDatalogProgram {
     return printAtom(q.query, q.of, "?");
   }
   public static String print(Rule r) {
-    return String.format("%s(%s) :- %s(%s)%s.", r.infer, String.join(",", entityNames(r.of1)), r.when,
-        String.join(",", entityNames(r.of2)), r.rule1.length == 0 ? ""
-            : " & " + Arrays.stream(r.rule1).map(PrintDatalogProgram::print).collect(Collectors.joining(" & ")));
+    return r instanceof WithBody ? print((WithBody) r) : print((Bodyless) r);
   }
-  public static String print(FollowingAtom a) {
-    return printAtom(a.and, a.of, "");
+  public static String print(Bodyless r) {
+    return String.format("%s(%s).", r.always, print(r.of));
+  }
+  public static String print(Term t) {
+    return t instanceof Term1 ? print((Term1) t) : print((Term2) t);
+  }
+  public static String print(Term1 t) {
+    return t.l;
+  }
+  public static String print(Term2 t) {
+    return t.v;
+  }
+  public static String print(WithBody r) {
+    return String.format("%s(%s) :- %s(%s)%s.", r.rulehead.infer, print(r.rulehead.of), r.rulebody.firstclause.when,
+        print(r.rulebody.firstclause.of),
+        " & " + Arrays.stream(r.rulebody.rulebody1).map(PrintDatalogProgram::print).collect(Collectors.joining(" & ")));
+  }
+  public static String print(AdditionalClause ac) {
+    return printAtom(ac.and, ac.of, "");
+  }
+  private static String print(Term[] ts) {
+    return Arrays.stream(ts).map(PrintDatalogProgram::print).collect(Collectors.joining(","));
   }
   private static String printAtom(String header, Term[] terms, String suffix) {
-    return printAtom(header, entityNames(terms), suffix);
+    return String.format("%s(%s)%s", header, Arrays.stream(terms).map(PrintDatalogProgram::print).collect(Collectors.joining(",")),
+        suffix);
   }
   private static String printAtom(String header, String[] entityNames, String suffix) {
     return String.format("%s(%s)%s", header, String.join(",", entityNames), suffix);

@@ -1,6 +1,5 @@
 package roth.ori.fling.examples;
 
-import static roth.ori.fling.api.Fling.attribute;
 import static roth.ori.fling.examples.Regex.NT.Expression;
 import static roth.ori.fling.examples.Regex.NT.RE;
 import static roth.ori.fling.examples.Regex.NT.Tail;
@@ -36,14 +35,15 @@ public class Regex extends Grammar {
   }
 
   @Override public FlingBNF bnf() {
+    Class<String> String = String.class;
     return buildFlingBNF(Term.class, NT.class, "Regex", PACKAGE_PATH, PROJECT_PATH) //
         .start(Expression) //
         .derive(Expression).to(re, RE) //
-        .derive(RE).to(attribute(exactly, String.class), Tail) //
-        /**/.or(attribute(option, RE), Tail) //
-        /**/.or(attribute(noneOrMore, RE), Tail) //
-        /**/.or(attribute(oneOrMore, RE), Tail) //
-        /**/.or(attribute(either, RE, RE), Tail) //
+        .derive(RE).to(exactly.with(String), Tail) //
+        /**/.or(option.with(RE), Tail) //
+        /**/.or(noneOrMore.with(RE), Tail) //
+        /**/.or(oneOrMore.with(RE), Tail) //
+        /**/.or(either.with(RE, RE), Tail) //
         /**/.or(anyChar, Tail) //
         /**/.or(anyDigit, Tail) //
         .derive(Tail).to(and, RE).or(or, RE).orNone();

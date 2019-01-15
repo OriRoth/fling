@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -27,6 +28,7 @@ import roth.ori.fling.symbols.extendibles.NoneOrMore;
 import roth.ori.fling.symbols.extendibles.OneOrMore;
 import roth.ori.fling.symbols.extendibles.Option;
 import roth.ori.fling.symbols.types.NestedType;
+import roth.ori.fling.symbols.types.VarArgs;
 
 public class Fling {
   public final Set<DerivationRule> derivationRules;
@@ -106,6 +108,11 @@ public class Fling {
         nestedParameters.add(nested);
         analyze(nested);
       });
+      Arrays.stream(s.asVerb().type).filter(t -> t instanceof VarArgs).map(t -> ((VarArgs) t).nt).filter(Objects::nonNull)
+          .forEach(nested -> {
+            nestedParameters.add(nested);
+            analyze(nested);
+          });
     } else if (s.isExtendible()) {
       extendibles.add(s.asExtendible());
       s.asExtendible().symbols().forEach(this::analyze);
