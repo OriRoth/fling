@@ -1,44 +1,62 @@
 package fling.automata;
 
 import static fling.automata.DPDA.dpda;
-import static fling.util.Collections.set;
-
-import org.junit.Test;
-
-import fling.automata.DPDA.δ;
-
+import static fling.automata.DPDATest.Q.q0;
+import static fling.automata.DPDATest.Q.q1;
+import static fling.automata.DPDATest.Q.q2;
+import static fling.automata.DPDATest.Γ.γ0;
+import static fling.automata.DPDATest.Γ.γ1;
+import static fling.automata.DPDATest.Σ.c;
+import static fling.automata.DPDATest.Σ.Ↄ;
+import static fling.automata.DPDATest.Σ.ↄ;
 import static fling.sententials.Alphabet.ε;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
+
+import fling.automata.DPDA.δ;
+
 public class DPDATest {
-  DPDA<Integer, Character, String> dpda = //
-      dpda(set(0, 1, 2), set('(', ')', ']'), set("g0", "g1")) //
-          .q0(0) //
-          .F(0) //
-          .γ0("g0") //
-          .δ(0, '(', "g0", 1, "g0", "g1") //
-          .δ(1, '(', "g1", 1, "g1", "g1") //
-          .δ(1, ')', "g1", 1) //
-          .δ(1, ε(), "g0", 0, "g0") //
-          .δ(1, ']', "g1", 2) //
-          .δ(2, ε(), "g1", 2) //
-          .δ(2, ε(), "g0", 0, "g0") //
+  enum Q {
+    q0, q1, q2
+  }
+
+  enum Σ {
+    c, ↄ, Ↄ
+  }
+
+  enum Γ {
+    γ0, γ1
+  }
+
+  DPDA<Q, Σ, Γ> dpda = //
+      dpda(Q.class, Σ.class, Γ.class) //
+          .q0(q0) //
+          .F(q0) //
+          .γ0(γ0) //
+          .δ(q0, c, γ0, q1, γ0, γ1) //
+          .δ(q1, c, γ1, q1, γ1, γ1) //
+          .δ(q1, ↄ, γ1, q1) //
+          .δ(q1, ε(), γ0, q0, γ0) //
+          .δ(q1, Ↄ, γ1, q2) //
+          .δ(q2, ε(), γ1, q2) //
+          .δ(q2, ε(), γ0, q0, γ0) //
           .go();
 
   @Test public void testTransitionMatching() {
-    δ<Integer, Character, String> δ = dpda.δ(0, '(', "g0");
-    assertEquals(1, δ.q$.intValue());
+    δ<Q, Σ, Γ> δ = dpda.δ(q0, c, γ0);
+    assertEquals(q1, δ.q$);
     assertEquals(2, δ.α.size());
-    assertEquals("g0", δ.α.top());
-    assertEquals("g1", δ.α.get(1));
-    assertNull(dpda.δ(0, ']', "g0"));
+    assertEquals(γ0, δ.α.top());
+    assertEquals(γ1, δ.α.get(1));
+    assertNull(dpda.δ(q0, Ↄ, γ0));
   }
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
-    δ<Integer, Character, String> δ = dpda.δδ(1, ']', "g1");
-    assertEquals(2, δ.q$.intValue());
+    δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
+    assertEquals(q2, δ.q$);
     assertTrue(δ.α.isEmpty());
   }
 }

@@ -1,12 +1,13 @@
 package fling.automata;
 
+import static fling.sententials.Alphabet.ε;
+
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import fling.sententials.Word;
-import static fling.sententials.Alphabet.ε;
 
 /**
  * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.
@@ -34,7 +35,8 @@ public class DPDA<Q, Σ, Γ> {
     this.q0 = q0;
     this.γ0 = γ0;
   }
-  public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ) {
+  public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Class<Q> Q, final Class<Σ> Σ,
+      final Class<Γ> Γ) {
     return new Builder<>(Q, Σ, Γ);
   }
   /**
@@ -92,24 +94,15 @@ public class DPDA<Q, Σ, Γ> {
    * i.e., it assumes it is deterministic and cannot loop infinitely.
    */
   public static class Builder<Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> {
-    private final Set<Q> Q;
-    private final Set<Σ> Σ;
-    private final Set<Γ> Γ;
+    private final Class<Q> Q;
+    private final Class<Σ> Σ;
+    private final Class<Γ> Γ;
     private final Set<δ<Q, Σ, Γ>> δs = new LinkedHashSet<>();
     private final Set<Q> F = new LinkedHashSet<>();
     private Q q0;
     private Γ γ0;
 
-    public Stream<Q> Q() {
-      return Q.stream();
-    }
-    public Stream<Σ> Σ() {
-      return Σ.stream();
-    }
-    public Stream<Γ> Γ() {
-      return Γ.stream();
-    }
-    public Builder(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ) {
+    public Builder(final Class<Q> Q, final Class<Σ> Σ, final Class<Γ> Γ) {
       this.Q = Q;
       this.Σ = Σ;
       this.Γ = Γ;
@@ -133,7 +126,7 @@ public class DPDA<Q, Σ, Γ> {
     public DPDA<Q, Σ, Γ> go() {
       assert q0 != null;
       assert γ0 != null;
-      return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
+      return new DPDA<>(EnumSet.allOf(Q), EnumSet.allOf(Σ), EnumSet.allOf(Γ), δs, F, q0, γ0);
     }
   }
 
