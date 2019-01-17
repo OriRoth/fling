@@ -20,16 +20,16 @@ public class DPDA<Q, Σ, Γ> {
   public final Set<Σ> Σ;
   public final Set<Γ> Γ;
   public final Set<δ<Q, Σ, Γ>> δs;
-  public final Set<Q> q$;
+  public final Set<Q> F;
   public final Q q0;
   public final Γ γ0;
 
-  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> q$, final Q q0, final Γ γ0) {
+  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> F, final Q q0, final Γ γ0) {
     this.Q = Collections.unmodifiableSet(Q);
     this.Σ = Collections.unmodifiableSet(Σ);
     this.Γ = Collections.unmodifiableSet(Γ);
     this.δs = Collections.unmodifiableSet(δs);
-    this.q$ = Collections.unmodifiableSet(q$);
+    this.F = Collections.unmodifiableSet(F);
     this.q0 = q0;
     this.γ0 = γ0;
   }
@@ -53,7 +53,7 @@ public class DPDA<Q, Σ, Γ> {
    * @return whether this is an accepting state
    */
   public boolean isAccepting(final Q q) {
-    return q$.contains(q);
+    return F.contains(q);
   }
   /**
    * Returns matching consolidated transition, i.e., the result of the multiple
@@ -67,14 +67,14 @@ public class DPDA<Q, Σ, Γ> {
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
     Q q$ = q;
     Word<Γ> s = new Word<>(γ);
-    if (σ != null) { // Consuming transition.
+    if (σ != null) { // We search for a consuming transition.
       final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
       if (δ == null)
         return null;
       q$ = δ.q$;
       s = s.pop().push(δ.α);
     }
-    // subsequent ε transitions.
+    // process subsequent ε transitions.
     for (;;) {
       if (s.isEmpty())
         return new δ<>(q, σ, γ, q$, s);
