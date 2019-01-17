@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import fling.sententials.Word;
 
@@ -38,6 +39,15 @@ public class DPDA<Q, Σ, Γ> {
   public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Class<Q> Q, final Class<Σ> Σ,
       final Class<Γ> Γ) {
     return new Builder<>(Q, Σ, Γ);
+  }
+  public Stream<Q> Q() {
+    return Q.stream();
+  }
+  public Stream<Σ> Σ() {
+    return Σ.stream();
+  }
+  public Stream<Γ> Γ() {
+    return Γ.stream();
   }
   /**
    * @param q current state
@@ -134,11 +144,11 @@ public class DPDA<Q, Σ, Γ> {
    * An automaton edge. A set of edges is a transition function.
    */
   public static class δ<Q, Σ, Γ> {
-    final Q q;
-    final Σ σ;
-    final Γ γ;
-    final Q q$;
-    final Word<Γ> α;
+    public final Q q;
+    public final Σ σ;
+    public final Γ γ;
+    public final Q q$;
+    public final Word<Γ> α;
 
     public δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Word<Γ> α) {
       this.q = q;
