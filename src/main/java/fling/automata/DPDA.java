@@ -94,8 +94,8 @@ public class DPDA<Q, Σ, Γ> {
     private final Set<Q> Q;
     private final Set<Σ> Σ;
     private final Set<Γ> Γ;
-    private final Set<δ<Q, Σ, Γ>> δs;
-    private final Set<Q> F;
+    private final Set<δ<Q, Σ, Γ>> δs = new LinkedHashSet<>();
+    private final Set<Q> F= new LinkedHashSet<>();
     private Q q0;
     private Γ γ0;
 
@@ -103,8 +103,7 @@ public class DPDA<Q, Σ, Γ> {
       this.Q = Q;
       this.Σ = Σ;
       this.Γ = Γ;
-      this.δs = new LinkedHashSet<>();
-      this.F = new LinkedHashSet<>();
+
     }
     @SafeVarargs public final Builder<Q, Σ, Γ> δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Γ... α) {
       δs.add(new δ<>(q, σ, γ, q$, new Word<>(α)));
