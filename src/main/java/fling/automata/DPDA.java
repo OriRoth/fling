@@ -3,6 +3,7 @@ package fling.automata;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import fling.sententials.Word;
 import static fling.sententials.Alphabet.ε;
@@ -33,7 +34,7 @@ public class DPDA<Q, Σ, Γ> {
     this.q0 = q0;
     this.γ0 = γ0;
   }
-  public static <Q, Σ, Γ> Builder<Q, Σ, Γ> dpda(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ) {
+  public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ) {
     return new Builder<>(Q, Σ, Γ);
   }
   /**
@@ -90,20 +91,28 @@ public class DPDA<Q, Σ, Γ> {
    * {@link DPDA} builder. Does not check the correctness of the automaton,
    * i.e., it assumes it is deterministic and cannot loop infinitely.
    */
-  public static class Builder<Q, Σ, Γ> {
+  public static class Builder<Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> {
     private final Set<Q> Q;
     private final Set<Σ> Σ;
     private final Set<Γ> Γ;
     private final Set<δ<Q, Σ, Γ>> δs = new LinkedHashSet<>();
-    private final Set<Q> F= new LinkedHashSet<>();
+    private final Set<Q> F = new LinkedHashSet<>();
     private Q q0;
     private Γ γ0;
 
+    public Stream<Q> Q() {
+      return Q.stream();
+    }
+    public Stream<Σ> Σ() {
+      return Σ.stream();
+    }
+    public Stream<Γ> Γ() {
+      return Γ.stream();
+    }
     public Builder(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ) {
       this.Q = Q;
       this.Σ = Σ;
       this.Γ = Γ;
-
     }
     @SafeVarargs public final Builder<Q, Σ, Γ> δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Γ... α) {
       δs.add(new δ<>(q, σ, γ, q$, new Word<>(α)));
