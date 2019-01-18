@@ -5,6 +5,7 @@ import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
 import static fling.util.Collections.chainList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -36,15 +37,8 @@ import fling.sententials.Word;
  */
 public class Compiler<Q, Σ, Γ> {
   public final DPDA<Q, Σ, Γ> dpda;
-  private final TypeName _TOP = new TypeName();
-  private final TypeName _BOT = new TypeName();
-  public final PolymorphicTypeNode<TypeName> TOP = new PolymorphicTypeNode<>(_TOP);
-  public final PolymorphicTypeNode<TypeName> BOT = new PolymorphicTypeNode<>(_BOT);
-  public final InterfaceDeclaration ITOP = new InterfaceDeclaration();
-  public final InterfaceDeclaration IBOT = new InterfaceDeclaration();
-  public final MethodDeclaration START_METHOD = new MethodDeclaration();
-  private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
   private final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types;
+  private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
   public Compiler(DPDA<Q, Σ, Γ> dpda) {
     this.dpda = dpda;
@@ -55,16 +49,16 @@ public class Compiler<Q, Σ, Γ> {
     return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
   }
   private List<MethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections
-        .singletonList(new MethodNode<>(START_METHOD, new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
-            dpda.Q().map(q -> dpda.isAccepting(q) ? TOP : BOT).collect(Collectors.toList()))));
+    return Collections.singletonList(new MethodNode<>(MethodNode.specialDeclaration(),
+        new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
+            dpda.Q().map(q -> dpda.isAccepting(q) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
+                .collect(Collectors.toList()))));
   }
   private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return chainList(fixedInterfaces(), types.values());
   }
-  private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
-    return Arrays.asList(new InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>(ITOP, Collections.emptyList()),
-        new InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>(IBOT, Collections.emptyList()));
+  @SuppressWarnings("static-method") private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
+    return Arrays.asList(InterfaceNode.top(), InterfaceNode.bot());
   }
   /**
    * Get type name given a state and stack symbols to push. If this type is not
@@ -83,9 +77,13 @@ public class Compiler<Q, Σ, Γ> {
     return $;
   }
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
+    List<MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
+    $.addAll(dpda.Σ().map(σ -> //
+    new MethodNode<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+    if (dpda.isAccepting(q))
+      $.add(new MethodNode<>(MethodNode.specialDeclaration(), null));
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
-        dpda.Σ().map(σ -> //
-        new MethodNode<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+        Collections.unmodifiableList($));
   }
   /**
    * Computes the type representing the state of the automaton after consuming
@@ -98,7 +96,7 @@ public class Compiler<Q, Σ, Γ> {
    */
   private PolymorphicTypeNode<TypeName> next(final Q q, final Word<Γ> α, final Σ σ) {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? BOT : common(δ, α.pop());
+    return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop());
   }
   private PolymorphicTypeNode<TypeName> consolidate(final Q q, final Word<Γ> α) {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q, ε(), α.top());

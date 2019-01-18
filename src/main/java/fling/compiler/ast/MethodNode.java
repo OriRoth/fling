@@ -8,4 +8,10 @@ public class MethodNode<T, D> {
     this.declaration = declaration;
     this.returnType = returnType;
   }
+  public static <D> D specialDeclaration() {
+    return null;
+  }
+  public boolean isSpecial() {
+    return declaration == null;
+  }
 }

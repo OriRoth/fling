@@ -23,21 +23,20 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicAdapter<Q, Σ, Γ> {
     return printFluentAPI(name, compiler.compileFluentAPI());
   }
   @Override public String printType(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> type) {
-    return compiler.TOP == type ? JTOP : compiler.BOT == type ? JBOT : type.isLeaf() ? printTypeName(type.name) : //
+    return type.isTop() ? JTOP : type.isBot() ? JBOT : type.isLeaf() ? printTypeName(type.name) : //
         String.format("%s<%s>", printTypeName(type.name), //
             type.typeArguments.stream().map(t -> printType(t)).collect(Collectors.joining(",")));
   }
   @Override public String printMethod(MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration> method) {
-    return String.format("%s %s();", printType(method.returnType),
-        compiler.START_METHOD == method.declaration ? JSTART : method.declaration.name);
+    return method.isSpecial() ? "void $();" : String.format("%s %s();", printType(method.returnType), method.declaration.name);
   }
   public String printStaticMethod(MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration> method) {
     return String.format("public static %s %s(){return null;}", printType(method.returnType),
-        compiler.START_METHOD == method.declaration ? JSTART : method.declaration.name);
+        method.isSpecial() ? JSTART : method.declaration.name);
   }
   @Override public String printInterface(
       InterfaceNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration, Compiler<Q, Σ, Γ>.InterfaceDeclaration> interfaze) {
-    return String.format("interface %s{%s}", printInterfaceDeclaration(interfaze.declaration), //
+    return interfaze.isTop() ? "interface T{void $();}" : interfaze.isBot() ? "interface B{}" : String.format("interface %s{%s}", printInterfaceDeclaration(interfaze.declaration), //
         interfaze.methods.stream().map(m -> printMethod(m)).collect(Collectors.joining()));
   }
   @Override public String printFluentAPI(String name,
@@ -53,9 +52,7 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicAdapter<Q, Σ, Γ> {
     return α == null ? q.toString() : String.format("%s_%s", q, α);
   }
   public String printInterfaceDeclaration(Compiler<Q, Σ, Γ>.InterfaceDeclaration declaration) {
-    return compiler.ITOP == declaration ? JTOP
-        : compiler.IBOT == declaration ? JBOT
-            : String.format("%s<%s>", printTypeName(declaration.q, declaration.α), //
-                declaration.typeVariables.stream().map(Object::toString).collect(Collectors.joining(",")));
+    return String.format("%s<%s>", printTypeName(declaration.q, declaration.α), //
+        declaration.typeVariables.stream().map(Object::toString).collect(Collectors.joining(",")));
   }
 }
