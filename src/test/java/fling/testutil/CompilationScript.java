@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fling.compiler.AnBnTest;
 import fling.compiler.BalancedParenthesesTest;
 import fling.compiler.LongFallTest;
 
@@ -18,6 +19,7 @@ public class CompilationScript {
   static {
     files.put("BalancedParentheses", BalancedParenthesesTest.fluentAPI);
     files.put("LongFall", LongFallTest.JavaFluentAPI);
+    files.put("AnBn", AnBnTest.JavaFluentAPI);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 

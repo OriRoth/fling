@@ -34,7 +34,7 @@ public class CppAdapter<Q, Σ, Γ> implements TargetLanguageAdapter<Q, Σ, Γ> {
         typeArguments.stream().map(t -> printType(t)).collect(joining(",")));
   }
   @Override public String printStartMethod(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
-    return String.format("%s* %s() {return NULL;}", printType(returnType), startMethodName);
+    return String.format("%s* %s() {return nullptr;}", printType(returnType), startMethodName);
   }
   @Override public String printTerminationMethod() {
     return String.format("virtual void %s() const;", terminationMethodName);
@@ -57,7 +57,7 @@ public class CppAdapter<Q, Σ, Γ> implements TargetLanguageAdapter<Q, Σ, Γ> {
   }
   @Override public String printFluentAPI(
       FluentAPINode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration, Compiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
-    return String.format("#include <cstdlib>\n%s%s%s", //
+    return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
             .collect(joining()), //
         fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
