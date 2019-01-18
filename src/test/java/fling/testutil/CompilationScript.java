@@ -17,7 +17,7 @@ public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
     files.put("BalancedParentheses", BalancedParenthesesTest.fluentAPI);
-    files.put("LongFall", LongFallTest.fluentAPI);
+    files.put("LongFall", LongFallTest.JavaFluentAPI);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 
