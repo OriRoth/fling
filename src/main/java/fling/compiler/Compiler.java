@@ -2,11 +2,15 @@ package fling.compiler;
 
 import static fling.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
+import static fling.util.Collections.asWord;
+import static fling.util.Collections.chainList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import fling.automata.DPDA;
@@ -36,25 +40,31 @@ public class Compiler<Q, Σ, Γ> {
   private final TypeName _BOT = new TypeName();
   public final PolymorphicTypeNode<TypeName> TOP = new PolymorphicTypeNode<>(_TOP);
   public final PolymorphicTypeNode<TypeName> BOT = new PolymorphicTypeNode<>(_BOT);
-  private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
+  public final InterfaceDeclaration ITOP = new InterfaceDeclaration();
+  public final InterfaceDeclaration IBOT = new InterfaceDeclaration();
   public final MethodDeclaration START_METHOD = new MethodDeclaration();
-  private final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceName>> types;
+  private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
+  private final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types;
 
   public Compiler(DPDA<Q, Σ, Γ> dpda) {
     this.dpda = dpda;
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
   }
-  public FluentAPINode<TypeName, MethodDeclaration, InterfaceName> compileFluentAPI() {
+  public FluentAPINode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
     return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
   }
   private List<MethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections.singletonList(
-        new MethodNode<>((MethodDeclaration) null, new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
+    return Collections
+        .singletonList(new MethodNode<>(START_METHOD, new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
             dpda.Q().map(q -> dpda.isAccepting(q) ? TOP : BOT).collect(Collectors.toList()))));
   }
-  private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceName>> compileInterfaces() {
-    return asList(types.values());
+  private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
+    return chainList(fixedInterfaces(), types.values());
+  }
+  private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
+    return Arrays.asList(new InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>(ITOP, Collections.emptyList()),
+        new InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>(IBOT, Collections.emptyList()));
   }
   /**
    * Get type name given a state and stack symbols to push. If this type is not
@@ -69,13 +79,13 @@ public class Compiler<Q, Σ, Γ> {
     if (types.containsKey($))
       return $;
     types.put($, null); // Pending computation.
-    types.put($, encodedBody(q, α, new InterfaceName($.q, $.α, asList(dpda.Q))));
+    types.put($, encodedBody(q, α));
     return $;
   }
-  private InterfaceNode<TypeName, MethodDeclaration, InterfaceName> encodedBody(final Q q, final Word<Γ> α,
-      final InterfaceName name) {
-    return new InterfaceNode<>(name, dpda.Σ().map(σ -> //
-    new MethodNode<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
+    return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
+        dpda.Σ().map(σ -> //
+        new MethodNode<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
   }
   /**
    * Computes the type representing the state of the automaton after consuming
@@ -92,17 +102,17 @@ public class Compiler<Q, Σ, Γ> {
   }
   private PolymorphicTypeNode<TypeName> consolidate(final Q q, final Word<Γ> α) {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q, ε(), α.top());
-    return δ == null ? new PolymorphicTypeNode<>(new TypeName(q, α), asList(typeVariables.values())) : common(δ, α.pop());
+    return δ == null ? new PolymorphicTypeNode<>(encodedName(q, α), asList(typeVariables.values())) : common(δ, α.pop());
   }
   private PolymorphicTypeNode<TypeName> common(final δ<Q, Σ, Γ> δ, final Word<Γ> α) {
     if (α.isEmpty()) {
       if (δ.α.isEmpty())
         return typeVariables.get(δ.q$);
-      return new PolymorphicTypeNode<>(new TypeName(δ.q$, δ.α), asList(typeVariables.values()));
+      return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), asList(typeVariables.values()));
     }
     if (δ.α.isEmpty())
       return consolidate(δ.q$, α);
-    return new PolymorphicTypeNode<>(new TypeName(δ.q$, δ.α), //
+    return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), //
         dpda.Q().map(q -> consolidate(q, α)).collect(Collectors.toList()));
   }
 
@@ -122,6 +132,25 @@ public class Compiler<Q, Σ, Γ> {
       this.q = null;
       this.α = null;
     }
+    @Override public int hashCode() {
+      int $ = 1;
+      if (q != null)
+        $ = $ * 31 + q.hashCode();
+      if (α != null)
+        $ = $ * 31 + α.hashCode();
+      return $;
+    }
+    @Override public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (!(o instanceof Compiler.TypeName))
+        return false;
+      @SuppressWarnings("unchecked") Compiler<Q, Σ, Γ>.TypeName other = (TypeName) o;
+      return Objects.equals(q, other.q) && Objects.equals(α, other.α);
+    }
+    @Override public String toString() {
+      return String.format("<~%s,%s~>", q, α);
+    }
   }
 
   public class MethodDeclaration {
@@ -135,15 +164,20 @@ public class Compiler<Q, Σ, Γ> {
     }
   }
 
-  public class InterfaceName {
+  public class InterfaceDeclaration {
     public final Q q;
-    public final List<Γ> α;
-    @SuppressWarnings("hiding") public final List<Q> typeVariables;
+    public final Word<Γ> α;
+    @SuppressWarnings("hiding") public final Word<Q> typeVariables;
 
-    public InterfaceName(Q q, List<Γ> α, List<Q> typeVariables) {
+    public InterfaceDeclaration(Q q, Word<Γ> α, Word<Q> typeVariables) {
       this.q = q;
-      this.α = Collections.unmodifiableList(α);
-      this.typeVariables = Collections.unmodifiableList(typeVariables);
+      this.α = α;
+      this.typeVariables = typeVariables;
+    }
+    InterfaceDeclaration() {
+      this.q = null;
+      this.α = null;
+      this.typeVariables = null;
     }
   }
 

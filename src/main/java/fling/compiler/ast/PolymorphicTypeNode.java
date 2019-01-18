@@ -15,4 +15,7 @@ public class PolymorphicTypeNode<T> {
     this.name = name;
     this.typeArguments = Collections.emptyList();
   }
+  public boolean isLeaf() {
+    return typeArguments.isEmpty();
+  }
 }

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * An unmodifiable finite sequence. Supports stack notations.
@@ -26,7 +27,7 @@ import java.util.Objects;
   public Word(T[] origin) {
     inner = Arrays.asList(origin);
   }
-  public Word(List<T> origin) {
+  public Word(Collection<T> origin) {
     inner = new ArrayList<>(origin);
   }
   @Override public boolean add(T e) {
@@ -100,21 +101,34 @@ import java.util.Objects;
   }
   public T top() {
     assert !inner.isEmpty();
-    return inner.get(0);
+    return inner.get(inner.size() - 1);
   }
   public Word<T> push(T t) {
     List<T> $ = new ArrayList<>(inner.size() + 1);
-    $.add(0, t);
+    $.add(t);
     return new Word<>($);
   }
-  public Word<T> push(Collection<T> collection) {
-    Objects.requireNonNull(collection);
-    List<T> $ = new ArrayList<>(inner.size() + collection.size());
-    $.addAll(0, collection);
+  public Word<T> push(List<T> list) {
+    List<T> $ = new ArrayList<>(inner.size() + list.size());
+    $.addAll(inner);
+    $.addAll(list);
     return new Word<>($);
   }
   public Word<T> pop() {
     assert !inner.isEmpty();
-    return new Word<>(inner.subList(1, inner.size()));
+    return new Word<>(inner.subList(0, inner.size() - 1));
+  }
+  @Override public int hashCode() {
+    return inner.hashCode();
+  }
+  @Override public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (!(o instanceof Word))
+      return false;
+    return inner.equals(((Word<?>) o).inner);
+  }
+  @Override public String toString() {
+    return inner.stream().map(Object::toString).collect(Collectors.joining(""));
   }
 }

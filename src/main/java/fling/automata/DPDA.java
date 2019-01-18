@@ -80,22 +80,20 @@ public class DPDA<Q, Σ, Γ> {
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
     Q q$ = q;
     Word<Γ> s = new Word<>(γ);
-    if (σ != null) { // We search for a consuming transition.
-      final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
-      if (δ == null)
-        return null;
-      q$ = δ.q$;
-      s = s.pop().push(δ.α);
-    }
+    final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
+    if (δ == null)
+      return null;
+    q$ = δ.q$;
+    s = s.pop().push(δ.α);
     // process subsequent ε transitions.
     for (;;) {
       if (s.isEmpty())
         return new δ<>(q, σ, γ, q$, s);
-      final δ<Q, Σ, Γ> δ = δ(q$, ε(), s.top());
-      if (δ == null)
+      final δ<Q, Σ, Γ> δ$ = δ(q$, ε(), s.top());
+      if (δ$ == null)
         return new δ<>(q, σ, γ, q$, s);
-      s = s.pop().push(δ.α);
-      q$ = δ.q$;
+      s = s.pop().push(δ$.α);
+      q$ = δ$.q$;
     }
   }
 
