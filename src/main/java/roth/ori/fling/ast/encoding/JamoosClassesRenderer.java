@@ -35,7 +35,7 @@ public class JamoosClassesRenderer {
   protected final String packagePath;
   protected final DAG<Symbol> inheritance;
   protected DAG<Symbol> reversedInheritance;
-  protected Set<Symbol> abstractNonTerminals = new LinkedHashSet<>();
+  protected Set<Symbol> abstractsymbols = new LinkedHashSet<>();
   protected List<String> innerClasses = new LinkedList<>();
   public String topClass;
   protected Map<Symbol, Map<Symbol, List<GrammarElement>>> concreteClassesMapping = new LinkedHashMap<>();
@@ -82,7 +82,7 @@ public class JamoosClassesRenderer {
           for (GrammarElement s : clause)
             parseSymbol(lhs.name(), s);
       } else
-        abstractNonTerminals.add(lhs);
+        abstractsymbols.add(lhs);
     }
     parseInnerClasses();
     for (String i : innerClasses)
@@ -191,14 +191,14 @@ public class JamoosClassesRenderer {
     return new JamoosClassesRenderer(ebnf, packagePath);
   }
   public boolean isAbstractNonTerminal(Symbol nt) {
-    return actual.abstractNonTerminals.contains(nt);
+    return actual.abstractsymbols.contains(nt);
   }
   public Symbol solveAbstractNonTerminal(Symbol nt, Terminal t, EBNFAnalyzer analyzer) {
     if (actual.reversedInheritance == null)
       actual.reversedInheritance = actual.inheritance.reverse();
     for (Symbol child : actual.reversedInheritance.get(nt))
       if (t == null && analyzer.isNullable(child) || t != null && analyzer.firstSetOf(child).contains(t))
-        return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t, analyzer) : child;
+        return actual.abstractsymbols.contains(child) ? actual.solveAbstractNonTerminal(child, t, analyzer) : child;
     return null;
   }
   public boolean isInterfaces() {

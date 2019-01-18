@@ -7,36 +7,36 @@ import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 
 public class DerivationRule {
-  public final Symbol lhs;
-  private final List<GrammarElement> rhs;
+  public final Symbol head;
+  private final List<GrammarElement> body;
 
-  public DerivationRule(final Symbol lhs, final List<GrammarElement> rhs) {
-    this.lhs = lhs;
-    this.rhs = new ArrayList<>(rhs);
+  public DerivationRule(final Symbol head, final List<GrammarElement> body) {
+    this.head = head;
+    this.body = new ArrayList<>(body);
   }
   @Override public String toString() {
-    StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
-    for (GrammarElement symb : rhs)
+    StringBuilder sb = new StringBuilder(head.toString2() + " ::= ");
+    for (GrammarElement symb : body)
       sb.append(symb.toString() + " ");
     return sb.toString();
   }
   @Override public boolean equals(final Object obj) {
-    return obj != null && obj.getClass().equals(getClass()) && lhs.equals(((DerivationRule) obj).lhs)
-        && rhs.equals(((DerivationRule) obj).rhs);
+    return obj != null && obj.getClass().equals(getClass()) && head.equals(((DerivationRule) obj).head)
+        && body.equals(((DerivationRule) obj).body);
   }
   @Override public int hashCode() {
-    return lhs.hashCode() + 7 * rhs.hashCode();
+    return head.hashCode() + 7 * body.hashCode();
   }
   public GrammarElement get(int i) {
-    return rhs.get(i);
+    return body.get(i);
   }
   public int size() {
-    return rhs.size();
+    return body.size();
   }
-  public List<GrammarElement> getRHS() {
-    return new ArrayList<>(rhs);
+  public List<GrammarElement> body() {
+    return new ArrayList<>(body);
   }
-  public List<GrammarElement> getRHSSuffix(int from) {
-    return getRHS().subList(from, rhs.size());
+  public List<GrammarElement> suffix(int from) {
+    return body().subList(from, body.size());
   }
 }

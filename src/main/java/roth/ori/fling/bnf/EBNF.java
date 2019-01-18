@@ -25,7 +25,7 @@ import roth.ori.fling.symbols.types.VarArgs;
 
 public final class EBNF {
   public final Set<Verb> verbs;
-  public final Set<Symbol> nonTerminals;
+  public final Set<Symbol> symbols;
   public final Set<Extendible> extendibles;
   public final Set<Symbol> startSymbols;
   private final Set<DerivationRule> derivationRules;
@@ -38,12 +38,12 @@ public final class EBNF {
   private FlingProducer afterSolution;
   private BNF bnf;
 
-  public EBNF(Set<Verb> verbs, Set<Symbol> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
+  public EBNF(Set<Verb> verbs, Set<Symbol> symbols, Set<Extendible> extendibles, Set<DerivationRule> rules,
       Set<Symbol> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
-    this.nonTerminals = new LinkedHashSet<>(nonTerminals);
-    this.nonTerminals.add(SpecialSymbols.augmentedStartSymbol);
+    this.symbols = new LinkedHashSet<>(symbols);
+    this.symbols.add(SpecialSymbols.augmentedStartSymbol);
     this.extendibles = new LinkedHashSet<>(extendibles);
     this.derivationRules = new LinkedHashSet<>(rules);
     this.startSymbols = new LinkedHashSet<>(start);
@@ -57,7 +57,7 @@ public final class EBNF {
     return name;
   }
   public List<DerivationRule> getRulesOf(Symbol nt) {
-    return derivationRules.stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
+    return derivationRules.stream().filter(r -> r.head.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode
   // TODO Roth: use normalized form here
@@ -69,8 +69,8 @@ public final class EBNF {
     nestedSymbolsMapping = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
       List<GrammarElement> rhs = new LinkedList<>();
-      for (GrammarElement s : r.getRHS()) {
-        rs.addAll(s.solve(r.lhs, producer));
+      for (GrammarElement s : r.body()) {
+        rs.addAll(s.solve(r.head, producer));
         rhs.add(s.head());
         if (s.isVerb())
           for (ParameterType t : s.asVerb().type)
@@ -82,14 +82,14 @@ public final class EBNF {
               nestedSymbolsMapping.put(nested, nested);
             }
       }
-      rs.add(new DerivationRule(r.lhs, rhs));
+      rs.add(new DerivationRule(r.head, rhs));
     }
     Set<Symbol> nts = new LinkedHashSet<>();
     Set<Verb> vs = new LinkedHashSet<>();
     Set<Symbol> ns = new LinkedHashSet<>();
     for (DerivationRule r : rs) {
-      nts.add(r.lhs);
-      for (GrammarElement s : r.getRHS()) {
+      nts.add(r.head);
+      for (GrammarElement s : r.body()) {
         assert !s.isExtendible();
         if (s.isVerb()) {
           for (ParameterType t : s.asVerb().type)
@@ -110,8 +110,8 @@ public final class EBNF {
   public Map<Symbol, Set<List<GrammarElement>>> regularForm() {
     Map<Symbol, Set<List<GrammarElement>>> $ = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
-      $.putIfAbsent(r.lhs, new LinkedHashSet<>());
-      $.get(r.lhs).add(r.getRHS());
+      $.putIfAbsent(r.head, new LinkedHashSet<>());
+      $.get(r.head).add(r.body());
     }
     return $;
   }
@@ -121,8 +121,8 @@ public final class EBNF {
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
       for (DerivationRule r : e.rawSolution()) {
-        $.putIfAbsent(r.lhs, new HashSet<>());
-        $.get(r.lhs).add(r.getRHS());
+        $.putIfAbsent(r.head, new HashSet<>());
+        $.get(r.head).add(r.body());
       }
     }
     return $;

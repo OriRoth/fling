@@ -30,7 +30,7 @@ public class BNFAnalyzer {
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
     llClosure = new HashMap<>();
-    for (Symbol nt : bnf.nonTerminals)
+    for (Symbol nt : bnf.symbols)
       for (Verb v : bnf.verbs)
         llClosure(nt, v);
   }
@@ -40,14 +40,14 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule rule : bnf.rules())
-        if (rule.getRHS().stream().allMatch(child -> nullables.contains(child)))
-          moreChanges |= nullables.add(rule.lhs);
+        if (rule.body().stream().allMatch(child -> nullables.contains(child)))
+          moreChanges |= nullables.add(rule.head);
     } while (moreChanges);
     return nullables;
   }
   private Map<GrammarElement, Collection<Verb>> calculateSymbolFirstSet() {
     Map<GrammarElement, Collection<Verb>> $ = new HashMap<>();
-    for (Symbol nt : bnf.nonTerminals)
+    for (Symbol nt : bnf.symbols)
       $.put(nt, new LinkedHashSet<>());
     for (Verb term : bnf.verbs)
       $.put(term, new LinkedHashSet<>(Arrays.asList(term)));
@@ -55,8 +55,8 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule dRule : bnf.rules())
-        for (GrammarElement symbol : dRule.getRHS()) {
-          moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
+        for (GrammarElement symbol : dRule.body()) {
+          moreChanges |= $.get(dRule.head).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
             break;
         }
@@ -83,7 +83,7 @@ public class BNFAnalyzer {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))
       return llClosure.get(nt).get(v);
     llClosure.putIfAbsent(nt, new HashMap<>());
-    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.getRHS()).contains(v))) {
+    if (bnf.getRulesOf(nt).stream().noneMatch(d -> firstSetOf(d.body()).contains(v))) {
       llClosure.get(nt).put(v, null);
       return null;
     }
@@ -102,8 +102,8 @@ public class BNFAnalyzer {
       }
       assert current.isNonTerminal();
       for (DerivationRule r : bnf.getRulesOf(current.asNonTerminal()))
-        if (firstSetOf(r.getRHS()).contains(v)) {
-          List<GrammarElement> a = new ArrayList<>(r.getRHS());
+        if (firstSetOf(r.body()).contains(v)) {
+          List<GrammarElement> a = new ArrayList<>(r.body());
           Collections.reverse(a);
           for (GrammarElement s : a)
             $.push(s);
@@ -116,6 +116,6 @@ public class BNFAnalyzer {
     return isNullable(expr.toArray(new GrammarElement[] {}));
   }
   public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.getRHS().toArray(new GrammarElement[] {}), index, rule.size());
+    return Arrays.copyOfRange(rule.body().toArray(new GrammarElement[] {}), index, rule.size());
   }
 }

@@ -84,7 +84,7 @@ public class EBNFAnalyzer {
     return isNullable(expr.toArray(new GrammarElement[] {}));
   }
   public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.getRHS().toArray(new GrammarElement[] {}), index, rule.size());
+    return Arrays.copyOfRange(rule.body().toArray(new GrammarElement[] {}), index, rule.size());
   }
   public static RuntimeException reject() {
     return new ELLRecognizerRejection();

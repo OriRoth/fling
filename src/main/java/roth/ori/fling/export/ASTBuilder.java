@@ -72,7 +72,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
       Interpretation i = (Interpretation) values.get(0);
       return build(jamoos.solveAbstractNonTerminal(nt, nextTerminal(values), analyzer), i.value);
     }
-    // TODO Roth: not forgiving for nonterminals receiving themselves
+    // TODO Roth: not forgiving for symbols receiving themselves
     if (values.size() == 1 && values.get(0) instanceof Interpretation && nt.equals(((Interpretation) values.get(0)).symbol))
       return build(nt, ((Interpretation) values.get(0)).value);
     return Collections.singletonList(instance(clazz(nt), values));

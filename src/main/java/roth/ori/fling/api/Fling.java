@@ -186,7 +186,7 @@ public class Fling {
     InitialSpecializeDeriver(final Symbol lhs) {
       this.lhs = lhs;
     }
-    // TODO Roth: allow ENonTerminals?
+    // TODO Roth: allow Esymbols?
     public FlingBNF into(final Symbol s, final Symbol... ss) {
       OrDeriver $ = new InitialDeriver(lhs).to(s);
       for (GrammarElement x : ss)

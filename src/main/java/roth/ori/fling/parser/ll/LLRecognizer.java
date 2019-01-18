@@ -66,7 +66,7 @@ public class LLRecognizer {
   }
   private Map<Symbol, Map<Verb, List<GrammarElement>>> createActionTable() {
     Map<Symbol, Map<Verb, List<GrammarElement>>> $ = new HashMap<>();
-    for (Symbol nt : bnf.nonTerminals) {
+    for (Symbol nt : bnf.symbols) {
       Map<Verb, List<GrammarElement>> innerMap = new HashMap<>();
       for (Verb v : bnf.verbs) {
         List<GrammarElement> closure = analyzer.llClosure(nt, v);

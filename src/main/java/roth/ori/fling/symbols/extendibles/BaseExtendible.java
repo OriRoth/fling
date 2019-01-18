@@ -101,9 +101,9 @@ import roth.ori.fling.symbols.Terminal;
       seen.addAll(toConclude);
       toConclude = new HashSet<>();
       for (DerivationRule r : solvedRules)
-        if (current.contains(r.lhs)) {
+        if (current.contains(r.head)) {
           List<GrammarElement> rhs = new LinkedList<>();
-          for (GrammarElement s : r.getRHS()) {
+          for (GrammarElement s : r.body()) {
             if (heads.containsKey(s)) {
               rhs.add(heads.get(s));
               continue;
@@ -112,7 +112,7 @@ import roth.ori.fling.symbols.Terminal;
               toConclude.add(s.asNonTerminal());
             rhs.add(s);
           }
-          rawSolution.add(new DerivationRule(r.lhs, rhs));
+          rawSolution.add(new DerivationRule(r.head, rhs));
         }
     } while (!toConclude.isEmpty());
     return rawSolution;
