@@ -48,7 +48,7 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicAdapter<Q, Σ, Γ> {
     return String.format("%s %s();", printType(returnType), declaration.name);
   }
   @Override public String printTopInterface() {
-    return String.format("interface ${void %s();}", startMethodName);
+    return String.format("interface ${void %s();}", terminationMethodName);
   }
   @Override public String printBotInterface() {
     return "interface ø {}";
