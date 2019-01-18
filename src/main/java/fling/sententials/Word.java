@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
  * 
  * @author Ori Roth
  */
-@SuppressWarnings("unused") public class Word<T> implements List<T> {
+public class Word<T> implements List<T> {
   private List<T> inner;
 
   public Word() {
@@ -30,16 +29,16 @@ import java.util.stream.Collectors;
   public Word(Collection<T> origin) {
     inner = new ArrayList<>(origin);
   }
-  @Override public boolean add(T e) {
+  @SuppressWarnings("unused") @Override public boolean add(T t) {
     throw new UnsupportedOperationException();
   }
-  @Override public void add(int index, T element) {
+  @SuppressWarnings("unused") @Override public void add(int index, T element) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean addAll(Collection<? extends T> c) {
+  @SuppressWarnings("unused") @Override public boolean addAll(Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean addAll(int index, Collection<? extends T> c) {
+  @SuppressWarnings("unused") @Override public boolean addAll(int index, Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
   @Override public void clear() {
@@ -72,19 +71,19 @@ import java.util.stream.Collectors;
   @Override public ListIterator<T> listIterator(int index) {
     return inner.listIterator(index);
   }
-  @Override public boolean remove(Object o) {
+  @SuppressWarnings("unused") @Override public boolean remove(Object o) {
     throw new UnsupportedOperationException();
   }
-  @Override public T remove(int index) {
+  @SuppressWarnings("unused") @Override public T remove(int index) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean removeAll(Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean removeAll(Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean retainAll(Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean retainAll(Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @Override public T set(int index, T element) {
+  @SuppressWarnings("unused") @Override public T set(int index, T element) {
     throw new UnsupportedOperationException();
   }
   @Override public int size() {

@@ -123,11 +123,11 @@ public class DPDA<Q, Σ, Γ> {
       Collections.addAll(F, qs);
       return this;
     }
-    public Builder<Q, Σ, Γ> q0(final Q q0) {
+    @SuppressWarnings("hiding") public Builder<Q, Σ, Γ> q0(final Q q0) {
       this.q0 = q0;
       return this;
     }
-    public Builder<Q, Σ, Γ> γ0(final Γ γ0) {
+    @SuppressWarnings("hiding") public Builder<Q, Σ, Γ> γ0(final Γ γ0) {
       this.γ0 = γ0;
       return this;
     }
