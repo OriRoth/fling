@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.symbols.extendibles.Extendible;
 
 public interface GrammarElement {
@@ -12,7 +12,7 @@ public interface GrammarElement {
   public default boolean isVerb() {
     return Verb.class.isAssignableFrom(getClass());
   }
-  public default boolean isNonTerminal() {
+  public default boolean isSymbol() {
     return Symbol.class.isAssignableFrom(getClass());
   }
   public default boolean isTerminal() {
@@ -37,7 +37,7 @@ public interface GrammarElement {
   default GrammarElement head() {
     return this;
   }
-  @SuppressWarnings("unused") default List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
+  @SuppressWarnings("unused") default List<Rule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
     return new LinkedList<>();
   }
   @SuppressWarnings({ "rawtypes", "unused" }) default List<Class> toClasses(Function<GrammarElement, Class> classSolution) {

@@ -28,7 +28,7 @@ public final class EBNF {
   public final Set<Symbol> symbols;
   public final Set<Extendible> extendibles;
   public final Set<Symbol> startSymbols;
-  private final Set<DerivationRule> derivationRules;
+  private final Set<Rule> derivationRules;
   public final String name;
   public boolean isSubEBNF;
   // Valid only after toBNF
@@ -38,7 +38,7 @@ public final class EBNF {
   private FlingProducer afterSolution;
   private BNF bnf;
 
-  public EBNF(Set<Verb> verbs, Set<Symbol> symbols, Set<Extendible> extendibles, Set<DerivationRule> rules,
+  public EBNF(Set<Verb> verbs, Set<Symbol> symbols, Set<Extendible> extendibles, Set<Rule> rules,
       Set<Symbol> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
@@ -48,7 +48,7 @@ public final class EBNF {
     this.derivationRules = new LinkedHashSet<>(rules);
     this.startSymbols = new LinkedHashSet<>(start);
     this.startSymbols
-        .forEach(ss -> derivationRules.add(new DerivationRule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
+        .forEach(ss -> derivationRules.add(new Rule(SpecialSymbols.augmentedStartSymbol, Arrays.asList(ss))));
     this.name = name;
     this.isSubEBNF = false;
   }
@@ -56,7 +56,7 @@ public final class EBNF {
     // TODO Roth: set EBNF toString
     return name;
   }
-  public List<DerivationRule> getRulesOf(Symbol nt) {
+  public List<Rule> getRulesOf(Symbol nt) {
     return derivationRules.stream().filter(r -> r.head.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode
@@ -65,9 +65,9 @@ public final class EBNF {
     if (bnf != null)
       return bnf;
     beforeSolution = producer.clone();
-    Set<DerivationRule> rs = new LinkedHashSet<>();
+    Set<Rule> rs = new LinkedHashSet<>();
     nestedSymbolsMapping = new LinkedHashMap<>();
-    for (DerivationRule r : derivationRules) {
+    for (Rule r : derivationRules) {
       List<GrammarElement> rhs = new LinkedList<>();
       for (GrammarElement s : r.body()) {
         rs.addAll(s.solve(r.head, producer));
@@ -82,18 +82,18 @@ public final class EBNF {
               nestedSymbolsMapping.put(nested, nested);
             }
       }
-      rs.add(new DerivationRule(r.head, rhs));
+      rs.add(new Rule(r.head, rhs));
     }
     Set<Symbol> nts = new LinkedHashSet<>();
     Set<Verb> vs = new LinkedHashSet<>();
     Set<Symbol> ns = new LinkedHashSet<>();
-    for (DerivationRule r : rs) {
+    for (Rule r : rs) {
       nts.add(r.head);
       for (GrammarElement s : r.body()) {
         assert !s.isExtendible();
         if (s.isVerb()) {
           for (ParameterType t : s.asVerb().type)
-            if (t instanceof NestedType && ((NestedType) t).nested.head().isNonTerminal())
+            if (t instanceof NestedType && ((NestedType) t).nested.head().isSymbol())
               ns.add(((NestedType) t).nested.head().asNonTerminal());
             else if (t instanceof VarArgs && ((VarArgs) t).nt != null)
               ns.add(((VarArgs) t).nt);
@@ -109,7 +109,7 @@ public final class EBNF {
   }
   public Map<Symbol, Set<List<GrammarElement>>> regularForm() {
     Map<Symbol, Set<List<GrammarElement>>> $ = new LinkedHashMap<>();
-    for (DerivationRule r : derivationRules) {
+    for (Rule r : derivationRules) {
       $.putIfAbsent(r.head, new LinkedHashSet<>());
       $.get(r.head).add(r.body());
     }
@@ -120,7 +120,7 @@ public final class EBNF {
     Map<GrammarElement, Set<List<GrammarElement>>> $ = new LinkedHashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
-      for (DerivationRule r : e.rawSolution()) {
+      for (Rule r : e.rawSolution()) {
         $.putIfAbsent(r.head, new HashSet<>());
         $.get(r.head).add(r.body());
       }
@@ -132,7 +132,7 @@ public final class EBNF {
     for (Entry<Symbol, Set<List<GrammarElement>>> e : rf.entrySet()) {
       Symbol lhs = e.getKey();
       Set<List<GrammarElement>> rhs = e.getValue();
-      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
+      if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isSymbol())) {
         $.put(lhs, rhs);
         continue;
       }
@@ -157,7 +157,7 @@ public final class EBNF {
     subHead = nestedSymbolsMapping.get(nt);
     return this;
   }
-  public Set<DerivationRule> rules() {
+  public Set<Rule> rules() {
     return new LinkedHashSet<>(derivationRules);
   }
   public FlingProducer beforeSolution() {

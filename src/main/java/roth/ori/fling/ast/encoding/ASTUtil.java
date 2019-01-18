@@ -28,7 +28,7 @@ public class ASTUtil {
       if (isInheritanceRule(e.getValue()))
         for (List<GrammarElement> rhs : e.getValue())
           for (GrammarElement s : rhs)
-            if (s.isNonTerminal()) {
+            if (s.isSymbol()) {
               inheritance.initialize((Symbol) s);
               inheritance.add((Symbol) s, e.getKey());
             }

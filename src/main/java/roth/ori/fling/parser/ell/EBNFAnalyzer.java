@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
@@ -83,7 +83,7 @@ public class EBNFAnalyzer {
   public boolean isNullable(List<GrammarElement> expr) {
     return isNullable(expr.toArray(new GrammarElement[] {}));
   }
-  public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
+  public static GrammarElement[] ruleSuffix(Rule rule, int index) {
     return Arrays.copyOfRange(rule.body().toArray(new GrammarElement[] {}), index, rule.size());
   }
   public static RuntimeException reject() {
@@ -96,11 +96,11 @@ public class EBNFAnalyzer {
     Set<Verb> vs = new HashSet<>();
     Set<Symbol> nts = new HashSet<>();
     Set<Extendible> exs = new HashSet<>();
-    Set<DerivationRule> rs = new HashSet<>();
+    Set<Rule> rs = new HashSet<>();
     for (Symbol lhs : n.keySet()) {
       nts.add(lhs.asNonTerminal());
       for (List<GrammarElement> clause : n.get(lhs)) {
-        rs.add(new DerivationRule(lhs.asNonTerminal(), clause));
+        rs.add(new Rule(lhs.asNonTerminal(), clause));
         for (GrammarElement s : clause)
           if (s.isVerb())
             vs.add(s.asVerb());

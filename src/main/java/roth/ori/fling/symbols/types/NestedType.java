@@ -20,7 +20,7 @@ public class NestedType implements ParameterType {
     this.nested = nested;
   }
   public NestedType(GrammarElement nested) {
-    assert nested.isExtendible() || nested.isNonTerminal();
+    assert nested.isExtendible() || nested.isSymbol();
     this.nested = nested;
   }
   @Override public String toString() {

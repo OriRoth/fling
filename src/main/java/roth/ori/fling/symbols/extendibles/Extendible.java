@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
@@ -17,7 +17,7 @@ public interface Extendible extends GrammarElement {
   List<String> parseTypes(Function<GrammarElement, List<String>> operation, Function<GrammarElement, //
       List<String>> forgivingOperation);
   List<GrammarElement> symbols();
-  List<DerivationRule> rawSolution();
+  List<Rule> rawSolution();
   List<?> fold(List<?> t);
   @SuppressWarnings("rawtypes") List<Object> conclude(List values, BiFunction<GrammarElement, List, List> solution,
       Function<GrammarElement, Class> classSolution);

@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 import roth.ori.fling.api.encoding.FlingEncoder;
 import roth.ori.fling.bnf.BNF;
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.Symbol;
@@ -31,28 +31,23 @@ import roth.ori.fling.symbols.types.NestedType;
 import roth.ori.fling.symbols.types.VarArgs;
 
 public class Fling {
-  public final Set<DerivationRule> derivationRules;
-  public final Set<Verb> verbs;
+  public final Set<Rule> rules= new LinkedHashSet<>();
+  public final Set<Verb> verbs = new LinkedHashSet<>();
   public final Set<Symbol> symbols;
-  public final Set<Extendible> extendibles;
-  public final Set<Symbol> startSymbols;
+  public final Set<Extendible> extendibles=new LinkedHashSet<>();
+  public final Set<Symbol> startSymbols=new LinkedHashSet<>();
   public final String apiName;
-  public final Set<Terminal> terminals;
-  public final Set<GrammarElement> nestedParameters; // NonTerminal and Extendibles (?)
+  public final Set<Terminal> tokens;
+  public final Set<GrammarElement> nestedParameters=new LinkedHashSet<>(); // NonTerminal and Extendibles (?)
   public final String packagePath;
   public final String projectPath;
   public Class<? extends Grammar> provider;
   private EBNF ebnf;
 
   public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & Symbol> Fling(Class<? extends Grammar> provider,
-      final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
-    terminals = new LinkedHashSet<>(EnumSet.allOf(terminalEnum));
-    verbs = new LinkedHashSet<>();
-    symbols = new LinkedHashSet<>(EnumSet.allOf(nonterminalEnum));
-    derivationRules = new LinkedHashSet<>();
-    startSymbols = new LinkedHashSet<>();
-    nestedParameters = new LinkedHashSet<>();
-    extendibles = new LinkedHashSet<>();
+      final Class<Term> terminals, final Class<NT> symbols, String apiName, String packagePath, String projectPath) {
+    this.tokens = new LinkedHashSet<>(EnumSet.allOf(terminals));
+    this.symbols = new LinkedHashSet<>(EnumSet.allOf(symbols));
     this.provider = provider;
     this.apiName = apiName;
     this.packagePath = packagePath;
@@ -83,7 +78,7 @@ public class Fling {
   public EBNF ebnf() {
     if (ebnf != null)
       return ebnf;
-    ebnf = new EBNF(verbs, symbols, extendibles, derivationRules, startSymbols, apiName);
+    ebnf = new EBNF(verbs, symbols, extendibles, rules, startSymbols, apiName);
     ebnf.toBNF(new FlingProducer());
     return ebnf;
   }
@@ -99,7 +94,7 @@ public class Fling {
   public void addRule(Symbol lhs, List<GrammarElement> rhs) {
     List<GrammarElement> $ = fixRawTerminals(rhs);
     analyze($);
-    derivationRules.add(new DerivationRule(lhs, $));
+    rules.add(new Rule(lhs, $));
   }
   private void analyze(GrammarElement s) {
     if (s.isVerb()) {
@@ -279,7 +274,7 @@ public class Fling {
   private List<GrammarElement> fixRawTerminals(List<GrammarElement> rhs) {
     List<GrammarElement> $ = new ArrayList<>();
     for (GrammarElement s : rhs)
-      if (s.isVerb() || s.isNonTerminal())
+      if (s.isVerb() || s.isSymbol())
         $.add(s);
       else if (s.isTerminal())
         $.add(new Verb(s.asTerminal()));

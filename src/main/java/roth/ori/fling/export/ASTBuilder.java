@@ -50,7 +50,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
   private List build(GrammarElement s, List values) {
     if (SpecialSymbols.augmentedStartSymbol.equals(s))
       return buildAugS(values);
-    if (s.isNonTerminal())
+    if (s.isSymbol())
       return build(s.asNonTerminal(), values);
     if (s.isExtendible())
       return build(s.asExtendible(), values);

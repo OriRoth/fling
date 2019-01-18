@@ -40,7 +40,7 @@ public class LLRecognizer {
     if (rejected)
       return false;
     if (!initialized) {
-      stack.push(bnf.startSymbols.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
+      stack.push(bnf.starts.stream().filter(s -> !isError(s.asNonTerminal(), v)).findAny().get());
       initialized = true;
     }
     GrammarElement top = stack.pop();

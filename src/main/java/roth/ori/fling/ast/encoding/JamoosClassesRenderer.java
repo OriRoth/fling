@@ -146,7 +146,7 @@ public class JamoosClassesRenderer {
           $.add(va.nt == null ? va.toString() : va.nt.name(packagePath, topClassName) + "[]");
         } else
           $.add(t.toString());
-    } else if (s.isNonTerminal())
+    } else if (s.isSymbol())
       $.add(s.asNonTerminal().name(packagePath, topClassName));
     else
       $.add("Void");

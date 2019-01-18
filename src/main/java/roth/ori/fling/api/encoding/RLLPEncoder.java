@@ -67,7 +67,7 @@ public class RLLPEncoder {
   }
   // TODO Roth: code duplication in constructors
   public RLLPEncoder(Fling fling, GrammarElement nested, String astTopClass) {
-    assert nested.isNonTerminal() || nested.isExtendible();
+    assert nested.isSymbol() || nested.isExtendible();
     topClassName = nested.name();
     packagePath = fling.packagePath;
     topClassPath = packagePath + "." + topClassName;

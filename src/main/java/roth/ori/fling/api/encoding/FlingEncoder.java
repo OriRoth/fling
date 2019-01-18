@@ -9,7 +9,7 @@ import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 
 public class FlingEncoder {
-  Fling fling;
+  final Fling fling;
 
   public FlingEncoder(Fling fling) {
     this.fling = fling;

@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
@@ -21,8 +21,8 @@ import roth.ori.fling.symbols.Terminal;
   protected boolean isSolved = false;
   private Symbol lhs;
   private Function<Symbol, Symbol> producer;
-  private List<DerivationRule> solvedRules = new LinkedList<>();
-  private List<DerivationRule> rawSolution;
+  private List<Rule> solvedRules = new LinkedList<>();
+  private List<Rule> rawSolution;
 
   public BaseExtendible(List<GrammarElement> symbols) {
     this.symbols = symbols;
@@ -35,7 +35,7 @@ import roth.ori.fling.symbols.Terminal;
     assert isSolved;
     return head;
   }
-  @Override public List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
+  @Override public List<Rule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
     if (isSolved)
       return solvedRules;
     isSolved = true;
@@ -62,7 +62,7 @@ import roth.ori.fling.symbols.Terminal;
     return ss.stream().map(x -> solve(x)).collect(Collectors.toList());
   }
   protected void addRule(Symbol lhs, List<GrammarElement> rhs) {
-    solvedRules.add(new DerivationRule(lhs, rhs));
+    solvedRules.add(new Rule(lhs, rhs));
   }
   protected void addRule(GrammarElement lhs, List<GrammarElement> rhs) {
     addRule((Symbol) lhs, rhs);
@@ -88,7 +88,7 @@ import roth.ori.fling.symbols.Terminal;
     return knownFirstSets.get(this).addAll(fs);
   }
   protected abstract Set<Terminal> getFirstSet(Set<GrammarElement> nullables, Map<GrammarElement, Set<Terminal>> knownFirstSets);
-  @Override public List<DerivationRule> rawSolution() {
+  @Override public List<Rule> rawSolution() {
     assert isSolved;
     if (rawSolution != null)
       return rawSolution;
@@ -100,7 +100,7 @@ import roth.ori.fling.symbols.Terminal;
       Set<Symbol> current = toConclude;
       seen.addAll(toConclude);
       toConclude = new HashSet<>();
-      for (DerivationRule r : solvedRules)
+      for (Rule r : solvedRules)
         if (current.contains(r.head)) {
           List<GrammarElement> rhs = new LinkedList<>();
           for (GrammarElement s : r.body()) {
@@ -108,11 +108,11 @@ import roth.ori.fling.symbols.Terminal;
               rhs.add(heads.get(s));
               continue;
             }
-            if (s.isNonTerminal() && !seen.contains(s))
+            if (s.isSymbol() && !seen.contains(s))
               toConclude.add(s.asNonTerminal());
             rhs.add(s);
           }
-          rawSolution.add(new DerivationRule(r.head, rhs));
+          rawSolution.add(new Rule(r.head, rhs));
         }
     } while (!toConclude.isEmpty());
     return rawSolution;

@@ -39,7 +39,7 @@ public class RLLPConcrete {
   private RLLPConcrete consume(Verb verb) {
     if (!initialized) {
       jsm = new JSM(bnf, analyzer,
-          bnf.startSymbols.stream().filter(s -> analyzer.firstSetOf(s.asNonTerminal()).contains(verb)).findAny().get(),
+          bnf.starts.stream().filter(s -> analyzer.firstSetOf(s.asNonTerminal()).contains(verb)).findAny().get(),
           JSM.initialBaseLegalJumps());
       initialized = true;
     }

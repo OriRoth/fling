@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.export.RuntimeVerb;
 import roth.ori.fling.symbols.types.ClassType;
 import roth.ori.fling.symbols.types.NestedType;
@@ -88,8 +88,8 @@ public class Verb implements Terminal, Comparable<Verb> {
         return false;
     return true;
   }
-  @Override public List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
-    List<DerivationRule> $ = new LinkedList<>();
+  @Override public List<Rule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
+    List<Rule> $ = new LinkedList<>();
     for (ParameterType t : type)
       if (t instanceof NestedType)
         $.addAll(((NestedType) t).nested.solve(lhs, producer));

@@ -14,7 +14,7 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import roth.ori.fling.bnf.BNF;
-import roth.ori.fling.bnf.DerivationRule;
+import roth.ori.fling.bnf.Rule;
 import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
@@ -39,7 +39,7 @@ public class BNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule rule : bnf.rules())
+      for (Rule rule : bnf.rules())
         if (rule.body().stream().allMatch(child -> nullables.contains(child)))
           moreChanges |= nullables.add(rule.head);
     } while (moreChanges);
@@ -54,7 +54,7 @@ public class BNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (DerivationRule dRule : bnf.rules())
+      for (Rule dRule : bnf.rules())
         for (GrammarElement symbol : dRule.body()) {
           moreChanges |= $.get(dRule.head).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
@@ -100,8 +100,8 @@ public class BNFAnalyzer {
         llClosure.get(nt).put(v, $);
         return $;
       }
-      assert current.isNonTerminal();
-      for (DerivationRule r : bnf.getRulesOf(current.asNonTerminal()))
+      assert current.isSymbol();
+      for (Rule r : bnf.getRulesOf(current.asNonTerminal()))
         if (firstSetOf(r.body()).contains(v)) {
           List<GrammarElement> a = new ArrayList<>(r.body());
           Collections.reverse(a);
@@ -115,7 +115,7 @@ public class BNFAnalyzer {
   public boolean isNullable(List<GrammarElement> expr) {
     return isNullable(expr.toArray(new GrammarElement[] {}));
   }
-  public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
+  public static GrammarElement[] ruleSuffix(Rule rule, int index) {
     return Arrays.copyOfRange(rule.body().toArray(new GrammarElement[] {}), index, rule.size());
   }
 }
