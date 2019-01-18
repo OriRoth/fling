@@ -33,7 +33,4 @@ public class PolymorphicTypeNode<T> {
   public boolean isBot() {
     return this == BOT;
   }
-  public boolean isLeaf() {
-    return typeArguments.isEmpty();
-  }
 }

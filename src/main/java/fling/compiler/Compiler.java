@@ -49,10 +49,9 @@ public class Compiler<Q, Σ, Γ> {
     return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
   }
   private List<MethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections.singletonList(new MethodNode<>(MethodNode.specialDeclaration(),
-        new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
-            dpda.Q().map(q -> dpda.isAccepting(q) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
-                .collect(Collectors.toList()))));
+    return Collections.singletonList(new MethodNode.Start<>(new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
+        dpda.Q().map(q -> dpda.isAccepting(q) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
+            .collect(Collectors.toList()))));
   }
   private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return chainList(fixedInterfaces(), types.values());
@@ -79,9 +78,9 @@ public class Compiler<Q, Σ, Γ> {
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
     List<MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
     $.addAll(dpda.Σ().map(σ -> //
-    new MethodNode<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+    new MethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
     if (dpda.isAccepting(q))
-      $.add(new MethodNode<>(MethodNode.specialDeclaration(), null));
+      $.add(new MethodNode.Termination<>());
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
         Collections.unmodifiableList($));
   }

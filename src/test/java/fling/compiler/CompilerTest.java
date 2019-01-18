@@ -57,12 +57,10 @@ public class CompilerTest {
     Path filePath = Paths.get(PATH + "BalancedParentheses.java");
     if (Files.exists(filePath))
       Files.delete(filePath);
-    Files.write(filePath,
-        Collections.singleton("package generated;" + new JavaAdapter<>(new Compiler<>(dpda)).print("BalancedParentheses")),
-        StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+    Files.write(filePath, Collections.singleton(new JavaAdapter<Q, Σ, Γ>("generated", "BalancedParentheses", "__", "$") //
+        .printFluentAPI(new Compiler<>(dpda).compileFluentAPI())), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
     System.out.println("File BalancedParentheses.java written successfully.");
   }
-
   public static void compilationTest() {
     __().c().ↄ().$();
     __().c().ↄ().ↄ();

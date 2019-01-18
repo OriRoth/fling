@@ -1,49 +1,71 @@
 package fling.compiler;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import fling.compiler.ast.FluentAPINode;
-import fling.compiler.ast.InterfaceNode;
 import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Word;
 
 public class JavaAdapter<Q, Σ, Γ> implements PolymorphicAdapter<Q, Σ, Γ> {
-  // TODO Roth: receive these in constructor.
-  private static final String JBOT = "B";
-  private static final String JTOP = "T";
-  private static final String JSTART = "__";
-  // TODO Roth: instead get relevant fields in constructor. (?)
-  private final Compiler<Q, Σ, Γ> compiler;
+  private final String packageName;
+  private final String className;
+  private final String startMethodName;
+  private final String terminationMethodName;
 
-  public JavaAdapter(Compiler<Q, Σ, Γ> compiler) {
-    this.compiler = compiler;
+  public JavaAdapter(String packageName, String className, String startMethodName, String terminationMethodName) {
+    this.startMethodName = startMethodName;
+    this.terminationMethodName = terminationMethodName;
+    this.packageName = packageName;
+    this.className = className;
   }
-  public String print(String name) {
-    return printFluentAPI(name, compiler.compileFluentAPI());
+  @Override public String printTopType() {
+    return "$";
   }
-  @Override public String printType(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> type) {
-    return type.isTop() ? JTOP : type.isBot() ? JBOT : type.isLeaf() ? printTypeName(type.name) : //
-        String.format("%s<%s>", printTypeName(type.name), //
-            type.typeArguments.stream().map(t -> printType(t)).collect(Collectors.joining(",")));
+  @Override public String printBotType() {
+    return "ø";
   }
-  @Override public String printMethod(MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration> method) {
-    return method.isSpecial() ? "void $();" : String.format("%s %s();", printType(method.returnType), method.declaration.name);
+  @Override public String printIntermediateType(Compiler<Q, Σ, Γ>.TypeName name) {
+    return printTypeName(name);
   }
-  public String printStaticMethod(MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration> method) {
-    return String.format("public static %s %s(){return null;}", printType(method.returnType),
-        method.isSpecial() ? JSTART : method.declaration.name);
+  @Override public String printIntermediateType(Compiler<Q, Σ, Γ>.TypeName name,
+      List<PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName>> typeArguments) {
+    return String.format("%s<%s>", //
+        printTypeName(name), //
+        typeArguments.stream().map(t -> printType(t)).collect(joining(",")));
   }
-  @Override public String printInterface(
-      InterfaceNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration, Compiler<Q, Σ, Γ>.InterfaceDeclaration> interfaze) {
-    return interfaze.isTop() ? "interface T{void $();}" : interfaze.isBot() ? "interface B{}" : String.format("interface %s{%s}", printInterfaceDeclaration(interfaze.declaration), //
-        interfaze.methods.stream().map(m -> printMethod(m)).collect(Collectors.joining()));
+  @Override public String printStartMethod(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
+    return String.format("public static %s %s() {return null;}", printType(returnType), startMethodName);
   }
-  @Override public String printFluentAPI(String name,
+  @Override public String printTerminationMethod() {
+    return String.format("void %s();", terminationMethodName);
+  }
+  @Override public String printIntermediateMethod(Compiler<Q, Σ, Γ>.MethodDeclaration declaration,
+      PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
+    return String.format("%s %s();", printType(returnType), declaration.name);
+  }
+  @Override public String printTopInterface() {
+    return String.format("interface ${void %s();}", startMethodName);
+  }
+  @Override public String printBotInterface() {
+    return "interface ø {}";
+  }
+  @Override public String printInterface(Compiler<Q, Σ, Γ>.InterfaceDeclaration declaration,
+      List<MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration>> methods) {
+    return String.format("interface %s{%s}", //
+        printInterfaceDeclaration(declaration), //
+        methods.stream().map(m -> printMethod(m)).collect(joining()));
+  }
+  @Override public String printFluentAPI(
       FluentAPINode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration, Compiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
-    return String.format("@SuppressWarnings(\"all\") public interface %s{%s%s}", name,
-        fluentAPI.startMethods.stream().map(m -> printStaticMethod(m)).collect(Collectors.joining()),
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(Collectors.joining()));
+    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s}", //
+        packageName, //
+        className, //
+        fluentAPI.startMethods.stream().map(m -> printMethod(m)).collect(joining()),
+        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()));
   }
   public String printTypeName(Compiler<Q, Σ, Γ>.TypeName name) {
     return printTypeName(name.q, name.α);

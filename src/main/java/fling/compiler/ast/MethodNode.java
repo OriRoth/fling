@@ -1,17 +1,40 @@
 package fling.compiler.ast;
 
-public class MethodNode<T, D> {
-  public final D declaration;
-  public final PolymorphicTypeNode<T> returnType;
+public interface MethodNode<T, D> {
+  public static class Start<T, D> implements MethodNode<T, D> {
+    public final PolymorphicTypeNode<T> returnType;
 
-  public MethodNode(D declaration, PolymorphicTypeNode<T> returnType) {
-    this.declaration = declaration;
-    this.returnType = returnType;
+    public Start(PolymorphicTypeNode<T> returnType) {
+      this.returnType = returnType;
+    }
   }
-  public static <D> D specialDeclaration() {
-    return null;
+
+  public static class Termination<T, D> implements MethodNode<T, D> {
   }
-  public boolean isSpecial() {
-    return declaration == null;
+
+  public static class Intermediate<T, D> implements MethodNode<T, D> {
+    public final D declaration;
+    public final PolymorphicTypeNode<T> returnType;
+
+    public Intermediate(D declaration, PolymorphicTypeNode<T> returnType) {
+      this.declaration = declaration;
+      this.returnType = returnType;
+    }
+  }
+
+  default boolean isStartMethod() {
+    return this instanceof Start;
+  }
+  default boolean isTerminationMethod() {
+    return this instanceof Termination;
+  }
+  default boolean isIntermediateMethod() {
+    return this instanceof Intermediate;
+  }
+  default Start<T, D> asStartMethod() {
+    return (Start<T, D>) this;
+  }
+  default Intermediate<T, D> asIntermediateMethod() {
+    return (Intermediate<T, D>) this;
   }
 }
