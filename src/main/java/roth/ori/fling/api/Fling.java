@@ -33,7 +33,7 @@ import roth.ori.fling.symbols.types.VarArgs;
 public class Fling {
   public final Set<DerivationRule> derivationRules;
   public final Set<Verb> verbs;
-  public final Set<Symbol> nonTerminals;
+  public final Set<Symbol> symbols;
   public final Set<Extendible> extendibles;
   public final Set<Symbol> startSymbols;
   public final String apiName;
@@ -48,7 +48,7 @@ public class Fling {
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
     terminals = new LinkedHashSet<>(EnumSet.allOf(terminalEnum));
     verbs = new LinkedHashSet<>();
-    nonTerminals = new LinkedHashSet<>(EnumSet.allOf(nonterminalEnum));
+    symbols = new LinkedHashSet<>(EnumSet.allOf(nonterminalEnum));
     derivationRules = new LinkedHashSet<>();
     startSymbols = new LinkedHashSet<>();
     nestedParameters = new LinkedHashSet<>();
@@ -83,7 +83,7 @@ public class Fling {
   public EBNF ebnf() {
     if (ebnf != null)
       return ebnf;
-    ebnf = new EBNF(verbs, nonTerminals, extendibles, derivationRules, startSymbols, apiName);
+    ebnf = new EBNF(verbs, symbols, extendibles, derivationRules, startSymbols, apiName);
     ebnf.toBNF(new FlingProducer());
     return ebnf;
   }
