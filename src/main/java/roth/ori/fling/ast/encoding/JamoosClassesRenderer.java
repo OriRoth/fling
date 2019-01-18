@@ -18,7 +18,7 @@ import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.AST;
 import roth.ori.fling.parser.ell.EBNFAnalyzer;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
@@ -33,22 +33,22 @@ public class JamoosClassesRenderer {
   EBNF ebnf;
   public String topClassName;
   protected final String packagePath;
-  protected final DAG<NonTerminal> inheritance;
-  protected DAG<NonTerminal> reversedInheritance;
-  protected Set<NonTerminal> abstractNonTerminals = new LinkedHashSet<>();
+  protected final DAG<Symbol> inheritance;
+  protected DAG<Symbol> reversedInheritance;
+  protected Set<Symbol> abstractNonTerminals = new LinkedHashSet<>();
   protected List<String> innerClasses = new LinkedList<>();
   public String topClass;
-  protected Map<NonTerminal, Map<NonTerminal, List<GrammarElement>>> concreteClassesMapping = new LinkedHashMap<>();
+  protected Map<Symbol, Map<Symbol, List<GrammarElement>>> concreteClassesMapping = new LinkedHashMap<>();
   protected Map<String, Integer> innerClassesUsedNames = new LinkedHashMap<>();
   protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new LinkedHashMap<>();
   protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new LinkedHashMap<>();
-  protected Map<NonTerminal, Set<List<GrammarElement>>> n;
+  protected Map<Symbol, Set<List<GrammarElement>>> n;
   private JamoosClassesRenderer actual = this;
 
   public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
     this(ebnf, packagePath, new DAG.Tree<>());
   }
-  protected JamoosClassesRenderer(EBNF ebnf, String packagePath, DAG<NonTerminal> inheritance) {
+  protected JamoosClassesRenderer(EBNF ebnf, String packagePath, DAG<Symbol> inheritance) {
     this.inheritance = inheritance;
     this.ebnf = ebnf;
     this.packagePath = packagePath;
@@ -62,7 +62,7 @@ public class JamoosClassesRenderer {
   public static String topClassName(BNF bnf) {
     return bnf.name + "AST";
   }
-  protected void parseTopClass(Function<NonTerminal, NonTerminal> producer) {
+  protected void parseTopClass(Function<Symbol, Symbol> producer) {
     StringBuilder $ = new StringBuilder();
     $.append("package " + packagePath + ";");
     $.append("public class " + topClassName + " implements " + AST.class.getTypeName() + "{");
@@ -73,8 +73,8 @@ public class JamoosClassesRenderer {
       topClass = actual.topClass;
       return;
     }
-    for (Entry<NonTerminal, Set<List<GrammarElement>>> r : n.entrySet()) {
-      NonTerminal lhs = r.getKey();
+    for (Entry<Symbol, Set<List<GrammarElement>>> r : n.entrySet()) {
+      Symbol lhs = r.getKey();
       Set<List<GrammarElement>> rhs = r.getValue();
       if (!isInheritanceRule(rhs)) {
         innerClassesFieldTypes.putIfAbsent(lhs.name(), new LinkedHashMap<>());
@@ -90,9 +90,9 @@ public class JamoosClassesRenderer {
     topClass = $.append("}").toString();
   }
   protected void parseInnerClasses() {
-    for (Entry<NonTerminal, Set<List<GrammarElement>>> r : n.entrySet()) {
+    for (Entry<Symbol, Set<List<GrammarElement>>> r : n.entrySet()) {
       StringBuilder $ = new StringBuilder();
-      NonTerminal lhs = r.getKey();
+      Symbol lhs = r.getKey();
       Set<List<GrammarElement>> rhs = r.getValue();
       // Declaration
       $.append("public static class ") //
@@ -190,13 +190,13 @@ public class JamoosClassesRenderer {
   public static JamoosClassesRenderer render(EBNF ebnf, String packagePath) {
     return new JamoosClassesRenderer(ebnf, packagePath);
   }
-  public boolean isAbstractNonTerminal(NonTerminal nt) {
+  public boolean isAbstractNonTerminal(Symbol nt) {
     return actual.abstractNonTerminals.contains(nt);
   }
-  public NonTerminal solveAbstractNonTerminal(NonTerminal nt, Terminal t, EBNFAnalyzer analyzer) {
+  public Symbol solveAbstractNonTerminal(Symbol nt, Terminal t, EBNFAnalyzer analyzer) {
     if (actual.reversedInheritance == null)
       actual.reversedInheritance = actual.inheritance.reverse();
-    for (NonTerminal child : actual.reversedInheritance.get(nt))
+    for (Symbol child : actual.reversedInheritance.get(nt))
       if (t == null && analyzer.isNullable(child) || t != null && analyzer.firstSetOf(child).contains(t))
         return actual.abstractNonTerminals.contains(child) ? actual.solveAbstractNonTerminal(child, t, analyzer) : child;
     return null;

@@ -14,7 +14,7 @@ import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 
 public class TestAnB extends Grammar {
@@ -22,7 +22,7 @@ public class TestAnB extends Grammar {
     c, d
   }
 
-  public static enum NT implements NonTerminal {
+  public static enum NT implements Symbol {
     S, S1, C, D
   }
 

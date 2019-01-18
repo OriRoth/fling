@@ -88,7 +88,7 @@ public class Verb implements Terminal, Comparable<Verb> {
         return false;
     return true;
   }
-  @Override public List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
+  @Override public List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
     List<DerivationRule> $ = new LinkedList<>();
     for (ParameterType t : type)
       if (t instanceof NestedType)

@@ -18,7 +18,7 @@ import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
@@ -33,9 +33,9 @@ import roth.ori.fling.symbols.types.VarArgs;
 public class Fling {
   public final Set<DerivationRule> derivationRules;
   public final Set<Verb> verbs;
-  public final Set<NonTerminal> nonTerminals;
+  public final Set<Symbol> nonTerminals;
   public final Set<Extendible> extendibles;
-  public final Set<NonTerminal> startSymbols;
+  public final Set<Symbol> startSymbols;
   public final String apiName;
   public final Set<Terminal> terminals;
   public final Set<GrammarElement> nestedParameters; // NonTerminal and Extendibles (?)
@@ -44,7 +44,7 @@ public class Fling {
   public Class<? extends Grammar> provider;
   private EBNF ebnf;
 
-  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> Fling(Class<? extends Grammar> provider,
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & Symbol> Fling(Class<? extends Grammar> provider,
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
     terminals = new LinkedHashSet<>(EnumSet.allOf(terminalEnum));
     verbs = new LinkedHashSet<>();
@@ -59,13 +59,13 @@ public class Fling {
     this.projectPath = projectPath;
   }
 
-  public static class FlingProducer implements Function<NonTerminal, NonTerminal>, Cloneable {
+  public static class FlingProducer implements Function<Symbol, Symbol>, Cloneable {
     // TODO Roth: make private
-    public Map<NonTerminal, Integer> counter = new LinkedHashMap<>();
+    public Map<Symbol, Integer> counter = new LinkedHashMap<>();
 
-    @Override public NonTerminal apply(NonTerminal lhs) {
+    @Override public Symbol apply(Symbol lhs) {
       counter.putIfAbsent(lhs, Integer.valueOf(1));
-      return NonTerminal.of(lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1)));
+      return Symbol.of(lhs.name() + counter.put(lhs, Integer.valueOf(counter.get(lhs).intValue() + 1)));
     }
     @Override public FlingProducer clone() {
       FlingProducer $ = new FlingProducer();
@@ -90,13 +90,13 @@ public class Fling {
   Map<String, String> finish() {
     return FlingEncoder.encode(this);
   }
-  public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols build(
+  public static <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & Symbol> SetSymbols build(
       Class<? extends Grammar> provider, final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName,
       String packagePath, String projectPath) {
     Fling builder = new Fling(provider, terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
     return builder.new SetSymbols();
   }
-  public void addRule(NonTerminal lhs, List<GrammarElement> rhs) {
+  public void addRule(Symbol lhs, List<GrammarElement> rhs) {
     List<GrammarElement> $ = fixRawTerminals(rhs);
     analyze($);
     derivationRules.add(new DerivationRule(lhs, $));
@@ -123,7 +123,7 @@ public class Fling {
   }
 
   public class SetSymbols {
-    public FirstDerive start(final NonTerminal nt, final NonTerminal... nts) {
+    public FirstDerive start(final Symbol nt, final Symbol... nts) {
       Fling.this.startSymbols.add(nt);
       Collections.addAll(Fling.this.startSymbols, nts);
       return new FirstDerive();
@@ -131,19 +131,19 @@ public class Fling {
   }
 
   public abstract class FlingBNF {
-    protected final NonTerminal lhs;
+    protected final Symbol lhs;
     protected final ArrayList<GrammarElement> rhs;
 
-    public FlingBNF(final NonTerminal lhs, final GrammarElement... rhs) {
+    public FlingBNF(final Symbol lhs, final GrammarElement... rhs) {
       this.lhs = lhs;
       this.rhs = new ArrayList<>(Arrays.asList(rhs));
     }
-    public InitialDeriver derive(final NonTerminal newRuleLHS) {
+    public InitialDeriver derive(final Symbol newRuleLHS) {
       if (!rhs.isEmpty())
         addRuleToBNF();
       return new InitialDeriver(newRuleLHS);
     }
-    public InitialSpecializeDeriver specialize(final NonTerminal newRuleLHS) {
+    public InitialSpecializeDeriver specialize(final Symbol newRuleLHS) {
       if (!rhs.isEmpty())
         addRuleToBNF();
       return new InitialSpecializeDeriver(newRuleLHS);
@@ -163,9 +163,9 @@ public class Fling {
   }
 
   public class InitialDeriver {
-    private final NonTerminal lhs;
+    private final Symbol lhs;
 
-    InitialDeriver(final NonTerminal lhs) {
+    InitialDeriver(final Symbol lhs) {
       this.lhs = lhs;
     }
     public AndDeriver to(final GrammarElement s, final GrammarElement... ss) {
@@ -181,13 +181,13 @@ public class Fling {
   }
 
   public class InitialSpecializeDeriver {
-    private final NonTerminal lhs;
+    private final Symbol lhs;
 
-    InitialSpecializeDeriver(final NonTerminal lhs) {
+    InitialSpecializeDeriver(final Symbol lhs) {
       this.lhs = lhs;
     }
     // TODO Roth: allow ENonTerminals?
-    public FlingBNF into(final NonTerminal s, final NonTerminal... ss) {
+    public FlingBNF into(final Symbol s, final Symbol... ss) {
       OrDeriver $ = new InitialDeriver(lhs).to(s);
       for (GrammarElement x : ss)
         $ = $.or(x);
@@ -196,7 +196,7 @@ public class Fling {
   }
 
   public class OrDeriver extends FlingBNF {
-    OrDeriver(final NonTerminal lhs) {
+    OrDeriver(final Symbol lhs) {
       super(lhs);
     }
     public AndDeriver or(final GrammarElement s, GrammarElement... ss) {
@@ -215,7 +215,7 @@ public class Fling {
   }
 
   public final class AndDeriver extends OrDeriver {
-    AndDeriver(final NonTerminal lhs, final GrammarElement child) {
+    AndDeriver(final Symbol lhs, final GrammarElement child) {
       super(lhs);
       rhs.add(child);
     }
@@ -240,10 +240,10 @@ public class Fling {
   }
 
   public class FirstDerive {
-    public InitialDeriver derive(final NonTerminal nt) {
+    public InitialDeriver derive(final Symbol nt) {
       return new InitialDeriver(nt);
     }
-    public InitialSpecializeDeriver specialize(final NonTerminal nt) {
+    public InitialSpecializeDeriver specialize(final Symbol nt) {
       return new InitialSpecializeDeriver(nt);
     }
   }

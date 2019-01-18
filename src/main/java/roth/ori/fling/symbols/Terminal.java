@@ -6,7 +6,7 @@ public interface Terminal extends GrammarElement {
   default Verb with(Object... parameterTypes) {
     return new Verb(this, parameterTypes);
   }
-  default Verb many(NonTerminal nt) {
+  default Verb many(Symbol nt) {
     return with(new VarArgs(nt));
   }
   default Verb many(Class<?> parameterType) {

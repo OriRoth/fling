@@ -12,7 +12,7 @@ import java.util.List;
 import roth.ori.fling.ast.encoding.JamoosClassesRenderer;
 import roth.ori.fling.parser.ell.EBNFAnalyzer;
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
@@ -62,7 +62,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
     assert values.size() == 1 && values.get(0) instanceof Interpretation;
     return build((Interpretation) values.get(0));
   }
-  private List build(NonTerminal nt, List values) {
+  private List build(Symbol nt, List values) {
     if (nt == null)
       throw problem();
     if (jamoos.isAbstractNonTerminal(nt)) {

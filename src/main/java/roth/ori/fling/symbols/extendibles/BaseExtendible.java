@@ -10,17 +10,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.bnf.DerivationRule;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 @SuppressWarnings("hiding") public abstract class BaseExtendible implements Extendible {
-  protected NonTerminal head;
+  protected Symbol head;
   protected List<GrammarElement> symbols;
   protected List<GrammarElement> solvedSymbols;
   protected boolean isSolved = false;
-  private NonTerminal lhs;
-  private Function<NonTerminal, NonTerminal> producer;
+  private Symbol lhs;
+  private Function<Symbol, Symbol> producer;
   private List<DerivationRule> solvedRules = new LinkedList<>();
   private List<DerivationRule> rawSolution;
 
@@ -31,11 +31,11 @@ import roth.ori.fling.symbols.Terminal;
     assert !isSolved;
     symbols = fix.apply(symbols);
   }
-  @Override public NonTerminal head() {
+  @Override public Symbol head() {
     assert isSolved;
     return head;
   }
-  @Override public List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
+  @Override public List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
     if (isSolved)
       return solvedRules;
     isSolved = true;
@@ -51,7 +51,7 @@ import roth.ori.fling.symbols.Terminal;
   @Override public String toString() {
     return getClass().getSimpleName() + symbols;
   }
-  protected NonTerminal nonTerminal() {
+  protected Symbol nonTerminal() {
     return producer.apply(lhs);
   }
   protected GrammarElement solve(GrammarElement s) {
@@ -61,11 +61,11 @@ import roth.ori.fling.symbols.Terminal;
   protected List<GrammarElement> solve(List<GrammarElement> ss) {
     return ss.stream().map(x -> solve(x)).collect(Collectors.toList());
   }
-  protected void addRule(NonTerminal lhs, List<GrammarElement> rhs) {
+  protected void addRule(Symbol lhs, List<GrammarElement> rhs) {
     solvedRules.add(new DerivationRule(lhs, rhs));
   }
   protected void addRule(GrammarElement lhs, List<GrammarElement> rhs) {
-    addRule((NonTerminal) lhs, rhs);
+    addRule((Symbol) lhs, rhs);
   }
   @Override public List<GrammarElement> symbols() {
     return new LinkedList<>(symbols);
@@ -94,10 +94,10 @@ import roth.ori.fling.symbols.Terminal;
       return rawSolution;
     rawSolution = new LinkedList<>();
     Map<GrammarElement, Extendible> heads = computeHeads();
-    Set<NonTerminal> toConclude = new HashSet<>(), seen = new HashSet<>();
+    Set<Symbol> toConclude = new HashSet<>(), seen = new HashSet<>();
     toConclude.add(head);
     do {
-      Set<NonTerminal> current = toConclude;
+      Set<Symbol> current = toConclude;
       seen.addAll(toConclude);
       toConclude = new HashSet<>();
       for (DerivationRule r : solvedRules)

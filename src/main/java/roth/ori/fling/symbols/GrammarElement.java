@@ -13,7 +13,7 @@ public interface GrammarElement {
     return Verb.class.isAssignableFrom(getClass());
   }
   public default boolean isNonTerminal() {
-    return NonTerminal.class.isAssignableFrom(getClass());
+    return Symbol.class.isAssignableFrom(getClass());
   }
   public default boolean isTerminal() {
     return Terminal.class.isAssignableFrom(getClass());
@@ -24,8 +24,8 @@ public interface GrammarElement {
   public default Verb asVerb() {
     return (Verb) this;
   }
-  public default NonTerminal asNonTerminal() {
-    return (NonTerminal) this;
+  public default Symbol asNonTerminal() {
+    return (Symbol) this;
   }
   public default Terminal asTerminal() {
     return (Terminal) this;
@@ -37,7 +37,7 @@ public interface GrammarElement {
   default GrammarElement head() {
     return this;
   }
-  @SuppressWarnings("unused") default List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
+  @SuppressWarnings("unused") default List<DerivationRule> solve(Symbol lhs, Function<Symbol, Symbol> producer) {
     return new LinkedList<>();
   }
   @SuppressWarnings({ "rawtypes", "unused" }) default List<Class> toClasses(Function<GrammarElement, Class> classSolution) {

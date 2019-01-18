@@ -17,11 +17,11 @@ import roth.ori.fling.export.testing.FlingTestingAST.MalExample;
 import roth.ori.fling.export.testing.FlingTestingAST.Test;
 import roth.ori.fling.parser.ell.EBNFAnalyzer.ELLRecognizerRejection;
 import roth.ori.fling.parser.ell.ELLRecognizer;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 
 public abstract class Grammar {
-  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & NonTerminal> SetSymbols buildFlingBNF(
+  public <Term extends Enum<Term> & Terminal, NT extends Enum<NT> & Symbol> SetSymbols buildFlingBNF(
       final Class<Term> terminalEnum, final Class<NT> nonterminalEnum, String apiName, String packagePath, String projectPath) {
     return Fling.build(getClass(), terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
   }
@@ -56,7 +56,7 @@ public abstract class Grammar {
         b.call, b.with, b.examplebody2);
   }
   private static boolean _match(ELLRecognizer ell, Terminal t, Object[] args, ExampleBodyNext[] next) {
-    List<Object> $ = Arrays.stream(args).map(a -> !(a instanceof NonTerminal) ? a : ASTNode.dummy).collect(Collectors.toList());
+    List<Object> $ = Arrays.stream(args).map(a -> !(a instanceof Symbol) ? a : ASTNode.dummy).collect(Collectors.toList());
     try {
       ell.consume(new RuntimeVerb(t, $.toArray(new Object[$.size()])));
       return _match(ell, next);

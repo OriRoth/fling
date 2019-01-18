@@ -19,7 +19,7 @@ import java.io.IOException;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 
 public class Regex extends Grammar {
@@ -30,7 +30,7 @@ public class Regex extends Grammar {
     re, exactly, and, or, option, noneOrMore, oneOrMore, either, anyChar, anyDigit
   }
 
-  public static enum NT implements NonTerminal {
+  public static enum NT implements Symbol {
     Expression, RE, Tail
   }
 

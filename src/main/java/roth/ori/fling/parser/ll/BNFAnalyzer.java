@@ -15,27 +15,27 @@ import java.util.TreeSet;
 
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.bnf.DerivationRule;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 
 public class BNFAnalyzer {
   public final BNF bnf;
-  private final Collection<NonTerminal> nullableSymbols;
+  private final Collection<Symbol> nullableSymbols;
   private final Map<GrammarElement, Collection<Verb>> baseFirstSets;
-  private final Map<NonTerminal, Map<Verb, List<GrammarElement>>> llClosure;
+  private final Map<Symbol, Map<Verb, List<GrammarElement>>> llClosure;
 
   public BNFAnalyzer(final BNF bnf) {
     this.bnf = bnf;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
     llClosure = new HashMap<>();
-    for (NonTerminal nt : bnf.nonTerminals)
+    for (Symbol nt : bnf.nonTerminals)
       for (Verb v : bnf.verbs)
         llClosure(nt, v);
   }
-  private Collection<NonTerminal> calculateNullableSymbols() {
-    Set<NonTerminal> nullables = new HashSet<>();
+  private Collection<Symbol> calculateNullableSymbols() {
+    Set<Symbol> nullables = new HashSet<>();
     boolean moreChanges;
     do {
       moreChanges = false;
@@ -47,7 +47,7 @@ public class BNFAnalyzer {
   }
   private Map<GrammarElement, Collection<Verb>> calculateSymbolFirstSet() {
     Map<GrammarElement, Collection<Verb>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.nonTerminals)
+    for (Symbol nt : bnf.nonTerminals)
       $.put(nt, new LinkedHashSet<>());
     for (Verb term : bnf.verbs)
       $.put(term, new LinkedHashSet<>(Arrays.asList(term)));
@@ -79,7 +79,7 @@ public class BNFAnalyzer {
     return firstSetOf(expression.toArray(new GrammarElement[expression.size()]));
   }
   // NOTE This is the "consolidation" algorithm
-  public List<GrammarElement> llClosure(final NonTerminal nt, final Verb v) {
+  public List<GrammarElement> llClosure(final Symbol nt, final Verb v) {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))
       return llClosure.get(nt).get(v);
     llClosure.putIfAbsent(nt, new HashMap<>());

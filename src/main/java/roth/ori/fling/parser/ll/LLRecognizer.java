@@ -9,7 +9,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.bnf.BNF;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
@@ -18,7 +18,7 @@ import roth.ori.fling.symbols.Verb;
 public class LLRecognizer {
   private final BNF bnf;
   private final BNFAnalyzer analyzer;
-  private final Map<NonTerminal, Map<Verb, List<GrammarElement>>> actionTable;
+  private final Map<Symbol, Map<Verb, List<GrammarElement>>> actionTable;
   private final Stack<GrammarElement> stack;
   private boolean rejected;
   private boolean initialized;
@@ -50,7 +50,7 @@ public class LLRecognizer {
       return top.equals(v);
     if (isError(top.asNonTerminal(), v))
       return analyzer.isNullable(top) && consume(v);
-    List<GrammarElement> toPush = getPush((NonTerminal) top, v);
+    List<GrammarElement> toPush = getPush((Symbol) top, v);
     for (GrammarElement x : toPush)
       stack.push(x);
     return true;
@@ -58,15 +58,15 @@ public class LLRecognizer {
   public boolean consume(List<Verb> input) {
     return input.stream().allMatch(i -> consume(i));
   }
-  public List<GrammarElement> getPush(NonTerminal nt, Verb v) {
+  public List<GrammarElement> getPush(Symbol nt, Verb v) {
     return actionTable.get(nt).get(v);
   }
-  public boolean isError(NonTerminal nt, Verb v) {
+  public boolean isError(Symbol nt, Verb v) {
     return !actionTable.get(nt).containsKey(v);
   }
-  private Map<NonTerminal, Map<Verb, List<GrammarElement>>> createActionTable() {
-    Map<NonTerminal, Map<Verb, List<GrammarElement>>> $ = new HashMap<>();
-    for (NonTerminal nt : bnf.nonTerminals) {
+  private Map<Symbol, Map<Verb, List<GrammarElement>>> createActionTable() {
+    Map<Symbol, Map<Verb, List<GrammarElement>>> $ = new HashMap<>();
+    for (Symbol nt : bnf.nonTerminals) {
       Map<Verb, List<GrammarElement>> innerMap = new HashMap<>();
       for (Verb v : bnf.verbs) {
         List<GrammarElement> closure = analyzer.llClosure(nt, v);

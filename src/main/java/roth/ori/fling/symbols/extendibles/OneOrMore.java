@@ -12,12 +12,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 public class OneOrMore extends BaseExtendible {
-  private NonTerminal head2;
+  private Symbol head2;
 
   public OneOrMore(List<GrammarElement> symbols) {
     super(symbols);

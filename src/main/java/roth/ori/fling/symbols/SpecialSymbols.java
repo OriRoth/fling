@@ -20,7 +20,7 @@ public class SpecialSymbols {
       return "~";
     }
   };
-  public static final NonTerminal augmentedStartSymbol = new NonTerminal() {
+  public static final Symbol augmentedStartSymbol = new Symbol() {
     @Override public String name() {
       return "augS";
     }

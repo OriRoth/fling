@@ -7,23 +7,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.bnf.DerivationRule;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 
 public final class BNF {
   public final Set<Verb> verbs;
-  public final Set<NonTerminal> nonTerminals;
-  public final Set<NonTerminal> startSymbols;
-  public final Set<NonTerminal> nestedNonTerminals;
+  public final Set<Symbol> nonTerminals;
+  public final Set<Symbol> startSymbols;
+  public final Set<Symbol> nestedNonTerminals;
   private final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubBNF;
   public EBNF origin;
 
-  public BNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<NonTerminal> nestedNonTerminals, Set<DerivationRule> rules,
-      Set<NonTerminal> start, String name) {
+  public BNF(Set<Verb> verbs, Set<Symbol> nonTerminals, Set<Symbol> nestedNonTerminals, Set<DerivationRule> rules,
+      Set<Symbol> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
     this.nonTerminals = new LinkedHashSet<>(nonTerminals);
@@ -36,11 +36,11 @@ public final class BNF {
     this.name = name;
     this.isSubBNF = false;
   }
-  public BNF getSubBNF(NonTerminal startNT) {
+  public BNF getSubBNF(Symbol startNT) {
     Set<Verb> subVerbs = new LinkedHashSet<>();
-    Set<NonTerminal> subNonTerminals = new LinkedHashSet<>();
+    Set<Symbol> subNonTerminals = new LinkedHashSet<>();
     Set<DerivationRule> subRules = new LinkedHashSet<>();
-    Set<NonTerminal> subStart = new LinkedHashSet<>();
+    Set<Symbol> subStart = new LinkedHashSet<>();
     subStart.add(startNT);
     subNonTerminals.add(startNT);
     boolean change;
@@ -67,7 +67,7 @@ public final class BNF {
     // TODO Roth: set BNF toString
     return name;
   }
-  public List<DerivationRule> getRulesOf(NonTerminal nt) {
+  public List<DerivationRule> getRulesOf(Symbol nt) {
     return derivationRules.stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode

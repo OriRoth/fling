@@ -6,14 +6,14 @@ import static roth.ori.fling.junk.Literal.either;
 import static roth.ori.fling.junk.Literal.oneOrMore;
 import static roth.ori.fling.junk.Literal.option;
 
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
 
 public class EBNF {
   public static void main(String[] args) {
     derive("EBNF").to(oneOrMore("Rule")) //
-        .derive("Rule").to(attribute("derive", NonTerminal.class).and("To").and(option("ClauseTail"))) //
+        .derive("Rule").to(attribute("derive", Symbol.class).and("To").and(option("ClauseTail"))) //
         .derive("To").to(attribute("to", "Literal")).or(attribute("to", String.class)) //
         .derive("ClauseTail").to(oneOrMore(either("and", "or").and("Literal"))) //
         .derive("Literal").to(attribute("oneOrMore", "Literal").and(option("ClauseTail"))) //

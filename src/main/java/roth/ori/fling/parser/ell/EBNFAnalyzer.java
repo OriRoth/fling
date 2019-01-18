@@ -9,7 +9,7 @@ import java.util.Set;
 
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.bnf.EBNF;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
@@ -27,7 +27,7 @@ public class EBNFAnalyzer {
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
   }
-  public EBNFAnalyzer(Map<NonTerminal, Set<List<GrammarElement>>> n, Set<NonTerminal> start) {
+  public EBNFAnalyzer(Map<Symbol, Set<List<GrammarElement>>> n, Set<Symbol> start) {
     this(recreateEBNF(n, start), new HashMap<>(n));
   }
   private Set<GrammarElement> calculateNullableSymbols() {
@@ -92,12 +92,12 @@ public class EBNFAnalyzer {
   public static RuntimeException reject(String message) {
     return new ELLRecognizerRejection(message);
   }
-  private static EBNF recreateEBNF(Map<NonTerminal, Set<List<GrammarElement>>> n, Set<NonTerminal> start) {
+  private static EBNF recreateEBNF(Map<Symbol, Set<List<GrammarElement>>> n, Set<Symbol> start) {
     Set<Verb> vs = new HashSet<>();
-    Set<NonTerminal> nts = new HashSet<>();
+    Set<Symbol> nts = new HashSet<>();
     Set<Extendible> exs = new HashSet<>();
     Set<DerivationRule> rs = new HashSet<>();
-    for (NonTerminal lhs : n.keySet()) {
+    for (Symbol lhs : n.keySet()) {
       nts.add(lhs.asNonTerminal());
       for (List<GrammarElement> clause : n.get(lhs)) {
         rs.add(new DerivationRule(lhs.asNonTerminal(), clause));

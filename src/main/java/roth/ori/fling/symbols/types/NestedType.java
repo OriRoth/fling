@@ -6,14 +6,14 @@ import java.util.function.Function;
 
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.extendibles.Extendible;
 
 public class NestedType implements ParameterType {
   public final GrammarElement nested;
 
-  public NestedType(NonTerminal nested) {
+  public NestedType(Symbol nested) {
     this.nested = nested;
   }
   public NestedType(Extendible nested) {

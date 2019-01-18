@@ -3,14 +3,14 @@ package roth.ori.fling.bnf;
 import java.util.ArrayList;
 import java.util.List;
 
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 
 public class DerivationRule {
-  public final NonTerminal lhs;
+  public final Symbol lhs;
   private final List<GrammarElement> rhs;
 
-  public DerivationRule(final NonTerminal lhs, final List<GrammarElement> rhs) {
+  public DerivationRule(final Symbol lhs, final List<GrammarElement> rhs) {
     this.lhs = lhs;
     this.rhs = new ArrayList<>(rhs);
   }

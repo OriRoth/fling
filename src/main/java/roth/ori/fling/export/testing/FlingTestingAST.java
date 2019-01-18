@@ -5,12 +5,12 @@ public class FlingTestingAST implements roth.ori.fling.export.AST {
   }
 
   public static class ExampleBody {
-    public java.util.Optional<roth.ori.fling.symbols.NonTerminal> examplebody1;
+    public java.util.Optional<roth.ori.fling.symbols.Symbol> examplebody1;
     public roth.ori.fling.symbols.Terminal call;
     public java.lang.Object[] with;
     public roth.ori.fling.export.testing.FlingTestingAST.ExampleBodyNext[] examplebody2;
 
-    public ExampleBody(java.util.Optional<roth.ori.fling.symbols.NonTerminal> examplebody1,
+    public ExampleBody(java.util.Optional<roth.ori.fling.symbols.Symbol> examplebody1,
         roth.ori.fling.symbols.Terminal call, java.lang.Object[] with,
         roth.ori.fling.export.testing.FlingTestingAST.ExampleBodyNext[] examplebody2) {
       this.examplebody1 = examplebody1;

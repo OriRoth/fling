@@ -9,30 +9,30 @@ import java.util.Set;
 import java.util.function.Function;
 
 import roth.ori.fling.bnf.EBNF;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.util.DAG;
 
 public class ASTUtil {
-  public static Map<NonTerminal, Set<List<GrammarElement>>> normalize(EBNF ebnf, DAG<NonTerminal> inheritance,
-      Function<NonTerminal, NonTerminal> producer) {
+  public static Map<Symbol, Set<List<GrammarElement>>> normalize(EBNF ebnf, DAG<Symbol> inheritance,
+      Function<Symbol, Symbol> producer) {
     return sortRules(ebnf.normalizedForm(producer), inheritance);
   }
-  private static Map<NonTerminal, Set<List<GrammarElement>>> sortRules(Map<NonTerminal, Set<List<GrammarElement>>> orig,
-      DAG<NonTerminal> inheritance) {
+  private static Map<Symbol, Set<List<GrammarElement>>> sortRules(Map<Symbol, Set<List<GrammarElement>>> orig,
+      DAG<Symbol> inheritance) {
     clearAugSRules(orig);
     inheritance.clear();
-    for (Entry<NonTerminal, Set<List<GrammarElement>>> e : orig.entrySet())
+    for (Entry<Symbol, Set<List<GrammarElement>>> e : orig.entrySet())
       if (isInheritanceRule(e.getValue()))
         for (List<GrammarElement> rhs : e.getValue())
           for (GrammarElement s : rhs)
             if (s.isNonTerminal()) {
-              inheritance.initialize((NonTerminal) s);
-              inheritance.add((NonTerminal) s, e.getKey());
+              inheritance.initialize((Symbol) s);
+              inheritance.add((Symbol) s, e.getKey());
             }
-    Map<NonTerminal, Set<List<GrammarElement>>> $ = new LinkedHashMap<>(), remain = new LinkedHashMap<>(orig);
+    Map<Symbol, Set<List<GrammarElement>>> $ = new LinkedHashMap<>(), remain = new LinkedHashMap<>(orig);
     orig.keySet().stream().filter(x -> !inheritance.containsKey(x)).forEach(x -> {
       $.put(x, orig.get(x));
       remain.remove(x);
@@ -40,13 +40,13 @@ public class ASTUtil {
     while (!remain.isEmpty()) {
       remain.entrySet().stream()
           .filter(
-              e -> e.getValue().stream().allMatch(c -> c.stream().allMatch(s -> (!(s instanceof NonTerminal) || $.containsKey(s)))))
+              e -> e.getValue().stream().allMatch(c -> c.stream().allMatch(s -> (!(s instanceof Symbol) || $.containsKey(s)))))
           .forEach(e -> $.put(e.getKey(), e.getValue()));
       $.keySet().forEach(x -> remain.remove(x));
     }
     return $;
   }
-  @SuppressWarnings("unused") private static void clearEmptyRules(Map<NonTerminal, Set<List<GrammarElement>>> rs) {
+  @SuppressWarnings("unused") private static void clearEmptyRules(Map<Symbol, Set<List<GrammarElement>>> rs) {
     List<GrammarElement> tbr = new ArrayList<>();
     rs.keySet().stream().forEach(k -> //
     rs.get(k).stream().forEach(c -> //
@@ -54,7 +54,7 @@ public class ASTUtil {
     l.isVerb() && ((Verb) l).type.length == 0).forEach(e -> tbr.add(e))));
     rs.values().stream().forEach(r -> r.stream().forEach(c -> c.removeAll(tbr)));
   }
-  private static void clearAugSRules(Map<NonTerminal, Set<List<GrammarElement>>> rs) {
+  private static void clearAugSRules(Map<Symbol, Set<List<GrammarElement>>> rs) {
     rs.remove(SpecialSymbols.augmentedStartSymbol);
   }
   public static boolean isInheritanceRule(Set<List<GrammarElement>> rhs) {

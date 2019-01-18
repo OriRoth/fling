@@ -5,7 +5,7 @@ import java.util.Map;
 
 import roth.ori.fling.api.Fling;
 import roth.ori.fling.ast.encoding.JamoosClassesRenderer;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 
 public class FlingEncoder {
@@ -17,7 +17,7 @@ public class FlingEncoder {
   private Map<String, String> _encode() {
     Map<String, String> $ = new HashMap<>();
     String astTopClass = JamoosClassesRenderer.topClassName(fling.bnf());
-    for (NonTerminal start : fling.startSymbols) {
+    for (Symbol start : fling.startSymbols) {
       RLLPEncoder rllpe = new RLLPEncoder(fling, start, astTopClass);
       $.put(rllpe.topClassName + ".java", rllpe.topClass);
     }

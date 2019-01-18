@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.api.Fling.FlingProducer;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
@@ -25,9 +25,9 @@ import roth.ori.fling.symbols.types.VarArgs;
 
 public final class EBNF {
   public final Set<Verb> verbs;
-  public final Set<NonTerminal> nonTerminals;
+  public final Set<Symbol> nonTerminals;
   public final Set<Extendible> extendibles;
-  public final Set<NonTerminal> startSymbols;
+  public final Set<Symbol> startSymbols;
   private final Set<DerivationRule> derivationRules;
   public final String name;
   public boolean isSubEBNF;
@@ -38,8 +38,8 @@ public final class EBNF {
   private FlingProducer afterSolution;
   private BNF bnf;
 
-  public EBNF(Set<Verb> verbs, Set<NonTerminal> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
-      Set<NonTerminal> start, String name) {
+  public EBNF(Set<Verb> verbs, Set<Symbol> nonTerminals, Set<Extendible> extendibles, Set<DerivationRule> rules,
+      Set<Symbol> start, String name) {
     this.verbs = new LinkedHashSet<>(verbs);
     this.verbs.add(SpecialSymbols.$);
     this.nonTerminals = new LinkedHashSet<>(nonTerminals);
@@ -56,7 +56,7 @@ public final class EBNF {
     // TODO Roth: set EBNF toString
     return name;
   }
-  public List<DerivationRule> getRulesOf(NonTerminal nt) {
+  public List<DerivationRule> getRulesOf(Symbol nt) {
     return derivationRules.stream().filter(r -> r.lhs.equals(nt)).collect(Collectors.toList());
   }
   // NOTE no equals/hashCode
@@ -78,15 +78,15 @@ public final class EBNF {
               GrammarElement nested = ((NestedType) t).nested;
               nestedSymbolsMapping.put(nested.head().asNonTerminal(), nested);
             } else if (t instanceof VarArgs) {
-              NonTerminal nested = ((VarArgs) t).nt;
+              Symbol nested = ((VarArgs) t).nt;
               nestedSymbolsMapping.put(nested, nested);
             }
       }
       rs.add(new DerivationRule(r.lhs, rhs));
     }
-    Set<NonTerminal> nts = new LinkedHashSet<>();
+    Set<Symbol> nts = new LinkedHashSet<>();
     Set<Verb> vs = new LinkedHashSet<>();
-    Set<NonTerminal> ns = new LinkedHashSet<>();
+    Set<Symbol> ns = new LinkedHashSet<>();
     for (DerivationRule r : rs) {
       nts.add(r.lhs);
       for (GrammarElement s : r.getRHS()) {
@@ -107,8 +107,8 @@ public final class EBNF {
     afterSolution = producer.clone();
     return bnf = $;
   }
-  public Map<NonTerminal, Set<List<GrammarElement>>> regularForm() {
-    Map<NonTerminal, Set<List<GrammarElement>>> $ = new LinkedHashMap<>();
+  public Map<Symbol, Set<List<GrammarElement>>> regularForm() {
+    Map<Symbol, Set<List<GrammarElement>>> $ = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
       $.putIfAbsent(r.lhs, new LinkedHashSet<>());
       $.get(r.lhs).add(r.getRHS());
@@ -127,10 +127,10 @@ public final class EBNF {
     }
     return $;
   }
-  public Map<NonTerminal, Set<List<GrammarElement>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
-    Map<NonTerminal, Set<List<GrammarElement>>> rf = regularForm(), $ = new LinkedHashMap<>();
-    for (Entry<NonTerminal, Set<List<GrammarElement>>> e : rf.entrySet()) {
-      NonTerminal lhs = e.getKey();
+  public Map<Symbol, Set<List<GrammarElement>>> normalizedForm(Function<Symbol, Symbol> producer) {
+    Map<Symbol, Set<List<GrammarElement>>> rf = regularForm(), $ = new LinkedHashMap<>();
+    for (Entry<Symbol, Set<List<GrammarElement>>> e : rf.entrySet()) {
+      Symbol lhs = e.getKey();
       Set<List<GrammarElement>> rhs = e.getValue();
       if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
         $.put(lhs, rhs);
@@ -139,7 +139,7 @@ public final class EBNF {
       $.put(lhs, new HashSet<>());
       for (List<GrammarElement> clause : rhs) {
         List<GrammarElement> l = new LinkedList<>();
-        NonTerminal nt = producer.apply(lhs);
+        Symbol nt = producer.apply(lhs);
         l.add(nt);
         $.get(lhs).add(l);
         $.put(nt, new HashSet<>());
@@ -149,9 +149,9 @@ public final class EBNF {
     return $;
   }
   public EBNF makeSubBNF(String s) {
-    return makeSubBNF(NonTerminal.of(s));
+    return makeSubBNF(Symbol.of(s));
   }
-  public EBNF makeSubBNF(NonTerminal nt) {
+  public EBNF makeSubBNF(Symbol nt) {
     assert nestedSymbolsMapping != null;
     isSubEBNF = true;
     subHead = nestedSymbolsMapping.get(nt);

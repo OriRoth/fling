@@ -22,7 +22,7 @@ import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
 
@@ -31,7 +31,7 @@ public class EBNF extends Grammar {
     derive, to, and, or, orNone, option, noneOrMore, oneOrMore, either, attribute
   }
 
-  public static enum NT implements NonTerminal {
+  public static enum NT implements Symbol {
     EBNF, Rule, ClauseTail, Literal, To, AndOr
   }
 

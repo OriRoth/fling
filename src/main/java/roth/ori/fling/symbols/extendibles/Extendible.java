@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import roth.ori.fling.bnf.DerivationRule;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
@@ -22,5 +22,5 @@ public interface Extendible extends GrammarElement {
   @SuppressWarnings("rawtypes") List<Object> conclude(List values, BiFunction<GrammarElement, List, List> solution,
       Function<GrammarElement, Class> classSolution);
   void fixSymbols(Function<List<GrammarElement>, List<GrammarElement>> fix);
-  @Override NonTerminal head();
+  @Override Symbol head();
 }

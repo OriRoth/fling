@@ -13,7 +13,7 @@ import roth.ori.fling.api.Fling;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.types.VarArgs;
 
@@ -22,7 +22,7 @@ public class FlingTesting extends Grammar {
     example, malexample, call, with, toConclude, then
   }
 
-  public enum NT implements NonTerminal {
+  public enum NT implements Symbol {
     Test, ExampleKind, Example, MalExample, ExampleBody, ExampleBodyNext
   }
 
@@ -33,7 +33,7 @@ public class FlingTesting extends Grammar {
         .specialize(ExampleKind).into(Example, MalExample) //
         .derive(Example).to(attribute(example, ExampleBody)) //
         .derive(MalExample).to(attribute(malexample, ExampleBody)) //
-        .derive(ExampleBody).to(option(attribute(toConclude, NonTerminal.class)), //
+        .derive(ExampleBody).to(option(attribute(toConclude, Symbol.class)), //
             attribute(call, Terminal.class), //
             attribute(with, new VarArgs(Object.class)), //
             noneOrMore(ExampleBodyNext)) //

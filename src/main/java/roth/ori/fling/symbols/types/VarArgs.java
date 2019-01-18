@@ -9,20 +9,20 @@ import java.util.stream.Collectors;
 
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.GrammarElement;
 
 public class VarArgs implements ParameterType {
   public final Class<?> aclazz;
   public final Class<?> clazz;
-  public final NonTerminal nt;
+  public final Symbol nt;
 
   public <T> VarArgs(Class<T> clazz) {
     this.aclazz = Array.newInstance(clazz, 0).getClass();
     this.clazz = clazz;
     this.nt = null;
   }
-  public VarArgs(NonTerminal nt) {
+  public VarArgs(Symbol nt) {
     this.aclazz = null;
     this.clazz = null;
     this.nt = nt;

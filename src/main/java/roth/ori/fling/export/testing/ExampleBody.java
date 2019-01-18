@@ -2,7 +2,7 @@ package roth.ori.fling.export.testing;
 
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.export.FluentAPIRecorder;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 
 @SuppressWarnings("all") public class ExampleBody {
@@ -11,7 +11,7 @@ import roth.ori.fling.symbols.Terminal;
     $$$.recordTerminal(FlingTesting.Term.call, arg0);
     return $$$;
   }
-  public static ExampleBody1_1<ExampleBody_2> toConclude(NonTerminal arg0) {
+  public static ExampleBody1_1<ExampleBody_2> toConclude(Symbol arg0) {
     $$$ $$$ = new $$$();
     $$$.recordTerminal(FlingTesting.Term.toConclude, arg0);
     return $$$;

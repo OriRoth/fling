@@ -19,7 +19,7 @@ import roth.ori.fling.export.FluentAPIRecorder;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.parser.ll.BNFAnalyzer;
 import roth.ori.fling.parser.rll.JSM;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.SpecialSymbols;
 import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
@@ -31,7 +31,7 @@ import roth.ori.fling.symbols.types.VarArgs;
 public class RLLPEncoder {
   public final String topClassName;
   public final String topClass;
-  final NonTerminal startSymbol;
+  final Symbol startSymbol;
   final String astTopClass;
   final BNF bnf;
   final BNFAnalyzer analyzer;
@@ -42,7 +42,7 @@ public class RLLPEncoder {
   final List<String> staticMethods;
   final Class<? extends Grammar> provider;
 
-  public RLLPEncoder(Fling fling, NonTerminal start, String astTopClass) {
+  public RLLPEncoder(Fling fling, Symbol start, String astTopClass) {
     topClassName = fling.apiName;
     packagePath = fling.packagePath;
     topClassPath = packagePath + "." + topClassName;

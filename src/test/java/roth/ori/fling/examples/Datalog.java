@@ -29,7 +29,7 @@ import java.io.IOException;
 import roth.ori.fling.api.Fling.FlingBNF;
 import roth.ori.fling.api.Main;
 import roth.ori.fling.export.Grammar;
-import roth.ori.fling.symbols.NonTerminal;
+import roth.ori.fling.symbols.Symbol;
 import roth.ori.fling.symbols.Terminal;
 
 public class Datalog extends Grammar {
@@ -40,7 +40,7 @@ public class Datalog extends Grammar {
     infer, fact, query, of, and, when, always, v, l
   }
 
-  public enum Symbols implements NonTerminal {
+  public enum Symbols implements Symbol {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, RuleHead, RuleBody, FirstClause, AdditionalClause, Term
   }
 
