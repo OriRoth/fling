@@ -7,11 +7,11 @@ import java.util.function.Function;
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.parser.ell.Interpretation;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.extendibles.Extendible;
 
 public class NestedType implements ParameterType {
-  public final Symbol nested;
+  public final GrammarElement nested;
 
   public NestedType(NonTerminal nested) {
     this.nested = nested;
@@ -19,7 +19,7 @@ public class NestedType implements ParameterType {
   public NestedType(Extendible nested) {
     this.nested = nested;
   }
-  public NestedType(Symbol nested) {
+  public NestedType(GrammarElement nested) {
     assert nested.isExtendible() || nested.isNonTerminal();
     this.nested = nested;
   }
@@ -48,12 +48,12 @@ public class NestedType implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return nested.equals(arg) || ASTNode.class.isInstance(arg);
   }
-  @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution,
+  @SuppressWarnings("rawtypes") @Override public List conclude(Object arg, BiFunction<GrammarElement, List, List> solution,
       @SuppressWarnings("unused") String astPath) {
     Interpretation i = (Interpretation) arg;
     return solution.apply(i.symbol, i.value);
   }
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     return nested.toClasses(classSolution);
   }
 }

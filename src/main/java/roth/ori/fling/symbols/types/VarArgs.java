@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import roth.ori.fling.export.ASTNode;
 import roth.ori.fling.parser.ell.Interpretation;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 
 public class VarArgs implements ParameterType {
   public final Class<?> aclazz;
@@ -56,7 +56,7 @@ public class VarArgs implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return clazz != null ? clazz.isInstance(arg) : nt.equals(arg) || ASTNode.class.isInstance(arg);
   }
-  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution,
+  @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List conclude(Object arg, BiFunction<GrammarElement, List, List> solution,
       String astPath) {
     List l = (List) ((List) arg).stream().map(x -> {
       // TODO Roth: check whether it make sense
@@ -79,7 +79,7 @@ public class VarArgs implements ParameterType {
     return Collections.singletonList($);
   }
   // NOTE the returned classes should be duplicated according to input size
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     return nt != null ? nt.toClasses(classSolution) : Collections.singletonList(clazz);
   }
 }

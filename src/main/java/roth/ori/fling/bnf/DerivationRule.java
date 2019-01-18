@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 
 public class DerivationRule {
   public final NonTerminal lhs;
-  private final List<Symbol> rhs;
+  private final List<GrammarElement> rhs;
 
-  public DerivationRule(final NonTerminal lhs, final List<Symbol> rhs) {
+  public DerivationRule(final NonTerminal lhs, final List<GrammarElement> rhs) {
     this.lhs = lhs;
     this.rhs = new ArrayList<>(rhs);
   }
   @Override public String toString() {
     StringBuilder sb = new StringBuilder(lhs.toString2() + " ::= ");
-    for (Symbol symb : rhs)
+    for (GrammarElement symb : rhs)
       sb.append(symb.toString() + " ");
     return sb.toString();
   }
@@ -27,16 +27,16 @@ public class DerivationRule {
   @Override public int hashCode() {
     return lhs.hashCode() + 7 * rhs.hashCode();
   }
-  public Symbol get(int i) {
+  public GrammarElement get(int i) {
     return rhs.get(i);
   }
   public int size() {
     return rhs.size();
   }
-  public List<Symbol> getRHS() {
+  public List<GrammarElement> getRHS() {
     return new ArrayList<>(rhs);
   }
-  public List<Symbol> getRHSSuffix(int from) {
+  public List<GrammarElement> getRHSSuffix(int from) {
     return getRHS().subList(from, rhs.size());
   }
 }

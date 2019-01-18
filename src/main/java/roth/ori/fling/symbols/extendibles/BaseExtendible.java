@@ -11,23 +11,23 @@ import java.util.stream.Collectors;
 
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 @SuppressWarnings("hiding") public abstract class BaseExtendible implements Extendible {
   protected NonTerminal head;
-  protected List<Symbol> symbols;
-  protected List<Symbol> solvedSymbols;
+  protected List<GrammarElement> symbols;
+  protected List<GrammarElement> solvedSymbols;
   protected boolean isSolved = false;
   private NonTerminal lhs;
   private Function<NonTerminal, NonTerminal> producer;
   private List<DerivationRule> solvedRules = new LinkedList<>();
   private List<DerivationRule> rawSolution;
 
-  public BaseExtendible(List<Symbol> symbols) {
+  public BaseExtendible(List<GrammarElement> symbols) {
     this.symbols = symbols;
   }
-  @Override public void fixSymbols(Function<List<Symbol>, List<Symbol>> fix) {
+  @Override public void fixSymbols(Function<List<GrammarElement>, List<GrammarElement>> fix) {
     assert !isSolved;
     symbols = fix.apply(symbols);
   }
@@ -54,23 +54,23 @@ import roth.ori.fling.symbols.Terminal;
   protected NonTerminal nonTerminal() {
     return producer.apply(lhs);
   }
-  protected Symbol solve(Symbol s) {
+  protected GrammarElement solve(GrammarElement s) {
     solvedRules.addAll(s.solve(lhs, producer));
     return s.head();
   }
-  protected List<Symbol> solve(List<Symbol> ss) {
+  protected List<GrammarElement> solve(List<GrammarElement> ss) {
     return ss.stream().map(x -> solve(x)).collect(Collectors.toList());
   }
-  protected void addRule(NonTerminal lhs, List<Symbol> rhs) {
+  protected void addRule(NonTerminal lhs, List<GrammarElement> rhs) {
     solvedRules.add(new DerivationRule(lhs, rhs));
   }
-  protected void addRule(Symbol lhs, List<Symbol> rhs) {
+  protected void addRule(GrammarElement lhs, List<GrammarElement> rhs) {
     addRule((NonTerminal) lhs, rhs);
   }
-  @Override public List<Symbol> symbols() {
+  @Override public List<GrammarElement> symbols() {
     return new LinkedList<>(symbols);
   }
-  @Override public boolean updateNullable(Set<Symbol> knownNullables) {
+  @Override public boolean updateNullable(Set<GrammarElement> knownNullables) {
     if (knownNullables.contains(this))
       return false;
     if (isNullable(knownNullables)) {
@@ -79,21 +79,21 @@ import roth.ori.fling.symbols.Terminal;
     }
     return false;
   }
-  protected abstract boolean isNullable(Set<Symbol> knownNullables);
-  @Override public boolean updateFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
+  protected abstract boolean isNullable(Set<GrammarElement> knownNullables);
+  @Override public boolean updateFirstSet(Set<GrammarElement> nullables, Map<GrammarElement, Set<Terminal>> knownFirstSets) {
     Set<Terminal> fs = getFirstSet(nullables, knownFirstSets);
     if (fs.isEmpty())
       return false;
     knownFirstSets.putIfAbsent(this, new HashSet<>());
     return knownFirstSets.get(this).addAll(fs);
   }
-  protected abstract Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets);
+  protected abstract Set<Terminal> getFirstSet(Set<GrammarElement> nullables, Map<GrammarElement, Set<Terminal>> knownFirstSets);
   @Override public List<DerivationRule> rawSolution() {
     assert isSolved;
     if (rawSolution != null)
       return rawSolution;
     rawSolution = new LinkedList<>();
-    Map<Symbol, Extendible> heads = computeHeads();
+    Map<GrammarElement, Extendible> heads = computeHeads();
     Set<NonTerminal> toConclude = new HashSet<>(), seen = new HashSet<>();
     toConclude.add(head);
     do {
@@ -102,8 +102,8 @@ import roth.ori.fling.symbols.Terminal;
       toConclude = new HashSet<>();
       for (DerivationRule r : solvedRules)
         if (current.contains(r.lhs)) {
-          List<Symbol> rhs = new LinkedList<>();
-          for (Symbol s : r.getRHS()) {
+          List<GrammarElement> rhs = new LinkedList<>();
+          for (GrammarElement s : r.getRHS()) {
             if (heads.containsKey(s)) {
               rhs.add(heads.get(s));
               continue;
@@ -117,9 +117,9 @@ import roth.ori.fling.symbols.Terminal;
     } while (!toConclude.isEmpty());
     return rawSolution;
   }
-  private Map<Symbol, Extendible> computeHeads() {
-    Map<Symbol, Extendible> $ = new HashMap<>();
-    for (Symbol s : symbols)
+  private Map<GrammarElement, Extendible> computeHeads() {
+    Map<GrammarElement, Extendible> $ = new HashMap<>();
+    for (GrammarElement s : symbols)
       if (s.isExtendible())
         $.put(s.head(), s.asExtendible());
     return $;

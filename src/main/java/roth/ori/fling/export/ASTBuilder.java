@@ -14,7 +14,7 @@ import roth.ori.fling.parser.ell.EBNFAnalyzer;
 import roth.ori.fling.parser.ell.Interpretation;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.extendibles.Extendible;
@@ -47,7 +47,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
   private List build(Interpretation i) {
     return build(i.symbol, i.value);
   }
-  private List build(Symbol s, List values) {
+  private List build(GrammarElement s, List values) {
     if (SpecialSymbols.augmentedStartSymbol.equals(s))
       return buildAugS(values);
     if (s.isNonTerminal())
@@ -107,7 +107,7 @@ import roth.ori.fling.symbols.extendibles.Extendible;
       throw new RuntimeException(e);
     }
   }
-  private Class<?> clazz(Symbol s) {
+  private Class<?> clazz(GrammarElement s) {
     return clazz(s.name());
   }
   private Class<?> clazz(Interpretation i) {

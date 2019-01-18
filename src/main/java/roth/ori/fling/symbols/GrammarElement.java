@@ -7,7 +7,7 @@ import java.util.function.Function;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.symbols.extendibles.Extendible;
 
-public interface Symbol {
+public interface GrammarElement {
   public String name();
   public default boolean isVerb() {
     return Verb.class.isAssignableFrom(getClass());
@@ -34,13 +34,13 @@ public interface Symbol {
     return (Extendible) this;
   }
   // NOTE applicable only after solve
-  default Symbol head() {
+  default GrammarElement head() {
     return this;
   }
   @SuppressWarnings("unused") default List<DerivationRule> solve(NonTerminal lhs, Function<NonTerminal, NonTerminal> producer) {
     return new LinkedList<>();
   }
-  @SuppressWarnings({ "rawtypes", "unused" }) default List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings({ "rawtypes", "unused" }) default List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     throw new UnsupportedOperationException();
   }
 }

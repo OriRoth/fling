@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import roth.ori.fling.export.FluentAPIRecorder;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 
 @SuppressWarnings("rawtypes") public class Interpretation {
-  public Symbol symbol;
+  public GrammarElement symbol;
   public List value;
   private static final String PP_IDENT = "--";
 
-  public Interpretation(Symbol symbol, List<?> value) {
+  public Interpretation(GrammarElement symbol, List<?> value) {
     this.symbol = symbol;
     this.value = value;
   }
@@ -58,7 +58,7 @@ import roth.ori.fling.symbols.Symbol;
     }
     return $.toString();
   }
-  public static Interpretation of(Symbol symbol, List<?> value) {
+  public static Interpretation of(GrammarElement symbol, List<?> value) {
     return new Interpretation(symbol, value);
   }
 }

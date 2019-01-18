@@ -7,7 +7,7 @@ import static roth.ori.fling.parser.rll.JSM.UNKNOWN;
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.parser.ll.BNFAnalyzer;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 
@@ -17,7 +17,7 @@ public class RLLPConcrete {
   protected boolean accept;
   protected boolean reject;
   protected boolean initialized;
-  protected Symbol startSymbol;
+  protected GrammarElement startSymbol;
   private BNFAnalyzer analyzer;
 
   public RLLPConcrete(BNF bnf) {

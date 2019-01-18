@@ -9,7 +9,7 @@ import java.util.Set;
 
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.util.DAG;
 
 public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
@@ -17,14 +17,14 @@ public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
     super(ebnf, packagePath, new DAG<>());
   }
   @Override protected void parseInnerClasses() {
-    for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
+    for (Entry<NonTerminal, Set<List<GrammarElement>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
-      Set<List<Symbol>> rhs = r.getValue();
+      Set<List<GrammarElement>> rhs = r.getValue();
       innerClasses.add(parseInnerInterface(lhs, rhs));
       innerClasses.add(parseInnerClass(lhs, rhs));
     }
   }
-  private String parseInnerInterface(NonTerminal lhs, Set<List<Symbol>> rhs) {
+  private String parseInnerInterface(NonTerminal lhs, Set<List<GrammarElement>> rhs) {
     StringBuilder $ = new StringBuilder();
     if (!isInheritanceRule(rhs))
       return $.toString();
@@ -36,7 +36,7 @@ public class JamoosInterfacesRenderer extends JamoosClassesRenderer {
         .append("{");
     return $.append("}").toString();
   }
-  private String parseInnerClass(NonTerminal lhs, Set<List<Symbol>> rhs) {
+  private String parseInnerClass(NonTerminal lhs, Set<List<GrammarElement>> rhs) {
     StringBuilder $ = new StringBuilder();
     if (isInheritanceRule(rhs))
       return $.toString();

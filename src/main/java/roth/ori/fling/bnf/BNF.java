@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 
 public final class BNF {
@@ -49,7 +49,7 @@ public final class BNF {
       for (DerivationRule rule : derivationRules) {
         if (subNonTerminals.contains(rule.lhs) && subRules.add(rule)) {
           change = true;
-          for (Symbol s : rule.getRHS())
+          for (GrammarElement s : rule.getRHS())
             if (s.isVerb())
               subVerbs.add(s.asVerb());
             else

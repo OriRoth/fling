@@ -12,10 +12,10 @@ import java.util.Stack;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.RuntimeVerb;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 
 public class ELLRecognizer {
-  private final Map<Symbol, Set<List<Symbol>>> n;
+  private final Map<GrammarElement, Set<List<GrammarElement>>> n;
   public final EBNFAnalyzer analyzer;
   private ELLStack stack;
   private static final String PP_IDENT = "--";
@@ -43,16 +43,16 @@ public class ELLRecognizer {
 
   @SuppressWarnings("synthetic-access") public class ELLStack {
     public ELLStack parent;
-    public Symbol current;
+    public GrammarElement current;
     public List<Interpretation> interpretations;
     public Stack<ELLStack> children;
 
-    public ELLStack(Symbol current) {
+    public ELLStack(GrammarElement current) {
       this.current = current;
       this.interpretations = new LinkedList<>();
       assert n.containsKey(current) : reject();
     }
-    public ELLStack(Symbol current, ELLStack parent) {
+    public ELLStack(GrammarElement current, ELLStack parent) {
       this.current = current;
       this.interpretations = new LinkedList<>();
       assert current.isVerb() || n.containsKey(current) : reject();
@@ -76,7 +76,7 @@ public class ELLRecognizer {
         throw reject();
       }
       children = new Stack<>();
-      for (List<Symbol> clause : n.get(current)) {
+      for (List<GrammarElement> clause : n.get(current)) {
         if (analyzer.firstSetOf(clause).contains(input)) {
           for (int i = clause.size() - 1; i >= 0; --i)
             children.push(new ELLStack(clause.get(i), this));
@@ -85,7 +85,7 @@ public class ELLRecognizer {
       }
       if (!analyzer.isNullable(current))
         return false;
-      for (List<Symbol> clause : n.get(current)) {
+      for (List<GrammarElement> clause : n.get(current)) {
         if (analyzer.isNullable(clause)) {
           for (int i = clause.size() - 1; i >= 0; --i)
             children.push(new ELLStack(clause.get(i), this));
@@ -130,7 +130,7 @@ public class ELLRecognizer {
         if (!analyzer.isNullable(current))
           throw reject("folded on non nullable");
         children = new Stack<>();
-        for (List<Symbol> clause : n.get(current)) {
+        for (List<GrammarElement> clause : n.get(current)) {
           if (analyzer.isNullable(clause)) {
             for (int i = clause.size() - 1; i >= 0; --i)
               children.push(new ELLStack(clause.get(i), this));

@@ -10,33 +10,33 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 public class Either extends BaseExtendible {
-  public Either(List<Symbol> symbols) {
+  public Either(List<GrammarElement> symbols) {
     super(symbols);
   }
   @Override protected void solve() {
     head = nonTerminal();
     solvedSymbols = solve(symbols);
-    for (Symbol s : solvedSymbols)
+    for (GrammarElement s : solvedSymbols)
       addRule(head, Collections.singletonList(s));
   }
-  @Override protected boolean isNullable(Set<Symbol> knownNullables) {
+  @Override protected boolean isNullable(Set<GrammarElement> knownNullables) {
     return symbols.stream().allMatch(x -> knownNullables.contains(x));
   }
-  @Override protected Set<Terminal> getFirstSet(@SuppressWarnings("unused") Set<Symbol> nullables,
-      Map<Symbol, Set<Terminal>> knownFirstSets) {
+  @Override protected Set<Terminal> getFirstSet(@SuppressWarnings("unused") Set<GrammarElement> nullables,
+      Map<GrammarElement, Set<Terminal>> knownFirstSets) {
     Set<Terminal> $ = new HashSet<>();
-    for (Symbol s : symbols) {
+    for (GrammarElement s : symbols) {
       if (knownFirstSets.containsKey(s))
         $.addAll(knownFirstSets.get(s));
     }
     return $;
   }
-  @SuppressWarnings("unused") @Override public List<String> parseTypes(Function<Symbol, List<String>> operation,
-      Function<Symbol, List<String>> forgivingOperation) {
+  @SuppressWarnings("unused") @Override public List<String> parseTypes(Function<GrammarElement, List<String>> operation,
+      Function<GrammarElement, List<String>> forgivingOperation) {
     return Collections.singletonList(roth.ori.fling.export.Either.class.getTypeName());
   }
   @SuppressWarnings("unchecked") @Override public List<?> fold(List<?> t) {
@@ -48,7 +48,7 @@ public class Either extends BaseExtendible {
     return new LinkedList<>(current.value);
   }
   @SuppressWarnings({ "unused", "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
-      BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
+      BiFunction<GrammarElement, List, List> solution, Function<GrammarElement, Class> classSolution) {
     assert values.size() == 1 && values.get(0) instanceof Interpretation;
     Interpretation i = (Interpretation) values.get(0);
     List is = solution.apply(i.symbol, i.value);
@@ -56,7 +56,7 @@ public class Either extends BaseExtendible {
     return Collections.singletonList(new roth.ori.fling.export.Either(
         is.isEmpty() ? null : is.size() == 1 ? is.get(0) : is.toArray(new Object[is.size()])));
   }
-  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     return Collections.singletonList(roth.ori.fling.export.Either.class);
   }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 
 public class ClassType implements ParameterType {
   public final Class<?> clazz;
@@ -50,11 +50,11 @@ public class ClassType implements ParameterType {
   @Override public boolean accepts(Object arg) {
     return clazz.isInstance(arg);
   }
-  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<Symbol, List, List> solution, String astPath) {
+  @SuppressWarnings({ "unused", "rawtypes" }) @Override public List conclude(Object arg, BiFunction<GrammarElement, List, List> solution, String astPath) {
     assert clazz.isInstance(arg);
     return Collections.singletonList(arg);
   }
-  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings({ "rawtypes", "unused" }) @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     return Collections.singletonList(clazz);
   }
 }

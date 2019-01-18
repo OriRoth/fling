@@ -20,7 +20,7 @@ import java.util.function.Function;
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.parser.ll.BNFAnalyzer;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 
 public class JSM implements Cloneable {
@@ -42,7 +42,7 @@ public class JSM implements Cloneable {
     this(bnf, analyzer);
     this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
   }
-  public JSM(BNF bnf, BNFAnalyzer analyzer, Symbol initial, Set<Verb> baseLegalJumps) {
+  public JSM(BNF bnf, BNFAnalyzer analyzer, GrammarElement initial, Set<Verb> baseLegalJumps) {
     this(bnf, analyzer);
     this.baseLegalJumps = new LinkedHashSet<>(baseLegalJumps);
     this.stack.addAll(clone().push(initial).stack);
@@ -69,7 +69,7 @@ public class JSM implements Cloneable {
     $.add(SpecialSymbols.$);
     return $;
   }
-  private JSM push(Symbol symbol) {
+  private JSM push(GrammarElement symbol) {
     JSM $ = clone();
     Map<Verb, J> newDictionary = new LinkedHashMap<>();
     Function<Verb, J> jumpSolution = stack.isEmpty() ? v -> baseLegalJumps.contains(v) ? JUNKNOWN : JJAMMED
@@ -84,9 +84,9 @@ public class JSM implements Cloneable {
     $.stack.push(newDictionary);
     return $;
   }
-  public JSM push(Collection<Symbol> symbols) {
+  public JSM push(Collection<GrammarElement> symbols) {
     JSM $ = clone();
-    for (Symbol symbol : symbols)
+    for (GrammarElement symbol : symbols)
       $ = $.push(symbol);
     return $;
   }
@@ -120,7 +120,7 @@ public class JSM implements Cloneable {
         : this == UNKNOWN ? "UNKNOWN" //
             : toString(0, null, new HashSet<>(), new ArrayList<>());
   }
-  String toString(int ind, Verb v, Set<J> seen, List<Symbol> toPush) {
+  String toString(int ind, Verb v, Set<J> seen, List<GrammarElement> toPush) {
     seen.add(J.of(this));
     StringBuilder $ = new StringBuilder();
     for (int i = 0; i < ind; ++i)
@@ -177,10 +177,10 @@ public class JSM implements Cloneable {
     public static final J JACCEPT = JUNKNOWN;
     // NOTE address is cloned
     public final JSM address;
-    public final List<Symbol> toPush;
+    public final List<GrammarElement> toPush;
     private JSM asJSM;
 
-    private J(JSM address, List<Symbol> toPush) {
+    private J(JSM address, List<GrammarElement> toPush) {
       this.address = address;
       this.toPush = toPush;
     }
@@ -188,7 +188,7 @@ public class JSM implements Cloneable {
       address = null;
       toPush = null;
     }
-    public static J of(JSM address, List<Symbol> toPush) {
+    public static J of(JSM address, List<GrammarElement> toPush) {
       assert address != JAMMED && address != UNKNOWN;
       return new J(address, toPush);
     }

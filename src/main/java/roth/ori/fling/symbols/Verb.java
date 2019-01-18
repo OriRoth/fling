@@ -30,7 +30,7 @@ public class Verb implements Terminal, Comparable<Verb> {
         throw new IllegalArgumentException("Nested terminals are not yet supported");
     }
     List<Object> t = Arrays.stream(parameterTypes)
-        .map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x) : x instanceof Symbol ? new NestedType((Symbol) x) : x)
+        .map(x -> x instanceof Class<?> ? new ClassType((Class<?>) x) : x instanceof GrammarElement ? new NestedType((GrammarElement) x) : x)
         .collect(toList());
     this.type = t.toArray(new ParameterType[t.size()]);
   }
@@ -107,13 +107,13 @@ public class Verb implements Terminal, Comparable<Verb> {
   @Override public int compareTo(Verb v) {
     return equals(v) ? 0 : terminal.name().compareTo(v.name());
   }
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     List<Class> $ = new LinkedList<>();
     for (ParameterType t : type)
       $.addAll(t.toClasses(classSolution));
     return $;
   }
-  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<Symbol, List, List> solution,
+  @SuppressWarnings({ "unchecked", "rawtypes" }) public List conclude(List args, BiFunction<GrammarElement, List, List> solution,
       String astPath) {
     // NOTE this assertion might need Verb to deal with Interpretation (?)
     // assert accepts(args.toArray(new Object[args.size()]));

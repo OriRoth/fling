@@ -10,42 +10,42 @@ import java.util.Set;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.extendibles.Extendible;
 
 public class EBNFAnalyzer {
   public final EBNF ebnf;
-  public final Map<Symbol, Set<List<Symbol>>> normalized;
-  private final Set<Symbol> nullableSymbols;
-  public final Map<Symbol, Set<Terminal>> baseFirstSets;
+  public final Map<GrammarElement, Set<List<GrammarElement>>> normalized;
+  private final Set<GrammarElement> nullableSymbols;
+  public final Map<GrammarElement, Set<Terminal>> baseFirstSets;
 
-  public EBNFAnalyzer(final EBNF ebnf, Map<Symbol, Set<List<Symbol>>> normalized) {
+  public EBNFAnalyzer(final EBNF ebnf, Map<GrammarElement, Set<List<GrammarElement>>> normalized) {
     this.ebnf = ebnf;
     this.normalized = normalized;
     nullableSymbols = calculateNullableSymbols();
     baseFirstSets = calculateSymbolFirstSet();
   }
-  public EBNFAnalyzer(Map<NonTerminal, Set<List<Symbol>>> n, Set<NonTerminal> start) {
+  public EBNFAnalyzer(Map<NonTerminal, Set<List<GrammarElement>>> n, Set<NonTerminal> start) {
     this(recreateEBNF(n, start), new HashMap<>(n));
   }
-  private Set<Symbol> calculateNullableSymbols() {
-    Set<Symbol> nullables = new HashSet<>();
+  private Set<GrammarElement> calculateNullableSymbols() {
+    Set<GrammarElement> nullables = new HashSet<>();
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (Symbol lhs : normalized.keySet())
-        for (List<Symbol> clause : normalized.get(lhs))
+      for (GrammarElement lhs : normalized.keySet())
+        for (List<GrammarElement> clause : normalized.get(lhs))
           if (clause.stream().allMatch(x -> nullables.contains(x) || //
               x.isExtendible() && x.asExtendible().updateNullable(nullables)))
             moreChanges |= nullables.add(lhs);
     } while (moreChanges);
     return nullables;
   }
-  private Map<Symbol, Set<Terminal>> calculateSymbolFirstSet() {
-    Map<Symbol, Set<Terminal>> $ = new HashMap<>();
-    for (Symbol s : normalized.keySet())
+  private Map<GrammarElement, Set<Terminal>> calculateSymbolFirstSet() {
+    Map<GrammarElement, Set<Terminal>> $ = new HashMap<>();
+    for (GrammarElement s : normalized.keySet())
       $.put(s, new HashSet<>());
     for (Extendible e : ebnf.extendibles)
       $.put(e, new HashSet<>());
@@ -54,9 +54,9 @@ public class EBNFAnalyzer {
     boolean moreChanges;
     do {
       moreChanges = false;
-      for (Symbol lhs : normalized.keySet())
-        for (List<Symbol> clause : normalized.get(lhs))
-          for (Symbol s : clause) {
+      for (GrammarElement lhs : normalized.keySet())
+        for (List<GrammarElement> clause : normalized.get(lhs))
+          for (GrammarElement s : clause) {
             moreChanges |= s.isExtendible() && s.asExtendible().updateFirstSet(nullableSymbols, $);
             moreChanges |= $.get(lhs).addAll($.getOrDefault(s, new HashSet<>()));
             if (!isNullable(s))
@@ -65,26 +65,26 @@ public class EBNFAnalyzer {
     } while (moreChanges);
     return $;
   }
-  public boolean isNullable(final Symbol... expression) {
+  public boolean isNullable(final GrammarElement... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
-  public Set<Terminal> firstSetOf(final Symbol... expression) {
+  public Set<Terminal> firstSetOf(final GrammarElement... expression) {
     Set<Terminal> $ = new HashSet<>();
-    for (Symbol symbol : expression) {
+    for (GrammarElement symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))
         break;
     }
     return $;
   }
-  public Set<Terminal> firstSetOf(final List<Symbol> expression) {
-    return firstSetOf(expression.toArray(new Symbol[] {}));
+  public Set<Terminal> firstSetOf(final List<GrammarElement> expression) {
+    return firstSetOf(expression.toArray(new GrammarElement[] {}));
   }
-  public boolean isNullable(List<Symbol> expr) {
-    return isNullable(expr.toArray(new Symbol[] {}));
+  public boolean isNullable(List<GrammarElement> expr) {
+    return isNullable(expr.toArray(new GrammarElement[] {}));
   }
-  public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
+  public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
+    return Arrays.copyOfRange(rule.getRHS().toArray(new GrammarElement[] {}), index, rule.size());
   }
   public static RuntimeException reject() {
     return new ELLRecognizerRejection();
@@ -92,16 +92,16 @@ public class EBNFAnalyzer {
   public static RuntimeException reject(String message) {
     return new ELLRecognizerRejection(message);
   }
-  private static EBNF recreateEBNF(Map<NonTerminal, Set<List<Symbol>>> n, Set<NonTerminal> start) {
+  private static EBNF recreateEBNF(Map<NonTerminal, Set<List<GrammarElement>>> n, Set<NonTerminal> start) {
     Set<Verb> vs = new HashSet<>();
     Set<NonTerminal> nts = new HashSet<>();
     Set<Extendible> exs = new HashSet<>();
     Set<DerivationRule> rs = new HashSet<>();
     for (NonTerminal lhs : n.keySet()) {
       nts.add(lhs.asNonTerminal());
-      for (List<Symbol> clause : n.get(lhs)) {
+      for (List<GrammarElement> clause : n.get(lhs)) {
         rs.add(new DerivationRule(lhs.asNonTerminal(), clause));
-        for (Symbol s : clause)
+        for (GrammarElement s : clause)
           if (s.isVerb())
             vs.add(s.asVerb());
           else if (s.isExtendible())

@@ -19,7 +19,7 @@ import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.AST;
 import roth.ori.fling.parser.ell.EBNFAnalyzer;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.types.ClassType;
@@ -38,11 +38,11 @@ public class JamoosClassesRenderer {
   protected Set<NonTerminal> abstractNonTerminals = new LinkedHashSet<>();
   protected List<String> innerClasses = new LinkedList<>();
   public String topClass;
-  protected Map<NonTerminal, Map<NonTerminal, List<Symbol>>> concreteClassesMapping = new LinkedHashMap<>();
+  protected Map<NonTerminal, Map<NonTerminal, List<GrammarElement>>> concreteClassesMapping = new LinkedHashMap<>();
   protected Map<String, Integer> innerClassesUsedNames = new LinkedHashMap<>();
   protected Map<String, Map<String, Integer>> innerClassesFieldUsedNames = new LinkedHashMap<>();
   protected Map<String, LinkedHashMap<String, String>> innerClassesFieldTypes = new LinkedHashMap<>();
-  protected Map<NonTerminal, Set<List<Symbol>>> n;
+  protected Map<NonTerminal, Set<List<GrammarElement>>> n;
   private JamoosClassesRenderer actual = this;
 
   public JamoosClassesRenderer(EBNF ebnf, String packagePath) {
@@ -73,13 +73,13 @@ public class JamoosClassesRenderer {
       topClass = actual.topClass;
       return;
     }
-    for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
+    for (Entry<NonTerminal, Set<List<GrammarElement>>> r : n.entrySet()) {
       NonTerminal lhs = r.getKey();
-      Set<List<Symbol>> rhs = r.getValue();
+      Set<List<GrammarElement>> rhs = r.getValue();
       if (!isInheritanceRule(rhs)) {
         innerClassesFieldTypes.putIfAbsent(lhs.name(), new LinkedHashMap<>());
-        for (List<Symbol> clause : r.getValue())
-          for (Symbol s : clause)
+        for (List<GrammarElement> clause : r.getValue())
+          for (GrammarElement s : clause)
             parseSymbol(lhs.name(), s);
       } else
         abstractNonTerminals.add(lhs);
@@ -90,10 +90,10 @@ public class JamoosClassesRenderer {
     topClass = $.append("}").toString();
   }
   protected void parseInnerClasses() {
-    for (Entry<NonTerminal, Set<List<Symbol>>> r : n.entrySet()) {
+    for (Entry<NonTerminal, Set<List<GrammarElement>>> r : n.entrySet()) {
       StringBuilder $ = new StringBuilder();
       NonTerminal lhs = r.getKey();
-      Set<List<Symbol>> rhs = r.getValue();
+      Set<List<GrammarElement>> rhs = r.getValue();
       // Declaration
       $.append("public static class ") //
           .append(lhs.name()) //
@@ -120,17 +120,17 @@ public class JamoosClassesRenderer {
       innerClasses.add($.append("}").toString());
     }
   }
-  protected void parseSymbol(String lhs, Symbol s) {
+  protected void parseSymbol(String lhs, GrammarElement s) {
     for (String t : parseType(s))
       innerClassesFieldTypes.get(lhs).put(generateFieldName(lhs, s), t);
   }
-  @SuppressWarnings("unused") protected List<String> parseTypes(String lhs, List<Symbol> ss) {
+  @SuppressWarnings("unused") protected List<String> parseTypes(String lhs, List<GrammarElement> ss) {
     return ss.stream().map(x -> parseType(x)).reduce(new LinkedList<>(), (l1, l2) -> {
       l1.addAll(l2);
       return l1;
     });
   }
-  protected List<String> parseType(Symbol s) {
+  protected List<String> parseType(GrammarElement s) {
     List<String> $ = new LinkedList<>();
     if (s.isExtendible())
       $.addAll(s.asExtendible().parseTypes(this::parseType, this::parseTypeForgiving));
@@ -152,7 +152,7 @@ public class JamoosClassesRenderer {
       $.add("Void");
     return $;
   }
-  protected List<String> parseTypeForgiving(Symbol s) {
+  protected List<String> parseTypeForgiving(GrammarElement s) {
     return s.isVerb() && s.asVerb().type.length == 0 ? Collections.singletonList("Void") : parseType(s);
   }
   protected String generateFieldName(String lhs, String name) {
@@ -175,7 +175,7 @@ public class JamoosClassesRenderer {
     names.put(name, Integer.valueOf(nn = innerClassesFieldUsedNames.get(lhs).get(name).intValue() + 1));
     return name + nn;
   }
-  protected String generateFieldName(String lhs, Symbol s) {
+  protected String generateFieldName(String lhs, GrammarElement s) {
     return generateFieldName(lhs, s.head().name().toLowerCase());
   }
   protected String generateClassName(String name) {

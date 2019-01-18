@@ -19,7 +19,7 @@ import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.bnf.EBNF;
 import roth.ori.fling.export.Grammar;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.extendibles.Either;
@@ -38,7 +38,7 @@ public class Fling {
   public final Set<NonTerminal> startSymbols;
   public final String apiName;
   public final Set<Terminal> terminals;
-  public final Set<Symbol> nestedParameters; // NonTerminal and Extendibles (?)
+  public final Set<GrammarElement> nestedParameters; // NonTerminal and Extendibles (?)
   public final String packagePath;
   public final String projectPath;
   public Class<? extends Grammar> provider;
@@ -96,12 +96,12 @@ public class Fling {
     Fling builder = new Fling(provider, terminalEnum, nonterminalEnum, apiName, packagePath, projectPath);
     return builder.new SetSymbols();
   }
-  public void addRule(NonTerminal lhs, List<Symbol> rhs) {
-    List<Symbol> $ = fixRawTerminals(rhs);
+  public void addRule(NonTerminal lhs, List<GrammarElement> rhs) {
+    List<GrammarElement> $ = fixRawTerminals(rhs);
     analyze($);
     derivationRules.add(new DerivationRule(lhs, $));
   }
-  private void analyze(Symbol s) {
+  private void analyze(GrammarElement s) {
     if (s.isVerb()) {
       verbs.add(s.asVerb());
       Arrays.stream(s.asVerb().type).filter(t -> t instanceof NestedType).map(t -> ((NestedType) t).nested).forEach(nested -> {
@@ -118,7 +118,7 @@ public class Fling {
       s.asExtendible().symbols().forEach(this::analyze);
     }
   }
-  private void analyze(List<Symbol> rhs) {
+  private void analyze(List<GrammarElement> rhs) {
     rhs.forEach(s -> analyze(s));
   }
 
@@ -132,9 +132,9 @@ public class Fling {
 
   public abstract class FlingBNF {
     protected final NonTerminal lhs;
-    protected final ArrayList<Symbol> rhs;
+    protected final ArrayList<GrammarElement> rhs;
 
-    public FlingBNF(final NonTerminal lhs, final Symbol... rhs) {
+    public FlingBNF(final NonTerminal lhs, final GrammarElement... rhs) {
       this.lhs = lhs;
       this.rhs = new ArrayList<>(Arrays.asList(rhs));
     }
@@ -168,9 +168,9 @@ public class Fling {
     InitialDeriver(final NonTerminal lhs) {
       this.lhs = lhs;
     }
-    public AndDeriver to(final Symbol s, final Symbol... ss) {
+    public AndDeriver to(final GrammarElement s, final GrammarElement... ss) {
       AndDeriver $ = new AndDeriver(lhs, s);
-      for (Symbol x : ss)
+      for (GrammarElement x : ss)
         $.and(x);
       return $;
     }
@@ -189,7 +189,7 @@ public class Fling {
     // TODO Roth: allow ENonTerminals?
     public FlingBNF into(final NonTerminal s, final NonTerminal... ss) {
       OrDeriver $ = new InitialDeriver(lhs).to(s);
-      for (Symbol x : ss)
+      for (GrammarElement x : ss)
         $ = $.or(x);
       return $;
     }
@@ -199,9 +199,9 @@ public class Fling {
     OrDeriver(final NonTerminal lhs) {
       super(lhs);
     }
-    public AndDeriver or(final Symbol s, Symbol... ss) {
+    public AndDeriver or(final GrammarElement s, GrammarElement... ss) {
       AndDeriver $ = new AndDeriver(lhs, s);
-      for (Symbol x : ss)
+      for (GrammarElement x : ss)
         $.and(x);
       return or($);
     }
@@ -215,13 +215,13 @@ public class Fling {
   }
 
   public final class AndDeriver extends OrDeriver {
-    AndDeriver(final NonTerminal lhs, final Symbol child) {
+    AndDeriver(final NonTerminal lhs, final GrammarElement child) {
       super(lhs);
       rhs.add(child);
     }
-    public AndDeriver and(final Symbol s, Symbol... ss) {
+    public AndDeriver and(final GrammarElement s, GrammarElement... ss) {
       rhs.add(s);
-      for (Symbol x : ss)
+      for (GrammarElement x : ss)
         rhs.add(x);
       return this;
     }
@@ -248,14 +248,14 @@ public class Fling {
     }
   }
 
-  static List<Symbol> merge(Symbol s, Symbol... ss) {
-    List<Symbol> $ = new LinkedList<>();
+  static List<GrammarElement> merge(GrammarElement s, GrammarElement... ss) {
+    List<GrammarElement> $ = new LinkedList<>();
     $.add(s);
     Collections.addAll($, ss);
     return $;
   }
-  static List<Symbol> merge(Symbol s1, Symbol s2, Symbol... ss) {
-    List<Symbol> $ = new LinkedList<>();
+  static List<GrammarElement> merge(GrammarElement s1, GrammarElement s2, GrammarElement... ss) {
+    List<GrammarElement> $ = new LinkedList<>();
     $.add(s1);
     $.add(s2);
     Collections.addAll($, ss);
@@ -264,21 +264,21 @@ public class Fling {
   public static Verb attribute(Terminal terminal, Object... parameterTypes) {
     return new Verb(terminal, parameterTypes);
   }
-  public static OneOrMore oneOrMore(Symbol s, Symbol... ss) {
+  public static OneOrMore oneOrMore(GrammarElement s, GrammarElement... ss) {
     return new OneOrMore(merge(s, ss));
   }
-  public static NoneOrMore noneOrMore(Symbol s, Symbol... ss) {
+  public static NoneOrMore noneOrMore(GrammarElement s, GrammarElement... ss) {
     return new NoneOrMore(merge(s, ss));
   }
-  public static Either either(Symbol s1, Symbol s2, Symbol... ss) {
+  public static Either either(GrammarElement s1, GrammarElement s2, GrammarElement... ss) {
     return new Either(merge(s1, s2, ss));
   }
-  public static Option option(Symbol s, Symbol... ss) {
+  public static Option option(GrammarElement s, GrammarElement... ss) {
     return new Option(merge(s, ss));
   }
-  private List<Symbol> fixRawTerminals(List<Symbol> rhs) {
-    List<Symbol> $ = new ArrayList<>();
-    for (Symbol s : rhs)
+  private List<GrammarElement> fixRawTerminals(List<GrammarElement> rhs) {
+    List<GrammarElement> $ = new ArrayList<>();
+    for (GrammarElement s : rhs)
       if (s.isVerb() || s.isNonTerminal())
         $.add(s);
       else if (s.isTerminal())

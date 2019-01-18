@@ -21,7 +21,7 @@ import roth.ori.fling.parser.ll.BNFAnalyzer;
 import roth.ori.fling.parser.rll.JSM;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.types.NestedType;
@@ -66,7 +66,7 @@ public class RLLPEncoder {
     topClass = $.toString();
   }
   // TODO Roth: code duplication in constructors
-  public RLLPEncoder(Fling fling, Symbol nested, String astTopClass) {
+  public RLLPEncoder(Fling fling, GrammarElement nested, String astTopClass) {
     assert nested.isNonTerminal() || nested.isExtendible();
     topClassName = nested.name();
     packagePath = fling.packagePath;
@@ -110,13 +110,13 @@ public class RLLPEncoder {
       verbNames.put(v, $);
       return $;
     }
-    private String name(Symbol s) {
+    private String name(GrammarElement s) {
       return s.isVerb() ? name(s.asVerb()) : s.asNonTerminal().name();
     }
-    private String names(Collection<? extends Symbol> ss) {
+    private String names(Collection<? extends GrammarElement> ss) {
       return String.join("", ss.stream().map(s -> name(s)).collect(toList()));
     }
-    public String name(Collection<Symbol> toPush, Set<Verb> legalJumps) {
+    public String name(Collection<GrammarElement> toPush, Set<Verb> legalJumps) {
       assert toPush != null && legalJumps != null;
       return new StringBuilder("π_").append(names(toPush)).append("_").append(names(legalJumps)).toString();
     }
@@ -136,7 +136,7 @@ public class RLLPEncoder {
         computeStaticMethod(v);
     }
     private void computeStaticMethod(Verb v) {
-      List<Symbol> toPush = new ArrayList<>();
+      List<GrammarElement> toPush = new ArrayList<>();
       toPush.add(startSymbol);
       Set<Verb> baseLegalJumps = JSM.initialBaseLegalJumps();
       computeType(toPush, baseLegalJumps, v, x -> namer.name(x));
@@ -156,16 +156,16 @@ public class RLLPEncoder {
               + (v.type.length == 0 ? "" : ",") + parameterNamesEncoding(v.type) + ");return Λ;}") //
           .toString());
     }
-    private String computeType(List<Symbol> toPush, Set<Verb> baseLegalJumps, Verb origin, Function<Verb, String> unknownSolution) {
+    private String computeType(List<GrammarElement> toPush, Set<Verb> baseLegalJumps, Verb origin, Function<Verb, String> unknownSolution) {
       if (toPush.isEmpty()) {
         assert baseLegalJumps.contains(origin);
         return unknownSolution.apply(origin);
       }
-      Symbol firstToPush = toPush.get(toPush.size() - 1);
-      List<Symbol> restToPush = new ArrayList<>(toPush);
+      GrammarElement firstToPush = toPush.get(toPush.size() - 1);
+      List<GrammarElement> restToPush = new ArrayList<>(toPush);
       restToPush.remove(toPush.size() - 1);
       if (analyzer.firstSetOf(firstToPush).contains(origin)) {
-        List<Symbol> newToPush = firstToPush.isTerminal() ? new ArrayList<>()
+        List<GrammarElement> newToPush = firstToPush.isTerminal() ? new ArrayList<>()
             : analyzer.llClosure(firstToPush.asNonTerminal(), origin);
         Set<Verb> newBaseLegalJumps = new JSM(bnf, analyzer, baseLegalJumps).push(restToPush).trim().baseLegalJumps();
         String typeName = namer.name(newToPush, newBaseLegalJumps);
@@ -181,7 +181,7 @@ public class RLLPEncoder {
       assert analyzer.isNullable(firstToPush);
       return computeType(restToPush, baseLegalJumps, origin, unknownSolution);
     }
-    private void createType(String typeName, List<Symbol> toPush, Set<Verb> baseLegalJumps,
+    private void createType(String typeName, List<GrammarElement> toPush, Set<Verb> baseLegalJumps,
         Function<Verb, String> unknownSolution) {
       StringBuilder $ = new StringBuilder("public interface ").append(typeName);
       if (!baseLegalJumps.isEmpty() && (baseLegalJumps.size() != 1 || !baseLegalJumps.contains(SpecialSymbols.$)))

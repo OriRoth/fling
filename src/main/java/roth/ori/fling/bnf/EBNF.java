@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import roth.ori.fling.api.Fling.FlingProducer;
 import roth.ori.fling.symbols.NonTerminal;
 import roth.ori.fling.symbols.SpecialSymbols;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 import roth.ori.fling.symbols.extendibles.Extendible;
 import roth.ori.fling.symbols.types.NestedType;
@@ -32,8 +32,8 @@ public final class EBNF {
   public final String name;
   public boolean isSubEBNF;
   // Valid only after toBNF
-  public Map<Symbol, Symbol> nestedSymbolsMapping;
-  public Symbol subHead;
+  public Map<GrammarElement, GrammarElement> nestedSymbolsMapping;
+  public GrammarElement subHead;
   private FlingProducer beforeSolution;
   private FlingProducer afterSolution;
   private BNF bnf;
@@ -68,14 +68,14 @@ public final class EBNF {
     Set<DerivationRule> rs = new LinkedHashSet<>();
     nestedSymbolsMapping = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
-      List<Symbol> rhs = new LinkedList<>();
-      for (Symbol s : r.getRHS()) {
+      List<GrammarElement> rhs = new LinkedList<>();
+      for (GrammarElement s : r.getRHS()) {
         rs.addAll(s.solve(r.lhs, producer));
         rhs.add(s.head());
         if (s.isVerb())
           for (ParameterType t : s.asVerb().type)
             if (t instanceof NestedType) {
-              Symbol nested = ((NestedType) t).nested;
+              GrammarElement nested = ((NestedType) t).nested;
               nestedSymbolsMapping.put(nested.head().asNonTerminal(), nested);
             } else if (t instanceof VarArgs) {
               NonTerminal nested = ((VarArgs) t).nt;
@@ -89,7 +89,7 @@ public final class EBNF {
     Set<NonTerminal> ns = new LinkedHashSet<>();
     for (DerivationRule r : rs) {
       nts.add(r.lhs);
-      for (Symbol s : r.getRHS()) {
+      for (GrammarElement s : r.getRHS()) {
         assert !s.isExtendible();
         if (s.isVerb()) {
           for (ParameterType t : s.asVerb().type)
@@ -107,17 +107,17 @@ public final class EBNF {
     afterSolution = producer.clone();
     return bnf = $;
   }
-  public Map<NonTerminal, Set<List<Symbol>>> regularForm() {
-    Map<NonTerminal, Set<List<Symbol>>> $ = new LinkedHashMap<>();
+  public Map<NonTerminal, Set<List<GrammarElement>>> regularForm() {
+    Map<NonTerminal, Set<List<GrammarElement>>> $ = new LinkedHashMap<>();
     for (DerivationRule r : derivationRules) {
       $.putIfAbsent(r.lhs, new LinkedHashSet<>());
       $.get(r.lhs).add(r.getRHS());
     }
     return $;
   }
-  public Map<Symbol, Set<List<Symbol>>> regularFormWithExtendibles(FlingProducer producer) {
+  public Map<GrammarElement, Set<List<GrammarElement>>> regularFormWithExtendibles(FlingProducer producer) {
     toBNF(producer);
-    Map<Symbol, Set<List<Symbol>>> $ = new LinkedHashMap<>(normalizedForm(producer));
+    Map<GrammarElement, Set<List<GrammarElement>>> $ = new LinkedHashMap<>(normalizedForm(producer));
     for (Extendible e : extendibles) {
       $.put(e, Collections.singleton(Collections.singletonList(e.head())));
       for (DerivationRule r : e.rawSolution()) {
@@ -127,18 +127,18 @@ public final class EBNF {
     }
     return $;
   }
-  public Map<NonTerminal, Set<List<Symbol>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
-    Map<NonTerminal, Set<List<Symbol>>> rf = regularForm(), $ = new LinkedHashMap<>();
-    for (Entry<NonTerminal, Set<List<Symbol>>> e : rf.entrySet()) {
+  public Map<NonTerminal, Set<List<GrammarElement>>> normalizedForm(Function<NonTerminal, NonTerminal> producer) {
+    Map<NonTerminal, Set<List<GrammarElement>>> rf = regularForm(), $ = new LinkedHashMap<>();
+    for (Entry<NonTerminal, Set<List<GrammarElement>>> e : rf.entrySet()) {
       NonTerminal lhs = e.getKey();
-      Set<List<Symbol>> rhs = e.getValue();
+      Set<List<GrammarElement>> rhs = e.getValue();
       if (rhs.size() <= 1 || rhs.stream().allMatch(x -> x.isEmpty() || x.size() == 1 && x.get(0).isNonTerminal())) {
         $.put(lhs, rhs);
         continue;
       }
       $.put(lhs, new HashSet<>());
-      for (List<Symbol> clause : rhs) {
-        List<Symbol> l = new LinkedList<>();
+      for (List<GrammarElement> clause : rhs) {
+        List<GrammarElement> l = new LinkedList<>();
         NonTerminal nt = producer.apply(lhs);
         l.add(nt);
         $.get(lhs).add(l);

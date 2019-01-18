@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public interface NonTerminal extends Symbol {
+public interface NonTerminal extends GrammarElement {
   default String name(String packagePath) {
     return packagePath + "." + name();
   }
@@ -14,7 +14,7 @@ public interface NonTerminal extends Symbol {
   public default String toString2() {
     return "<" + name() + ">";
   }
-  @SuppressWarnings("rawtypes") @Override default List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override default List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     return Collections.singletonList(classSolution.apply(this));
   }
   public static NonTerminal of(String name) {

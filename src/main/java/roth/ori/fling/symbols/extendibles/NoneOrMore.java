@@ -12,27 +12,27 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import roth.ori.fling.parser.ell.Interpretation;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 public class NoneOrMore extends BaseExtendible {
-  public NoneOrMore(List<Symbol> symbols) {
+  public NoneOrMore(List<GrammarElement> symbols) {
     super(symbols);
   }
   @Override protected void solve() {
     head = nonTerminal();
     solvedSymbols = solve(symbols);
-    List<Symbol> rhs = new ArrayList<>(solvedSymbols);
+    List<GrammarElement> rhs = new ArrayList<>(solvedSymbols);
     rhs.add(head);
     addRule(head, rhs);
     addRule(head, new LinkedList<>());
   }
-  @Override public boolean isNullable(@SuppressWarnings("unused") Set<Symbol> knownNullables) {
+  @Override public boolean isNullable(@SuppressWarnings("unused") Set<GrammarElement> knownNullables) {
     return true;
   }
-  @Override public Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
+  @Override public Set<Terminal> getFirstSet(Set<GrammarElement> nullables, Map<GrammarElement, Set<Terminal>> knownFirstSets) {
     Set<Terminal> $ = new HashSet<>();
-    for (Symbol s : symbols) {
+    for (GrammarElement s : symbols) {
       if (knownFirstSets.containsKey(s))
         $.addAll(knownFirstSets.get(s));
       if (!nullables.contains(s))
@@ -40,10 +40,10 @@ public class NoneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation,
-      @SuppressWarnings("unused") Function<Symbol, List<String>> forgivingOperation) {
+  @Override public List<String> parseTypes(Function<GrammarElement, List<String>> operation,
+      @SuppressWarnings("unused") Function<GrammarElement, List<String>> forgivingOperation) {
     List<String> $ = new LinkedList<>();
-    for (Symbol s : symbols)
+    for (GrammarElement s : symbols)
       for (String q : operation.apply(s))
         $.add(q + "[]");
     return $;
@@ -68,7 +68,7 @@ public class NoneOrMore extends BaseExtendible {
     return $;
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
-      BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
+      BiFunction<GrammarElement, List, List> solution, Function<GrammarElement, Class> classSolution) {
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {
@@ -110,9 +110,9 @@ public class NoneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     List<Class> $ = new LinkedList<>();
-    for (Symbol s : symbols)
+    for (GrammarElement s : symbols)
       $.addAll(s.toClasses(classSolution).stream().map(c -> Array.newInstance(c, 0).getClass()).collect(Collectors.toList()));
     return $;
   }

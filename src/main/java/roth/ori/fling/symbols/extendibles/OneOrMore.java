@@ -13,33 +13,33 @@ import java.util.stream.Collectors;
 
 import roth.ori.fling.parser.ell.Interpretation;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Terminal;
 
 public class OneOrMore extends BaseExtendible {
   private NonTerminal head2;
 
-  public OneOrMore(List<Symbol> symbols) {
+  public OneOrMore(List<GrammarElement> symbols) {
     super(symbols);
   }
   @Override protected void solve() {
     head = nonTerminal();
     head2 = nonTerminal();
     solvedSymbols = solve(symbols);
-    List<Symbol> rhs1 = new ArrayList<>(solvedSymbols);
+    List<GrammarElement> rhs1 = new ArrayList<>(solvedSymbols);
     rhs1.add(head2);
     addRule(head, rhs1);
-    List<Symbol> rhs2 = new ArrayList<>(solvedSymbols);
+    List<GrammarElement> rhs2 = new ArrayList<>(solvedSymbols);
     rhs2.add(head2);
     addRule(head2, rhs2);
     addRule(head2, new LinkedList<>());
   }
-  @Override public boolean isNullable(Set<Symbol> knownNullables) {
+  @Override public boolean isNullable(Set<GrammarElement> knownNullables) {
     return symbols.stream().allMatch(x -> knownNullables.contains(x));
   }
-  @Override public Set<Terminal> getFirstSet(Set<Symbol> nullables, Map<Symbol, Set<Terminal>> knownFirstSets) {
+  @Override public Set<Terminal> getFirstSet(Set<GrammarElement> nullables, Map<GrammarElement, Set<Terminal>> knownFirstSets) {
     Set<Terminal> $ = new HashSet<>();
-    for (Symbol s : symbols) {
+    for (GrammarElement s : symbols) {
       if (knownFirstSets.containsKey(s))
         $.addAll(knownFirstSets.get(s));
       if (!nullables.contains(s))
@@ -47,10 +47,10 @@ public class OneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @Override public List<String> parseTypes(Function<Symbol, List<String>> operation,
-      @SuppressWarnings("unused") Function<Symbol, List<String>> forgivingOperation) {
+  @Override public List<String> parseTypes(Function<GrammarElement, List<String>> operation,
+      @SuppressWarnings("unused") Function<GrammarElement, List<String>> forgivingOperation) {
     List<String> $ = new LinkedList<>();
-    for (Symbol s : symbols)
+    for (GrammarElement s : symbols)
       for (String q : operation.apply(s))
         $.add(q + "[]");
     return $;
@@ -78,7 +78,7 @@ public class OneOrMore extends BaseExtendible {
     return $;
   }
   @SuppressWarnings({ "rawtypes", "unchecked" }) @Override public List<Object> conclude(List values,
-      BiFunction<Symbol, List, List> solution, Function<Symbol, Class> classSolution) {
+      BiFunction<GrammarElement, List, List> solution, Function<GrammarElement, Class> classSolution) {
     List<List> solved = new LinkedList<>();
     int currentSymbol = 0;
     for (Object o : values) {
@@ -120,9 +120,9 @@ public class OneOrMore extends BaseExtendible {
     }
     return $;
   }
-  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<Symbol, Class> classSolution) {
+  @SuppressWarnings("rawtypes") @Override public List<Class> toClasses(Function<GrammarElement, Class> classSolution) {
     List<Class> $ = new LinkedList<>();
-    for (Symbol s : symbols)
+    for (GrammarElement s : symbols)
       $.addAll(s.toClasses(classSolution).stream().map(c -> Array.newInstance(c, 0).getClass()).collect(Collectors.toList()));
     return $;
   }

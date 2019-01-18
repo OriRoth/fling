@@ -16,14 +16,14 @@ import java.util.TreeSet;
 import roth.ori.fling.bnf.BNF;
 import roth.ori.fling.bnf.DerivationRule;
 import roth.ori.fling.symbols.NonTerminal;
-import roth.ori.fling.symbols.Symbol;
+import roth.ori.fling.symbols.GrammarElement;
 import roth.ori.fling.symbols.Verb;
 
 public class BNFAnalyzer {
   public final BNF bnf;
   private final Collection<NonTerminal> nullableSymbols;
-  private final Map<Symbol, Collection<Verb>> baseFirstSets;
-  private final Map<NonTerminal, Map<Verb, List<Symbol>>> llClosure;
+  private final Map<GrammarElement, Collection<Verb>> baseFirstSets;
+  private final Map<NonTerminal, Map<Verb, List<GrammarElement>>> llClosure;
 
   public BNFAnalyzer(final BNF bnf) {
     this.bnf = bnf;
@@ -45,8 +45,8 @@ public class BNFAnalyzer {
     } while (moreChanges);
     return nullables;
   }
-  private Map<Symbol, Collection<Verb>> calculateSymbolFirstSet() {
-    Map<Symbol, Collection<Verb>> $ = new HashMap<>();
+  private Map<GrammarElement, Collection<Verb>> calculateSymbolFirstSet() {
+    Map<GrammarElement, Collection<Verb>> $ = new HashMap<>();
     for (NonTerminal nt : bnf.nonTerminals)
       $.put(nt, new LinkedHashSet<>());
     for (Verb term : bnf.verbs)
@@ -55,7 +55,7 @@ public class BNFAnalyzer {
     do {
       moreChanges = false;
       for (DerivationRule dRule : bnf.rules())
-        for (Symbol symbol : dRule.getRHS()) {
+        for (GrammarElement symbol : dRule.getRHS()) {
           moreChanges |= $.get(dRule.lhs).addAll($.getOrDefault(symbol, new TreeSet<>()));
           if (!isNullable(symbol))
             break;
@@ -63,23 +63,23 @@ public class BNFAnalyzer {
     } while (moreChanges);
     return $;
   }
-  public boolean isNullable(final Symbol... expression) {
+  public boolean isNullable(final GrammarElement... expression) {
     return Arrays.asList(expression).stream().allMatch(symbol -> nullableSymbols.contains(symbol));
   }
-  public Collection<Verb> firstSetOf(final Symbol... expression) {
+  public Collection<Verb> firstSetOf(final GrammarElement... expression) {
     List<Verb> $ = new ArrayList<>();
-    for (Symbol symbol : expression) {
+    for (GrammarElement symbol : expression) {
       $.addAll(baseFirstSets.get(symbol));
       if (!isNullable(symbol))
         break;
     }
     return $;
   }
-  public Collection<Verb> firstSetOf(final List<Symbol> expression) {
-    return firstSetOf(expression.toArray(new Symbol[expression.size()]));
+  public Collection<Verb> firstSetOf(final List<GrammarElement> expression) {
+    return firstSetOf(expression.toArray(new GrammarElement[expression.size()]));
   }
   // NOTE This is the "consolidation" algorithm
-  public List<Symbol> llClosure(final NonTerminal nt, final Verb v) {
+  public List<GrammarElement> llClosure(final NonTerminal nt, final Verb v) {
     if (llClosure.containsKey(nt) && llClosure.get(nt).containsKey(v))
       return llClosure.get(nt).get(v);
     llClosure.putIfAbsent(nt, new HashMap<>());
@@ -87,14 +87,14 @@ public class BNFAnalyzer {
       llClosure.get(nt).put(v, null);
       return null;
     }
-    Stack<Symbol> $ = new Stack<>();
+    Stack<GrammarElement> $ = new Stack<>();
     $.add(nt);
     outer: for (;;) {
       if ($.isEmpty()) {
         llClosure.get(nt).put(v, $);
         return $;
       }
-      Symbol current = $.pop();
+      GrammarElement current = $.pop();
       if (current.isVerb()) {
         assert current.equals(v);
         llClosure.get(nt).put(v, $);
@@ -103,19 +103,19 @@ public class BNFAnalyzer {
       assert current.isNonTerminal();
       for (DerivationRule r : bnf.getRulesOf(current.asNonTerminal()))
         if (firstSetOf(r.getRHS()).contains(v)) {
-          List<Symbol> a = new ArrayList<>(r.getRHS());
+          List<GrammarElement> a = new ArrayList<>(r.getRHS());
           Collections.reverse(a);
-          for (Symbol s : a)
+          for (GrammarElement s : a)
             $.push(s);
           continue outer;
         }
       assert isNullable(current);
     }
   }
-  public boolean isNullable(List<Symbol> expr) {
-    return isNullable(expr.toArray(new Symbol[] {}));
+  public boolean isNullable(List<GrammarElement> expr) {
+    return isNullable(expr.toArray(new GrammarElement[] {}));
   }
-  public static Symbol[] ruleSuffix(DerivationRule rule, int index) {
-    return Arrays.copyOfRange(rule.getRHS().toArray(new Symbol[] {}), index, rule.size());
+  public static GrammarElement[] ruleSuffix(DerivationRule rule, int index) {
+    return Arrays.copyOfRange(rule.getRHS().toArray(new GrammarElement[] {}), index, rule.size());
   }
 }
