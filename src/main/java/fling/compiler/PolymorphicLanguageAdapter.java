@@ -7,7 +7,7 @@ import fling.compiler.ast.InterfaceNode;
 import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
 
-public interface TargetLanguageAdapter<Q, Σ, Γ> {
+public interface PolymorphicLanguageAdapter<Q, Σ, Γ> {
   String printTopType();
   String printBotType();
   String printIntermediateType(Compiler<Q, Σ, Γ>.TypeName name);

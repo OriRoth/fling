@@ -1,4 +1,4 @@
-package fling.bnf;
+package fling.grammar;
 
 import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableMap;

@@ -10,7 +10,7 @@ import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Word;
 
-public class CppAdapter<Q, Σ, Γ> implements TargetLanguageAdapter<Q, Σ, Γ> {
+public class CppAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
   private final String startMethodName;
   private final String terminationMethodName;
 

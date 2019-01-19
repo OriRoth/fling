@@ -10,7 +10,7 @@ import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Word;
 
-public class JavaAdapter<Q, Σ, Γ> implements TargetLanguageAdapter<Q, Σ, Γ> {
+public class JavaAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
   private final String packageName;
   private final String className;
   private final String startMethodName;
