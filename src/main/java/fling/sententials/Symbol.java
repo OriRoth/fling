@@ -1,5 +1,9 @@
 package fling.sententials;
 
+import java.util.function.Consumer;
+
+import fling.grammar.Namer;
+
 public interface Symbol {
   default boolean isTerminal() {
     return this instanceof Terminal || Constants.$.equals(this);
@@ -12,5 +16,9 @@ public interface Symbol {
   }
   default Variable asVariable() {
     return (Variable) this;
+  }
+  @SuppressWarnings("unused") default Symbol expand(Namer namer, Consumer<Variable> newVariableCallback,
+      Consumer<DerivationRule> newRuleCallback) {
+    return this;
   }
 }
