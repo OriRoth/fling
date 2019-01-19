@@ -5,6 +5,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -13,24 +14,22 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import fling.sententials.Constants;
-import fling.sententials.RHS;
+import fling.sententials.SententialForm;
 import fling.sententials.Symbol;
 import fling.sententials.Terminal;
 import fling.sententials.Variable;
-import fling.sententials.Word;
 
 public class BNF<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
-  public final Map<Variable, RHS> R;
+  public final Map<Variable, List<SententialForm>> R;
   public final Set<Symbol> nullables;
   public final Map<Symbol, Set<Terminal>> firsts;
   public final Map<Variable, Set<Terminal>> follows;
   private final Class<Σ> Σ;
   private final Class<V> V;
 
-  public BNF(Class<Σ> Σ, Class<V> V, Map<Variable, RHS> R) {
+  public BNF(Class<Σ> Σ, Class<V> V, Map<Variable, List<SententialForm>> R) {
     this.Σ = Σ;
     this.V = V;
     this.R = R;
@@ -56,8 +55,8 @@ public class BNF<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
     $.addAll(V());
     return unmodifiableSet($);
   }
-  public Stream<Word<Symbol>> rhs(Variable v) {
-    return R.get(v).stream();
+  public Collection<SententialForm> rhs(Variable v) {
+    return R.get(v);
   }
   public boolean isNullable(Symbol... symbols) {
     return isNullable(symbols);
@@ -87,7 +86,7 @@ public class BNF<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
     for (boolean changed = true; changed;) {
       changed = false;
       for (V v : EnumSet.allOf(V))
-        for (Word<Symbol> sf : R.get(v))
+        for (SententialForm sf : R.get(v))
           for (Symbol s : sf) {
             changed |= $.get(v).addAll($.get(s));
             if (!isNullable(s))
@@ -104,7 +103,7 @@ public class BNF<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
     for (boolean changed = true; changed;) {
       changed = false;
       for (Variable v : V())
-        for (Word<Symbol> sf : R.get(v))
+        for (SententialForm sf : R.get(v))
           for (int i = 0; i < sf.size(); ++i) {
             if (!sf.get(i).isVariable())
               continue;
@@ -122,17 +121,17 @@ public class BNF<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
   public static class Builder<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
     private final Class<Σ> Σ;
     private final Class<V> V;
-    private final Map<Variable, RHS> R;
+    private final Map<Variable, List<SententialForm>> R;
 
     public Builder(Class<Σ> Σ, Class<V> V) {
       this.Σ = Σ;
       this.V = V;
       this.R = new LinkedHashMap<>();
       for (V v : EnumSet.allOf(V))
-        R.put(v, new RHS());
+        R.put(v, new ArrayList<SententialForm>());
     }
-    public Builder<Σ, V> derive(Variable lhs, Symbol... rhs) {
-      R.get(lhs).add(new Word<>(rhs));
+    public Builder<Σ, V> derive(Variable lhs, Symbol... sf) {
+      R.get(lhs).add(new SententialForm(sf));
       return this;
     }
     public BNF<Σ, V> build() {
