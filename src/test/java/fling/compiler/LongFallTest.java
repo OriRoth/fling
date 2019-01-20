@@ -25,8 +25,7 @@ public class LongFallTest {
   public static final DPDA<Q, Σ, Γ> dpda = dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
-      .γ0(g0) //
-      .δ(q0, a, g0, q0, g0, g1) //
+      .γ0(g0, g1) //
       .δ(q0, a, g1, q0, g1, g1) //
       .δ(q0, b, g1, q1) //
       .δ(q1, ε(), g1, q1) //

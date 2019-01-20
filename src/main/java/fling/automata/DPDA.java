@@ -25,9 +25,9 @@ public class DPDA<Q, Σ, Γ> {
   public final Set<δ<Q, Σ, Γ>> δs;
   public final Set<Q> F;
   public final Q q0;
-  public final Γ γ0;
+  public final Word<Γ> γ0;
 
-  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> F, final Q q0, final Γ γ0) {
+  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> F, final Q q0, final Word<Γ> γ0) {
     this.Q = Collections.unmodifiableSet(Q);
     this.Σ = Collections.unmodifiableSet(Σ);
     this.Γ = Collections.unmodifiableSet(Γ);
@@ -108,7 +108,7 @@ public class DPDA<Q, Σ, Γ> {
     private final Set<δ<Q, Σ, Γ>> δs = new LinkedHashSet<>();
     private final Set<Q> F = new LinkedHashSet<>();
     private Q q0;
-    private Γ γ0;
+    private Word<Γ> γ0;
 
     public Builder(final Class<Q> Q, final Class<Σ> Σ, final Class<Γ> Γ) {
       this.Q = Q;
@@ -127,8 +127,8 @@ public class DPDA<Q, Σ, Γ> {
       this.q0 = q0;
       return this;
     }
-    @SuppressWarnings("hiding") public Builder<Q, Σ, Γ> γ0(final Γ γ0) {
-      this.γ0 = γ0;
+    @SafeVarargs @SuppressWarnings("hiding") public final Builder<Q, Σ, Γ> γ0(Γ... γ0) {
+      this.γ0 = new Word<>(γ0);
       return this;
     }
     public DPDA<Q, Σ, Γ> go() {

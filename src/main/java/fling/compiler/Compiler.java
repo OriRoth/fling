@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static fling.compiler.ast.PolymorphicTypeNode.*;
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.compiler.ast.FluentAPINode;
@@ -49,9 +50,7 @@ public class Compiler<Q, Σ, Γ> {
     return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
   }
   private List<MethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections.singletonList(new MethodNode.Start<>(new PolymorphicTypeNode<>(encodedName(dpda.q0, new Word<>(dpda.γ0)),
-        dpda.Q().map(q -> dpda.isAccepting(q) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
-            .collect(Collectors.toList()))));
+    return Collections.singletonList(new MethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));
   }
   private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return chainList(fixedInterfaces(), types.values());
@@ -95,22 +94,31 @@ public class Compiler<Q, Σ, Γ> {
    */
   private PolymorphicTypeNode<TypeName> next(final Q q, final Word<Γ> α, final Σ σ) {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop());
+    return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), false);
   }
-  private PolymorphicTypeNode<TypeName> consolidate(final Q q, final Word<Γ> α) {
+  private PolymorphicTypeNode<TypeName> consolidate(final Q q, final Word<Γ> α, boolean isInitialType) {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q, ε(), α.top());
-    return δ == null ? new PolymorphicTypeNode<>(encodedName(q, α), asList(typeVariables.values())) : common(δ, α.pop());
+    return δ == null ? new PolymorphicTypeNode<>(encodedName(q, α), getTypeArguments(isInitialType))
+        : common(δ, α.pop(), isInitialType);
   }
-  private PolymorphicTypeNode<TypeName> common(final δ<Q, Σ, Γ> δ, final Word<Γ> α) {
+  private PolymorphicTypeNode<TypeName> common(final δ<Q, Σ, Γ> δ, final Word<Γ> α, boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.α.isEmpty())
-        return typeVariables.get(δ.q$);
-      return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), asList(typeVariables.values()));
+        return getTypeArgument(δ, isInitialType);
+      return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), getTypeArguments(isInitialType));
     }
     if (δ.α.isEmpty())
-      return consolidate(δ.q$, α);
+      return consolidate(δ.q$, α, isInitialType);
     return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), //
-        dpda.Q().map(q -> consolidate(q, α)).collect(Collectors.toList()));
+        dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(Collectors.toList()));
+  }
+  private PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> getTypeArgument(final δ<Q, Σ, Γ> δ, boolean isInitialType) {
+    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
+  }
+  private List<PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName>> getTypeArguments(boolean isInitialType) {
+    return !isInitialType ? asList(typeVariables.values())
+        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
+            .collect(Collectors.toList());
   }
 
   public class TypeName {
