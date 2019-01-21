@@ -1,15 +1,18 @@
-package fling.compiler;
+package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.compiler.AnBnTest.Q.*;
-import static fling.compiler.AnBnTest.Γ.*;
-import static fling.compiler.AnBnTest.Σ.*;
 import static fling.sententials.Alphabet.ε;
 import static fling.generated.AnBn.__;
+import static fling.languages.AnBn.Q.*;
+import static fling.languages.AnBn.Γ.*;
+import static fling.languages.AnBn.Σ.*;
 
 import fling.automata.DPDA;
+import fling.compiler.Compiler;
+import fling.compiler.CppAdapter;
+import fling.compiler.JavaAdapter;
 
-public class AnBnTest {
+public class AnBn {
   enum Q {
     q0, q1, q2
   }

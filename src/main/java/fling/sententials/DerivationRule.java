@@ -1,6 +1,7 @@
 package fling.sententials;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DerivationRule {
   public final Variable lhs;
@@ -29,5 +30,8 @@ public class DerivationRule {
       return false;
     DerivationRule other = (DerivationRule) o;
     return lhs.equals(other.lhs) && rhs.equals(other.rhs);
+  }
+  @Override public String toString() {
+    return String.format("%s::=%s", lhs, String.join("|", rhs.stream().map(sf -> sf.isEmpty() ? "ε" : sf.toString()).collect(Collectors.toList())));
   }
 }

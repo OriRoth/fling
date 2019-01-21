@@ -1,6 +1,7 @@
 package fling.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,5 +26,18 @@ public class Collections {
     for (Collection<T> collection : collections)
       list.addAll(collection);
     return java.util.Collections.unmodifiableList(list);
+  }
+  public static final <T> List<T> reversed(T[] ts) {
+    return reversed(Arrays.asList(ts));
+  }
+  public static final <T> List<T> reversed(List<T> ts) {
+    List<T> $ = new ArrayList<>(ts);
+    java.util.Collections.reverse($);
+    return $;
+  }
+  public static final <T> Word<T> reversed(Word<T> w) {
+    List<T> $ = new ArrayList<>(w);
+    java.util.Collections.reverse($);
+    return new Word<>($);
   }
 }

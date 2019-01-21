@@ -23,7 +23,7 @@ public class Word<T> implements List<T> {
   public Word(T t) {
     inner = Collections.singletonList(t);
   }
-  public Word(T[] origin) {
+  @SafeVarargs public Word(T... origin) {
     inner = Arrays.asList(origin);
   }
   public Word(Collection<T> origin) {

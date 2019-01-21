@@ -10,16 +10,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import fling.compiler.AnBnTest;
-import fling.compiler.BalancedParenthesesTest;
-import fling.compiler.LongFallTest;
+import fling.languages.AnBn;
+import fling.languages.BalancedParentheses;
+import fling.languages.ExtendedBalancedParentheses;
+import fling.languages.LongFall;
 
 public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
-    files.put("BalancedParentheses", BalancedParenthesesTest.fluentAPI);
-    files.put("LongFall", LongFallTest.JavaFluentAPI);
-    files.put("AnBn", AnBnTest.JavaFluentAPI);
+    files.put("BalancedParentheses", BalancedParentheses.fluentAPI);
+    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
+    files.put("LongFall", LongFall.JavaFluentAPI);
+    files.put("AnBn", AnBn.JavaFluentAPI);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 

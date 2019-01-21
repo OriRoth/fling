@@ -4,8 +4,13 @@ import static fling.sententials.Alphabet.ε;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fling.sententials.Word;
@@ -27,7 +32,8 @@ public class DPDA<Q, Σ, Γ> {
   public final Q q0;
   public final Word<Γ> γ0;
 
-  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> F, final Q q0, final Word<Γ> γ0) {
+  public DPDA(final Set<Q> Q, final Set<Σ> Σ, final Set<Γ> Γ, final Set<δ<Q, Σ, Γ>> δs, final Set<Q> F, final Q q0,
+      final Word<Γ> γ0) {
     this.Q = Collections.unmodifiableSet(Q);
     this.Σ = Collections.unmodifiableSet(Σ);
     this.Γ = Collections.unmodifiableSet(Γ);
@@ -35,6 +41,7 @@ public class DPDA<Q, Σ, Γ> {
     this.F = Collections.unmodifiableSet(F);
     this.q0 = q0;
     this.γ0 = γ0;
+    verify();
   }
   public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Class<Q> Q, final Class<Σ> Σ,
       final Class<Γ> Γ) {
@@ -95,6 +102,29 @@ public class DPDA<Q, Σ, Γ> {
       s = s.pop().push(δ$.α);
       q$ = δ$.q$;
     }
+  }
+  private void verify() {
+    Map<Q, Set<δ<Q, Σ, Γ>>> seenTransitions = new HashMap<>();
+    Q.forEach(q -> seenTransitions.put(q, new HashSet<>()));
+    for (Q q : Q)
+      for (δ<Q, Σ, Γ> δ : δs)
+        if (q.equals(δ.q)) {
+          Optional<δ<Q, Σ, Γ>> δ2 = seenTransitions.get(q).stream().filter(δ$ -> δ.γ.equals(δ$.γ))
+              .filter(δ$ -> δ$.σ == ε() || δ$.σ.equals(δ.σ)).findAny();
+          if (δ2.isPresent())
+            throw new RuntimeException(String.format("determinism broke in state %s with transitions %s and %s", q, δ2.get(), δ));
+          seenTransitions.get(q).add(δ);
+        }
+  }
+  @Override public String toString() {
+    return String.format("" //
+        + "Q=%s\n" //
+        + "Σ=%s\n" //
+        + "Γ=%s\n" //
+        + "F=%s\n" //
+        + "q0=%s\n" //
+        + "γ0=%s\n" //
+        + "δs=\t%s", Q, Σ, Γ, F, q0, γ0, δs.stream().map(Object::toString).collect(Collectors.joining("\n\t")));
   }
 
   /**

@@ -1,20 +1,22 @@
-package fling.compiler;
+package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.compiler.BalancedParenthesesTest.Q.q0;
-import static fling.compiler.BalancedParenthesesTest.Q.q1;
-import static fling.compiler.BalancedParenthesesTest.Q.q2;
-import static fling.compiler.BalancedParenthesesTest.Γ.γ0;
-import static fling.compiler.BalancedParenthesesTest.Γ.γ1;
-import static fling.compiler.BalancedParenthesesTest.Σ.c;
-import static fling.compiler.BalancedParenthesesTest.Σ.Ↄ;
-import static fling.compiler.BalancedParenthesesTest.Σ.ↄ;
 import static fling.sententials.Alphabet.ε;
-import static fling.generated.BalancedParentheses.__;
+import static fling.generated.ExtendedBalancedParentheses.__;
+import static fling.languages.ExtendedBalancedParentheses.Q.q0;
+import static fling.languages.ExtendedBalancedParentheses.Q.q1;
+import static fling.languages.ExtendedBalancedParentheses.Q.q2;
+import static fling.languages.ExtendedBalancedParentheses.Γ.γ0;
+import static fling.languages.ExtendedBalancedParentheses.Γ.γ1;
+import static fling.languages.ExtendedBalancedParentheses.Σ.c;
+import static fling.languages.ExtendedBalancedParentheses.Σ.Ↄ;
+import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 
 import fling.automata.DPDA;
+import fling.compiler.Compiler;
+import fling.compiler.JavaAdapter;
 
-public class BalancedParenthesesTest {
+public class ExtendedBalancedParentheses {
   enum Q {
     q0, q1, q2
   }
@@ -39,7 +41,7 @@ public class BalancedParenthesesTest {
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
       .go();
-  public static final String fluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "BalancedParentheses", "__", "$") //
+  public static final String fluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "ExtendedBalancedParentheses", "__", "$") //
       .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {

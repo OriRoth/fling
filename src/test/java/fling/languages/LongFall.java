@@ -1,15 +1,18 @@
-package fling.compiler;
+package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.compiler.LongFallTest.Q.*;
-import static fling.compiler.LongFallTest.Γ.*;
-import static fling.compiler.LongFallTest.Σ.*;
 import static fling.sententials.Alphabet.ε;
 import static fling.generated.LongFall.__;
+import static fling.languages.LongFall.Q.*;
+import static fling.languages.LongFall.Γ.*;
+import static fling.languages.LongFall.Σ.*;
 
 import fling.automata.DPDA;
+import fling.compiler.Compiler;
+import fling.compiler.CppAdapter;
+import fling.compiler.JavaAdapter;
 
-public class LongFallTest {
+public class LongFall {
   enum Q {
     q0, q1
   }

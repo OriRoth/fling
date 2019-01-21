@@ -30,22 +30,32 @@ public class BNF {
   public final Map<Variable, Set<Terminal>> follows;
   public final Set<Terminal> Σ;
   public final Set<Variable> V;
+  public final Set<Variable> startVariables;
 
   public <Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> //
-  BNF(Class<Σ> Σ, Class<V> V, Set<DerivationRule> R, Set<Variable> startVariables) {
-    this(new LinkedHashSet<>(EnumSet.allOf(Σ)), new LinkedHashSet<>(EnumSet.allOf(V)), R, startVariables);
+  BNF(Class<Σ> Σ, Class<V> V, Set<DerivationRule> R, Set<Variable> startVariables, boolean addStartSymbolDerivationRules) {
+    this(new LinkedHashSet<>(EnumSet.allOf(Σ)), new LinkedHashSet<>(EnumSet.allOf(V)), R, startVariables,
+        addStartSymbolDerivationRules);
   }
-  public BNF(Set<Terminal> Σ, Set<Variable> V, Set<DerivationRule> R, Set<Variable> startVariables) {
+  public BNF(Set<Terminal> Σ, Set<Variable> V, Set<DerivationRule> R, Set<Variable> startVariables,
+      boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
     Σ.add(Constants.$);
     this.V = V;
     V.add(Constants.S);
     this.R = R;
-    for (Variable v : startVariables)
-      rhs(Constants.S).add(new SententialForm(v));
+    if (addStartSymbolDerivationRules) {
+      R.add(new DerivationRule(Constants.S, new ArrayList<>()));
+      for (Variable v : startVariables)
+        rhs(Constants.S).add(new SententialForm(v));
+    }
+    this.startVariables = startVariables;
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
+  }
+  public static <Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> Builder<Σ, V> bnf(Class<Σ> Σ, Class<V> V) {
+    return new Builder<>(Σ, V);
   }
   public Set<Symbol> symbols() {
     Set<Symbol> $ = new LinkedHashSet<>();
@@ -57,7 +67,7 @@ public class BNF {
     return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
   }
   public boolean isNullable(Symbol... symbols) {
-    return isNullable(symbols);
+    return isNullable(Arrays.asList(symbols));
   }
   public boolean isNullable(List<Symbol> symbols) {
     return symbols.stream().allMatch(nullables::contains);
@@ -75,7 +85,13 @@ public class BNF {
     return unmodifiableSet($);
   }
   private Set<Symbol> getNullables() {
-    return V.stream().filter(v -> rhs(v).stream().anyMatch(List::isEmpty)).collect(toSet());
+    Set<Symbol> $ = new LinkedHashSet<>();
+    for (; $.addAll(V.stream() //
+        .filter(v -> rhs(v).stream() //
+            .anyMatch(sf -> sf.isEmpty() || sf.stream().allMatch($::contains))) //
+        .collect(toSet()));)
+      ;
+    return $;
   }
   private Map<Symbol, Set<Terminal>> getFirsts() {
     Map<Symbol, Set<Terminal>> $ = new LinkedHashMap<>();
@@ -139,7 +155,7 @@ public class BNF {
       return this;
     }
     public BNF build() {
-      return new BNF(Σ, V, R, starts);
+      return new BNF(Σ, V, R, starts, true);
     }
     private List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
