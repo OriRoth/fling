@@ -115,11 +115,11 @@ public class LL1 extends Grammar {
   private Word<Object> getPossiblyAcceptingVariables(SententialForm sf, boolean isFromQ0$) {
     List<Object> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
-    for (Symbol s : sf) {
+    for (Symbol s : reversed(sf)) {
       $.add(!s.isVariable() || !isAccepting ? s : getAcceptingVariable(s.asVariable()));
       isAccepting &= isNullable(s);
     }
-    return new Word<>($);
+    return new Word<>(reversed($));
   }
 
   public class Item {
