@@ -6,8 +6,10 @@ import fling.compiler.ast.FluentAPINode;
 import fling.compiler.ast.InterfaceNode;
 import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 
-public interface PolymorphicLanguageAdapter<Q, Σ, Γ> {
+public interface PolymorphicLanguageAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> {
   String printTopType();
   String printBotType();
   String printIntermediateType(Compiler<Q, Σ, Γ>.TypeName name);

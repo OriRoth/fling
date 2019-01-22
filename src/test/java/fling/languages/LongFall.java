@@ -11,17 +11,19 @@ import fling.automata.DPDA;
 import fling.compiler.Compiler;
 import fling.compiler.CppAdapter;
 import fling.compiler.JavaAdapter;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 
 public class LongFall {
-  enum Q {
+  enum Q implements Named {
     q0, q1
   }
 
-  enum Σ {
+  enum Σ implements Terminal {
     a, b
   }
 
-  enum Γ {
+  enum Γ implements Named {
     g0, g1
   }
 
@@ -43,7 +45,6 @@ public class LongFall {
     __().a().a().a().a().a().a().a().$();
     __().a().a().a().a().a().a().a().b().$();
   }
-
   public static void main(String[] args) {
     System.out.println(CppFluentAPI);
   }

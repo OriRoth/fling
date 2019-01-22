@@ -15,17 +15,19 @@ import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 import fling.automata.DPDA;
 import fling.compiler.Compiler;
 import fling.compiler.JavaAdapter;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 
 public class ExtendedBalancedParentheses {
-  enum Q {
+  enum Q implements Named {
     q0, q1, q2
   }
 
-  enum Σ {
+  enum Σ implements Terminal {
     c, ↄ, Ↄ
   }
 
-  enum Γ {
+  enum Γ implements Named {
     γ0, γ1
   }
 

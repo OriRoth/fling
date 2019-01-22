@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 import fling.compiler.ast.FluentAPINode;
 import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 import fling.sententials.Word;
 
-public class JavaAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
+public class JavaAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
   private final String packageName;
   private final String className;
   private final String startMethodName;
@@ -35,7 +37,7 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ,
       List<PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
-        typeArguments.stream().map(t -> printType(t)).collect(joining(",")));
+        typeArguments.stream().map(this::printType).collect(joining(",")));
   }
   @Override public String printStartMethod(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
     return String.format("public static %s %s() {return null;}", printType(returnType), startMethodName);
@@ -45,7 +47,8 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ,
   }
   @Override public String printIntermediateMethod(Compiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
-    return String.format("%s %s();", printType(returnType), declaration.name);
+    return String.format("%s %s(%s);", printType(returnType), declaration.name.name(),
+        String.join(",", declaration.name.parameters()));
   }
   @Override public String printTopInterface() {
     return String.format("interface ${void %s();}", terminationMethodName);
@@ -57,24 +60,24 @@ public class JavaAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ,
       List<MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration>> methods) {
     return String.format("interface %s{%s}", //
         printInterfaceDeclaration(declaration), //
-        methods.stream().map(m -> printMethod(m)).collect(joining()));
+        methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
       FluentAPINode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration, Compiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s}", //
         packageName, //
         className, //
-        fluentAPI.startMethods.stream().map(m -> printMethod(m)).collect(joining()),
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()));
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()),
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()));
   }
   public String printTypeName(Compiler<Q, Σ, Γ>.TypeName name) {
     return printTypeName(name.q, name.α);
   }
   public String printTypeName(Q q, Word<Γ> α) {
-    return α == null ? q.toString() : String.format("%s_%s", q, α);
+    return α == null ? q.name() : String.format("%s_%s", q.name(), α.stream().map(Named::name).collect(Collectors.joining()));
   }
   public String printInterfaceDeclaration(Compiler<Q, Σ, Γ>.InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration.q, declaration.α), //
-        declaration.typeVariables.stream().map(Object::toString).collect(Collectors.joining(",")));
+        declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
   }
 }

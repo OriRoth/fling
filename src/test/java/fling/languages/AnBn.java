@@ -11,17 +11,19 @@ import fling.automata.DPDA;
 import fling.compiler.Compiler;
 import fling.compiler.CppAdapter;
 import fling.compiler.JavaAdapter;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 
 public class AnBn {
-  enum Q {
+  enum Q implements Named {
     q0, q1, q2
   }
 
-  enum Σ {
+  enum Σ implements Terminal {
     a, b
   }
 
-  enum Γ {
+  enum Γ implements Named {
     E, X
   }
 

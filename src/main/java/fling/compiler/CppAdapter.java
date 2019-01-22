@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 import fling.compiler.ast.FluentAPINode;
 import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
+import fling.sententials.Named;
+import fling.sententials.Terminal;
 import fling.sententials.Word;
 
-public class CppAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
+public class CppAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAdapter<Q, Σ, Γ> {
   private final String startMethodName;
   private final String terminationMethodName;
 
@@ -31,7 +33,7 @@ public class CppAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, 
       List<PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
-        typeArguments.stream().map(t -> printType(t)).collect(joining(",")));
+        typeArguments.stream().map(this::printType).collect(joining(",")));
   }
   @Override public String printStartMethod(PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
     return String.format("%s* %s() {return nullptr;}", printType(returnType), startMethodName);
@@ -41,7 +43,8 @@ public class CppAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, 
   }
   @Override public String printIntermediateMethod(Compiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> returnType) {
-    return String.format("virtual %s %s() const;", printType(returnType), declaration.name);
+    return String.format("virtual %s %s(%s) const;", printType(returnType), declaration.name.name(),
+        String.join(",", declaration.name.parameters()));
   }
   @Override public String printTopInterface() {
     return String.format("class TOP{public:virtual void %s() const;};", terminationMethodName);
@@ -67,12 +70,12 @@ public class CppAdapter<Q, Σ, Γ> implements PolymorphicLanguageAdapter<Q, Σ, 
     return printTypeName(name.q, name.α);
   }
   public String printTypeName(Q q, Word<Γ> α) {
-    return α == null ? q.toString() : String.format("%s_%s", q, α);
+    return α == null ? q.name() : String.format("%s_%s", q.name(), α.stream().map(Named::name).collect(Collectors.joining()));
   }
   public String printInterfaceDeclaration(Compiler<Q, Σ, Γ>.InterfaceDeclaration declaration) {
     return declaration.typeVariables.isEmpty() ? String.format("class %s", printTypeName(declaration.q, declaration.α))
         : String.format("template<%s>class %s",
-            declaration.typeVariables.stream().map(q -> "class " + q).collect(Collectors.joining(",")), //
+            declaration.typeVariables.stream().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
             printTypeName(declaration.q, declaration.α));
   }
 }

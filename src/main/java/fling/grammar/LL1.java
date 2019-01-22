@@ -15,6 +15,7 @@ import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.sententials.Constants;
 import fling.sententials.DerivationRule;
+import fling.sententials.Named;
 import fling.sententials.SententialForm;
 import fling.sententials.Symbol;
 import fling.sententials.Terminal;
@@ -22,13 +23,13 @@ import fling.sententials.Variable;
 import fling.sententials.Word;
 
 public class LL1 extends Grammar {
-  public final Set<Object> Q;
+  public final Set<Named> Q;
   public final Set<Terminal> Σ;
-  public final Set<Object> Γ;
-  public final Set<δ<Object, Terminal, Object>> δs;
-  public final Set<Object> F;
-  public Object q0;
-  public Word<Object> γ0;
+  public final Set<Named> Γ;
+  public final Set<δ<Named, Terminal, Named>> δs;
+  public final Set<Named> F;
+  public Named q0;
+  public Word<Named> γ0;
 
   public LL1(BNF bnf, Namer namer) {
     super(bnf, namer);
@@ -39,32 +40,32 @@ public class LL1 extends Grammar {
     F = new LinkedHashSet<>();
     buildLL1Automaton();
   }
-  @Override public DPDA<Object, Terminal, Object> toDPDA() {
+  @Override public DPDA<Named, Terminal, Named> toDPDA() {
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
   private void buildLL1Automaton() {
     Σ.addAll(standardizedBnf.Σ);
     Σ.remove(Constants.$);
     Q.addAll(Σ);
-    Object q0$ = "q0$", q0ø = "q0ø";
+    Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø");
     Q.add(q0$);
     Q.add(q0ø);
     Γ.addAll(Σ);
     Γ.add(Constants.$);
     Γ.addAll(standardizedBnf.V);
     assert Γ.contains(Constants.S);
-    Set<String> A = standardizedBnf.V.stream().filter(this::isNullable).map(this::getAcceptingVariable).collect(toSet());
+    Set<Named> A = standardizedBnf.V.stream().filter(this::isNullable).map(this::getAcceptingVariable).collect(toSet());
     Γ.addAll(A);
     F.add(q0$);
-    q0 = q0$; // Can be either.
+    q0 = q0$;
     γ0 = new Word<>(Constants.$, !isNullable(Constants.S) ? Constants.S : getAcceptingVariable(Constants.S));
     // Moving from q0ø to q0$ with $.
     δs.add(new δ<>(q0ø, ε(), Constants.$, q0$, new Word<>()));
     // Moving from q0ø to q0$ with accepting variables.
-    for (Object v : A)
+    for (Named v : A)
       δs.add(new δ<>(q0ø, ε(), v, q0$, new Word<>(v)));
     // Moving from q0$ to q0ø with non-accepting variables and symbols.
-    for (Object v : standardizedBnf.V)
+    for (Named v : standardizedBnf.V)
       δs.add(new δ<>(q0$, ε(), v, q0ø, new Word<>(v)));
     for (Terminal σ : standardizedBnf.Σ)
       if (!Constants.$.equals(σ))
@@ -89,7 +90,7 @@ public class LL1 extends Grammar {
       for (Terminal σ : standardizedBnf.Σ)
         if (!Constants.$.equals(σ) && !standardizedBnf.firsts(v).contains(σ) && isNullable(v))
           δs.add(new δ<>(q0ø, σ, v, σ, new Word<>()));
-    // ε transitions from qσ to q0$ (can be either).
+    // ε transitions from qσ to q0.
     for (Terminal σ : standardizedBnf.Σ)
       if (!Constants.$.equals(σ))
         δs.add(new δ<>(σ, ε(), σ, q0$, new Word<>()));
@@ -109,11 +110,11 @@ public class LL1 extends Grammar {
   private boolean isNullable(Symbol s) {
     return standardizedBnf.isNullable(s);
   }
-  private String getAcceptingVariable(Variable v) {
-    return v + "$";
+  private Named getAcceptingVariable(Variable v) {
+    return Named.by(v.name() + "$");
   }
-  private Word<Object> getPossiblyAcceptingVariables(SententialForm sf, boolean isFromQ0$) {
-    List<Object> $ = new ArrayList<>();
+  private Word<Named> getPossiblyAcceptingVariables(SententialForm sf, boolean isFromQ0$) {
+    List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
     for (Symbol s : reversed(sf)) {
       $.add(!s.isVariable() || !isAccepting ? s : getAcceptingVariable(s.asVariable()));

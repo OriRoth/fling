@@ -28,7 +28,7 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final String fluentAPI = new JavaAdapter<Object, Terminal, Object>("fling.generated", "BalancedParentheses", "__",
+  public static final String fluentAPI = new JavaAdapter<>("fling.generated", "BalancedParentheses", "__",
       "$").printFluentAPI(new Compiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
 
   public static void compilationTest() {

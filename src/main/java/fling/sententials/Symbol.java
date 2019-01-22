@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import fling.grammar.Namer;
 
-public interface Symbol {
+public interface Symbol extends Named {
   default boolean isTerminal() {
     return this instanceof Terminal || Constants.$.equals(this);
   }
