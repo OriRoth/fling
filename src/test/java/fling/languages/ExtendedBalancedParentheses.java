@@ -13,8 +13,8 @@ import static fling.languages.ExtendedBalancedParentheses.Σ.Ↄ;
 import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 
 import fling.automata.DPDA;
-import fling.compiler.Compiler;
 import fling.compiler.JavaAdapter;
+import fling.compiler.api.APICompiler;
 import fling.sententials.Named;
 import fling.sententials.Terminal;
 
@@ -44,7 +44,7 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ0, q0, γ0) //
       .go();
   public static final String fluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "ExtendedBalancedParentheses", "__", "$") //
-      .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
+      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();

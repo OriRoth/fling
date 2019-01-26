@@ -6,8 +6,8 @@ import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
 import static fling.languages.BalancedParentheses.Σ.ↄ;
 
-import fling.compiler.Compiler;
 import fling.compiler.JavaAdapter;
+import fling.compiler.api.APICompiler;
 import fling.grammar.BNF;
 import fling.grammar.LL1;
 import fling.grammar.NaiveNamer;
@@ -29,7 +29,7 @@ public class BalancedParentheses {
       derive(P). //
       build();
   public static final String fluentAPI = new JavaAdapter<>("fling.generated", "BalancedParentheses", "__",
-      "$").printFluentAPI(new Compiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
+      "$").printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();

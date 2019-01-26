@@ -1,5 +1,6 @@
-package fling.compiler;
+package fling.compiler.api;
 
+import static fling.compiler.ast.PolymorphicTypeNode.*;
 import static fling.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
@@ -14,12 +15,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static fling.compiler.ast.PolymorphicTypeNode.*;
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
+import fling.compiler.ast.AbstractMethodNode;
 import fling.compiler.ast.FluentAPINode;
 import fling.compiler.ast.InterfaceNode;
-import fling.compiler.ast.MethodNode;
 import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Word;
 
@@ -36,12 +36,12 @@ import fling.sententials.Word;
  * @param <Σ> alphabet set
  * @param <Γ> stack symbols set
  */
-public class Compiler<Q, Σ, Γ> {
+public class APICompiler<Q, Σ, Γ> {
   public final DPDA<Q, Σ, Γ> dpda;
   private final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types;
   private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
-  public Compiler(DPDA<Q, Σ, Γ> dpda) {
+  public APICompiler(DPDA<Q, Σ, Γ> dpda) {
     this.dpda = dpda;
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
@@ -49,8 +49,8 @@ public class Compiler<Q, Σ, Γ> {
   public FluentAPINode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
     return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
   }
-  private List<MethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections.singletonList(new MethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));
+  private List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
+    return Collections.singletonList(new AbstractMethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));
   }
   private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return chainList(fixedInterfaces(), types.values());
@@ -75,11 +75,11 @@ public class Compiler<Q, Σ, Γ> {
     return $;
   }
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
-    List<MethodNode<Compiler<Q, Σ, Γ>.TypeName, Compiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
+    List<AbstractMethodNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
     $.addAll(dpda.Σ().map(σ -> //
-    new MethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
     if (dpda.isAccepting(q))
-      $.add(new MethodNode.Termination<>());
+      $.add(new AbstractMethodNode.Termination<>());
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
         Collections.unmodifiableList($));
   }
@@ -112,10 +112,10 @@ public class Compiler<Q, Σ, Γ> {
     return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), //
         dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(Collectors.toList()));
   }
-  private PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName> getTypeArgument(final δ<Q, Σ, Γ> δ, boolean isInitialType) {
+  private PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> getTypeArgument(final δ<Q, Σ, Γ> δ, boolean isInitialType) {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
   }
-  private List<PolymorphicTypeNode<Compiler<Q, Σ, Γ>.TypeName>> getTypeArguments(boolean isInitialType) {
+  private List<PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName>> getTypeArguments(boolean isInitialType) {
     return !isInitialType ? asList(typeVariables.values())
         : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
             .collect(Collectors.toList());
@@ -148,9 +148,9 @@ public class Compiler<Q, Σ, Γ> {
     @Override public boolean equals(Object o) {
       if (this == o)
         return true;
-      if (!(o instanceof Compiler.TypeName))
+      if (!(o instanceof APICompiler.TypeName))
         return false;
-      @SuppressWarnings("unchecked") Compiler<Q, Σ, Γ>.TypeName other = (TypeName) o;
+      @SuppressWarnings("unchecked") APICompiler<Q, Σ, Γ>.TypeName other = (TypeName) o;
       return Objects.equals(q, other.q) && Objects.equals(α, other.α);
     }
     @Override public String toString() {

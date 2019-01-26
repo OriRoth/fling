@@ -8,9 +8,9 @@ import static fling.languages.LongFall.Γ.*;
 import static fling.languages.LongFall.Σ.*;
 
 import fling.automata.DPDA;
-import fling.compiler.Compiler;
 import fling.compiler.CppAdapter;
 import fling.compiler.JavaAdapter;
+import fling.compiler.api.APICompiler;
 import fling.sententials.Named;
 import fling.sententials.Terminal;
 
@@ -37,9 +37,9 @@ public class LongFall {
       .δ(q1, ε(), g0, q0, g0) //
       .go();
   public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "LongFall", "__", "$") //
-      .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
+      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAdapter<Q, Σ, Γ>("__", "$") //
-      .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
+      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     __().a().a().a().a().a().a().a().$();

@@ -1,7 +1,7 @@
 package fling.compiler.ast;
 
-public interface MethodNode<T, D> {
-  public static class Start<T, D> implements MethodNode<T, D> {
+public interface AbstractMethodNode<T, D> {
+  public static class Start<T, D> implements AbstractMethodNode<T, D> {
     public final PolymorphicTypeNode<T> returnType;
 
     public Start(PolymorphicTypeNode<T> returnType) {
@@ -9,10 +9,10 @@ public interface MethodNode<T, D> {
     }
   }
 
-  public static class Termination<T, D> implements MethodNode<T, D> {
+  public static class Termination<T, D> implements AbstractMethodNode<T, D> {
   }
 
-  public static class Intermediate<T, D> implements MethodNode<T, D> {
+  public static class Intermediate<T, D> implements AbstractMethodNode<T, D> {
     public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 

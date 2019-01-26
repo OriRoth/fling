@@ -7,9 +7,9 @@ public class InterfaceNode<T, D, N> {
   @SuppressWarnings("rawtypes") /* private */ static final InterfaceNode TOP = new InterfaceNode();
   @SuppressWarnings("rawtypes") /* private */ static final InterfaceNode BOT = new InterfaceNode();
   public final N declaration;
-  public final List<MethodNode<T, D>> methods;
+  public final List<AbstractMethodNode<T, D>> methods;
 
-  public InterfaceNode(N name, List<MethodNode<T, D>> methods) {
+  public InterfaceNode(N name, List<AbstractMethodNode<T, D>> methods) {
     this.declaration = name;
     this.methods = Collections.unmodifiableList(methods);
   }

@@ -8,9 +8,9 @@ import static fling.languages.AnBn.Γ.*;
 import static fling.languages.AnBn.Σ.*;
 
 import fling.automata.DPDA;
-import fling.compiler.Compiler;
 import fling.compiler.CppAdapter;
 import fling.compiler.JavaAdapter;
+import fling.compiler.api.APICompiler;
 import fling.sententials.Named;
 import fling.sententials.Terminal;
 
@@ -38,9 +38,9 @@ public class AnBn {
       .δ(q1, ε(), E, q2) //
       .go();
   public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "AnBn", "__", "$") //
-      .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
+      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAdapter<Q, Σ, Γ>("__", "$") //
-      .printFluentAPI(new Compiler<>(dpda).compileFluentAPI());
+      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     __().a().a().a().b().b().b().$();
