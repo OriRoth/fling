@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import fling.automata.DPDA.δ;
+import fling.sententials.Word;
 
 public class DPDATest {
   enum Q {
@@ -49,8 +50,7 @@ public class DPDATest {
     δ<Q, Σ, Γ> δ = dpda.δ(q0, c, γ0);
     assertEquals(q1, δ.q$);
     assertEquals(2, δ.α.size());
-    assertEquals(γ0, δ.α.top());
-    assertEquals(γ1, δ.α.get(1));
+    assertEquals(new Word<>(γ0, γ1), δ.α);
     assertNull(dpda.δ(q0, Ↄ, γ0));
   }
   // TODO Roth: add better consolidation testing
