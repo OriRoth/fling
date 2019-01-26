@@ -1,6 +1,6 @@
 package fling.compiler.api;
 
-import static fling.compiler.ast.PolymorphicTypeNode.*;
+import static fling.compiler.api.PolymorphicTypeNode.*;
 import static fling.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
@@ -17,10 +17,6 @@ import java.util.stream.Collectors;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
-import fling.compiler.ast.AbstractMethodNode;
-import fling.compiler.ast.FluentAPINode;
-import fling.compiler.ast.InterfaceNode;
-import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Word;
 
 /**

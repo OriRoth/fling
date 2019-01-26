@@ -2,10 +2,6 @@ package fling.compiler.api;
 
 import java.util.List;
 
-import fling.compiler.ast.AbstractMethodNode;
-import fling.compiler.ast.FluentAPINode;
-import fling.compiler.ast.InterfaceNode;
-import fling.compiler.ast.PolymorphicTypeNode;
 import fling.sententials.Named;
 import fling.sententials.Terminal;
 

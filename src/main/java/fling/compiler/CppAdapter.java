@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.APIPolymorphicLanguageAdapter;
-import fling.compiler.ast.AbstractMethodNode;
-import fling.compiler.ast.FluentAPINode;
-import fling.compiler.ast.PolymorphicTypeNode;
+import fling.compiler.api.AbstractMethodNode;
+import fling.compiler.api.FluentAPINode;
+import fling.compiler.api.PolymorphicTypeNode;
 import fling.sententials.Named;
 import fling.sententials.Terminal;
 import fling.sententials.Word;
