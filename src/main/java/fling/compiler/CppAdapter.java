@@ -58,7 +58,7 @@ public class CppAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> 
       List<AbstractMethodNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration>> methods) {
     return String.format("%s{public:%s};", //
         printInterfaceDeclaration(declaration), //
-        methods.stream().map(m -> printMethod(m)).collect(joining()));
+        methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
       FluentAPINode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
@@ -66,7 +66,7 @@ public class CppAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> 
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
             .collect(joining()), //
         fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
-        fluentAPI.startMethods.stream().map(m -> printMethod(m)).collect(joining()));
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
   }
   public String printTypeName(APICompiler<Q, Σ, Γ>.TypeName name) {
     return printTypeName(name.q, name.α);
