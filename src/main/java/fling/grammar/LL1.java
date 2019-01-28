@@ -44,7 +44,7 @@ public class LL1 extends Grammar {
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
   private void buildLL1Automaton() {
-    Σ.addAll(standardizedBnf.Σ);
+    Σ.addAll(bnf.Σ);
     Σ.remove(Constants.$);
     Q.addAll(Σ);
     Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø");
@@ -52,9 +52,9 @@ public class LL1 extends Grammar {
     Q.add(q0ø);
     Γ.addAll(Σ);
     Γ.add(Constants.$);
-    Γ.addAll(standardizedBnf.V);
+    Γ.addAll(bnf.V);
     assert Γ.contains(Constants.S);
-    Set<Named> A = standardizedBnf.V.stream().filter(this::isNullable).map(this::getAcceptingVariable).collect(toSet());
+    Set<Named> A = bnf.V.stream().filter(this::isNullable).map(this::getAcceptingVariable).collect(toSet());
     Γ.addAll(A);
     F.add(q0$);
     q0 = q0$;
@@ -65,50 +65,50 @@ public class LL1 extends Grammar {
     for (Named v : A)
       δs.add(new δ<>(q0ø, ε(), v, q0$, new Word<>(v)));
     // Moving from q0$ to q0ø with non-accepting variables and symbols.
-    for (Named v : standardizedBnf.V)
+    for (Named v : bnf.V)
       δs.add(new δ<>(q0$, ε(), v, q0ø, new Word<>(v)));
-    for (Terminal σ : standardizedBnf.Σ)
+    for (Terminal σ : bnf.Σ)
       if (!Constants.$.equals(σ))
         δs.add(new δ<>(q0$, ε(), σ, q0ø, new Word<>(σ)));
     // Consuming transitions from q0$ to qσ.
-    for (DerivationRule r : standardizedBnf.R)
+    for (DerivationRule r : bnf.R)
       for (SententialForm sf : r.rhs)
-        for (Terminal σ : standardizedBnf.firsts(sf))
+        for (Terminal σ : bnf.firsts(sf))
           if (!Constants.$.equals(σ))
             δs.add(new δ<>(q0$, σ, getAcceptingVariable(r.lhs), σ, reversed(getPossiblyAcceptingVariables(sf, true))));
-    for (Variable v : standardizedBnf.V)
-      for (Terminal σ : standardizedBnf.Σ)
-        if (!Constants.$.equals(σ) && !standardizedBnf.firsts(v).contains(σ) && isNullable(v))
+    for (Variable v : bnf.V)
+      for (Terminal σ : bnf.Σ)
+        if (!Constants.$.equals(σ) && !bnf.firsts(v).contains(σ) && isNullable(v))
           δs.add(new δ<>(q0$, σ, getAcceptingVariable(v), σ, new Word<>()));
     // Consuming transitions from q0ø to qσ.
-    for (DerivationRule r : standardizedBnf.R)
+    for (DerivationRule r : bnf.R)
       for (SententialForm sf : r.rhs)
-        for (Terminal σ : standardizedBnf.firsts(sf))
+        for (Terminal σ : bnf.firsts(sf))
           if (!Constants.$.equals(σ))
             δs.add(new δ<>(q0ø, σ, r.lhs, σ, reversed(getPossiblyAcceptingVariables(sf, false))));
-    for (Variable v : standardizedBnf.V)
-      for (Terminal σ : standardizedBnf.Σ)
-        if (!Constants.$.equals(σ) && !standardizedBnf.firsts(v).contains(σ) && isNullable(v))
+    for (Variable v : bnf.V)
+      for (Terminal σ : bnf.Σ)
+        if (!Constants.$.equals(σ) && !bnf.firsts(v).contains(σ) && isNullable(v))
           δs.add(new δ<>(q0ø, σ, v, σ, new Word<>()));
     // ε transitions from qσ to q0.
-    for (Terminal σ : standardizedBnf.Σ)
+    for (Terminal σ : bnf.Σ)
       if (!Constants.$.equals(σ))
         δs.add(new δ<>(σ, ε(), σ, q0$, new Word<>()));
     // σ consuming transitions from q0ø to itself.
-    for (Terminal σ : standardizedBnf.Σ)
+    for (Terminal σ : bnf.Σ)
       if (!Constants.$.equals(σ))
         δs.add(new δ<>(q0ø, σ, σ, q0ø, new Word<>()));
     // ε transitions from qσ to itself.
-    for (DerivationRule r : standardizedBnf.R)
+    for (DerivationRule r : bnf.R)
       for (SententialForm sf : r.rhs)
-        for (Terminal σ : standardizedBnf.firsts(sf))
+        for (Terminal σ : bnf.firsts(sf))
           if (!Constants.$.equals(σ)) {
             δs.add(new δ<>(σ, ε(), getAcceptingVariable(r.lhs), σ, reversed(getPossiblyAcceptingVariables(sf, true))));
             δs.add(new δ<>(σ, ε(), r.lhs, σ, reversed(getPossiblyAcceptingVariables(sf, false))));
           }
   }
   private boolean isNullable(Symbol s) {
-    return standardizedBnf.isNullable(s);
+    return bnf.isNullable(s);
   }
   private Named getAcceptingVariable(Variable v) {
     return Named.by(v.name() + "$");

@@ -6,6 +6,9 @@ import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
 import static fling.languages.BalancedParentheses.Σ.ↄ;
 
+import java.util.EnumSet;
+import java.util.LinkedHashSet;
+
 import fling.compiler.JavaAdapter;
 import fling.compiler.api.APICompiler;
 import fling.grammar.BNF;
@@ -28,8 +31,9 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final String fluentAPI = new JavaAdapter<>("fling.generated", "BalancedParentheses", "__",
-      "$").printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
+  public static final String fluentAPI = new JavaAdapter<>(new LinkedHashSet<Terminal>(EnumSet.allOf(Σ.class)), "fling.generated",
+      "BalancedParentheses", "__", "$")
+          .printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();

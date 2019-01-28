@@ -2,6 +2,10 @@ package fling.languages;
 
 import static fling.automata.DPDA.dpda;
 import static fling.sententials.Alphabet.ε;
+
+import java.util.EnumSet;
+import java.util.LinkedHashSet;
+
 import static fling.generated.AnBn.__;
 import static fling.languages.AnBn.Q.*;
 import static fling.languages.AnBn.Γ.*;
@@ -37,8 +41,9 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go();
-  public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "AnBn", "__", "$") //
-      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
+  public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>(new LinkedHashSet<>(EnumSet.allOf(Σ.class)),
+      "fling.generated", "AnBn", "__", "$") //
+          .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAdapter<Q, Σ, Γ>("__", "$") //
       .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 

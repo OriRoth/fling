@@ -17,7 +17,7 @@ public interface Symbol extends Named {
   default Variable asVariable() {
     return (Variable) this;
   }
-  @SuppressWarnings("unused") default Symbol expand(Namer namer, Consumer<Variable> newVariableCallback,
+  @SuppressWarnings("unused") default Symbol abbreviate(Namer namer, Consumer<Variable> newVariableCallback,
       Consumer<DerivationRule> newRuleCallback) {
     return this;
   }

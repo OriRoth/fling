@@ -1,11 +1,17 @@
 package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.sententials.Alphabet.ε;
 import static fling.generated.LongFall.__;
-import static fling.languages.LongFall.Q.*;
-import static fling.languages.LongFall.Γ.*;
-import static fling.languages.LongFall.Σ.*;
+import static fling.languages.LongFall.Q.q0;
+import static fling.languages.LongFall.Q.q1;
+import static fling.languages.LongFall.Γ.g0;
+import static fling.languages.LongFall.Γ.g1;
+import static fling.languages.LongFall.Σ.a;
+import static fling.languages.LongFall.Σ.b;
+import static fling.sententials.Alphabet.ε;
+
+import java.util.EnumSet;
+import java.util.LinkedHashSet;
 
 import fling.automata.DPDA;
 import fling.compiler.CppAdapter;
@@ -36,8 +42,9 @@ public class LongFall {
       .δ(q1, ε(), g1, q1) //
       .δ(q1, ε(), g0, q0, g0) //
       .go();
-  public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>("fling.generated", "LongFall", "__", "$") //
-      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
+  public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>(new LinkedHashSet<>(EnumSet.allOf(Σ.class)),
+      "fling.generated", "LongFall", "__", "$") //
+          .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAdapter<Q, Σ, Γ>("__", "$") //
       .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 

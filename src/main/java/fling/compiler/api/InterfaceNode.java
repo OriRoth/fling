@@ -17,6 +17,9 @@ public class InterfaceNode<T, D, N> {
     this.declaration = null;
     this.methods = null;
   }
+  public N declaration() {
+    return declaration;
+  }
   @SuppressWarnings("unchecked") public static <T, D, N> InterfaceNode<T, D, N> top() {
     return TOP;
   }

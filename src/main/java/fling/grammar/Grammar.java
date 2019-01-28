@@ -8,21 +8,26 @@ import fling.sententials.DerivationRule;
 import fling.sententials.Variable;
 
 public abstract class Grammar {
-  public final BNF bnf;
+  public final BNF ebnf;
   public final Namer namer;
-  public final BNF standardizedBnf;
+  public final BNF bnf;
+  public final BNF normalizedBNF;
 
-  public Grammar(BNF bnf, Namer namer) {
-    this.bnf = bnf;
+  public Grammar(BNF ebnf, Namer namer) {
+    this.ebnf = ebnf;
     this.namer = namer;
-    this.standardizedBnf = getStandardizedBNF();
+    this.bnf = getBNF();
+    this.normalizedBNF = getNormalizedBNF();
   }
   public abstract DPDA<?, ?, ?> toDPDA();
-  private BNF getStandardizedBNF() {
-    Set<Variable> V = new LinkedHashSet<>(bnf.V);
-    Set<DerivationRule> R = new LinkedHashSet<>(bnf.R);
-    Set<Variable> startVariables = new LinkedHashSet<>(bnf.startVariables);
-    bnf.V.forEach(v -> v.expand(namer, V::add, R::add));
-    return new BNF(bnf.Σ, V, R, startVariables, false);
+  private BNF getBNF() {
+    Set<Variable> V = new LinkedHashSet<>();
+    Set<DerivationRule> R = new LinkedHashSet<>(ebnf.R);
+    Set<Variable> startVariables = new LinkedHashSet<>(ebnf.startVariables);
+    ebnf.V.forEach(v -> V.add(v.abbreviate(namer, V::add, R::add)));
+    return new BNF(ebnf.Σ, V, R, startVariables, false);
+  }
+  private BNF getNormalizedBNF() {
+    return null;
   }
 }
