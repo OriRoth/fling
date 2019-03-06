@@ -1,12 +1,11 @@
 package fling.grammar;
 
-import static java.util.stream.Collectors.toSet;
+import static fling.sententials.Alphabet.ε;
 import static fling.util.Collections.reversed;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
-
-import static fling.sententials.Alphabet.ε;
-
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,9 +46,10 @@ public class LL1 extends Grammar {
     Σ.addAll(bnf.Σ);
     Σ.remove(Constants.$);
     Q.addAll(Σ);
-    Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø");
+    Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø"), qT = Named.by("qT");
     Q.add(q0$);
     Q.add(q0ø);
+    Q.add(qT);
     Γ.addAll(Σ);
     Γ.add(Constants.$);
     Γ.addAll(bnf.V);
@@ -106,6 +106,21 @@ public class LL1 extends Grammar {
             δs.add(new δ<>(σ, ε(), getAcceptingVariable(r.lhs), σ, reversed(getPossiblyAcceptingVariables(sf, true))));
             δs.add(new δ<>(σ, ε(), r.lhs, σ, reversed(getPossiblyAcceptingVariables(sf, false))));
           }
+    // ε transitions from qσ to qT.
+    for (Terminal σ : bnf.Σ)
+      if (!Constants.$.equals(σ)) {
+        Set<Named> legalTops = new HashSet<>();
+        legalTops.add(σ);
+        for (DerivationRule r : bnf.R)
+          for (SententialForm sf : r.rhs)
+            if (bnf.firsts(sf).contains(σ)) {
+              legalTops.add(r.lhs);
+              legalTops.add(getAcceptingVariable(r.lhs));
+            }
+        for (Named γ : Γ)
+          if (!legalTops.contains(γ))
+            δs.add(new δ<>(σ, ε(), γ, qT, new Word<>()));
+      }
   }
   private boolean isNullable(Symbol s) {
     return bnf.isNullable(s);
