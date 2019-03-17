@@ -1,6 +1,6 @@
 package fling.automata;
 
-import static fling.sententials.Alphabet.ε;
+import static fling.grammar.sententials.Alphabet.ε;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fling.sententials.Word;
+import fling.grammar.sententials.Word;
 
 /**
  * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.

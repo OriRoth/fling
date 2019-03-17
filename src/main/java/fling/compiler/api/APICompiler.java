@@ -1,7 +1,7 @@
 package fling.compiler.api;
 
-import static fling.compiler.api.PolymorphicTypeNode.*;
-import static fling.sententials.Alphabet.ε;
+import static fling.compiler.api.nodes.PolymorphicTypeNode.*;
+import static fling.grammar.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
 import static fling.util.Collections.chainList;
@@ -17,7 +17,11 @@ import java.util.stream.Collectors;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
-import fling.sententials.Word;
+import fling.compiler.api.nodes.AbstractMethodNode;
+import fling.compiler.api.nodes.CompilationUnitNode;
+import fling.compiler.api.nodes.InterfaceNode;
+import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Word;
 
 /**
  * Encodes deterministic pushdown automaton ({@link DPDA}) as a Java class; A
@@ -42,8 +46,8 @@ public class APICompiler<Q, Σ, Γ> {
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
   }
-  public FluentAPINode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
-    return new FluentAPINode<>(compileStartMethods(), compileInterfaces());
+  public CompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
+    return new CompilationUnitNode<>(compileStartMethods(), compileInterfaces());
   }
   private List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
     return Collections.singletonList(new AbstractMethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));

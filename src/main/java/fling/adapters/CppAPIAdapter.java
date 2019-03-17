@@ -1,4 +1,4 @@
-package fling.compiler;
+package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import fling.compiler.api.APICompiler;
-import fling.compiler.api.APIPolymorphicLanguageAdapter;
-import fling.compiler.api.AbstractMethodNode;
-import fling.compiler.api.FluentAPINode;
-import fling.compiler.api.PolymorphicTypeNode;
-import fling.sententials.Named;
-import fling.sententials.Terminal;
-import fling.sententials.Word;
+import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.nodes.AbstractMethodNode;
+import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Word;
+import fling.compiler.api.nodes.CompilationUnitNode;
 
-public class CppAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements APIPolymorphicLanguageAdapter<Q, Σ, Γ> {
+public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final String startMethodName;
   private final String terminationMethodName;
 
-  public CppAdapter(String startMethodName, String terminationMethodName) {
+  public CppAPIAdapter(String startMethodName, String terminationMethodName) {
     this.startMethodName = startMethodName;
     this.terminationMethodName = terminationMethodName;
   }
@@ -61,7 +61,7 @@ public class CppAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> 
         methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
-      FluentAPINode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+      CompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
     return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
             .collect(joining()), //

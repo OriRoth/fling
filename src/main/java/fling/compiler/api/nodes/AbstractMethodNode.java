@@ -1,4 +1,4 @@
-package fling.compiler.api;
+package fling.compiler.api.nodes;
 
 public interface AbstractMethodNode<T, D> {
   public static class Start<T, D> implements AbstractMethodNode<T, D> {

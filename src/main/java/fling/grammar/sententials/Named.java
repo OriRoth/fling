@@ -1,4 +1,4 @@
-package fling.sententials;
+package fling.grammar.sententials;
 
 public interface Named {
   String name();

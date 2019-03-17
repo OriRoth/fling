@@ -2,10 +2,14 @@ package fling.compiler.api;
 
 import java.util.List;
 
-import fling.sententials.Named;
-import fling.sententials.Terminal;
+import fling.compiler.api.nodes.AbstractMethodNode;
+import fling.compiler.api.nodes.CompilationUnitNode;
+import fling.compiler.api.nodes.InterfaceNode;
+import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Terminal;
 
-public interface APIPolymorphicLanguageAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> {
+public interface PolymorphicLanguageAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> {
   String printTopType();
   String printBotType();
   String printIntermediateType(APICompiler<Q, Σ, Γ>.TypeName name);
@@ -36,5 +40,5 @@ public interface APIPolymorphicLanguageAdapter<Q extends Named, Σ extends Termi
         : interfaze.isBot() ? printBotInterface() : printInterface(interfaze.declaration, interfaze.methods);
   }
   String printFluentAPI(
-      FluentAPINode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI);
+      CompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI);
 }

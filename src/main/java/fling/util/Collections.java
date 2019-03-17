@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import fling.sententials.Word;
+import fling.grammar.sententials.Word;
 
 public class Collections {
   @SafeVarargs public static <T> Set<T> set(T... items) {

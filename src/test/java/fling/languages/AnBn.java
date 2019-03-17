@@ -1,22 +1,22 @@
 package fling.languages;
 
+import static fling._generated.AnBn.__;
 import static fling.automata.DPDA.dpda;
-import static fling.sententials.Alphabet.ε;
 
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 
-import static fling.generated.AnBn.__;
+import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.AnBn.Q.*;
 import static fling.languages.AnBn.Γ.*;
 import static fling.languages.AnBn.Σ.*;
 
+import fling.adapters.CppAPIAdapter;
+import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
-import fling.compiler.CppAdapter;
-import fling.compiler.JavaAdapter;
 import fling.compiler.api.APICompiler;
-import fling.sententials.Named;
-import fling.sententials.Terminal;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Terminal;
 
 public class AnBn {
   enum Q implements Named {
@@ -41,10 +41,10 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go();
-  public static final String JavaFluentAPI = new JavaAdapter<Q, Σ, Γ>(new LinkedHashSet<>(EnumSet.allOf(Σ.class)),
+  public static final String JavaFluentAPI = new JavaAPIAdapter<Q, Σ, Γ>(new LinkedHashSet<>(EnumSet.allOf(Σ.class)),
       "fling.generated", "AnBn", "__", "$") //
           .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAdapter<Q, Σ, Γ>("__", "$") //
+  public static final String CppFluentAPI = new CppAPIAdapter<Q, Σ, Γ>("__", "$") //
       .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {

@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fling.sententials.Constants;
-import fling.sententials.DerivationRule;
-import fling.sententials.SententialForm;
-import fling.sententials.Symbol;
-import fling.sententials.Terminal;
-import fling.sententials.Variable;
+import fling.grammar.sententials.Constants;
+import fling.grammar.sententials.DerivationRule;
+import fling.grammar.sententials.SententialForm;
+import fling.grammar.sententials.Symbol;
+import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Variable;
 
 public class BNF {
   public final Set<DerivationRule> R;

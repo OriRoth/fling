@@ -1,4 +1,4 @@
-package fling.sententials;
+package fling.grammar.sententials;
 
 import java.util.Collections;
 import java.util.List;

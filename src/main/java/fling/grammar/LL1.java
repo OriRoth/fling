@@ -1,6 +1,6 @@
 package fling.grammar;
 
-import static fling.sententials.Alphabet.ε;
+import static fling.grammar.sententials.Alphabet.ε;
 import static fling.util.Collections.reversed;
 import static java.util.stream.Collectors.toSet;
 
@@ -12,14 +12,14 @@ import java.util.Set;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
-import fling.sententials.Constants;
-import fling.sententials.DerivationRule;
-import fling.sententials.Named;
-import fling.sententials.SententialForm;
-import fling.sententials.Symbol;
-import fling.sententials.Terminal;
-import fling.sententials.Variable;
-import fling.sententials.Word;
+import fling.grammar.sententials.Constants;
+import fling.grammar.sententials.DerivationRule;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.SententialForm;
+import fling.grammar.sententials.Symbol;
+import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Variable;
+import fling.grammar.sententials.Word;
 
 public class LL1 extends Grammar {
   public final Set<Named> Q;

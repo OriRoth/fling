@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling.generated.BalancedParentheses.__;
+import static fling._generated.BalancedParentheses.__;
 import static fling.grammar.BNF.bnf;
 import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
@@ -9,13 +9,13 @@ import static fling.languages.BalancedParentheses.Σ.ↄ;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 
-import fling.compiler.JavaAdapter;
+import fling.adapters.JavaAPIAdapter;
 import fling.compiler.api.APICompiler;
 import fling.grammar.BNF;
 import fling.grammar.LL1;
 import fling.grammar.NaiveNamer;
-import fling.sententials.Terminal;
-import fling.sententials.Variable;
+import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Variable;
 
 public class BalancedParentheses {
   enum Σ implements Terminal {
@@ -31,7 +31,7 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final String fluentAPI = new JavaAdapter<>(new LinkedHashSet<Terminal>(EnumSet.allOf(Σ.class)), "fling.generated",
+  public static final String fluentAPI = new JavaAPIAdapter<>(new LinkedHashSet<Terminal>(EnumSet.allOf(Σ.class)), "fling.generated",
       "BalancedParentheses", "__", "$")
           .printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
 

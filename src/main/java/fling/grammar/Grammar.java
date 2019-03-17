@@ -4,8 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import fling.automata.DPDA;
-import fling.sententials.DerivationRule;
-import fling.sententials.Variable;
+import fling.grammar.sententials.DerivationRule;
+import fling.grammar.sententials.Variable;
 
 public abstract class Grammar {
   public final BNF ebnf;

@@ -9,7 +9,7 @@ import static fling.automata.DPDATest.Γ.γ1;
 import static fling.automata.DPDATest.Σ.c;
 import static fling.automata.DPDATest.Σ.Ↄ;
 import static fling.automata.DPDATest.Σ.ↄ;
-import static fling.sententials.Alphabet.ε;
+import static fling.grammar.sententials.Alphabet.ε;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import fling.automata.DPDA.δ;
-import fling.sententials.Word;
+import fling.grammar.sententials.Word;
 
 public class DPDATest {
   enum Q {

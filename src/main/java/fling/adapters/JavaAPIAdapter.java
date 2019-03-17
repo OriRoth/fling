@@ -1,4 +1,4 @@
-package fling.compiler;
+package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import fling.compiler.api.APICompiler;
-import fling.compiler.api.APIPolymorphicLanguageAdapter;
-import fling.compiler.api.AbstractMethodNode;
-import fling.compiler.api.FluentAPINode;
-import fling.compiler.api.InterfaceNode;
-import fling.compiler.api.PolymorphicTypeNode;
-import fling.sententials.Named;
-import fling.sententials.Terminal;
-import fling.sententials.Word;
+import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.nodes.AbstractMethodNode;
+import fling.compiler.api.nodes.InterfaceNode;
+import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Word;
+import fling.compiler.api.nodes.CompilationUnitNode;
 
-public class JavaAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements APIPolymorphicLanguageAdapter<Q, Σ, Γ> {
+public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final Collection<Σ> terminals;
   private final String packageName;
   private final String className;
   private final String startMethodName;
   private final String terminationMethodName;
 
-  public JavaAdapter(Collection<Σ> terminals, String packageName, String className, String startMethodName,
+  public JavaAPIAdapter(Collection<Σ> terminals, String packageName, String className, String startMethodName,
       String terminationMethodName) {
     this.terminals = terminals;
     this.startMethodName = startMethodName;
@@ -70,7 +70,7 @@ public class JavaAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
         methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
-      FluentAPINode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+      CompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s%s}", //
         packageName, //
         className, //
