@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling._generated.LongFall.__;
+import static fling.generated.LongFall.__;
 import static fling.automata.DPDA.dpda;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.LongFall.Q.q0;

@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling._generated.AnBn.__;
+import static fling.generated.AnBn.__;
 import static fling.automata.DPDA.dpda;
 
 import java.util.EnumSet;

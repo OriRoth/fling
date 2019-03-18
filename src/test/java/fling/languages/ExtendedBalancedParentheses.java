@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling._generated.ExtendedBalancedParentheses.__;
+import static fling.generated.ExtendedBalancedParentheses.__;
 import static fling.automata.DPDA.dpda;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.ExtendedBalancedParentheses.Q.q0;

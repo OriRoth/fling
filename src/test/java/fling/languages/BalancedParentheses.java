@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling._generated.BalancedParentheses.__;
+import static fling.generated.BalancedParentheses.__;
 import static fling.grammar.BNF.bnf;
 import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
