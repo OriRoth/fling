@@ -111,8 +111,7 @@ public class LL1 extends Grammar {
             δs.add(new δ<>(σ, ε(), getAcceptingVariable(r.lhs), σ, reversed(getPossiblyAcceptingVariables(sf, true))));
             δs.add(new δ<>(σ, ε(), r.lhs, σ, reversed(getPossiblyAcceptingVariables(sf, false))));
           }
-    // Moving from qσ to qT with ε + inappropriate symbol
-    // (these transition makes fluent API compilation failure earlier).
+    // Moving from qσ to qT with ε + inappropriate symbol.
     for (Terminal σ : bnf.Σ)
       if (!Constants.$.equals(σ)) {
         Set<Named> legalTops = new HashSet<>();
