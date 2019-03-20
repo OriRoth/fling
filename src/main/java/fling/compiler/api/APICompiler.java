@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.compiler.api.nodes.AbstractMethodNode;
-import fling.compiler.api.nodes.CompilationUnitNode;
+import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Word;
@@ -46,8 +46,8 @@ public class APICompiler<Q, Σ, Γ> {
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
   }
-  public CompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
-    return new CompilationUnitNode<>(compileStartMethods(), compileInterfaces());
+  public APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
+    return new APICompilationUnitNode<>(compileStartMethods(), compileInterfaces());
   }
   private List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
     return Collections.singletonList(new AbstractMethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));

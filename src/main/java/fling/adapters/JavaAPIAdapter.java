@@ -14,7 +14,7 @@ import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
-import fling.compiler.api.nodes.CompilationUnitNode;
+import fling.compiler.api.nodes.APICompilationUnitNode;
 
 public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final Collection<Σ> terminals;
@@ -70,7 +70,7 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
         methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
-      CompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+      APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s%s}", //
         packageName, //
         className, //

@@ -3,7 +3,7 @@ package fling.compiler.api;
 import java.util.List;
 
 import fling.compiler.api.nodes.AbstractMethodNode;
-import fling.compiler.api.nodes.CompilationUnitNode;
+import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Named;
@@ -40,5 +40,5 @@ public interface PolymorphicLanguageAPIAdapter<Q extends Named, Σ extends Termi
         : interfaze.isBot() ? printBotInterface() : printInterface(interfaze.declaration, interfaze.methods);
   }
   String printFluentAPI(
-      CompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI);
+      APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI);
 }
