@@ -1,5 +1,6 @@
 package fling.compiler.ast;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -55,10 +56,14 @@ public class ASTCompiler {
         continue;
       else if (fields.containsKey(v))
         // Concrete class.
-        classes.add(new ConcreteClassNode(v, parents.get(v), fields.get(v).stream().map(FieldNode::new).collect(toList())));
+        classes.add(new ConcreteClassNode(v, //
+            parents.getOrDefault(v, emptyList()), //
+            fields.getOrDefault(v, emptyList()).stream().map(FieldNode::new).collect(toList())));
       else
         // Abstract class.
-        classes.add(new AbstractClassNode(v, parents.get(v), children.get(v)));
+        classes.add(new AbstractClassNode(v, //
+            parents.getOrDefault(v, emptyList()), //
+            children.getOrDefault(v, emptyList())));
     return new ASTCompilationUnitNode(classes, parents.values().stream().anyMatch(ps -> ps.size() > 1));
   }
 }

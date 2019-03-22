@@ -10,12 +10,16 @@ import java.util.EnumSet;
 import java.util.LinkedHashSet;
 
 import fling.adapters.JavaAPIAdapter;
+import fling.adapters.JavaInterfacesASTAdapter;
+import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
+import fling.compiler.ast.ASTCompiler;
 import fling.grammar.BNF;
+import fling.grammar.Grammar;
 import fling.grammar.LL1;
-import fling.grammar.NaiveNamer;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
+import fling.namers.NaiveNamer;
 
 public class BalancedParentheses {
   enum Σ implements Terminal {
@@ -43,5 +47,11 @@ public class BalancedParentheses {
     __().c().c().ↄ().ↄ().c().ↄ().$();
     __().c().c().ↄ().ↄ().c();
     __().ↄ();
+  }
+  public static void main(String[] args) {
+    Namer namer = new NaiveNamer();
+    Grammar g = new LL1(bnf, namer);
+    System.out.println(new JavaInterfacesASTAdapter("fling.generated", "BalancedParenthesesAST", namer)
+        .printASTClass(new ASTCompiler(g.normalizedBNF).compileAST()));
   }
 }

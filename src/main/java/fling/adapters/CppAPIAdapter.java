@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
-import fling.compiler.api.nodes.APICompilationUnitNode;
 
 public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final String startMethodName;
@@ -46,7 +46,9 @@ public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Name
   @Override public String printIntermediateMethod(APICompiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
     return String.format("virtual %s %s(%s) const;", printType(returnType), declaration.name.name(),
-        String.join(",", declaration.name.parameters()));
+        declaration.name.parameters().stream() //
+            .map(parameter -> String.format("%s %s", parameter.typeName(), parameter.parameterName())) //
+            .collect(joining(",")));
   }
   @Override public String printTopInterface() {
     return String.format("class TOP{public:virtual void %s() const;};", terminationMethodName);

@@ -8,15 +8,16 @@ import java.util.stream.Collectors;
 
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
-import fling.compiler.api.nodes.APICompilationUnitNode;
 
-public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
+public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
+    implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final Collection<Σ> terminals;
   private final String packageName;
   private final String className;
@@ -54,8 +55,12 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
   }
   @Override public String printIntermediateMethod(APICompiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
-    return String.format("%s %s(%s);", printType(returnType), declaration.name.name(),
-        String.join(",", declaration.name.parameters()));
+    return String.format("%s %s(%s);", //
+        printType(returnType), //
+        declaration.name.name(), //
+        declaration.name.parameters().stream() //
+            .map(parameter -> String.format("%s %s", parameter.typeName(), parameter.parameterName())) //
+            .collect(joining(",")));
   }
   @Override public String printTopInterface() {
     return String.format("interface ${void %s();}", terminationMethodName);
@@ -97,10 +102,12 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
   }
   public String printConcreteImplementation(
       List<InterfaceNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration>> interfaces) {
-    return String.format("static class α implements %s{%s%s}",
-        interfaces.stream().map(this::printTypeName).collect(joining(",")),
-        terminals.stream().map(t -> String.format("public α %s(%s){return this;}", t.name(), String.join(",", t.parameters())))
-            .collect(joining()),
-        "public void $(){}");
+    return String
+        .format("static class α implements %s{%s%s}", interfaces.stream().map(this::printTypeName).collect(joining(",")), terminals
+            .stream().map(t -> String.format("public α %s(%s){return this;}", //
+                t.name(), //
+                t.parameters().stream().map(parameter -> String.format("%s %s", parameter.typeName(), parameter.parameterName()))
+                    .collect(joining(",")))) //
+            .collect(joining()), "public void $(){}");
   }
 }
