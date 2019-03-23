@@ -95,11 +95,11 @@ public class NaiveNamer implements Namer {
     return lowerCamelCase(v.name());
   }
   protected void setInferredFieldsInClass(List<FieldNode> fields) {
+    Map<String, Integer> usedNames = new HashMap<>();
     for (FieldNode field : fields) {
       Symbol source = field.source;
       // TODO support more complex types.
       assert source.isTerminal() || source.isVariable();
-      Map<String, Integer> usedNames = new HashMap<>();
       if (source.isVariable()) {
         Variable v = source.asVariable();
         field.setInferredFieldFragments(singletonList(FieldNodeFragment.of( //

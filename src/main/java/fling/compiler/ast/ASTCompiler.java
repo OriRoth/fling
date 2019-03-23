@@ -74,13 +74,13 @@ public class ASTCompiler {
       ClassNode classNode = classes.get(v);
       if (classNode.isConcrete())
         // Concrete class.
-        classNode.asConcrete().parents.addAll(parents.get(v).stream() //
+        classNode.asConcrete().parents.addAll(parents.getOrDefault(v, emptyList()).stream() //
             .map(classes::get).map(ClassNode::asAbstract).collect(toList()));
       else {
         // Abstract class.
-        classNode.asAbstract().parents.addAll(parents.get(v).stream() //
+        classNode.asAbstract().parents.addAll(parents.getOrDefault(v, emptyList()).stream() //
             .map(classes::get).map(ClassNode::asAbstract).collect(toList()));
-        classNode.asAbstract().children.addAll(children.get(v).stream() //
+        classNode.asAbstract().children.addAll(children.getOrDefault(v, emptyList()).stream() //
             .map(classes::get).map(ClassNode::asConcrete).collect(toList()));
       }
     }
