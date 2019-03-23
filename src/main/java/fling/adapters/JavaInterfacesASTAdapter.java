@@ -9,7 +9,6 @@ import fling.compiler.ast.nodes.AbstractClassNode;
 import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
-import fling.grammar.sententials.Symbol;
 
 public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapter {
   private final String packageName;
@@ -22,63 +21,54 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapter {
     this.namer = namer;
   }
   @Override public String printASTClass(ASTCompilationUnitNode compilationUnit) {
+    namer.name(compilationUnit);
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s}", //
         packageName, //
         className, //
-        compilationUnit.classes.stream().map(this::printClass).collect(joining()));
+        compilationUnit.classes.stream() //
+            .map(this::printClass) //
+            .collect(joining()));
   }
   @Override public String printAbstractClass(AbstractClassNode abstractClass) {
     return String.format("interface %s %s{}", //
-        namer.getClassName(abstractClass.source), //
+        abstractClass.getClassName(), //
         abstractClass.parents.isEmpty() ? "" : //
-            "extends " + abstractClass.parents.stream().map(namer::getClassName).collect(joining(",")));
+            "extends " + abstractClass.parents.stream() //
+                .map(ClassNode::getClassName) //
+                .collect(joining(",")));
   }
   @Override public String printConcreteClass(ConcreteClassNode concreteClass) {
     return String.format("class %s implements %s{%s%s}", //
-        namer.getClassName(concreteClass.source), //
-        concreteClass.parents.stream().map(namer::getClassName).collect(joining(",")), //
+        concreteClass.getClassName(), //
+        concreteClass.parents.stream().map(ClassNode::getClassName).collect(joining(",")), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //
-            .map(field -> printField("public final %s %s;", "", field, concreteClass)) //
+            .map(field -> printField("public final %s %s;", "", field)) //
             .collect(joining()), //
         printConstructor(concreteClass));
   }
-  public String printField(String format, String separator, FieldNode field, ClassNode container) {
-    Symbol source = field.source;
-    // TODO support more complex types.
-    assert source.isTerminal() || source.isVariable();
-    return source.isVariable() ? String.format(format, //
-        namer.getClassName(source.asVariable()), //
-        namer.getParameterName(source.asVariable(), field, container)) : //
-        source.asTerminal().parameters().stream() //
-            .map(parameter -> String.format(format, //
-                namer.getParameterType(parameter), //
-                namer.getParameterName(parameter, field, container))) //
-            .collect(joining(separator));
+  @SuppressWarnings("static-method") public String printField(String format, String separator, FieldNode field) {
+    return field.getInferredFieldFragments().stream() //
+        .map(fragment -> String.format(format, //
+            fragment.parameterType, fragment.parameterName)) //
+        .collect(joining(separator));
   }
-  public String constructorAssignment(FieldNode field, ClassNode container) {
-    Symbol source = field.source;
-    // TODO support more complex types.
-    assert source.isTerminal() || source.isVariable();
-    return source.isVariable() ? String.format("this.%s = %s;", //
-        namer.getParameterName(source.asVariable(), field, container), //
-        namer.getParameterName(source.asVariable(), field, container)) : //
-        source.asTerminal().parameters().stream() //
-            .map(parameter -> String.format("this.%s = %s;", //
-                namer.getParameterType(parameter), //
-                namer.getParameterName(parameter, field, container))) //
-            .collect(joining());
+  @SuppressWarnings("static-method") public String constructorAssignment(FieldNode field) {
+    return field.getInferredFieldFragments().stream() //
+        .map(fragment -> String.format("this.%s = %s;", //
+            fragment.parameterName, fragment.parameterName)) //
+        .collect(joining());
   }
   public String printConstructor(ConcreteClassNode concreteClass) {
     return String.format("public %s(%s){%s}", //
-        namer.getClassName(concreteClass.source), //
+        concreteClass.getClassName(), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //
-            .map(field -> printField("%s %s", ",", field, concreteClass)) //
+            .map(field -> printField("%s %s", ",", field)) //
             .collect(joining(",")), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //
-            .map(field -> constructorAssignment(field, concreteClass)) //
+            .map(field -> constructorAssignment(field)) //
             .collect(joining()));
   }
   public boolean nonEmptyField(FieldNode field) {

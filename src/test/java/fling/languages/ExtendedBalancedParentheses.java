@@ -1,7 +1,7 @@
 package fling.languages;
 
-import static fling.generated.ExtendedBalancedParentheses.__;
 import static fling.automata.DPDA.dpda;
+import static fling.generated.ExtendedBalancedParentheses.__;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.ExtendedBalancedParentheses.Q.q0;
 import static fling.languages.ExtendedBalancedParentheses.Q.q1;
@@ -12,14 +12,12 @@ import static fling.languages.ExtendedBalancedParentheses.Σ.c;
 import static fling.languages.ExtendedBalancedParentheses.Σ.Ↄ;
 import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
 import fling.compiler.api.APICompiler;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
+import fling.namers.NaiveNamer;
 
 public class ExtendedBalancedParentheses {
   enum Q implements Named {
@@ -46,8 +44,8 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
       .go();
-  public static final String fluentAPI = new JavaAPIAdapter<Q, Σ, Γ>(new LinkedHashSet<>(EnumSet.allOf(Σ.class)), "fling.generated",
-      "ExtendedBalancedParentheses", "__", "$") //
+  public static final String fluentAPI = new JavaAPIAdapter<Q, Σ, Γ>("fling.generated", "ExtendedBalancedParentheses", "__", "$",
+      new NaiveNamer()) //
           .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
 
   public static void compilationTest() {

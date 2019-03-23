@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.joining;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
@@ -17,10 +18,12 @@ import fling.grammar.sententials.Word;
 public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
   private final String startMethodName;
   private final String terminationMethodName;
+  private final Namer namer;
 
-  public CppAPIAdapter(String startMethodName, String terminationMethodName) {
+  public CppAPIAdapter(String startMethodName, String terminationMethodName, Namer namer) {
     this.startMethodName = startMethodName;
     this.terminationMethodName = terminationMethodName;
+    this.namer = namer;
   }
   @Override public String printTopType() {
     return "TOP";
@@ -46,8 +49,8 @@ public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Name
   @Override public String printIntermediateMethod(APICompiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
     return String.format("virtual %s %s(%s) const;", printType(returnType), declaration.name.name(),
-        declaration.name.parameters().stream() //
-            .map(parameter -> String.format("%s %s", parameter.typeName(), parameter.parameterName())) //
+        declaration.getInferredParameters().stream() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
             .collect(joining(",")));
   }
   @Override public String printTopInterface() {
@@ -64,6 +67,7 @@ public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Name
   }
   @Override public String printFluentAPI(
       APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+    namer.name(fluentAPI);
     return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
             .collect(joining()), //

@@ -1,9 +1,11 @@
 package fling.compiler.api;
 
-import static fling.compiler.api.nodes.PolymorphicTypeNode.*;
+import static fling.compiler.api.nodes.PolymorphicTypeNode.bot;
+import static fling.compiler.api.nodes.PolymorphicTypeNode.top;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
+import static java.util.stream.Collectors.toList;
 import static fling.util.Collections.chainList;
 
 import java.util.ArrayList;
@@ -13,14 +15,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
-import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.APICompilationUnitNode;
+import fling.compiler.api.nodes.AbstractMethodNode;
+import fling.compiler.api.nodes.ConcreteImplementationNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Word;
 
 /**
@@ -47,7 +50,13 @@ public class APICompiler<Q, Σ, Γ> {
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
   }
   public APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
-    return new APICompilationUnitNode<>(compileStartMethods(), compileInterfaces());
+    return new APICompilationUnitNode<>(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
+  }
+  @SuppressWarnings("unused") private ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation() {
+    return new ConcreteImplementationNode<>(dpda.Σ() //
+        .filter(σ -> Constants.$ != σ) //
+        .map(σ -> new AbstractMethodNode.Chained<TypeName, MethodDeclaration>(new MethodDeclaration(σ))) //
+        .collect(toList()));
   }
   private List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
     return Collections.singletonList(new AbstractMethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));
@@ -77,7 +86,7 @@ public class APICompiler<Q, Σ, Γ> {
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
     List<AbstractMethodNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
     $.addAll(dpda.Σ().map(σ -> //
-    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList()));
+    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
@@ -110,7 +119,7 @@ public class APICompiler<Q, Σ, Γ> {
     if (δ.α.isEmpty())
       return consolidate(δ.q$, α, isInitialType);
     return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), //
-        dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(Collectors.toList()));
+        dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
   private PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> getTypeArgument(final δ<Q, Σ, Γ> δ, boolean isInitialType) {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
@@ -118,7 +127,7 @@ public class APICompiler<Q, Σ, Γ> {
   private List<PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName>> getTypeArguments(boolean isInitialType) {
     return !isInitialType ? asList(typeVariables.values())
         : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
-            .collect(Collectors.toList());
+            .collect(toList());
   }
 
   public class TypeName {
@@ -160,12 +169,31 @@ public class APICompiler<Q, Σ, Γ> {
 
   public class MethodDeclaration {
     public final Σ name;
+    private List<ParameterFragment> inferredParameters;
 
     public MethodDeclaration(Σ name) {
       this.name = name;
     }
-    MethodDeclaration() {
-      this.name = null;
+    public List<ParameterFragment> getInferredParameters() {
+      if (inferredParameters == null)
+        throw new IllegalStateException("parameter types and names not decided");
+      return inferredParameters;
+    }
+    public void setInferredParameters(List<ParameterFragment> inferredParameters) {
+      this.inferredParameters = inferredParameters;
+    }
+  }
+
+  public static class ParameterFragment {
+    public final String parameterType;
+    public final String parameterName;
+
+    private ParameterFragment(String parameterType, String parameterName) {
+      this.parameterType = parameterType;
+      this.parameterName = parameterName;
+    }
+    public static ParameterFragment of(String parameterType, String parameterName) {
+      return new ParameterFragment(parameterType, parameterName);
     }
   }
 

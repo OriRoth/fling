@@ -50,20 +50,40 @@ public class ASTCompiler {
           }
       }
     }
-    List<ClassNode> classes = new ArrayList<>();
+    Map<Variable, ClassNode> classes = new LinkedHashMap<>();
     for (Variable v : bnf.V)
       if (Constants.S == v)
         continue;
       else if (fields.containsKey(v))
         // Concrete class.
-        classes.add(new ConcreteClassNode(v, //
-            parents.getOrDefault(v, emptyList()), //
-            fields.getOrDefault(v, emptyList()).stream().map(FieldNode::new).collect(toList())));
+        classes.put(v, new ConcreteClassNode(v, //
+            new ArrayList<>(), // To be set later.
+            fields.getOrDefault(v, emptyList()).stream() //
+                .map(FieldNode::new) //
+                .collect(toList())));
       else
         // Abstract class.
-        classes.add(new AbstractClassNode(v, //
-            parents.getOrDefault(v, emptyList()), //
-            children.getOrDefault(v, emptyList())));
-    return new ASTCompilationUnitNode(classes, parents.values().stream().anyMatch(ps -> ps.size() > 1));
+        classes.put(v, new AbstractClassNode(v, //
+            new ArrayList<>(), // To be set later.
+            new ArrayList<>() // To be set later.
+        ));
+    // Set parents and children:
+    for (Variable v : bnf.V) {
+      if (Constants.S == v)
+        continue;
+      ClassNode classNode = classes.get(v);
+      if (classNode.isConcrete())
+        // Concrete class.
+        classNode.asConcrete().parents.addAll(parents.get(v).stream() //
+            .map(classes::get).map(ClassNode::asAbstract).collect(toList()));
+      else {
+        // Abstract class.
+        classNode.asAbstract().parents.addAll(parents.get(v).stream() //
+            .map(classes::get).map(ClassNode::asAbstract).collect(toList()));
+        classNode.asAbstract().children.addAll(children.get(v).stream() //
+            .map(classes::get).map(ClassNode::asConcrete).collect(toList()));
+      }
+    }
+    return new ASTCompilationUnitNode(classes.values(), parents.values().stream().anyMatch(ps -> ps.size() > 1));
   }
 }

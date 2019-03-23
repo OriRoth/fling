@@ -20,6 +20,9 @@ public class InterfaceNode<T, D, N> {
   public N declaration() {
     return declaration;
   }
+  public List<AbstractMethodNode<T, D>> methods() {
+    return methods;
+  }
   @SuppressWarnings("unchecked") public static <T, D, N> InterfaceNode<T, D, N> top() {
     return TOP;
   }

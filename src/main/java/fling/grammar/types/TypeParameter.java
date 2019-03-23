@@ -2,5 +2,5 @@ package fling.grammar.types;
 
 public interface TypeParameter {
   String typeName();
-  String parameterName();
+  String baseParameterName();
 }

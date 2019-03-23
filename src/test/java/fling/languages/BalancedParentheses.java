@@ -6,9 +6,6 @@ import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
 import static fling.languages.BalancedParentheses.Σ.ↄ;
 
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-
 import fling.adapters.JavaAPIAdapter;
 import fling.adapters.JavaInterfacesASTAdapter;
 import fling.compiler.Namer;
@@ -35,9 +32,9 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final String fluentAPI = new JavaAPIAdapter<>(new LinkedHashSet<Terminal>(EnumSet.allOf(Σ.class)),
-      "fling.generated", "BalancedParentheses", "__", "$")
-          .printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
+  private static Namer namer = new NaiveNamer();
+  public static final String fluentAPI = new JavaAPIAdapter<>("fling.generated", "BalancedParentheses", "__", "$", namer)
+      .printFluentAPI(new APICompiler<>(new LL1(bnf, namer).toDPDA()).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();
@@ -49,7 +46,6 @@ public class BalancedParentheses {
     __().ↄ();
   }
   public static void main(String[] args) {
-    Namer namer = new NaiveNamer();
     Grammar g = new LL1(bnf, namer);
     System.out.println(new JavaInterfacesASTAdapter("fling.generated", "BalancedParenthesesAST", namer)
         .printASTClass(new ASTCompiler(g.normalizedBNF).compileAST()));
