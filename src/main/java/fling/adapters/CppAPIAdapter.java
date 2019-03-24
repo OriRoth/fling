@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
-import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
@@ -15,7 +15,8 @@ import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
 
-public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named> implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
+public class CppAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
+    implements PolymorphicLanguageAPIBaseAdapter<Q, Σ, Γ> {
   private final String startMethodName;
   private final String terminationMethodName;
   private final Namer namer;

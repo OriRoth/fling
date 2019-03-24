@@ -3,14 +3,14 @@ package fling.adapters;
 import static java.util.stream.Collectors.joining;
 
 import fling.compiler.Namer;
-import fling.compiler.ast.PolymorphicLanguageASTAdapter;
+import fling.compiler.ast.PolymorphicLanguageASTAdapterBase;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.compiler.ast.nodes.AbstractClassNode;
 import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
 
-public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapter {
+public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
   private final String packageName;
   private final String className;
   private final Namer namer;

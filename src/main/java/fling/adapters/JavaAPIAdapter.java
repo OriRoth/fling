@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
-import fling.compiler.api.PolymorphicLanguageAPIAdapter;
+import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.AbstractMethodNode.Chained;
@@ -18,7 +18,7 @@ import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
 
 public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
-    implements PolymorphicLanguageAPIAdapter<Q, Σ, Γ> {
+    implements PolymorphicLanguageAPIBaseAdapter<Q, Σ, Γ> {
   private final String packageName;
   private final String className;
   private final String startMethodName;
@@ -102,19 +102,26 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
   }
   public String printConcreteImplementation(
       APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
-    return String.format("static class α implements %s{%s%s}", //
+    return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
-        fluentAPI.concreteImplementation.methods.stream() //
+        printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
             .map(AbstractMethodNode::asChainedMethod) //
             .map(Chained::declaration) //
-            .map(declaration -> String.format("public α %s(%s){return this;}", //
+            .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
                 declaration.name.name(), //
                 declaration.getInferredParameters().stream() //
                     .map(parameter -> String.format("%s %s", //
                         parameter.parameterType, //
                         parameter.parameterName)) //
-                    .collect(joining(",")))) //
+                    .collect(joining(",")), //
+                printConcreteImplementationMethodBody(declaration.name))) //
             .collect(joining()),
         "public void $(){}");
+  }
+  public String printConcreteImplementationClassBody() {
+    return "";
+  }
+  public String printConcreteImplementationMethodBody(Σ σ) {
+    return "";
   }
 }
