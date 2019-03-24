@@ -27,7 +27,7 @@ public abstract class Grammar {
     this.bnf = getBNF();
     this.normalizedBNF = getNormalizedBNF();
   }
-  public abstract DPDA<?, ?, ?> toDPDA();
+  public abstract <Q, Σ, Γ> DPDA<Q, Σ, Γ> toDPDA();
   private BNF getBNF() {
     Set<Variable> V = new LinkedHashSet<>(ebnf.V);
     Set<DerivationRule> R = new LinkedHashSet<>();

@@ -6,13 +6,13 @@ import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
 import static fling.languages.BalancedParentheses.Σ.ↄ;
 
-import fling.adapters.JavaAPIAdapter;
-import fling.adapters.JavaInterfacesASTAdapter;
+import fling.adapters.JavaCompleteAdapter;
+import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
 import fling.compiler.ast.ASTCompiler;
 import fling.grammar.BNF;
-import fling.grammar.Grammar;
 import fling.grammar.LL1;
+import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 import fling.namers.NaiveNamer;
@@ -31,8 +31,12 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final String fluentAPI = new JavaAPIAdapter<>("fling.generated", "BalancedParentheses", "__", "$", new NaiveNamer())
-      .printFluentAPI(new APICompiler<>(new LL1(bnf, new NaiveNamer()).toDPDA()).compileFluentAPI());
+  private static final Namer namer = new NaiveNamer();
+  private static final LL1 grammar = new LL1(bnf, namer);
+  private static final JavaCompleteAdapter<Named, Terminal, Named> adapter = new JavaCompleteAdapter<>("fling.generated",
+      "BalancedParentheses", "__", "$", namer);
+  public static final String astClasses = adapter.printASTClass(new ASTCompiler(grammar.normalizedBNF).compileAST());
+  public static final String fluentAPI = adapter.printFluentAPI(new APICompiler<>(grammar.toDPDA()).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();
@@ -44,8 +48,6 @@ public class BalancedParentheses {
     __().ↄ();
   }
   public static void main(String[] args) {
-    Grammar g = new LL1(bnf, new NaiveNamer());
-    System.out.println(new JavaInterfacesASTAdapter("fling.generated", "BalancedParenthesesAST", new NaiveNamer())
-        .printASTClass(new ASTCompiler(g.normalizedBNF).compileAST()));
+    System.out.println(astClasses);
   }
 }

@@ -40,7 +40,7 @@ public class LL1 extends Grammar {
     F = new LinkedHashSet<>();
     buildLL1Automaton();
   }
-  @Override public DPDA<Named, Terminal, Named> toDPDA() {
+  @SuppressWarnings("unchecked") @Override public DPDA<Named, Terminal, Named> toDPDA() {
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
   private void buildLL1Automaton() {

@@ -17,7 +17,7 @@ import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Word;
 
-public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
+@SuppressWarnings("static-method") public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
     implements PolymorphicLanguageAPIBaseAdapter<Q, Σ, Γ> {
   private final String packageName;
   private final String className;
@@ -51,7 +51,9 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
     return String.format("public static %s %s() {return new α();}", printType(returnType), startMethodName);
   }
   @Override public String printTerminationMethod() {
-    return String.format("void %s();", terminationMethodName);
+    return String.format("%s %s();", //
+        printTerminationMethodReturnType(), //
+        terminationMethodName);
   }
   @Override public String printIntermediateMethod(APICompiler<Q, Σ, Γ>.MethodDeclaration declaration,
       PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
@@ -116,12 +118,21 @@ public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Nam
                     .collect(joining(",")), //
                 printConcreteImplementationMethodBody(declaration.name))) //
             .collect(joining()),
-        "public void $(){}");
+        String.format("public %s %s(){%s}", //
+            printTerminationMethodReturnType(), //
+            terminationMethodName, //
+            printTerminationMethodConcreteBody()));
   }
   public String printConcreteImplementationClassBody() {
     return "";
   }
-  public String printConcreteImplementationMethodBody(Σ σ) {
+  public String printConcreteImplementationMethodBody(@SuppressWarnings("unused") Σ σ) {
+    return "";
+  }
+  public String printTerminationMethodReturnType() {
+    return "void";
+  }
+  public String printTerminationMethodConcreteBody() {
     return "";
   }
 }
