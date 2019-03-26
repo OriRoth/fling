@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import fling.languages.AnBn;
 import fling.languages.BalancedParentheses;
 import fling.languages.ExtendedBalancedParentheses;
+import fling.languages.LateFailure;
 import fling.languages.LongFall;
 
 public class CompilationScript {
@@ -22,6 +23,7 @@ public class CompilationScript {
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
     files.put("LongFall", LongFall.JavaFluentAPI);
     files.put("AnBn", AnBn.JavaFluentAPI);
+    files.put("LateFailure", LateFailure.JavaFluentAPI);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 
