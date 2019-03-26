@@ -13,6 +13,7 @@ import fling.compiler.Namer;
 import fling.grammar.sententials.DerivationRule;
 import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
+import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 
 public abstract class Grammar {
@@ -28,6 +29,7 @@ public abstract class Grammar {
     this.normalizedBNF = getNormalizedBNF();
   }
   public abstract <Q, Σ, Γ> DPDA<Q, Σ, Γ> toDPDA();
+  public abstract List<SyntaxNode> compile(List<Terminal> w);
   private BNF getBNF() {
     Set<Variable> V = new LinkedHashSet<>(ebnf.V);
     Set<DerivationRule> R = new LinkedHashSet<>();

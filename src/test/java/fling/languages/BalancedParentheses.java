@@ -18,11 +18,11 @@ import fling.grammar.sententials.Variable;
 import fling.namers.NaiveNamer;
 
 public class BalancedParentheses {
-  enum Σ implements Terminal {
+  public enum Σ implements Terminal {
     c, ↄ
   }
 
-  enum V implements Variable {
+  public enum V implements Variable {
     P
   }
 
@@ -34,7 +34,7 @@ public class BalancedParentheses {
   private static final Namer namer = new NaiveNamer();
   private static final LL1 grammar = new LL1(bnf, namer);
   private static final JavaCompleteAdapter<Named, Terminal, Named> adapter = new JavaCompleteAdapter<>("fling.generated",
-      "BalancedParentheses", "__", "$", namer);
+      "BalancedParentheses", "__", "$", namer, Σ.class);
   public static final String astClasses = adapter.printASTClass(new ASTCompiler(grammar.normalizedBNF).compileAST());
   public static final String fluentAPI = adapter.printFluentAPI(new APICompiler<>(grammar.toDPDA()).compileFluentAPI());
 

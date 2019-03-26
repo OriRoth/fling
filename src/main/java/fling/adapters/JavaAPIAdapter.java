@@ -65,7 +65,9 @@ import fling.grammar.sententials.Word;
             .collect(joining(",")));
   }
   @Override public String printTopInterface() {
-    return String.format("interface ${void %s();}", terminationMethodName);
+    return String.format("interface ${%s %s();}", //
+        printTerminationMethodReturnType(), //
+        terminationMethodName);
   }
   @Override public String printBotInterface() {
     return "interface ø {}";

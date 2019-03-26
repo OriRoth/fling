@@ -145,16 +145,26 @@ public class LL1 extends Grammar {
     }
     return new Word<>(reversed($));
   }
-
-  public class Item {
-    public final DerivationRule rule;
-    public final int dot;
-    public final Object lookahead;
-
-    public Item(DerivationRule rule, int dot, Object lookahead) {
-      this.rule = rule;
-      this.dot = dot;
-      this.lookahead = lookahead;
-    }
+  @Override public List<SyntaxNode> compile(List<Terminal> w) {
+    // assert normalizedBNF != null;
+    // Stack<SyntaxNode> stack = new Stack<>();
+    // stack.push(SyntaxNode.of(Constants.S));
+    // for (Terminal σ : w)
+    // for (;;) {
+    // assert !stack.isEmpty();
+    // SyntaxNode topNode = stack.pop();
+    // Symbol topSymbol = topNode.symbol;
+    // if (topSymbol.isTerminal()) {
+    // // Terminal consumption.
+    // assert σ.match(topSymbol.asTerminal());
+    // σ.asTerminal().arguments().forEach(topNode::addElement);
+    // break;
+    // }
+    // // TODO deal with more complex structures.
+    // // Variable popped.
+    // normalizedBNF.rhs(topSymbol.asVariable()).stream() //
+    // .filter(sf -> normalizedBNF.firsts(sf).contains(arg0))
+    // }
+    return null;
   }
 }

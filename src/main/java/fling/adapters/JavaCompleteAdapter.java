@@ -1,5 +1,8 @@
 package fling.adapters;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
@@ -14,9 +17,10 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
   private boolean afterASTProcessing = false;
   private final JavaAPIAdapter<Q, Σ, Γ> apiAdapter;
   private final JavaInterfacesASTAdapter astAdapter;
+  private final Class<? extends Σ> Σ;
 
   public JavaCompleteAdapter(String packageName, String className, String apiStartMethodName, String apiTerminationMethodName,
-      Namer namer) {
+      Namer namer, Class<? extends Σ> Σ) {
     this.apiAdapter = new JavaAPIAdapter<Q, Σ, Γ>(packageName, className, apiStartMethodName, apiTerminationMethodName, namer) {
       @Override public String printConcreteImplementationClassBody() {
         return JavaCompleteAdapter.this.printConcreteImplementationClassBody();
@@ -32,6 +36,7 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
       }
     };
     this.astAdapter = new JavaInterfacesASTAdapter(packageName, className + "AST", namer);
+    this.Σ = Σ;
   }
   @Override public String printASTClass(ASTCompilationUnitNode compilationUnit) {
     String output = astAdapter.printASTClass(compilationUnit);
@@ -46,10 +51,15 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
     return apiAdapter.printFluentAPI(fluentAPI);
   }
   public String printConcreteImplementationClassBody() {
-    return "";
+    return String.format("public %s<%s> w=new %s();", //
+        List.class.getCanonicalName(), //
+        Σ.getCanonicalName(), //
+        LinkedList.class.getCanonicalName());
   }
   public String printConcreteImplementationMethodBody(Σ σ) {
-    return "";
+    return String.format("this.w.add(%s.%s);", //
+        Σ.getCanonicalName(), //
+        σ.name());
   }
   public String printTerminationMethodReturnType() {
     return "void";
