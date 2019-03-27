@@ -40,4 +40,7 @@ public class Collections {
     java.util.Collections.reverse($);
     return new Word<>($);
   }
+  @SafeVarargs public static final <T> boolean included(T t, T... ts) {
+    return Arrays.asList(ts).contains(t);
+  }
 }

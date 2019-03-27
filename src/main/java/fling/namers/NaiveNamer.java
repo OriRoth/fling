@@ -121,12 +121,12 @@ public class NaiveNamer implements Namer {
             getNameFromBase(parameter.baseParameterName(), usedNames)))
         .collect(toList()));
   }
-  protected static String lowerCamelCase(String string) {
+  public static String lowerCamelCase(String string) {
     if (string.isEmpty())
       return string;
     return Character.toLowerCase(string.charAt(0)) + string.substring(1);
   }
-  private static String getNameFromBase(String baseName, Map<String, Integer> usedNames) {
+  public static String getNameFromBase(String baseName, Map<String, Integer> usedNames) {
     if (!usedNames.containsKey(baseName)) {
       usedNames.put(baseName, 2);
       return baseName;

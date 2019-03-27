@@ -7,8 +7,10 @@ import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
+import fling.compiler.ast.ASTParserCompiler;
 import fling.compiler.ast.PolymorphicLanguageASTAdapter;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
+import fling.grammar.BNF;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 
@@ -18,9 +20,10 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
   private final JavaAPIAdapter<Q, Σ, Γ> apiAdapter;
   private final JavaInterfacesASTAdapter astAdapter;
   private final Class<? extends Σ> Σ;
+  private final ASTParserCompiler parserCompiler;
 
   public JavaCompleteAdapter(String packageName, String className, String apiStartMethodName, String apiTerminationMethodName,
-      Namer namer, Class<? extends Σ> Σ) {
+      Namer namer, Class<? extends Σ> Σ, ASTParserCompiler parserCompiler) {
     this.apiAdapter = new JavaAPIAdapter<Q, Σ, Γ>(packageName, className, apiStartMethodName, apiTerminationMethodName, namer) {
       @Override public String printConcreteImplementationClassBody() {
         return JavaCompleteAdapter.this.printConcreteImplementationClassBody();
@@ -37,6 +40,7 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
     };
     this.astAdapter = new JavaInterfacesASTAdapter(packageName, className + "AST", namer);
     this.Σ = Σ;
+    this.parserCompiler = parserCompiler;
   }
   @Override public String printASTClass(ASTCompilationUnitNode compilationUnit) {
     String output = astAdapter.printASTClass(compilationUnit);
@@ -49,6 +53,9 @@ public class JavaCompleteAdapter<Q extends Named, Σ extends Terminal, Γ extend
     if (!afterASTProcessing)
       throw new IllegalStateException("cannot produce API types before creating AST classes");
     return apiAdapter.printFluentAPI(fluentAPI);
+  }
+  @Override public String printASTClass() {
+    return parserCompiler.printParserClass();
   }
   public String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //

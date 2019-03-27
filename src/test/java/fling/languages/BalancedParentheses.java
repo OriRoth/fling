@@ -10,8 +10,10 @@ import fling.adapters.JavaCompleteAdapter;
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
 import fling.compiler.ast.ASTCompiler;
+import fling.compiler.ast.ASTParserCompiler;
 import fling.grammar.BNF;
 import fling.grammar.LL1;
+import fling.grammar.LL1JavaASTParserCompiler;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
@@ -33,8 +35,10 @@ public class BalancedParentheses {
       build();
   private static final Namer namer = new NaiveNamer();
   private static final LL1 grammar = new LL1(bnf, namer);
+  private static final ASTParserCompiler astParserCompiler = new LL1JavaASTParserCompiler<>(grammar.normalizedBNF, Σ.class,
+      "BalancedParenthesesAST", "fling.generated", "BalancedParenthesesCompiler");
   private static final JavaCompleteAdapter<Named, Terminal, Named> adapter = new JavaCompleteAdapter<>("fling.generated",
-      "BalancedParentheses", "__", "$", namer, Σ.class);
+      "BalancedParentheses", "__", "$", namer, Σ.class, astParserCompiler);
   public static final String astClasses = adapter.printASTClass(new ASTCompiler(grammar.normalizedBNF).compileAST());
   public static final String fluentAPI = adapter.printFluentAPI(new APICompiler<>(grammar.toDPDA()).compileFluentAPI());
 
@@ -49,5 +53,6 @@ public class BalancedParentheses {
   }
   public static void main(String[] args) {
     System.out.println(astClasses);
+    System.out.println(adapter.printASTClass());
   }
 }
