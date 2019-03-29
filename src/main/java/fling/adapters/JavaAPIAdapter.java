@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
+import fling.compiler.api.APICompiler.ParameterFragment;
 import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
@@ -83,8 +84,9 @@ import fling.grammar.sententials.Word;
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s%s}", //
         packageName, //
         className, //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()),
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), printConcreteImplementation(fluentAPI));
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()), //
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
+        printConcreteImplementation(fluentAPI));
   }
   public String printTypeName(APICompiler.TypeName name) {
     return printTypeName(name.q, name.α);
@@ -117,7 +119,7 @@ import fling.grammar.sententials.Word;
                         parameter.parameterType, //
                         parameter.parameterName)) //
                     .collect(joining(",")), //
-                printConcreteImplementationMethodBody(declaration.name))) //
+                printConcreteImplementationMethodBody(declaration.name, declaration.getInferredParameters()))) //
             .collect(joining()),
         String.format("public %s %s(){%s}", //
             printTerminationMethodReturnType(), //
@@ -127,7 +129,7 @@ import fling.grammar.sententials.Word;
   public String printConcreteImplementationClassBody() {
     return "";
   }
-  public String printConcreteImplementationMethodBody(@SuppressWarnings("unused") Verb σ) {
+  @SuppressWarnings("unused") public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
     return "";
   }
   public String printTerminationMethodReturnType() {

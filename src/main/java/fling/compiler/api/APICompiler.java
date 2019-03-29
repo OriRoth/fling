@@ -197,6 +197,12 @@ public class APICompiler {
     public static ParameterFragment of(String parameterType, String parameterName) {
       return new ParameterFragment(parameterType, parameterName);
     }
+    public String parameterType() {
+      return parameterType();
+    }
+    public String parameterName() {
+      return parameterName;
+    }
   }
 
   public class InterfaceDeclaration {

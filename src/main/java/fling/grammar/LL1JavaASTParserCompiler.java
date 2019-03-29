@@ -10,12 +10,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import fling.compiler.Assignment;
 import fling.compiler.ast.ASTParserCompiler;
 import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
+import fling.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 import fling.util.Collections;
 
@@ -45,12 +47,21 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             .map(this::printParserVariableCompilerMethod) //
             .collect(joining()));
   }
+  @Override public String topClassName() {
+    return getClassForVariable(bnf.startVariables.stream().findAny().get());
+  }
+  @Override public String getTopClassParsingMethodName() {
+    return String.format("%s.%s.parse_%s", //
+        packageName, //
+        className, //
+        bnf.startVariables.stream().findAny().get().name());
+  }
   private String printParserVariableCompilerMethod(Variable v) {
     return String.format("public static %s parse_%s(%s<%s> w){%s}", //
         getClassForVariable(v), //
         v.name(), //
         inputClass.getCanonicalName(), //
-        Σ.getCanonicalName(), //
+        Assignment.class.getCanonicalName(), //
         Grammar.isSequenceRHS(bnf.rhs(v)) ? //
             printConcreteChildMethodBody(v) : //
             printAbstractParentMethodBody(v));
@@ -64,12 +75,12 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         .filter(bnf::isNullable) //
         .findAny();
     StringBuilder body = new StringBuilder();
-    if (bnf.isNullable(v) && bnf.follows.get(v).contains(Constants.$$))
-      // Nullable possibly last child.
+    if (bnf.isNullable(v))
+      // Nullable child.
       body.append(String.format("if(w.isEmpty())return parse_%s(w);", //
-          getClassForVariable(optionalNullableChild.get())));
+          optionalNullableChild.get().name()));
     // Read input letter:
-    body.append(Σ.getCanonicalName() + " σ = w.get(0);");
+    body.append(Assignment.class.getCanonicalName() + " a = w.get(0);");
     // Diverge by firsts sets:
     children.stream() //
         .filter(child -> !optionalNullableChild.isPresent() || !child.equals(optionalNullableChild.get())) //
@@ -86,6 +97,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private String printConcreteChildMethodBody(Variable v) {
     List<Symbol> children = bnf.rhs(v).get(0);
     StringBuilder body = new StringBuilder();
+    body.append(Assignment.class.getCanonicalName() + " a;");
     Map<String, Integer> usedNames = new HashMap<>();
     List<String> argumentNames = new ArrayList<>();
     // Consume input as necessary:
@@ -98,9 +110,19 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             variableName, //
             child.name()));
         argumentNames.add(variableName);
-      } else if (child.isVerb())
-        // TODO fetch arguments from terminal.
-        body.append("w.remove(0);");
+      } else if (child.isVerb()) {
+        body.append("a=w.remove(0);");
+        int index = 0;
+        for (TypeParameter parameter : child.asVerb().parameters) {
+          String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
+          body.append(String.format("%s %s=(%s)a.arguments.get(%s);", //
+              parameter.typeName(), //
+              variableName, //
+              parameter.typeName(), //
+              index++));
+          argumentNames.add(variableName);
+        }
+      }
     }
     // Compose abstract syntax node:
     body.append(String.format("return new %s(%s);", //
@@ -109,7 +131,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     return body.toString();
   }
   private String printTerminalInclusionCondition(Set<Verb> firsts) {
-    return String.format("%s.included(σ,%s)", //
+    return String.format("%s.included(a.σ,%s)", //
         Collections.class.getCanonicalName(), //
         firsts.stream() //
             .map(terminal -> String.format("%s.%s", //

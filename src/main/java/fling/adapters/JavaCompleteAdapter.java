@@ -1,10 +1,14 @@
 package fling.adapters;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.LinkedList;
 import java.util.List;
 
+import fling.compiler.Assignment;
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
+import fling.compiler.api.APICompiler.ParameterFragment;
 import fling.compiler.api.PolymorphicLanguageAPIAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.ast.ASTParserCompiler;
@@ -13,7 +17,8 @@ import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Verb;
 
-public class JavaCompleteAdapter implements PolymorphicLanguageAPIAdapter, PolymorphicLanguageASTAdapter {
+@SuppressWarnings("static-method") public class JavaCompleteAdapter
+    implements PolymorphicLanguageAPIAdapter, PolymorphicLanguageASTAdapter {
   private boolean afterASTProcessing = false;
   private final JavaAPIAdapter apiAdapter;
   private final JavaInterfacesASTAdapter astAdapter;
@@ -26,8 +31,8 @@ public class JavaCompleteAdapter implements PolymorphicLanguageAPIAdapter, Polym
       @Override public String printConcreteImplementationClassBody() {
         return JavaCompleteAdapter.this.printConcreteImplementationClassBody();
       }
-      @Override public String printConcreteImplementationMethodBody(Verb σ) {
-        return JavaCompleteAdapter.this.printConcreteImplementationMethodBody(σ);
+      @Override public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+        return JavaCompleteAdapter.this.printConcreteImplementationMethodBody(σ, parameters);
       }
       @Override public String printTerminationMethodReturnType() {
         return JavaCompleteAdapter.this.printTerminationMethodReturnType();
@@ -58,18 +63,22 @@ public class JavaCompleteAdapter implements PolymorphicLanguageAPIAdapter, Polym
   public String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         List.class.getCanonicalName(), //
-        Σ.getCanonicalName(), //
+        Assignment.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
-  public String printConcreteImplementationMethodBody(Verb σ) {
-    return String.format("this.w.add(%s.%s);", //
+  public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+    return String.format("this.w.add(new %s(%s.%s%s%s));", //
+        Assignment.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
-        σ.name());
+        σ.name(), //
+        parameters.isEmpty() ? "" : ",", //
+        parameters.stream().map(ParameterFragment::parameterName).collect(joining(",")));
   }
   public String printTerminationMethodReturnType() {
-    return "void";
+    return parserCompiler.topClassName();
   }
   public String printTerminationMethodConcreteBody() {
-    return "";
+    return String.format("return %s(w);", //
+        parserCompiler.getTopClassParsingMethodName());
   }
 }
