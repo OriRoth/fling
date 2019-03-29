@@ -72,6 +72,6 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
             .collect(joining()));
   }
   public boolean nonEmptyField(FieldNode field) {
-    return !field.source.isTerminal() || !field.source.asTerminal().parameters().isEmpty();
+    return !field.source.isVerb() || !field.source.asVerb().parameters.isEmpty();
   }
 }

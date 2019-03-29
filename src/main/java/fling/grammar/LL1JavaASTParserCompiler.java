@@ -15,6 +15,7 @@ import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
+import fling.grammar.sententials.Verb;
 import fling.namers.NaiveNamer;
 import fling.util.Collections;
 
@@ -63,7 +64,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         .filter(bnf::isNullable) //
         .findAny();
     StringBuilder body = new StringBuilder();
-    if (bnf.isNullable(v) && bnf.follows.get(v).contains(Constants.$))
+    if (bnf.isNullable(v) && bnf.follows.get(v).contains(Constants.$$))
       // Nullable possibly last child.
       body.append(String.format("if(w.isEmpty())return parse_%s(w);", //
           getClassForVariable(optionalNullableChild.get())));
@@ -97,7 +98,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             variableName, //
             child.name()));
         argumentNames.add(variableName);
-      } else if (child.isTerminal())
+      } else if (child.isVerb())
         // TODO fetch arguments from terminal.
         body.append("w.remove(0);");
     }
@@ -107,7 +108,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.join(",", argumentNames)));
     return body.toString();
   }
-  private String printTerminalInclusionCondition(Set<Terminal> firsts) {
+  private String printTerminalInclusionCondition(Set<Verb> firsts) {
     return String.format("%s.included(σ,%s)", //
         Collections.class.getCanonicalName(), //
         firsts.stream() //

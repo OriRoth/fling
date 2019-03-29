@@ -22,9 +22,7 @@ import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
 import fling.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import fling.grammar.sententials.DerivationRule;
-import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Symbol;
-import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 
 public class NaiveNamer implements Namer {
@@ -70,8 +68,8 @@ public class NaiveNamer implements Namer {
         .map(ConcreteClassNode::getFields) //
         .forEach(this::setInferredFieldsInClass);
   }
-  @Override public <Q extends Named, Σ extends Terminal, Γ extends Named> void name(
-      APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+  @Override public void name(
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     // TODO set start methods parameter names.
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
@@ -99,23 +97,23 @@ public class NaiveNamer implements Namer {
     for (FieldNode field : fields) {
       Symbol source = field.source;
       // TODO support more complex types.
-      assert source.isTerminal() || source.isVariable();
+      assert source.isVerb() || source.isVariable();
       if (source.isVariable()) {
         Variable v = source.asVariable();
         field.setInferredFieldFragments(singletonList(FieldNodeFragment.of( //
             getClassName(v), //
             getNameFromBase(getBaseParameterName(v), usedNames))));
-      } else if (source.isTerminal())
-        field.setInferredFieldFragments(source.asTerminal().parameters().stream() //
+      } else if (source.isVerb())
+        field.setInferredFieldFragments(source.asVerb().parameters.stream() //
             .map(parameter -> FieldNodeFragment.of( //
                 parameter.typeName(), //
                 getNameFromBase(parameter.baseParameterName(), usedNames))) //
             .collect(toList()));
     }
   }
-  protected void setInferredParametersIntermediateInMethod(APICompiler<?, ? extends Terminal, ?>.MethodDeclaration declaration) {
+  protected void setInferredParametersIntermediateInMethod(APICompiler.MethodDeclaration declaration) {
     Map<String, Integer> usedNames = new HashMap<>();
-    declaration.setInferredParameters(declaration.name.parameters().stream() //
+    declaration.setInferredParameters(declaration.name.parameters.stream() //
         .map(parameter -> ParameterFragment.of( //
             parameter.typeName(), //
             getNameFromBase(parameter.baseParameterName(), usedNames)))

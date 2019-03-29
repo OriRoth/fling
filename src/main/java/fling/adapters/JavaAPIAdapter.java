@@ -14,11 +14,10 @@ import fling.compiler.api.nodes.AbstractMethodNode.Chained;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Named;
-import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Verb;
 import fling.grammar.sententials.Word;
 
-@SuppressWarnings("static-method") public class JavaAPIAdapter<Q extends Named, Σ extends Terminal, Γ extends Named>
-    implements PolymorphicLanguageAPIBaseAdapter<Q, Σ, Γ> {
+@SuppressWarnings("static-method") public class JavaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String packageName;
   private final String className;
   private final String startMethodName;
@@ -38,16 +37,16 @@ import fling.grammar.sententials.Word;
   @Override public String printBotType() {
     return "ø";
   }
-  @Override public String printIntermediateType(APICompiler<Q, Σ, Γ>.TypeName name) {
+  @Override public String printIntermediateType(APICompiler.TypeName name) {
     return printTypeName(name);
   }
-  @Override public String printIntermediateType(APICompiler<Q, Σ, Γ>.TypeName name,
-      List<PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName>> typeArguments) {
+  @Override public String printIntermediateType(APICompiler.TypeName name,
+      List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
-  @Override public String printStartMethod(PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
+  @Override public String printStartMethod(PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("public static %s %s() {return new α();}", printType(returnType), startMethodName);
   }
   @Override public String printTerminationMethod() {
@@ -55,8 +54,8 @@ import fling.grammar.sententials.Word;
         printTerminationMethodReturnType(), //
         terminationMethodName);
   }
-  @Override public String printIntermediateMethod(APICompiler<Q, Σ, Γ>.MethodDeclaration declaration,
-      PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> returnType) {
+  @Override public String printIntermediateMethod(APICompiler.MethodDeclaration declaration,
+      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("%s %s(%s);", //
         printType(returnType), //
         declaration.name.name(), //
@@ -72,14 +71,14 @@ import fling.grammar.sententials.Word;
   @Override public String printBotInterface() {
     return "interface ø {}";
   }
-  @Override public String printInterface(APICompiler<Q, Σ, Γ>.InterfaceDeclaration declaration,
-      List<AbstractMethodNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration>> methods) {
+  @Override public String printInterface(APICompiler.InterfaceDeclaration declaration,
+      List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("interface %s{%s}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
   }
   @Override public String printFluentAPI(
-      APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s%s}", //
         packageName, //
@@ -87,25 +86,25 @@ import fling.grammar.sententials.Word;
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()),
         fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), printConcreteImplementation(fluentAPI));
   }
-  public String printTypeName(APICompiler<Q, Σ, Γ>.TypeName name) {
+  public String printTypeName(APICompiler.TypeName name) {
     return printTypeName(name.q, name.α);
   }
-  public String printTypeName(APICompiler<Q, Σ, Γ>.InterfaceDeclaration declaration) {
+  public String printTypeName(APICompiler.InterfaceDeclaration declaration) {
     return printTypeName(declaration.q, declaration.α);
   }
-  public String printTypeName(Q q, Word<Γ> α) {
+  public String printTypeName(Named q, Word<Named> α) {
     return α == null ? q.name() : String.format("%s_%s", q.name(), α.stream().map(Named::name).collect(Collectors.joining()));
   }
-  public String printInterfaceDeclaration(APICompiler<Q, Σ, Γ>.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(APICompiler.InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
         declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
   }
   public String printTypeName(
-      InterfaceNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> interfaze) {
+      InterfaceNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> interfaze) {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
   public String printConcreteImplementation(
-      APICompilationUnitNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration, APICompiler<Q, Σ, Γ>.InterfaceDeclaration> fluentAPI) {
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
@@ -128,7 +127,7 @@ import fling.grammar.sententials.Word;
   public String printConcreteImplementationClassBody() {
     return "";
   }
-  public String printConcreteImplementationMethodBody(@SuppressWarnings("unused") Σ σ) {
+  public String printConcreteImplementationMethodBody(@SuppressWarnings("unused") Verb σ) {
     return "";
   }
   public String printTerminationMethodReturnType() {

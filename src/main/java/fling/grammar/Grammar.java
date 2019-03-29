@@ -1,6 +1,8 @@
 package fling.grammar;
 
+import static fling.grammar.sententials.Alphabet.ε;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,9 +13,13 @@ import java.util.Set;
 import fling.automata.DPDA;
 import fling.compiler.Namer;
 import fling.grammar.sententials.DerivationRule;
+import fling.grammar.sententials.Named;
 import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
+import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
+import fling.grammar.sententials.Verb;
+import fling.grammar.sententials.Word;
 
 public abstract class Grammar {
   public final BNF ebnf;
@@ -72,5 +78,21 @@ public abstract class Grammar {
   }
   public static boolean isSequenceRHS(List<SententialForm> rhs) {
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable());
+  }
+  @SuppressWarnings({ "null", "unused" }) public static DPDA<Named, Verb, Named> cast(
+      DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
+    return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
+        dpda.Σ().map(Verb::new).collect(toSet()), //
+        new LinkedHashSet<>(dpda.Γ), //
+        dpda.δs.stream() //
+            .map(δ -> new DPDA.δ<Named, Verb, Named>(δ.q, δ.σ == ε() ? ε() : new Verb(δ.σ), δ.γ, δ.q$, new Word<>(δ.getΑ().stream() //
+                .map(Named.class::cast) //
+                .collect(toList())))) //
+            .collect(toSet()), //
+        new LinkedHashSet<>(dpda.F), //
+        dpda.q0, //
+        new Word<>(dpda.γ0.stream() //
+            .map(Named.class::cast) //
+            .collect(toList())));
   }
 }

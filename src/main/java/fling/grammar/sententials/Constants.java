@@ -9,6 +9,7 @@ public interface Constants {
       return "$";
     }
   };
+  public static final Verb $$ = new Verb($);
   public static final Variable S = new Variable() {
     @Override public String name() {
       return "S";

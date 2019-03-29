@@ -49,14 +49,14 @@ public class DPDATest {
   @Test public void testTransitionMatching() {
     δ<Q, Σ, Γ> δ = dpda.δ(q0, c, γ0);
     assertEquals(q1, δ.q$);
-    assertEquals(2, δ.α.size());
-    assertEquals(new Word<>(γ0, γ1), δ.α);
+    assertEquals(2, δ.getΑ().size());
+    assertEquals(new Word<>(γ0, γ1), δ.getΑ());
     assertNull(dpda.δ(q0, Ↄ, γ0));
   }
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
     δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
     assertEquals(q2, δ.q$);
-    assertTrue(δ.α.isEmpty());
+    assertTrue(δ.getΑ().isEmpty());
   }
 }

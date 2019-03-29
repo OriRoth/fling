@@ -1,12 +1,9 @@
 package fling.grammar.sententials;
 
-import java.util.Collections;
-import java.util.List;
-
-import fling.grammar.types.TypeParameter;
+import fling.grammar.types.ClassParameter;
 
 public interface Terminal extends Symbol {
-  default List<TypeParameter> parameters() {
-    return Collections.emptyList();
+  default Verb with(Class<?> parameterClass) {
+    return new Verb(this, new ClassParameter(parameterClass));
   }
 }

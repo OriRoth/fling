@@ -15,34 +15,30 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.DerivationRule;
 import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
-import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
+import fling.grammar.sententials.Verb;
 
 public class BNF {
   public final Set<DerivationRule> R;
   public final Set<Symbol> nullables;
-  public final Map<Symbol, Set<Terminal>> firsts;
-  public final Map<Variable, Set<Terminal>> follows;
-  public final Set<Terminal> Σ;
+  public final Map<Symbol, Set<Verb>> firsts;
+  public final Map<Variable, Set<Verb>> follows;
+  public final Set<Verb> Σ;
   public final Set<Variable> V;
   public final Set<Variable> startVariables;
 
-  public <Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> //
-  BNF(Class<Σ> Σ, Class<V> V, Set<DerivationRule> R, Set<Variable> startVariables, boolean addStartSymbolDerivationRules) {
-    this(new LinkedHashSet<>(EnumSet.allOf(Σ)), new LinkedHashSet<>(EnumSet.allOf(V)), R, startVariables,
-        addStartSymbolDerivationRules);
-  }
-  public BNF(Set<Terminal> Σ, Set<Variable> V, Set<DerivationRule> R, Set<Variable> startVariables,
+  public BNF(Set<Verb> Σ, Set<? extends Variable> V, Set<DerivationRule> R, Set<Variable> startVariables,
       boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
-    Σ.add(Constants.$);
-    this.V = V;
-    V.add(Constants.S);
+    Σ.add(Constants.$$);
+    this.V = new LinkedHashSet<>(V);
+    this.V.add(Constants.S);
     this.R = R;
     if (addStartSymbolDerivationRules) {
       R.add(new DerivationRule(Constants.S, new ArrayList<>()));
@@ -54,8 +50,8 @@ public class BNF {
     this.firsts = getFirsts();
     this.follows = getFollows();
   }
-  public static <Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> Builder<Σ, V> bnf(Class<Σ> Σ, Class<V> V) {
-    return new Builder<>(Σ, V);
+  public static <V extends Enum<V> & Variable> Builder<V> bnf(Class<V> V) {
+    return new Builder<>(V);
   }
   public Set<Symbol> symbols() {
     Set<Symbol> $ = new LinkedHashSet<>();
@@ -72,11 +68,11 @@ public class BNF {
   public boolean isNullable(List<Symbol> symbols) {
     return symbols.stream().allMatch(nullables::contains);
   }
-  public Set<Terminal> firsts(Symbol... symbols) {
+  public Set<Verb> firsts(Symbol... symbols) {
     return firsts(Arrays.asList(symbols));
   }
-  public Set<Terminal> firsts(Collection<Symbol> symbols) {
-    Set<Terminal> $ = new LinkedHashSet<>();
+  public Set<Verb> firsts(Collection<Symbol> symbols) {
+    Set<Verb> $ = new LinkedHashSet<>();
     for (Symbol s : symbols) {
       $.addAll(firsts.get(s));
       if (!isNullable(s))
@@ -93,8 +89,8 @@ public class BNF {
       ;
     return $;
   }
-  private Map<Symbol, Set<Terminal>> getFirsts() {
-    Map<Symbol, Set<Terminal>> $ = new LinkedHashMap<>();
+  private Map<Symbol, Set<Verb>> getFirsts() {
+    Map<Symbol, Set<Verb>> $ = new LinkedHashMap<>();
     Σ.forEach(σ -> $.put(σ, singleton(σ)));
     V.forEach(v -> $.put(v, new LinkedHashSet<>()));
     for (boolean changed = true; changed;) {
@@ -110,10 +106,10 @@ public class BNF {
     V.forEach(v -> $.put(v, unmodifiableSet($.get(v))));
     return unmodifiableMap($);
   }
-  private Map<Variable, Set<Terminal>> getFollows() {
-    Map<Variable, Set<Terminal>> $ = new LinkedHashMap<>();
+  private Map<Variable, Set<Verb>> getFollows() {
+    Map<Variable, Set<Verb>> $ = new LinkedHashMap<>();
     V.forEach(v -> $.put(v, new LinkedHashSet<>()));
-    $.get(Constants.S).add(Constants.$);
+    $.get(Constants.S).add(Constants.$$);
     for (boolean changed = true; changed;) {
       changed = false;
       for (Variable v : V)
@@ -132,30 +128,37 @@ public class BNF {
     return unmodifiableMap($);
   }
 
-  public static class Builder<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
-    private final Class<Σ> Σ;
+  public static class Builder<V extends Enum<V> & Variable> {
+    private final Set<Verb> Σ;
     private final Class<V> V;
     private final Set<DerivationRule> R;
     private final Set<Variable> starts;
 
-    public Builder(Class<Σ> Σ, Class<V> V) {
-      this.Σ = Σ;
+    public Builder(Class<V> V) {
+      this.Σ = new LinkedHashSet<>();
       this.V = V;
       this.R = new LinkedHashSet<>();
       for (V v : EnumSet.allOf(V))
         R.add(new DerivationRule(v, new ArrayList<>()));
       this.starts = new LinkedHashSet<>();
     }
-    public Builder<Σ, V> derive(Variable lhs, Symbol... sententialForm) {
-      rhs(lhs).add(new SententialForm(sententialForm));
+    public Builder<V> derive(Variable lhs, Symbol... sententialForm) {
+      rhs(lhs).add(new SententialForm(Arrays.stream(sententialForm) //
+          .map(symbol -> {
+            Symbol ret = !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
+            if (ret.isVerb())
+              Σ.add(ret.asVerb());
+            return ret;
+          }) //
+          .collect(Collectors.toList())));
       return this;
     }
-    @SafeVarargs public final Builder<Σ, V> start(V... startVariables) {
+    @SafeVarargs public final Builder<V> start(V... startVariables) {
       Collections.addAll(starts, startVariables);
       return this;
     }
     public BNF build() {
-      return new BNF(Σ, V, R, starts, true);
+      return new BNF(Σ, EnumSet.allOf(V), R, starts, true);
     }
     private List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);

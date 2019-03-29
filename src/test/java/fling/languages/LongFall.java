@@ -14,8 +14,10 @@ import fling.adapters.CppAPIAdapter;
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
 import fling.compiler.api.APICompiler;
+import fling.grammar.Grammar;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Verb;
 import fling.namers.NaiveNamer;
 
 public class LongFall {
@@ -31,7 +33,7 @@ public class LongFall {
     g0, g1
   }
 
-  public static final DPDA<Q, Σ, Γ> dpda = dpda(Q.class, Σ.class, Γ.class) //
+  public static final DPDA<Named, Verb, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(g0, g1) //
@@ -39,11 +41,11 @@ public class LongFall {
       .δ(q0, b, g1, q1) //
       .δ(q1, ε(), g1, q1) //
       .δ(q1, ε(), g0, q0, g0) //
-      .go();
-  public static final String JavaFluentAPI = new JavaAPIAdapter<Q, Σ, Γ>("fling.generated", "LongFall", "__", "$", new NaiveNamer()) //
-      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter<Q, Σ, Γ>("__", "$", new NaiveNamer()) //
-      .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
+      .go());
+  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "LongFall", "__", "$", new NaiveNamer()) //
+      .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+  public static final String CppFluentAPI = new CppAPIAdapter("__", "$", new NaiveNamer()) //
+      .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     __().a().a().a().a().a().a().a().$();

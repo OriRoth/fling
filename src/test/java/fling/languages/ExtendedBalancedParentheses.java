@@ -15,8 +15,10 @@ import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
 import fling.compiler.api.APICompiler;
+import fling.grammar.Grammar;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
+import fling.grammar.sententials.Verb;
 import fling.namers.NaiveNamer;
 
 public class ExtendedBalancedParentheses {
@@ -32,7 +34,7 @@ public class ExtendedBalancedParentheses {
     γ0, γ1
   }
 
-  public static final DPDA<Q, Σ, Γ> dpda = dpda(Q.class, Σ.class, Γ.class) //
+  public static final DPDA<Named, Verb, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(γ0) //
@@ -43,10 +45,10 @@ public class ExtendedBalancedParentheses {
       .δ(q1, Ↄ, γ1, q2) //
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
-      .go();
-  public static final String fluentAPI = new JavaAPIAdapter<Q, Σ, Γ>("fling.generated", "ExtendedBalancedParentheses", "__", "$",
+      .go());
+  public static final String fluentAPI = new JavaAPIAdapter("fling.generated", "ExtendedBalancedParentheses", "__", "$",
       new NaiveNamer()) //
-          .printFluentAPI(new APICompiler<>(dpda).compileFluentAPI());
+          .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     __().c().ↄ().$();

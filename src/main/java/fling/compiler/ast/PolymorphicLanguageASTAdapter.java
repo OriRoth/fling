@@ -4,7 +4,7 @@ import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 
 public interface PolymorphicLanguageASTAdapter {
   String printASTClass(ASTCompilationUnitNode compilationUnit);
-  default String printASTClass() {
+  default String printASTParser() {
     throw new UnsupportedOperationException();
   }
 }

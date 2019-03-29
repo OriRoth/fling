@@ -7,10 +7,16 @@ public interface Symbol extends Named {
   default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);
   }
+  default boolean isVerb() {
+    return this instanceof Verb || Constants.$$.equals(this);
+  }
   default Terminal asTerminal() {
     return (Terminal) this;
   }
   default Variable asVariable() {
     return (Variable) this;
+  }
+  default Verb asVerb() {
+    return (Verb) this;
   }
 }

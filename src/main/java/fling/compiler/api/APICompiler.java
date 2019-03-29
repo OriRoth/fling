@@ -5,8 +5,8 @@ import static fling.compiler.api.nodes.PolymorphicTypeNode.top;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
-import static java.util.stream.Collectors.toList;
 import static fling.util.Collections.chainList;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +24,8 @@ import fling.compiler.api.nodes.ConcreteImplementationNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 import fling.grammar.sententials.Constants;
+import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Verb;
 import fling.grammar.sententials.Word;
 
 /**
@@ -37,14 +39,14 @@ import fling.grammar.sententials.Word;
  * @author Ori Roth
  * @param <Q> states set
  * @param <Σ> alphabet set
- * @param <Γ> stack symbols set
+ * @param <Named> stack symbols set
  */
-public class APICompiler<Q, Σ, Γ> {
-  public final DPDA<Q, Σ, Γ> dpda;
+public class APICompiler {
+  public final DPDA<Named, Verb, Named> dpda;
   private final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types;
-  private final Map<Q, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
+  private final Map<Named, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
-  public APICompiler(DPDA<Q, Σ, Γ> dpda) {
+  public APICompiler(DPDA<Named, Verb, Named> dpda) {
     this.dpda = dpda;
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
@@ -54,7 +56,7 @@ public class APICompiler<Q, Σ, Γ> {
   }
   @SuppressWarnings("unused") private ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation() {
     return new ConcreteImplementationNode<>(dpda.Σ() //
-        .filter(σ -> Constants.$ != σ) //
+        .filter(σ -> Constants.$$ != σ) //
         .map(σ -> new AbstractMethodNode.Chained<TypeName, MethodDeclaration>(new MethodDeclaration(σ))) //
         .collect(toList()));
   }
@@ -75,7 +77,7 @@ public class APICompiler<Q, Σ, Γ> {
    * @param α current stack symbols to be pushed
    * @return type name
    */
-  private TypeName encodedName(final Q q, final Word<Γ> α) {
+  private TypeName encodedName(final Named q, final Word<Named> α) {
     final TypeName $ = new TypeName(q, α);
     if (types.containsKey($))
       return $;
@@ -83,8 +85,8 @@ public class APICompiler<Q, Σ, Γ> {
     types.put($, encodedBody(q, α));
     return $;
   }
-  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Q q, final Word<Γ> α) {
-    List<AbstractMethodNode<APICompiler<Q, Σ, Γ>.TypeName, APICompiler<Q, Σ, Γ>.MethodDeclaration>> $ = new ArrayList<>();
+  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α) {
+    List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> $ = new ArrayList<>();
     $.addAll(dpda.Σ().map(σ -> //
     new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
     if (dpda.isAccepting(q))
@@ -101,44 +103,44 @@ public class APICompiler<Q, Σ, Γ> {
    * @param σ current input letter
    * @return next state type
    */
-  private PolymorphicTypeNode<TypeName> next(final Q q, final Word<Γ> α, final Σ σ) {
-    final δ<Q, Σ, Γ> δ = dpda.δδ(q, σ, α.top());
+  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, final Verb σ) {
+    final δ<Named, Verb, Named> δ = dpda.δδ(q, σ, α.top());
     return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), false);
   }
-  private PolymorphicTypeNode<TypeName> consolidate(final Q q, final Word<Γ> α, boolean isInitialType) {
-    final δ<Q, Σ, Γ> δ = dpda.δδ(q, ε(), α.top());
+  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, boolean isInitialType) {
+    final δ<Named, Verb, Named> δ = dpda.δδ(q, ε(), α.top());
     return δ == null ? new PolymorphicTypeNode<>(encodedName(q, α), getTypeArguments(isInitialType))
         : common(δ, α.pop(), isInitialType);
   }
-  private PolymorphicTypeNode<TypeName> common(final δ<Q, Σ, Γ> δ, final Word<Γ> α, boolean isInitialType) {
+  private PolymorphicTypeNode<TypeName> common(final δ<Named, Verb, Named> δ, final Word<Named> α, boolean isInitialType) {
     if (α.isEmpty()) {
-      if (δ.α.isEmpty())
+      if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);
-      return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), getTypeArguments(isInitialType));
+      return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.getΑ()), getTypeArguments(isInitialType));
     }
-    if (δ.α.isEmpty())
+    if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, isInitialType);
-    return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.α), //
+    return new PolymorphicTypeNode<>(encodedName(δ.q$, δ.getΑ()), //
         dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
-  private PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName> getTypeArgument(final δ<Q, Σ, Γ> δ, boolean isInitialType) {
+  private PolymorphicTypeNode<APICompiler.TypeName> getTypeArgument(final δ<Named, Verb, Named> δ, boolean isInitialType) {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
   }
-  private List<PolymorphicTypeNode<APICompiler<Q, Σ, Γ>.TypeName>> getTypeArguments(boolean isInitialType) {
+  private List<PolymorphicTypeNode<APICompiler.TypeName>> getTypeArguments(boolean isInitialType) {
     return !isInitialType ? asList(typeVariables.values())
         : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
             .collect(toList());
   }
 
   public class TypeName {
-    public final Q q;
-    public final Word<Γ> α;
+    public final Named q;
+    public final Word<Named> α;
 
-    public TypeName(Q q, Word<Γ> α) {
+    public TypeName(Named q, Word<Named> α) {
       this.q = q;
       this.α = α;
     }
-    TypeName(Q q) {
+    TypeName(Named q) {
       this.q = q;
       this.α = null;
     }
@@ -159,7 +161,7 @@ public class APICompiler<Q, Σ, Γ> {
         return true;
       if (!(o instanceof APICompiler.TypeName))
         return false;
-      @SuppressWarnings("unchecked") APICompiler<Q, Σ, Γ>.TypeName other = (TypeName) o;
+      APICompiler.TypeName other = (TypeName) o;
       return Objects.equals(q, other.q) && Objects.equals(α, other.α);
     }
     @Override public String toString() {
@@ -168,10 +170,10 @@ public class APICompiler<Q, Σ, Γ> {
   }
 
   public class MethodDeclaration {
-    public final Σ name;
+    public final Verb name;
     private List<ParameterFragment> inferredParameters;
 
-    public MethodDeclaration(Σ name) {
+    public MethodDeclaration(Verb name) {
       this.name = name;
     }
     public List<ParameterFragment> getInferredParameters() {
@@ -198,11 +200,11 @@ public class APICompiler<Q, Σ, Γ> {
   }
 
   public class InterfaceDeclaration {
-    public final Q q;
-    public final Word<Γ> α;
-    @SuppressWarnings("hiding") public final Word<Q> typeVariables;
+    public final Named q;
+    public final Word<Named> α;
+    @SuppressWarnings("hiding") public final Word<Named> typeVariables;
 
-    public InterfaceDeclaration(Q q, Word<Γ> α, Word<Q> typeVariables) {
+    public InterfaceDeclaration(Named q, Word<Named> α, Word<Named> typeVariables) {
       this.q = q;
       this.α = α;
       this.typeVariables = typeVariables;

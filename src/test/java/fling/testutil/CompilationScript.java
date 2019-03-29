@@ -13,17 +13,21 @@ import java.util.Map.Entry;
 import fling.languages.AnBn;
 import fling.languages.BalancedParentheses;
 import fling.languages.ExtendedBalancedParentheses;
-import fling.languages.LateFailure;
 import fling.languages.LongFall;
+import fling.languages.TaggedBalancedParentheses;
 
 public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
-    files.put("BalancedParentheses", BalancedParentheses.fluentAPI);
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
     files.put("LongFall", LongFall.JavaFluentAPI);
     files.put("AnBn", AnBn.JavaFluentAPI);
-    files.put("LateFailure", LateFailure.JavaFluentAPI);
+    files.put("BalancedParentheses", BalancedParentheses.fluentAPI);
+    files.put("BalancedParenthesesAST", BalancedParentheses.astClasses);
+    files.put("BalancedParenthesesCompiler", BalancedParentheses.astParser);
+    files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.fluentAPI);
+    files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.astClasses);
+    files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.astParser);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 

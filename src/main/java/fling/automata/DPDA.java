@@ -91,7 +91,7 @@ public class DPDA<Q, Σ, Γ> {
     if (δ == null)
       return null;
     q$ = δ.q$;
-    s = s.pop().push(δ.α);
+    s = s.pop().push(δ.getΑ());
     // process subsequent ε transitions.
     for (;;) {
       if (s.isEmpty())
@@ -99,7 +99,7 @@ public class DPDA<Q, Σ, Γ> {
       final δ<Q, Σ, Γ> δ$ = δ(q$, ε(), s.top());
       if (δ$ == null)
         return new δ<>(q, σ, γ, q$, s);
-      s = s.pop().push(δ$.α);
+      s = s.pop().push(δ$.getΑ());
       q$ = δ$.q$;
     }
   }
@@ -176,7 +176,7 @@ public class DPDA<Q, Σ, Γ> {
     public final Σ σ;
     public final Γ γ;
     public final Q q$;
-    public final Word<Γ> α;
+    private final Word<Γ> α;
 
     public δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Word<Γ> α) {
       this.q = q;
@@ -196,17 +196,20 @@ public class DPDA<Q, Σ, Γ> {
     }
     @Override public int hashCode() {
       return 31 * (q$.hashCode() + 31 * (γ.hashCode() + 31 * (31 * (q.hashCode() + 31) + (σ == null ? 1 : σ.hashCode()))))
-          + α.hashCode();
+          + getΑ().hashCode();
     }
     @Override public boolean equals(final Object o) {
       return o == this || o instanceof δ && equals((δ<?, ?, ?>) o);
     }
     private boolean equals(final δ<?, ?, ?> other) {
       return q.equals(other.q) && (σ == ε() && other.σ == ε() || σ != ε() && σ.equals(other.σ)) && γ.equals(other.γ)
-          && q$.equals(other.q$) && α.equals(other.α);
+          && q$.equals(other.q$) && getΑ().equals(other.getΑ());
     }
     @Override public String toString() {
-      return String.format("<%s,%s,%s,%s,%s>", q, σ != ε() ? σ : "ε", γ, q$, α);
+      return String.format("<%s,%s,%s,%s,%s>", q, σ != ε() ? σ : "ε", γ, q$, getΑ());
+    }
+    public Word<Γ> getΑ() {
+      return α;
     }
   }
 }
