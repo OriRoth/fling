@@ -115,7 +115,7 @@ public class NaiveNamer implements Namer {
     Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters.stream() //
         .map(parameter -> ParameterFragment.of( //
-            parameter.typeName(), //
+            parameter.parameterTypeName(), //
             getNameFromBase(parameter.baseParameterName(), usedNames)))
         .collect(toList()));
   }

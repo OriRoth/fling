@@ -32,7 +32,7 @@ public class TaggedBalancedParentheses {
 
   public static final BNF bnf = bnf(V.class). //
       start(P). //
-      derive(P, c.with(char.class), P, ↄ.with(char.class), P). //
+      derive(P, c.many(char.class), P, ↄ.with(char.class), P). //
       derive(P). //
       build();
   public static final Namer namer = new NaiveNamer();
@@ -55,7 +55,7 @@ public class TaggedBalancedParentheses {
     __().ↄ('a');
   }
   public static void main(String[] args) {
-    P parseTree = __().c('a').c('b').ↄ('c').c('d').ↄ('e').ↄ('f').$();
+    P parseTree = __().c('a', 'a').c('b').ↄ('c').c('d').ↄ('e').ↄ('f').$();
     traverse(parseTree, 0);
   }
   private static void traverse(P p, int depth) {
