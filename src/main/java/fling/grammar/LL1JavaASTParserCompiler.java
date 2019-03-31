@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import fling.compiler.Assignment;
+import fling.compiler.Namer;
 import fling.compiler.ast.ASTParserCompiler;
 import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Symbol;
@@ -25,36 +26,34 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   @SuppressWarnings("rawtypes") private static final Class<? extends List> inputClass = List.class;
   private final BNF bnf;
   private final Class<Σ> Σ;
-  private final String astClassesContainerName;
+  private final Namer namer;
   private final String packageName;
-  private final String className;
+  private final String apiName;
+  private final String astClassesContainerName;
 
-  public LL1JavaASTParserCompiler(BNF bnf, Class<Σ> Σ, String astClassesContainerName, String packageName, String className) {
-    // TODO support multiple start variables.
-    assert bnf.startVariables.size() == 1;
+  public LL1JavaASTParserCompiler(BNF bnf, Class<Σ> Σ, Namer namer, String packageName, String apiName,
+      String astClassesContainerName) {
     this.bnf = bnf;
     this.Σ = Σ;
-    this.astClassesContainerName = astClassesContainerName;
+    this.namer = namer;
     this.packageName = packageName;
-    this.className = className;
+    this.apiName = apiName;
+    this.astClassesContainerName = astClassesContainerName;
   }
   @Override public String printParserClass() {
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s}", //
         packageName, //
-        className, //
+        apiName, //
         bnf.V.stream() //
             .filter(v -> !Constants.S.equals(v)) //
             .map(this::printParserVariableCompilerMethod) //
             .collect(joining()));
   }
-  @Override public String topClassName() {
-    return getClassForVariable(bnf.startVariables.stream().findAny().get());
-  }
-  @Override public String getTopClassParsingMethodName() {
+  @Override public String getParsingMethodName(Variable variable) {
     return String.format("%s.%s.parse_%s", //
         packageName, //
-        className, //
-        bnf.startVariables.stream().findAny().get().name());
+        apiName, //
+        variable.name());
   }
   private String printParserVariableCompilerMethod(Variable v) {
     return String.format("public static %s parse_%s(%s<%s> w){%s}", //
@@ -115,10 +114,15 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         int index = 0;
         for (TypeParameter parameter : child.asVerb().parameters) {
           String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
+          String typeName = parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
+              : String.format("%s.%s.%s", //
+                  packageName, //
+                  astClassesContainerName, //
+                  namer.headVariableClassName(parameter.asVariableTypeParameter().variable));
           body.append(String.format("%s %s=(%s)a.arguments.get(%s);", //
-              parameter.typeName(), //
+              typeName, //
               variableName, //
-              parameter.typeName(), //
+              typeName, //
               index++));
           argumentNames.add(variableName);
         }

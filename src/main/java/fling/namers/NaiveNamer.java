@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
@@ -21,17 +20,17 @@ import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
 import fling.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.grammar.sententials.DerivationRule;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Variable;
 
 public class NaiveNamer implements Namer {
-  Map<Variable, Integer> childrenCounter = new HashMap<>();
+  private final Map<Variable, Integer> childrenCounter = new HashMap<>();
+  private final String packageName;
+  private final String apiName;
 
-  @SuppressWarnings("unused") @Override public Symbol abbreviate(Symbol symbol, Consumer<Variable> newVariableCallback,
-      Consumer<DerivationRule> newRuleCallback) {
-    // TODO support regular expressions.
-    return symbol;
+  public NaiveNamer(String packageName, String apiName) {
+    this.packageName = packageName;
+    this.apiName = apiName;
   }
   @Override public Variable createChild(Variable v) {
     if (!childrenCounter.containsKey(v))
@@ -60,7 +59,7 @@ public class NaiveNamer implements Namer {
   @Override public void name(ASTCompilationUnitNode compilationUnit) {
     // Set class names:
     compilationUnit.classes //
-        .forEach(clazz -> clazz.setClassName(getClassName(clazz.source)));
+        .forEach(clazz -> clazz.setClassName(getASTClassName(clazz.source)));
     // Set field names:
     compilationUnit.classes.stream() //
         .filter(ClassNode::isConcrete) //
@@ -86,7 +85,7 @@ public class NaiveNamer implements Namer {
         .map(Chained::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
   }
-  @SuppressWarnings("static-method") protected String getClassName(Variable v) {
+  @Override public String getASTClassName(Variable v) {
     return v.name();
   }
   @SuppressWarnings("static-method") protected String getBaseParameterName(Variable v) {
@@ -101,12 +100,13 @@ public class NaiveNamer implements Namer {
       if (source.isVariable()) {
         Variable v = source.asVariable();
         field.setInferredFieldFragments(singletonList(FieldNodeFragment.of( //
-            getClassName(v), //
+            getASTClassName(v), //
             getNameFromBase(getBaseParameterName(v), usedNames))));
       } else if (source.isVerb())
         field.setInferredFieldFragments(source.asVerb().parameters.stream() //
             .map(parameter -> FieldNodeFragment.of( //
-                parameter.typeName(), //
+                parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
+                    : getASTClassName(parameter.asVariableTypeParameter().variable), //
                 getNameFromBase(parameter.baseParameterName(), usedNames))) //
             .collect(toList()));
     }
@@ -115,7 +115,12 @@ public class NaiveNamer implements Namer {
     Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters.stream() //
         .map(parameter -> ParameterFragment.of( //
-            parameter.parameterTypeName(), //
+            parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().parameterTypeName()
+                : String.format("%s.%s.%s.%s", //
+                    packageName, //
+                    apiName, //
+                    headVariableClassName(parameter.asVariableTypeParameter().variable), //
+                    headVariableConclusionTypeName()), //
             getNameFromBase(parameter.baseParameterName(), usedNames)))
         .collect(toList()));
   }
@@ -131,5 +136,11 @@ public class NaiveNamer implements Namer {
     }
     int position = usedNames.put(baseName, usedNames.get(baseName) + 1);
     return baseName + position;
+  }
+  @Override public String headVariableClassName(Variable variable) {
+    return variable.name();
+  }
+  @Override public String headVariableConclusionTypeName() {
+    return "$";
   }
 }

@@ -32,10 +32,10 @@ public class BalancedParentheses {
       derive(P, c, P, ↄ, P). //
       derive(P). //
       build();
-  public static final Namer namer = new NaiveNamer();
+  public static final Namer namer = new NaiveNamer("fling.generated", "BalancedParentheses");
   public static final LL1 grammar = new LL1(bnf, namer);
   public static final ASTParserCompiler astParserCompiler = new LL1JavaASTParserCompiler<>(grammar.normalizedBNF, Σ.class,
-      "BalancedParenthesesAST", "fling.generated", "BalancedParenthesesCompiler");
+      namer::headVariableClassName, "BalancedParenthesesAST", "fling.generated", "BalancedParenthesesCompiler");
   public static final JavaCompleteAdapter adapter = new JavaCompleteAdapter("fling.generated", "BalancedParentheses", "__", "$",
       namer, Σ.class, astParserCompiler);
   public static final String astClasses = adapter.printASTClass(new ASTCompiler(grammar.normalizedBNF).compileAST());

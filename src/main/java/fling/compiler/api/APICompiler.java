@@ -37,9 +37,6 @@ import fling.grammar.sententials.Word;
  * the chain may terminate its computation by calling {@code TERMINATED()}.
  *
  * @author Ori Roth
- * @param <Q> states set
- * @param <Σ> alphabet set
- * @param <Named> stack symbols set
  */
 public class APICompiler {
   public final DPDA<Named, Verb, Named> dpda;

@@ -8,7 +8,6 @@ import static java.util.stream.Collectors.toSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -23,6 +22,7 @@ import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
+import fling.grammar.types.TypeParameter;
 
 public class BNF {
   public final Set<DerivationRule> R;
@@ -31,9 +31,10 @@ public class BNF {
   public final Map<Variable, Set<Verb>> follows;
   public final Set<Verb> Σ;
   public final Set<Variable> V;
-  public final Set<Variable> startVariables;
+  public final Variable startVariable;
+  public final Set<Variable> headVariables;
 
-  public BNF(Set<Verb> Σ, Set<? extends Variable> V, Set<DerivationRule> R, Set<Variable> startVariables,
+  public BNF(Set<Verb> Σ, Set<? extends Variable> V, Set<DerivationRule> R, Variable startVariable, Set<Variable> headVariables,
       boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
     Σ.add(Constants.$$);
@@ -42,10 +43,10 @@ public class BNF {
     this.R = R;
     if (addStartSymbolDerivationRules) {
       R.add(new DerivationRule(Constants.S, new ArrayList<>()));
-      for (Variable v : startVariables)
-        rhs(Constants.S).add(new SententialForm(v));
+      rhs(Constants.S).add(new SententialForm(startVariable));
     }
-    this.startVariables = startVariables;
+    this.headVariables = headVariables;
+    this.startVariable = startVariable;
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
@@ -132,7 +133,8 @@ public class BNF {
     private final Set<Verb> Σ;
     private final Class<V> V;
     private final Set<DerivationRule> R;
-    private final Set<Variable> starts;
+    private V start;
+    private final Set<Variable> heads;
 
     public Builder(Class<V> V) {
       this.Σ = new LinkedHashSet<>();
@@ -140,7 +142,7 @@ public class BNF {
       this.R = new LinkedHashSet<>();
       for (V v : EnumSet.allOf(V))
         R.add(new DerivationRule(v, new ArrayList<>()));
-      this.starts = new LinkedHashSet<>();
+      this.heads = new LinkedHashSet<>();
     }
     public Builder<V> derive(Variable lhs, Symbol... sententialForm) {
       rhs(lhs).add(new SententialForm(Arrays.stream(sententialForm) //
@@ -151,14 +153,21 @@ public class BNF {
             return ret;
           }) //
           .collect(Collectors.toList())));
+      for (Symbol symbol : sententialForm)
+        // TODO support more complex structures.
+        if (symbol.isVerb())
+          symbol.asVerb().parameters.stream() //
+              .map(TypeParameter::declaredHeadVariables) //
+              .forEach(heads::addAll);
       return this;
     }
-    @SafeVarargs public final Builder<V> start(V... startVariables) {
-      Collections.addAll(starts, startVariables);
+    public final Builder<V> start(V startVariable) {
+      start = startVariable;
       return this;
     }
     public BNF build() {
-      return new BNF(Σ, EnumSet.allOf(V), R, starts, true);
+      assert start != null;
+      return new BNF(Σ, EnumSet.allOf(V), R, start, heads, true);
     }
     private List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);

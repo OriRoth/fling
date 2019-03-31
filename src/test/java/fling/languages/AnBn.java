@@ -44,9 +44,10 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AnBn", "__", "$", new NaiveNamer()) //
-      .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("__", "$", new NaiveNamer()) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AnBn", "__", "$",
+      new NaiveNamer("fling.generated", "AnBn")) //
+          .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+  public static final String CppFluentAPI = new CppAPIAdapter("__", "$", new NaiveNamer("fling.generated", "AnBn")) //
       .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {

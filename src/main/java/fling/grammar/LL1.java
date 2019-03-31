@@ -23,27 +23,17 @@ import fling.grammar.sententials.Verb;
 import fling.grammar.sententials.Word;
 
 public class LL1 extends Grammar {
-  public final Set<Named> Q;
-  public final Set<Verb> Σ;
-  public final Set<Named> Γ;
-  public final Set<δ<Named, Verb, Named>> δs;
-  public final Set<Named> F;
-  public Named q0;
-  public Word<Named> γ0;
-
   public LL1(BNF bnf, Namer namer) {
     super(bnf, namer);
-    Q = new LinkedHashSet<>();
-    Σ = new LinkedHashSet<>();
-    Γ = new LinkedHashSet<>();
-    δs = new LinkedHashSet<>();
-    F = new LinkedHashSet<>();
-    buildLL1Automaton();
   }
-  @SuppressWarnings("unchecked") @Override public DPDA<Named, Verb, Named> toDPDA() {
-    return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
-  }
-  private void buildLL1Automaton() {
+  @Override public DPDA<Named, Verb, Named> buildAutomaton(BNF bnf) {
+    Set<Named> Q = new LinkedHashSet<>();
+    Set<Verb> Σ = new LinkedHashSet<>();
+    Set<Named> Γ = new LinkedHashSet<>();
+    Set<δ<Named, Verb, Named>> δs = new LinkedHashSet<>();
+    Set<Named> F = new LinkedHashSet<>();
+    Named q0;
+    Word<Named> γ0;
     Σ.addAll(bnf.Σ);
     Σ.remove(Constants.$$);
     Q.addAll(Σ);
@@ -129,6 +119,7 @@ public class LL1 extends Grammar {
       }
     // Automaton should not stop in qσ.
     // Automaton gets stuck after reaching qT.
+    return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
   private boolean isNullable(Symbol s) {
     return bnf.isNullable(s);

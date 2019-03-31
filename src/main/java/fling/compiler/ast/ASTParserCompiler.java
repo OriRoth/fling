@@ -1,7 +1,8 @@
 package fling.compiler.ast;
 
+import fling.grammar.sententials.Variable;
+
 public interface ASTParserCompiler {
   String printParserClass();
-  String topClassName();
-  String getTopClassParsingMethodName();
+  String getParsingMethodName(Variable variable);
 }

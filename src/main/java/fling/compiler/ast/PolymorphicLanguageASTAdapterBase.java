@@ -1,10 +1,12 @@
 package fling.compiler.ast;
 
+import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.compiler.ast.nodes.AbstractClassNode;
 import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 
-public interface PolymorphicLanguageASTAdapterBase extends PolymorphicLanguageASTAdapter {
+public interface PolymorphicLanguageASTAdapterBase {
+  String printASTClass(ASTCompilationUnitNode compilationUnit);
   String printAbstractClass(AbstractClassNode abstractClass);
   String printConcreteClass(ConcreteClassNode concreteClass);
   default String printClass(ClassNode clazz) {

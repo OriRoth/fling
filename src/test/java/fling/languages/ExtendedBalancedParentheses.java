@@ -47,7 +47,7 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ0, q0, γ0) //
       .go());
   public static final String fluentAPI = new JavaAPIAdapter("fling.generated", "ExtendedBalancedParentheses", "__", "$",
-      new NaiveNamer()) //
+      new NaiveNamer("fling.generated", "ExtendedBalancedParentheses")) //
           .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {

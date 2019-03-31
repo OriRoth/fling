@@ -2,11 +2,14 @@ package fling.compiler.api;
 
 import java.util.List;
 
+import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
 
-public interface PolymorphicLanguageAPIBaseAdapter extends PolymorphicLanguageAPIAdapter {
+public interface PolymorphicLanguageAPIBaseAdapter {
+  String printFluentAPI(
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI);
   String printTopType();
   String printBotType();
   String printIntermediateType(APICompiler.TypeName name);

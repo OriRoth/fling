@@ -25,9 +25,9 @@ public class CompilationScript {
     files.put("BalancedParentheses", BalancedParentheses.fluentAPI);
     files.put("BalancedParenthesesAST", BalancedParentheses.astClasses);
     files.put("BalancedParenthesesCompiler", BalancedParentheses.astParser);
-    files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.fluentAPI);
-    files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.astClasses);
-    files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.astParser);
+    files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
+    files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
+    files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 

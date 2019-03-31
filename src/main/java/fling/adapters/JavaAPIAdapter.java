@@ -32,6 +32,17 @@ import fling.grammar.sententials.Word;
     this.className = className;
     this.namer = namer;
   }
+  @Override public String printFluentAPI(
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+    namer.name(fluentAPI);
+    return String.format("%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
+        packageName == null ? "" : String.format("package %s;", packageName), //
+        className, //
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()), //
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
+        printConcreteImplementation(fluentAPI), //
+        printAdditionalDeclarations());
+  }
   @Override public String printTopType() {
     return "$";
   }
@@ -65,7 +76,10 @@ import fling.grammar.sententials.Word;
             .collect(joining(",")));
   }
   @Override public String printTopInterface() {
-    return String.format("interface ${%s %s();}", //
+    return String.format("interface ${%s}", printTopInterfaceBody());
+  }
+  public String printTopInterfaceBody() {
+    return String.format("%s %s();", //
         printTerminationMethodReturnType(), //
         terminationMethodName);
   }
@@ -77,16 +91,6 @@ import fling.grammar.sententials.Word;
     return String.format("interface %s{%s}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
-  }
-  @Override public String printFluentAPI(
-      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
-    namer.name(fluentAPI);
-    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s%s}", //
-        packageName, //
-        className, //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()), //
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
-        printConcreteImplementation(fluentAPI));
   }
   public String printTypeName(APICompiler.TypeName name) {
     return printTypeName(name.q, name.α);
@@ -126,16 +130,19 @@ import fling.grammar.sententials.Word;
             terminationMethodName, //
             printTerminationMethodConcreteBody()));
   }
-  public String printConcreteImplementationClassBody() {
+  protected String printConcreteImplementationClassBody() {
     return "";
   }
-  @SuppressWarnings("unused") public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+  @SuppressWarnings("unused") protected String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
     return "";
   }
-  public String printTerminationMethodReturnType() {
+  protected String printTerminationMethodReturnType() {
     return "void";
   }
-  public String printTerminationMethodConcreteBody() {
+  protected String printTerminationMethodConcreteBody() {
+    return "";
+  }
+  protected String printAdditionalDeclarations() {
     return "";
   }
 }

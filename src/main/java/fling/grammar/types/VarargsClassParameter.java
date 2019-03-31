@@ -2,7 +2,7 @@ package fling.grammar.types;
 
 import java.util.Objects;
 
-public class VarargsClassParameter implements TypeParameter {
+public class VarargsClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
   public VarargsClassParameter(Class<?> parameterClass) {
