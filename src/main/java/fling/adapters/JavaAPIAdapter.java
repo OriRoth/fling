@@ -88,9 +88,13 @@ import fling.grammar.sententials.Word;
   }
   @Override public String printInterface(APICompiler.InterfaceDeclaration declaration,
       List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
-    return String.format("interface %s{%s}", //
+    return String.format("interface %s%s{%s}", //
         printInterfaceDeclaration(declaration), //
-        methods.stream().map(this::printMethod).collect(joining()));
+        " extends " + printTopType(), //
+        methods.stream() //
+            .filter(method -> !method.isTerminationMethod()) //
+            .map(this::printMethod) //
+            .collect(joining()));
   }
   public String printTypeName(APICompiler.TypeName name) {
     return printTypeName(name.q, name.α);

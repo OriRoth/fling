@@ -2,6 +2,7 @@ package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import fling.grammar.LL1JavaASTParserCompiler;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
+import fling.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 
 public class JavaMediator {
@@ -37,7 +39,7 @@ public class JavaMediator {
     this.ll1 = new LL1(bnf, namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "__", "$", namer) {
+    this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "_1", "$", namer) {
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
@@ -69,12 +71,24 @@ public class JavaMediator {
         LinkedList.class.getCanonicalName());
   }
   String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+    assert σ.parameters.size() == parameters.size();
+    List<String> processedParameters = new ArrayList<>();
+    for (int i = 0; i < parameters.size(); ++i) {
+      TypeParameter parameter = σ.parameters.get(i);
+      ParameterFragment declaration = parameters.get(i);
+      if (parameter.isVariableTypeParameter())
+        processedParameters.add(String.format("((%s.α)%s).$()", //
+            namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
+            declaration.parameterName));
+      else
+        processedParameters.add(declaration.parameterName);
+    }
     return String.format("this.w.add(new %s(%s.%s%s%s));", //
         Assignment.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
         σ.name(), //
-        parameters.isEmpty() ? "" : ",", //
-        parameters.stream().map(ParameterFragment::parameterName).collect(joining(",")));
+        processedParameters.isEmpty() ? "" : ",", //
+        String.join(",", processedParameters));
   }
   String printTerminationMethodReturnType(Variable head) {
     return String.format("%s.%s.%s", //
@@ -89,7 +103,7 @@ public class JavaMediator {
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "__", "$", namer) {
+        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "_2", "$", namer) {
           @Override public String printTopInterfaceBody() {
             return "";
           }
