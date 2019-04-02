@@ -1,7 +1,7 @@
 package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.generated.ExtendedBalancedParentheses.__;
+import static fling.generated.ExtendedBalancedParentheses.c;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.ExtendedBalancedParentheses.Q.q0;
 import static fling.languages.ExtendedBalancedParentheses.Q.q1;
@@ -46,17 +46,17 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
       .go());
-  public static final String fluentAPI = new JavaAPIAdapter("fling.generated", "ExtendedBalancedParentheses", "__", "$",
+  public static final String fluentAPI = new JavaAPIAdapter("fling.generated", "ExtendedBalancedParentheses", "$",
       new NaiveNamer("fling.generated", "ExtendedBalancedParentheses")) //
           .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
-    __().c().ↄ().$();
-    __().c().ↄ().ↄ();
-    __().c().c().c().ↄ().ↄ();
-    __().c().c().c().ↄ().ↄ().ↄ().$();
-    __().c().c().c().ↄ().Ↄ().c().ↄ().$();
-    __().c().c().c().ↄ().Ↄ().c();
-    __().c().c().c().ↄ().Ↄ().c().Ↄ().$();
+    c().ↄ().$();
+    c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ().ↄ().$();
+    c().c().c().ↄ().Ↄ().c().ↄ().$();
+    c().c().c().ↄ().Ↄ().c();
+    c().c().c().ↄ().Ↄ().c().Ↄ().$();
   }
 }

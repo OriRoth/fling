@@ -1,7 +1,8 @@
 package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.generated.LongFall.__;
+import static fling.generated.LongFall.a;
+import static fling.generated.LongFall.b;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.LongFall.Q.q0;
 import static fling.languages.LongFall.Q.q1;
@@ -42,14 +43,16 @@ public class LongFall {
       .δ(q1, ε(), g1, q1) //
       .δ(q1, ε(), g0, q0, g0) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "LongFall", "__", "$", new NaiveNamer("fling.generated", "LongFall")) //
-      .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("__", "$", new NaiveNamer("fling.generated", "LongFall")) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "LongFall", "$",
+      new NaiveNamer("fling.generated", "LongFall")) //
+          .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("fling.generated", "LongFall")) //
       .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
-    __().a().a().a().a().a().a().a().$();
-    __().a().a().a().a().a().a().a().b().$();
+    a().a().a().a().a().a().a().$();
+    a().a().a().a().a().a().a().b().$();
+    b().$();
   }
   public static void main(String[] args) {
     System.out.println(CppFluentAPI);

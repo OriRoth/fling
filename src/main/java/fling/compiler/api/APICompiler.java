@@ -58,7 +58,21 @@ public class APICompiler {
         .collect(toList()));
   }
   private List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    return Collections.singletonList(new AbstractMethodNode.Start<>(consolidate(dpda.q0, dpda.γ0, true)));
+    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
+    if (dpda.F.contains(dpda.q0))
+      $.add(new AbstractMethodNode.Start<>(new MethodDeclaration(Constants.$$), //
+          PolymorphicTypeNode.top()));
+    for (Verb σ : dpda.Σ) {
+      δ<Named, Verb, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+      if (δ == null)
+        continue;
+      AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
+          new AbstractMethodNode.Start<>(new MethodDeclaration(σ), //
+              consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
+      if (!startMethod.returnType.isBot())
+        $.add(startMethod);
+    }
+    return $;
   }
   private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return chainList(fixedInterfaces(), types.values());

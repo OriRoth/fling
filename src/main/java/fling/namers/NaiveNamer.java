@@ -14,6 +14,7 @@ import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.AbstractMethodNode.Chained;
 import fling.compiler.api.nodes.AbstractMethodNode.Intermediate;
+import fling.compiler.api.nodes.AbstractMethodNode.Start;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.compiler.ast.nodes.ClassNode;
@@ -78,6 +79,11 @@ public class NaiveNamer implements Namer {
         .filter(AbstractMethodNode::isIntermediateMethod) //
         .map(AbstractMethodNode::asIntermediateMethod) //
         .map(Intermediate::declaration) //
+        .forEach(this::setInferredParametersIntermediateInMethod);
+    // Set start methods parameter names:
+    fluentAPI.startMethods.stream() //
+        .map(AbstractMethodNode::asStartMethod) //
+        .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
     fluentAPI.concreteImplementation.methods.stream() //

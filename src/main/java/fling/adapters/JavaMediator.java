@@ -15,6 +15,7 @@ import fling.compiler.ast.ASTParserCompiler;
 import fling.grammar.BNF;
 import fling.grammar.LL1;
 import fling.grammar.LL1JavaASTParserCompiler;
+import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
@@ -39,7 +40,10 @@ public class JavaMediator {
     this.ll1 = new LL1(bnf, namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "_1", "$", namer) {
+    this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
+      @Override protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+        return JavaMediator.this.printStartMethodBody(σ, parameters);
+      }
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
@@ -64,6 +68,17 @@ public class JavaMediator {
     this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.toDPDA()).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
+  protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+    List<String> processedParameters = processParameters(σ, parameters);
+    return String.format("α α=new α();%sreturn α;", //
+        Constants.$$.equals(σ) ? "" //
+            : String.format("α.w.add(new %s(%s.%s%s%s));", //
+                Assignment.class.getCanonicalName(), //
+                Σ.getCanonicalName(), //
+                σ.name(), //
+                processedParameters.isEmpty() ? "" : ",", //
+                String.join(",", processedParameters)));
+  }
   @SuppressWarnings("static-method") String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         List.class.getCanonicalName(), //
@@ -72,17 +87,7 @@ public class JavaMediator {
   }
   String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
     assert σ.parameters.size() == parameters.size();
-    List<String> processedParameters = new ArrayList<>();
-    for (int i = 0; i < parameters.size(); ++i) {
-      TypeParameter parameter = σ.parameters.get(i);
-      ParameterFragment declaration = parameters.get(i);
-      if (parameter.isVariableTypeParameter())
-        processedParameters.add(String.format("((%s.α)%s).$()", //
-            namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
-            declaration.parameterName));
-      else
-        processedParameters.add(declaration.parameterName);
-    }
+    List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s%s%s));", //
         Assignment.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
@@ -103,7 +108,10 @@ public class JavaMediator {
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "_2", "$", namer) {
+        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "$", namer) {
+          @Override protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+            return JavaMediator.this.printStartMethodBody(σ, parameters);
+          }
           @Override public String printTopInterfaceBody() {
             return "";
           }
@@ -122,5 +130,19 @@ public class JavaMediator {
         } //
             .printFluentAPI(new APICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
+  }
+  private List<String> processParameters(Verb σ, List<ParameterFragment> parameters) {
+    List<String> processedParameters = new ArrayList<>();
+    for (int i = 0; i < parameters.size(); ++i) {
+      TypeParameter parameter = σ.parameters.get(i);
+      ParameterFragment declaration = parameters.get(i);
+      if (parameter.isVariableTypeParameter())
+        processedParameters.add(String.format("((%s.α)%s).$()", //
+            namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
+            declaration.parameterName));
+      else
+        processedParameters.add(declaration.parameterName);
+    }
+    return processedParameters;
   }
 }

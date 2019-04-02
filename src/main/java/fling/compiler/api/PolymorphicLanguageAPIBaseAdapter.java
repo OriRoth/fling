@@ -2,6 +2,7 @@ package fling.compiler.api;
 
 import java.util.List;
 
+import fling.compiler.api.APICompiler.MethodDeclaration;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.InterfaceNode;
@@ -20,11 +21,11 @@ public interface PolymorphicLanguageAPIBaseAdapter {
             : type.typeArguments.isEmpty() ? printIntermediateType(type.name)
                 : printIntermediateType(type.name, type.typeArguments);
   }
-  String printStartMethod(PolymorphicTypeNode<APICompiler.TypeName> returnType);
+  String printStartMethod(MethodDeclaration declaration, PolymorphicTypeNode<APICompiler.TypeName> returnType);
   String printTerminationMethod();
   String printIntermediateMethod(APICompiler.MethodDeclaration declaration, PolymorphicTypeNode<APICompiler.TypeName> returnType);
   default String printMethod(AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration> method) {
-    return method.isStartMethod() ? printStartMethod(method.asStartMethod().returnType) : //
+    return method.isStartMethod() ? printStartMethod(method.asStartMethod().declaration, method.asStartMethod().returnType) : //
         method.isTerminationMethod() ? printTerminationMethod() : //
             printIntermediateMethod(method.asIntermediateMethod().declaration, method.asIntermediateMethod().returnType);
   }

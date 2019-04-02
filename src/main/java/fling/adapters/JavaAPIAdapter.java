@@ -14,6 +14,7 @@ import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.AbstractMethodNode.Chained;
 import fling.compiler.api.nodes.InterfaceNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Verb;
 import fling.grammar.sententials.Word;
@@ -21,12 +22,10 @@ import fling.grammar.sententials.Word;
 @SuppressWarnings("static-method") public class JavaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String packageName;
   private final String className;
-  private final String startMethodName;
   private final String terminationMethodName;
   private final Namer namer;
 
-  public JavaAPIAdapter(String packageName, String className, String startMethodName, String terminationMethodName, Namer namer) {
-    this.startMethodName = startMethodName;
+  public JavaAPIAdapter(String packageName, String className, String terminationMethodName, Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.packageName = packageName;
     this.className = className;
@@ -58,8 +57,15 @@ import fling.grammar.sententials.Word;
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
-  @Override public String printStartMethod(PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("public static %s %s() {return new α();}", printType(returnType), startMethodName);
+  @Override public String printStartMethod(APICompiler.MethodDeclaration declaration,
+      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+    return String.format("public static %s %s(%s) {%s}", //
+        printType(returnType), //
+        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
+        declaration.getInferredParameters().stream() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+            .collect(joining(",")), //
+        printStartMethodBody(declaration.name, declaration.getInferredParameters()));
   }
   @Override public String printTerminationMethod() {
     return String.format("%s %s();", //
@@ -133,6 +139,9 @@ import fling.grammar.sententials.Word;
             printTerminationMethodReturnType(), //
             terminationMethodName, //
             printTerminationMethodConcreteBody()));
+  }
+  @SuppressWarnings("unused") protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+    return "return new α();";
   }
   protected String printConcreteImplementationClassBody() {
     return "";

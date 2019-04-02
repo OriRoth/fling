@@ -1,6 +1,6 @@
 package fling.languages;
 
-import static fling.generated.BalancedParentheses._1;
+import static fling.generated.BalancedParentheses.c;
 import static fling.grammar.BNF.bnf;
 import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
@@ -29,12 +29,12 @@ public class BalancedParentheses {
       "fling.generated", "BalancedParentheses", Σ.class);
 
   public static void compilationTest() {
-    _1().c().ↄ().$();
-    _1().c().ↄ().ↄ();
-    _1().c().c().c().ↄ().ↄ();
-    _1().c().c().c().ↄ().ↄ().ↄ().$();
-    _1().c().c().ↄ().ↄ().c().ↄ().$();
-    _1().c().c().ↄ().ↄ().c();
-    _1().ↄ();
+    c().ↄ().$();
+    c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ().ↄ().$();
+    c().c().ↄ().ↄ().c().ↄ().$();
+    c().c().ↄ().ↄ().c();
+    // ↄ();
   }
 }

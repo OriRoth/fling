@@ -1,7 +1,9 @@
 package fling.languages;
 
-import static fling.generated.TaggedBalancedParentheses._1;
-import static fling.generated.TaggedBalancedParentheses.AB._2;
+import static fling.generated.TaggedBalancedParentheses.c;
+import static fling.generated.TaggedBalancedParentheses.__;
+import static fling.generated.TaggedBalancedParentheses.AB.a;
+import static fling.generated.TaggedBalancedParentheses.AB.b;
 import static fling.grammar.BNF.bnf;
 import static fling.languages.TaggedBalancedParentheses.V.AB;
 import static fling.languages.TaggedBalancedParentheses.V.P;
@@ -39,17 +41,19 @@ public class TaggedBalancedParentheses {
       "fling.generated", "TaggedBalancedParentheses", Σ.class);
 
   public static void compilationTest() {
-    _1().c('a', 'a').ↄ(_2().a()).$();
-    _1().c('a', 'a').ↄ(_2().a()).ↄ(_2().a());
-    _1().c('a', 'a').c('b').c('c').ↄ(_2().a()).ↄ(_2().a());
-    _1().c('a', 'a').c('b').c('c').ↄ(_2().a()).ↄ(_2().b()).ↄ(_2().a()).$();
-    _1().c('a', 'a').c('b').ↄ(_2().a()).ↄ(_2().b()).c('e').ↄ(_2().a()).$();
-    _1().c('a', 'a').c('b').ↄ(_2().a()).ↄ(_2().b()).c('e');
-    _1().ↄ(_2().a());
+    c('a', 'a').ↄ(a()).$();
+    c('a', 'a').ↄ(a()).ↄ(a());
+    c('a', 'a').c('b').c('c').ↄ(a()).ↄ(a());
+    c('a', 'a').c('b').c('c').ↄ(a()).ↄ(b()).ↄ(a()).$();
+    c('a', 'a').c('b').ↄ(a()).ↄ(b()).c('e').ↄ(a()).$();
+    c('a', 'a').c('b').ↄ(a()).ↄ(b()).c('e');
+    __().$();
+    // ↄ(a());
   }
   public static void main(String[] args) {
-    P parseTree = _1().c('a', 'a').c('b', 'b').ↄ(_2().a()).c('d').ↄ(_2().b()).ↄ(_2().a()).$();
+    P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b()).ↄ(a()).$();
     traverse(parseTree, 0);
+    traverse(__().$(), 0);
   }
   private static void traverse(P p, int depth) {
     if (p instanceof P1)

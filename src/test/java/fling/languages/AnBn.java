@@ -1,7 +1,7 @@
 package fling.languages;
 
 import static fling.automata.DPDA.dpda;
-import static fling.generated.AnBn.__;
+import static fling.generated.AnBn.a;
 import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.AnBn.Q.q0;
 import static fling.languages.AnBn.Q.q1;
@@ -44,15 +44,15 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AnBn", "__", "$",
+  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AnBn", "$",
       new NaiveNamer("fling.generated", "AnBn")) //
           .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("__", "$", new NaiveNamer("fling.generated", "AnBn")) //
+  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("fling.generated", "AnBn")) //
       .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
-    __().a().a().a().b().b().b().$();
-    __().a().a().a().b().b();
+    a().a().a().b().b().b().$();
+    a().a().a().b().b();
   }
   public static void main(String[] args) {
     System.out.println(CppFluentAPI);

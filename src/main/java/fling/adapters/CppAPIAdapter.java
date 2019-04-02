@@ -11,16 +11,15 @@ import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.PolymorphicTypeNode;
+import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Word;
 
 public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
-  private final String startMethodName;
   private final String terminationMethodName;
   private final Namer namer;
 
-  public CppAPIAdapter(String startMethodName, String terminationMethodName, Namer namer) {
-    this.startMethodName = startMethodName;
+  public CppAPIAdapter(String terminationMethodName, Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.namer = namer;
   }
@@ -39,8 +38,11 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
-  @Override public String printStartMethod(PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("%s* %s() {return nullptr;}", printType(returnType), startMethodName);
+  @Override public String printStartMethod(APICompiler.MethodDeclaration declaration,
+      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+    return String.format("%s* %s() {return nullptr;}", //
+        printType(returnType), //
+        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name());
   }
   @Override public String printTerminationMethod() {
     return String.format("virtual void %s() const;", terminationMethodName);

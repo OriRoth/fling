@@ -2,11 +2,16 @@ package fling.compiler.api.nodes;
 
 public interface AbstractMethodNode<T, D> {
   public static class Start<T, D> implements AbstractMethodNode<T, D> {
-    // TODO add declaration.
+    public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 
-    public Start(PolymorphicTypeNode<T> returnType) {
+    public Start(D declaration, PolymorphicTypeNode<T> returnType) {
+      this.declaration = declaration;
       this.returnType = returnType;
+    }
+    
+    public D declaration() {
+      return declaration;
     }
   }
 
