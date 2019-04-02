@@ -35,7 +35,8 @@ public class TaggedBalancedParentheses {
       derive(AB, a). //
       derive(AB, b). //
       build();
-  public static final JavaMediator jm = new JavaMediator(bnf, "fling.generated", "TaggedBalancedParentheses", Σ.class);
+  public static final JavaMediator jm = new JavaMediator(bnf, //
+      "fling.generated", "TaggedBalancedParentheses", Σ.class);
 
   public static void compilationTest() {
     _1().c('a', 'a').ↄ(_2().a()).$();

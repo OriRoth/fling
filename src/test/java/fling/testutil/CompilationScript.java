@@ -22,9 +22,9 @@ public class CompilationScript {
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
     files.put("LongFall", LongFall.JavaFluentAPI);
     files.put("AnBn", AnBn.JavaFluentAPI);
-    files.put("BalancedParentheses", BalancedParentheses.fluentAPI);
-    files.put("BalancedParenthesesAST", BalancedParentheses.astClasses);
-    files.put("BalancedParenthesesCompiler", BalancedParentheses.astParser);
+    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
+    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
+    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
     files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
     files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
     files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
