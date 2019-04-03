@@ -39,9 +39,9 @@ public class BNF {
     this.Σ = Σ;
     Σ.add(Constants.$$);
     this.V = new LinkedHashSet<>(V);
-    this.V.add(Constants.S);
     this.R = R;
     if (addStartSymbolDerivationRules) {
+      this.V.add(Constants.S);
       R.add(new DerivationRule(Constants.S, new ArrayList<>()));
       rhs(Constants.S).add(new SententialForm(startVariable));
     }
@@ -80,6 +80,34 @@ public class BNF {
         break;
     }
     return unmodifiableSet($);
+  }
+  public BNF reachableSubBNF() {
+    Set<DerivationRule> subR = new LinkedHashSet<>();
+    Set<Verb> subΣ = new LinkedHashSet<>();
+    Set<Variable> subV = new LinkedHashSet<>();
+    Set<Variable> newSubV = new LinkedHashSet<>();
+    newSubV.add(startVariable);
+    int previousCount = -1;
+    while (previousCount < subV.size()) {
+      previousCount = subV.size();
+      Set<Variable> newestSubV = new LinkedHashSet<>();
+      for (DerivationRule rule : R) {
+        if (!newSubV.contains(rule.lhs))
+          continue;
+        subR.add(rule);
+        for (SententialForm sf : rule.rhs)
+          for (Symbol symbol : sf)
+            if (symbol.isVerb())
+              subΣ.add(symbol.asVerb());
+            else if (symbol.isVariable())
+              newestSubV.add(symbol.asVariable());
+            else
+              throw new RuntimeException("problem while analyzing BNF");
+      }
+      subV.addAll(newSubV);
+      newSubV = newestSubV;
+    }
+    return new BNF(subΣ, subV, subR, startVariable, null, true);
   }
   private Set<Symbol> getNullables() {
     Set<Symbol> $ = new LinkedHashSet<>();

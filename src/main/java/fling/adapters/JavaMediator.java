@@ -65,7 +65,7 @@ public class JavaMediator {
     this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
     this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedBNF).compileAST());
-    this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.toDPDA()).compileFluentAPI());
+    this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
   protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
@@ -128,7 +128,7 @@ public class JavaMediator {
             return JavaMediator.this.printTerminationMethodConcreteBody(bnf.startVariable);
           }
         } //
-            .printFluentAPI(new APICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+            .printFluentAPI(new APICompiler(ll1.buildAutomaton(bnf.reachableSubBNF())).compileFluentAPI())) //
         .collect(joining());
   }
   private List<String> processParameters(Verb σ, List<ParameterFragment> parameters) {
