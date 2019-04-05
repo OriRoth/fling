@@ -1,18 +1,31 @@
 package fling.grammar.types;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
+// TODO allow primitive types.
 public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
   public ClassParameter(Class<?> parameterClass) {
-    this.parameterClass = Objects.requireNonNull(parameterClass);
+    this.parameterClass = replacePrimitive(requireNonNull(parameterClass));
+  }
+  private static Class<?> replacePrimitive(Class<?> c) {
+    return byte.class.equals(c) ? Byte.class : //
+        short.class.equals(c) ? Short.class : //
+            int.class.equals(c) ? Integer.class : //
+                long.class.equals(c) ? Long.class : //
+                    float.class.equals(c) ? Float.class : //
+                        double.class.equals(c) ? Double.class : //
+                            boolean.class.equals(c) ? Boolean.class : //
+                                char.class.equals(c) ? Character.class : //
+                                    void.class.equals(c) ? Void.class : //
+                                        c;
   }
   @Override public String typeName() {
     return parameterClass.getCanonicalName();
   }
   @Override public String baseParameterName() {
-    return String.valueOf(Character.toLowerCase(parameterClass.getName().charAt(0)));
+    return String.valueOf(Character.toLowerCase(parameterClass.getSimpleName().charAt(0)));
   }
   @Override public int hashCode() {
     return parameterClass.hashCode();

@@ -10,6 +10,9 @@ public interface Symbol extends Named {
   default boolean isVerb() {
     return this instanceof Verb || Constants.$$.equals(this);
   }
+  default boolean isNotation() {
+    return this instanceof Notation;
+  }
   default Terminal asTerminal() {
     return (Terminal) this;
   }
@@ -18,5 +21,8 @@ public interface Symbol extends Named {
   }
   default Verb asVerb() {
     return (Verb) this;
+  }
+  default Notation asNotation() {
+    return (Notation) this;
   }
 }

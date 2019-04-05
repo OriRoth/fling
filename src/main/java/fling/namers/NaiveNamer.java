@@ -25,7 +25,8 @@ import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Variable;
 
 public class NaiveNamer implements Namer {
-  private final Map<Variable, Integer> childrenCounter = new HashMap<>();
+  private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
+  private final Map<Symbol, Integer> notationsChildrenCounter = new HashMap<>();
   private final String packageName;
   private final String apiName;
 
@@ -33,29 +34,18 @@ public class NaiveNamer implements Namer {
     this.packageName = packageName;
     this.apiName = apiName;
   }
-  @Override public Variable createChild(Variable v) {
-    if (!childrenCounter.containsKey(v))
-      childrenCounter.put(v, 1);
-    String name = v.name() + childrenCounter.put(v, childrenCounter.get(v) + 1);
-    return new Variable() {
-      @Override public String name() {
-        return name;
-      }
-      @Override public String toString() {
-        return name;
-      }
-      @Override public int hashCode() {
-        return name.hashCode();
-      }
-      @Override public boolean equals(Object obj) {
-        if (this == obj)
-          return true;
-        if (!(obj instanceof Variable))
-          return false;
-        Variable other = (Variable) obj;
-        return name().equals(other.name());
-      }
-    };
+  @Override public Variable createASTChild(Variable variable) {
+    if (!astChildrenCounter.containsKey(variable))
+      astChildrenCounter.put(variable, 1);
+    String name = variable.name() + astChildrenCounter.put(variable, astChildrenCounter.get(variable) + 1);
+    return Variable.byName(name);
+  }
+  @Override public Variable createNotationChild(Symbol symbol) {
+    assert symbol.isVerb() || symbol.isVariable();
+    if (!notationsChildrenCounter.containsKey(symbol))
+      notationsChildrenCounter.put(symbol, 1);
+    String name = symbol.name() + notationsChildrenCounter.put(symbol, notationsChildrenCounter.get(symbol) + 1);
+    return Variable.byName(name);
   }
   @Override public void name(ASTCompilationUnitNode compilationUnit) {
     // Set class names:
@@ -99,23 +89,23 @@ public class NaiveNamer implements Namer {
   }
   protected void setInferredFieldsInClass(List<FieldNode> fields) {
     Map<String, Integer> usedNames = new HashMap<>();
-    for (FieldNode field : fields) {
-      Symbol source = field.source;
-      // TODO support more complex types.
-      assert source.isVerb() || source.isVariable();
-      if (source.isVariable()) {
-        Variable v = source.asVariable();
-        field.setInferredFieldFragments(singletonList(FieldNodeFragment.of( //
-            getASTClassName(v), //
-            getNameFromBase(getBaseParameterName(v), usedNames))));
-      } else if (source.isVerb())
-        field.setInferredFieldFragments(source.asVerb().parameters.stream() //
-            .map(parameter -> FieldNodeFragment.of( //
-                parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
-                    : getASTClassName(parameter.asVariableTypeParameter().variable), //
-                getNameFromBase(parameter.baseParameterName(), usedNames))) //
-            .collect(toList()));
-    }
+    fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
+  }
+  private List<FieldNodeFragment> getFields(Symbol symbol, Map<String, Integer> usedNames) {
+    if (symbol.isVerb())
+      return symbol.asVerb().parameters.stream() //
+          .map(parameter -> FieldNodeFragment.of( //
+              parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
+                  : getASTClassName(parameter.asVariableTypeParameter().variable), //
+              getNameFromBase(parameter.baseParameterName(), usedNames))) //
+          .collect(toList());
+    if (symbol.isVariable())
+      return singletonList(FieldNodeFragment.of( //
+          getASTClassName(symbol.asVariable()), //
+          getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
+    if (symbol.isNotation())
+      return symbol.asNotation().getFields(s -> getFields(s, usedNames), baseName -> getNameFromBase(baseName, usedNames));
+    throw new RuntimeException("problem while building AST types");
   }
   protected void setInferredParametersIntermediateInMethod(APICompiler.MethodDeclaration declaration) {
     Map<String, Integer> usedNames = new HashMap<>();

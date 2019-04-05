@@ -16,6 +16,7 @@ import fling.automata.DPDA;
 import fling.compiler.Namer;
 import fling.grammar.sententials.DerivationRule;
 import fling.grammar.sententials.Named;
+import fling.grammar.sententials.Notation;
 import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Terminal;
@@ -33,8 +34,8 @@ public abstract class Grammar {
   public Grammar(BNF ebnf, Namer namer) {
     this.ebnf = ebnf;
     this.namer = namer;
-    this.bnf = getBNF();
-    this.normalizedBNF = getNormalizedBNF();
+    this.bnf = getBNF(ebnf);
+    this.normalizedBNF = getNormalizedEBNF(bnf);
     subBNFs = new LinkedHashMap<>();
     for (Variable head : bnf.headVariables)
       subBNFs.put(head, computeSubBNF(head));
@@ -44,8 +45,31 @@ public abstract class Grammar {
   public DPDA<Named, Verb, Named> toDPDA() {
     return buildAutomaton(bnf);
   }
-  private BNF getBNF() {
-    return new BNF(ebnf.Σ, ebnf.V, ebnf.R, ebnf.startVariable, ebnf.headVariables, false);
+  private BNF getBNF(BNF ebnf) {
+    Set<Variable> V = new LinkedHashSet<>(ebnf.V);
+    Set<DerivationRule> R = new LinkedHashSet<>();
+    Map<Variable, Notation> extensionHeadsMapping = new LinkedHashMap<>();
+    Set<Variable> extensionProducts = new LinkedHashSet<>();
+    for (DerivationRule rule : ebnf.R) {
+      List<SententialForm> rhs = new ArrayList<>();
+      for (SententialForm sf : rule.rhs) {
+        List<Symbol> symbols = new ArrayList<>();
+        for (Symbol symbol : sf) {
+          if (!symbol.isNotation()) {
+            symbols.add(symbol);
+            continue;
+          }
+          Notation notation = symbol.asNotation();
+          Variable head = notation.extend(namer, extensionProducts::add, R::add);
+          extensionHeadsMapping.put(head, notation);
+          symbols.add(head);
+        }
+        rhs.add(new SententialForm(symbols));
+      }
+      R.add(new DerivationRule(rule.lhs, rhs));
+    }
+    V.addAll(extensionProducts);
+    return new BNF(ebnf.Σ, V, R, ebnf.startVariable, ebnf.headVariables, extensionHeadsMapping, extensionProducts, false);
   }
   public BNF getSubBNF(Variable variable) {
     return subBNFs.get(variable);
@@ -69,13 +93,13 @@ public abstract class Grammar {
                 Σ.add(symbol.asVerb());
         }
     }
-    return new BNF(Σ, V, R, head, null, true);
+    return new BNF(Σ, V, R, head, null, null, null, true);
   }
-  private BNF getNormalizedBNF() {
-    Set<Variable> V = new LinkedHashSet<>(ebnf.V);
+  private BNF getNormalizedEBNF(BNF bnf) {
+    Set<Variable> V = new LinkedHashSet<>(bnf.V);
     Set<DerivationRule> R = new LinkedHashSet<>();
-    for (Variable v : ebnf.V) {
-      List<SententialForm> rhs = ebnf.rhs(v);
+    for (Variable v : bnf.V) {
+      List<SententialForm> rhs = bnf.rhs(v);
       assert rhs.size() > 0;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
@@ -89,14 +113,14 @@ public abstract class Grammar {
           alteration.add(sf.get(0).asVariable());
         else {
           // Create a suitable child variable.
-          Variable a = namer.createChild(v);
+          Variable a = namer.createASTChild(v);
           V.add(a);
           R.add(new DerivationRule(a, Collections.singletonList(sf)));
           alteration.add(a);
         }
       R.add(new DerivationRule(v, alteration.stream().map(a -> new SententialForm(a)).collect(toList())));
     }
-    return new BNF(ebnf.Σ, V, R, ebnf.startVariable, ebnf.headVariables, false);
+    return new BNF(bnf.Σ, V, R, bnf.startVariable, bnf.headVariables, null, null, false);
   }
   public static boolean isSequenceRHS(List<SententialForm> rhs) {
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable());

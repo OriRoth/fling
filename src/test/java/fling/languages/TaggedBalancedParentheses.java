@@ -1,10 +1,11 @@
 package fling.languages;
 
-import static fling.generated.TaggedBalancedParentheses.c;
 import static fling.generated.TaggedBalancedParentheses.__;
+import static fling.generated.TaggedBalancedParentheses.c;
 import static fling.generated.TaggedBalancedParentheses.AB.a;
 import static fling.generated.TaggedBalancedParentheses.AB.b;
 import static fling.grammar.BNF.bnf;
+import static fling.grammar.sententials.Notation.oneOrMore;
 import static fling.languages.TaggedBalancedParentheses.V.AB;
 import static fling.languages.TaggedBalancedParentheses.V.P;
 import static fling.languages.TaggedBalancedParentheses.Σ.a;
@@ -35,7 +36,7 @@ public class TaggedBalancedParentheses {
       derive(P, c.many(char.class), P, ↄ.with(AB), P). //
       derive(P). //
       derive(AB, a). //
-      derive(AB, b). //
+      derive(AB, oneOrMore(b.with(int.class))). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.generated", "TaggedBalancedParentheses", Σ.class);
@@ -44,14 +45,14 @@ public class TaggedBalancedParentheses {
     c('a', 'a').ↄ(a()).$();
     c('a', 'a').ↄ(a()).ↄ(a());
     c('a', 'a').c('b').c('c').ↄ(a()).ↄ(a());
-    c('a', 'a').c('b').c('c').ↄ(a()).ↄ(b()).ↄ(a()).$();
-    c('a', 'a').c('b').ↄ(a()).ↄ(b()).c('e').ↄ(a()).$();
-    c('a', 'a').c('b').ↄ(a()).ↄ(b()).c('e');
+    c('a', 'a').c('b').c('c').ↄ(a()).ↄ(b(1).b(2)).ↄ(a()).$();
+    c('a', 'a').c('b').ↄ(a()).ↄ(b(1).b(2)).c('e').ↄ(a()).$();
+    c('a', 'a').c('b').ↄ(a()).ↄ(b(1).b(2)).c('e');
     __().$();
     // ↄ(a());
   }
   public static void main(String[] args) {
-    P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b()).ↄ(a()).$();
+    P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b(1).b(2)).ↄ(a()).$();
     traverse(parseTree, 0);
     traverse(__().$(), 0);
   }

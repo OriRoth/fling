@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.DerivationRule;
+import fling.grammar.sententials.Notation;
 import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Variable;
@@ -33,9 +34,11 @@ public class BNF {
   public final Set<Variable> V;
   public final Variable startVariable;
   public final Set<Variable> headVariables;
+  public final Map<Variable, Notation> extensionHeadsMapping;
+  public final Set<Variable> extensionProducts;
 
   public BNF(Set<Verb> Σ, Set<? extends Variable> V, Set<DerivationRule> R, Variable startVariable, Set<Variable> headVariables,
-      boolean addStartSymbolDerivationRules) {
+      Map<Variable, Notation> extensionHeadsMapping, Set<Variable> extensionProducts, boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
     Σ.add(Constants.$$);
     this.V = new LinkedHashSet<>(V);
@@ -47,6 +50,8 @@ public class BNF {
     }
     this.headVariables = headVariables;
     this.startVariable = startVariable;
+    this.extensionHeadsMapping = extensionHeadsMapping;
+    this.extensionProducts = extensionProducts;
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
@@ -67,7 +72,8 @@ public class BNF {
     return isNullable(Arrays.asList(symbols));
   }
   public boolean isNullable(List<Symbol> symbols) {
-    return symbols.stream().allMatch(nullables::contains);
+    return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
+        symbol.isNotation() && symbol.asNotation().isNullable(this::isNullable));
   }
   public Set<Verb> firsts(Symbol... symbols) {
     return firsts(Arrays.asList(symbols));
@@ -107,16 +113,25 @@ public class BNF {
       subV.addAll(newSubV);
       newSubV = newestSubV;
     }
-    return new BNF(subΣ, subV, subR, startVariable, null, true);
+    return new BNF(subΣ, subV, subR, startVariable, null, null, null, true);
   }
   private Set<Symbol> getNullables() {
     Set<Symbol> $ = new LinkedHashSet<>();
     for (; $.addAll(V.stream() //
         .filter(v -> rhs(v).stream() //
-            .anyMatch(sf -> sf.isEmpty() || sf.stream().allMatch($::contains))) //
+            .anyMatch(sf -> sf.stream().allMatch(symbol -> isNullable(symbol, $)))) //
         .collect(toSet()));)
       ;
     return $;
+  }
+  private boolean isNullable(Symbol symbol, Set<Symbol> knownNullables) {
+    if (symbol.isVerb())
+      return false;
+    if (symbol.isVariable())
+      return knownNullables.contains(symbol);
+    if (symbol.isNotation())
+      return symbol.asNotation().isNullable(s -> isNullable(s, knownNullables));
+    throw new RuntimeException("problem while analyzing BNF");
   }
   private Map<Symbol, Set<Verb>> getFirsts() {
     Map<Symbol, Set<Verb>> $ = new LinkedHashMap<>();
@@ -126,9 +141,10 @@ public class BNF {
       changed = false;
       for (Variable v : V)
         for (SententialForm sf : rhs(v))
-          for (Symbol s : sf) {
-            changed |= $.get(v).addAll($.get(s));
-            if (!isNullable(s))
+          for (Symbol symbol : sf) {
+            changed |= $.get(v).addAll(!symbol.isNotation() ? $.get(symbol) : //
+                symbol.asNotation().getFirsts($::get));
+            if (!isNullable(symbol))
               break;
           }
     }
@@ -173,29 +189,32 @@ public class BNF {
       this.heads = new LinkedHashSet<>();
     }
     public Builder<V> derive(Variable lhs, Symbol... sententialForm) {
-      rhs(lhs).add(new SententialForm(Arrays.stream(sententialForm) //
+      SententialForm processedSententialForm = new SententialForm(Arrays.stream(sententialForm) //
           .map(symbol -> {
-            Symbol ret = !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
-            if (ret.isVerb())
-              Σ.add(ret.asVerb());
-            return ret;
+            return !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
           }) //
-          .collect(Collectors.toList())));
-      for (Symbol symbol : sententialForm)
-        // TODO support more complex structures.
-        if (symbol.isVerb())
-          symbol.asVerb().parameters.stream() //
-              .map(TypeParameter::declaredHeadVariables) //
-              .forEach(heads::addAll);
+          .collect(Collectors.toList()));
+      processedSententialForm.forEach(this::processSymbol);
+      rhs(lhs).add(processedSententialForm);
       return this;
+    }
+    private void processSymbol(Symbol symbol) {
+      assert !symbol.isTerminal();
+      if (symbol.isVerb()) {
+        Σ.add(symbol.asVerb());
+        symbol.asVerb().parameters.stream() //
+            .map(TypeParameter::declaredHeadVariables) //
+            .forEach(heads::addAll);
+      } else if (symbol.isNotation())
+        symbol.asNotation().abbreviatedSymbols().forEach(this::processSymbol);
     }
     public final Builder<V> start(V startVariable) {
       start = startVariable;
       return this;
     }
     public BNF build() {
-      assert start != null;
-      return new BNF(Σ, EnumSet.allOf(V), R, start, heads, true);
+      assert start != null : "declare a start variable";
+      return new BNF(Σ, EnumSet.allOf(V), R, start, heads, null, null, true);
     }
     private List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);

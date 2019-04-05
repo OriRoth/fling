@@ -22,12 +22,12 @@ import fling.languages.TaggedBalancedParentheses;
 public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
-    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
-    files.put("LongFall", LongFall.JavaFluentAPI);
-    files.put("AnBn", AnBn.JavaFluentAPI);
-    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
-    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
-    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
+//    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
+//    files.put("LongFall", LongFall.JavaFluentAPI);
+//    files.put("AnBn", AnBn.JavaFluentAPI);
+//    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
+//    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
+//    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
     files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
     files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
     files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
@@ -46,7 +46,8 @@ public class CompilationScript {
       Path filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);
-      Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+      Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE,
+          StandardOpenOption.WRITE);
       System.out.println("file " + file.getKey() + ".java written successfully.");
     }
   }
