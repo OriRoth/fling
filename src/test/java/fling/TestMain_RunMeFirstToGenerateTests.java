@@ -1,4 +1,4 @@
-package fling.testutil;
+package fling;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,13 +13,13 @@ import java.util.Map.Entry;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
-import fling.languages.AnBn;
-import fling.languages.BalancedParentheses;
-import fling.languages.ExtendedBalancedParentheses;
-import fling.languages.LongFall;
-import fling.languages.TaggedBalancedParentheses;
+import fling.examples.AnBn;
+import fling.examples.BalancedParentheses;
+import fling.examples.ExtendedBalancedParentheses;
+import fling.examples.LongFall;
+import fling.examples.TaggedBalancedParentheses;
 
-public class CompilationScript {
+public class TestMain_RunMeFirstToGenerateTests {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);

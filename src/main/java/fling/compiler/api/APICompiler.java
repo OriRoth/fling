@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import fling.automata.DPDA;
-import fling.automata.DPDA.δ;
+import fling.DPDA;
+import fling.DPDA.δ;
 import fling.compiler.api.nodes.APICompilationUnitNode;
 import fling.compiler.api.nodes.AbstractMethodNode;
 import fling.compiler.api.nodes.ConcreteImplementationNode;

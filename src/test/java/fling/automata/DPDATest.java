@@ -1,6 +1,6 @@
 package fling.automata;
 
-import static fling.automata.DPDA.dpda;
+import static fling.DPDA.dpda;
 import static fling.automata.DPDATest.Q.q0;
 import static fling.automata.DPDATest.Q.q1;
 import static fling.automata.DPDATest.Q.q2;
@@ -16,7 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import fling.automata.DPDA.δ;
+import fling.DPDA;
+import fling.DPDA.δ;
 import fling.grammar.sententials.Word;
 
 public class DPDATest {

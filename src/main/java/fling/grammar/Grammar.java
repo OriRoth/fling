@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fling.automata.DPDA;
+import fling.DPDA;
 import fling.compiler.Namer;
 import fling.grammar.sententials.DerivationRule;
 import fling.grammar.sententials.Named;
