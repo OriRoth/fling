@@ -18,10 +18,7 @@ public class DerivationRule {
     return rhs;
   }
   @Override public int hashCode() {
-    int $ = 1;
-    $ = $ * 31 + lhs.hashCode();
-    $ = $ * 31 + rhs.hashCode();
-    return $;
+    return rhs.hashCode() + 31 * (lhs.hashCode() + 31);
   }
   @Override public boolean equals(Object o) {
     if (this == o)

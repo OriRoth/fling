@@ -1,4 +1,5 @@
 package fling.examples;
+
 /**
  * If you see compilation errors in the import section of this file, please run
  * {@link RunMeFirstToGenerateTests} to generate the fluent API that this test

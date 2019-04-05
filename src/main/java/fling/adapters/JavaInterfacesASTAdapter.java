@@ -3,7 +3,6 @@ package fling.adapters;
 import static java.util.stream.Collectors.joining;
 
 import fling.compiler.Namer;
-import fling.compiler.ast.PolymorphicLanguageASTAdapterBase;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.compiler.ast.nodes.AbstractClassNode;
 import fling.compiler.ast.nodes.ClassNode;

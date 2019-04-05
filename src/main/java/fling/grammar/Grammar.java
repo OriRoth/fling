@@ -76,7 +76,7 @@ public abstract class Grammar {
     Set<DerivationRule> R = new LinkedHashSet<>();
     for (Variable v : ebnf.V) {
       List<SententialForm> rhs = ebnf.rhs(v);
-      assert rhs.size() > 0;
+      assert !rhs.isEmpty();
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
         R.add(new DerivationRule(v, rhs));

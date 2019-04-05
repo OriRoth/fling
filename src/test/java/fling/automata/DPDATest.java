@@ -12,8 +12,6 @@ import static fling.automata.DPDATest.Σ.ↄ;
 import static fling.grammar.sententials.Alphabet.ε;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import fling.DPDA;
@@ -58,6 +56,6 @@ public class DPDATest {
   @Test public void testTransitionConsolidation() {
     δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
     assertEquals(q2, δ.q$);
-    assertTrue(δ.getΑ().isEmpty());
+    assert δ.getΑ().isEmpty();
   }
 }

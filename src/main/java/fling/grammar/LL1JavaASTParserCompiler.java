@@ -91,7 +91,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     body.append(String.format("return %s;", !optionalNullableChild.isPresent() ? //
         "null" : //
         String.format("parse_%s(w)", optionalNullableChild.get().name())));
-    return body.toString();
+    return body + "";
   }
   private String printConcreteChildMethodBody(Variable v) {
     List<Symbol> children = bnf.rhs(v).get(0);
@@ -132,7 +132,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     body.append(String.format("return new %s(%s);", //
         getClassForVariable(v), //
         String.join(",", argumentNames)));
-    return body.toString();
+    return body + "";
   }
   private String printTerminalInclusionCondition(Set<Verb> firsts) {
     return String.format("%s.included(a.σ,%s)", //

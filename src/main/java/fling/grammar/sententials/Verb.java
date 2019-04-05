@@ -19,9 +19,8 @@ public class Verb implements Symbol {
     return source.name();
   }
   @Override public int hashCode() {
-    int hc = 1;
-    hc = hc * 31 + source.hashCode();
-    hc = hc * 31 + parameters.hashCode();
+    int hc = 31 * 1 + source.hashCode();
+    hc = 31 * hc + parameters.hashCode();
     return super.hashCode();
   }
   @Override public boolean equals(Object obj) {

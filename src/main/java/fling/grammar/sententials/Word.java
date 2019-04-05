@@ -29,16 +29,16 @@ public class Word<T> implements List<T> {
   public Word(Collection<T> origin) {
     inner = new ArrayList<>(origin);
   }
-  @SuppressWarnings("unused") @Override public boolean add(T t) {
+  @Override @SuppressWarnings("unused") public boolean add(T t) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public void add(int index, T element) {
+  @Override @SuppressWarnings("unused") public void add(int index, T element) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean addAll(Collection<? extends T> c) {
+  @Override @SuppressWarnings("unused") public boolean addAll(Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean addAll(int index, Collection<? extends T> c) {
+  @Override @SuppressWarnings("unused") public boolean addAll(int index, Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
   @Override public void clear() {
@@ -71,19 +71,19 @@ public class Word<T> implements List<T> {
   @Override public ListIterator<T> listIterator(int index) {
     return inner.listIterator(index);
   }
-  @SuppressWarnings("unused") @Override public boolean remove(Object o) {
+  @Override @SuppressWarnings("unused") public boolean remove(Object o) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public T remove(int index) {
+  @Override @SuppressWarnings("unused") public T remove(int index) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean removeAll(Collection<?> c) {
+  @Override @SuppressWarnings("unused") public boolean removeAll(Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean retainAll(Collection<?> c) {
+  @Override @SuppressWarnings("unused") public boolean retainAll(Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public T set(int index, T element) {
+  @Override @SuppressWarnings("unused") public T set(int index, T element) {
     throw new UnsupportedOperationException();
   }
   @Override public int size() {

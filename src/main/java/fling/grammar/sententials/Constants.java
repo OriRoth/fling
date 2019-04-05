@@ -1,7 +1,7 @@
 package fling.grammar.sententials;
 
 public interface Constants {
-  public static final Terminal $ = new Terminal() {
+  Terminal $ = new Terminal() {
     @Override public String name() {
       return "$";
     }
@@ -9,8 +9,8 @@ public interface Constants {
       return "$";
     }
   };
-  public static final Verb $$ = new Verb($);
-  public static final Variable S = new Variable() {
+  Verb $$ = new Verb($);
+  Variable S = new Variable() {
     @Override public String name() {
       return "S";
     }

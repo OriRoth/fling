@@ -160,15 +160,13 @@ public class APICompiler {
       this.α = null;
     }
     @Override public int hashCode() {
-      int $ = 1;
-      if (q != null)
-        $ = $ * 31 + q.hashCode();
+      int $ = q != null ? 1 * 31 + q.hashCode() : 1;
       if (α != null)
-        $ = $ * 31 + α.hashCode();
+        $ = 31 * $ + α.hashCode();
       return $;
     }
     @Override public boolean equals(Object o) {
-      if (this == o)
+      if (o == this)
         return true;
       if (!(o instanceof APICompiler.TypeName))
         return false;
@@ -233,7 +231,7 @@ public class APICompiler {
     }
   }
 
-  public boolean isTypeVariable(PolymorphicTypeNode<TypeName> type) {
-    return typeVariables.get(type.name.q) == type;
+  public boolean isTypeVariable(PolymorphicTypeNode<TypeName> n) {
+    return typeVariables.get(n.name.q) == n;
   }
 }

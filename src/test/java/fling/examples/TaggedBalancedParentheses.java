@@ -1,4 +1,5 @@
 package fling.examples;
+
 import static fling.examples.TaggedBalancedParentheses.V.AB;
 import static fling.examples.TaggedBalancedParentheses.V.P;
 import static fling.examples.TaggedBalancedParentheses.Σ.a;
@@ -56,29 +57,28 @@ public class TaggedBalancedParentheses {
   }
   public static void main(String[] args) {
     P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b()).ↄ(a()).$();
-    traverse(parseTree, 0);
-    traverse(__().$(), 0);
+    System.out.println(traverse(parseTree, 0));
+    System.out.println(traverse(__().$(), 0));
   }
-  private static void traverse(P p, int depth) {
-    if (p instanceof P1)
-      traverse((P1) p, depth);
-    else
-      traverse((P2) p, depth);
+  private static String traverse(P p, int depth) {
+    return (p instanceof P1) ? traverse((P1) p, depth) : traverse((P2) p, depth);
   }
-  private static void traverse(P1 p, int depth) {
+  private static String traverse(P1 p, int depth) {
+    String $ = "";
     for (int i = 0; i < depth; ++i)
-      System.out.print('\t');
-    System.out.println(p.c);
-    traverse(p.p, depth + 1);
+      $ += '\t';
+    $ += p.c;
+    $ += traverse(p.p, depth + 1);
     for (int i = 0; i < depth; ++i)
-      System.out.print('\t');
+      $ += '\t';
     if (p.AB instanceof AB1)
-      System.out.println("@a");
+      $ += "@a";
     else
-      System.out.println("@b");
-    traverse(p.p2, depth);
+      $ += "@b";
+    $ += traverse(p.p2, depth);
+    return $;
   }
-  @SuppressWarnings("unused") private static void traverse(P2 p, int depth) {
-    // Relax.
+  private static String traverse(P2 p, int depth) {
+    return "";
   }
 }

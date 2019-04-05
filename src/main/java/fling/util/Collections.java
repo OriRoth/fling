@@ -27,15 +27,15 @@ public class Collections {
       list.addAll(collection);
     return java.util.Collections.unmodifiableList(list);
   }
-  public static final <T> List<T> reversed(T[] ts) {
+  public static <T> List<T> reversed(T[] ts) {
     return reversed(Arrays.asList(ts));
   }
-  public static final <T> List<T> reversed(List<T> ts) {
+  public static <T> List<T> reversed(List<T> ts) {
     List<T> $ = new ArrayList<>(ts);
     java.util.Collections.reverse($);
     return $;
   }
-  public static final <T> Word<T> reversed(Word<T> w) {
+  public static <T> Word<T> reversed(Word<T> w) {
     List<T> $ = new ArrayList<>(w);
     java.util.Collections.reverse($);
     return new Word<>($);

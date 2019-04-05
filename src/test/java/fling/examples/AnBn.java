@@ -17,7 +17,6 @@ import static fling.generated.AnBn.a;
 import static fling.grammar.sententials.Alphabet.ε;
 
 import fling.DPDA;
-import fling.TestMain_RunMeFirstToGenerateTests;
 import fling.adapters.CppAPIAdapter;
 import fling.adapters.JavaAPIAdapter;
 import fling.compiler.api.APICompiler;
