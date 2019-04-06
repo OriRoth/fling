@@ -89,12 +89,11 @@ public class JavaMediator {
   String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
     assert σ.parameters.size() == parameters.size();
     List<String> processedParameters = processParameters(σ, parameters);
-    return String.format("this.w.add(new %s(%s.%s%s%s));", //
+    return String.format("this.w.add(new %s(%s.%s,%s));", //
         Assignment.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
         σ.name(), //
-        processedParameters.isEmpty() ? "" : ",", //
-        String.join(",", processedParameters));
+        String.format("new Object[]{%s}", String.join(",", processedParameters)));
   }
   String printTerminationMethodReturnType(Variable head) {
     return String.format("%s.%s.%s", //

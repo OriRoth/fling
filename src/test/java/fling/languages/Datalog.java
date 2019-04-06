@@ -29,6 +29,7 @@ import static fling.languages.Datalog.Σ.v;
 import static fling.languages.Datalog.Σ.when;
 
 import fling.adapters.JavaMediator;
+import fling.generated.DatalogAST.Program;
 import fling.grammar.BNF;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
@@ -51,7 +52,7 @@ public class Datalog {
       derive(Statement, Rule). //
       derive(Statement, Query). //
       derive(Fact, fact.with(String), of.many(String)). //
-      derive(Query, query.with(String), of.many(String)). //
+      derive(Query, query.with(String), of.many(Term)). //
       derive(Rule, Bodyless). //
       derive(Rule, WithBody). //
       derive(Bodyless, always.with(String), of.many(Term)). //
@@ -67,7 +68,7 @@ public class Datalog {
       "fling.generated", "Datalog", Σ.class);
 
   public static void main(String[] args) {
-    fact("parent").of("john", "bob"). //
+    Program program = fact("parent").of("john", "bob"). //
         fact("parent").of("bob", "donald"). //
         always("ancestor").of(l("adam"), v("X")). //
         infer("ancestor").of(v("A"), v("B")). //
@@ -75,6 +76,8 @@ public class Datalog {
         infer("ancestor").of(v("A"), v("B")). //
         when("parent").of(v("A"), v("C")). //
         and("ancestor").of(v("C"), v("B")). //
-        query("ancestor").of(l("john"), v("X"));
+        query("ancestor").of(l("john"), v("X")). //
+        $();
+    System.out.println(program);
   }
 }
