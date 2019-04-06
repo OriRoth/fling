@@ -1,5 +1,8 @@
 package fling.grammar.sententials.notations;
 
-public @interface JavaCompatibleNotation {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME) public @interface JavaCompatibleNotation {
   public static final String abbreviationMethodName = "abbreviate";
 }

@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.junit.Test;
+
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
@@ -19,7 +21,7 @@ import fling.languages.ExtendedBalancedParentheses;
 import fling.languages.LongFall;
 import fling.languages.TaggedBalancedParentheses;
 
-public class CompilationScript {
+@SuppressWarnings("static-method") public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
@@ -34,7 +36,7 @@ public class CompilationScript {
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 
-  public static void main(String[] args) throws IOException, FormatterException {
+  @Test public void compile() throws IOException, FormatterException {
     System.out.println("project path: " + PATH);
     Path outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {
