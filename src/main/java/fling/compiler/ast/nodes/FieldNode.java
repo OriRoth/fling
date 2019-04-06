@@ -1,8 +1,11 @@
 package fling.compiler.ast.nodes;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import fling.grammar.sententials.Symbol;
+import fling.grammar.sententials.Variable;
 
 public class FieldNode {
   public final Symbol source;
@@ -10,6 +13,9 @@ public class FieldNode {
 
   public FieldNode(Symbol source) {
     this.source = source;
+  }
+  public Symbol source() {
+    return source;
   }
   public List<FieldNodeFragment> getInferredFieldFragments() {
     if (inferredFieldFragments == null)
@@ -24,12 +30,16 @@ public class FieldNode {
     public final String parameterType;
     public final String parameterName;
 
-    private FieldNodeFragment(String parameterType, String parameterName) {
+    public FieldNodeFragment(String parameterType, String parameterName) {
       this.parameterType = parameterType;
       this.parameterName = parameterName;
     }
     public static FieldNodeFragment of(String parameterType, String parameterName) {
       return new FieldNodeFragment(parameterType, parameterName);
+    }
+    @SuppressWarnings({ "static-method", "unused" }) public String visitingMethod(
+        BiFunction<Variable, String, String> variableVisitingSolver, String accessor, Supplier<String> variableNamesGenerator) {
+      return null;
     }
   }
 }

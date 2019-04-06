@@ -2,12 +2,19 @@ package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import fling.compiler.Namer;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.compiler.ast.nodes.AbstractClassNode;
 import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
+import fling.compiler.ast.nodes.FieldNode;
 import fling.grammar.sententials.Variable;
+import fling.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.namers.NaiveNamer;
 
 @SuppressWarnings("static-method") public class JavaASTVisitorAdapter {
@@ -22,10 +29,15 @@ import fling.namers.NaiveNamer;
     this.namer = namer;
   }
   public String printASTVisitorClass(ASTCompilationUnitNode compilationUnit) {
-    return String.format("public static class %s{%s}", //
+    return String.format("public static class %s{%s%s}", //
         VISITOR_CLASS_NAME, //
         compilationUnit.classes.stream() //
             .map(this::printVisitMethod) //
+            .collect(joining()), //
+        compilationUnit.classes.stream() //
+            .filter(ClassNode::isConcrete) //
+            .map(ClassNode::asConcrete) //
+            .map(this::printWhileVisitingMethod) //
             .collect(joining()));
   }
   public String printVisitMethod(ClassNode clazz) {
@@ -36,7 +48,7 @@ import fling.namers.NaiveNamer;
   public String printVisitMethod(AbstractClassNode clazz) {
     Variable source = clazz.source;
     String parameterName = getNodeParameterName(source);
-    return String.format("public void visit(%s %s){%s}", //
+    return String.format("public final void visit(%s %s){%s}", //
         getASTVariableClassName(source), //
         parameterName, //
         printVisitMethodBody(clazz, parameterName));
@@ -44,28 +56,60 @@ import fling.namers.NaiveNamer;
   public String printVisitMethod(ConcreteClassNode clazz) {
     Variable source = clazz.source;
     String parameterName = getNodeParameterName(source);
-    return String.format("public void visit(%s %s){%s}", //
+    return String.format("public final void visit(%s %s){%s}", //
         getASTVariableClassName(source), //
         parameterName, //
         printVisitMethodBody(clazz, parameterName));
   }
+  public String printWhileVisitingMethod(ConcreteClassNode clazz) {
+    Variable source = clazz.source;
+    String parameterName = getNodeParameterName(source);
+    return String.format("public void whileVisiting(%s %s){}", //
+        getASTVariableClassName(source), //
+        parameterName);
+  }
   private String printVisitMethodBody(AbstractClassNode clazz, String parameterName) {
     return clazz.children.stream() //
-        .map(child -> String.format("if(%s instanceof %s)visit((%s)%s);", //
+        .map(child -> String.format("if(%s instanceof %s)%s;", //
             parameterName, //
             getASTVariableClassName(child.source), //
-            getASTVariableClassName(child.source), //
-            parameterName)) //
-        .collect(joining());
+            variableVisitingMethod(child.source, parameterName))) //
+        .collect(joining("else "));
   }
-  @SuppressWarnings("unused") private String printVisitMethodBody(ConcreteClassNode clazz, String parameterName) {
-    return "";
+  private String printVisitMethodBody(ConcreteClassNode clazz, String parameterName) {
+    StringBuilder $ = new StringBuilder();
+    Map<String, Integer> usedNames = new LinkedHashMap<>();
+    $.append(String.format("this.whileVisiting(%s);", parameterName));
+    clazz.fields.stream() //
+        .map(FieldNode::source) //
+        .forEach(source -> {
+          assert !source.isNotation()
+              || source.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : "BNF uses a non-Java-compatible notation";
+        });
+    clazz.fields.stream() //
+        .map(FieldNode::getInferredFieldFragments) //
+        .flatMap(List::stream) //
+        .map(field -> field.visitingMethod(//
+            this::variableVisitingMethod, //
+            String.format("%s.%s", //
+                parameterName, //
+                field.parameterName), //
+            () -> NaiveNamer.getNameFromBase("_x_", usedNames)))
+        .filter(Objects::nonNull) //
+        .map(method -> method + ";") //
+        .forEach($::append);
+    return $.toString();
   }
   private String getASTVariableClassName(Variable variable) {
     return String.format("%s.%s.%s", //
         packageName, //
         astClassName, //
         namer.getASTClassName(variable));
+  }
+  private String variableVisitingMethod(Variable variable, String access) {
+    return String.format("visit((%s)%s)", //
+        getASTVariableClassName(variable), //
+        access);
   }
   private String getNodeParameterName(Variable variable) {
     return NaiveNamer.lowerCamelCase(variable.name());

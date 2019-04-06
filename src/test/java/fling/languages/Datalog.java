@@ -1,5 +1,6 @@
 package fling.languages;
 
+import static java.util.stream.Collectors.joining;
 import static fling.generated.Datalog.fact;
 import static fling.generated.Datalog.Term.l;
 import static fling.generated.Datalog.Term.v;
@@ -27,12 +28,17 @@ import static fling.languages.Datalog.Σ.of;
 import static fling.languages.Datalog.Σ.query;
 import static fling.languages.Datalog.Σ.v;
 import static fling.languages.Datalog.Σ.when;
+import fling.generated.DatalogAST;
 
 import fling.adapters.JavaMediator;
+import fling.generated.DatalogAST.Fact;
 import fling.generated.DatalogAST.Program;
 import fling.grammar.BNF;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
+import static java.lang.String.format;
+
+import java.util.Arrays;
 
 public class Datalog {
   public enum Σ implements Terminal {
@@ -78,6 +84,12 @@ public class Datalog {
         and("ancestor").of(v("C"), v("B")). //
         query("ancestor").of(l("john"), v("X")). //
         $();
-    System.out.println(program);
+    new DatalogPrinter().visit(program);
+  }
+
+  public static class DatalogPrinter extends DatalogAST.Visitor {
+    @Override public void whileVisiting(Fact fact) {
+      System.out.println(format("%s(%s).", fact.s, Arrays.stream(fact.j).collect(joining(","))));
+    }
   }
 }

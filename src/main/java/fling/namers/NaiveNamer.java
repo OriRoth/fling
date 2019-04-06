@@ -6,6 +6,8 @@ import static java.util.stream.Collectors.toList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import fling.compiler.Namer;
 import fling.compiler.api.APICompiler;
@@ -109,9 +111,14 @@ public class NaiveNamer implements Namer {
           }) //
           .collect(toList());
     if (symbol.isVariable())
-      return singletonList(FieldNodeFragment.of( //
+      return singletonList(new FieldNodeFragment( //
           getASTClassName(symbol.asVariable()), //
-          getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
+          getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)) {
+        @SuppressWarnings("unused") @Override public String visitingMethod(
+            BiFunction<Variable, String, String> variableVisitingSolver, String accessor, Supplier<String> variableNamesGenerator) {
+          return variableVisitingSolver.apply(symbol.asVariable(), accessor);
+        }
+      });
     if (symbol.isNotation())
       return symbol.asNotation().getFields(s -> getFields(s, usedNames), baseName -> getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");

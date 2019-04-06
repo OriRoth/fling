@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import fling.compiler.Namer;
 import fling.compiler.ast.nodes.FieldNode.FieldNodeFragment;
@@ -52,11 +54,22 @@ import fling.grammar.types.ClassParameter;
       @SuppressWarnings("unused") Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
     return fieldsSolver.apply(symbol).stream() //
-        .map(innerField -> FieldNodeFragment.of( //
+        .map(innerField -> new FieldNodeFragment( //
             String.format("%s<%s>", //
                 List.class.getCanonicalName(), //
                 ClassParameter.unPrimitiveType(innerField.parameterType)), //
-            innerField.parameterName)) //
+            innerField.parameterName) {
+          @Override public String visitingMethod(BiFunction<Variable, String, String> variableVisitingSolver, String accessor,
+              Supplier<String> variableNamesGenerator) {
+            if (!symbol.isVariable())
+              return null;
+            String streamingVariable = variableNamesGenerator.get();
+            return String.format("%s.stream().forEach(%s->%s)", //
+                accessor, //
+                streamingVariable, //
+                variableVisitingSolver.apply(symbol.asVariable(), streamingVariable));
+          }
+        }) //
         .collect(toList());
   }
   @Override public boolean isNullable(Function<Symbol, Boolean> nullabilitySolver) {
