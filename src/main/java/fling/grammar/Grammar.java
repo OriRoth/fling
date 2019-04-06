@@ -29,13 +29,15 @@ public abstract class Grammar {
   public final Namer namer;
   public final BNF bnf;
   public final BNF normalizedBNF;
+  public final BNF normalizedEBNF;
   private final Map<Variable, BNF> subBNFs;
 
   public Grammar(BNF ebnf, Namer namer) {
     this.ebnf = ebnf;
     this.namer = namer;
     this.bnf = getBNF(ebnf);
-    this.normalizedBNF = getNormalizedEBNF(bnf);
+    this.normalizedEBNF = getNormalizedBNF(ebnf);
+    this.normalizedBNF = getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
     for (Variable head : bnf.headVariables)
       subBNFs.put(head, computeSubBNF(head));
@@ -95,7 +97,7 @@ public abstract class Grammar {
     }
     return new BNF(Σ, V, R, head, null, null, null, true);
   }
-  private BNF getNormalizedEBNF(BNF bnf) {
+  private BNF getNormalizedBNF(BNF bnf) {
     Set<Variable> V = new LinkedHashSet<>(bnf.V);
     Set<DerivationRule> R = new LinkedHashSet<>();
     for (Variable v : bnf.V) {
@@ -108,7 +110,7 @@ public abstract class Grammar {
       }
       List<Variable> alteration = new ArrayList<>();
       for (SententialForm sf : rhs)
-        if (sf.size() == 1 && sf.stream().allMatch(s -> s.isVariable()))
+        if (sf.size() == 1 && sf.stream().allMatch(bnf::isOriginalVariable))
           // Ready alteration variable.
           alteration.add(sf.get(0).asVariable());
         else {
@@ -120,10 +122,11 @@ public abstract class Grammar {
         }
       R.add(new DerivationRule(v, alteration.stream().map(a -> new SententialForm(a)).collect(toList())));
     }
-    return new BNF(bnf.Σ, V, R, bnf.startVariable, bnf.headVariables, null, null, false);
+    return new BNF(bnf.Σ, V, R, bnf.startVariable, bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts, false);
   }
-  public static boolean isSequenceRHS(List<SententialForm> rhs) {
-    return rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable());
+  public static boolean isSequenceRHS(BNF bnf, Variable v) {
+    List<SententialForm> rhs = bnf.rhs(v);
+    return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
   @SuppressWarnings({ "null", "unused" }) public static DPDA<Named, Verb, Named> cast(
       DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {

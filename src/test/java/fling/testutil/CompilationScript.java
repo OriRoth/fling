@@ -22,12 +22,12 @@ import fling.languages.TaggedBalancedParentheses;
 public class CompilationScript {
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
-//    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
-//    files.put("LongFall", LongFall.JavaFluentAPI);
-//    files.put("AnBn", AnBn.JavaFluentAPI);
-//    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
-//    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
-//    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
+    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
+    files.put("LongFall", LongFall.JavaFluentAPI);
+    files.put("AnBn", AnBn.JavaFluentAPI);
+    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
+    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
+    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
     files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
     files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
     files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);

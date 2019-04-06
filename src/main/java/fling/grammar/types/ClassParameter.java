@@ -7,19 +7,7 @@ public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
   public ClassParameter(Class<?> parameterClass) {
-    this.parameterClass = replacePrimitive(requireNonNull(parameterClass));
-  }
-  private static Class<?> replacePrimitive(Class<?> c) {
-    return byte.class.equals(c) ? Byte.class : //
-        short.class.equals(c) ? Short.class : //
-            int.class.equals(c) ? Integer.class : //
-                long.class.equals(c) ? Long.class : //
-                    float.class.equals(c) ? Float.class : //
-                        double.class.equals(c) ? Double.class : //
-                            boolean.class.equals(c) ? Boolean.class : //
-                                char.class.equals(c) ? Character.class : //
-                                    void.class.equals(c) ? Void.class : //
-                                        c;
+    this.parameterClass = requireNonNull(parameterClass);
   }
   @Override public String typeName() {
     return parameterClass.getCanonicalName();
@@ -40,5 +28,17 @@ public class ClassParameter implements StringTypeParameter {
   }
   @Override public String toString() {
     return parameterClass.getCanonicalName();
+  }
+  public static String unPrimitiveType(String typeName) {
+    return byte.class.getName().equals(typeName) ? Byte.class.getCanonicalName() : //
+        short.class.getName().equals(typeName) ? Short.class.getCanonicalName() : //
+            int.class.getName().equals(typeName) ? Integer.class.getCanonicalName() : //
+                long.class.getName().equals(typeName) ? Long.class.getCanonicalName() : //
+                    float.class.getName().equals(typeName) ? Float.class.getCanonicalName() : //
+                        double.class.getName().equals(typeName) ? Double.class.getCanonicalName() : //
+                            boolean.class.getName().equals(typeName) ? Boolean.class.getCanonicalName() : //
+                                char.class.getName().equals(typeName) ? Character.class.getCanonicalName() : //
+                                    void.class.getName().equals(typeName) ? Void.class.getCanonicalName() : //
+                                        typeName;
   }
 }

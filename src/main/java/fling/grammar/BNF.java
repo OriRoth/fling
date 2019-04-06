@@ -115,6 +115,9 @@ public class BNF {
     }
     return new BNF(subΣ, subV, subR, startVariable, null, null, null, true);
   }
+  public boolean isOriginalVariable(Symbol symbol) {
+    return symbol.isVariable() && !extensionProducts.contains(symbol);
+  }
   private Set<Symbol> getNullables() {
     Set<Symbol> $ = new LinkedHashSet<>();
     for (; $.addAll(V.stream() //

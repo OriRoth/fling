@@ -1,5 +1,6 @@
 package fling.grammar;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
@@ -13,11 +14,14 @@ import java.util.Set;
 import fling.compiler.Assignment;
 import fling.compiler.Namer;
 import fling.compiler.ast.ASTParserCompiler;
+import fling.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import fling.grammar.sententials.Constants;
+import fling.grammar.sententials.Notation;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
+import fling.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 import fling.util.Collections;
@@ -46,6 +50,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         apiName, //
         bnf.V.stream() //
             .filter(v -> !Constants.S.equals(v)) //
+            .filter(bnf::isOriginalVariable) //
             .map(this::printParserVariableCompilerMethod) //
             .collect(joining()));
   }
@@ -61,11 +66,11 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         v.name(), //
         inputClass.getCanonicalName(), //
         Assignment.class.getCanonicalName(), //
-        Grammar.isSequenceRHS(bnf.rhs(v)) ? //
+        Grammar.isSequenceRHS(bnf, v) ? //
             printConcreteChildMethodBody(v) : //
             printAbstractParentMethodBody(v));
   }
-  private Object printAbstractParentMethodBody(Variable v) {
+  private String printAbstractParentMethodBody(Variable v) {
     List<Variable> children = bnf.rhs(v).stream() //
         .map(sf -> sf.get(0)) //
         .map(Symbol::asVariable) //
@@ -96,13 +101,16 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private String printConcreteChildMethodBody(Variable v) {
     List<Symbol> children = bnf.rhs(v).get(0);
     StringBuilder body = new StringBuilder();
-    body.append(Assignment.class.getCanonicalName() + " a;");
+    body.append(Assignment.class.getCanonicalName() + " _a;");
+    body.append(String.format("%s<%s> _b;", List.class.getCanonicalName(), Object.class.getCanonicalName()));
     Map<String, Integer> usedNames = new HashMap<>();
+    usedNames.put("_a", 1);
+    usedNames.put("_b", 1);
     List<String> argumentNames = new ArrayList<>();
     // Consume input as necessary:
     for (Symbol child : children) {
       // TODO support more complex structures.
-      if (child.isVariable()) {
+      if (child.isVariable() && bnf.isOriginalVariable(child)) {
         String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             getClassForVariable(child.asVariable()), //
@@ -110,7 +118,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             child.name()));
         argumentNames.add(variableName);
       } else if (child.isVerb()) {
-        body.append("a=w.remove(0);");
+        body.append("_a=w.remove(0);");
         int index = 0;
         for (TypeParameter parameter : child.asVerb().parameters) {
           String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
@@ -119,10 +127,31 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
                   packageName, //
                   astClassesContainerName, //
                   namer.headVariableClassName(parameter.asVariableTypeParameter().variable));
-          body.append(String.format("%s %s=(%s)a.arguments.get(%s);", //
+          body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
               variableName, //
               typeName, //
+              index++));
+          argumentNames.add(variableName);
+        }
+      } else if (child.isVariable()) {
+        assert bnf.extensionHeadsMapping.containsKey(child);
+        Notation notation = bnf.extensionHeadsMapping.get(child);
+        assert notation.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : //
+        "notation is not Java compatible";
+        List<FieldNodeFragment> fields = getFieldsInClassContext(notation, usedNames);
+        body.append(String.format("_b=%s.%s(parse_%s(w), %s);", //
+            notation.getClass().getCanonicalName(), //
+            JavaCompatibleNotation.abbreviationMethodName, //
+            child.name(), //
+            fields.size()));
+        int index = 0;
+        for (FieldNodeFragment field : fields) {
+          String variableName = field.parameterName;
+          body.append(String.format("%s %s=(%s)_b.get(%s);", //
+              field.parameterType, //
+              variableName, //
+              field.parameterType, //
               index++));
           argumentNames.add(variableName);
         }
@@ -133,6 +162,26 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         getClassForVariable(v), //
         String.join(",", argumentNames)));
     return body.toString();
+  }
+  private List<FieldNodeFragment> getFieldsInClassContext(Symbol symbol, Map<String, Integer> usedNames) {
+    if (symbol.isVerb())
+      return symbol.asVerb().parameters.stream() //
+          .map(parameter -> FieldNodeFragment.of( //
+              parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
+                  : getClassForVariable(parameter.asVariableTypeParameter().variable), //
+              NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames))) //
+          .collect(toList());
+    if (symbol.isVariable())
+      return singletonList(FieldNodeFragment.of( //
+          getClassForVariable(symbol.asVariable()), //
+          NaiveNamer.getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
+    if (symbol.isNotation())
+      return symbol.asNotation().getFields(s -> getFieldsInClassContext(s, usedNames),
+          baseName -> NaiveNamer.getNameFromBase(baseName, usedNames));
+    throw new RuntimeException("problem while building AST types");
+  }
+  @SuppressWarnings("static-method") protected String getBaseParameterName(Variable variable) {
+    return NaiveNamer.lowerCamelCase(variable.name());
   }
   private String printTerminalInclusionCondition(Set<Verb> firsts) {
     return String.format("%s.included(a.σ,%s)", //

@@ -33,7 +33,7 @@ public class ASTCompiler {
       if (Constants.S == v)
         continue;
       List<SententialForm> rhs = bnf.rhs(v);
-      if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !isOriginalVariable(rhs.get(0).get(0)))) {
+      if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable())) {
         // Sequence rule.
         fields.put(v, rhs.get(0));
       } else {
@@ -85,8 +85,5 @@ public class ASTCompiler {
       }
     }
     return new ASTCompilationUnitNode(classes.values(), parents.values().stream().anyMatch(ps -> ps.size() > 1));
-  }
-  private boolean isOriginalVariable(Symbol symbol) {
-    return symbol.isVariable() && !bnf.extensionProducts.contains(symbol);
   }
 }

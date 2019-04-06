@@ -64,7 +64,7 @@ public class JavaMediator {
     this.Σ = Σ;
     this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName,
         apiName + "Compiler", apiName + "AST");
-    this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedBNF).compileAST());
+    this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
     this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }

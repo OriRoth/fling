@@ -13,6 +13,7 @@ import fling.grammar.sententials.SententialForm;
 import fling.grammar.sententials.Symbol;
 import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.Verb;
+import fling.grammar.types.ClassParameter;
 
 import static java.util.Arrays.asList;
 
@@ -20,8 +21,10 @@ import java.util.Collection;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+
 // TODO support nested notations (?).
-public class OneOrMore implements Notation {
+@JavaCompatibleNotation public class OneOrMore implements Notation {
   public final Symbol symbol;
 
   public OneOrMore(Symbol symbol) {
@@ -54,7 +57,7 @@ public class OneOrMore implements Notation {
         .map(innerField -> FieldNodeFragment.of( //
             String.format("%s<%s>", //
                 List.class.getCanonicalName(), //
-                innerField.parameterType), //
+                ClassParameter.unPrimitiveType(innerField.parameterType)), //
             innerField.parameterName)) //
         .collect(toList());
   }
@@ -66,5 +69,17 @@ public class OneOrMore implements Notation {
   }
   @Override public String toString() {
     return symbol + "*";
+  }
+  @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(List<Object> rawNode, int fieldCount) {
+    List<List<Object>> $ = new ArrayList<>();
+    List<Object> currentRawNode = rawNode;
+    while (!currentRawNode.isEmpty()) {
+      List<Object> rawArguments = (List<Object>) currentRawNode.get(0);
+      assert rawArguments.size() == fieldCount;
+      for (int i = 0; i < fieldCount; ++i)
+        $.get(i).add(rawArguments.get(i));
+      currentRawNode = (List<Object>) currentRawNode.get(1);
+    }
+    return $;
   }
 }
