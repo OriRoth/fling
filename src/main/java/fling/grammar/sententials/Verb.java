@@ -22,7 +22,7 @@ public class Verb implements Symbol {
     int hc = 1;
     hc = hc * 31 + source.hashCode();
     hc = hc * 31 + parameters.hashCode();
-    return super.hashCode();
+    return hc;
   }
   @Override public boolean equals(Object obj) {
     if (this == obj)

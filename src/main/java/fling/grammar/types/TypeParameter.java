@@ -16,10 +16,16 @@ public interface TypeParameter {
   default boolean isVariableTypeParameter() {
     return this instanceof VariableTypeParameter;
   }
+  default boolean isVarargsTypeParameter() {
+    return this instanceof VarargsVariableTypeParameter;
+  }
   default StringTypeParameter asStringTypeParameter() {
     return (StringTypeParameter) this;
   }
   default VariableTypeParameter asVariableTypeParameter() {
     return (VariableTypeParameter) this;
+  }
+  default VarargsVariableTypeParameter asVarargsVariableTypeParameter() {
+    return (VarargsVariableTypeParameter) this;
   }
 }

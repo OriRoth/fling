@@ -102,7 +102,7 @@ public class APICompiler {
     new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
-    return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q)), //
+    return new InterfaceNode<>(new InterfaceDeclaration(q, α, asWord(dpda.Q), dpda.isAccepting(q)), //
         Collections.unmodifiableList($));
   }
   /**
@@ -220,16 +220,19 @@ public class APICompiler {
     public final Named q;
     public final Word<Named> α;
     @SuppressWarnings("hiding") public final Word<Named> typeVariables;
+    public final boolean isAccepting;
 
-    public InterfaceDeclaration(Named q, Word<Named> α, Word<Named> typeVariables) {
+    public InterfaceDeclaration(Named q, Word<Named> α, Word<Named> typeVariables, boolean isAccepting) {
       this.q = q;
       this.α = α;
       this.typeVariables = typeVariables;
+      this.isAccepting = isAccepting;
     }
     InterfaceDeclaration() {
       this.q = null;
       this.α = null;
       this.typeVariables = null;
+      this.isAccepting = false;
     }
   }
 

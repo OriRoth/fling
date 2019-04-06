@@ -126,11 +126,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         int index = 0;
         for (TypeParameter parameter : child.asVerb().parameters) {
           String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
-          String typeName = parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
-              : String.format("%s.%s.%s", //
-                  packageName, //
-                  astClassesContainerName, //
-                  namer.headVariableClassName(parameter.asVariableTypeParameter().variable));
+          String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
               variableName, //
@@ -202,11 +198,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         int index = 0;
         for (TypeParameter parameter : child.asVerb().parameters) {
           String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
-          String typeName = parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
-              : String.format("%s.%s.%s", //
-                  packageName, //
-                  astClassesContainerName, //
-                  namer.headVariableClassName(parameter.asVariableTypeParameter().variable));
+          String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
               variableName, //
@@ -232,12 +224,27 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.join(",", argumentNames)));
     return body.toString();
   }
+  private String getTypeName(TypeParameter parameter) {
+    if (parameter.isStringTypeParameter())
+      return parameter.asStringTypeParameter().typeName();
+    else if (parameter.isVariableTypeParameter())
+      return String.format("%s.%s.%s", //
+          packageName, //
+          astClassesContainerName, //
+          namer.headVariableClassName(parameter.asVariableTypeParameter().variable));
+    else if (parameter.isVarargsTypeParameter())
+      return String.format("%s.%s.%s[]", //
+          packageName, //
+          astClassesContainerName, //
+          namer.headVariableClassName(parameter.asVarargsVariableTypeParameter().variable));
+    else
+      throw new RuntimeException("problem while creating real-time parser");
+  }
   private List<FieldNodeFragment> getFieldsInClassContext(Symbol symbol, Map<String, Integer> usedNames) {
     if (symbol.isVerb())
       return symbol.asVerb().parameters.stream() //
           .map(parameter -> FieldNodeFragment.of( //
-              parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
-                  : getClassForVariable(parameter.asVariableTypeParameter().variable), //
+              getTypeName(parameter), //
               NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames))) //
           .collect(toList());
     if (symbol.isVariable())

@@ -22,26 +22,22 @@ import fling.grammar.sententials.Verb;
 import fling.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).
-@JavaCompatibleNotation public class OneOrMore implements Notation {
+@JavaCompatibleNotation public class NoneOrMore implements Notation {
   public final Symbol symbol;
 
-  public OneOrMore(Symbol symbol) {
+  public NoneOrMore(Symbol symbol) {
     Objects.requireNonNull(symbol);
     assert !symbol.isNotation() : "nested notations are not supported";
     this.symbol = symbol;
   }
   @Override public String name() {
-    return symbol.name() + "+";
+    return symbol.name() + "*";
   }
   @Override public Variable extend(Namer namer, Consumer<Variable> variableDeclaration, Consumer<DerivationRule> ruleDeclaration) {
     Variable head = namer.createNotationChild(symbol);
-    Variable tail = namer.createNotationChild(symbol);
     variableDeclaration.accept(head);
-    variableDeclaration.accept(tail);
-    ruleDeclaration.accept(new DerivationRule(head, asList( //
-        new SententialForm(symbol, tail))));
-    ruleDeclaration.accept(new DerivationRule(tail, asList(//
-        new SententialForm(symbol, tail), //
+    ruleDeclaration.accept(new DerivationRule(head, asList(//
+        new SententialForm(symbol, head), //
         new SententialForm())));
     return head;
   }
@@ -59,14 +55,14 @@ import fling.grammar.types.ClassParameter;
             innerField.parameterName)) //
         .collect(toList());
   }
-  @Override public boolean isNullable(Function<Symbol, Boolean> nullabilitySolver) {
-    return nullabilitySolver.apply(symbol);
+  @SuppressWarnings("unused") @Override public boolean isNullable(Function<Symbol, Boolean> nullabilitySolver) {
+    return true;
   }
   @Override public Set<Verb> getFirsts(Function<Symbol, Set<Verb>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   @Override public String toString() {
-    return symbol + "+";
+    return symbol + "*";
   }
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(List<Object> rawNode, int fieldCount) {
     List<List<Object>> $ = new ArrayList<>();

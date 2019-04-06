@@ -81,7 +81,7 @@ public class ASTCompiler {
         classNode.asAbstract().parents.addAll(parents.getOrDefault(v, emptyList()).stream() //
             .map(classes::get).map(ClassNode::asAbstract).collect(toList()));
         classNode.asAbstract().children.addAll(children.getOrDefault(v, emptyList()).stream() //
-            .map(classes::get).map(ClassNode::asConcrete).collect(toList()));
+            .map(classes::get).collect(toList()));
       }
     }
     return new ASTCompilationUnitNode(classes.values(), parents.values().stream().anyMatch(ps -> ps.size() > 1));

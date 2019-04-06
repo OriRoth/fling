@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -19,15 +20,22 @@ public class Word<T> implements List<T> {
 
   public Word() {
     inner = Collections.emptyList();
+    verify();
   }
   public Word(T t) {
     inner = Collections.singletonList(t);
+    verify();
   }
   @SafeVarargs public Word(T... origin) {
     inner = Arrays.asList(origin);
+    verify();
   }
   public Word(Collection<T> origin) {
     inner = new ArrayList<>(origin);
+    verify();
+  }
+  public static <T> Word<T> empty() {
+    return new Word<>();
   }
   @SuppressWarnings("unused") @Override public boolean add(T t) {
     throw new UnsupportedOperationException();
@@ -129,5 +137,8 @@ public class Word<T> implements List<T> {
   }
   @Override public String toString() {
     return inner.stream().map(Object::toString).collect(Collectors.joining(""));
+  }
+  private void verify() {
+    inner.stream().forEach(Objects::requireNonNull);
   }
 }

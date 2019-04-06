@@ -5,10 +5,10 @@ import java.util.Set;
 
 import fling.grammar.sententials.Variable;
 
-public class VariableTypeParameter implements TypeParameter {
+public class VarargsVariableTypeParameter implements TypeParameter {
   public final Variable variable;
 
-  public VariableTypeParameter(Variable variable) {
+  public VarargsVariableTypeParameter(Variable variable) {
     this.variable = variable;
   }
   @Override public String baseParameterName() {
@@ -23,12 +23,12 @@ public class VariableTypeParameter implements TypeParameter {
   @Override public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (!(obj instanceof VariableTypeParameter))
+    if (!(obj instanceof VarargsVariableTypeParameter))
       return false;
-    VariableTypeParameter other = (VariableTypeParameter) obj;
+    VarargsVariableTypeParameter other = (VarargsVariableTypeParameter) obj;
     return variable.equals(other.variable);
   }
   @Override public String toString() {
-    return variable.name();
+    return variable.name() + "...";
   }
 }

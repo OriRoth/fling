@@ -60,7 +60,6 @@ public class NaiveNamer implements Namer {
   }
   @Override public void name(
       APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
-    // TODO set start methods parameter names.
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
@@ -94,10 +93,20 @@ public class NaiveNamer implements Namer {
   private List<FieldNodeFragment> getFields(Symbol symbol, Map<String, Integer> usedNames) {
     if (symbol.isVerb())
       return symbol.asVerb().parameters.stream() //
-          .map(parameter -> FieldNodeFragment.of( //
-              parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().typeName()
-                  : getASTClassName(parameter.asVariableTypeParameter().variable), //
-              getNameFromBase(parameter.baseParameterName(), usedNames))) //
+          .map(parameter -> {
+            String typeName;
+            if (parameter.isStringTypeParameter())
+              typeName = parameter.asStringTypeParameter().typeName();
+            else if (parameter.isVariableTypeParameter())
+              typeName = getASTClassName(parameter.asVariableTypeParameter().variable);
+            else if (parameter.isVarargsTypeParameter())
+              typeName = getASTClassName(parameter.asVarargsVariableTypeParameter().variable) + "[]";
+            else
+              throw new RuntimeException("problem while naming AST types");
+            return FieldNodeFragment.of( //
+                typeName, //
+                getNameFromBase(parameter.baseParameterName(), usedNames));
+          }) //
           .collect(toList());
     if (symbol.isVariable())
       return singletonList(FieldNodeFragment.of( //
@@ -110,15 +119,28 @@ public class NaiveNamer implements Namer {
   protected void setInferredParametersIntermediateInMethod(APICompiler.MethodDeclaration declaration) {
     Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters.stream() //
-        .map(parameter -> ParameterFragment.of( //
-            parameter.isStringTypeParameter() ? parameter.asStringTypeParameter().parameterTypeName()
-                : String.format("%s.%s.%s.%s", //
-                    packageName, //
-                    apiName, //
-                    headVariableClassName(parameter.asVariableTypeParameter().variable), //
-                    headVariableConclusionTypeName()), //
-            getNameFromBase(parameter.baseParameterName(), usedNames)))
-        .collect(toList()));
+        .map(parameter -> {
+          String typeName;
+          if (parameter.isStringTypeParameter())
+            typeName = parameter.asStringTypeParameter().parameterTypeName();
+          else if (parameter.isVariableTypeParameter())
+            typeName = String.format("%s.%s.%s.%s", //
+                packageName, //
+                apiName, //
+                headVariableClassName(parameter.asVariableTypeParameter().variable), //
+                headVariableConclusionTypeName());
+          else if (parameter.isVarargsTypeParameter())
+            typeName = String.format("%s.%s.%s.%s...", //
+                packageName, //
+                apiName, //
+                headVariableClassName(parameter.asVarargsVariableTypeParameter().variable), //
+                headVariableConclusionTypeName());
+          else
+            throw new RuntimeException("problem while naming API types");
+          return ParameterFragment.of( //
+              typeName, //
+              getNameFromBase(parameter.baseParameterName(), usedNames));
+        }).collect(toList()));
   }
   public static String lowerCamelCase(String string) {
     if (string.isEmpty())

@@ -3,6 +3,7 @@ package fling.adapters;
 import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,8 +63,8 @@ public class JavaMediator {
     };
     this.astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer);
     this.Σ = Σ;
-    this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName,
-        apiName + "Compiler", apiName + "AST");
+    this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
+        apiName + "AST");
     this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
     this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
@@ -132,16 +133,34 @@ public class JavaMediator {
         .collect(joining());
   }
   private List<String> processParameters(Verb σ, List<ParameterFragment> parameters) {
+    Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     List<String> processedParameters = new ArrayList<>();
     for (int i = 0; i < parameters.size(); ++i) {
       TypeParameter parameter = σ.parameters.get(i);
       ParameterFragment declaration = parameters.get(i);
       if (parameter.isVariableTypeParameter())
-        processedParameters.add(String.format("((%s.α)%s).$()", //
+        processedParameters.add(String.format("((%s.%s.%s.α)%s).$()", //
+            packageName, //
+            apiName, //
             namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
             declaration.parameterName));
-      else
+      else if (parameter.isVarargsTypeParameter()) {
+        String αClass = String.format("%s.%s.%s.α", //
+            packageName, //
+            apiName, //
+            namer.headVariableClassName(parameter.asVarargsVariableTypeParameter().variable));
+        processedParameters.add(String.format("%s.stream(%s).map(%s.class::cast).map(%s::$).toArray(%s.%s.%s[]::new)", //
+            Arrays.class.getCanonicalName(), //
+            declaration.parameterName, //
+            αClass, //
+            αClass, //
+            packageName, //
+            apiName + "AST", //
+            namer.getASTClassName(parameter.asVarargsVariableTypeParameter().variable)));
+      } else if (parameter.isStringTypeParameter())
         processedParameters.add(declaration.parameterName);
+      else
+        throw new RuntimeException("problem while processing API parameters");
     }
     return processedParameters;
   }

@@ -17,11 +17,13 @@ import com.google.googlejavaformat.java.FormatterException;
 
 import fling.languages.AnBn;
 import fling.languages.BalancedParentheses;
+import fling.languages.Datalog;
 import fling.languages.ExtendedBalancedParentheses;
 import fling.languages.LongFall;
 import fling.languages.TaggedBalancedParentheses;
 
 @SuppressWarnings("static-method") public class CompilationScript {
+  private static final boolean FORMAT_OUTPUT = true;
   private static final Map<String, String> files = new LinkedHashMap<>();
   static {
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
@@ -33,6 +35,9 @@ import fling.languages.TaggedBalancedParentheses;
     files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
     files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
     files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
+    files.put("Datalog", Datalog.jm.apiClass);
+    files.put("DatalogAST", Datalog.jm.astClass);
+    files.put("DatalogCompiler", Datalog.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 
@@ -48,9 +53,14 @@ import fling.languages.TaggedBalancedParentheses;
       Path filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);
-      Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE,
-          StandardOpenOption.WRITE);
+      Files.write(filePath, Collections.singleton(FORMAT_OUTPUT ? //
+          formatter.formatSource(file.getValue()) : //
+          file.getValue() //
+      ), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
       System.out.println("file " + file.getKey() + ".java written successfully.");
     }
+  }
+  public static void main(String[] args) throws IOException, FormatterException {
+    new CompilationScript().compile();
   }
 }

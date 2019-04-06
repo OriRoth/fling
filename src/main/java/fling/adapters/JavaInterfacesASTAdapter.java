@@ -38,8 +38,9 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
                 .collect(joining(",")));
   }
   @Override public String printConcreteClass(ConcreteClassNode concreteClass) {
-    return String.format("class %s implements %s{%s%s}", //
+    return String.format("class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
+        concreteClass.parents.isEmpty() ? "" : "implements ", //
         concreteClass.parents.stream().map(ClassNode::getClassName).collect(joining(",")), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //

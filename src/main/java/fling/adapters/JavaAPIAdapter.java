@@ -96,7 +96,7 @@ import fling.grammar.sententials.Word;
       List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("interface %s%s{%s}", //
         printInterfaceDeclaration(declaration), //
-        " extends " + printTopType(), //
+        !declaration.isAccepting ? "" : " extends " + printTopType(), //
         methods.stream() //
             .filter(method -> !method.isTerminationMethod()) //
             .map(this::printMethod) //

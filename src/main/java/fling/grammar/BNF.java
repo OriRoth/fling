@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -50,8 +51,8 @@ public class BNF {
     }
     this.headVariables = headVariables;
     this.startVariable = startVariable;
-    this.extensionHeadsMapping = extensionHeadsMapping;
-    this.extensionProducts = extensionProducts;
+    this.extensionHeadsMapping = extensionHeadsMapping == null ? Collections.emptyMap() : extensionHeadsMapping;
+    this.extensionProducts = extensionProducts == null ? Collections.emptySet() : extensionProducts;
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
