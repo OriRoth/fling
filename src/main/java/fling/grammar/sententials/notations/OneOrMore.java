@@ -72,13 +72,15 @@ import java.util.ArrayList;
   }
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(List<Object> rawNode, int fieldCount) {
     List<List<Object>> $ = new ArrayList<>();
+    for (int i = 0; i < fieldCount; ++i)
+      $.add(new ArrayList<>());
     List<Object> currentRawNode = rawNode;
     while (!currentRawNode.isEmpty()) {
-      List<Object> rawArguments = (List<Object>) currentRawNode.get(0);
-      assert rawArguments.size() == fieldCount;
+      assert currentRawNode.size() == fieldCount + 1;
+      List<Object> rawArguments = currentRawNode.subList(0, fieldCount);
       for (int i = 0; i < fieldCount; ++i)
         $.get(i).add(rawArguments.get(i));
-      currentRawNode = (List<Object>) currentRawNode.get(1);
+      currentRawNode = (List<Object>) currentRawNode.get(fieldCount);
     }
     return $;
   }

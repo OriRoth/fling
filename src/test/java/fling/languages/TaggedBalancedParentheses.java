@@ -15,6 +15,7 @@ import static fling.languages.TaggedBalancedParentheses.Σ.ↄ;
 
 import fling.adapters.JavaMediator;
 import fling.generated.TaggedBalancedParenthesesAST.AB1;
+import fling.generated.TaggedBalancedParenthesesAST.AB2;
 import fling.generated.TaggedBalancedParenthesesAST.P;
 import fling.generated.TaggedBalancedParenthesesAST.P1;
 import fling.generated.TaggedBalancedParenthesesAST.P2;
@@ -72,7 +73,7 @@ public class TaggedBalancedParentheses {
     if (p.AB instanceof AB1)
       System.out.println("@a");
     else
-      System.out.println("@b");
+      System.out.println("@b" + ((AB2) p.AB).i);
     traverse(p.p2, depth);
   }
   @SuppressWarnings("unused") private static void traverse(P2 p, int depth) {
