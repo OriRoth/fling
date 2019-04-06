@@ -13,6 +13,7 @@ import fling.compiler.api.APICompiler;
 import fling.compiler.api.APICompiler.ParameterFragment;
 import fling.compiler.ast.ASTCompiler;
 import fling.compiler.ast.ASTParserCompiler;
+import fling.compiler.ast.nodes.ASTCompilationUnitNode;
 import fling.grammar.BNF;
 import fling.grammar.LL1;
 import fling.grammar.LL1JavaASTParserCompiler;
@@ -61,7 +62,12 @@ public class JavaMediator {
         return JavaMediator.this.printAdditionalDeclarations();
       }
     };
-    this.astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer);
+    JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
+    this.astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
+      @Override protected String printAdditionalDeclarations(ASTCompilationUnitNode compilationUnit) {
+        return astVisitorAdapter.printASTVisitorClass(compilationUnit);
+      }
+    };
     this.Σ = Σ;
     this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");

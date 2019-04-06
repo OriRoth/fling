@@ -10,7 +10,7 @@ import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
 
-public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
+@SuppressWarnings("static-method") public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
   private final String packageName;
   private final String className;
   private final Namer namer;
@@ -22,12 +22,13 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
   }
   @Override public String printASTClass(ASTCompilationUnitNode compilationUnit) {
     namer.name(compilationUnit);
-    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s}", //
+    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s}", //
         packageName, //
         className, //
         compilationUnit.classes.stream() //
             .map(this::printClass) //
-            .collect(joining()));
+            .collect(joining()), //
+        printAdditionalDeclarations(compilationUnit));
   }
   @Override public String printAbstractClass(AbstractClassNode abstractClass) {
     return String.format("interface %s %s{}", //
@@ -48,13 +49,16 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
             .collect(joining()), //
         printConstructor(concreteClass));
   }
-  @SuppressWarnings("static-method") public String printField(String format, String separator, FieldNode field) {
+  @SuppressWarnings("unused") protected String printAdditionalDeclarations(ASTCompilationUnitNode compilationUnit) {
+    return "";
+  }
+  public String printField(String format, String separator, FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format(format, //
             fragment.parameterType, fragment.parameterName)) //
         .collect(joining(separator));
   }
-  @SuppressWarnings("static-method") public String constructorAssignment(FieldNode field) {
+  public String constructorAssignment(FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format("this.%s = %s;", //
             fragment.parameterName, fragment.parameterName)) //
