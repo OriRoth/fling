@@ -107,7 +107,7 @@ public class NaiveNamer implements Namer {
               throw new RuntimeException("problem while naming AST types");
             return FieldNodeFragment.of( //
                 typeName, //
-                getNameFromBase(parameter.baseParameterName(), usedNames));
+                getNameFromBase(lowerCamelCase(symbol.name()), usedNames));
           }) //
           .collect(toList());
     if (symbol.isVariable())
@@ -153,6 +153,11 @@ public class NaiveNamer implements Namer {
     if (string.isEmpty())
       return string;
     return Character.toLowerCase(string.charAt(0)) + string.substring(1);
+  }
+  public static String upperCamelCase(String string) {
+    if (string.isEmpty())
+      return string;
+    return Character.toUpperCase(string.charAt(0)) + string.substring(1);
   }
   public static String getNameFromBase(String baseName, Map<String, Integer> usedNames) {
     if (!usedNames.containsKey(baseName)) {

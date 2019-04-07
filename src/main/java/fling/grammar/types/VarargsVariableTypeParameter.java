@@ -13,7 +13,7 @@ public class VarargsVariableTypeParameter implements TypeParameter {
     this.variable = variable;
   }
   @Override public String baseParameterName() {
-    return NaiveNamer.lowerCamelCase(variable.name());
+    return NaiveNamer.lowerCamelCase(variable.name() + "s");
   }
   @Override public Set<Variable> declaredHeadVariables() {
     return Collections.singleton(variable);

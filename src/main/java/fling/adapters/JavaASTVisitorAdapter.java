@@ -64,9 +64,10 @@ import fling.namers.NaiveNamer;
   public String printWhileVisitingMethod(ConcreteClassNode clazz) {
     Variable source = clazz.source;
     String parameterName = getNodeParameterName(source);
-    return String.format("public void whileVisiting(%s %s){}", //
+    return String.format("public void whileVisiting(%s %s)throws %s{}", //
         getASTVariableClassName(source), //
-        parameterName);
+        parameterName, //
+        Exception.class.getCanonicalName());
   }
   private String printVisitMethodBody(AbstractClassNode clazz, String parameterName) {
     return clazz.children.stream() //
@@ -79,7 +80,9 @@ import fling.namers.NaiveNamer;
   private String printVisitMethodBody(ConcreteClassNode clazz, String parameterName) {
     StringBuilder $ = new StringBuilder();
     Map<String, Integer> usedNames = new LinkedHashMap<>();
-    $.append(String.format("this.whileVisiting(%s);", parameterName));
+    $.append(String.format("try{this.whileVisiting(%s);}catch(%s __){__.printStackTrace();}", //
+        parameterName, //
+        Exception.class.getCanonicalName()));
     clazz.fields.stream() //
         .map(FieldNode::source) //
         .forEach(source -> {

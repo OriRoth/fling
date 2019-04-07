@@ -66,14 +66,14 @@ public class TaggedBalancedParentheses {
   private static void traverse(P1 p, int depth) {
     for (int i = 0; i < depth; ++i)
       System.out.print('\t');
-    System.out.println(p.chars);
+    System.out.println(p.c);
     traverse(p.p, depth + 1);
     for (int i = 0; i < depth; ++i)
       System.out.print('\t');
-    if (p.aB instanceof AB1)
+    if (p.ↄ instanceof AB1)
       System.out.println("@a");
     else
-      System.out.println("@b" + ((AB2) p.aB).integer);
+      System.out.println("@b" + ((AB2) p.ↄ).b);
     traverse(p.p2, depth);
   }
   @SuppressWarnings("unused") private static void traverse(P2 p, int depth) {
