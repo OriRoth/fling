@@ -2,6 +2,8 @@ package fling.grammar.types;
 
 import java.util.Objects;
 
+import fling.namers.NaiveNamer;
+
 public class VarargsClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
@@ -15,7 +17,7 @@ public class VarargsClassParameter implements StringTypeParameter {
     return parameterClass.getCanonicalName() + "...";
   }
   @Override public String baseParameterName() {
-    return String.valueOf(Character.toLowerCase(parameterClass.getName().charAt(0)));
+    return NaiveNamer.lowerCamelCase(parameterClass.getSimpleName() + "s");
   }
   @Override public int hashCode() {
     return parameterClass.hashCode();

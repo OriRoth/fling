@@ -2,6 +2,8 @@ package fling.grammar.types;
 
 import static java.util.Objects.requireNonNull;
 
+import fling.namers.NaiveNamer;
+
 // TODO allow primitive types.
 public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
@@ -13,7 +15,7 @@ public class ClassParameter implements StringTypeParameter {
     return parameterClass.getCanonicalName();
   }
   @Override public String baseParameterName() {
-    return String.valueOf(Character.toLowerCase(parameterClass.getSimpleName().charAt(0)));
+    return NaiveNamer.lowerCamelCase(unPrimitiveTypeSimple(parameterClass.getSimpleName()));
   }
   @Override public int hashCode() {
     return parameterClass.hashCode();
@@ -39,6 +41,18 @@ public class ClassParameter implements StringTypeParameter {
                             boolean.class.getName().equals(typeName) ? Boolean.class.getCanonicalName() : //
                                 char.class.getName().equals(typeName) ? Character.class.getCanonicalName() : //
                                     void.class.getName().equals(typeName) ? Void.class.getCanonicalName() : //
+                                        typeName;
+  }
+  public static String unPrimitiveTypeSimple(String typeName) {
+    return byte.class.getName().equals(typeName) ? Byte.class.getSimpleName() : //
+        short.class.getName().equals(typeName) ? Short.class.getSimpleName() : //
+            int.class.getName().equals(typeName) ? Integer.class.getSimpleName() : //
+                long.class.getName().equals(typeName) ? Long.class.getSimpleName() : //
+                    float.class.getName().equals(typeName) ? Float.class.getSimpleName() : //
+                        double.class.getName().equals(typeName) ? Double.class.getSimpleName() : //
+                            boolean.class.getName().equals(typeName) ? Boolean.class.getSimpleName() : //
+                                char.class.getName().equals(typeName) ? Character.class.getSimpleName() : //
+                                    void.class.getName().equals(typeName) ? Void.class.getSimpleName() : //
                                         typeName;
   }
 }

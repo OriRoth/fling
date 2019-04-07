@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import fling.grammar.sententials.Variable;
+import fling.namers.NaiveNamer;
 
 public class VarargsVariableTypeParameter implements TypeParameter {
   public final Variable variable;
@@ -12,7 +13,7 @@ public class VarargsVariableTypeParameter implements TypeParameter {
     this.variable = variable;
   }
   @Override public String baseParameterName() {
-    return variable.name();
+    return NaiveNamer.lowerCamelCase(variable.name());
   }
   @Override public Set<Variable> declaredHeadVariables() {
     return Collections.singleton(variable);
