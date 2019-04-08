@@ -9,8 +9,8 @@ import java.util.List;
 
 import fling.compiler.Assignment;
 import fling.compiler.Namer;
-import fling.compiler.api.APICompiler;
 import fling.compiler.api.APICompiler.ParameterFragment;
+import fling.compiler.api.ReliableAPICompiler;
 import fling.compiler.ast.ASTCompiler;
 import fling.compiler.ast.ASTParserCompiler;
 import fling.compiler.ast.nodes.ASTCompilationUnitNode;
@@ -72,7 +72,8 @@ public class JavaMediator {
     this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
     this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
-    this.apiClass = apiAdapter.printFluentAPI(new APICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
+    this.apiClass = apiAdapter
+        .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
   protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
@@ -134,7 +135,7 @@ public class JavaMediator {
             return JavaMediator.this.printTerminationMethodConcreteBody(bnf.startVariable);
           }
         } //
-            .printFluentAPI(new APICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+            .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
   private List<String> processParameters(Verb σ, List<ParameterFragment> parameters) {

@@ -14,7 +14,7 @@ import static fling.languages.LongFall.Σ.b;
 import fling.adapters.CppAPIAdapter;
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
-import fling.compiler.api.APICompiler;
+import fling.compiler.api.ReliableAPICompiler;
 import fling.grammar.Grammar;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
@@ -45,9 +45,9 @@ public class LongFall {
       .go());
   public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "LongFall", "$",
       new NaiveNamer("fling.generated", "LongFall")) //
-          .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+          .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("fling.generated", "LongFall")) //
-      .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+      .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     a().a().a().a().a().a().a().$();

@@ -44,7 +44,7 @@ public class TaggedBalancedParentheses {
 
   public static void compilationTest() {
     c('a', 'a').ↄ(a()).$();
-    c('a', 'a').ↄ(a()).ↄ(a());
+    // c('a', 'a').ↄ(a()).ↄ(a());
     c('a', 'a').c('b').c('c').ↄ(a()).ↄ(a());
     c('a', 'a').c('b').c('c').ↄ(a()).ↄ(b(1).b(2)).ↄ(a()).$();
     c('a', 'a').c('b').ↄ(a()).ↄ(b(1).b(2)).c('e').ↄ(a()).$();

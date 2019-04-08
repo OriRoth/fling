@@ -14,7 +14,7 @@ import static fling.languages.ExtendedBalancedParentheses.Σ.ↄ;
 
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
-import fling.compiler.api.APICompiler;
+import fling.compiler.api.ReliableAPICompiler;
 import fling.grammar.Grammar;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Terminal;
@@ -48,11 +48,11 @@ public class ExtendedBalancedParentheses {
       .go());
   public static final String fluentAPI = new JavaAPIAdapter("fling.generated", "ExtendedBalancedParentheses", "$",
       new NaiveNamer("fling.generated", "ExtendedBalancedParentheses")) //
-          .printFluentAPI(new APICompiler(dpda).compileFluentAPI());
+          .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 
   public static void compilationTest() {
     c().ↄ().$();
-    c().ↄ().ↄ();
+    // c().ↄ().ↄ();
     c().c().c().ↄ().ↄ();
     c().c().c().ↄ().ↄ().ↄ().$();
     c().c().c().ↄ().Ↄ().c().ↄ().$();

@@ -3,6 +3,7 @@ package fling.adapters;
 import static java.util.stream.Collectors.joining;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import fling.compiler.Namer;
@@ -76,15 +77,20 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
   }
   public String printTypeName(APICompiler.TypeName name) {
-    return printTypeName(name.q, name.α);
+    return printTypeName(name.q, name.α, name.legalJumps);
   }
-  @SuppressWarnings("static-method") public String printTypeName(Named q, Word<Named> α) {
-    return α == null ? q.name() : String.format("%s_%s", q.name(), α.stream().map(Named::name).collect(Collectors.joining()));
+  @SuppressWarnings("static-method") public String printTypeName(Named q, Word<Named> α, Set<Named> legalJumps) {
+    return α == null ? q.name()
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
   public String printInterfaceDeclaration(APICompiler.InterfaceDeclaration declaration) {
-    return declaration.typeVariables.isEmpty() ? String.format("class %s", printTypeName(declaration.q, declaration.α))
+    return declaration.typeVariables.isEmpty()
+        ? String.format("class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
         : String.format("template<%s>class %s",
             declaration.typeVariables.stream().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
-            printTypeName(declaration.q, declaration.α));
+            printTypeName(declaration.q, declaration.α, declaration.legalJumps));
   }
 }

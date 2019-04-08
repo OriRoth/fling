@@ -3,6 +3,7 @@ package fling.adapters;
 import static java.util.stream.Collectors.joining;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import fling.compiler.Namer;
@@ -103,13 +104,17 @@ import fling.grammar.sententials.Word;
             .collect(joining()));
   }
   public String printTypeName(APICompiler.TypeName name) {
-    return printTypeName(name.q, name.α);
+    return printTypeName(name.q, name.α, name.legalJumps);
   }
   public String printTypeName(APICompiler.InterfaceDeclaration declaration) {
-    return printTypeName(declaration.q, declaration.α);
+    return printTypeName(declaration.q, declaration.α, declaration.legalJumps);
   }
-  public String printTypeName(Named q, Word<Named> α) {
-    return α == null ? q.name() : String.format("%s_%s", q.name(), α.stream().map(Named::name).collect(Collectors.joining()));
+  public String printTypeName(Named q, Word<Named> α, Set<Named> legalJumps) {
+    return α == null ? q.name()
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
   public String printInterfaceDeclaration(APICompiler.InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //

@@ -37,7 +37,6 @@ import fling.languages.TaggedBalancedParentheses;
     files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
     files.put("Datalog", Datalog.jm.apiClass);
     files.put("DatalogAST", Datalog.jm.astClass);
-    System.out.println(Datalog.jm.astClass);
     files.put("DatalogCompiler", Datalog.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
