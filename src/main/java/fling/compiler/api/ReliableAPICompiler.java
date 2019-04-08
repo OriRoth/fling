@@ -97,9 +97,18 @@ public class ReliableAPICompiler extends APICompiler {
   private boolean shallowIsBot(TypeName type) {
     if (dpda.isAccepting(type.q))
       return false;
-    return !dpda.Σ() //
-        .filter(σ -> dpda.δδ(type.q, σ, type.α.top()) != null) //
-        .findAny().isPresent();
+    for (Verb σ : dpda.Σ) {
+      δ<Named, Verb, Named> δ = dpda.δδ(type.q, σ, type.α.top());
+      if (δ == null)
+        continue;
+      if (!δ.getΑ().isEmpty())
+        // Consuming transition.
+        return false;
+      if (type.legalJumps.contains(δ.q$))
+        // Legal epsilon-transition is possible.
+        return false;
+    }
+    return true;
   }
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α,
       Set<Named> legalJumps) {
