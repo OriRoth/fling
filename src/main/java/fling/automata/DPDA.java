@@ -103,6 +103,25 @@ public class DPDA<Q, Σ, Γ> {
       q$ = δ$.q$;
     }
   }
+  public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
+    Q q$ = q;
+    Word<Γ> s = new Word<>(α);
+    final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
+    if (δ == null)
+      return null;
+    q$ = δ.q$;
+    s = s.pop().push(δ.getΑ());
+    // process subsequent ε transitions.
+    for (;;) {
+      if (s.isEmpty())
+        return new δ<>(q, σ, null, q$, s);
+      final δ<Q, Σ, Γ> δ$ = δ(q$, ε(), s.top());
+      if (δ$ == null)
+        return new δ<>(q, σ, null, q$, s);
+      s = s.pop().push(δ$.getΑ());
+      q$ = δ$.q$;
+    }
+  }
   private void verify() {
     Map<Q, Set<δ<Q, Σ, Γ>>> seenTransitions = new HashMap<>();
     Q.forEach(q -> seenTransitions.put(q, new HashSet<>()));

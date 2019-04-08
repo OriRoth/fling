@@ -98,7 +98,7 @@ public class ReliableAPICompiler extends APICompiler {
     if (dpda.isAccepting(type.q))
       return false;
     for (Verb σ : dpda.Σ) {
-      δ<Named, Verb, Named> δ = dpda.δδ(type.q, σ, type.α.top());
+      δ<Named, Verb, Named> δ = dpda.δδ(type.q, σ, type.α);
       if (δ == null)
         continue;
       if (!δ.getΑ().isEmpty())
