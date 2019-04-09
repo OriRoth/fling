@@ -22,8 +22,8 @@ public class BalancedParentheses {
 
   public static final BNF bnf = bnf(V.class). //
       start(P). //
-      derive(P, c, P, ↄ, P). //
-      derive(P). //
+      derive(P).to(c, P, ↄ, P). //
+      derive(P).toEpsilon(). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.generated", "BalancedParentheses", Σ.class);

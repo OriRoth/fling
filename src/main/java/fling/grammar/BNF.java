@@ -192,17 +192,13 @@ public class BNF {
         R.add(new DerivationRule(v, new ArrayList<>()));
       this.heads = new LinkedHashSet<>();
     }
-    public Builder<V> derive(Variable lhs, Symbol... sententialForm) {
-      SententialForm processedSententialForm = new SententialForm(Arrays.stream(sententialForm) //
-          .map(symbol -> {
-            return !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
-          }) //
-          .collect(Collectors.toList()));
-      processedSententialForm.forEach(this::processSymbol);
-      rhs(lhs).add(processedSententialForm);
-      return this;
+    public Derive derive(Variable lhs) {
+      return new Derive(lhs);
     }
-    private void processSymbol(Symbol symbol) {
+    public Specialize specialize(Variable lhs) {
+      return new Specialize(lhs);
+    }
+    void processSymbol(Symbol symbol) {
       assert !symbol.isTerminal();
       if (symbol.isVerb()) {
         Σ.add(symbol.asVerb());
@@ -220,8 +216,47 @@ public class BNF {
       assert start != null : "declare a start variable";
       return new BNF(Σ, EnumSet.allOf(V), R, start, heads, null, null, true);
     }
-    private List<SententialForm> rhs(Variable v) {
+    List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
+    }
+
+    public class Derive {
+      private final Variable lhs;
+
+      public Derive(Variable lhs) {
+        this.lhs = lhs;
+      }
+      public Builder<V> to(Symbol... sententialForm) {
+        SententialForm processedSententialForm = new SententialForm(Arrays.stream(sententialForm) //
+            .map(symbol -> {
+              return !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
+            }) //
+            .collect(Collectors.toList()));
+        processedSententialForm.forEach(Builder.this::processSymbol);
+        rhs(lhs).add(processedSententialForm);
+        return Builder.this;
+      }
+      public Builder<V> toEpsilon() {
+        SententialForm processedSententialForm = new SententialForm();
+        rhs(lhs).add(processedSententialForm);
+        return Builder.this;
+      }
+    }
+
+    public class Specialize {
+      private final Variable lhs;
+
+      public Specialize(Variable lhs) {
+        this.lhs = lhs;
+      }
+      public Builder<V> into(Variable... variables) {
+        for (Variable variable : variables) {
+          SententialForm processedSententialForm = new SententialForm(variable);
+          processedSententialForm.forEach(Builder.this::processSymbol);
+          rhs(lhs).add(processedSententialForm);
+        }
+        return Builder.this;
+      }
     }
   }
 }

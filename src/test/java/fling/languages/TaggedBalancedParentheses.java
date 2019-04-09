@@ -34,10 +34,10 @@ public class TaggedBalancedParentheses {
 
   public static final BNF bnf = bnf(V.class). //
       start(P). //
-      derive(P, c.many(char.class), P, ↄ.with(AB), P). //
-      derive(P). //
-      derive(AB, a). //
-      derive(AB, oneOrMore(b.with(int.class))). //
+      derive(P).to(c.many(char.class), P, ↄ.with(AB), P). //
+      derive(P).toEpsilon(). //
+      derive(AB).to(a). //
+      derive(AB).to(oneOrMore(b.with(int.class))). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.generated", "TaggedBalancedParentheses", Σ.class);
