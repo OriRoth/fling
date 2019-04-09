@@ -2,8 +2,6 @@ package fling.languages;
 
 import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
-import static fling.generated.LongFall.a;
-import static fling.generated.LongFall.b;
 import static fling.languages.LongFall.Q.q0;
 import static fling.languages.LongFall.Q.q1;
 import static fling.languages.LongFall.Γ.g0;
@@ -48,13 +46,4 @@ public class LongFall {
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("fling.generated", "LongFall")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-
-  public static void compilationTest() {
-    a().a().a().a().a().a().a().$();
-    a().a().a().a().a().a().a().b().$();
-    b().$();
-  }
-  public static void main(String[] args) {
-    System.out.println(CppFluentAPI);
-  }
 }

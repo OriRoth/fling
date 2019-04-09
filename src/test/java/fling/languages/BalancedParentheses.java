@@ -1,6 +1,5 @@
 package fling.languages;
 
-import static fling.generated.BalancedParentheses.c;
 import static fling.grammar.BNF.bnf;
 import static fling.languages.BalancedParentheses.V.P;
 import static fling.languages.BalancedParentheses.Σ.c;
@@ -27,14 +26,4 @@ public class BalancedParentheses {
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.generated", "BalancedParentheses", Σ.class);
-
-  public static void compilationTest() {
-    c().ↄ().$();
-    // c().ↄ().ↄ();
-    c().c().c().ↄ().ↄ();
-    c().c().c().ↄ().ↄ().ↄ().$();
-    c().c().ↄ().ↄ().c().ↄ().$();
-    c().c().ↄ().ↄ().c();
-    // ↄ();
-  }
 }

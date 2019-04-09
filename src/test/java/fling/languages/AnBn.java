@@ -2,7 +2,6 @@ package fling.languages;
 
 import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
-import static fling.generated.AnBn.a;
 import static fling.languages.AnBn.Q.q0;
 import static fling.languages.AnBn.Q.q1;
 import static fling.languages.AnBn.Q.q2;
@@ -49,12 +48,4 @@ public class AnBn {
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("fling.generated", "AnBn")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-
-  public static void compilationTest() {
-    a().a().a().b().b().b().$();
-    // a().a().a().b().b().a();
-  }
-  public static void main(String[] args) {
-    System.out.println(CppFluentAPI);
-  }
 }
