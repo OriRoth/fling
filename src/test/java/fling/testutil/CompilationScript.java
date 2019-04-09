@@ -20,6 +20,7 @@ import fling.languages.BalancedParentheses;
 import fling.languages.Datalog;
 import fling.languages.ExtendedBalancedParentheses;
 import fling.languages.LongFall;
+import fling.languages.SubFigure;
 import fling.languages.TaggedBalancedParentheses;
 
 @SuppressWarnings("static-method") public class CompilationScript {
@@ -38,6 +39,9 @@ import fling.languages.TaggedBalancedParentheses;
     files.put("Datalog", Datalog.jm.apiClass);
     files.put("DatalogAST", Datalog.jm.astClass);
     files.put("DatalogCompiler", Datalog.jm.astCompilerClass);
+    files.put("SubFigure", SubFigure.jm.apiClass);
+    files.put("SubFigureAST", SubFigure.jm.astClass);
+    files.put("SubFigureCompiler", SubFigure.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/generated/";
 
