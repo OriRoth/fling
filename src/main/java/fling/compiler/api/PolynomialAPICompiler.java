@@ -1,8 +1,8 @@
 package fling.compiler.api;
 
+import static fling.automata.Alphabet.ε;
 import static fling.compiler.api.nodes.PolymorphicTypeNode.bot;
 import static fling.compiler.api.nodes.PolymorphicTypeNode.top;
-import static fling.grammar.sententials.Alphabet.ε;
 import static fling.util.Collections.asList;
 import static fling.util.Collections.asWord;
 import static fling.util.Collections.chainList;

@@ -10,6 +10,12 @@ import fling.compiler.ast.nodes.ClassNode;
 import fling.compiler.ast.nodes.ConcreteClassNode;
 import fling.compiler.ast.nodes.FieldNode;
 
+/**
+ * Java AST adapter. Abstract types translate to interfaces, while Concrete
+ * types translate to classes implementing them.
+ * 
+ * @author Ori Roth
+ */
 @SuppressWarnings("static-method") public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
   private final String packageName;
   private final String className;
@@ -49,6 +55,12 @@ import fling.compiler.ast.nodes.FieldNode;
             .collect(joining()), //
         printConstructor(concreteClass));
   }
+  /**
+   * Additional definitions to be printed in the top class.
+   * 
+   * @param compilationUnit AST
+   * @return additional definitions
+   */
   @SuppressWarnings("unused") protected String printAdditionalDeclarations(ASTCompilationUnitNode compilationUnit) {
     return "";
   }

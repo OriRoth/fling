@@ -1,6 +1,6 @@
 package fling.grammar;
 
-import static fling.grammar.sententials.Alphabet.ε;
+import static fling.automata.Alphabet.ε;
 import static fling.util.Collections.reversed;
 
 import java.util.ArrayList;

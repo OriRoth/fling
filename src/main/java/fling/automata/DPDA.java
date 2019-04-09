@@ -1,6 +1,6 @@
 package fling.automata;
 
-import static fling.grammar.sententials.Alphabet.ε;
+import static fling.automata.Alphabet.ε;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -19,9 +19,9 @@ import fling.grammar.sententials.Word;
  * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.
  * 
  * @author Ori Roth
- * @param <Q> states enum
- * @param <Σ> alphabet enum
- * @param <Γ> stack symbols enum
+ * @param <Q> states type
+ * @param <Σ> alphabet type
+ * @param <Γ> stack symbols type
  */
 public class DPDA<Q, Σ, Γ> {
   public final Set<Q> Q;
@@ -103,6 +103,16 @@ public class DPDA<Q, Σ, Γ> {
       q$ = δ$.q$;
     }
   }
+  /**
+   * Returns matching consolidated transition, i.e., the result of the multiple
+   * transitions initiated by the received configuration. The returned
+   * transition does not contain stack symbol.
+   * 
+   * @param q current state
+   * @param σ current input letter
+   * @param α current stack
+   * @return matching consolidated transition
+   */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
     Q q$ = q;
     Word<Γ> s = new Word<>(α);

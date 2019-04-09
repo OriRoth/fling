@@ -24,6 +24,13 @@ import fling.grammar.sententials.Verb;
 import fling.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 
+/**
+ * Java adapters mediator. Connects fluent API, AST types and AST run-time
+ * compiler generation given LL(1) grammars. AST visitor class definition is
+ * also produced.
+ * 
+ * @author Ori Roth
+ */
 public class JavaMediator {
   final LL1 ll1;
   private final Namer namer;
@@ -33,8 +40,17 @@ public class JavaMediator {
   private final JavaInterfacesASTAdapter astAdapter;
   private final Class<? extends Terminal> Σ;
   private final ASTParserCompiler parserCompiler;
+  /**
+   * API Java file contents.
+   */
   public final String apiClass;
+  /**
+   * AST Java file contents. Includes the AST visitor class.
+   */
   public final String astClass;
+  /**
+   * AST run-time compiler Java file contents.
+   */
   public final String astCompilerClass;
 
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(BNF bnf, String packageName, String apiName, Class<Σ> Σ) {

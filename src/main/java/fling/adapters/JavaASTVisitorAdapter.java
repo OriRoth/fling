@@ -17,6 +17,11 @@ import fling.grammar.sententials.Variable;
 import fling.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.namers.NaiveNamer;
 
+/**
+ * Java adapter printing AST visitor class given AST type definitions.
+ * 
+ * @author Ori Roth
+ */
 @SuppressWarnings("static-method") public class JavaASTVisitorAdapter {
   private static final String VISITOR_CLASS_NAME = "Visitor";
   private final String packageName;

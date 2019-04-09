@@ -20,6 +20,13 @@ import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Verb;
 import fling.grammar.sententials.Word;
 
+/**
+ * Java API adapter. Output contains the API types and a single concrete
+ * implementation to be returned from the static method initiation method
+ * chains.
+ * 
+ * @author Ori Roth
+ */
 @SuppressWarnings("static-method") public class JavaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String packageName;
   private final String className;
@@ -145,21 +152,57 @@ import fling.grammar.sententials.Word;
             terminationMethodName, //
             printTerminationMethodConcreteBody()));
   }
+  /**
+   * Start static method body.
+   * 
+   * @param σ inducing verb
+   * @param parameters method parameters
+   * @return method body
+   */
   @SuppressWarnings("unused") protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
     return "return new α();";
   }
+  /**
+   * Prints additional definition in concrete implementation class's body.
+   * 
+   * @return additional definition
+   */
   protected String printConcreteImplementationClassBody() {
     return "";
   }
+  /**
+   * Concrete implementation's method's body. Making the recording of terminals
+   * and their parameters possible.
+   * 
+   * @param σ current verb
+   * @param parameters method parameters
+   * @return method body
+   */
   @SuppressWarnings("unused") protected String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
     return "";
   }
+  /**
+   * Return type of the termination method.
+   * 
+   * @return return type
+   */
   protected String printTerminationMethodReturnType() {
     return "void";
   }
+  /**
+   * Concrete implementation's termination method body. Might be used to create
+   * and return the processed terminal.
+   * 
+   * @return method body
+   */
   protected String printTerminationMethodConcreteBody() {
     return "";
   }
+  /**
+   * Additional declaration within the top class.
+   * 
+   * @return additional declarations
+   */
   protected String printAdditionalDeclarations() {
     return "";
   }

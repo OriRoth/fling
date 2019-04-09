@@ -16,6 +16,11 @@ import fling.grammar.sententials.Constants;
 import fling.grammar.sententials.Named;
 import fling.grammar.sententials.Word;
 
+/**
+ * Prototypical C++ API adapter.
+ * 
+ * @author Ori Roth
+ */
 public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String terminationMethodName;
   private final Namer namer;

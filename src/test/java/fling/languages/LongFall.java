@@ -1,9 +1,9 @@
 package fling.languages;
 
+import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
 import static fling.generated.LongFall.a;
 import static fling.generated.LongFall.b;
-import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.LongFall.Q.q0;
 import static fling.languages.LongFall.Q.q1;
 import static fling.languages.LongFall.Γ.g0;

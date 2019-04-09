@@ -1,8 +1,8 @@
 package fling.languages;
 
+import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
 import static fling.generated.AnBn.a;
-import static fling.grammar.sententials.Alphabet.ε;
 import static fling.languages.AnBn.Q.q0;
 import static fling.languages.AnBn.Q.q1;
 import static fling.languages.AnBn.Q.q2;

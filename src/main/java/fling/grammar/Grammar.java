@@ -1,6 +1,6 @@
 package fling.grammar;
 
-import static fling.grammar.sententials.Alphabet.ε;
+import static fling.automata.Alphabet.ε;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 

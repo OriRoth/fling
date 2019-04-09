@@ -1,5 +1,6 @@
 package fling.automata;
 
+import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
 import static fling.automata.DPDATest.Q.q0;
 import static fling.automata.DPDATest.Q.q1;
@@ -9,7 +10,6 @@ import static fling.automata.DPDATest.Γ.γ1;
 import static fling.automata.DPDATest.Σ.c;
 import static fling.automata.DPDATest.Σ.Ↄ;
 import static fling.automata.DPDATest.Σ.ↄ;
-import static fling.grammar.sententials.Alphabet.ε;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
