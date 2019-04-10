@@ -2,13 +2,9 @@ package fling.languages;
 
 import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
-import static fling.languages.AnBn.Q.q0;
-import static fling.languages.AnBn.Q.q1;
-import static fling.languages.AnBn.Q.q2;
-import static fling.languages.AnBn.Γ.E;
-import static fling.languages.AnBn.Γ.X;
-import static fling.languages.AnBn.Σ.a;
-import static fling.languages.AnBn.Σ.b;
+import static fling.languages.AeqB.Q.*;
+import static fling.languages.AeqB.Γ.*;
+import static fling.languages.AeqB.Σ.*;
 
 import fling.adapters.CppAPIAdapter;
 import fling.adapters.JavaAPIAdapter;
@@ -20,9 +16,9 @@ import fling.grammar.sententials.Terminal;
 import fling.grammar.sententials.Verb;
 import fling.namers.NaiveNamer;
 
-public class AnBn {
+public class AeqB {
   enum Q implements Named {
-    q0, q1, q2
+    q0, q1
   }
 
   enum Σ implements Terminal {
@@ -30,22 +26,27 @@ public class AnBn {
   }
 
   enum Γ implements Named {
-    E, X
+    E, A, B
   }
 
   public static final DPDA<Named, Verb, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
-      .F(q2) //
+      .F(q0) //
       .γ0(E) //
-      .δ(q0, a, E, q0, E, X) //
-      .δ(q0, a, X, q0, X, X) //
-      .δ(q0, b, X, q1) //
-      .δ(q1, b, X, q1) //
-      .δ(q1, ε(), E, q2) //
+      .δ(q0, a, E, q1, E, A) //
+      .δ(q0, b, E, q1, E, B) //
+      .δ(q1, ε(), E, q0, E) //
+      .δ(q1, a, A, q1, A, A) //
+      .δ(q1, a, B, q1) //
+      .δ(q1, b, A, q1) //
+      .δ(q1, b, B, q1, B, B) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AnBn", "$",
-      new NaiveNamer("fling.generated", "AnBn")) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("fling.generated", "AeqB", "$",
+      new NaiveNamer("fling.generated", "AeqB")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AnBn")) //
+  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+  public static void main(String[] args) {
+    System.out.println(CppFluentAPI);
+  }
 }

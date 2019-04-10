@@ -32,6 +32,9 @@ public class NaiveNamer implements Namer {
   private final String packageName;
   private final String apiName;
 
+  public NaiveNamer(String apiName) {
+    this(null, apiName);
+  }
   public NaiveNamer(String packageName, String apiName) {
     this.packageName = packageName;
     this.apiName = apiName;

@@ -29,6 +29,15 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     this.terminationMethodName = terminationMethodName;
     this.namer = namer;
   }
+  @Override public String printFluentAPI(
+      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+    namer.name(fluentAPI);
+    return String.format("%s%s%s", //
+        fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
+            .collect(joining()), //
+        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
+  }
   @Override public String printTopType() {
     return "TOP";
   }
@@ -71,15 +80,6 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     return String.format("%s{public:%s};", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
-  }
-  @Override public String printFluentAPI(
-      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
-    namer.name(fluentAPI);
-    return String.format("%s%s%s", //
-        fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
-            .collect(joining()), //
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
   }
   public String printTypeName(APICompiler.TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);

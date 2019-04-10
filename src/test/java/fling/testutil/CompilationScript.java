@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
+import fling.languages.AeqB;
 import fling.languages.AnBn;
 import fling.languages.BalancedParentheses;
 import fling.languages.Datalog;
@@ -30,6 +31,7 @@ import fling.languages.TaggedBalancedParentheses;
     files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
     files.put("LongFall", LongFall.JavaFluentAPI);
     files.put("AnBn", AnBn.JavaFluentAPI);
+    files.put("AeqB", AeqB.JavaFluentAPI);
     files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
     files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
     files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
