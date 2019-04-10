@@ -13,12 +13,16 @@ public class SubFigure {
   public static void main(String[] args) {
     Figure fig =
       row().
-        load("p1").
         column().
+          load("p1").
           load("p2").
+          load("p3").
+        seal().
+        column().
+          load("p4").
           row().
-            load("p3").
-            load("p4").
+            load("p5").
+            load("p6").
           seal().
         seal().
       seal().$();
@@ -64,18 +68,26 @@ public class SubFigure {
     table[i + h / 2][j + w / 2 - 1] = n1;
     table[i + h / 2][j + w / 2] = n2;
   }
-  private static void fillTable(Figure2 composite, char[][] table, int i, int j, int h, int w) {
+  @SuppressWarnings("null") private static void fillTable(Figure2 composite, char[][] table, int i, int j, int h, int w) {
     if (isRow(composite.orientation)) {
+      int totalWidth = composite.figure.stream().map(SubFigure::getWidth).reduce(0, Integer::sum);
       int k = 0;
-      for (Figure fig : composite.figure) {
-        int figW = getWidth(fig);
+      for (int l = 0; l < composite.figure.size(); ++l) {
+        Figure fig = composite.figure.get(l);
+        int figW = (w / totalWidth) * getWidth(fig);
+        if (l == composite.figure.size() - 1)
+          figW = w - k;
         fillTable(fig, table, i, j + k, h, figW);
         k += figW;
       }
     } else {
+      int totalHeight = composite.figure.stream().map(SubFigure::getHeight).reduce(0, Integer::sum);
       int k = 0;
-      for (Figure fig : composite.figure) {
-        int figH = getHeight(fig);
+      for (int l = 0; l < composite.figure.size(); ++l) {
+        Figure fig = composite.figure.get(l);
+        int figH = (h / totalHeight) * getHeight(fig);
+        if (l == composite.figure.size() - 1)
+          figH = h - k;
         fillTable(fig, table, i + k, j, figH, w);
         k += figH;
       }
