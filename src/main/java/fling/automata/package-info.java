@@ -21,8 +21,7 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * Deterministic push-down automaton (DPDA) specification API and logic.
  *
  * @since April 2019
  */

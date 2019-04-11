@@ -22,8 +22,7 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * Fling namers, assigning concrete names to AST elements of the output classes.
  *
  * @since April 2019
  */

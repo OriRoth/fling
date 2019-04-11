@@ -21,9 +21,8 @@
  * SOFTWARE. */
 /**
  * <p>
- * Fluent API and AST types compilers. The input languages are compiled into
- * ASTs later to be parsed by specific language adapters.
+ * Fluent API compilers.
  *
  * @since April 2019
  */
-package fling.compilers;
+package fling.compilers.api;

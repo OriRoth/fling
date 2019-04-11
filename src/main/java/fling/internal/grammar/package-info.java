@@ -1,4 +1,4 @@
-/* The MIT License (MIT) 
+/* The MIT License (MIT)
  * 
  * Copyright (c) 2019 (authors)
  * 
@@ -21,9 +21,8 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * Grammar families and formal language specification forms.
  *
  * @since April 2019
  */
-package fling.util;
+package fling.internal.grammar;

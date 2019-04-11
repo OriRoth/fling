@@ -21,9 +21,8 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * Fluent API compilers.
  *
  * @since April 2019
  */
-package fling.grammar.types;
+package fling.internal.compiler.api;

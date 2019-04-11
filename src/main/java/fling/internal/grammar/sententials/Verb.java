@@ -1,12 +1,12 @@
 package fling.internal.grammar.sententials;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import fling.internal.grammar.types.TypeParameter;
-
-import static java.util.Objects.requireNonNull;
 
 public class Verb implements Symbol {
   public final Terminal source;

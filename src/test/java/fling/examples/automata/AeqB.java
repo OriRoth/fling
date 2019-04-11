@@ -2,9 +2,13 @@ package fling.examples.automata;
 
 import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
-import static fling.examples.automata.AeqB.Q.*;
-import static fling.examples.automata.AeqB.Γ.*;
-import static fling.examples.automata.AeqB.Σ.*;
+import static fling.examples.automata.AeqB.Q.q0;
+import static fling.examples.automata.AeqB.Q.q1;
+import static fling.examples.automata.AeqB.Γ.A;
+import static fling.examples.automata.AeqB.Γ.B;
+import static fling.examples.automata.AeqB.Γ.E;
+import static fling.examples.automata.AeqB.Σ.a;
+import static fling.examples.automata.AeqB.Σ.b;
 
 import fling.adapters.CppAPIAdapter;
 import fling.adapters.JavaAPIAdapter;

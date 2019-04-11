@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.api.APICompiler;
-import fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.internal.compiler.api.APICompiler.ParameterFragment;
+import fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import fling.internal.compiler.api.nodes.AbstractMethodNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
 import fling.internal.compiler.api.nodes.InterfaceNode;
 import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
 import fling.internal.grammar.sententials.Constants;
 import fling.internal.grammar.sententials.Named;
 import fling.internal.grammar.sententials.Verb;

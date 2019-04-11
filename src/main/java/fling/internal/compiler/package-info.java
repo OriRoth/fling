@@ -21,9 +21,9 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * Fluent API and AST types compilers. The input languages are compiled into
+ * ASTs later to be parsed by specific language adapters.
  *
  * @since April 2019
  */
-package fling.grammar.sententials;
+package fling.internal.compiler;

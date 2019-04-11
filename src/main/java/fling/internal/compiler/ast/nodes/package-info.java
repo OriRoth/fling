@@ -21,9 +21,8 @@
  * SOFTWARE. */
 /**
  * <p>
- * Adapters telling fling how to generate its output for various programming
- * languages.
+ * AST types compiler output AST nodes.
  *
  * @since April 2019
  */
-package fling.grammar;
+package fling.internal.compiler.ast.nodes;

@@ -1,9 +1,9 @@
 package fling.examples.programs;
 
-import static fling.examples.programs.Datalog.DatalogPrinter.print;
 import static fling.examples.generated.Datalog.fact;
 import static fling.examples.generated.Datalog.Term.l;
 import static fling.examples.generated.Datalog.Term.v;
+import static fling.examples.programs.Datalog.DatalogPrinter.print;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
