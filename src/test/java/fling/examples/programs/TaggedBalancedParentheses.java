@@ -24,29 +24,29 @@ public class TaggedBalancedParentheses {
   }
   public static void main(String[] args) {
     P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b(1).b(2)).ↄ(a()).$();
-    traverse(parseTree, 0);
-    traverse(__().$(), 0);
+    System.out.println(traverse(parseTree, 0));
+    System.out.println(traverse(__().$(), 0));
   }
-  private static void traverse(P p, int depth) {
-    if (p instanceof P1)
-      traverse((P1) p, depth);
-    else
-      traverse((P2) p, depth);
+  private static String traverse(P p, int depth) {
+    return p instanceof P1 ? traverse((P1) p, depth) : traverse((P2) p, depth);
   }
-  private static void traverse(P1 p, int depth) {
+  private static String traverse(P1 p, int depth) {
+    StringBuilder $ = new StringBuilder();
     for (int i = 0; i < depth; ++i)
-      System.out.print('\t');
-    System.out.println(p.c);
-    traverse(p.p, depth + 1);
+      $.append('\t');
+    $.append(p.c).append('\n');
+    $.append(traverse(p.p, depth + 1));
     for (int i = 0; i < depth; ++i)
-      System.out.print('\t');
+      $.append('\t');
     if (p.ↄ instanceof AB1)
-      System.out.println("@a");
+      $.append("@a").append('\n');
     else
-      System.out.println("@b" + ((AB2) p.ↄ).b);
-    traverse(p.p2, depth);
+      $.append("@b" + ((AB2) p.ↄ).b).append('\n');
+    $.append(traverse(p.p2, depth));
+    return $.toString();
   }
-  @SuppressWarnings("unused") private static void traverse(P2 p, int depth) {
+  @SuppressWarnings("unused") private static String traverse(P2 p, int depth) {
     // Relax.
+    return "";
   }
 }
