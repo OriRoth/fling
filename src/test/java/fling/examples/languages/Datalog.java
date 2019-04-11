@@ -21,7 +21,7 @@ import static fling.examples.languages.Datalog.Σ.of;
 import static fling.examples.languages.Datalog.Σ.query;
 import static fling.examples.languages.Datalog.Σ.v;
 import static fling.examples.languages.Datalog.Σ.when;
-import static fling.grammars.BNF.bnf;
+import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.noneOrMore;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
@@ -41,7 +41,7 @@ public class Datalog {
   }
 
   private static final Class<String> String = String.class;
-  public static final BNF bnf = bnf(V.class). //
+  public static final BNF bnf = bnf(). //
       start(Program). //
       derive(Program).to(oneOrMore(Statement)). //
       specialize(Statement).into(Fact, Rule, Query). //

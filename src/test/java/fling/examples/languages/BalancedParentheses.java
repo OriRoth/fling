@@ -3,7 +3,7 @@ package fling.examples.languages;
 import static fling.examples.languages.BalancedParentheses.V.P;
 import static fling.examples.languages.BalancedParentheses.Σ.c;
 import static fling.examples.languages.BalancedParentheses.Σ.ↄ;
-import static fling.grammars.BNF.bnf;
+import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
@@ -19,7 +19,7 @@ public class BalancedParentheses {
     P
   }
 
-  public static final BNF bnf = bnf(V.class). //
+  public static final BNF bnf = bnf(). //
       start(P). //
       derive(P).to(c, P, ↄ, P). //
       derive(P).toEpsilon(). //

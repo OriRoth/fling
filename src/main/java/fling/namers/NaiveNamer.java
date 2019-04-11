@@ -49,7 +49,7 @@ public class NaiveNamer implements Namer {
     assert symbol.isVerb() || symbol.isVariable();
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
-    String name = symbol.name() + notationsChildrenCounter.put(symbol, notationsChildrenCounter.get(symbol) + 1);
+    String name = "_" + symbol.name() + notationsChildrenCounter.put(symbol, notationsChildrenCounter.get(symbol) + 1);
     return Variable.byName(name);
   }
   @Override public void name(ASTCompilationUnitNode compilationUnit) {

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,6 +16,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fling.grammars.api.BNFAST;
+import fling.grammars.api.BNFAST.ConcreteDerivation;
+import fling.grammars.api.BNFAST.Rule;
+import fling.grammars.api.BNFAST.SpecializationRule;
+import fling.grammars.api.BNFAST.Specification;
 import fling.internal.grammar.sententials.Constants;
 import fling.internal.grammar.sententials.DerivationRule;
 import fling.internal.grammar.sententials.Notation;
@@ -56,9 +60,6 @@ public class BNF {
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
-  }
-  public static <V extends Enum<V> & Variable> Builder<V> bnf(Class<V> V) {
-    return new Builder<>(V);
   }
   public Set<Symbol> symbols() {
     Set<Symbol> $ = new LinkedHashSet<>();
@@ -176,23 +177,42 @@ public class BNF {
     V.forEach(s -> $.put(s, unmodifiableSet($.get(s))));
     return unmodifiableMap($);
   }
+  public static BNF toBNF(Specification specification) {
+    Builder $ = new Builder();
+    $.start(specification.start);
+    for (Rule rule : specification.rule)
+      if (rule instanceof BNFAST.DerivationRule) {
+        // Derivation rule.
+        BNFAST.DerivationRule derivationRule = (BNFAST.DerivationRule) rule;
+        if (derivationRule.derivationTarget instanceof ConcreteDerivation)
+          // Concrete derivation rule.
+          $.derive(derivationRule.derive).to(((ConcreteDerivation) derivationRule.derivationTarget).to);
+        else
+          // Epsilon derivation rule.
+          $.derive(derivationRule.derive).toEpsilon();
+      } else {
+        // Specialization rule.
+        SpecializationRule specializationRule = (SpecializationRule) rule;
+        $.specialize(specializationRule.specialize).into(specializationRule.into);
+      }
+    return $.build();
+  }
 
-  public static class Builder<V extends Enum<V> & Variable> {
+  @Deprecated private static class Builder {
     private final Set<Verb> Σ;
-    private final Class<V> V;
+    private final Set<Variable> V;
     private final Set<DerivationRule> R;
-    private V start;
+    private Variable start;
     private final Set<Variable> heads;
 
-    public Builder(Class<V> V) {
+    public Builder() {
       this.Σ = new LinkedHashSet<>();
-      this.V = V;
+      this.V = new LinkedHashSet<>();
       this.R = new LinkedHashSet<>();
-      for (V v : EnumSet.allOf(V))
-        R.add(new DerivationRule(v, new ArrayList<>()));
       this.heads = new LinkedHashSet<>();
     }
     public Derive derive(Variable lhs) {
+      processSymbol(lhs);
       return new Derive(lhs);
     }
     public Specialize specialize(Variable lhs) {
@@ -207,14 +227,21 @@ public class BNF {
             .forEach(heads::addAll);
       } else if (symbol.isNotation())
         symbol.asNotation().abbreviatedSymbols().forEach(this::processSymbol);
+      else if (symbol.isVariable()) {
+        Variable variable = symbol.asVariable();
+        if (!V.contains(variable)) {
+          V.add(variable);
+          R.add(new DerivationRule(variable, new ArrayList<>()));
+        }
+      }
     }
-    public final Builder<V> start(V startVariable) {
+    public final Builder start(Variable startVariable) {
       start = startVariable;
       return this;
     }
     public BNF build() {
       assert start != null : "declare a start variable";
-      return new BNF(Σ, EnumSet.allOf(V), R, start, heads, null, null, true);
+      return new BNF(Σ, V, R, start, heads, null, null, true);
     }
     List<SententialForm> rhs(Variable v) {
       return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
@@ -226,7 +253,7 @@ public class BNF {
       public Derive(Variable lhs) {
         this.lhs = lhs;
       }
-      public Builder<V> to(Symbol... sententialForm) {
+      public Builder to(Symbol... sententialForm) {
         SententialForm processedSententialForm = new SententialForm(Arrays.stream(sententialForm) //
             .map(symbol -> {
               return !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
@@ -236,7 +263,7 @@ public class BNF {
         rhs(lhs).add(processedSententialForm);
         return Builder.this;
       }
-      public Builder<V> toEpsilon() {
+      public Builder toEpsilon() {
         SententialForm processedSententialForm = new SententialForm();
         rhs(lhs).add(processedSententialForm);
         return Builder.this;
@@ -249,7 +276,7 @@ public class BNF {
       public Specialize(Variable lhs) {
         this.lhs = lhs;
       }
-      public Builder<V> into(Variable... variables) {
+      public Builder into(Variable... variables) {
         for (Variable variable : variables) {
           SententialForm processedSententialForm = new SententialForm(variable);
           processedSententialForm.forEach(Builder.this::processSymbol);

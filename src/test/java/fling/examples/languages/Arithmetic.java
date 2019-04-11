@@ -13,7 +13,7 @@ import static fling.examples.languages.Arithmetic.Σ.n;
 import static fling.examples.languages.Arithmetic.Σ.plus;
 import static fling.examples.languages.Arithmetic.Σ.times;
 import static fling.examples.languages.Arithmetic.Σ.v;
-import static fling.grammars.BNF.bnf;
+import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
@@ -29,7 +29,7 @@ public class Arithmetic {
     E, E_, T, T_, F
   }
 
-  public static final BNF bnf = bnf(V.class). //
+  public static final BNF bnf = bnf(). //
       start(E). //
       derive(E).to(T, E_). //
       derive(E_).to(plus, T, E_). //

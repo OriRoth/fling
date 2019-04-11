@@ -6,7 +6,7 @@ import static fling.examples.languages.TaggedBalancedParentheses.Σ.a;
 import static fling.examples.languages.TaggedBalancedParentheses.Σ.b;
 import static fling.examples.languages.TaggedBalancedParentheses.Σ.c;
 import static fling.examples.languages.TaggedBalancedParentheses.Σ.ↄ;
-import static fling.grammars.BNF.bnf;
+import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.adapters.JavaMediator;
@@ -23,7 +23,7 @@ public class TaggedBalancedParentheses {
     P, AB
   }
 
-  public static final BNF bnf = bnf(V.class). //
+  public static final BNF bnf = bnf(). //
       start(P). //
       derive(P).to(c.many(char.class), P, ↄ.with(AB), P). //
       derive(P).toEpsilon(). //

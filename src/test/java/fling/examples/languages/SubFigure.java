@@ -6,7 +6,7 @@ import static fling.examples.languages.SubFigure.Σ.column;
 import static fling.examples.languages.SubFigure.Σ.load;
 import static fling.examples.languages.SubFigure.Σ.row;
 import static fling.examples.languages.SubFigure.Σ.seal;
-import static fling.grammars.BNF.bnf;
+import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.adapters.JavaMediator;
@@ -23,7 +23,7 @@ public class SubFigure {
     Figure, Orientation
   }
 
-  public static final BNF bnf = bnf(V.class). //
+  public static final BNF bnf = bnf(). //
       start(Figure). //
       derive(Figure).to(load.with(String.class)). //
       derive(Figure).to(Orientation, oneOrMore(Figure), seal). //
