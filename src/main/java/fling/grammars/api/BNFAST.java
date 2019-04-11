@@ -1,28 +1,27 @@
 package fling.grammars.api;
 
-@SuppressWarnings("all")
-public interface BNFAST {
+@SuppressWarnings("all") public interface BNFAST {
   class Specification {
     public final fling.internal.grammar.sententials.Variable start;
     public final java.util.List<Rule> rule;
 
-    public Specification(
-        fling.internal.grammar.sententials.Variable start, java.util.List<Rule> rule) {
+    public Specification(fling.internal.grammar.sententials.Variable start, java.util.List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }
   }
 
-  interface Rule {}
+  interface Rule {
+  }
 
-  interface DerivationTarget {}
+  interface DerivationTarget {
+  }
 
   class DerivationRule implements Rule {
     public final fling.internal.grammar.sententials.Variable derive;
     public final DerivationTarget derivationTarget;
 
-    public DerivationRule(
-        fling.internal.grammar.sententials.Variable derive, DerivationTarget derivationTarget) {
+    public DerivationRule(fling.internal.grammar.sententials.Variable derive, DerivationTarget derivationTarget) {
       this.derive = derive;
       this.derivationTarget = derivationTarget;
     }
@@ -32,8 +31,7 @@ public interface BNFAST {
     public final fling.internal.grammar.sententials.Variable specialize;
     public final fling.internal.grammar.sententials.Variable[] into;
 
-    public SpecializationRule(
-        fling.internal.grammar.sententials.Variable specialize,
+    public SpecializationRule(fling.internal.grammar.sententials.Variable specialize,
         fling.internal.grammar.sententials.Variable[] into) {
       this.specialize = specialize;
       this.into = into;
@@ -49,7 +47,8 @@ public interface BNFAST {
   }
 
   class EpsilonDerivation implements DerivationTarget {
-    public EpsilonDerivation() {}
+    public EpsilonDerivation() {
+    }
   }
 
   public static class Visitor {
@@ -61,21 +60,18 @@ public interface BNFAST {
       }
       specification.rule.stream().forEach(_x_ -> visit((BNFAST.Rule) _x_));
     }
-
     public final void visit(BNFAST.Rule rule) {
       if (rule instanceof BNFAST.DerivationRule)
         visit((BNFAST.DerivationRule) rule);
       else if (rule instanceof BNFAST.SpecializationRule)
         visit((BNFAST.SpecializationRule) rule);
     }
-
     public final void visit(BNFAST.DerivationTarget derivationTarget) {
       if (derivationTarget instanceof BNFAST.ConcreteDerivation)
         visit((BNFAST.ConcreteDerivation) derivationTarget);
       else if (derivationTarget instanceof BNFAST.EpsilonDerivation)
         visit((BNFAST.EpsilonDerivation) derivationTarget);
     }
-
     public final void visit(BNFAST.DerivationRule rule1) {
       try {
         this.whileVisiting(rule1);
@@ -84,7 +80,6 @@ public interface BNFAST {
       }
       visit((BNFAST.DerivationTarget) rule1.derivationTarget);
     }
-
     public final void visit(BNFAST.SpecializationRule rule2) {
       try {
         this.whileVisiting(rule2);
@@ -92,7 +87,6 @@ public interface BNFAST {
         __.printStackTrace();
       }
     }
-
     public final void visit(BNFAST.ConcreteDerivation derivationTarget1) {
       try {
         this.whileVisiting(derivationTarget1);
@@ -100,7 +94,6 @@ public interface BNFAST {
         __.printStackTrace();
       }
     }
-
     public final void visit(BNFAST.EpsilonDerivation derivationTarget2) {
       try {
         this.whileVisiting(derivationTarget2);
@@ -108,21 +101,15 @@ public interface BNFAST {
         __.printStackTrace();
       }
     }
-
-    public void whileVisiting(BNFAST.Specification specification)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(BNFAST.DerivationRule rule1)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(BNFAST.SpecializationRule rule2)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(BNFAST.ConcreteDerivation derivationTarget1)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(BNFAST.EpsilonDerivation derivationTarget2)
-        throws java.lang.Exception {}
+    public void whileVisiting(BNFAST.Specification specification) throws java.lang.Exception {
+    }
+    public void whileVisiting(BNFAST.DerivationRule rule1) throws java.lang.Exception {
+    }
+    public void whileVisiting(BNFAST.SpecializationRule rule2) throws java.lang.Exception {
+    }
+    public void whileVisiting(BNFAST.ConcreteDerivation derivationTarget1) throws java.lang.Exception {
+    }
+    public void whileVisiting(BNFAST.EpsilonDerivation derivationTarget2) throws java.lang.Exception {
+    }
   }
 }
-
