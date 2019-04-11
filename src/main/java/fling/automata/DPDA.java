@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fling.grammar.sententials.Word;
+import fling.internal.grammar.sententials.Word;
 
 /**
  * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.

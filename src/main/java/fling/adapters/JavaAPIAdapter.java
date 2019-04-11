@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import fling.compiler.Namer;
-import fling.compiler.api.APICompiler;
-import fling.compiler.api.APICompiler.ParameterFragment;
-import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
-import fling.compiler.api.nodes.APICompilationUnitNode;
-import fling.compiler.api.nodes.AbstractMethodNode;
-import fling.compiler.api.nodes.AbstractMethodNode.Chained;
-import fling.compiler.api.nodes.InterfaceNode;
-import fling.compiler.api.nodes.PolymorphicTypeNode;
-import fling.grammar.sententials.Constants;
-import fling.grammar.sententials.Named;
-import fling.grammar.sententials.Verb;
-import fling.grammar.sententials.Word;
+import fling.internal.compiler.Namer;
+import fling.internal.compiler.api.APICompiler;
+import fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
+import fling.internal.compiler.api.APICompiler.ParameterFragment;
+import fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode;
+import fling.internal.compiler.api.nodes.InterfaceNode;
+import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
+import fling.internal.grammar.sententials.Constants;
+import fling.internal.grammar.sententials.Named;
+import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.sententials.Word;
 
 /**
  * Java API adapter. Output contains the API types and a single concrete

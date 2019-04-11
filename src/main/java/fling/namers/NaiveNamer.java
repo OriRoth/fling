@@ -9,22 +9,22 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import fling.compiler.Namer;
-import fling.compiler.api.APICompiler;
-import fling.compiler.api.APICompiler.ParameterFragment;
-import fling.compiler.api.nodes.APICompilationUnitNode;
-import fling.compiler.api.nodes.AbstractMethodNode;
-import fling.compiler.api.nodes.AbstractMethodNode.Chained;
-import fling.compiler.api.nodes.AbstractMethodNode.Intermediate;
-import fling.compiler.api.nodes.AbstractMethodNode.Start;
-import fling.compiler.api.nodes.InterfaceNode;
-import fling.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.compiler.ast.nodes.ClassNode;
-import fling.compiler.ast.nodes.ConcreteClassNode;
-import fling.compiler.ast.nodes.FieldNode;
-import fling.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.grammar.sententials.Symbol;
-import fling.grammar.sententials.Variable;
+import fling.internal.compiler.Namer;
+import fling.internal.compiler.api.APICompiler;
+import fling.internal.compiler.api.APICompiler.ParameterFragment;
+import fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode;
+import fling.internal.compiler.api.nodes.InterfaceNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.Intermediate;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.Start;
+import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
+import fling.internal.compiler.ast.nodes.ClassNode;
+import fling.internal.compiler.ast.nodes.ConcreteClassNode;
+import fling.internal.compiler.ast.nodes.FieldNode;
+import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
+import fling.internal.grammar.sententials.Symbol;
+import fling.internal.grammar.sententials.Variable;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();

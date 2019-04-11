@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import fling.compiler.Namer;
-import fling.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.compiler.ast.nodes.AbstractClassNode;
-import fling.compiler.ast.nodes.ClassNode;
-import fling.compiler.ast.nodes.ConcreteClassNode;
-import fling.compiler.ast.nodes.FieldNode;
-import fling.grammar.sententials.Variable;
-import fling.grammar.sententials.notations.JavaCompatibleNotation;
+import fling.internal.compiler.Namer;
+import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
+import fling.internal.compiler.ast.nodes.AbstractClassNode;
+import fling.internal.compiler.ast.nodes.ClassNode;
+import fling.internal.compiler.ast.nodes.ConcreteClassNode;
+import fling.internal.compiler.ast.nodes.FieldNode;
+import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.namers.NaiveNamer;
 
 /**

@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import fling.compiler.Namer;
-import fling.compiler.api.APICompiler;
-import fling.compiler.api.PolymorphicLanguageAPIBaseAdapter;
-import fling.compiler.api.nodes.APICompilationUnitNode;
-import fling.compiler.api.nodes.AbstractMethodNode;
-import fling.compiler.api.nodes.PolymorphicTypeNode;
-import fling.grammar.sententials.Constants;
-import fling.grammar.sententials.Named;
-import fling.grammar.sententials.Word;
+import fling.internal.compiler.Namer;
+import fling.internal.compiler.api.APICompiler;
+import fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
+import fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import fling.internal.compiler.api.nodes.AbstractMethodNode;
+import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import fling.internal.grammar.sententials.Constants;
+import fling.internal.grammar.sententials.Named;
+import fling.internal.grammar.sententials.Word;
 
 /**
  * Prototypical C++ API adapter.

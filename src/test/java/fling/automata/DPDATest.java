@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import fling.automata.DPDA.δ;
-import fling.grammar.sententials.Word;
+import fling.internal.grammar.sententials.Word;
 
 public class DPDATest {
   enum Q {

@@ -7,21 +7,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import fling.compiler.Assignment;
-import fling.compiler.Namer;
-import fling.compiler.api.APICompiler.ParameterFragment;
-import fling.compiler.api.ReliableAPICompiler;
-import fling.compiler.ast.ASTCompiler;
-import fling.compiler.ast.ASTParserCompiler;
-import fling.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.grammar.BNF;
-import fling.grammar.LL1;
-import fling.grammar.LL1JavaASTParserCompiler;
-import fling.grammar.sententials.Constants;
-import fling.grammar.sententials.Terminal;
-import fling.grammar.sententials.Variable;
-import fling.grammar.sententials.Verb;
-import fling.grammar.types.TypeParameter;
+import fling.compilers.api.ReliableAPICompiler;
+import fling.compilers.ast.ASTCompiler;
+import fling.grammars.BNF;
+import fling.grammars.LL1;
+import fling.grammars.LL1JavaASTParserCompiler;
+import fling.internal.compiler.Assignment;
+import fling.internal.compiler.Namer;
+import fling.internal.compiler.api.APICompiler.ParameterFragment;
+import fling.internal.compiler.ast.ASTParserCompiler;
+import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
+import fling.internal.grammar.sententials.Constants;
+import fling.internal.grammar.sententials.Terminal;
+import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 
 /**
