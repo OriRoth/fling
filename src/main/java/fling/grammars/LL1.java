@@ -133,7 +133,16 @@ public class LL1 extends Grammar {
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
             δs.add(new δ<>(σState, ε(), r.lhs, σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
           }
-    // Moving from qσ to qT with ε + inappropriate symbol.
+    // Moving from qσ to qσ with ε + nullable variable.
+    for (Verb σ : bnf.Σ)
+      if (!Constants.$$.equals(σ))
+        for (Variable v : bnf.V)
+          if (bnf.isNullable(v) && !bnf.firsts(v).contains(σ)) {
+            Named σState = typeNameMapping.get(σ);
+            δs.add(new δ<>(σState, ε(), v, σState, Word.empty()));
+            δs.add(new δ<>(σState, ε(), A.get(v), σState, Word.empty()));
+          }
+    // Moving from qσ to qT with ε + inappropriate, non-nullable symbol.
     for (Verb σ : bnf.Σ)
       if (!Constants.$$.equals(σ)) {
         Set<Named> legalTops = new HashSet<>();
@@ -144,6 +153,12 @@ public class LL1 extends Grammar {
               legalTops.add(r.lhs);
               legalTops.add(getAcceptingVariable(r.lhs));
             }
+        bnf.V.stream() //
+            .filter(bnf::isNullable) //
+            .forEach(v -> {
+              legalTops.add(v);
+              legalTops.add(A.get(v));
+            });
         for (Named γ : Γ)
           if (!legalTops.contains(γ))
             δs.add(new δ<>(typeNameMapping.get(σ), ε(), γ, qT, Word.empty()));

@@ -19,6 +19,7 @@ import fling.examples.automata.AeqB;
 import fling.examples.automata.AnBn;
 import fling.examples.automata.ExtendedBalancedParentheses;
 import fling.examples.automata.LongFall;
+import fling.examples.languages.Arithmetic;
 import fling.examples.languages.BalancedParentheses;
 import fling.examples.languages.Datalog;
 import fling.examples.languages.SubFigure;
@@ -44,6 +45,9 @@ import fling.examples.languages.TaggedBalancedParentheses;
     files.put("SubFigure", SubFigure.jm.apiClass);
     files.put("SubFigureAST", SubFigure.jm.astClass);
     files.put("SubFigureCompiler", SubFigure.jm.astCompilerClass);
+    files.put("Arithmetic", Arithmetic.jm.apiClass);
+    files.put("ArithmeticAST", Arithmetic.jm.astClass);
+    files.put("ArithmeticCompiler", Arithmetic.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/examples/generated/";
 

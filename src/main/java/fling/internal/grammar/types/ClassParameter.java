@@ -15,7 +15,7 @@ public class ClassParameter implements StringTypeParameter {
     return parameterClass.getCanonicalName();
   }
   @Override public String baseParameterName() {
-    return NaiveNamer.lowerCamelCase(unPrimitiveTypeSimple(parameterClass.getSimpleName()));
+    return unPrimitiveTypeSimple(NaiveNamer.lowerCamelCase(parameterClass.getSimpleName()));
   }
   @Override public int hashCode() {
     return parameterClass.hashCode();
@@ -44,15 +44,15 @@ public class ClassParameter implements StringTypeParameter {
                                         typeName;
   }
   public static String unPrimitiveTypeSimple(String typeName) {
-    return byte.class.getName().equals(typeName) ? Byte.class.getSimpleName() : //
-        short.class.getName().equals(typeName) ? Short.class.getSimpleName() : //
-            int.class.getName().equals(typeName) ? Integer.class.getSimpleName() : //
-                long.class.getName().equals(typeName) ? Long.class.getSimpleName() : //
-                    float.class.getName().equals(typeName) ? Float.class.getSimpleName() : //
-                        double.class.getName().equals(typeName) ? Double.class.getSimpleName() : //
-                            boolean.class.getName().equals(typeName) ? Boolean.class.getSimpleName() : //
-                                char.class.getName().equals(typeName) ? Character.class.getSimpleName() : //
-                                    void.class.getName().equals(typeName) ? Void.class.getSimpleName() : //
+    return byte.class.getName().equals(typeName) ? "b" : //
+        short.class.getName().equals(typeName) ? "s" : //
+            int.class.getName().equals(typeName) ? "i" : //
+                long.class.getName().equals(typeName) ? "l" : //
+                    float.class.getName().equals(typeName) ? "f" : //
+                        double.class.getName().equals(typeName) ? "d" : //
+                            boolean.class.getName().equals(typeName) ? "b" : //
+                                char.class.getName().equals(typeName) ? "c" : //
+                                    void.class.getName().equals(typeName) ? "v" : //
                                         typeName;
   }
 }
