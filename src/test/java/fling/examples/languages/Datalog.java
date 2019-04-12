@@ -61,7 +61,8 @@ public class Datalog {
    * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
    * types/AST run-time compiler.
    */
-  public static final JavaMediator jm = new JavaMediator(bnf, //
+  public static final JavaMediator jm = new JavaMediator(//
+      bnf, // use this BNF as language specification
       "fling.examples.generated", // Name of package in which output will reside
       "Datalog", // Name of generated class, 
       Σ.class //
