@@ -5,11 +5,10 @@ import fling.internal.grammar.sententials.Variable;
 public abstract class ClassNode {
   public final Variable source;
   private String className;
-  
-  public ClassNode(Variable source) {
+
+  public ClassNode(final Variable source) {
     this.source = source;
   }
-
   public boolean isConcrete() {
     return this instanceof ConcreteClassNode;
   }
@@ -27,7 +26,7 @@ public abstract class ClassNode {
       throw new IllegalStateException("class name not decided");
     return className;
   }
-  public void setClassName(String className) {
+  public void setClassName(final String className) {
     this.className = className;
   }
 }

@@ -5,11 +5,10 @@ public interface AbstractMethodNode<T, D> {
     public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 
-    public Start(D declaration, PolymorphicTypeNode<T> returnType) {
+    public Start(final D declaration, final PolymorphicTypeNode<T> returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
-    
     public D declaration() {
       return declaration;
     }
@@ -22,11 +21,10 @@ public interface AbstractMethodNode<T, D> {
     public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 
-    public Intermediate(D declaration, PolymorphicTypeNode<T> returnType) {
+    public Intermediate(final D declaration, final PolymorphicTypeNode<T> returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
-    
     public D declaration() {
       return declaration;
     }
@@ -35,10 +33,9 @@ public interface AbstractMethodNode<T, D> {
   public static class Chained<T, D> implements AbstractMethodNode<T, D> {
     public final D declaration;
 
-    public Chained(D declaration) {
+    public Chained(final D declaration) {
       this.declaration = declaration;
     }
-    
     public D declaration() {
       return declaration;
     }

@@ -18,19 +18,19 @@ import fling.internal.grammar.sententials.Word;
 
 /**
  * Prototypical C++ API adapter.
- * 
+ *
  * @author Ori Roth
  */
 public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String terminationMethodName;
   private final Namer namer;
 
-  public CppAPIAdapter(String terminationMethodName, Namer namer) {
+  public CppAPIAdapter(final String terminationMethodName, final Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.namer = namer;
   }
   @Override public String printFluentAPI(
-      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot()).map(i -> printInterfaceDeclaration(i.declaration) + ";")
@@ -44,17 +44,17 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   @Override public String printBotType() {
     return "BOT";
   }
-  @Override public String printIntermediateType(APICompiler.TypeName name) {
+  @Override public String printIntermediateType(final APICompiler.TypeName name) {
     return printTypeName(name);
   }
-  @Override public String printIntermediateType(APICompiler.TypeName name,
-      List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
+  @Override public String printIntermediateType(final APICompiler.TypeName name,
+      final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
-  @Override public String printStartMethod(APICompiler.MethodDeclaration declaration,
-      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
+      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("%s* %s() {return nullptr;}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name());
@@ -62,8 +62,8 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   @Override public String printTerminationMethod() {
     return String.format("virtual void %s() const;", terminationMethodName);
   }
-  @Override public String printIntermediateMethod(APICompiler.MethodDeclaration declaration,
-      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
+      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("virtual %s %s(%s) const;", printType(returnType), declaration.name.name(),
         declaration.getInferredParameters().stream() //
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
@@ -75,23 +75,23 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   @Override public String printBotInterface() {
     return "class BOT{};";
   }
-  @Override public String printInterface(APICompiler.InterfaceDeclaration declaration,
-      List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+  @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
+      final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("%s{public:%s};", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
   }
-  public String printTypeName(APICompiler.TypeName name) {
+  public String printTypeName(final APICompiler.TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
-  @SuppressWarnings("static-method") public String printTypeName(Named q, Word<Named> α, Set<Named> legalJumps) {
+  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     return α == null ? q.name()
         : String.format("%s_%s%s", //
             q.name(), //
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  public String printInterfaceDeclaration(APICompiler.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
     return declaration.typeVariables.isEmpty()
         ? String.format("class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
         : String.format("template<%s>class %s",

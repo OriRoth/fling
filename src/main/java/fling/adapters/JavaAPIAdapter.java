@@ -24,7 +24,7 @@ import fling.internal.grammar.sententials.Word;
  * Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method
  * chains.
- * 
+ *
  * @author Ori Roth
  */
 @SuppressWarnings("static-method") public class JavaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
@@ -33,14 +33,14 @@ import fling.internal.grammar.sententials.Word;
   private final String terminationMethodName;
   private final Namer namer;
 
-  public JavaAPIAdapter(String packageName, String className, String terminationMethodName, Namer namer) {
+  public JavaAPIAdapter(final String packageName, final String className, final String terminationMethodName, final Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.packageName = packageName;
     this.className = className;
     this.namer = namer;
   }
   @Override public String printFluentAPI(
-      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         packageName == null ? "" : String.format("package %s;", packageName), //
@@ -56,17 +56,17 @@ import fling.internal.grammar.sententials.Word;
   @Override public String printBotType() {
     return "ø";
   }
-  @Override public String printIntermediateType(APICompiler.TypeName name) {
+  @Override public String printIntermediateType(final APICompiler.TypeName name) {
     return printTypeName(name);
   }
-  @Override public String printIntermediateType(APICompiler.TypeName name,
-      List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
+  @Override public String printIntermediateType(final APICompiler.TypeName name,
+      final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
-  @Override public String printStartMethod(APICompiler.MethodDeclaration declaration,
-      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
+      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -80,8 +80,8 @@ import fling.internal.grammar.sententials.Word;
         printTerminationMethodReturnType(), //
         terminationMethodName);
   }
-  @Override public String printIntermediateMethod(APICompiler.MethodDeclaration declaration,
-      PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
+      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     return String.format("%s %s(%s);", //
         printType(returnType), //
         declaration.name.name(), //
@@ -100,8 +100,8 @@ import fling.internal.grammar.sententials.Word;
   @Override public String printBotInterface() {
     return "interface ø {}";
   }
-  @Override public String printInterface(APICompiler.InterfaceDeclaration declaration,
-      List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+  @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
+      final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("interface %s%s{%s}", //
         printInterfaceDeclaration(declaration), //
         !declaration.isAccepting ? "" : " extends " + printTopType(), //
@@ -110,29 +110,29 @@ import fling.internal.grammar.sententials.Word;
             .map(this::printMethod) //
             .collect(joining()));
   }
-  public String printTypeName(APICompiler.TypeName name) {
+  public String printTypeName(final APICompiler.TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
-  public String printTypeName(APICompiler.InterfaceDeclaration declaration) {
+  public String printTypeName(final APICompiler.InterfaceDeclaration declaration) {
     return printTypeName(declaration.q, declaration.α, declaration.legalJumps);
   }
-  public String printTypeName(Named q, Word<Named> α, Set<Named> legalJumps) {
+  public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     return α == null ? q.name()
         : String.format("%s_%s%s", //
             q.name(), //
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  public String printInterfaceDeclaration(APICompiler.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
         declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
   }
   public String printTypeName(
-      InterfaceNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> interfaze) {
+      final InterfaceNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> interfaze) {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
   public String printConcreteImplementation(
-      APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
@@ -154,17 +154,17 @@ import fling.internal.grammar.sententials.Word;
   }
   /**
    * Start static method body.
-   * 
+   *
    * @param σ inducing verb
    * @param parameters method parameters
    * @return method body
    */
-  @SuppressWarnings("unused") protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+  @SuppressWarnings("unused") protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
     return "return new α();";
   }
   /**
    * Prints additional definition in concrete implementation class's body.
-   * 
+   *
    * @return additional definition
    */
   protected String printConcreteImplementationClassBody() {
@@ -173,17 +173,18 @@ import fling.internal.grammar.sententials.Word;
   /**
    * Concrete implementation's method's body. Making the recording of terminals
    * and their parameters possible.
-   * 
+   *
    * @param σ current verb
    * @param parameters method parameters
    * @return method body
    */
-  @SuppressWarnings("unused") protected String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+  @SuppressWarnings("unused") protected String printConcreteImplementationMethodBody(final Verb σ,
+      final List<ParameterFragment> parameters) {
     return "";
   }
   /**
    * Return type of the termination method.
-   * 
+   *
    * @return return type
    */
   protected String printTerminationMethodReturnType() {
@@ -192,7 +193,7 @@ import fling.internal.grammar.sententials.Word;
   /**
    * Concrete implementation's termination method body. Might be used to create
    * and return the processed terminal.
-   * 
+   *
    * @return method body
    */
   protected String printTerminationMethodConcreteBody() {
@@ -200,7 +201,7 @@ import fling.internal.grammar.sententials.Word;
   }
   /**
    * Additional declaration within the top class.
-   * 
+   *
    * @return additional declarations
    */
   protected String printAdditionalDeclarations() {

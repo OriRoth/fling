@@ -8,7 +8,7 @@ import fling.namers.NaiveNamer;
 public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
-  public ClassParameter(Class<?> parameterClass) {
+  public ClassParameter(final Class<?> parameterClass) {
     this.parameterClass = requireNonNull(parameterClass);
   }
   @Override public String typeName() {
@@ -20,18 +20,18 @@ public class ClassParameter implements StringTypeParameter {
   @Override public int hashCode() {
     return parameterClass.hashCode();
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (!(obj instanceof ClassParameter))
       return false;
-    ClassParameter other = (ClassParameter) obj;
+    final ClassParameter other = (ClassParameter) obj;
     return parameterClass.equals(other.parameterClass);
   }
   @Override public String toString() {
     return parameterClass.getCanonicalName();
   }
-  public static String unPrimitiveType(String typeName) {
+  public static String unPrimitiveType(final String typeName) {
     return byte.class.getName().equals(typeName) ? Byte.class.getCanonicalName() : //
         short.class.getName().equals(typeName) ? Short.class.getCanonicalName() : //
             int.class.getName().equals(typeName) ? Integer.class.getCanonicalName() : //
@@ -43,7 +43,7 @@ public class ClassParameter implements StringTypeParameter {
                                     void.class.getName().equals(typeName) ? Void.class.getCanonicalName() : //
                                         typeName;
   }
-  public static String unPrimitiveTypeSimple(String typeName) {
+  public static String unPrimitiveTypeSimple(final String typeName) {
     return byte.class.getName().equals(typeName) ? "b" : //
         short.class.getName().equals(typeName) ? "s" : //
             int.class.getName().equals(typeName) ? "i" : //

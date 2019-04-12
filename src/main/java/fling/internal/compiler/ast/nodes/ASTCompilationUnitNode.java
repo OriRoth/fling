@@ -6,7 +6,7 @@ public class ASTCompilationUnitNode {
   public final Collection<ClassNode> classes;
   public final boolean requireMultipleInheritance;
 
-  public ASTCompilationUnitNode(Collection<ClassNode> classes, boolean requireMultipleInheritance) {
+  public ASTCompilationUnitNode(final Collection<ClassNode> classes, final boolean requireMultipleInheritance) {
     this.classes = classes;
     this.requireMultipleInheritance = requireMultipleInheritance;
   }

@@ -9,11 +9,11 @@ public class PolymorphicTypeNode<T> {
   @SuppressWarnings("rawtypes") private static final PolymorphicTypeNode TOP = new PolymorphicTypeNode<>();
   @SuppressWarnings("rawtypes") private static final PolymorphicTypeNode BOT = new PolymorphicTypeNode<>();
 
-  public PolymorphicTypeNode(T name, List<PolymorphicTypeNode<T>> typeArguments) {
+  public PolymorphicTypeNode(final T name, final List<PolymorphicTypeNode<T>> typeArguments) {
     this.name = name;
     this.typeArguments = Collections.unmodifiableList(typeArguments);
   }
-  public PolymorphicTypeNode(T name) {
+  public PolymorphicTypeNode(final T name) {
     this.name = name;
     this.typeArguments = Collections.emptyList();
   }

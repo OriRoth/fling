@@ -7,7 +7,7 @@ public class DerivationRule {
   public final Variable lhs;
   public final List<SententialForm> rhs;
 
-  public DerivationRule(Variable lhs, List<SententialForm> rhs) {
+  public DerivationRule(final Variable lhs, final List<SententialForm> rhs) {
     this.lhs = lhs;
     this.rhs = rhs;
   }
@@ -23,15 +23,16 @@ public class DerivationRule {
     $ = $ * 31 + rhs.hashCode();
     return $;
   }
-  @Override public boolean equals(Object o) {
+  @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
     if (!(o instanceof DerivationRule))
       return false;
-    DerivationRule other = (DerivationRule) o;
+    final DerivationRule other = (DerivationRule) o;
     return lhs.equals(other.lhs) && rhs.equals(other.rhs);
   }
   @Override public String toString() {
-    return String.format("%s::=%s", lhs, String.join("|", rhs.stream().map(sf -> sf.isEmpty() ? "ε" : sf.toString()).collect(Collectors.toList())));
+    return String.format("%s::=%s", lhs,
+        String.join("|", rhs.stream().map(sf -> sf.isEmpty() ? "ε" : sf.toString()).collect(Collectors.toList())));
   }
 }

@@ -7,7 +7,7 @@ import fling.namers.NaiveNamer;
 public class VarargsClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
 
-  public VarargsClassParameter(Class<?> parameterClass) {
+  public VarargsClassParameter(final Class<?> parameterClass) {
     this.parameterClass = Objects.requireNonNull(parameterClass);
   }
   @Override public String typeName() {
@@ -22,12 +22,12 @@ public class VarargsClassParameter implements StringTypeParameter {
   @Override public int hashCode() {
     return parameterClass.hashCode();
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (!(obj instanceof VarargsClassParameter))
       return false;
-    VarargsClassParameter other = (VarargsClassParameter) obj;
+    final VarargsClassParameter other = (VarargsClassParameter) obj;
     return parameterClass.equals(other.parameterClass);
   }
   @Override public String toString() {

@@ -9,7 +9,7 @@ public interface PolymorphicLanguageASTAdapterBase {
   String printASTClass(ASTCompilationUnitNode compilationUnit);
   String printAbstractClass(AbstractClassNode abstractClass);
   String printConcreteClass(ConcreteClassNode concreteClass);
-  default String printClass(ClassNode clazz) {
+  default String printClass(final ClassNode clazz) {
     return clazz.isAbstract() ? printAbstractClass(clazz.asAbstract()) : printConcreteClass(clazz.asConcrete());
   }
 }

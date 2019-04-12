@@ -9,7 +9,7 @@ import fling.namers.NaiveNamer;
 public class VariableTypeParameter implements TypeParameter {
   public final Variable variable;
 
-  public VariableTypeParameter(Variable variable) {
+  public VariableTypeParameter(final Variable variable) {
     this.variable = variable;
   }
   @Override public String baseParameterName() {
@@ -21,12 +21,12 @@ public class VariableTypeParameter implements TypeParameter {
   @Override public int hashCode() {
     return variable.hashCode();
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (!(obj instanceof VariableTypeParameter))
       return false;
-    VariableTypeParameter other = (VariableTypeParameter) obj;
+    final VariableTypeParameter other = (VariableTypeParameter) obj;
     return variable.equals(other.variable);
   }
   @Override public String toString() {

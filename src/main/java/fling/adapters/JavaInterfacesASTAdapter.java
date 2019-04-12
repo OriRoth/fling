@@ -13,7 +13,7 @@ import fling.internal.compiler.ast.nodes.FieldNode;
 /**
  * Java AST adapter. Abstract types translate to interfaces, while Concrete
  * types translate to classes implementing them.
- * 
+ *
  * @author Ori Roth
  */
 @SuppressWarnings("static-method") public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
@@ -21,12 +21,12 @@ import fling.internal.compiler.ast.nodes.FieldNode;
   private final String className;
   private final Namer namer;
 
-  public JavaInterfacesASTAdapter(String packageName, String className, Namer namer) {
+  public JavaInterfacesASTAdapter(final String packageName, final String className, final Namer namer) {
     this.packageName = packageName;
     this.className = className;
     this.namer = namer;
   }
-  @Override public String printASTClass(ASTCompilationUnitNode compilationUnit) {
+  @Override public String printASTClass(final ASTCompilationUnitNode compilationUnit) {
     namer.name(compilationUnit);
     return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s}", //
         packageName, //
@@ -36,7 +36,7 @@ import fling.internal.compiler.ast.nodes.FieldNode;
             .collect(joining()), //
         printAdditionalDeclarations(compilationUnit));
   }
-  @Override public String printAbstractClass(AbstractClassNode abstractClass) {
+  @Override public String printAbstractClass(final AbstractClassNode abstractClass) {
     return String.format("interface %s %s{}", //
         abstractClass.getClassName(), //
         abstractClass.parents.isEmpty() ? "" : //
@@ -44,7 +44,7 @@ import fling.internal.compiler.ast.nodes.FieldNode;
                 .map(ClassNode::getClassName) //
                 .collect(joining(",")));
   }
-  @Override public String printConcreteClass(ConcreteClassNode concreteClass) {
+  @Override public String printConcreteClass(final ConcreteClassNode concreteClass) {
     return String.format("class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
         concreteClass.parents.isEmpty() ? "" : "implements ", //
@@ -57,26 +57,26 @@ import fling.internal.compiler.ast.nodes.FieldNode;
   }
   /**
    * Additional definitions to be printed in the top class.
-   * 
+   *
    * @param compilationUnit AST
    * @return additional definitions
    */
-  @SuppressWarnings("unused") protected String printAdditionalDeclarations(ASTCompilationUnitNode compilationUnit) {
+  @SuppressWarnings("unused") protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
     return "";
   }
-  public String printField(String format, String separator, FieldNode field) {
+  public String printField(final String format, final String separator, final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format(format, //
             fragment.parameterType, fragment.parameterName)) //
         .collect(joining(separator));
   }
-  public String constructorAssignment(FieldNode field) {
+  public String constructorAssignment(final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format("this.%s = %s;", //
             fragment.parameterName, fragment.parameterName)) //
         .collect(joining());
   }
-  public String printConstructor(ConcreteClassNode concreteClass) {
+  public String printConstructor(final ConcreteClassNode concreteClass) {
     return String.format("public %s(%s){%s}", //
         concreteClass.getClassName(), //
         concreteClass.fields.stream() //
@@ -88,7 +88,7 @@ import fling.internal.compiler.ast.nodes.FieldNode;
             .map(field -> constructorAssignment(field)) //
             .collect(joining()));
   }
-  public boolean nonEmptyField(FieldNode field) {
+  public boolean nonEmptyField(final FieldNode field) {
     return !field.source.isVerb() || !field.source.asVerb().parameters.isEmpty();
   }
 }

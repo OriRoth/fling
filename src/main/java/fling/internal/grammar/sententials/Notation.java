@@ -18,10 +18,10 @@ public interface Notation extends Symbol {
       Function<String, String> nameFromBaseSolver);
   boolean isNullable(Function<Symbol, Boolean> nullabilitySolver);
   Set<Verb> getFirsts(Function<Symbol, Set<Verb>> firstsSolver);
-  public static OneOrMore oneOrMore(Symbol symbol) {
+  static OneOrMore oneOrMore(final Symbol symbol) {
     return new OneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
   }
-  public static NoneOrMore noneOrMore(Symbol symbol) {
+  static NoneOrMore noneOrMore(final Symbol symbol) {
     return new NoneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
   }
 }

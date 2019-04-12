@@ -9,7 +9,7 @@ public class InterfaceNode<T, D, N> {
   public final N declaration;
   public final List<AbstractMethodNode<T, D>> methods;
 
-  public InterfaceNode(N name, List<AbstractMethodNode<T, D>> methods) {
+  public InterfaceNode(final N name, final List<AbstractMethodNode<T, D>> methods) {
     this.declaration = name;
     this.methods = Collections.unmodifiableList(methods);
   }

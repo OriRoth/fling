@@ -2,7 +2,7 @@ package fling.internal.grammar.sententials;
 
 public interface Named {
   String name();
-  public static Named by(String name) {
+  static Named by(final String name) {
     return new Named() {
       @Override public String name() {
         return name;
@@ -13,7 +13,7 @@ public interface Named {
       @Override public int hashCode() {
         return name.hashCode();
       }
-      @Override public boolean equals(Object obj) {
+      @Override public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (!(obj instanceof Named))

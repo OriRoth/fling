@@ -10,8 +10,8 @@ import fling.examples.generated.SubFigureAST.Orientation1;
 
 public class SubFigure {
   // @formatter:off
-  public static void main(String[] args) {
-    Figure fig =
+  public static void main(final String[] args) {
+    final Figure fig =
       row().
         column().
           load("p1").
@@ -29,28 +29,28 @@ public class SubFigure {
     System.out.println(toString(fig));
   }
   // @formatter:on
-  public static String toString(Figure fig) {
-    int h = getHeight(fig), w = getWidth(fig);
-    char[][] table = new char[h * 5][w * 6];
+  public static String toString(final Figure fig) {
+    final int h = getHeight(fig), w = getWidth(fig);
+    final char[][] table = new char[h * 5][w * 6];
     for (int i = 0; i < table.length; ++i)
       for (int j = 0; j < table[i].length; ++j)
         table[i][j] = ' ';
     fillTable(fig, table, 0, 0, h, w);
-    StringBuilder $ = new StringBuilder();
-    for (char[] row : table) {
-      for (char c : row)
+    final StringBuilder $ = new StringBuilder();
+    for (final char[] row : table) {
+      for (final char c : row)
         $.append(c);
       $.append('\n');
     }
     return $.toString().trim();
   }
-  private static void fillTable(Figure fig, char[][] table, int i, int j, int h, int w) {
+  private static void fillTable(final Figure fig, final char[][] table, final int i, final int j, final int h, final int w) {
     if (fig instanceof Figure1)
       fillTable((Figure1) fig, table, i, j, h, w);
     else
       fillTable((Figure2) fig, table, i, j, h, w);
   }
-  private static void fillTable(Figure1 fig, char[][] table, int i, int j, int h, int w) {
+  private static void fillTable(final Figure1 fig, final char[][] table, int i, int j, int h, int w) {
     i *= 5;
     h *= 5;
     j *= 6;
@@ -63,29 +63,30 @@ public class SubFigure {
       table[ii][j] = '*';
     for (int ii = i; ii < i + h; ++ii)
       table[ii][j + w - 1] = '*';
-    char n1 = fig.load.isEmpty() ? ' ' : fig.load.charAt(0);
-    char n2 = fig.load.length() < 1 ? ' ' : fig.load.charAt(1);
+    final char n1 = fig.load.isEmpty() ? ' ' : fig.load.charAt(0);
+    final char n2 = fig.load.length() < 1 ? ' ' : fig.load.charAt(1);
     table[i + h / 2][j + w / 2 - 1] = n1;
     table[i + h / 2][j + w / 2] = n2;
   }
-  @SuppressWarnings("null") private static void fillTable(Figure2 composite, char[][] table, int i, int j, int h, int w) {
+  @SuppressWarnings("null") private static void fillTable(final Figure2 composite, final char[][] table, final int i, final int j,
+      final int h, final int w) {
     if (isRow(composite.orientation)) {
-      int totalWidth = composite.figure.stream().map(SubFigure::getWidth).reduce(0, Integer::sum);
+      final int totalWidth = composite.figure.stream().map(SubFigure::getWidth).reduce(0, Integer::sum);
       int k = 0;
       for (int l = 0; l < composite.figure.size(); ++l) {
-        Figure fig = composite.figure.get(l);
-        int figW = (w / totalWidth) * getWidth(fig);
+        final Figure fig = composite.figure.get(l);
+        int figW = w / totalWidth * getWidth(fig);
         if (l == composite.figure.size() - 1)
           figW = w - k;
         fillTable(fig, table, i, j + k, h, figW);
         k += figW;
       }
     } else {
-      int totalHeight = composite.figure.stream().map(SubFigure::getHeight).reduce(0, Integer::sum);
+      final int totalHeight = composite.figure.stream().map(SubFigure::getHeight).reduce(0, Integer::sum);
       int k = 0;
       for (int l = 0; l < composite.figure.size(); ++l) {
-        Figure fig = composite.figure.get(l);
-        int figH = (h / totalHeight) * getHeight(fig);
+        final Figure fig = composite.figure.get(l);
+        int figH = h / totalHeight * getHeight(fig);
         if (l == composite.figure.size() - 1)
           figH = h - k;
         fillTable(fig, table, i + k, j, figH, w);
@@ -93,10 +94,10 @@ public class SubFigure {
       }
     }
   }
-  @SuppressWarnings("null") public static int getHeight(Figure fig) {
+  @SuppressWarnings("null") public static int getHeight(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
-    Figure2 composite = (Figure2) fig;
+    final Figure2 composite = (Figure2) fig;
     return isRow(composite.orientation) ? //
         composite.figure.stream() //
             .map(SubFigure::getHeight) //
@@ -105,10 +106,10 @@ public class SubFigure {
             .map(SubFigure::getHeight) //
             .reduce(Integer::sum).get();
   }
-  @SuppressWarnings("null") public static int getWidth(Figure fig) {
+  @SuppressWarnings("null") public static int getWidth(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
-    Figure2 composite = (Figure2) fig;
+    final Figure2 composite = (Figure2) fig;
     return !isRow(composite.orientation) ? //
         composite.figure.stream() //
             .map(SubFigure::getWidth) //
@@ -117,7 +118,7 @@ public class SubFigure {
             .map(SubFigure::getWidth) //
             .reduce(Integer::sum).get();
   }
-  public static boolean isRow(Orientation orientation) {
+  public static boolean isRow(final Orientation orientation) {
     return orientation instanceof Orientation1;
   }
 }

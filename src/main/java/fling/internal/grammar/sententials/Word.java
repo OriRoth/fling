@@ -12,56 +12,56 @@ import java.util.stream.Collectors;
 
 /**
  * An unmodifiable finite sequence. Supports stack notations.
- * 
+ *
  * @author Ori Roth
  */
 public class Word<T> implements List<T> {
-  private List<T> inner;
+  private final List<T> inner;
 
   public Word() {
     inner = Collections.emptyList();
     verify();
   }
-  public Word(T t) {
+  public Word(final T t) {
     inner = Collections.singletonList(t);
     verify();
   }
-  @SafeVarargs public Word(T... origin) {
+  @SafeVarargs public Word(final T... origin) {
     inner = Arrays.asList(origin);
     verify();
   }
-  public Word(Collection<T> origin) {
+  public Word(final Collection<T> origin) {
     inner = new ArrayList<>(origin);
     verify();
   }
   public static <T> Word<T> empty() {
     return new Word<>();
   }
-  @SuppressWarnings("unused") @Override public boolean add(T t) {
+  @SuppressWarnings("unused") @Override public boolean add(final T t) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public void add(int index, T element) {
+  @SuppressWarnings("unused") @Override public void add(final int index, final T element) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean addAll(Collection<? extends T> c) {
+  @SuppressWarnings("unused") @Override public boolean addAll(final Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean addAll(int index, Collection<? extends T> c) {
+  @SuppressWarnings("unused") @Override public boolean addAll(final int index, final Collection<? extends T> c) {
     throw new UnsupportedOperationException();
   }
   @Override public void clear() {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean contains(Object o) {
+  @Override public boolean contains(final Object o) {
     return inner.contains(o);
   }
-  @Override public boolean containsAll(Collection<?> c) {
+  @Override public boolean containsAll(final Collection<?> c) {
     return inner.containsAll(c);
   }
-  @Override public T get(int index) {
+  @Override public T get(final int index) {
     return inner.get(index);
   }
-  @Override public int indexOf(Object o) {
+  @Override public int indexOf(final Object o) {
     return inner.indexOf(o);
   }
   @Override public boolean isEmpty() {
@@ -70,53 +70,53 @@ public class Word<T> implements List<T> {
   @Override public Iterator<T> iterator() {
     return inner.iterator();
   }
-  @Override public int lastIndexOf(Object o) {
+  @Override public int lastIndexOf(final Object o) {
     return inner.lastIndexOf(o);
   }
   @Override public ListIterator<T> listIterator() {
     return inner.listIterator();
   }
-  @Override public ListIterator<T> listIterator(int index) {
+  @Override public ListIterator<T> listIterator(final int index) {
     return inner.listIterator(index);
   }
-  @SuppressWarnings("unused") @Override public boolean remove(Object o) {
+  @SuppressWarnings("unused") @Override public boolean remove(final Object o) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public T remove(int index) {
+  @SuppressWarnings("unused") @Override public T remove(final int index) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean removeAll(Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean removeAll(final Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean retainAll(Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean retainAll(final Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public T set(int index, T element) {
+  @SuppressWarnings("unused") @Override public T set(final int index, final T element) {
     throw new UnsupportedOperationException();
   }
   @Override public int size() {
     return inner.size();
   }
-  @Override public List<T> subList(int fromIndex, int toIndex) {
+  @Override public List<T> subList(final int fromIndex, final int toIndex) {
     return inner.subList(fromIndex, toIndex);
   }
   @Override public Object[] toArray() {
     return inner.toArray();
   }
-  @Override public <U> U[] toArray(U[] a) {
+  @Override public <U> U[] toArray(final U[] a) {
     return inner.toArray(a);
   }
   public T top() {
     assert !inner.isEmpty();
     return inner.get(inner.size() - 1);
   }
-  public Word<T> push(T t) {
-    List<T> $ = new ArrayList<>(inner.size() + 1);
+  public Word<T> push(final T t) {
+    final List<T> $ = new ArrayList<>(inner.size() + 1);
     $.add(t);
     return new Word<>($);
   }
-  public Word<T> push(List<T> list) {
-    List<T> $ = new ArrayList<>(inner.size() + list.size());
+  public Word<T> push(final List<T> list) {
+    final List<T> $ = new ArrayList<>(inner.size() + list.size());
     $.addAll(inner);
     $.addAll(list);
     return new Word<>($);
@@ -128,7 +128,7 @@ public class Word<T> implements List<T> {
   @Override public int hashCode() {
     return inner.hashCode();
   }
-  @Override public boolean equals(Object o) {
+  @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
     if (!(o instanceof Word))

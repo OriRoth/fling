@@ -27,7 +27,7 @@ import fling.internal.grammar.types.ClassParameter;
 @JavaCompatibleNotation public class NoneOrMore implements Notation {
   public final Symbol symbol;
 
-  public NoneOrMore(Symbol symbol) {
+  public NoneOrMore(final Symbol symbol) {
     Objects.requireNonNull(symbol);
     assert !symbol.isNotation() : "nested notations are not supported";
     this.symbol = symbol;
@@ -35,8 +35,9 @@ import fling.internal.grammar.types.ClassParameter;
   @Override public String name() {
     return symbol.name() + "*";
   }
-  @Override public Variable extend(Namer namer, Consumer<Variable> variableDeclaration, Consumer<DerivationRule> ruleDeclaration) {
-    Variable head = namer.createNotationChild(symbol);
+  @Override public Variable extend(final Namer namer, final Consumer<Variable> variableDeclaration,
+      final Consumer<DerivationRule> ruleDeclaration) {
+    final Variable head = namer.createNotationChild(symbol);
     variableDeclaration.accept(head);
     ruleDeclaration.accept(new DerivationRule(head, asList(//
         new SententialForm(symbol, head), //
@@ -46,8 +47,8 @@ import fling.internal.grammar.types.ClassParameter;
   @Override public Collection<Symbol> abbreviatedSymbols() {
     return asList(symbol);
   }
-  @Override public List<FieldNodeFragment> getFields(Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
-      @SuppressWarnings("unused") Function<String, String> nameFromBaseSolver) {
+  @Override public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
+      @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
     return fieldsSolver.apply(symbol).stream() //
         .map(innerField -> new FieldNodeFragment( //
@@ -55,11 +56,11 @@ import fling.internal.grammar.types.ClassParameter;
                 List.class.getCanonicalName(), //
                 ClassParameter.unPrimitiveType(innerField.parameterType)), //
             innerField.parameterName) {
-          @Override public String visitingMethod(BiFunction<Variable, String, String> variableVisitingSolver, String accessor,
-              Supplier<String> variableNamesGenerator) {
+          @Override public String visitingMethod(final BiFunction<Variable, String, String> variableVisitingSolver,
+              final String accessor, final Supplier<String> variableNamesGenerator) {
             if (!symbol.isVariable())
               return null;
-            String streamingVariable = variableNamesGenerator.get();
+            final String streamingVariable = variableNamesGenerator.get();
             return String.format("%s.stream().forEach(%s->%s)", //
                 accessor, //
                 streamingVariable, //
@@ -68,23 +69,23 @@ import fling.internal.grammar.types.ClassParameter;
         }) //
         .collect(toList());
   }
-  @SuppressWarnings("unused") @Override public boolean isNullable(Function<Symbol, Boolean> nullabilitySolver) {
+  @SuppressWarnings("unused") @Override public boolean isNullable(final Function<Symbol, Boolean> nullabilitySolver) {
     return true;
   }
-  @Override public Set<Verb> getFirsts(Function<Symbol, Set<Verb>> firstsSolver) {
+  @Override public Set<Verb> getFirsts(final Function<Symbol, Set<Verb>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   @Override public String toString() {
     return symbol + "*";
   }
-  @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(List<Object> rawNode, int fieldCount) {
-    List<List<Object>> $ = new ArrayList<>();
+  @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
+    final List<List<Object>> $ = new ArrayList<>();
     for (int i = 0; i < fieldCount; ++i)
       $.add(new ArrayList<>());
     List<Object> currentRawNode = rawNode;
     while (!currentRawNode.isEmpty()) {
       assert currentRawNode.size() == fieldCount + 1;
-      List<Object> rawArguments = currentRawNode.subList(0, fieldCount);
+      final List<Object> rawArguments = currentRawNode.subList(0, fieldCount);
       for (int i = 0; i < fieldCount; ++i)
         $.get(i).add(rawArguments.get(i));
       currentRawNode = (List<Object>) currentRawNode.get(fieldCount);

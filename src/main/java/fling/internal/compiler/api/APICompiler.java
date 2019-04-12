@@ -39,7 +39,7 @@ public abstract class APICompiler {
    */
   protected final Map<Named, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
-  public APICompiler(DPDA<Named, Verb, Named> dpda) {
+  public APICompiler(final DPDA<Named, Verb, Named> dpda) {
     this.dpda = dpda;
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
@@ -47,7 +47,7 @@ public abstract class APICompiler {
   /**
    * Compile fluent API. The object's state after calling this method is
    * undefined.
-   * 
+   *
    * @return compiled API
    */
   public APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
@@ -55,26 +55,26 @@ public abstract class APICompiler {
   }
   /**
    * Compile API concrete implementation.
-   * 
+   *
    * @return concrete implementation
    */
   protected abstract ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation();
   /**
    * Compile API static start methods.
-   * 
+   *
    * @return compiled methods
    */
   protected abstract List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods();
   /**
    * Compile API types.
-   * 
+   *
    * @return compiled types
    */
   protected abstract List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces();
 
   /**
    * Type name node declaration.
-   * 
+   *
    * @author Ori Roth
    */
   public class TypeName {
@@ -91,12 +91,12 @@ public abstract class APICompiler {
      */
     public final Set<Named> legalJumps;
 
-    public TypeName(Named q, Word<Named> α, Set<Named> legalJumps) {
+    public TypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
       this.q = q;
       this.α = α;
       this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
     }
-    TypeName(Named q) {
+    TypeName(final Named q) {
       this.q = q;
       this.α = null;
       this.legalJumps = null;
@@ -116,12 +116,12 @@ public abstract class APICompiler {
         $ = $ * 31 + legalJumps.hashCode();
       return $;
     }
-    @Override public boolean equals(Object o) {
+    @Override public boolean equals(final Object o) {
       if (this == o)
         return true;
       if (!(o instanceof APICompiler.TypeName))
         return false;
-      APICompiler.TypeName other = (TypeName) o;
+      final APICompiler.TypeName other = (TypeName) o;
       return Objects.equals(q, other.q) && //
           Objects.equals(α, other.α) && //
           Objects.equals(legalJumps, other.legalJumps);
@@ -133,7 +133,7 @@ public abstract class APICompiler {
 
   /**
    * Method node declaration.
-   * 
+   *
    * @author Ori Roth
    */
   public class MethodDeclaration {
@@ -146,7 +146,7 @@ public abstract class APICompiler {
      */
     private List<ParameterFragment> inferredParameters;
 
-    public MethodDeclaration(Verb name) {
+    public MethodDeclaration(final Verb name) {
       this.name = name;
     }
     /**
@@ -160,10 +160,10 @@ public abstract class APICompiler {
     }
     /**
      * Set verb's inferred parameters.
-     * 
+     *
      * @param inferredParameters parameters
      */
-    public void setInferredParameters(List<ParameterFragment> inferredParameters) {
+    public void setInferredParameters(final List<ParameterFragment> inferredParameters) {
       this.inferredParameters = inferredParameters;
     }
   }
@@ -171,7 +171,7 @@ public abstract class APICompiler {
   /**
    * Parameter declaration inferred from verb. Single verb may define multiple
    * parameters.
-   * 
+   *
    * @author Ori Roth
    */
   public static class ParameterFragment {
@@ -184,11 +184,11 @@ public abstract class APICompiler {
      */
     public final String parameterName;
 
-    private ParameterFragment(String parameterType, String parameterName) {
+    private ParameterFragment(final String parameterType, final String parameterName) {
       this.parameterType = parameterType;
       this.parameterName = parameterName;
     }
-    public static ParameterFragment of(String parameterType, String parameterName) {
+    public static ParameterFragment of(final String parameterType, final String parameterName) {
       return new ParameterFragment(parameterType, parameterName);
     }
     public String parameterType() {
@@ -201,7 +201,7 @@ public abstract class APICompiler {
 
   /**
    * Type node declaration.
-   * 
+   *
    * @author Ori Roth
    */
   public class InterfaceDeclaration {
@@ -224,7 +224,8 @@ public abstract class APICompiler {
     @SuppressWarnings("hiding") public final Word<Named> typeVariables;
     public final boolean isAccepting;
 
-    public InterfaceDeclaration(Named q, Word<Named> α, Set<Named> legalJumps, Word<Named> typeVariables, boolean isAccepting) {
+    public InterfaceDeclaration(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Word<Named> typeVariables,
+        final boolean isAccepting) {
       this.q = q;
       this.α = α;
       this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);

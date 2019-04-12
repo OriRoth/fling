@@ -28,7 +28,7 @@ import fling.namers.NaiveNamer;
  * Java adapters mediator. Connects fluent API, AST types and AST run-time
  * compiler generation given LL(1) grammars. AST visitor class definition is
  * also produced.
- * 
+ *
  * @author Ori Roth
  */
 public class JavaMediator {
@@ -53,19 +53,20 @@ public class JavaMediator {
    */
   public final String astCompilerClass;
 
-  public <Σ extends Enum<Σ> & Terminal> JavaMediator(BNF bnf, String packageName, String apiName, Class<Σ> Σ) {
+  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final BNF bnf, final String packageName, final String apiName,
+      final Class<Σ> Σ) {
     this.namer = new NaiveNamer(packageName, apiName);
     this.ll1 = new LL1(bnf, namer);
     this.packageName = packageName;
     this.apiName = apiName;
     this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
-      @Override protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+      @Override protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
-      @Override public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+      @Override public String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
       @Override public String printTerminationMethodReturnType() {
@@ -78,9 +79,9 @@ public class JavaMediator {
         return JavaMediator.this.printAdditionalDeclarations();
       }
     };
-    JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
+    final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
     this.astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
-      @Override protected String printAdditionalDeclarations(ASTCompilationUnitNode compilationUnit) {
+      @Override protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
         return astVisitorAdapter.printASTVisitorClass(compilationUnit);
       }
     };
@@ -92,8 +93,8 @@ public class JavaMediator {
         .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
-  protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
-    List<String> processedParameters = processParameters(σ, parameters);
+  protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+    final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
             : String.format("α.w.add(new %s(%s.%s%s%s));", //
@@ -109,22 +110,22 @@ public class JavaMediator {
         Assignment.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
-  String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+  String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
     assert σ.parameters.size() == parameters.size();
-    List<String> processedParameters = processParameters(σ, parameters);
+    final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s,%s));", //
         Assignment.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
         σ.name(), //
         String.format("new Object[]{%s}", String.join(",", processedParameters)));
   }
-  String printTerminationMethodReturnType(Variable head) {
+  String printTerminationMethodReturnType(final Variable head) {
     return String.format("%s.%s.%s", //
         packageName, //
         apiName + "AST", //
         namer.getASTClassName(head));
   }
-  String printTerminationMethodConcreteBody(Variable head) {
+  String printTerminationMethodConcreteBody(final Variable head) {
     return String.format("return %s(w);", //
         parserCompiler.getParsingMethodName(head));
   }
@@ -132,7 +133,7 @@ public class JavaMediator {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
         .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "$", namer) {
-          @Override protected String printStartMethodBody(Verb σ, List<ParameterFragment> parameters) {
+          @Override protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
           @Override public String printTopInterfaceBody() {
@@ -141,7 +142,7 @@ public class JavaMediator {
           @Override public String printConcreteImplementationClassBody() {
             return JavaMediator.this.printConcreteImplementationClassBody();
           }
-          @Override public String printConcreteImplementationMethodBody(Verb σ, List<ParameterFragment> parameters) {
+          @Override public String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
           }
           @Override public String printTerminationMethodReturnType() {
@@ -154,12 +155,12 @@ public class JavaMediator {
             .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
-  private List<String> processParameters(Verb σ, List<ParameterFragment> parameters) {
+  private List<String> processParameters(final Verb σ, final List<ParameterFragment> parameters) {
     Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
-    List<String> processedParameters = new ArrayList<>();
+    final List<String> processedParameters = new ArrayList<>();
     for (int i = 0; i < parameters.size(); ++i) {
-      TypeParameter parameter = σ.parameters.get(i);
-      ParameterFragment declaration = parameters.get(i);
+      final TypeParameter parameter = σ.parameters.get(i);
+      final ParameterFragment declaration = parameters.get(i);
       if (parameter.isVariableTypeParameter())
         processedParameters.add(String.format("((%s.%s.%s.α)%s).$()", //
             packageName, //
@@ -167,7 +168,7 @@ public class JavaMediator {
             namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
             declaration.parameterName));
       else if (parameter.isVarargsTypeParameter()) {
-        String αClass = String.format("%s.%s.%s.α", //
+        final String αClass = String.format("%s.%s.%s.α", //
             packageName, //
             apiName, //
             namer.headVariableClassName(parameter.asVarargsVariableTypeParameter().variable));

@@ -17,7 +17,7 @@ import fling.internal.grammar.sententials.Word;
 
 /**
  * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.
- * 
+ *
  * @author Ori Roth
  * @param <Q> states type
  * @param <Σ> alphabet type
@@ -78,7 +78,7 @@ public class DPDA<Q, Σ, Γ> {
   /**
    * Returns matching consolidated transition, i.e., the result of the multiple
    * transitions initiated by the received configuration.
-   * 
+   *
    * @param q current state
    * @param σ current input letter
    * @param γ current stack symbol
@@ -107,7 +107,7 @@ public class DPDA<Q, Σ, Γ> {
    * Returns matching consolidated transition, i.e., the result of the multiple
    * transitions initiated by the received configuration. The returned
    * transition does not contain stack symbol.
-   * 
+   *
    * @param q current state
    * @param σ current input letter
    * @param α current stack
@@ -133,12 +133,12 @@ public class DPDA<Q, Σ, Γ> {
     }
   }
   private void verify() {
-    Map<Q, Set<δ<Q, Σ, Γ>>> seenTransitions = new HashMap<>();
+    final Map<Q, Set<δ<Q, Σ, Γ>>> seenTransitions = new HashMap<>();
     Q.forEach(q -> seenTransitions.put(q, new HashSet<>()));
-    for (Q q : Q)
-      for (δ<Q, Σ, Γ> δ : δs)
+    for (final Q q : Q)
+      for (final δ<Q, Σ, Γ> δ : δs)
         if (q.equals(δ.q)) {
-          Optional<δ<Q, Σ, Γ>> δ2 = seenTransitions.get(q).stream().filter(δ$ -> δ.γ.equals(δ$.γ))
+          final Optional<δ<Q, Σ, Γ>> δ2 = seenTransitions.get(q).stream().filter(δ$ -> δ.γ.equals(δ$.γ))
               .filter(δ$ -> δ$.σ == ε() || δ$.σ.equals(δ.σ)).findAny();
           if (δ2.isPresent())
             throw new RuntimeException(String.format("determinism broke in state %s with transitions %s and %s", q, δ2.get(), δ));
@@ -186,7 +186,7 @@ public class DPDA<Q, Σ, Γ> {
       this.q0 = q0;
       return this;
     }
-    @SafeVarargs @SuppressWarnings("hiding") public final Builder<Q, Σ, Γ> γ0(Γ... γ0) {
+    @SafeVarargs @SuppressWarnings("hiding") public final Builder<Q, Σ, Γ> γ0(final Γ... γ0) {
       this.γ0 = new Word<>(γ0);
       return this;
     }

@@ -8,7 +8,7 @@ public class AbstractClassNode extends ClassNode {
   public final List<AbstractClassNode> parents;
   public final List<ClassNode> children;
 
-  public AbstractClassNode(Variable source, List<AbstractClassNode> parents, List<ClassNode> children) {
+  public AbstractClassNode(final Variable source, final List<AbstractClassNode> parents, final List<ClassNode> children) {
     super(source);
     this.parents = parents;
     this.children = children;

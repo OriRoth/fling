@@ -10,7 +10,7 @@ public class LongFall {
     a().a().a().a().a().a().a().b().$();
     b().$();
   }
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     System.out.println(CppFluentAPI);
   }
 }

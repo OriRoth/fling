@@ -31,8 +31,8 @@ import za.co.wstoop.jatalog.Expr;
 import za.co.wstoop.jatalog.Jatalog;
 
 public class Datalog {
-  public static void main(String[] args) {
-    Program program = fact("parent").of("john", "bob"). //
+  public static void main(final String[] args) {
+    final Program program = fact("parent").of("john", "bob"). //
         fact("parent").of("bob", "donald"). //
         always("ancestor").of(l("adam"), v("X")). //
         infer("ancestor").of(v("A"), v("B")). //
@@ -46,19 +46,19 @@ public class Datalog {
   }
 
   public static class DatalogPrinter extends DatalogAST.Visitor {
-    @Override public void whileVisiting(Fact fact) {
+    @Override public void whileVisiting(final Fact fact) {
       print(fact);
     }
-    @Override public void whileVisiting(Query query) {
+    @Override public void whileVisiting(final Query query) {
       print(query);
     }
-    @Override public void whileVisiting(Bodyless bodyless) {
+    @Override public void whileVisiting(final Bodyless bodyless) {
       print(bodyless);
     }
-    @Override public void whileVisiting(RuleHead ruleHead) {
+    @Override public void whileVisiting(final RuleHead ruleHead) {
       System.out.print(format("%s(%s) :- ", ruleHead.infer, printTerms(ruleHead.of)));
     }
-    @Override public void whileVisiting(RuleBody ruleBody) {
+    @Override public void whileVisiting(final RuleBody ruleBody) {
       System.out.print(format("%s(%s)", ruleBody.firstClause.when, printTerms(ruleBody.firstClause.of)));
       ruleBody.additionalClause.stream() //
           .map(additionalClause -> format(", %s(%s)", //
@@ -67,22 +67,22 @@ public class Datalog {
           .forEach(System.out::print);
       System.out.println(".");
     }
-    private static String printTerms(Term[] terms) {
+    private static String printTerms(final Term[] terms) {
       return Arrays.stream(terms).map(DatalogPrinter::printTerm).collect(joining(","));
     }
-    private static String printTerm(Term term) {
+    private static String printTerm(final Term term) {
       return term instanceof Term1 ? ((Term1) term).l : ((Term2) term).v;
     }
-    public static void print(Fact fact) {
+    public static void print(final Fact fact) {
       System.out.println(format("%s(%s).", fact.fact, Arrays.stream(fact.of).collect(joining(","))));
     }
-    public static void print(Query query) {
+    public static void print(final Query query) {
       System.out.println(format("%s(%s)?", query.query, printTerms(query.of)));
     }
-    public static void print(Bodyless bodyless) {
+    public static void print(final Bodyless bodyless) {
       System.out.println(format("%s(%s).", bodyless.always, printTerms(bodyless.of)));
     }
-    public static void print(WithBody withBody) {
+    public static void print(final WithBody withBody) {
       System.out.println(format("%s(%s) :- %s(%s)%s%s.", //
           withBody.ruleHead.infer, //
           printTerms(withBody.ruleHead.of), //
@@ -98,38 +98,38 @@ public class Datalog {
   public static class DatalogRunner extends DatalogAST.Visitor {
     Jatalog j = new Jatalog();
 
-    @Override public void whileVisiting(Fact fact) throws DatalogException {
+    @Override public void whileVisiting(final Fact fact) throws DatalogException {
       j.fact(fact.fact, fact.of);
       print(fact);
     }
-    @SuppressWarnings("unused") @Override public void whileVisiting(Bodyless bodyless) throws DatalogException {
+    @SuppressWarnings("unused") @Override public void whileVisiting(final Bodyless bodyless) throws DatalogException {
       // j.fact(Expr.expr(bodyless.always, toStrings(bodyless.of)));
       // print(bodyless);
     }
-    @Override public void whileVisiting(WithBody withBody) throws Exception {
+    @Override public void whileVisiting(final WithBody withBody) throws Exception {
       j.rule(Expr.expr(withBody.ruleHead.infer, toStrings(withBody.ruleHead.of)), //
           getExprRightHandSide(withBody));
       print(withBody);
     }
-    @Override public void whileVisiting(Query query) throws DatalogException {
+    @Override public void whileVisiting(final Query query) throws DatalogException {
       print(query);
       printResult(j.query(Expr.expr(query.query, toStrings(query.of))));
     }
-    private static String[] toStrings(Term[] terms) {
+    private static String[] toStrings(final Term[] terms) {
       return Arrays.stream(terms) //
           .map(term -> term instanceof Term1 ? //
               ((Term1) term).l : //
               ((Term2) term).v) //
           .toArray(String[]::new);
     }
-    private static Expr[] getExprRightHandSide(WithBody withBody) {
-      List<Expr> $ = new ArrayList<>();
+    private static Expr[] getExprRightHandSide(final WithBody withBody) {
+      final List<Expr> $ = new ArrayList<>();
       $.add(Expr.expr(withBody.ruleBody.firstClause.when, toStrings(withBody.ruleBody.firstClause.of)));
-      for (AdditionalClause a : withBody.ruleBody.additionalClause)
+      for (final AdditionalClause a : withBody.ruleBody.additionalClause)
         $.add(Expr.expr(a.and, toStrings(a.of)));
       return $.toArray(new Expr[$.size()]);
     }
-    private static void printResult(Collection<Map<String, String>> result) {
+    private static void printResult(final Collection<Map<String, String>> result) {
       System.out.println("[" + result.stream() //
           .map(m -> m.entrySet().stream() //
               .map(e -> e.getKey() + "=" + e.getValue()) //

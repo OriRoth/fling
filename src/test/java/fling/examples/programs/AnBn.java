@@ -8,7 +8,7 @@ public class AnBn {
     a().a().a().b().b().b().$();
     // a().a().a().b().b().a();
   }
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
     System.out.println(CppFluentAPI);
   }
 }

@@ -12,8 +12,8 @@ import fling.internal.grammar.sententials.Variable;
     Specification, Rule, DerivationTarget
   }
 
-  public static q0ø__Rule1$start_q0$q0ø<q0$_$_q0$<$>, $> bnf() {
-    α α = new α();
+  static q0ø__Rule1$start_q0$q0ø<q0$_$_q0$<$>, $> bnf() {
+    final α α = new α();
     α.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.bnf));
     return α;
   }
@@ -51,31 +51,31 @@ import fling.internal.grammar.sententials.Variable;
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.bnf, new Object[] {}));
       return this;
     }
-    public α start(fling.internal.grammar.sententials.Variable variable) {
+    @Override public α start(final fling.internal.grammar.sententials.Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.start, new Object[] { variable }));
       return this;
     }
-    public α derive(fling.internal.grammar.sententials.Variable variable) {
+    @Override public α derive(final fling.internal.grammar.sententials.Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.derive, new Object[] { variable }));
       return this;
     }
-    public α specialize(fling.internal.grammar.sententials.Variable variable) {
+    @Override public α specialize(final fling.internal.grammar.sententials.Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.specialize, new Object[] { variable }));
       return this;
     }
-    public α into(fling.internal.grammar.sententials.Variable... variables) {
+    @Override public α into(final fling.internal.grammar.sententials.Variable... variables) {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.into, new Object[] { variables }));
       return this;
     }
-    public α to(fling.internal.grammar.sententials.Symbol... symbols) {
+    @Override public α to(final fling.internal.grammar.sententials.Symbol... symbols) {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.to, new Object[] { symbols }));
       return this;
     }
-    public α toEpsilon() {
+    @Override public α toEpsilon() {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.toEpsilon, new Object[] {}));
       return this;
     }
-    public fling.grammars.BNF build() {
+    @Override public fling.grammars.BNF build() {
       return fling.grammars.BNF.toBNF(BNFCompiler.parse_Specification(w));
     }
   }

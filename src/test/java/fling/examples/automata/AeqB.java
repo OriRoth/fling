@@ -50,7 +50,8 @@ public class AeqB {
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  public static void main(String[] args) {
+
+  public static void main(final String[] args) {
     System.out.println(CppFluentAPI);
   }
 }

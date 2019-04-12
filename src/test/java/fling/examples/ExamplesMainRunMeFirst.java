@@ -20,10 +20,10 @@ import fling.examples.automata.AnBn;
 import fling.examples.automata.ExtendedBalancedParentheses;
 import fling.examples.automata.LongFall;
 import fling.examples.languages.Arithmetic;
-//import fling.examples.automata.AnBn;
-//import fling.examples.automata.ExtendedBalancedParentheses;
-//import fling.examples.automata.LongFall;
-//import fling.examples.languages.Arithmetic;
+// import fling.examples.automata.AnBn;
+// import fling.examples.automata.ExtendedBalancedParentheses;
+// import fling.examples.automata.LongFall;
+// import fling.examples.languages.Arithmetic;
 import fling.examples.languages.BNF;
 import fling.examples.languages.BalancedParentheses;
 import fling.examples.languages.Datalog;
@@ -61,14 +61,14 @@ import fling.examples.languages.TaggedBalancedParentheses;
 
   @Test public void compile() throws IOException, FormatterException {
     System.out.println("project path: " + PATH);
-    Path outputFolder = Paths.get(PATH);
+    final Path outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {
       Files.createDirectory(outputFolder);
       System.out.println("directory " + PATH + " created successfully");
     }
-    Formatter formatter = new Formatter();
-    for (Entry<String, String> file : files.entrySet()) {
-      Path filePath = Paths.get(PATH + file.getKey() + ".java");
+    final Formatter formatter = new Formatter();
+    for (final Entry<String, String> file : files.entrySet()) {
+      final Path filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);
       Files.write(filePath, Collections.singleton(FORMAT_OUTPUT ? //
@@ -78,7 +78,7 @@ import fling.examples.languages.TaggedBalancedParentheses;
       System.out.println("file " + file.getKey() + ".java written successfully.");
     }
   }
-  public static void main(String[] args) throws IOException, FormatterException {
+  public static void main(final String[] args) throws IOException, FormatterException {
     new ExamplesMainRunMeFirst().compile();
   }
 }

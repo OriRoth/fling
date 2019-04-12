@@ -1,7 +1,7 @@
 package fling.internal.grammar.sententials;
 
 public interface Variable extends Symbol {
-  public static Variable byName(String name) {
+  static Variable byName(final String name) {
     return new Variable() {
       @Override public String name() {
         return name;
@@ -12,12 +12,12 @@ public interface Variable extends Symbol {
       @Override public int hashCode() {
         return name.hashCode();
       }
-      @Override public boolean equals(Object obj) {
+      @Override public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (!(obj instanceof Variable))
           return false;
-        Variable other = (Variable) obj;
+        final Variable other = (Variable) obj;
         return name().equals(other.name());
       }
     };
