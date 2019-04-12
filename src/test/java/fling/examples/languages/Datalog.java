@@ -5,6 +5,15 @@ import static fling.examples.languages.Datalog.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.*;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
+
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
@@ -73,4 +82,34 @@ public class Datalog {
       "Datalog", // Name of generated API.
       Σ.class // Language terminals enum.
   );
+
+  /**
+   * Prints the Datalog API/AST types/AST run-time compiler to corresponding
+   * files.
+   */
+  public static void main(String[] args) throws IOException, FormatterException {
+    Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
+      final Map<String, String> $ = new LinkedHashMap<>();
+      $.put("Datalog", Datalog.jm.apiClass);
+      $.put("DatalogAST", Datalog.jm.astClass);
+      $.put("DatalogCompiler", Datalog.jm.astCompilerClass);
+      return $;
+    }).get();
+    String PATH = "./src/test/java/fling/examples/generated/";
+    System.out.println("project path: " + PATH);
+    final Path outputFolder = Paths.get(PATH);
+    if (!Files.exists(outputFolder)) {
+      Files.createDirectory(outputFolder);
+      System.out.println("directory " + PATH + " created successfully");
+    }
+    final Formatter formatter = new Formatter();
+    for (final Entry<String, String> file : files.entrySet()) {
+      final Path filePath = Paths.get(PATH + file.getKey() + ".java");
+      if (Files.exists(filePath))
+        Files.delete(filePath);
+      Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE,
+          StandardOpenOption.WRITE);
+      System.out.println("file " + file.getKey() + ".java written successfully.");
+    }
+  }
 }
