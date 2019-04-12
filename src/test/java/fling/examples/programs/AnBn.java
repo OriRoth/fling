@@ -3,6 +3,8 @@ package fling.examples.programs;
 import static fling.examples.automata.AnBn.CppFluentAPI;
 import static fling.examples.generated.AnBn.a;
 
+import fling.examples.ExamplesMainRunMeFirst;
+
 /**
  * This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.

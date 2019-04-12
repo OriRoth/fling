@@ -3,7 +3,6 @@ package fling.grammars.api;
 import static fling.grammars.api.BNFAPICompiler.parse_PlainBNF;
 
 import fling.grammars.BNF;
-import fling.grammars.api.BNFAPIAST.PlainBNF;
 import fling.internal.grammar.sententials.*;
 @SuppressWarnings("all") public interface BNFAPI {
   public enum Σ implements Terminal {

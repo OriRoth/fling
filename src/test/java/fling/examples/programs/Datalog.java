@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.joining;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fling.examples.ExamplesMainRunMeFirst;
 import fling.examples.generated.DatalogAST;
 import fling.examples.generated.DatalogAST.*;
 import za.co.wstoop.jatalog.*;
