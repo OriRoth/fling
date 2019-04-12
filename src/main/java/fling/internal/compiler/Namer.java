@@ -1,5 +1,6 @@
 package fling.internal.compiler;
 
+import fling.Variable;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;

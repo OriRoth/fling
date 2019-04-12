@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.*;
 
-import fling.grammars.BNF;
+import fling.*;
 import fling.internal.compiler.ast.nodes.*;
 import fling.internal.grammar.sententials.*;
 

@@ -4,8 +4,9 @@ import static fling.examples.languages.BalancedParentheses.V.P;
 import static fling.examples.languages.BalancedParentheses.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
+import fling.*;
+import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.grammars.BNF;
 import fling.internal.grammar.sententials.*;
 
 public class BalancedParentheses {

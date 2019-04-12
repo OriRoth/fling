@@ -1,5 +1,6 @@
-package fling.internal.grammar.sententials;
+package fling;
 
+import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.*;
 
 public interface Terminal extends Symbol {

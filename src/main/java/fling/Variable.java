@@ -1,4 +1,6 @@
-package fling.internal.grammar.sententials;
+package fling;
+
+import fling.internal.grammar.sententials.Symbol;
 
 public interface Variable extends Symbol {
   static Variable byName(final String name) {

@@ -4,6 +4,7 @@ import static fling.examples.languages.RegularExpression.V.*;
 import static fling.examples.languages.RegularExpression.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
+import fling.*;
 import fling.adapters.JavaMediator;
 import fling.internal.grammar.sententials.*;
 
@@ -16,7 +17,7 @@ public class RegularExpression {
     Expression, RE, Tail
   }
 
-  public static final fling.grammars.BNF bnf = bnf(). //
+  public static final fling.BNF bnf = bnf(). //
       start(Expression). //
       derive(Expression).to(re, RE). //
       derive(RE).to(exactly.with(String.class), Tail). //

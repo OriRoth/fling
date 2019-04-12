@@ -1,5 +1,7 @@
 package fling.internal.grammar.sententials;
 
+import fling.*;
+
 public interface Constants {
   Terminal $ = new Terminal() {
     @Override public String name() {

@@ -4,8 +4,9 @@ import static fling.examples.languages.ArithmeticExpression.V.*;
 import static fling.examples.languages.ArithmeticExpression.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
+import fling.*;
+import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.grammars.BNF;
 import fling.internal.grammar.sententials.*;
 
 public class ArithmeticExpression {

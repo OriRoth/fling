@@ -2,7 +2,7 @@ package fling.internal.grammar.types;
 
 import java.util.*;
 
-import fling.internal.grammar.sententials.Variable;
+import fling.Variable;
 
 public interface TypeParameter {
   String baseParameterName();

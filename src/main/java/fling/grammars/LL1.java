@@ -5,6 +5,7 @@ import static fling.internal.util.Collections.reversed;
 
 import java.util.*;
 
+import fling.*;
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.internal.compiler.Namer;

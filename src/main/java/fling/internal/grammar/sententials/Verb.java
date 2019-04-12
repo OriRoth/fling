@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fling.Terminal;
 import fling.internal.grammar.types.TypeParameter;
 
 public class Verb implements Symbol {

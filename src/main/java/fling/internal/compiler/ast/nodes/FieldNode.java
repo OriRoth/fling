@@ -3,6 +3,7 @@ package fling.internal.compiler.ast.nodes;
 import java.util.List;
 import java.util.function.*;
 
+import fling.Variable;
 import fling.internal.grammar.sententials.*;
 
 public class FieldNode {

@@ -3,6 +3,7 @@ package fling.internal.grammar.sententials;
 import java.util.*;
 import java.util.function.*;
 
+import fling.Variable;
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import fling.internal.grammar.sententials.notations.*;

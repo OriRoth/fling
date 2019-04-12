@@ -1,5 +1,7 @@
 package fling.internal.grammar.sententials;
 
+import fling.*;
+
 public interface Symbol extends Named {
   default boolean isTerminal() {
     return this instanceof Terminal || Constants.$.equals(this);

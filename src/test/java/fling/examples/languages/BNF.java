@@ -5,6 +5,7 @@ import static fling.examples.languages.BNF.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.noneOrMore;
 
+import fling.*;
 import fling.adapters.JavaMediator;
 import fling.internal.grammar.sententials.*;
 
@@ -17,7 +18,7 @@ public class BNF {
     PlainBNF, Rule, RuleBody, RuleTail
   }
 
-  public static final fling.grammars.BNF bnf = bnf(). //
+  public static final fling.BNF bnf = bnf(). //
       start(PlainBNF). //
       derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
       derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody

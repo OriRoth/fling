@@ -5,8 +5,9 @@ import static fling.examples.languages.TaggedBalancedParentheses.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
+import fling.*;
+import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.grammars.BNF;
 import fling.internal.grammar.sententials.*;
 
 public class TaggedBalancedParentheses {

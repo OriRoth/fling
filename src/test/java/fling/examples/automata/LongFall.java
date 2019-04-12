@@ -6,6 +6,7 @@ import static fling.examples.automata.LongFall.Q.*;
 import static fling.examples.automata.LongFall.Γ.*;
 import static fling.examples.automata.LongFall.Σ.*;
 
+import fling.Terminal;
 import fling.adapters.*;
 import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;

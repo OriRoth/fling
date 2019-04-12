@@ -6,6 +6,7 @@ import static fling.examples.automata.AeqB.Q.*;
 import static fling.examples.automata.AeqB.Γ.*;
 import static fling.examples.automata.AeqB.Σ.*;
 
+import fling.Terminal;
 import fling.adapters.*;
 import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;

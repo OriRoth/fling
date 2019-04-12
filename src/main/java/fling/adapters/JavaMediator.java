@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.*;
 
+import fling.*;
 import fling.compilers.api.ReliableAPICompiler;
 import fling.compilers.ast.ASTCompiler;
 import fling.grammars.*;

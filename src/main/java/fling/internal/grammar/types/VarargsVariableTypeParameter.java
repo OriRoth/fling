@@ -2,7 +2,7 @@ package fling.internal.grammar.types;
 
 import java.util.*;
 
-import fling.internal.grammar.sententials.Variable;
+import fling.Variable;
 import fling.namers.NaiveNamer;
 
 public class VarargsVariableTypeParameter implements TypeParameter {

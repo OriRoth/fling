@@ -1,6 +1,6 @@
 package fling.internal.compiler.ast;
 
-import fling.internal.grammar.sententials.Variable;
+import fling.Variable;
 
 public interface ASTParserCompiler {
   String printParserClass();

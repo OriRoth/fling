@@ -6,6 +6,7 @@ import static fling.examples.automata.AnBn.Q.*;
 import static fling.examples.automata.AnBn.Γ.*;
 import static fling.examples.automata.AnBn.Σ.*;
 
+import fling.Terminal;
 import fling.adapters.*;
 import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;

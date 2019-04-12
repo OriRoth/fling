@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.*;
 
 import java.util.*;
 
+import fling.*;
 import fling.internal.compiler.*;
 import fling.internal.compiler.ast.ASTParserCompiler;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;

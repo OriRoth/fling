@@ -3,6 +3,8 @@ package fling.internal.grammar.sententials;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import fling.Variable;
+
 public class DerivationRule {
   public final Variable lhs;
   public final List<SententialForm> rhs;

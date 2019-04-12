@@ -3,9 +3,9 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.*;
 
+import fling.Variable;
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.ast.nodes.*;
-import fling.internal.grammar.sententials.Variable;
 import fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.namers.NaiveNamer;
 

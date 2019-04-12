@@ -2,7 +2,7 @@ package fling.internal.compiler;
 
 import java.util.*;
 
-import fling.internal.grammar.sententials.Terminal;
+import fling.Terminal;
 
 /**
  * Recording of method call in fluent API invocation.

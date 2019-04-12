@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.*;
 import java.util.function.*;
 
+import fling.Variable;
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import fling.internal.grammar.sententials.*;

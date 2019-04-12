@@ -6,6 +6,7 @@ import static fling.examples.automata.ExtendedBalancedParentheses.Q.*;
 import static fling.examples.automata.ExtendedBalancedParentheses.Γ.*;
 import static fling.examples.automata.ExtendedBalancedParentheses.Σ.*;
 
+import fling.Terminal;
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;

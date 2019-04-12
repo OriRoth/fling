@@ -1,6 +1,6 @@
 package fling.internal.compiler.ast.nodes;
 
-import fling.internal.grammar.sententials.Variable;
+import fling.Variable;
 
 public abstract class ClassNode {
   public final Variable source;

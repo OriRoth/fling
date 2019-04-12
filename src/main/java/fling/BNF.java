@@ -1,4 +1,4 @@
-package fling.grammars;
+package fling;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
