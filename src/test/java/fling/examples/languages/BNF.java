@@ -22,10 +22,8 @@ public class BNF {
       derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
       derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
       derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
-      derive(RuleBody).to(to.many(Symbol.class), noneOrMore(RuleTail)). // RuleBody ::= to(Symbol*) RuleTail*
-      derive(RuleBody).to(toEpsilon). // RuleBody ::= toEpsilon()
-      derive(RuleTail).to(or.many(Symbol.class)). // RuleTail ::= or(Symbol*)
-      derive(RuleTail).to(orNone).  // RuleTail ::= orNone()
+      derive(RuleBody).to(to.many(Symbol.class), noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
+      derive(RuleTail).to(or.many(Symbol.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "BNFAPI", Σ.class);
