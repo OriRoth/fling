@@ -11,10 +11,19 @@ import fling.internal.compiler.Namer;
 import fling.internal.grammar.Grammar;
 import fling.internal.grammar.sententials.*;
 
+/**
+ * LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
+ * 't', only a single derivation may inferred.
+ * 
+ * @author Ori Roth
+ */
 public class LL1 extends Grammar {
   public LL1(final BNF bnf, final Namer namer) {
     super(bnf, namer);
   }
+  /**
+   * Translate LL(1) BNF to DPDA.
+   */
   @Override public DPDA<Named, Verb, Named> buildAutomaton(final BNF bnf) {
     final Set<Named> Q = new LinkedHashSet<>();
     final Set<Verb> Σ = new LinkedHashSet<>();

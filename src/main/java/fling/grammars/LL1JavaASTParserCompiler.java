@@ -15,6 +15,13 @@ import fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.internal.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 
+/**
+ * Compiles BNF to run-time LL(1) compiler, generating AST from sequence of
+ * terminals.
+ * 
+ * @author Ori Roth
+ * @param <Σ> terminals enum
+ */
 public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements ASTParserCompiler {
   @SuppressWarnings("rawtypes") private static final Class<? extends List> inputClass = List.class;
   private static final String ListObject = String.format("%s<%s>", List.class.getCanonicalName(), Object.class.getCanonicalName());

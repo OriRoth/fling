@@ -9,12 +9,25 @@ import fling.*;
 import fling.internal.compiler.ast.nodes.*;
 import fling.internal.grammar.sententials.*;
 
+/**
+ * Abstract syntax tree compiler. Generates types corresponding to AST nodes.
+ * 
+ * @author Ori Roth
+ */
 public class ASTCompiler {
+  /**
+   * Input BNF.
+   */
   public final BNF bnf;
 
   public ASTCompiler(final BNF bnf) {
     this.bnf = bnf;
   }
+  /**
+   * Compiles BNF to AST types.
+   * 
+   * @return
+   */
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();
     final Map<Variable, List<Variable>> children = new LinkedHashMap<>();

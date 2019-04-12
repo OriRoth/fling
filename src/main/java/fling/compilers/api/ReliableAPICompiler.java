@@ -14,12 +14,8 @@ import fling.internal.compiler.api.nodes.*;
 import fling.internal.grammar.sententials.*;
 
 /**
- * Encodes deterministic pushdown automaton ({@link DPDA}) as a Java class; A
- * method calls chain of the form {@code START().a().b()...z().ACCEPT()}
- * type-checks against this class if, and only if, the original automaton
- * accepts the input word {@code ab...z}; A chain of a rejected input word
- * either do not type-check, or terminate with {@code STUCK()} call; Otherwise
- * the chain may terminate its computation by calling {@code TERMINATED()}.
+ * {@link APICompiler} generating (possibly) exponential number of API types.
+ * Supported method chains compiles only when prefix of legal word.
  *
  * @author Ori Roth
  */

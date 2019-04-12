@@ -10,16 +10,53 @@ import fling.grammars.api.BNFAPIAST.*;
 import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
 
+/**
+ * Backus-Naur form. Language specification, collection of derivation rules of
+ * the form <code>V ::= w X | Y z.</code> Computes grammar's nullables set and
+ * firsts/follows mappings.
+ * 
+ * @author Ori Roth
+ */
 public class BNF {
+  /**
+   * Derivation rules collection.
+   */
   public final Set<DerivationRule> R;
+  /**
+   * Set of nullable variables and notations.
+   */
   public final Set<Symbol> nullables;
+  /**
+   * Maps variables and notations to their firsts set.
+   */
   public final Map<Symbol, Set<Verb>> firsts;
+  /**
+   * Maps variables and notations to their follows set.
+   */
   public final Map<Variable, Set<Verb>> follows;
+  /**
+   * Verbs collection.
+   */
   public final Set<Verb> Σ;
+  /**
+   * Variables collection.
+   */
   public final Set<Variable> V;
+  /**
+   * Start variable.
+   */
   public final Variable startVariable;
+  /**
+   * Head variables set, containing variables used as API parameters.
+   */
   public final Set<Variable> headVariables;
+  /**
+   * Maps generated variables to the notation originated them. Optional.
+   */
   public final Map<Variable, Notation> extensionHeadsMapping;
+  /**
+   * Set of generated variables.
+   */
   public final Set<Variable> extensionProducts;
 
   public BNF(final Set<Verb> Σ, final Set<? extends Variable> V, final Set<DerivationRule> R, final Variable startVariable,
@@ -42,18 +79,33 @@ public class BNF {
     this.firsts = getFirsts();
     this.follows = getFollows();
   }
+  /**
+   * @return all grammar symbols.
+   */
   public Set<Symbol> symbols() {
     final Set<Symbol> $ = new LinkedHashSet<>();
     $.addAll(Σ);
     $.addAll(V);
     return unmodifiableSet($);
   }
+  /**
+   * @param v a variable
+   * @return the right hand side of its derivation rule
+   */
   public List<SententialForm> rhs(final Variable v) {
     return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
   }
+  /**
+   * @param symbols sequence of grammar symbols
+   * @return whether the sequence is nullable
+   */
   public boolean isNullable(final Symbol... symbols) {
     return isNullable(Arrays.asList(symbols));
   }
+  /**
+   * @param symbols sequence of grammar symbols
+   * @return whether the sequence is nullable
+   */
   public boolean isNullable(final List<Symbol> symbols) {
     return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
         symbol.isNotation() && symbol.asNotation().isNullable(this::isNullable));

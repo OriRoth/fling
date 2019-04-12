@@ -9,8 +9,8 @@ import fling.internal.grammar.sententials.*;
 /**
  * Encodes deterministic pushdown automaton ({@link DPDA}) as type declarations
  * constituting proper fluent API of the automaton's language. The automaton is
- * compiled into an AST which can be translated to any polymorphic,
- * object-oriented language (theoretically).
+ * compiled into an AST which can be translated to polymorphic,
+ * object-oriented language.
  *
  * @author Ori Roth
  */
