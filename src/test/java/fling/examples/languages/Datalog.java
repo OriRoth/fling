@@ -58,9 +58,12 @@ public class Datalog {
       derive(Term).to(l.with(S)).or(v.with(S)). //
       build();
   /**
-   * The {@link JavaMediator} responsible of compiling the Java Datalog API/AST
+   * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
    * types/AST run-time compiler.
    */
   public static final JavaMediator jm = new JavaMediator(bnf, //
-      "fling.examples.generated", "Datalog", Σ.class);
+      "fling.examples.generated", // Name of package in which output will reside
+      "Datalog", // Name of generated class, 
+      Σ.class //
+      );
 }
