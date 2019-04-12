@@ -3,21 +3,11 @@ package fling.compilers.ast;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import fling.grammars.BNF;
-import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.compiler.ast.nodes.AbstractClassNode;
-import fling.internal.compiler.ast.nodes.ClassNode;
-import fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import fling.internal.compiler.ast.nodes.FieldNode;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.SententialForm;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.compiler.ast.nodes.*;
+import fling.internal.grammar.sententials.*;
 
 public class ASTCompiler {
   public final BNF bnf;

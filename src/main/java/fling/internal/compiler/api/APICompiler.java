@@ -1,21 +1,10 @@
 package fling.internal.compiler.api;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import fling.automata.DPDA;
-import fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode;
-import fling.internal.compiler.api.nodes.ConcreteImplementationNode;
-import fling.internal.compiler.api.nodes.InterfaceNode;
-import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
-import fling.internal.grammar.sententials.Named;
-import fling.internal.grammar.sententials.Verb;
-import fling.internal.grammar.sententials.Word;
+import fling.internal.compiler.api.nodes.*;
+import fling.internal.grammar.sententials.*;
 
 /**
  * Encodes deterministic pushdown automaton ({@link DPDA}) as type declarations

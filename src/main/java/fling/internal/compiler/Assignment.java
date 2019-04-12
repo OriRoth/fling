@@ -1,7 +1,6 @@
 package fling.internal.compiler;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import fling.internal.grammar.sententials.Terminal;
 

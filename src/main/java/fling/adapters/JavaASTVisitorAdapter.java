@@ -2,17 +2,10 @@ package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import fling.internal.compiler.Namer;
-import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.compiler.ast.nodes.AbstractClassNode;
-import fling.internal.compiler.ast.nodes.ClassNode;
-import fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import fling.internal.compiler.ast.nodes.FieldNode;
+import fling.internal.compiler.ast.nodes.*;
 import fling.internal.grammar.sententials.Variable;
 import fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.namers.NaiveNamer;

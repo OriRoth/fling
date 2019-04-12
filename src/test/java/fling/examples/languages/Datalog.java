@@ -1,34 +1,13 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.Datalog.V.AdditionalClause;
-import static fling.examples.languages.Datalog.V.Bodyless;
-import static fling.examples.languages.Datalog.V.Fact;
-import static fling.examples.languages.Datalog.V.FirstClause;
-import static fling.examples.languages.Datalog.V.Program;
-import static fling.examples.languages.Datalog.V.Query;
-import static fling.examples.languages.Datalog.V.Rule;
-import static fling.examples.languages.Datalog.V.RuleBody;
-import static fling.examples.languages.Datalog.V.RuleHead;
-import static fling.examples.languages.Datalog.V.Statement;
-import static fling.examples.languages.Datalog.V.Term;
-import static fling.examples.languages.Datalog.V.WithBody;
-import static fling.examples.languages.Datalog.Σ.always;
-import static fling.examples.languages.Datalog.Σ.and;
-import static fling.examples.languages.Datalog.Σ.fact;
-import static fling.examples.languages.Datalog.Σ.infer;
-import static fling.examples.languages.Datalog.Σ.l;
-import static fling.examples.languages.Datalog.Σ.of;
-import static fling.examples.languages.Datalog.Σ.query;
-import static fling.examples.languages.Datalog.Σ.v;
-import static fling.examples.languages.Datalog.Σ.when;
+import static fling.examples.languages.Datalog.V.*;
+import static fling.examples.languages.Datalog.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
-import static fling.internal.grammar.sententials.Notation.noneOrMore;
-import static fling.internal.grammar.sententials.Notation.oneOrMore;
+import static fling.internal.grammar.sententials.Notation.*;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class Datalog {
   public enum Σ implements Terminal {

@@ -1,34 +1,17 @@
 package fling.examples.programs;
 
 import static fling.examples.generated.Datalog.fact;
-import static fling.examples.generated.Datalog.Term.l;
-import static fling.examples.generated.Datalog.Term.v;
+import static fling.examples.generated.Datalog.Term.*;
 import static fling.examples.programs.Datalog.DatalogPrinter.print;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fling.examples.generated.DatalogAST;
-import fling.examples.generated.DatalogAST.AdditionalClause;
-import fling.examples.generated.DatalogAST.Bodyless;
-import fling.examples.generated.DatalogAST.Fact;
-import fling.examples.generated.DatalogAST.Program;
-import fling.examples.generated.DatalogAST.Query;
-import fling.examples.generated.DatalogAST.RuleBody;
-import fling.examples.generated.DatalogAST.RuleHead;
-import fling.examples.generated.DatalogAST.Term;
-import fling.examples.generated.DatalogAST.Term1;
-import fling.examples.generated.DatalogAST.Term2;
-import fling.examples.generated.DatalogAST.WithBody;
-import za.co.wstoop.jatalog.DatalogException;
-import za.co.wstoop.jatalog.Expr;
-import za.co.wstoop.jatalog.Jatalog;
+import fling.examples.generated.DatalogAST.*;
+import za.co.wstoop.jatalog.*;
 
 public class Datalog {
   public static void main(final String[] args) {

@@ -1,24 +1,12 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.Arithmetic.V.E;
-import static fling.examples.languages.Arithmetic.V.E_;
-import static fling.examples.languages.Arithmetic.V.F;
-import static fling.examples.languages.Arithmetic.V.T;
-import static fling.examples.languages.Arithmetic.V.T_;
-import static fling.examples.languages.Arithmetic.Σ.begin;
-import static fling.examples.languages.Arithmetic.Σ.divide;
-import static fling.examples.languages.Arithmetic.Σ.end;
-import static fling.examples.languages.Arithmetic.Σ.minus;
-import static fling.examples.languages.Arithmetic.Σ.n;
-import static fling.examples.languages.Arithmetic.Σ.plus;
-import static fling.examples.languages.Arithmetic.Σ.times;
-import static fling.examples.languages.Arithmetic.Σ.v;
+import static fling.examples.languages.Arithmetic.V.*;
+import static fling.examples.languages.Arithmetic.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class Arithmetic {
   public enum Σ implements Terminal {

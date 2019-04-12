@@ -2,19 +2,13 @@ package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fling.internal.compiler.Namer;
-import fling.internal.compiler.api.APICompiler;
-import fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
-import fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode;
-import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.Named;
-import fling.internal.grammar.sententials.Word;
+import fling.internal.compiler.api.*;
+import fling.internal.compiler.api.nodes.*;
+import fling.internal.grammar.sententials.*;
 
 /**
  * Prototypical C++ API adapter.

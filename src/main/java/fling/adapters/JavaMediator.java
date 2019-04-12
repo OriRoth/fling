@@ -2,25 +2,16 @@ package fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import fling.compilers.api.ReliableAPICompiler;
 import fling.compilers.ast.ASTCompiler;
-import fling.grammars.BNF;
-import fling.grammars.LL1;
-import fling.grammars.LL1JavaASTParserCompiler;
-import fling.internal.compiler.Assignment;
-import fling.internal.compiler.Namer;
+import fling.grammars.*;
+import fling.internal.compiler.*;
 import fling.internal.compiler.api.APICompiler.ParameterFragment;
 import fling.internal.compiler.ast.ASTParserCompiler;
 import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
-import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
 

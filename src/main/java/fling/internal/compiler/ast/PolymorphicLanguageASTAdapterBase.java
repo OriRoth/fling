@@ -1,9 +1,6 @@
 package fling.internal.compiler.ast;
 
-import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.compiler.ast.nodes.AbstractClassNode;
-import fling.internal.compiler.ast.nodes.ClassNode;
-import fling.internal.compiler.ast.nodes.ConcreteClassNode;
+import fling.internal.compiler.ast.nodes.*;
 
 public interface PolymorphicLanguageASTAdapterBase {
   String printASTClass(ASTCompilationUnitNode compilationUnit);

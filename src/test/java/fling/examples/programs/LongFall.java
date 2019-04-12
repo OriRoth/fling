@@ -1,8 +1,7 @@
 package fling.examples.programs;
 
 import static fling.examples.automata.LongFall.CppFluentAPI;
-import static fling.examples.generated.LongFall.a;
-import static fling.examples.generated.LongFall.b;
+import static fling.examples.generated.LongFall.*;
 
 public class LongFall {
   public static void compilationTest() {

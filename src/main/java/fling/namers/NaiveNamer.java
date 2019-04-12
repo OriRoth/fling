@@ -3,28 +3,17 @@ package fling.namers;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.APICompiler.ParameterFragment;
-import fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
-import fling.internal.compiler.api.nodes.AbstractMethodNode.Intermediate;
-import fling.internal.compiler.api.nodes.AbstractMethodNode.Start;
-import fling.internal.compiler.api.nodes.InterfaceNode;
-import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.compiler.ast.nodes.ClassNode;
-import fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import fling.internal.compiler.ast.nodes.FieldNode;
+import fling.internal.compiler.api.nodes.*;
+import fling.internal.compiler.api.nodes.AbstractMethodNode.*;
+import fling.internal.compiler.ast.nodes.*;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();

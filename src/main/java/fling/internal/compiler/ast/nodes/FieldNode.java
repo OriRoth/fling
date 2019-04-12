@@ -1,11 +1,9 @@
 package fling.internal.compiler.ast.nodes;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
+import java.util.function.*;
 
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class FieldNode {
   public final Symbol source;

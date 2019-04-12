@@ -1,7 +1,6 @@
 package fling.internal.compiler.api.nodes;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PolymorphicTypeNode<T> {
   public final T name;

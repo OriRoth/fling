@@ -2,22 +2,15 @@ package fling.examples.automata;
 
 import static fling.automata.Alphabet.ε;
 import static fling.automata.DPDA.dpda;
-import static fling.examples.automata.ExtendedBalancedParentheses.Q.q0;
-import static fling.examples.automata.ExtendedBalancedParentheses.Q.q1;
-import static fling.examples.automata.ExtendedBalancedParentheses.Q.q2;
-import static fling.examples.automata.ExtendedBalancedParentheses.Γ.γ0;
-import static fling.examples.automata.ExtendedBalancedParentheses.Γ.γ1;
-import static fling.examples.automata.ExtendedBalancedParentheses.Σ.c;
-import static fling.examples.automata.ExtendedBalancedParentheses.Σ.Ↄ;
-import static fling.examples.automata.ExtendedBalancedParentheses.Σ.ↄ;
+import static fling.examples.automata.ExtendedBalancedParentheses.Q.*;
+import static fling.examples.automata.ExtendedBalancedParentheses.Γ.*;
+import static fling.examples.automata.ExtendedBalancedParentheses.Σ.*;
 
 import fling.adapters.JavaAPIAdapter;
 import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;
 import fling.internal.grammar.Grammar;
-import fling.internal.grammar.sententials.Named;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.sententials.*;
 import fling.namers.NaiveNamer;
 
 public class ExtendedBalancedParentheses {

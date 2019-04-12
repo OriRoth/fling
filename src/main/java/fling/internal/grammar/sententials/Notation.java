@@ -1,15 +1,11 @@
 package fling.internal.grammar.sententials;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.*;
 
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.internal.grammar.sententials.notations.NoneOrMore;
-import fling.internal.grammar.sententials.notations.OneOrMore;
+import fling.internal.grammar.sententials.notations.*;
 
 public interface Notation extends Symbol {
   Collection<Symbol> abbreviatedSymbols();

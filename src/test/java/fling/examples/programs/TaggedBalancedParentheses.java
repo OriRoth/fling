@@ -1,15 +1,9 @@
 package fling.examples.programs;
 
-import static fling.examples.generated.TaggedBalancedParentheses.__;
-import static fling.examples.generated.TaggedBalancedParentheses.c;
-import static fling.examples.generated.TaggedBalancedParentheses.AB.a;
-import static fling.examples.generated.TaggedBalancedParentheses.AB.b;
+import static fling.examples.generated.TaggedBalancedParentheses.*;
+import static fling.examples.generated.TaggedBalancedParentheses.AB.*;
 
-import fling.examples.generated.TaggedBalancedParenthesesAST.AB1;
-import fling.examples.generated.TaggedBalancedParenthesesAST.AB2;
-import fling.examples.generated.TaggedBalancedParenthesesAST.P;
-import fling.examples.generated.TaggedBalancedParenthesesAST.P1;
-import fling.examples.generated.TaggedBalancedParenthesesAST.P2;
+import fling.examples.generated.TaggedBalancedParenthesesAST.*;
 
 public class TaggedBalancedParentheses {
   public static void compilationTest() {

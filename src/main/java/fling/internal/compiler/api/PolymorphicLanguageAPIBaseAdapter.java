@@ -3,10 +3,7 @@ package fling.internal.compiler.api;
 import java.util.List;
 
 import fling.internal.compiler.api.APICompiler.MethodDeclaration;
-import fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import fling.internal.compiler.api.nodes.AbstractMethodNode;
-import fling.internal.compiler.api.nodes.InterfaceNode;
-import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import fling.internal.compiler.api.nodes.*;
 
 public interface PolymorphicLanguageAPIBaseAdapter {
   String printFluentAPI(

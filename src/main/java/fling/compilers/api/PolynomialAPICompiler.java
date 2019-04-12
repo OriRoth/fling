@@ -1,29 +1,17 @@
 package fling.compilers.api;
 
 import static fling.automata.Alphabet.ε;
-import static fling.internal.compiler.api.nodes.PolymorphicTypeNode.bot;
-import static fling.internal.compiler.api.nodes.PolymorphicTypeNode.top;
-import static fling.internal.util.Collections.asList;
-import static fling.internal.util.Collections.asWord;
-import static fling.internal.util.Collections.chainList;
+import static fling.internal.compiler.api.nodes.PolymorphicTypeNode.*;
+import static fling.internal.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.internal.compiler.api.APICompiler;
-import fling.internal.compiler.api.nodes.AbstractMethodNode;
-import fling.internal.compiler.api.nodes.ConcreteImplementationNode;
-import fling.internal.compiler.api.nodes.InterfaceNode;
-import fling.internal.compiler.api.nodes.PolymorphicTypeNode;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.Named;
-import fling.internal.grammar.sententials.Verb;
-import fling.internal.grammar.sententials.Word;
+import fling.internal.compiler.api.nodes.*;
+import fling.internal.grammar.sententials.*;
 
 /**
  * Encodes deterministic pushdown automaton ({@link DPDA}) as a Java class; A

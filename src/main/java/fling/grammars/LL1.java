@@ -3,26 +3,13 @@ package fling.grammars;
 import static fling.automata.Alphabet.ε;
 import static fling.internal.util.Collections.reversed;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import fling.automata.DPDA;
 import fling.automata.DPDA.δ;
 import fling.internal.compiler.Namer;
 import fling.internal.grammar.Grammar;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.DerivationRule;
-import fling.internal.grammar.sententials.Named;
-import fling.internal.grammar.sententials.SententialForm;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
-import fling.internal.grammar.sententials.Verb;
-import fling.internal.grammar.sententials.Word;
+import fling.internal.grammar.sententials.*;
 
 public class LL1 extends Grammar {
   public LL1(final BNF bnf, final Namer namer) {

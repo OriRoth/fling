@@ -1,21 +1,12 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.BNF.V.DerivationTarget;
-import static fling.examples.languages.BNF.V.Rule;
-import static fling.examples.languages.BNF.V.Specification;
-import static fling.examples.languages.BNF.Σ.derive;
-import static fling.examples.languages.BNF.Σ.into;
-import static fling.examples.languages.BNF.Σ.specialize;
-import static fling.examples.languages.BNF.Σ.start;
-import static fling.examples.languages.BNF.Σ.to;
-import static fling.examples.languages.BNF.Σ.toEpsilon;
+import static fling.examples.languages.BNF.V.*;
+import static fling.examples.languages.BNF.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.noneOrMore;
 
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class BNF {
   @SuppressWarnings("hiding") public enum Σ implements Terminal {

@@ -3,8 +3,7 @@ package fling.internal.compiler;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 /**
  * Names elements in the generated code.

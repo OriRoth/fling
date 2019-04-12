@@ -1,13 +1,8 @@
 package fling.examples;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.nio.file.*;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.junit.Test;
@@ -15,20 +10,12 @@ import org.junit.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
-import fling.examples.automata.AeqB;
-import fling.examples.automata.AnBn;
-import fling.examples.automata.ExtendedBalancedParentheses;
-import fling.examples.automata.LongFall;
-import fling.examples.languages.Arithmetic;
+import fling.examples.automata.*;
 // import fling.examples.automata.AnBn;
 // import fling.examples.automata.ExtendedBalancedParentheses;
 // import fling.examples.automata.LongFall;
 // import fling.examples.languages.Arithmetic;
-import fling.examples.languages.BNF;
-import fling.examples.languages.BalancedParentheses;
-import fling.examples.languages.Datalog;
-import fling.examples.languages.SubFigure;
-import fling.examples.languages.TaggedBalancedParentheses;
+import fling.examples.languages.*;
 
 @SuppressWarnings("static-method") public class ExamplesMainRunMeFirst {
   private static final boolean FORMAT_OUTPUT = true;

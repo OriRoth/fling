@@ -1,18 +1,13 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.TaggedBalancedParentheses.V.AB;
-import static fling.examples.languages.TaggedBalancedParentheses.V.P;
-import static fling.examples.languages.TaggedBalancedParentheses.Σ.a;
-import static fling.examples.languages.TaggedBalancedParentheses.Σ.b;
-import static fling.examples.languages.TaggedBalancedParentheses.Σ.c;
-import static fling.examples.languages.TaggedBalancedParentheses.Σ.ↄ;
+import static fling.examples.languages.TaggedBalancedParentheses.V.*;
+import static fling.examples.languages.TaggedBalancedParentheses.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class TaggedBalancedParentheses {
   public enum Σ implements Terminal {

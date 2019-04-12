@@ -3,24 +3,12 @@ package fling.internal.grammar.sententials.notations;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.internal.grammar.sententials.DerivationRule;
-import fling.internal.grammar.sententials.Notation;
-import fling.internal.grammar.sententials.SententialForm;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
-import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).

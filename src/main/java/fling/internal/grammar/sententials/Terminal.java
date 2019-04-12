@@ -1,9 +1,6 @@
 package fling.internal.grammar.sententials;
 
-import fling.internal.grammar.types.ClassParameter;
-import fling.internal.grammar.types.VarargsClassParameter;
-import fling.internal.grammar.types.VarargsVariableTypeParameter;
-import fling.internal.grammar.types.VariableTypeParameter;
+import fling.internal.grammar.types.*;
 
 public interface Terminal extends Symbol {
   default Verb with(final Class<?> parameterClass) {

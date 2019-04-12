@@ -1,7 +1,6 @@
 package fling.grammars.api;
 
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 @SuppressWarnings("all") public interface BNFAPI {
   enum Σ implements Terminal {

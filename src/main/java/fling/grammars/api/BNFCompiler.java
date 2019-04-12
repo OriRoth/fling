@@ -1,8 +1,6 @@
 package fling.grammars.api;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("all") public interface BNFCompiler {
   static BNFAST.Specification parse_Specification(final List<fling.internal.compiler.Assignment> w) {

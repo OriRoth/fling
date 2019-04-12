@@ -1,18 +1,13 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.SubFigure.V.Figure;
-import static fling.examples.languages.SubFigure.V.Orientation;
-import static fling.examples.languages.SubFigure.Σ.column;
-import static fling.examples.languages.SubFigure.Σ.load;
-import static fling.examples.languages.SubFigure.Σ.row;
-import static fling.examples.languages.SubFigure.Σ.seal;
+import static fling.examples.languages.SubFigure.V.*;
+import static fling.examples.languages.SubFigure.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
+import fling.internal.grammar.sententials.*;
 
 public class SubFigure {
   public enum Σ implements Terminal {

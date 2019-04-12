@@ -1,33 +1,15 @@
 package fling.grammars;
 
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fling.grammars.api.BNFAST;
-import fling.grammars.api.BNFAST.ConcreteDerivation;
-import fling.grammars.api.BNFAST.Rule;
-import fling.grammars.api.BNFAST.SpecializationRule;
-import fling.grammars.api.BNFAST.Specification;
-import fling.internal.grammar.sententials.Constants;
+import fling.grammars.api.BNFAST.*;
+import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.sententials.DerivationRule;
-import fling.internal.grammar.sententials.Notation;
-import fling.internal.grammar.sententials.SententialForm;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Variable;
-import fling.internal.grammar.sententials.Verb;
 import fling.internal.grammar.types.TypeParameter;
 
 public class BNF {

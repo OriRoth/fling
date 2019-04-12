@@ -2,11 +2,7 @@ package fling.examples.programs;
 
 import static fling.examples.generated.SubFigure.row;
 
-import fling.examples.generated.SubFigureAST.Figure;
-import fling.examples.generated.SubFigureAST.Figure1;
-import fling.examples.generated.SubFigureAST.Figure2;
-import fling.examples.generated.SubFigureAST.Orientation;
-import fling.examples.generated.SubFigureAST.Orientation1;
+import fling.examples.generated.SubFigureAST.*;
 
 public class SubFigure {
   // @formatter:off

@@ -1,29 +1,15 @@
 package fling.grammars;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-import fling.internal.compiler.Assignment;
-import fling.internal.compiler.Namer;
+import fling.internal.compiler.*;
 import fling.internal.compiler.ast.ASTParserCompiler;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import fling.internal.grammar.Grammar;
-import fling.internal.grammar.sententials.Constants;
-import fling.internal.grammar.sententials.Notation;
-import fling.internal.grammar.sententials.Symbol;
-import fling.internal.grammar.sententials.Terminal;
-import fling.internal.grammar.sententials.Variable;
-import fling.internal.grammar.sententials.Verb;
+import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
 import fling.internal.grammar.types.TypeParameter;
 import fling.namers.NaiveNamer;
