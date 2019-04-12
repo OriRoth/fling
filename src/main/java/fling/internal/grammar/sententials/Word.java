@@ -7,8 +7,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Objects;
+import java.util.Objects;import java.util.TooManyListenersException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import static fling.automata.Alphabet.ε;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An unmodifiable finite sequence. Supports stack notations.
@@ -140,5 +146,8 @@ public class Word<T> implements List<T> {
   }
   private void verify() {
     inner.stream().forEach(Objects::requireNonNull);
+  }
+  public static <T> Word<T> of(Stream<T> s) {
+    return new Word<>(s.collect(toList()));
   }
 }

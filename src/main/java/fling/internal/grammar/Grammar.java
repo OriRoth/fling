@@ -11,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import fling.automata.DPDA;
 import fling.grammars.BNF;
@@ -141,8 +144,6 @@ public abstract class Grammar {
             .collect(toSet()), //
         new LinkedHashSet<>(dpda.F), //
         dpda.q0, //
-        new Word<>(dpda.γ0.stream() //
-            .map(Named.class::cast) //
-            .collect(toList())));
+        Word.of(dpda.γ0.stream().map(Named.class::cast)));
   }
 }
