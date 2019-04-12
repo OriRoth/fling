@@ -1,10 +1,10 @@
-package fling.automata;
+package fling.examples.automata;
 
 import static fling.DPDA.dpda;
 import static fling.automata.Alphabet.ε;
-import static fling.automata.DPDATest.Q.*;
-import static fling.automata.DPDATest.Γ.*;
-import static fling.automata.DPDATest.Σ.*;
+import static fling.examples.automata.DPDATest.Q.*;
+import static fling.examples.automata.DPDATest.Γ.*;
+import static fling.examples.automata.DPDATest.Σ.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;

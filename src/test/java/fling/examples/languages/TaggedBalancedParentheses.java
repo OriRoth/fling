@@ -3,11 +3,9 @@ package fling.examples.languages;
 import static fling.examples.languages.TaggedBalancedParentheses.V.*;
 import static fling.examples.languages.TaggedBalancedParentheses.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
-import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.*;
 import fling.BNF;
-import fling.Symbol.oneOrMore;
 import fling.adapters.JavaMediator;
 
 public class TaggedBalancedParentheses {
