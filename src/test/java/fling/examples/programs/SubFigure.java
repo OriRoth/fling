@@ -1,6 +1,7 @@
 package fling.examples.programs;
 import static fling.examples.generated.SubFigure.row;
 
+import fling.examples.ExamplesMainRunMeFirst;
 import fling.examples.generated.SubFigureAST.*;
 /**
  * This class demonstrates the use of automatically generated fluent API.

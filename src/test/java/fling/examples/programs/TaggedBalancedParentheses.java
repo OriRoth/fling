@@ -3,6 +3,7 @@ package fling.examples.programs;
 import static fling.examples.generated.TaggedBalancedParentheses.*;
 import static fling.examples.generated.TaggedBalancedParentheses.AB.*;
 
+import fling.examples.ExamplesMainRunMeFirst;
 import fling.examples.generated.TaggedBalancedParenthesesAST.*;
 /**
  * This class demonstrates the use of automatically generated fluent API.

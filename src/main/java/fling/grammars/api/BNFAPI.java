@@ -2,8 +2,12 @@ package fling.grammars.api;
 
 import static fling.grammars.api.BNFAPICompiler.parse_PlainBNF;
 
+<<<<<<< HEAD
 import fling.*;
 import fling.grammars.api.BNFAPIAST.PlainBNF;
+=======
+import fling.grammars.BNF;
+>>>>>>> branch 'master' of https://github.com/OriRoth/fling.git
 import fling.internal.grammar.sententials.*;
 @SuppressWarnings("all") public interface BNFAPI {
   public enum Σ implements Terminal {
