@@ -1,4 +1,4 @@
-package fling.automata;
+package fling;
 
 import static fling.automata.Alphabet.ε;
 

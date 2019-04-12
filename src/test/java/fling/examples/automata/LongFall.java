@@ -1,14 +1,13 @@
 package fling.examples.automata;
 
+import static fling.DPDA.dpda;
 import static fling.automata.Alphabet.ε;
-import static fling.automata.DPDA.dpda;
 import static fling.examples.automata.LongFall.Q.*;
 import static fling.examples.automata.LongFall.Γ.*;
 import static fling.examples.automata.LongFall.Σ.*;
 
-import fling.Terminal;
+import fling.*;
 import fling.adapters.*;
-import fling.automata.DPDA;
 import fling.compilers.api.ReliableAPICompiler;
 import fling.internal.grammar.Grammar;
 import fling.internal.grammar.sententials.*;

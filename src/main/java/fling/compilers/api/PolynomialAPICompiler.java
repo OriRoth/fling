@@ -7,8 +7,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.*;
 
-import fling.automata.DPDA;
-import fling.automata.DPDA.δ;
+import fling.DPDA;
+import fling.DPDA.δ;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.nodes.*;
 import fling.internal.grammar.sententials.*;

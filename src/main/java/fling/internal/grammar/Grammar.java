@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.*;
 import java.util.*;
 
 import fling.*;
-import fling.automata.DPDA;
 import fling.internal.compiler.Namer;
 import fling.internal.grammar.sententials.*;
 

@@ -1,7 +1,7 @@
 package fling.automata;
 
+import static fling.DPDA.dpda;
 import static fling.automata.Alphabet.ε;
-import static fling.automata.DPDA.dpda;
 import static fling.automata.DPDATest.Q.*;
 import static fling.automata.DPDATest.Γ.*;
 import static fling.automata.DPDATest.Σ.*;
@@ -9,7 +9,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import fling.automata.DPDA.δ;
+import fling.DPDA;
+import fling.DPDA.δ;
 import fling.internal.grammar.sententials.Word;
 
 public class DPDATest {
