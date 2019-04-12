@@ -1,6 +1,5 @@
 package fling;
 
-import fling.*;
 import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.sententials.notations.*;
 

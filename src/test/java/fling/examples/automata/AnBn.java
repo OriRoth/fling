@@ -10,7 +10,7 @@ import fling.*;
 import fling.adapters.*;
 import fling.compilers.api.ReliableAPICompiler;
 import fling.internal.grammar.Grammar;
-import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.Verb;
 import fling.namers.NaiveNamer;
 
 public class AnBn {

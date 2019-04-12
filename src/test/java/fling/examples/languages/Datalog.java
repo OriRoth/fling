@@ -3,20 +3,20 @@ package fling.examples.languages;
 import static fling.examples.languages.Datalog.V.*;
 import static fling.examples.languages.Datalog.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
-import static fling.internal.grammar.sententials.Notation.*;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.io.IOException;
-import java.nio.file.*;
 
-import com.google.googlejavaformat.java.FormatterException;
 import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
 
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
+import fling.examples.generated.DatalogAST.Program;
 /**
  * Fling input specifying the formal
  * 

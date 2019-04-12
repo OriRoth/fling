@@ -5,7 +5,6 @@ import static fling.examples.languages.BNF.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.*;
-import fling.Symbol.*;
 import fling.adapters.JavaMediator;
 
 public class BNF {

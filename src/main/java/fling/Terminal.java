@@ -1,6 +1,6 @@
 package fling;
 
-import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.Verb;
 import fling.internal.grammar.types.*;
 
 /**
