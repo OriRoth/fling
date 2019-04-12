@@ -14,16 +14,16 @@ public class BNF {
   }
 
   public enum V implements Variable {
-    Specification, Rule, DerivationTarget
+    PlainBNF, Rule, RuleBody
   }
 
   public static final fling.grammars.BNF bnf = bnf(). //
-      start(Specification). //
-      derive(Specification).to(Σ.bnf, start.with(Variable.class), noneOrMore(Rule)). //
-      derive(Rule).to(derive.with(Variable.class), DerivationTarget). //
-      derive(DerivationTarget).to(to.many(Symbol.class)). //
-      derive(DerivationTarget).to(toEpsilon). //
-      derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). //
+      start(PlainBNF). //
+      derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
+      derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
+      derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
+      derive(RuleBody).to(to.many(Symbol.class)). // RuleBody ::= to(Symbol*)
+      derive(RuleBody).to(toEpsilon). // RuleBody ::= toEpsilon()
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "BNF", Σ.class);
