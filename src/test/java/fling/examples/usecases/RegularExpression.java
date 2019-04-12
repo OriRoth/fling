@@ -1,7 +1,7 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
-import static fling.examples.automata.LongFall.CppFluentAPI;
-import static fling.examples.generated.LongFall.*;
+import static fling.examples.generated.RegularExpression.re;
+import static fling.examples.generated.RegularExpression.RE.*;
 
 import fling.examples.ExamplesMainRunMeFirst;
 /**
@@ -12,13 +12,8 @@ import fling.examples.ExamplesMainRunMeFirst;
  * @author Yossi Gil
  * @since April 2019
  */
-public class LongFall {
+public class RegularExpression {
   public static void compilationTest() {
-    a().a().a().a().a().a().a().$();
-    a().a().a().a().a().a().a().b().$();
-    b().$();
-  }
-  public static void main(final String[] args) {
-    System.out.println(CppFluentAPI);
+    re().noneOrMore(exactly("a").and().option(exactly("b"))).or().oneOrMore(anyDigit()).$();
   }
 }

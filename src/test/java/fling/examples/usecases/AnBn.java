@@ -1,8 +1,10 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
-import static fling.examples.generated.BalancedParentheses.c;
+import static fling.examples.automata.AnBn.CppFluentAPI;
+import static fling.examples.generated.AnBn.a;
 
 import fling.examples.ExamplesMainRunMeFirst;
+
 /**
  * This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
@@ -11,14 +13,12 @@ import fling.examples.ExamplesMainRunMeFirst;
  * @author Yossi Gil
  * @since April 2019
  */
-public class BalancedParentheses {
+public class AnBn {
   public static void compilationTest() {
-    c().ↄ().$();
-    // c().ↄ().ↄ();
-    c().c().c().ↄ().ↄ();
-    c().c().c().ↄ().ↄ().ↄ().$();
-    c().c().ↄ().ↄ().c().ↄ().$();
-    c().c().ↄ().ↄ().c();
-    // ↄ();
+    a().a().a().b().b().b().$();
+    // a().a().a().b().b().a();
+  }
+  public static void main(final String[] args) {
+    System.out.println(CppFluentAPI);
   }
 }

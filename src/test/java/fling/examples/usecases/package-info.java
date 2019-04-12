@@ -27,4 +27,4 @@
  *
  * @since April 2019
  */
-package fling.examples.programs;
+package fling.examples.usecases;

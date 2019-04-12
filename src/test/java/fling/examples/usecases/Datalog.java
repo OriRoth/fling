@@ -1,8 +1,8 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
 import static fling.examples.generated.Datalog.fact;
 import static fling.examples.generated.Datalog.Term.*;
-import static fling.examples.programs.Datalog.DatalogPrinter.print;
+import static fling.examples.usecases.Datalog.DatalogPrinter.print;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 

@@ -1,4 +1,4 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
 import static fling.examples.generated.ArithmeticExpression.v;
 

@@ -1,6 +1,6 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
-import static fling.examples.generated.ExtendedBalancedParentheses.c;
+import static fling.examples.generated.BalancedParentheses.c;
 
 import fling.examples.ExamplesMainRunMeFirst;
 /**
@@ -11,14 +11,14 @@ import fling.examples.ExamplesMainRunMeFirst;
  * @author Yossi Gil
  * @since April 2019
  */
-public class ExtendedBalancedParentheses {
+public class BalancedParentheses {
   public static void compilationTest() {
     c().ↄ().$();
     // c().ↄ().ↄ();
     c().c().c().ↄ().ↄ();
     c().c().c().ↄ().ↄ().ↄ().$();
-    c().c().c().ↄ().Ↄ().c().ↄ().$();
-    c().c().c().ↄ().Ↄ().c();
-    c().c().c().ↄ().Ↄ().c().Ↄ().$();
+    c().c().ↄ().ↄ().c().ↄ().$();
+    c().c().ↄ().ↄ().c();
+    // ↄ();
   }
 }

@@ -1,7 +1,6 @@
-package fling.examples.programs;
+package fling.examples.usecases;
 
-import static fling.examples.generated.RegularExpression.re;
-import static fling.examples.generated.RegularExpression.RE.*;
+import static fling.examples.generated.ExtendedBalancedParentheses.c;
 
 import fling.examples.ExamplesMainRunMeFirst;
 /**
@@ -12,8 +11,14 @@ import fling.examples.ExamplesMainRunMeFirst;
  * @author Yossi Gil
  * @since April 2019
  */
-public class RegularExpression {
+public class ExtendedBalancedParentheses {
   public static void compilationTest() {
-    re().noneOrMore(exactly("a").and().option(exactly("b"))).or().oneOrMore(anyDigit()).$();
+    c().ↄ().$();
+    // c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ();
+    c().c().c().ↄ().ↄ().ↄ().$();
+    c().c().c().ↄ().Ↄ().c().ↄ().$();
+    c().c().c().ↄ().Ↄ().c();
+    c().c().c().ↄ().Ↄ().c().Ↄ().$();
   }
 }
