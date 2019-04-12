@@ -37,7 +37,7 @@ public abstract class Grammar {
     Set<DerivationRule> R = new LinkedHashSet<>();
     Map<Variable, Notation> extensionHeadsMapping = new LinkedHashMap<>();
     Set<Variable> extensionProducts = new LinkedHashSet<>();
-    for (DerivationRule rule : ebnf.R) {
+    for (DerivationRule rule : ebnf.rules) {
       List<SententialForm> rhs = new ArrayList<>();
       for (SententialForm sf : rule.rhs) {
         List<Symbol> symbols = new ArrayList<>();
@@ -69,7 +69,7 @@ public abstract class Grammar {
     int previousSize = -1;
     for (; previousSize < R.size();) {
       previousSize = R.size();
-      for (DerivationRule rule : bnf.R)
+      for (DerivationRule rule : bnf.rules)
         if (!R.contains(rule) && V.contains(rule.lhs)) {
           R.add(rule);
           for (SententialForm sf : rule.rhs)

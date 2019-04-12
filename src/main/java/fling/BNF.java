@@ -11,7 +11,7 @@ import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
 
 /**
- * Backus-Naur form. Language specification, collection of derivation rules of
+ * A Backus-Naur form specification of formal Language, collection of derivation rules of
  * the form <code>V ::= w X | Y z.</code> Computes grammar's nullables set and
  * firsts/follows mappings.
  * 
@@ -21,7 +21,7 @@ public class BNF {
   /**
    * Derivation rules collection.
    */
-  public final Set<DerivationRule> R;
+  public final Set<DerivationRule> rules;
   /**
    * Set of nullable variables and notations.
    */
@@ -65,7 +65,7 @@ public class BNF {
     this.Σ = Σ;
     Σ.add(Constants.$$);
     this.V = new LinkedHashSet<>(V);
-    this.R = R;
+    this.rules = R;
     if (addStartSymbolDerivationRules) {
       this.V.add(Constants.S);
       R.add(new DerivationRule(Constants.S, new ArrayList<>()));
@@ -93,7 +93,7 @@ public class BNF {
    * @return the right hand side of its derivation rule
    */
   public List<SententialForm> rhs(final Variable v) {
-    return R.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
+    return rules.stream().filter(r -> r.lhs.equals(v)).findFirst().map(DerivationRule::rhs).orElse(null);
   }
   /**
    * @param symbols sequence of grammar symbols
@@ -132,7 +132,7 @@ public class BNF {
     while (previousCount < subV.size()) {
       previousCount = subV.size();
       final Set<Variable> newestSubV = new LinkedHashSet<>();
-      for (final DerivationRule rule : R) {
+      for (final DerivationRule rule : rules) {
         if (!newSubV.contains(rule.lhs))
           continue;
         subR.add(rule);

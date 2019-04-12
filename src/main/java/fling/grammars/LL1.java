@@ -69,7 +69,7 @@ public class LL1 extends Grammar {
       if (isNullable(bnf, v))
         δs.add(new δ<>(q0ø, ε(), A.get(v), q0$, new Word<>(A.get(v))));
     // Moving from q0ø to qσ with σ + appropriate variable.
-    for (final DerivationRule r : bnf.R)
+    for (final DerivationRule r : bnf.rules)
       for (final SententialForm sf : r.rhs)
         for (final Verb σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
@@ -101,7 +101,7 @@ public class LL1 extends Grammar {
       if (!isNullable(bnf, v))
         δs.add(new δ<>(q0$, ε(), A.get(v), q0ø, new Word<>(A.get(v))));
     // Moving from q0$ to qσ with σ + appropriate variable.
-    for (final DerivationRule r : bnf.R)
+    for (final DerivationRule r : bnf.rules)
       if (isNullable(bnf, r.lhs))
         for (final SententialForm sf : r.rhs)
           for (final Verb σ : bnf.firsts(sf))
@@ -120,7 +120,7 @@ public class LL1 extends Grammar {
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty()));
     // Moving from qσ to qσ with ε + appropriate variable.
-    for (final DerivationRule r : bnf.R)
+    for (final DerivationRule r : bnf.rules)
       for (final SententialForm sf : r.rhs)
         for (final Verb σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
@@ -143,7 +143,7 @@ public class LL1 extends Grammar {
       if (!Constants.$$.equals(σ)) {
         final Set<Named> legalTops = new HashSet<>();
         legalTops.add(typeNameMapping.get(σ));
-        for (final DerivationRule r : bnf.R)
+        for (final DerivationRule r : bnf.rules)
           for (final SententialForm sf : r.rhs)
             if (bnf.firsts(sf).contains(σ)) {
               legalTops.add(r.lhs);
