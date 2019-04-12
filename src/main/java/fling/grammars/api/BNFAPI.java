@@ -1,5 +1,7 @@
 package fling.grammars.api;
 
+import java.util.List;
+
 import fling.internal.grammar.sententials.*;
 
 @SuppressWarnings("all") public interface BNFAPI {
@@ -44,7 +46,7 @@ import fling.internal.grammar.sententials.*;
 
   static class α implements $, q0$_$_q0$, q0ø__Rule1$start_q0$q0ø, q0$__Rule1$_q0$q0ø, q0ø__Rule1$DerivationTarget$_q0$q0ø,
       q0ø__Rule1$into_q0$q0ø {
-    public java.util.List<fling.internal.compiler.Assignment> w = new java.util.LinkedList();
+    public List<fling.internal.compiler.Assignment> w = new java.util.LinkedList();
 
     public α bnf() {
       this.w.add(new fling.internal.compiler.Assignment(BNFAPI.Σ.bnf, new Object[] {}));

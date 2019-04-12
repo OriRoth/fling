@@ -1,11 +1,13 @@
 package fling.grammars.api;
 
+import java.util.List;
+
 @SuppressWarnings("all") public interface BNFAST {
   class Specification {
     public final fling.internal.grammar.sententials.Variable start;
-    public final java.util.List<Rule> rule;
+    public final List<Rule> rule;
 
-    public Specification(fling.internal.grammar.sententials.Variable start, java.util.List<Rule> rule) {
+    public Specification(fling.internal.grammar.sententials.Variable start, List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }

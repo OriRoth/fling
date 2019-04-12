@@ -1,5 +1,5 @@
 package fling.examples.programs;
-
+import java.util.*;
 import static fling.examples.generated.Datalog.fact;
 import static fling.examples.generated.Datalog.Term.*;
 import static fling.examples.programs.Datalog.DatalogPrinter.print;
