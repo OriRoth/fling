@@ -2,12 +2,9 @@ package fling.grammars.api;
 
 import static fling.grammars.api.BNFAPICompiler.parse_PlainBNF;
 
-<<<<<<< HEAD
 import fling.*;
 import fling.grammars.api.BNFAPIAST.PlainBNF;
-=======
-import fling.grammars.BNF;
->>>>>>> branch 'master' of https://github.com/OriRoth/fling.git
+import fling.BNF;
 import fling.internal.grammar.sententials.*;
 @SuppressWarnings("all") public interface BNFAPI {
   public enum Σ implements Terminal {
@@ -32,7 +29,7 @@ import fling.internal.grammar.sententials.*;
   }
 
   interface q0ø__Rule1$start_q0$q0ø<q0$, q0ø> {
-    q0$__Rule1$_q0$q0ø<q0$, q0ø> start(fling.internal.grammar.sententials.Variable variable);
+    q0$__Rule1$_q0$q0ø<q0$, q0ø> start(Variable variable);
   }
 
   interface q0$__Rule1$_q0$q0ø<q0$, q0ø> extends $ {

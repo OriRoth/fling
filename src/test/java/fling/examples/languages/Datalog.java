@@ -8,7 +8,6 @@ import static fling.internal.grammar.sententials.Notation.*;
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.*;
 
 /**
  * @author yogi
