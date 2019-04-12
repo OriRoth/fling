@@ -13,6 +13,8 @@ abstract parse tree at run-time.
 
 [Full release](https://github.com/OriRoth/fling/releases/tag/1.0.0) (includes examples)
 
+[Documentation](https://oriroth.github.io/fling/docs/)
+
 ## Example
 
 Let us define the [Datalog](https://en.wikipedia.org/wiki/Datalog) grammar, in Java, using *Fling*'s interface:
