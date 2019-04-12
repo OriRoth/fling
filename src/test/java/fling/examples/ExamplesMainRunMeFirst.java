@@ -43,6 +43,9 @@ import fling.examples.languages.*;
     files.put("BNFAPI", BNF.jm.apiClass);
     files.put("BNFAPIAST", BNF.jm.astClass);
     files.put("BNFAPICompiler", BNF.jm.astCompilerClass);
+    files.put("RegularExpression", RegularExpression.jm.apiClass);
+    files.put("RegularExpressionAST", RegularExpression.jm.astClass);
+    files.put("RegularExpressionCompiler", RegularExpression.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/examples/generated/";
 
