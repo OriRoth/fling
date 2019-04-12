@@ -40,9 +40,9 @@ import fling.examples.languages.*;
     files.put("Arithmetic", Arithmetic.jm.apiClass);
     files.put("ArithmeticAST", Arithmetic.jm.astClass);
     files.put("ArithmeticCompiler", Arithmetic.jm.astCompilerClass);
-    files.put("BNF", BNF.jm.apiClass);
-    files.put("BNFAST", BNF.jm.astClass);
-    files.put("BNFCompiler", BNF.jm.astCompilerClass);
+    files.put("BNFAPI", BNF.jm.apiClass);
+    files.put("BNFAPIAST", BNF.jm.astClass);
+    files.put("BNFAPICompiler", BNF.jm.astCompilerClass);
   }
   private static final String PATH = "./src/test/java/fling/examples/generated/";
 
