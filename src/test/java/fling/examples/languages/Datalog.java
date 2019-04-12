@@ -11,23 +11,29 @@ import fling.adapters.JavaMediator;
 
 /**
  * @author yogi
- *
  */
 public class Datalog {
+  /** Set of terminals, i.e., method names of generated fluent API */
   public enum Σ implements Terminal {
     infer, fact, query, of, and, when, always, v, l
   }
 
+  /** Set of non-terminals, i.e., abstract concepts of fluent API */
   public enum V implements Variable {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
     RuleHead, RuleBody, FirstClause, AdditionalClause, Term
   }
 
+  /**
+   * Short name of String.class, used to specify the type of parameters to
+   * fluent API methods in grammar specification
+   */
   private static final Class<String> S = String.class;
   public static final BNF bnf = bnf(). //
-      start(Program). //
-      derive(Program).to(oneOrMore(Statement)). //
-      specialize(Statement).into(Fact, Rule, Query). //
+      start(Program). // This is the start symbol
+      derive(Program).to(oneOrMore(Statement)). // Program ::= Statement*
+      specialize(Statement).into(Fact, Rule, Query). // Statement ::= Fact | Rule | Query
+      // also, defines
       derive(Fact).to(fact.with(S), of.many(S)). //
       derive(Query).to(query.with(S), of.many(Term)). //
       specialize(Rule).into(Bodyless, WithBody). //
