@@ -77,8 +77,7 @@ public class Datalog {
    */
   public static final JavaMediator jm = new JavaMediator(//
       bnf, // Use this BNF as language specification.
-      "fling.examples.generated", // Name of package in which output will
-                                  // reside.
+      "fling.examples.generated", // Name of package in which output will reside.
       "Datalog", // Name of generated API.
       Σ.class // Language terminals enum.
   );
