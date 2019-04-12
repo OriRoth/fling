@@ -6,7 +6,6 @@ import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.*;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.*;
 
 public class RegularExpression {
   public enum Σ implements Terminal {

@@ -14,7 +14,7 @@ import fling.internal.compiler.api.nodes.*;
 import fling.internal.compiler.api.nodes.AbstractMethodNode.*;
 import fling.internal.compiler.ast.nodes.*;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.Symbol;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();

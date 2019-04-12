@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.*;
 
 import fling.Variable;
-import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.Symbol;
 
 public class FieldNode {
   public final Symbol source;

@@ -7,7 +7,6 @@ import static fling.grammars.api.BNFAPI.bnf;
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.*;
 
 public class ArithmeticExpression {
   public enum Σ implements Terminal {

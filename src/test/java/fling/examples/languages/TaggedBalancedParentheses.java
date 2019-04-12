@@ -8,7 +8,6 @@ import static fling.internal.grammar.sententials.Notation.oneOrMore;
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.*;
 
 public class TaggedBalancedParentheses {
   public enum Σ implements Terminal {

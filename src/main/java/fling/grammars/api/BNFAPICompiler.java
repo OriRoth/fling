@@ -10,7 +10,7 @@ import fling.grammars.api.BNFAPIAST.*;
     java.util.List<?> _b;
     _a = w.remove(0);
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Variable variable = (fling.internal.grammar.sententials.Variable) _a.arguments.get(0);
+    fling.Variable variable = (fling.Variable) _a.arguments.get(0);
     _b = fling.internal.grammar.sententials.notations.NoneOrMore.abbreviate(parse__Rule2(w), 1);
     java.util.List<Rule> rule = (java.util.List<Rule>) _b.get(0);
     return new PlainBNF(variable, rule);
@@ -43,7 +43,7 @@ import fling.grammars.api.BNFAPIAST.*;
     fling.internal.compiler.Assignment _a;
     java.util.List<?> _b;
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Variable variable = (fling.internal.grammar.sententials.Variable) _a.arguments.get(0);
+    fling.Variable variable = (fling.Variable) _a.arguments.get(0);
     RuleBody ruleBody = parse_RuleBody(w);
     return new Derivation(variable, ruleBody);
   }
@@ -51,9 +51,9 @@ import fling.grammars.api.BNFAPIAST.*;
     fling.internal.compiler.Assignment _a;
     java.util.List<?> _b;
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Variable variable = (fling.internal.grammar.sententials.Variable) _a.arguments.get(0);
+    fling.Variable variable = (fling.Variable) _a.arguments.get(0);
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Variable[] variables = (fling.internal.grammar.sententials.Variable[]) _a.arguments.get(0);
+    fling.Variable[] variables = (fling.Variable[]) _a.arguments.get(0);
     return new Specialization(variable, variables);
   }
   public static ConcreteDerivation parse_RuleBody1(java.util.List<fling.internal.compiler.Assignment> w) {

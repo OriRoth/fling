@@ -1,40 +1,40 @@
 package fling.grammars.api;
 
-@SuppressWarnings("all")
-public interface BNFAPIAST {
+@SuppressWarnings("all") public interface BNFAPIAST {
   class PlainBNF {
-    public final fling.internal.grammar.sententials.Variable start;
+    public final fling.Variable start;
     public final java.util.List<Rule> rule;
 
-    public PlainBNF(fling.internal.grammar.sententials.Variable start, java.util.List<Rule> rule) {
+    public PlainBNF(fling.Variable start, java.util.List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }
   }
 
-  interface Rule {}
+  interface Rule {
+  }
 
-  interface RuleBody {}
+  interface RuleBody {
+  }
 
-  interface RuleTail {}
+  interface RuleTail {
+  }
 
   class Derivation implements Rule {
-    public final fling.internal.grammar.sententials.Variable derive;
+    public final fling.Variable derive;
     public final RuleBody ruleBody;
 
-    public Derivation(fling.internal.grammar.sententials.Variable derive, RuleBody ruleBody) {
+    public Derivation(fling.Variable derive, RuleBody ruleBody) {
       this.derive = derive;
       this.ruleBody = ruleBody;
     }
   }
 
   class Specialization implements Rule {
-    public final fling.internal.grammar.sententials.Variable specialize;
-    public final fling.internal.grammar.sententials.Variable[] into;
+    public final fling.Variable specialize;
+    public final fling.Variable[] into;
 
-    public Specialization(
-        fling.internal.grammar.sententials.Variable specialize,
-        fling.internal.grammar.sententials.Variable[] into) {
+    public Specialization(fling.Variable specialize, fling.Variable[] into) {
       this.specialize = specialize;
       this.into = into;
     }
@@ -44,15 +44,15 @@ public interface BNFAPIAST {
     public final fling.internal.grammar.sententials.Symbol[] to;
     public final java.util.List<RuleTail> ruleTail;
 
-    public ConcreteDerivation(
-        fling.internal.grammar.sententials.Symbol[] to, java.util.List<RuleTail> ruleTail) {
+    public ConcreteDerivation(fling.internal.grammar.sententials.Symbol[] to, java.util.List<RuleTail> ruleTail) {
       this.to = to;
       this.ruleTail = ruleTail;
     }
   }
 
   class EpsilonDerivation implements RuleBody {
-    public EpsilonDerivation() {}
+    public EpsilonDerivation() {
+    }
   }
 
   class ConcreteDerivationTail implements RuleTail {
@@ -64,7 +64,8 @@ public interface BNFAPIAST {
   }
 
   class EpsilonDerivationTail implements RuleTail {
-    public EpsilonDerivationTail() {}
+    public EpsilonDerivationTail() {
+    }
   }
 
   public static class Visitor {
@@ -76,28 +77,24 @@ public interface BNFAPIAST {
       }
       plainBNF.rule.stream().forEach(_x_ -> visit((Rule) _x_));
     }
-
     public final void visit(Rule rule) {
       if (rule instanceof Derivation)
         visit((Derivation) rule);
       else if (rule instanceof Specialization)
         visit((Specialization) rule);
     }
-
     public final void visit(RuleBody ruleBody) {
       if (ruleBody instanceof ConcreteDerivation)
         visit((ConcreteDerivation) ruleBody);
       else if (ruleBody instanceof EpsilonDerivation)
         visit((EpsilonDerivation) ruleBody);
     }
-
     public final void visit(RuleTail ruleTail) {
       if (ruleTail instanceof ConcreteDerivationTail)
         visit((ConcreteDerivationTail) ruleTail);
       else if (ruleTail instanceof EpsilonDerivationTail)
         visit((EpsilonDerivationTail) ruleTail);
     }
-
     public final void visit(Derivation rule1) {
       try {
         this.whileVisiting(rule1);
@@ -106,7 +103,6 @@ public interface BNFAPIAST {
       }
       visit((RuleBody) rule1.ruleBody);
     }
-
     public final void visit(Specialization rule2) {
       try {
         this.whileVisiting(rule2);
@@ -114,19 +110,14 @@ public interface BNFAPIAST {
         __.printStackTrace();
       }
     }
-
     public final void visit(ConcreteDerivation ruleBody1) {
       try {
         this.whileVisiting(ruleBody1);
       } catch (java.lang.Exception __) {
         __.printStackTrace();
       }
-      ruleBody1
-          .ruleTail
-          .stream()
-          .forEach(_x_ -> visit((RuleTail) _x_));
+      ruleBody1.ruleTail.stream().forEach(_x_ -> visit((RuleTail) _x_));
     }
-
     public final void visit(EpsilonDerivation ruleBody2) {
       try {
         this.whileVisiting(ruleBody2);
@@ -134,7 +125,6 @@ public interface BNFAPIAST {
         __.printStackTrace();
       }
     }
-
     public final void visit(ConcreteDerivationTail ruleTail1) {
       try {
         this.whileVisiting(ruleTail1);
@@ -142,7 +132,6 @@ public interface BNFAPIAST {
         __.printStackTrace();
       }
     }
-
     public final void visit(EpsilonDerivationTail ruleTail2) {
       try {
         this.whileVisiting(ruleTail2);
@@ -150,27 +139,19 @@ public interface BNFAPIAST {
         __.printStackTrace();
       }
     }
-
-    public void whileVisiting(PlainBNF plainBNF)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(Derivation rule1)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(Specialization rule2)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(ConcreteDerivation ruleBody1)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(EpsilonDerivation ruleBody2)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(ConcreteDerivationTail ruleTail1)
-        throws java.lang.Exception {}
-
-    public void whileVisiting(EpsilonDerivationTail ruleTail2)
-        throws java.lang.Exception {}
+    public void whileVisiting(PlainBNF plainBNF) throws java.lang.Exception {
+    }
+    public void whileVisiting(Derivation rule1) throws java.lang.Exception {
+    }
+    public void whileVisiting(Specialization rule2) throws java.lang.Exception {
+    }
+    public void whileVisiting(ConcreteDerivation ruleBody1) throws java.lang.Exception {
+    }
+    public void whileVisiting(EpsilonDerivation ruleBody2) throws java.lang.Exception {
+    }
+    public void whileVisiting(ConcreteDerivationTail ruleTail1) throws java.lang.Exception {
+    }
+    public void whileVisiting(EpsilonDerivationTail ruleTail2) throws java.lang.Exception {
+    }
   }
 }
-

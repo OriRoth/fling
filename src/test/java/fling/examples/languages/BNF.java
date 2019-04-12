@@ -7,7 +7,7 @@ import static fling.internal.grammar.sententials.Notation.noneOrMore;
 
 import fling.*;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.Symbol;
 
 public class BNF {
   @SuppressWarnings("hiding") public enum Σ implements Terminal {
