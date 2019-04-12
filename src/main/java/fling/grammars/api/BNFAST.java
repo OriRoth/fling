@@ -55,7 +55,7 @@ package fling.grammars.api;
     public final void visit(BNFAST.Specification specification) {
       try {
         this.whileVisiting(specification);
-      } catch (java.lang.Exception __) {
+      } catch (Exception __) {
         __.printStackTrace();
       }
       specification.rule.stream().forEach(_x_ -> visit((BNFAST.Rule) _x_));
@@ -75,7 +75,7 @@ package fling.grammars.api;
     public final void visit(BNFAST.DerivationRule rule1) {
       try {
         this.whileVisiting(rule1);
-      } catch (java.lang.Exception __) {
+      } catch (Exception __) {
         __.printStackTrace();
       }
       visit((BNFAST.DerivationTarget) rule1.derivationTarget);
@@ -83,33 +83,33 @@ package fling.grammars.api;
     public final void visit(BNFAST.SpecializationRule rule2) {
       try {
         this.whileVisiting(rule2);
-      } catch (java.lang.Exception __) {
+      } catch (Exception __) {
         __.printStackTrace();
       }
     }
     public final void visit(BNFAST.ConcreteDerivation derivationTarget1) {
       try {
         this.whileVisiting(derivationTarget1);
-      } catch (java.lang.Exception __) {
+      } catch (Exception __) {
         __.printStackTrace();
       }
     }
     public final void visit(BNFAST.EpsilonDerivation derivationTarget2) {
       try {
         this.whileVisiting(derivationTarget2);
-      } catch (java.lang.Exception __) {
+      } catch (Exception __) {
         __.printStackTrace();
       }
     }
-    public void whileVisiting(BNFAST.Specification specification) throws java.lang.Exception {
+    public void whileVisiting(BNFAST.Specification specification) throws Exception {
     }
-    public void whileVisiting(BNFAST.DerivationRule rule1) throws java.lang.Exception {
+    public void whileVisiting(BNFAST.DerivationRule rule1) throws Exception {
     }
-    public void whileVisiting(BNFAST.SpecializationRule rule2) throws java.lang.Exception {
+    public void whileVisiting(BNFAST.SpecializationRule rule2) throws Exception {
     }
-    public void whileVisiting(BNFAST.ConcreteDerivation derivationTarget1) throws java.lang.Exception {
+    public void whileVisiting(BNFAST.ConcreteDerivation derivationTarget1) throws Exception {
     }
-    public void whileVisiting(BNFAST.EpsilonDerivation derivationTarget2) throws java.lang.Exception {
+    public void whileVisiting(BNFAST.EpsilonDerivation derivationTarget2) throws Exception {
     }
   }
 }
