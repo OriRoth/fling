@@ -10,10 +10,12 @@ import fling.BNF;
 import fling.adapters.JavaMediator;
 
 /**
- * @author yogi
+ * Datalog language.
+ * 
+ * @author Yossi Gil
  */
 public class Datalog {
-  /** Set of terminals, i.e., method names of generated fluent API */
+  /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
     infer, fact, query, of, and, when, always, v, l
   }
@@ -31,9 +33,12 @@ public class Datalog {
 
   /**
    * Short name of {@link String}.class, used to specify the type of parameters
-   * to fluent API methods in grammar specification
+   * to fluent API methods in grammar specification.
    */
   private static final Class<String> S = String.class;
+  /**
+   * Datalog's grammar in Backus-Naur form.
+   */
   public static final BNF bnf = bnf(). //
       start(Program). // This is the start symbol
       derive(Program).to(oneOrMore(Statement)). // Program ::= Statement*
@@ -52,6 +57,10 @@ public class Datalog {
       derive(AdditionalClause).to(and.with(S), of.many(Term)). //
       derive(Term).to(l.with(S)).or(v.with(S)). //
       build();
+  /**
+   * The {@link JavaMediator} responsible of compiling the Java Datalog API/AST
+   * types/AST run-time compiler.
+   */
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "Datalog", Σ.class);
 }
