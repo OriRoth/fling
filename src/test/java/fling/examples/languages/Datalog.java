@@ -33,8 +33,7 @@ public class Datalog {
       derive(RuleBody).to(FirstClause, noneOrMore(AdditionalClause)). //
       derive(FirstClause).to(when.with(String), of.many(Term)). //
       derive(AdditionalClause).to(and.with(String), of.many(Term)). //
-      derive(Term).to(l.with(String)). //
-      derive(Term).to(v.with(String)). //
+      derive(Term).to(l.with(String)).or(v.with(String)). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "Datalog", Σ.class);

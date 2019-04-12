@@ -22,8 +22,7 @@ public class SubFigure {
       start(Figure). //
       derive(Figure).to(load.with(String.class)). //
       derive(Figure).to(Orientation, oneOrMore(Figure), seal). //
-      derive(Orientation).to(row). //
-      derive(Orientation).to(column). //
+      derive(Orientation).to(row).or(column). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "SubFigure", Σ.class);

@@ -6,10 +6,8 @@ import static java.util.stream.Collectors.toSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import fling.grammars.api.BNFAST;
-import fling.grammars.api.BNFAST.*;
+import fling.grammars.api.BNFAPIAST.*;
 import fling.internal.grammar.sententials.*;
-import fling.internal.grammar.sententials.DerivationRule;
 import fling.internal.grammar.types.TypeParameter;
 
 public class BNF {
@@ -160,22 +158,31 @@ public class BNF {
     V.forEach(s -> $.put(s, unmodifiableSet($.get(s))));
     return unmodifiableMap($);
   }
-  public static BNF toBNF(final Specification specification) {
+  public static BNF toBNF(final PlainBNF specification) {
     final Builder $ = new Builder();
     $.start(specification.start);
     for (final Rule rule : specification.rule)
-      if (rule instanceof BNFAST.DerivationRule) {
+      if (rule instanceof Derivation) {
         // Derivation rule.
-        final BNFAST.DerivationRule derivationRule = (BNFAST.DerivationRule) rule;
-        if (derivationRule.derivationTarget instanceof ConcreteDerivation)
+        final Derivation derivation = (Derivation) rule;
+        Variable lhs = derivation.derive;
+        if (derivation.ruleBody instanceof ConcreteDerivation) {
           // Concrete derivation rule.
-          $.derive(derivationRule.derive).to(((ConcreteDerivation) derivationRule.derivationTarget).to);
-        else
+          ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
+          $.derive(lhs).to((concrete).to);
+          for (RuleTail tail : concrete.ruleTail)
+            if (tail instanceof ConcreteDerivationTail)
+              // Concrete tail.
+              $.derive(lhs).to(((ConcreteDerivationTail) tail).or);
+            else
+              // Epsilon tail.
+              $.derive(lhs).toEpsilon();
+        } else
           // Epsilon derivation rule.
-          $.derive(derivationRule.derive).toEpsilon();
+          $.derive(lhs).toEpsilon();
       } else {
         // Specialization rule.
-        final SpecializationRule specializationRule = (SpecializationRule) rule;
+        final Specialization specializationRule = (Specialization) rule;
         $.specialize(specializationRule.specialize).into(specializationRule.into);
       }
     return $.build();
