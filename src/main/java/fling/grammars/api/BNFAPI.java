@@ -47,7 +47,7 @@ import fling.*;
 
   interface q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø> {
     q0$__RuleTail1$_derivespecializeq0$q0ø<q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø>, q0ø__Rule1$into_q0$q0ø<q0$, q0ø>, q0$__Rule1$_q0$q0ø<q0$, q0ø>, q0$__Rule1$_q0$q0ø<q0$, q0ø>> to(
-        fling.internal.grammar.sententials.Symbol... symbols);
+        Symbol... symbols);
     q0$__Rule1$_q0$q0ø<q0$, q0ø> toEpsilon();
   }
 
@@ -58,7 +58,7 @@ import fling.*;
   interface q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> extends $ {
     derive derive(Variable variable);
     specialize specialize(Variable variable);
-    q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> or(fling.internal.grammar.sententials.Symbol... symbols);
+    q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> or(Symbol... symbols);
     q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> orNone();
   }
 
@@ -86,7 +86,7 @@ import fling.*;
       this.w.add(new fling.internal.compiler.Assignment(Σ.into, new Object[] { variables }));
       return this;
     }
-    public α to(fling.internal.grammar.sententials.Symbol... symbols) {
+    public α to(Symbol... symbols) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.to, new Object[] { symbols }));
       return this;
     }
@@ -94,7 +94,7 @@ import fling.*;
       this.w.add(new fling.internal.compiler.Assignment(Σ.toEpsilon, new Object[] {}));
       return this;
     }
-    public α or(fling.internal.grammar.sententials.Symbol... symbols) {
+    public α or(Symbol... symbols) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.or, new Object[] { symbols }));
       return this;
     }

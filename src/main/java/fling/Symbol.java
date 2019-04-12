@@ -1,6 +1,8 @@
-package fling.internal.grammar.sententials;
+package fling;
 
 import fling.*;
+import fling.internal.grammar.sententials.*;
+import fling.internal.grammar.sententials.notations.*;
 
 public interface Symbol extends Named {
   default boolean isTerminal() {
@@ -26,5 +28,11 @@ public interface Symbol extends Named {
   }
   default Notation asNotation() {
     return (Notation) this;
+  }
+  static NoneOrMore noneOrMore(final Symbol symbol) {
+    return new NoneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
+  }
+  static OneOrMore oneOrMore(final Symbol symbol) {
+    return new OneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
   }
 }

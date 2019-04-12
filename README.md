@@ -9,26 +9,30 @@ which implement a compile-time parser of the given language.
 If a grammar is given, *Fling* also generates the AST class definitions used to compile a fluent API INVOCATION into an
 abstract parse tree at run-time.
 
+[Download jar](https://github.com/OriRoth/fling/releases/download/1.0.0/fling.jar)
+
+[Full release](https://github.com/OriRoth/fling/releases/tag/1.0.0) (includes examples)
+
 ## Example
 
 Let us define the [Datalog](https://en.wikipedia.org/wiki/Datalog) grammar, in Java, using *Fling*'s interface:
 ```Java
 // Datalog grammar defined in BNF
-public FlingBNF bnf() {
-  return Fling.build(getClass(), Term.class, NT.class, "Datalog",
-        "desired.package.path", "system/project/path") //
-      .start(Program) //
-      .derive(Program).to(oneOrMore(Statement)) //
-      .specialize(Statement).into(Rule, Query, Fact) //
-      .derive(Fact).to(attribute(fact, String.class), attribute(by, new VarArgs(String.class))) //
-      .derive(Rule).to( //
-          attribute(rule, String.class), //
-          attribute(by, new VarArgs(String.class)), //
-          oneOrMore(RuleExpression)) //
-      .derive(RuleExpression).to(attribute(is, String.class), attribute(by, new VarArgs(String.class))) //
-      .derive(Query).to(attribute(query, String.class), attribute(by, new VarArgs(String.class))) //
-  ;
-}
+BNF bnf = bnf().
+      start(Program).
+      derive(Program).to(oneOrMore(Statement)).
+      specialize(Statement).into(Fact, Rule, Query).
+      derive(Fact).to(fact.with(S), of.many(S)).
+      derive(Query).to(query.with(S), of.many(Term)).
+      specialize(Rule).into(Bodyless, WithBody).
+      derive(Bodyless).to(always.with(S), of.many(Term)).
+      derive(WithBody).to(RuleHead, RuleBody).
+      derive(RuleHead).to(infer.with(S), of.many(Term)).
+      derive(RuleBody).to(FirstClause, noneOrMore(AdditionalClause)).
+      derive(FirstClause).to(when.with(S), of.many(Term)).
+      derive(AdditionalClause).to(and.with(S), of.many(Term)).
+      derive(Term).to(l.with(S)).or(v.with(S)).
+      build();
 ```
 After *Fling* has created the fluent interfaces supporting Datalog, a simple Datalog program...
 ```Datalog
@@ -40,19 +44,16 @@ ancestor(john, X)?
 ```
 ...can be written in Java by method-chaining, as follows:
 ```Java
-public class Ancestor {
-  public static Program program() {
-    return fact("parent").by("john", "bob") //
-        .fact("parent").by("bob", "donald") //
-        .rule("ancestor").by("A", "B") //
-        /**/.is("parent").by("A", "B") //
-        .rule("ancestor").by("A", "B") //
-        /**/.is("parent").by("A", "C") //
-        /**/.is("ancestor").by("C", "B") //
-        .query("ancestor").by("john", "X") //
-        .$();
-  }
-}
+Program program =
+  fact("parent").of("john", "bob").
+  fact("parent").of("bob", "donald").
+  always("ancestor").of(l("adam"), v("X")).
+  infer("ancestor").of(v("A"), v("B")).
+    when("parent").of(v("A"), v("B")).
+  infer("ancestor").of(v("A"), v("B")).
+    when("parent").of(v("A"), v("C")).
+    and("ancestor").of(v("C"), v("B")).
+  query("ancestor").of(l("john"), v("X")).$();
 ```
 The produced program is represented in Java as an abstract syntax tree (AST) that can be traversed and analyzed by the
 client library.

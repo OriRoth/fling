@@ -7,6 +7,7 @@ import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.*;
 import fling.BNF;
+import fling.Symbol.oneOrMore;
 import fling.adapters.JavaMediator;
 
 public class SubFigure {
@@ -21,7 +22,7 @@ public class SubFigure {
   public static final BNF bnf = bnf(). //
       start(Figure). //
       derive(Figure).to(load.with(String.class)). //
-      derive(Figure).to(Orientation, oneOrMore(Figure), seal). //
+      derive(Figure).to(Orientation, Symbol.oneOrMore(Figure), seal). //
       derive(Orientation).to(row).or(column). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //

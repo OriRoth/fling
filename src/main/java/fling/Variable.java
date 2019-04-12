@@ -1,7 +1,5 @@
 package fling;
 
-import fling.internal.grammar.sententials.Symbol;
-
 /**
  * Grammar sentential variable.
  * 

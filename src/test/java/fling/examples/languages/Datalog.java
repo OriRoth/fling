@@ -5,12 +5,20 @@ import static fling.examples.languages.Datalog.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.*;
 
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+import java.io.IOException;
+import java.nio.file.*;
+
+import com.google.googlejavaformat.java.FormatterException;
+import com.google.googlejavaformat.java.Formatter;
+
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
-
 /**
- * Fling input specifying the formal 
+ * Fling input specifying the formal
  * 
  * @author Yossi Gil
  */
@@ -41,7 +49,7 @@ public class Datalog {
    */
   public static final BNF bnf = bnf(). //
       start(Program). // This is the start symbol
-      derive(Program).to(oneOrMore(Statement)). // Program ::= Statement*
+      derive(Program).to(Symbol.oneOrMore(Statement)). // Program ::= Statement*
       specialize(Statement).into(Fact, Rule, Query).
       /* Defines the rule Statement ::= Fact |Rule | Query, but also defines
        * that classes {@link Fact}, {@link Rule} and {@link Query} extend class
@@ -52,7 +60,7 @@ public class Datalog {
       derive(Bodyless).to(always.with(S), of.many(Term)). //
       derive(WithBody).to(RuleHead, RuleBody). //
       derive(RuleHead).to(infer.with(S), of.many(Term)). //
-      derive(RuleBody).to(FirstClause, noneOrMore(AdditionalClause)). //
+      derive(RuleBody).to(FirstClause, Symbol.noneOrMore(AdditionalClause)). //
       derive(FirstClause).to(when.with(S), of.many(Term)). //
       derive(AdditionalClause).to(and.with(S), of.many(Term)). //
       derive(Term).to(l.with(S)).or(v.with(S)). //
@@ -64,7 +72,37 @@ public class Datalog {
   public static final JavaMediator jm = new JavaMediator(//
       bnf, // use this BNF as language specification
       "fling.examples.generated", // Name of package in which output will reside
-      "Datalog", // Name of generated class, 
+      "Datalog", // Name of generated class,
       Σ.class //
-      );
+  );
+
+  /**
+   * Prints the Datalog API/AST types/AST run-time compiler to corresponding
+   * files.
+   */
+  public static void main(String[] args) throws IOException, FormatterException {
+    Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
+      final Map<String, String> $ = new LinkedHashMap<>();
+      $.put("Datalog", Datalog.jm.apiClass);
+      $.put("DatalogAST", Datalog.jm.astClass);
+      $.put("DatalogCompiler", Datalog.jm.astCompilerClass);
+      return $;
+    }).get();
+    String PATH = "./src/test/java/fling/examples/generated/";
+    System.out.println("project path: " + PATH);
+    final Path outputFolder = Paths.get(PATH);
+    if (!Files.exists(outputFolder)) {
+      Files.createDirectory(outputFolder);
+      System.out.println("directory " + PATH + " created successfully");
+    }
+    final Formatter formatter = new Formatter();
+    for (final Entry<String, String> file : files.entrySet()) {
+      final Path filePath = Paths.get(PATH + file.getKey() + ".java");
+      if (Files.exists(filePath))
+        Files.delete(filePath);
+      Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE,
+          StandardOpenOption.WRITE);
+      System.out.println("file " + file.getKey() + ".java written successfully.");
+    }
+  }
 }

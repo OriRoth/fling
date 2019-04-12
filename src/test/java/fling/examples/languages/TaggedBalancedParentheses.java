@@ -7,6 +7,7 @@ import static fling.internal.grammar.sententials.Notation.oneOrMore;
 
 import fling.*;
 import fling.BNF;
+import fling.Symbol.oneOrMore;
 import fling.adapters.JavaMediator;
 
 public class TaggedBalancedParentheses {
@@ -23,7 +24,7 @@ public class TaggedBalancedParentheses {
       derive(P).to(c.many(char.class), P, ↄ.with(AB), P). //
       derive(P).toEpsilon(). //
       derive(AB).to(a). //
-      derive(AB).to(oneOrMore(b.with(int.class))). //
+      derive(AB).to(Symbol.oneOrMore(b.with(int.class))). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
       "fling.examples.generated", "TaggedBalancedParentheses", Σ.class);

@@ -66,7 +66,7 @@ import fling.grammars.api.BNFAPIAST.*;
     fling.internal.compiler.Assignment _a;
     java.util.List<?> _b;
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Symbol[] symbols = (fling.internal.grammar.sententials.Symbol[]) _a.arguments.get(0);
+    Symbol[] symbols = (Symbol[]) _a.arguments.get(0);
     _b = fling.internal.grammar.sententials.notations.NoneOrMore.abbreviate(parse__RuleTail2(w), 1);
     java.util.List<RuleTail> ruleTail = (java.util.List<RuleTail>) _b.get(0);
     return new ConcreteDerivation(symbols, ruleTail);
@@ -81,7 +81,7 @@ import fling.grammars.api.BNFAPIAST.*;
     fling.internal.compiler.Assignment _a;
     java.util.List<?> _b;
     _a = w.remove(0);
-    fling.internal.grammar.sententials.Symbol[] symbols = (fling.internal.grammar.sententials.Symbol[]) _a.arguments.get(0);
+    Symbol[] symbols = (Symbol[]) _a.arguments.get(0);
     return new ConcreteDerivationTail(symbols);
   }
   public static EpsilonDerivationTail parse_RuleTail2(java.util.List<fling.internal.compiler.Assignment> w) {

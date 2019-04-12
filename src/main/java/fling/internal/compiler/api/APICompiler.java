@@ -2,7 +2,7 @@ package fling.internal.compiler.api;
 
 import java.util.*;
 
-import fling.DPDA;
+import fling.*;
 import fling.internal.compiler.api.nodes.*;
 import fling.internal.grammar.sententials.*;
 

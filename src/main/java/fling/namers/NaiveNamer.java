@@ -6,7 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.*;
 import java.util.function.*;
 
-import fling.Variable;
+import fling.*;
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.APICompiler.ParameterFragment;
@@ -14,7 +14,6 @@ import fling.internal.compiler.api.nodes.*;
 import fling.internal.compiler.api.nodes.AbstractMethodNode.*;
 import fling.internal.compiler.ast.nodes.*;
 import fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import fling.internal.grammar.sententials.Symbol;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();

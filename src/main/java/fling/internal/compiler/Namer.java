@@ -1,10 +1,9 @@
 package fling.internal.compiler;
 
-import fling.Variable;
+import fling.*;
 import fling.internal.compiler.api.APICompiler;
 import fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import fling.internal.grammar.sententials.Symbol;
 
 /**
  * Names elements in the generated code.

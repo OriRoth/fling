@@ -6,8 +6,8 @@ import static fling.grammars.api.BNFAPI.bnf;
 import static fling.internal.grammar.sententials.Notation.noneOrMore;
 
 import fling.*;
+import fling.Symbol.noneOrMore;
 import fling.adapters.JavaMediator;
-import fling.internal.grammar.sententials.Symbol;
 
 public class BNF {
   @SuppressWarnings("hiding") public enum Σ implements Terminal {
@@ -20,10 +20,10 @@ public class BNF {
 
   public static final fling.BNF bnf = bnf(). //
       start(PlainBNF). //
-      derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
+      derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), Symbol.noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
       derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
       derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
-      derive(RuleBody).to(to.many(Symbol.class), noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
+      derive(RuleBody).to(to.many(Symbol.class), Symbol.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
       derive(RuleTail).to(or.many(Symbol.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //

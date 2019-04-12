@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.joining;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import fling.Named;
 import fling.internal.compiler.Namer;
 import fling.internal.compiler.api.*;
 import fling.internal.compiler.api.nodes.*;

@@ -1,18 +1,22 @@
 package fling.examples.usecases;
 
-import static fling.examples.generated.Datalog.fact;
-import static fling.examples.generated.Datalog.Term.*;
-import static fling.examples.usecases.Datalog.DatalogPrinter.print;
-import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
+import static fling.examples.languages.Datalog.V.*;
+import static fling.examples.languages.Datalog.Σ.*;
+import static fling.grammars.api.BNFAPI.bnf;
+import static fling.internal.grammar.sententials.Notation.*;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
 
-import fling.examples.ExamplesMainRunMeFirst;
-import fling.examples.generated.DatalogAST;
-import fling.examples.generated.DatalogAST.*;
-import za.co.wstoop.jatalog.*;
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
+
+import fling.*;
+import fling.BNF;
+import fling.adapters.JavaMediator;
 
 /**
  * This class demonstrates the use of automatically generated fluent API.

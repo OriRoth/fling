@@ -48,10 +48,10 @@ import fling.*;
   }
 
   class ConcreteDerivation implements RuleBody {
-    public final fling.internal.grammar.sententials.Symbol[] to;
+    public final Symbol[] to;
     public final java.util.List<RuleTail> ruleTail;
 
-    public ConcreteDerivation(fling.internal.grammar.sententials.Symbol[] to, java.util.List<RuleTail> ruleTail) {
+    public ConcreteDerivation(Symbol[] to, java.util.List<RuleTail> ruleTail) {
       this.to = to;
       this.ruleTail = ruleTail;
     }
@@ -63,9 +63,9 @@ import fling.*;
   }
 
   class ConcreteDerivationTail implements RuleTail {
-    public final fling.internal.grammar.sententials.Symbol[] or;
+    public final Symbol[] or;
 
-    public ConcreteDerivationTail(fling.internal.grammar.sententials.Symbol[] or) {
+    public ConcreteDerivationTail(Symbol[] or) {
       this.or = or;
     }
   }

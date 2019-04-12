@@ -1,6 +1,14 @@
-package fling.internal.grammar.sententials;
+package fling;
 
+/**
+ * Named entity.
+ * 
+ * @author Ori Roth
+ */
 public interface Named {
+  /**
+   * @return name
+   */
   String name();
   static Named by(final String name) {
     return new Named() {
