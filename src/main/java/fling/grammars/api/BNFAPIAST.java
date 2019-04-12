@@ -3,10 +3,10 @@ package fling.grammars.api;
 @SuppressWarnings("all")
 public interface BNFAPIAST {
   class PlainBNF {
-    public final fling.internal.grammar.sententials.Variable start;
+    public final Variable start;
     public final java.util.List<Rule> rule;
 
-    public PlainBNF(fling.internal.grammar.sententials.Variable start, java.util.List<Rule> rule) {
+    public PlainBNF(Variable start, java.util.List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }
@@ -19,22 +19,22 @@ public interface BNFAPIAST {
   interface RuleTail {}
 
   class Derivation implements Rule {
-    public final fling.internal.grammar.sententials.Variable derive;
+    public final Variable derive;
     public final RuleBody ruleBody;
 
-    public Derivation(fling.internal.grammar.sententials.Variable derive, RuleBody ruleBody) {
+    public Derivation(Variable derive, RuleBody ruleBody) {
       this.derive = derive;
       this.ruleBody = ruleBody;
     }
   }
 
   class Specialization implements Rule {
-    public final fling.internal.grammar.sententials.Variable specialize;
-    public final fling.internal.grammar.sententials.Variable[] into;
+    public final Variable specialize;
+    public final Variable[] into;
 
     public Specialization(
-        fling.internal.grammar.sententials.Variable specialize,
-        fling.internal.grammar.sententials.Variable[] into) {
+        Variable specialize,
+        Variable[] into) {
       this.specialize = specialize;
       this.into = into;
     }

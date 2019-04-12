@@ -33,8 +33,8 @@ import fling.internal.grammar.sententials.*;
   }
 
   interface q0$__Rule1$_q0$q0ø<q0$, q0ø> extends $ {
-    q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø> derive(fling.internal.grammar.sententials.Variable variable);
-    q0ø__Rule1$into_q0$q0ø<q0$, q0ø> specialize(fling.internal.grammar.sententials.Variable variable);
+    q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø> derive(Variable variable);
+    q0ø__Rule1$into_q0$q0ø<q0$, q0ø> specialize(Variable variable);
   }
 
   interface q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø> {
@@ -44,12 +44,12 @@ import fling.internal.grammar.sententials.*;
   }
 
   interface q0ø__Rule1$into_q0$q0ø<q0$, q0ø> {
-    q0$__Rule1$_q0$q0ø<q0$, q0ø> into(fling.internal.grammar.sententials.Variable... variables);
+    q0$__Rule1$_q0$q0ø<q0$, q0ø> into(Variable... variables);
   }
 
   interface q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> extends $ {
-    derive derive(fling.internal.grammar.sententials.Variable variable);
-    specialize specialize(fling.internal.grammar.sententials.Variable variable);
+    derive derive(Variable variable);
+    specialize specialize(Variable variable);
     q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> or(fling.internal.grammar.sententials.Symbol... symbols);
     q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> orNone();
   }
@@ -62,19 +62,19 @@ import fling.internal.grammar.sententials.*;
       this.w.add(new fling.internal.compiler.Assignment(Σ.bnf, new Object[] {}));
       return this;
     }
-    public α start(fling.internal.grammar.sententials.Variable variable) {
+    public α start(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.start, new Object[] { variable }));
       return this;
     }
-    public α derive(fling.internal.grammar.sententials.Variable variable) {
+    public α derive(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.derive, new Object[] { variable }));
       return this;
     }
-    public α specialize(fling.internal.grammar.sententials.Variable variable) {
+    public α specialize(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.specialize, new Object[] { variable }));
       return this;
     }
-    public α into(fling.internal.grammar.sententials.Variable... variables) {
+    public α into(Variable... variables) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.into, new Object[] { variables }));
       return this;
     }
