@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -11,42 +12,39 @@ import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
 import fling.examples.automata.*;
-// import fling.examples.automata.AnBn;
-// import fling.examples.automata.ExtendedBalancedParentheses;
-// import fling.examples.automata.LongFall;
-// import fling.examples.languages.Arithmetic;
 import fling.examples.languages.*;
 
 @SuppressWarnings("static-method") public class ExamplesMainRunMeFirst {
   private static final boolean FORMAT_OUTPUT = true;
-  private static final Map<String, String> files = new LinkedHashMap<>();
-  static {
-    files.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
-    files.put("LongFall", LongFall.JavaFluentAPI);
-    files.put("AnBn", AnBn.JavaFluentAPI);
-    files.put("AeqB", AeqB.JavaFluentAPI);
-    files.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
-    files.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
-    files.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
-    files.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
-    files.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
-    files.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
-    files.put("Datalog", Datalog.jm.apiClass);
-    files.put("DatalogAST", Datalog.jm.astClass);
-    files.put("DatalogCompiler", Datalog.jm.astCompilerClass);
-    files.put("SubFigure", SubFigure.jm.apiClass);
-    files.put("SubFigureAST", SubFigure.jm.astClass);
-    files.put("SubFigureCompiler", SubFigure.jm.astCompilerClass);
-    files.put("ArithmeticExpression", ArithmeticExpression.jm.apiClass);
-    files.put("ArithmeticExpressionAST", ArithmeticExpression.jm.astClass);
-    files.put("ArithmeticExpressionCompiler", ArithmeticExpression.jm.astCompilerClass);
-    files.put("BNFAPI", BNF.jm.apiClass);
-    files.put("BNFAPIAST", BNF.jm.astClass);
-    files.put("BNFAPICompiler", BNF.jm.astCompilerClass);
-    files.put("RegularExpression", RegularExpression.jm.apiClass);
-    files.put("RegularExpressionAST", RegularExpression.jm.astClass);
-    files.put("RegularExpressionCompiler", RegularExpression.jm.astCompilerClass);
-  }
+  private static final Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
+    final Map<String, String> $ = new LinkedHashMap<>();
+    $.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
+    $.put("LongFall", LongFall.JavaFluentAPI);
+    $.put("AnBn", AnBn.JavaFluentAPI);
+    $.put("AeqB", AeqB.JavaFluentAPI);
+    $.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
+    $.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
+    $.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
+    $.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
+    $.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
+    $.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
+    $.put("Datalog", Datalog.jm.apiClass);
+    $.put("DatalogAST", Datalog.jm.astClass);
+    $.put("DatalogCompiler", Datalog.jm.astCompilerClass);
+    $.put("SubFigure", SubFigure.jm.apiClass);
+    $.put("SubFigureAST", SubFigure.jm.astClass);
+    $.put("SubFigureCompiler", SubFigure.jm.astCompilerClass);
+    $.put("ArithmeticExpression", ArithmeticExpression.jm.apiClass);
+    $.put("ArithmeticExpressionAST", ArithmeticExpression.jm.astClass);
+    $.put("ArithmeticExpressionCompiler", ArithmeticExpression.jm.astCompilerClass);
+    $.put("BNFAPI", BNF.jm.apiClass);
+    $.put("BNFAPIAST", BNF.jm.astClass);
+    $.put("BNFAPICompiler", BNF.jm.astCompilerClass);
+    $.put("RegularExpression", RegularExpression.jm.apiClass);
+    $.put("RegularExpressionAST", RegularExpression.jm.astClass);
+    $.put("RegularExpressionCompiler", RegularExpression.jm.astCompilerClass);
+    return $;
+  }).get();
   private static final String PATH = "./src/test/java/fling/examples/generated/";
 
   @Test public void compile() throws IOException, FormatterException {

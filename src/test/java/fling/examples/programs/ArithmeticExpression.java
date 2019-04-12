@@ -1,6 +1,6 @@
 package fling.examples.programs;
 
-import static fling.examples.generated.Arithmetic.v;
+import static fling.examples.generated.ArithmeticExpression.v;
 
 public class ArithmeticExpression {
   public static void compilationTest() {
