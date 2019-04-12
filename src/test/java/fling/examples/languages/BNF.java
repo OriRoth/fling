@@ -3,10 +3,9 @@ package fling.examples.languages;
 import static fling.examples.languages.BNF.V.*;
 import static fling.examples.languages.BNF.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
-import static fling.internal.grammar.sententials.Notation.noneOrMore;
 
 import fling.*;
-import fling.Symbol.noneOrMore;
+import fling.Symbol.*;
 import fling.adapters.JavaMediator;
 
 public class BNF {
