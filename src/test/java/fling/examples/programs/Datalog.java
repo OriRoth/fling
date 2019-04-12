@@ -12,7 +12,14 @@ import java.util.stream.Collectors;
 import fling.examples.generated.DatalogAST;
 import fling.examples.generated.DatalogAST.*;
 import za.co.wstoop.jatalog.*;
-
+/**
+ * This class demonstrates the use of automatically generated fluent API.
+ * Needless to say, it cannot be compiled before this fluent API was generated.
+ * To generate the respective fluent APIs, run {@link ExamplesMainRunMeFirst}.
+ * 
+ * @author Yossi Gil
+ * @since April 2019
+ */
 public class Datalog {
   public static void main(final String[] args) {
     final Program program = fact("parent").of("john", "bob"). //

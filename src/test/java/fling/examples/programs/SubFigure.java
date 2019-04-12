@@ -2,7 +2,14 @@ package fling.examples.programs;
 import static fling.examples.generated.SubFigure.row;
 
 import fling.examples.generated.SubFigureAST.*;
-
+/**
+ * This class demonstrates the use of automatically generated fluent API.
+ * Needless to say, it cannot be compiled before this fluent API was generated.
+ * To generate the respective fluent APIs, run {@link ExamplesMainRunMeFirst}.
+ * 
+ * @author Yossi Gil
+ * @since April 2019
+ */
 public class SubFigure {
   // @formatter:off
   public static void main(final String[] args) {

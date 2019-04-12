@@ -4,7 +4,14 @@ import static fling.examples.generated.TaggedBalancedParentheses.*;
 import static fling.examples.generated.TaggedBalancedParentheses.AB.*;
 
 import fling.examples.generated.TaggedBalancedParenthesesAST.*;
-
+/**
+ * This class demonstrates the use of automatically generated fluent API.
+ * Needless to say, it cannot be compiled before this fluent API was generated.
+ * To generate the respective fluent APIs, run {@link ExamplesMainRunMeFirst}.
+ * 
+ * @author Yossi Gil
+ * @since April 2019
+ */
 public class TaggedBalancedParentheses {
   public static void compilationTest() {
     c('a', 'a').ↄ(a()).$();
