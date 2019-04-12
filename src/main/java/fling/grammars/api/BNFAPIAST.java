@@ -1,11 +1,13 @@
 package fling.grammars.api;
 
+import fling.Variable;
+
 @SuppressWarnings("all") public interface BNFAPIAST {
   class PlainBNF {
-    public final fling.Variable start;
+    public final Variable start;
     public final java.util.List<Rule> rule;
 
-    public PlainBNF(fling.Variable start, java.util.List<Rule> rule) {
+    public PlainBNF(Variable start, java.util.List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }
@@ -21,20 +23,20 @@ package fling.grammars.api;
   }
 
   class Derivation implements Rule {
-    public final fling.Variable derive;
+    public final Variable derive;
     public final RuleBody ruleBody;
 
-    public Derivation(fling.Variable derive, RuleBody ruleBody) {
+    public Derivation(Variable derive, RuleBody ruleBody) {
       this.derive = derive;
       this.ruleBody = ruleBody;
     }
   }
 
   class Specialization implements Rule {
-    public final fling.Variable specialize;
-    public final fling.Variable[] into;
+    public final Variable specialize;
+    public final Variable[] into;
 
-    public Specialization(fling.Variable specialize, fling.Variable[] into) {
+    public Specialization(Variable specialize, Variable[] into) {
       this.specialize = specialize;
       this.into = into;
     }
