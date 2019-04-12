@@ -2,7 +2,7 @@ package fling.examples.programs;
 
 import static fling.examples.generated.Arithmetic.v;
 
-public class Arithmetic {
+public class ArithmeticExpression {
   public static void compilationTest() {
     v("X"). // define variable X
         times().v("X").plus().v("Y"). // X * X + Y

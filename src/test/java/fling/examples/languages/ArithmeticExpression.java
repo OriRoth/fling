@@ -1,14 +1,14 @@
 package fling.examples.languages;
 
-import static fling.examples.languages.Arithmetic.V.*;
-import static fling.examples.languages.Arithmetic.Σ.*;
+import static fling.examples.languages.ArithmeticExpression.V.*;
+import static fling.examples.languages.ArithmeticExpression.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
 
 import fling.adapters.JavaMediator;
 import fling.grammars.BNF;
 import fling.internal.grammar.sententials.*;
 
-public class Arithmetic {
+public class ArithmeticExpression {
   public enum Σ implements Terminal {
     plus, minus, times, divide, begin, end, v, n
   }
@@ -32,5 +32,5 @@ public class Arithmetic {
       derive(F).to(n.with(double.class)). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //
-      "fling.examples.generated", "Arithmetic", Σ.class);
+      "fling.examples.generated", "ArithmeticExpression", Σ.class);
 }
