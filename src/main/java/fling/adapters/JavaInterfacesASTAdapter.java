@@ -41,7 +41,7 @@ import fling.internal.compiler.ast.nodes.*;
                 .collect(joining(",")));
   }
   @Override public String printConcreteClass(final ConcreteClassNode concreteClass) {
-    return String.format("class %s %s%s{%s%s}", //
+    return String.format("public class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
         concreteClass.parents.isEmpty() ? "" : "implements ", //
         concreteClass.parents.stream().map(ClassNode::getClassName).collect(joining(",")), //

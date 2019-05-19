@@ -16,7 +16,6 @@ import com.google.googlejavaformat.java.FormatterException;
 import fling.*;
 import fling.BNF;
 import fling.adapters.JavaMediator;
-import fling.examples.generated.DatalogAST.Program;
 /**
  * Fling input specifying the formal
  * 
