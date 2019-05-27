@@ -74,7 +74,7 @@ public class HTMLTable {
         printTabs(depth), //
         printOptions(table.table), //
         toString(table.header, depth + 1), //
-        table.line.stream().map(line -> toString(line, depth + 1)).collect(joining("\n")), //
+        table.row.stream().map(line -> toString(line, depth + 1)).collect(joining("\n")), //
         printTabs(depth));
   }
   public static String toString(final Header header, final int depth) {
@@ -91,14 +91,14 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
-  public static String toString(final Line line, final int depth) {
+  public static String toString(final Row r, final int depth) {
     return String.format("" //
         + "%s<tr%s>\n" //
         + "%s\n" //
         + "%s</tr>", //
         printTabs(depth), //
-        printOptions(line.tr.tr), //
-        line.td.stream().map(td -> String.format("%s<td%s>%s</td>", //
+        printOptions(r.tr.tr), //
+        r.td.stream().map(td -> String.format("%s<td%s>%s</td>", //
             printTabs(depth + 1), //
             printOptions(td.td), //
             td.cell instanceof Cell1 ? ((Cell1) td.cell).¢ : //

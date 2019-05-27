@@ -15,15 +15,15 @@ public class HTMLTable {
   }
 
   public enum V implements Variable {
-    HTML, Table, Header, Line, Tr, Th, Td, Cell
+    HTML, Table, Header, Row, Tr, Th, Td, Cell
   }
 
   public static final BNF bnf = bnf(). //
       start(HTML). //
       derive(HTML).to(html.with(String.class), Table). //
-      derive(Table).to(table.many(String.class), Header, noneOrMore(Line), end). //
+      derive(Table).to(table.many(String.class), Header, noneOrMore(Row), end). //
       derive(Header).to(Tr, noneOrMore(Th), end). //
-      derive(Line).to(Tr, noneOrMore(Td), end). //
+      derive(Row).to(Tr, noneOrMore(Td), end). //
       derive(Tr).to(tr.many(String.class)). //
       derive(Th).to(th.many(String.class), ¢.with(String.class), end). //
       derive(Td).to(td.many(String.class), Cell, end). //
