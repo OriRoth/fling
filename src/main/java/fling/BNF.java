@@ -11,9 +11,9 @@ import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
 
 /**
- * A Backus-Naur form specification of formal Language, collection of derivation rules of
- * the form <code>V ::= w X | Y z.</code> Computes grammar's nullables set and
- * firsts/follows mappings.
+ * A Backus-Naur form specification of formal Language, collection of derivation
+ * rules of the form <code>V ::= w X | Y z.</code> Computes grammar's nullables
+ * set and firsts/follows mappings.
  * 
  * @author Ori Roth
  */
@@ -237,7 +237,11 @@ public class BNF {
         final Specialization specializationRule = (Specialization) rule;
         $.specialize(specializationRule.specialize).into(specializationRule.into);
       }
-    return $.build();
+    try {
+      return $.build();
+    } catch (Exception e) {
+      throw new RuntimeException("problem while analyzing BNF, make sure the grammar adheres its class description (LL/LR/etc)", e);
+    }
   }
 
   @Deprecated private static class Builder {
