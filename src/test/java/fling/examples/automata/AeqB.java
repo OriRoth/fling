@@ -64,11 +64,17 @@ public class AeqB {
    */
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+  /**
+   * SML fluent API
+   */
+  public static final String SMLFluentAPI = new SMLAPIAdapter("zzz", new NaiveNamer("AeqB")) //
+      .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 
   /**
    * Print C++ program to standard output.
    */
   public static void main(final String[] args) {
-    System.out.println(CppFluentAPI);
+//    System.out.println(CppFluentAPI);
+    System.out.println(SMLFluentAPI);
   }
 }
