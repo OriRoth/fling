@@ -145,3 +145,5 @@ out/
 # User defined (add below this line) // vim: +,$!sort -u
 /target/
 /src/test/java/fling/examples/generated/
+.settings
+.classpath
