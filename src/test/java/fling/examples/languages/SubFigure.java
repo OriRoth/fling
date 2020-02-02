@@ -1,5 +1,6 @@
 package fling.examples.languages;
 
+import static fling.Symbol.oneOrMore;
 import static fling.examples.languages.SubFigure.V.*;
 import static fling.examples.languages.SubFigure.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
@@ -20,7 +21,7 @@ public class SubFigure {
   public static final BNF bnf = bnf(). //
       start(Figure). //
       derive(Figure).to(load.with(String.class)). //
-      derive(Figure).to(Orientation, Symbol.oneOrMore(Figure), seal). //
+      derive(Figure).to(Orientation, oneOrMore(Figure), seal). //
       derive(Orientation).to(row).or(column). //
       build();
   public static final JavaMediator jm = new JavaMediator(bnf, //

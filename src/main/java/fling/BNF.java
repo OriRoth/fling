@@ -6,6 +6,10 @@ import static java.util.stream.Collectors.toSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.antlr.runtime.tree.Tree;
+import org.antlr.v4.tool.Grammar;
+import org.antlr.v4.tool.ast.*;
+
 import fling.grammars.api.BNFAPIAST.*;
 import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
@@ -330,6 +334,94 @@ public class BNF {
         }
         return Builder.this;
       }
+    }
+  }
+
+  public static BNF fromANTLR(Grammar grammar) {
+    assert grammar.ast.getChildCount() == 2 : "ANTLR grammar is not simplified";
+    Builder $ = new Builder();
+    boolean initialized = false;
+    Tree rules = grammar.ast.getChild(1);
+    for (int i = 0; i < rules.getChildCount(); ++i) {
+      Tree rule = rules.getChild(i);
+      assert rule.getChildCount() == 2;
+      String variableName = rule.getChild(0).getText();
+      Variable variable = Variable.byName(variableName);
+      if (!initialized) {
+        // Assume first ANTLR variable is start variable.
+        $.start(variable);
+        initialized = true;
+      }
+      Tree rhs = rule.getChild(1);
+      for (int j = 0; j < rhs.getChildCount(); ++j) {
+        assert rhs.getChild(j) instanceof AltAST;
+        AltAST alt = (AltAST) rhs.getChild(j);
+        List<Symbol> others = new LinkedList<>();
+        for (Object derivation : alt.getChildren()) {
+          if (derivation instanceof RuleRefAST) {
+            Variable other = Variable.byName(derivation.toString());
+            others.add(other);
+          } else if (derivation instanceof StarBlockAST) {
+            // TODO add verification.
+            String otherName = ((StarBlockAST) derivation).getChild(0).getChild(0).getChild(0).toString();
+            Variable other = Variable.byName(otherName);
+            others.add(Symbol.noneOrMore(other));
+          } else if (derivation instanceof PlusBlockAST) {
+            // TODO add verification.
+            String otherName = ((StarBlockAST) derivation).getChild(0).getChild(0).getChild(0).toString();
+            Variable other = Variable.byName(otherName);
+            others.add(Symbol.oneOrMore(other));
+          } else if (derivation instanceof TerminalAST) {
+            String name = ((TerminalAST) derivation).getText();
+            name = name.substring(1, name.length() - 1);
+            if (name.contains(":type:")) {
+              String[] split = name.split(":type:");
+              name = split[0];
+              String type = split[1];
+              Terminal other = Terminal.byName(name);
+              others.add(other.with(parseType(type, "Terminal type not defined")));
+            } else {
+              // Assume simple terminal.
+              Terminal other = Terminal.byName(name);
+              others.add(other);
+            }
+          } else {
+            throw new RuntimeException(String.format("Grammar element %s no supported", derivation.getClass().getSimpleName()));
+          }
+        }
+        $.derive(variable).to(others.toArray(new Symbol[others.size()]));
+      }
+    }
+    return $.build();
+  }
+  // TODO export as utility.
+  private static Class<?> parseType(String className, String onError) {
+    switch (className) {
+      case "boolean":
+        return boolean.class;
+      case "byte":
+        return byte.class;
+      case "short":
+        return short.class;
+      case "int":
+        return int.class;
+      case "long":
+        return long.class;
+      case "float":
+        return float.class;
+      case "double":
+        return double.class;
+      case "char":
+        return char.class;
+      case "void":
+        return void.class;
+      default:
+        String fqn = className.contains(".") ? className : "java.lang.".concat(className);
+        try {
+          return Class.forName(fqn);
+        } catch (ClassNotFoundException e) {
+          throw new IllegalArgumentException(onError, e);
+        }
     }
   }
 }
