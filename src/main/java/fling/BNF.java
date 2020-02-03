@@ -2,6 +2,7 @@ package fling;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
+import static fling.internal.grammar.sententials.Constants.intermediateVariableName;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.antlr.v4.tool.ast.*;
 import fling.grammars.api.BNFAPIAST.*;
 import fling.internal.grammar.sententials.*;
 import fling.internal.grammar.types.TypeParameter;
+import fling.internal.util.Counter;
 
 /**
  * A Backus-Naur form specification of formal Language, collection of derivation
@@ -342,6 +344,7 @@ public class BNF {
     Builder $ = new Builder();
     boolean initialized = false;
     Tree rules = grammar.ast.getChild(1);
+    Counter counter = new Counter();
     for (int i = 0; i < rules.getChildCount(); ++i) {
       Tree rule = rules.getChild(i);
       assert rule.getChildCount() == 2;
@@ -352,76 +355,53 @@ public class BNF {
         $.start(variable);
         initialized = true;
       }
-      Tree rhs = rule.getChild(1);
-      for (int j = 0; j < rhs.getChildCount(); ++j) {
-        assert rhs.getChild(j) instanceof AltAST;
-        AltAST alt = (AltAST) rhs.getChild(j);
-        List<Symbol> others = new LinkedList<>();
-        for (Object derivation : alt.getChildren()) {
-          if (derivation instanceof RuleRefAST) {
-            Variable other = Variable.byName(derivation.toString());
-            others.add(other);
-          } else if (derivation instanceof StarBlockAST) {
-            // TODO add verification.
-            String otherName = ((StarBlockAST) derivation).getChild(0).getChild(0).getChild(0).toString();
-            Variable other = Variable.byName(otherName);
-            others.add(Symbol.noneOrMore(other));
-          } else if (derivation instanceof PlusBlockAST) {
-            // TODO add verification.
-            String otherName = ((StarBlockAST) derivation).getChild(0).getChild(0).getChild(0).toString();
-            Variable other = Variable.byName(otherName);
-            others.add(Symbol.oneOrMore(other));
-          } else if (derivation instanceof TerminalAST) {
-            String name = ((TerminalAST) derivation).getText();
-            name = name.substring(1, name.length() - 1);
-            if (name.contains(":type:")) {
-              String[] split = name.split(":type:");
-              name = split[0];
-              String type = split[1];
-              Terminal other = Terminal.byName(name);
-              others.add(other.with(parseType(type, "Terminal type not defined")));
-            } else {
-              // Assume simple terminal.
-              Terminal other = Terminal.byName(name);
-              others.add(other);
-            }
-          } else {
-            throw new RuntimeException(String.format("Grammar element %s no supported", derivation.getClass().getSimpleName()));
-          }
-        }
-        $.derive(variable).to(others.toArray(new Symbol[others.size()]));
-      }
+      Optional<Symbol> rhs = extractANTLRSentential($, rule.getChild(1), counter);
+      if (rhs.isPresent())
+        $.derive(variable).to(rhs.get());
+      else
+        $.derive(variable).toEpsilon();
     }
     return $.build();
   }
-  // TODO export as utility.
-  private static Class<?> parseType(String className, String onError) {
-    switch (className) {
-      case "boolean":
-        return boolean.class;
-      case "byte":
-        return byte.class;
-      case "short":
-        return short.class;
-      case "int":
-        return int.class;
-      case "long":
-        return long.class;
-      case "float":
-        return float.class;
-      case "double":
-        return double.class;
-      case "char":
-        return char.class;
-      case "void":
-        return void.class;
-      default:
-        String fqn = className.contains(".") ? className : "java.lang.".concat(className);
-        try {
-          return Class.forName(fqn);
-        } catch (ClassNotFoundException e) {
-          throw new IllegalArgumentException(onError, e);
-        }
+  private static Optional<Symbol> extractANTLRSentential(Builder $, Object element, Counter nameCounter) {
+    if (element instanceof List) {
+      List<?> elements = (List<?>) element;
+      if (elements.isEmpty())
+        return Optional.empty();
+      else if (elements.size() == 1)
+        return extractANTLRSentential($, elements.get(0), nameCounter);
+      Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
+      List<Symbol> items = new ArrayList<>();
+      for (Object item : elements)
+        extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
+      $.derive(top).to(items.toArray(new Symbol[items.size()]));
+      return Optional.of(top);
+    } else if (element instanceof AltAST) {
+      return extractANTLRSentential($, ((AltAST) element).getChildren(), nameCounter);
+    } else if (element instanceof BlockAST) {
+      BlockAST block = (BlockAST) element;
+      if (block.getChildCount() <= 1)
+        return extractANTLRSentential($, block.getChildren(), nameCounter);
+      Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
+      List<Symbol> items = new ArrayList<>();
+      for (Object item : block.getChildren())
+        extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
+      items.forEach(symbol -> $.derive(top).to(symbol));
+      return Optional.of(top);
+    } else if (element instanceof RuleRefAST) {
+      return Optional.of(Variable.byName(element.toString()));
+    } else if (element instanceof StarBlockAST) {
+      Optional<Symbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(), nameCounter);
+      return inner.map(Symbol::noneOrMore);
+    } else if (element instanceof PlusBlockAST) {
+      Optional<Symbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(), nameCounter);
+      return inner.map(Symbol::oneOrMore);
+    } else if (element instanceof TerminalAST) {
+      String name = ((TerminalAST) element).getText();
+      name = name.substring(1, name.length() - 1);
+      // Assume simple terminal.
+      return Optional.of(Terminal.byName(name));
     }
+    throw new RuntimeException(String.format("Grammar element %s no supported", element.getClass().getSimpleName()));
   }
 }

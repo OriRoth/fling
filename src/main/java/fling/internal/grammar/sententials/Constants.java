@@ -20,4 +20,5 @@ public interface Constants {
       return "S";
     }
   };
+  String intermediateVariableName = "_$_";
 }

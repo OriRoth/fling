@@ -25,6 +25,6 @@ multDivExp
     ;
 
 atomExp
-    :    'i:type:int'
+    :    'i'
     |    'p' additionExp 'q'
     ;
