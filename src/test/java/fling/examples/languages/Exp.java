@@ -4,7 +4,7 @@ import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
 
 import fling.BNF;
-import fling.adapters.JavaAPIAdapter;
+import fling.adapters.JavaANTLRAPIAdapter;
 import fling.compilers.api.ReliableAPICompiler;
 import fling.grammars.LL1;
 import fling.internal.compiler.Namer;
@@ -20,7 +20,7 @@ public class Exp {
     String apiName = "Exp";
     Namer namer = new NaiveNamer(packageName, apiName);
     LL1 ll1 = new LL1(bnf, namer);
-    JavaAPIAdapter adapter = new JavaAPIAdapter(packageName, apiName, "$", namer);
+    JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
     String api = adapter.printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     System.out.println(api);
   }
