@@ -394,7 +394,7 @@ public class BNF {
       Optional<Symbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(), nameCounter);
       return inner.map(Symbol::noneOrMore);
     } else if (element instanceof PlusBlockAST) {
-      Optional<Symbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(), nameCounter);
+      Optional<Symbol> inner = extractANTLRSentential($, ((PlusBlockAST) element).getChildren(), nameCounter);
       return inner.map(Symbol::oneOrMore);
     } else if (element instanceof TerminalAST) {
       String name = ((TerminalAST) element).getText();

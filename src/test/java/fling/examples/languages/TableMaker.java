@@ -10,14 +10,14 @@ import fling.grammars.LL1;
 import fling.internal.compiler.Namer;
 import fling.namers.NaiveNamer;
 
-public class Exp {
+public class TableMaker {
   public static void main(String[] args) {
-    String grammarFilePath = Exp.class.getClassLoader().getResource("Exp.g").getPath();
+    String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
     Tool tool = new Tool();
     Grammar grammar = tool.loadGrammar(grammarFilePath);
     BNF bnf = BNF.fromANTLR(grammar);
     String packageName = "fling.examples.generated";
-    String apiName = "Exp";
+    String apiName = "TableMaker";
     Namer namer = new NaiveNamer(packageName, apiName);
     LL1 ll1 = new LL1(bnf, namer);
     JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);

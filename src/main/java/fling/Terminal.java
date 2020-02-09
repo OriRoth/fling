@@ -59,9 +59,9 @@ public interface Terminal extends Symbol {
       @Override public boolean equals(final Object obj) {
         if (this == obj)
           return true;
-        if (!(obj instanceof Variable))
+        if (!(obj instanceof Terminal))
           return false;
-        final Variable other = (Variable) obj;
+        final Terminal other = (Terminal) obj;
         return name().equals(other.name());
       }
     };
