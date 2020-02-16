@@ -11,7 +11,8 @@ import fling.internal.compiler.Namer;
 import fling.namers.NaiveNamer;
 
 public class TableMaker {
-  public static void main(String[] args) {
+  public static final String apiClass;
+  static {
     String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
     Tool tool = new Tool();
     Grammar grammar = tool.loadGrammar(grammarFilePath);
@@ -21,7 +22,6 @@ public class TableMaker {
     Namer namer = new NaiveNamer(packageName, apiName);
     LL1 ll1 = new LL1(bnf, namer);
     JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
-    String api = adapter.printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
-    System.out.println(api);
+    apiClass = adapter.printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
   }
 }

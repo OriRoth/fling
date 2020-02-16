@@ -3,10 +3,10 @@ package fling.examples.languages;
 import static fling.examples.languages.SimpleArithmetic.V.*;
 import static fling.examples.languages.SimpleArithmetic.Σ.*;
 import static fling.grammars.api.BNFAPI.bnf;
+import static java.util.Collections.singleton;
 
 import java.io.IOException;
 import java.nio.file.*;
-import static java.util.Collections.singleton;
 
 import com.google.googlejavaformat.java.*;
 
@@ -33,6 +33,8 @@ public class SimpleArithmetic {
       derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ε
       derive(F).to(begin, E, end).or(i.with(Integer.class)). // F ::= (E) | int
       build(); // Yield BNF
+  public static JavaMediator jm = new JavaMediator(SimpleArithmetic.bnf, "fling.examples.generated", "SimpleArithmetic",
+      SimpleArithmetic.Σ.class);
 
   public static void main(String[] args) //
       throws IOException, FormatterException {

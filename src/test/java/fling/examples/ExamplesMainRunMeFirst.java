@@ -11,7 +11,6 @@ import org.junit.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
-import fling.adapters.JavaMediator;
 import fling.examples.automata.*;
 import fling.examples.languages.*;
 
@@ -47,11 +46,10 @@ import fling.examples.languages.*;
     $.put("HTMLTable", HTMLTable.jm.apiClass);
     $.put("HTMLTableAST", HTMLTable.jm.astClass);
     $.put("HTMLTableCompiler", HTMLTable.jm.astCompilerClass);
-    JavaMediator sajm = new JavaMediator(SimpleArithmetic.bnf, "fling.examples.generated", "SimpleArithmetic",
-        SimpleArithmetic.Σ.class);
-    $.put("SimpleArithmetic", sajm.apiClass);
-    $.put("SimpleArithmeticAST", sajm.astClass);
-    $.put("SimpleArithmeticCompiler", sajm.astCompilerClass);
+    $.put("SimpleArithmetic", SimpleArithmetic.jm.apiClass);
+    $.put("SimpleArithmeticAST", SimpleArithmetic.jm.astClass);
+    $.put("SimpleArithmeticCompiler", SimpleArithmetic.jm.astCompilerClass);
+    $.put("TableMaker", TableMaker.apiClass);
     return $;
   }).get();
   private static final String PATH = "./src/test/java/fling/examples/generated/";
