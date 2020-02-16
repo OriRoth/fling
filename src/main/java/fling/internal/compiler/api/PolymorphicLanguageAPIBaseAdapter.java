@@ -1,6 +1,6 @@
 package fling.internal.compiler.api;
 
-import java.util.List;
+import java.util.*;
 
 import fling.internal.compiler.api.APICompiler.MethodDeclaration;
 import fling.internal.compiler.api.nodes.*;

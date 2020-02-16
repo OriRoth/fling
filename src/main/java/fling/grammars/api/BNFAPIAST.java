@@ -1,5 +1,7 @@
 package fling.grammars.api;
 
+import java.util.List;
+
 import fling.*;
 
 /**
@@ -10,9 +12,9 @@ import fling.*;
 @SuppressWarnings("all") public interface BNFAPIAST {
   class PlainBNF {
     public final Variable start;
-    public final java.util.List<Rule> rule;
+    public final List<Rule> rule;
 
-    public PlainBNF(Variable start, java.util.List<Rule> rule) {
+    public PlainBNF(Variable start, List<Rule> rule) {
       this.start = start;
       this.rule = rule;
     }
@@ -49,9 +51,9 @@ import fling.*;
 
   class ConcreteDerivation implements RuleBody {
     public final Symbol[] to;
-    public final java.util.List<RuleTail> ruleTail;
+    public final List<RuleTail> ruleTail;
 
-    public ConcreteDerivation(Symbol[] to, java.util.List<RuleTail> ruleTail) {
+    public ConcreteDerivation(Symbol[] to, List<RuleTail> ruleTail) {
       this.to = to;
       this.ruleTail = ruleTail;
     }

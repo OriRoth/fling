@@ -43,7 +43,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     this.astClassesContainerName = astClassesContainerName;
   }
   @Override public String printParserClass() {
-    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s}", //
+    return String.format("package %s;\n import java.util.*;\n @SuppressWarnings(\"all\")public interface %s{%s}", //
         packageName, //
         apiName, //
         bnf.V.stream() //

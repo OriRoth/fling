@@ -1,6 +1,6 @@
 package fling.internal.compiler.api.nodes;
 
-import java.util.List;
+import java.util.*;
 
 public class APICompilationUnitNode<T, D, N> {
   public final List<AbstractMethodNode<T, D>> startMethods;

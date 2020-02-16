@@ -1,5 +1,4 @@
 package fling.examples.usecases;
-
 import static fling.examples.generated.TaggedBalancedParentheses.*;
 import static fling.examples.generated.TaggedBalancedParentheses.AB.*;
 

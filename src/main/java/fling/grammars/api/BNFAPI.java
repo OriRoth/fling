@@ -2,6 +2,8 @@ package fling.grammars.api;
 
 import static fling.grammars.api.BNFAPICompiler.parse_PlainBNF;
 
+import java.util.*;
+
 import fling.*;
 
 /**
@@ -64,43 +66,46 @@ import fling.*;
 
   static class α implements $, q0$_$_q0$, q0ø__Rule1$start_q0$q0ø, q0$__Rule1$_q0$q0ø, q0ø__Rule1$RuleBody$_q0$q0ø,
       q0ø__Rule1$into_q0$q0ø, q0$__RuleTail1$_derivespecializeq0$q0ø {
-    public java.util.List<fling.internal.compiler.Assignment> w = new java.util.LinkedList();
+    public List<fling.internal.compiler.Assignment> w = new ArrayList<>();
 
     public α bnf() {
       this.w.add(new fling.internal.compiler.Assignment(Σ.bnf, new Object[] {}));
-      return this;
+      return self();
     }
     public α start(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.start, new Object[] { variable }));
-      return this;
+      return self();
     }
     public α derive(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.derive, new Object[] { variable }));
-      return this;
+      return self();
     }
     public α specialize(Variable variable) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.specialize, new Object[] { variable }));
-      return this;
+      return self();
     }
     public α into(Variable... variables) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.into, new Object[] { variables }));
-      return this;
+      return self();
     }
     public α to(Symbol... symbols) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.to, new Object[] { symbols }));
-      return this;
+      return self();
     }
     public α toEpsilon() {
       this.w.add(new fling.internal.compiler.Assignment(Σ.toEpsilon, new Object[] {}));
+      return self();
+    }
+    public α self() {
       return this;
     }
     public α or(Symbol... symbols) {
       this.w.add(new fling.internal.compiler.Assignment(Σ.or, new Object[] { symbols }));
-      return this;
+      return self();
     }
     public α orNone() {
       this.w.add(new fling.internal.compiler.Assignment(Σ.orNone, new Object[] {}));
-      return this;
+      return self();
     }
     public BNF build() {
       return BNF.toBNF(parse_PlainBNF(w));

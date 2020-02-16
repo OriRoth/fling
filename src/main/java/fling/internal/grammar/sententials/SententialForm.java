@@ -1,6 +1,6 @@
 package fling.internal.grammar.sententials;
 
-import java.util.List;
+import java.util.*;
 
 import fling.Symbol;
 

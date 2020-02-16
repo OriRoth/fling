@@ -35,9 +35,9 @@ import fling.internal.grammar.sententials.*;
   @Override public String printFluentAPI(
       final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
-    return String.format("%s%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
+    return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
-        packageName == null ? "" : String.format("package %s;", packageName), //
+        packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()), //
         fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //

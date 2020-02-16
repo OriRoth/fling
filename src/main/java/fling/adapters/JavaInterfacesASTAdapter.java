@@ -24,7 +24,7 @@ import fling.internal.compiler.ast.nodes.*;
   }
   @Override public String printASTClass(final ASTCompilationUnitNode compilationUnit) {
     namer.name(compilationUnit);
-    return String.format("package %s;@SuppressWarnings(\"all\")public interface %s{%s%s}", //
+    return String.format("package %s;\n import java.util.*;\n @SuppressWarnings(\"all\")public interface %s{%s%s}", //
         packageName, //
         className, //
         compilationUnit.classes.stream() //
