@@ -2,8 +2,6 @@
 
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface HTMLTable {
   public static q0ø_Table$_q0$q0ø<q0$_$_q0$<$>, $> html(java.lang.String string) {

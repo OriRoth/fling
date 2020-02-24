@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.grammars.api;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.Σ.*;
 
-import java.util.*;
+import java.util.List;
 
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
@@ -24,25 +24,25 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
   }
   public static Rule parse_Rule(List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, derive))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, derive))
       return parse_Rule1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, specialize))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, specialize))
       return parse_Rule2(w);
     return null;
   }
   public static RuleBody parse_RuleBody(List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, to))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, to))
       return parse_RuleBody1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, toEpsilon))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, toEpsilon))
       return parse_RuleBody2(w);
     return null;
   }
   public static RuleTail parse_RuleTail(List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, or))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, or))
       return parse_RuleTail1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, orNone))
+    if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, orNone))
       return parse_RuleTail2(w);
     return null;
   }
@@ -97,7 +97,7 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
     if (w.isEmpty())
       return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, derive, specialize)))
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, derive, specialize)))
       return java.util.Collections.emptyList();
     Rule rule = parse_Rule(w);
     List<Object> _c = parse__Rule2(w);
@@ -109,7 +109,7 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
     if (w.isEmpty())
       return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(_a.σ, or, orNone)))
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, or, orNone)))
       return java.util.Collections.emptyList();
     RuleTail ruleTail = parse_RuleTail(w);
     List<Object> _c = parse__RuleTail2(w);

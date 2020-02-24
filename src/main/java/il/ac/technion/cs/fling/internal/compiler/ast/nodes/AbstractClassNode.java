@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler.ast.nodes;
 
 
-import java.util.*;
+import java.util.List;
 
 import il.ac.technion.cs.fling.Variable;
 

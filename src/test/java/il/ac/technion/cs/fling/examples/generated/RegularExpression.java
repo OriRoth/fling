@@ -2,8 +2,6 @@
 
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface RegularExpression {
   public static q0ø_RE$_q0$q0ø<q0$_$_q0$<$>, $> re() {

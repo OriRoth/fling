@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface SimpleArithmeticCompiler {
   public static il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.E parse_E(
@@ -26,7 +24,7 @@ public interface SimpleArithmeticCompiler {
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_E_2(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.plus))
       return parse_E_1(w);
     return parse_E_2(w);
@@ -35,10 +33,10 @@ public interface SimpleArithmeticCompiler {
   public static il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.F parse_F(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.begin))
       return parse_F1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.i)) return parse_F2(w);
     return null;
   }
@@ -47,7 +45,7 @@ public interface SimpleArithmeticCompiler {
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_T_2(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.mult))
       return parse_T_1(w);
     return parse_T_2(w);

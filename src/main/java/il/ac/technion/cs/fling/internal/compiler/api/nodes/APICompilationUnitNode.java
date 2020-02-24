@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.api.nodes;
 
-import java.util.*;
+import java.util.List;
 
 public class APICompilationUnitNode<T, D, N> {
   public final List<AbstractMethodNode<T, D>> startMethods;

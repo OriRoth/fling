@@ -2,8 +2,6 @@
 
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface AnBn {
   public static q0_EX_q2<$> a() {

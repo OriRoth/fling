@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.*;
-import static il.ac.technion.cs.fling.internal.util.Collections.*;
+import static il.ac.technion.cs.fling.internal.util.As.*;
 import static java.util.stream.Collectors.toList;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class PolynomialAPICompiler extends APICompiler {
     return $;
   }
   @Override protected List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
-    return chainList(fixedInterfaces(), types.values());
+    return list(fixedInterfaces(), types.values());
   }
   @SuppressWarnings("unused") @Override protected ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation() {
     return new ConcreteImplementationNode<>(dpda.Σ() //
@@ -75,7 +75,7 @@ public class PolynomialAPICompiler extends APICompiler {
     new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
-    return new InterfaceNode<>(new InterfaceDeclaration(q, α, null, asWord(dpda.Q), dpda.isAccepting(q)), //
+    return new InterfaceNode<>(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //
         Collections.unmodifiableList($));
   }
   /**
@@ -111,7 +111,7 @@ public class PolynomialAPICompiler extends APICompiler {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
   }
   private List<PolymorphicTypeNode<TypeName>> getTypeArguments(boolean isInitialType) {
-    return !isInitialType ? asList(typeVariables.values())
+    return !isInitialType ? list(typeVariables.values())
         : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName> top() : PolymorphicTypeNode.<TypeName> bot())
             .collect(toList());
   }

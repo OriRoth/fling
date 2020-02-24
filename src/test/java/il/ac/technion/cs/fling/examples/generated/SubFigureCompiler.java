@@ -1,15 +1,13 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface SubFigureCompiler {
   public static il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure parse_Figure(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.load)) return parse_Figure1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.row,
         il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.column)) return parse_Figure2(w);
@@ -19,10 +17,10 @@ public interface SubFigureCompiler {
   public static il.ac.technion.cs.fling.examples.generated.SubFigureAST.Orientation
       parse_Orientation(java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.row))
       return parse_Orientation1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.column))
       return parse_Orientation2(w);
     return null;
@@ -83,7 +81,7 @@ public interface SubFigureCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.load,
         il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.row,

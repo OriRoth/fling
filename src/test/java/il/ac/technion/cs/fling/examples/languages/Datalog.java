@@ -16,6 +16,7 @@ import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 /**
  * Fling input specifying the formal
  * 

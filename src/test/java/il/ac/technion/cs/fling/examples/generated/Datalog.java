@@ -2,8 +2,6 @@
 
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface Datalog {
   public static q0ø__Statement2$of_q0$q0ø<q0$_$_q0$<$>, $> fact(java.lang.String string) {

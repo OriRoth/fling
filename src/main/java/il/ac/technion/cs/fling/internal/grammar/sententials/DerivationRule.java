@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar.sententials;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.Variable;

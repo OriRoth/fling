@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.grammars;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.util.Collections.reversed;
+import static il.ac.technion.cs.fling.internal.util.As.reversed;
 
 import java.util.*;
 

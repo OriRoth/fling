@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.api;
 
-import java.util.*;
+import java.util.List;
 
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;

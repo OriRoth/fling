@@ -1,14 +1,12 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface TaggedBalancedParenthesesCompiler {
   public static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.P parse_P(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_P2(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.c))
       return parse_P1(w);
     return parse_P2(w);
@@ -17,10 +15,10 @@ public interface TaggedBalancedParenthesesCompiler {
   public static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.AB parse_AB(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.a))
       return parse_AB1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.b))
       return parse_AB2(w);
     return null;
@@ -84,7 +82,7 @@ public interface TaggedBalancedParenthesesCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.b)))
       return java.util.Collections.emptyList();
     _a = w.remove(0);

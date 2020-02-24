@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.*;
-import static il.ac.technion.cs.fling.internal.util.Collections.*;
+import static il.ac.technion.cs.fling.internal.util.As.*;
 import static java.util.stream.Collectors.toList;
 
 import java.util.*;
@@ -44,7 +44,7 @@ public class ReliableAPICompiler extends APICompiler {
     return $;
   }
   @Override protected List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
-    return chainList( //
+    return list( //
         fixedInterfaces(), //
         types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
   }
@@ -102,7 +102,7 @@ public class ReliableAPICompiler extends APICompiler {
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
     return $.isEmpty() ? null
-        : new InterfaceNode<>(new InterfaceDeclaration(q, α, legalJumps, asWord(legalJumps), dpda.isAccepting(q)), //
+        : new InterfaceNode<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
             Collections.unmodifiableList($));
   }
   /**

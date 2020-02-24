@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface ArithmeticExpressionCompiler {
   public static il.ac.technion.cs.fling.examples.generated.ArithmeticExpressionAST.E parse_E(
@@ -26,10 +24,10 @@ public interface ArithmeticExpressionCompiler {
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_E_3(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.plus))
       return parse_E_1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.minus))
       return parse_E_2(w);
     return parse_E_3(w);
@@ -38,13 +36,13 @@ public interface ArithmeticExpressionCompiler {
   public static il.ac.technion.cs.fling.examples.generated.ArithmeticExpressionAST.F parse_F(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.begin))
       return parse_F1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.v))
       return parse_F2(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.n))
       return parse_F3(w);
     return null;
@@ -54,10 +52,10 @@ public interface ArithmeticExpressionCompiler {
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_T_3(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.times))
       return parse_T_1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.divide))
       return parse_T_2(w);
     return parse_T_3(w);

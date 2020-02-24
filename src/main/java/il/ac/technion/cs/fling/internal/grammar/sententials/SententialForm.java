@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar.sententials;
 
-import java.util.*;
+import java.util.List;
 
 import il.ac.technion.cs.fling.Symbol;
 

@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface DatalogCompiler {
   public static il.ac.technion.cs.fling.examples.generated.DatalogAST.Program parse_Program(
@@ -19,13 +17,13 @@ public interface DatalogCompiler {
   public static il.ac.technion.cs.fling.examples.generated.DatalogAST.Statement parse_Statement(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.fact)) return parse_Fact(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.Datalog.Σ.always,
         il.ac.technion.cs.fling.examples.languages.Datalog.Σ.infer)) return parse_Rule(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.query)) return parse_Query(w);
     return null;
   }
@@ -44,10 +42,10 @@ public interface DatalogCompiler {
   public static il.ac.technion.cs.fling.examples.generated.DatalogAST.Rule parse_Rule(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.always))
       return parse_Bodyless(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.infer)) return parse_WithBody(w);
     return null;
   }
@@ -143,9 +141,9 @@ public interface DatalogCompiler {
   public static il.ac.technion.cs.fling.examples.generated.DatalogAST.Term parse_Term(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.l)) return parse_Term1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.v)) return parse_Term2(w);
     return null;
   }
@@ -183,7 +181,7 @@ public interface DatalogCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.Datalog.Σ.fact,
         il.ac.technion.cs.fling.examples.languages.Datalog.Σ.query,
@@ -201,7 +199,7 @@ public interface DatalogCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.Datalog.Σ.and)))
       return java.util.Collections.emptyList();
     il.ac.technion.cs.fling.examples.generated.DatalogAST.AdditionalClause additionalClause =

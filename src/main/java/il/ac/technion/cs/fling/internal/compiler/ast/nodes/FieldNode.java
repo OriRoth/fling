@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.ast.nodes;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.*;
 
 import il.ac.technion.cs.fling.*;

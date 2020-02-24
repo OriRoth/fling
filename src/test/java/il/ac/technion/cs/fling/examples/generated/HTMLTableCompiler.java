@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface HTMLTableCompiler {
   public static il.ac.technion.cs.fling.examples.generated.HTMLTableAST.HTML parse_HTML(
@@ -93,9 +91,9 @@ public interface HTMLTableCompiler {
   public static il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Cell parse_Cell(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.¢)) return parse_Cell1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.table)) return parse_Table(w);
     return null;
   }
@@ -115,7 +113,7 @@ public interface HTMLTableCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.tr)))
       return java.util.Collections.emptyList();
     il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Row row = parse_Row(w);
@@ -129,7 +127,7 @@ public interface HTMLTableCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.th)))
       return java.util.Collections.emptyList();
     il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Th th = parse_Th(w);
@@ -143,7 +141,7 @@ public interface HTMLTableCompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.td)))
       return java.util.Collections.emptyList();
     il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Td td = parse_Td(w);

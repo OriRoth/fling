@@ -2,8 +2,6 @@
 
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface SubFigure {
   public static q0$_$_q0$<$> load(java.lang.String string) {

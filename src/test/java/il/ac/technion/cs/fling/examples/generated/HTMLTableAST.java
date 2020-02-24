@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface HTMLTableAST {
   public class HTML {

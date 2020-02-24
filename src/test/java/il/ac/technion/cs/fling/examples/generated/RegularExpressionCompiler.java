@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface RegularExpressionCompiler {
   public static il.ac.technion.cs.fling.examples.generated.RegularExpressionAST.Expression
@@ -16,25 +14,25 @@ public interface RegularExpressionCompiler {
   public static il.ac.technion.cs.fling.examples.generated.RegularExpressionAST.RE parse_RE(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.exactly))
       return parse_RE1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.option))
       return parse_RE2(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.noneOrMore))
       return parse_RE3(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.oneOrMore))
       return parse_RE4(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.either))
       return parse_RE5(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.anyChar))
       return parse_RE6(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.anyDigit))
       return parse_RE7(w);
     return null;
@@ -44,10 +42,10 @@ public interface RegularExpressionCompiler {
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     if (w.isEmpty()) return parse_Tail3(w);
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.and))
       return parse_Tail1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.or))
       return parse_Tail2(w);
     return parse_Tail3(w);

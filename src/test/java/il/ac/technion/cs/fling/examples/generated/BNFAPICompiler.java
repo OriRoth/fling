@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.generated;
 
-import java.util.*;
-
 @SuppressWarnings("all")
 public interface BNFAPICompiler {
   public static il.ac.technion.cs.fling.examples.generated.BNFAPIAST.PlainBNF parse_PlainBNF(
@@ -23,9 +21,9 @@ public interface BNFAPICompiler {
   public static il.ac.technion.cs.fling.examples.generated.BNFAPIAST.Rule parse_Rule(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.derive)) return parse_Rule1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.specialize)) return parse_Rule2(w);
     return null;
   }
@@ -33,9 +31,9 @@ public interface BNFAPICompiler {
   public static il.ac.technion.cs.fling.examples.generated.BNFAPIAST.RuleBody parse_RuleBody(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.to)) return parse_RuleBody1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.toEpsilon))
       return parse_RuleBody2(w);
     return null;
@@ -44,9 +42,9 @@ public interface BNFAPICompiler {
   public static il.ac.technion.cs.fling.examples.generated.BNFAPIAST.RuleTail parse_RuleTail(
       java.util.List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {
     il.ac.technion.cs.fling.internal.compiler.Assignment _a = w.get(0);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.or)) return parse_RuleTail1(w);
-    if (il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ, il.ac.technion.cs.fling.examples.languages.BNF.Σ.orNone)) return parse_RuleTail2(w);
     return null;
   }
@@ -122,7 +120,7 @@ public interface BNFAPICompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.BNF.Σ.derive,
         il.ac.technion.cs.fling.examples.languages.BNF.Σ.specialize)))
@@ -138,7 +136,7 @@ public interface BNFAPICompiler {
     java.util.List<java.lang.Object> _b;
     if (w.isEmpty()) return java.util.Collections.emptyList();
     _a = w.get(0);
-    if (!(il.ac.technion.cs.fling.internal.util.Collections.included(
+    if (!(il.ac.technion.cs.fling.internal.util.Is.included(
         _a.σ,
         il.ac.technion.cs.fling.examples.languages.BNF.Σ.or,
         il.ac.technion.cs.fling.examples.languages.BNF.Σ.orNone)))
