@@ -66,7 +66,7 @@ public class LL1 extends Grammar {
     δs.add(new δ<>(q0ø, ε(), Constants.$$, q0$, Word.empty()));
     // Moving from q0ø to q0$ with ε + accepting nullable variable.
     for (final Variable v : A.keySet())
-      if (isNullable(bnf, v))
+      if (bnf.isNullable(v))
         δs.add(new δ<>(q0ø, ε(), A.get(v), q0$, new Word<>(A.get(v))));
     // Moving from q0ø to qσ with σ + appropriate variable.
     for (final DerivationRule r : bnf.rules)
@@ -75,13 +75,13 @@ public class LL1 extends Grammar {
           if (!Constants.$$.equals(σ)) {
             δs.add(new δ<>(q0ø, σ, r.lhs, typeNameMapping.get(σ),
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
-            if (!isNullable(bnf, r.lhs))
+            if (!bnf.isNullable(r.lhs))
               δs.add(new δ<>(q0ø, σ, A.get(r.lhs), typeNameMapping.get(σ),
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
           }
     for (final Variable v : bnf.V)
       for (final Verb σ : bnf.Σ)
-        if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ) && isNullable(bnf, v))
+        if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ) && bnf.isNullable(v))
           δs.add(new δ<>(q0ø, σ, v, typeNameMapping.get(σ), Word.empty()));
     // Moving from q0ø to q0ø with σ + σ.
     for (final Verb σ : bnf.Σ)
@@ -98,18 +98,18 @@ public class LL1 extends Grammar {
       δs.add(new δ<>(q0$, ε(), v, q0ø, new Word<>(v)));
     // Moving from q0$ to q0ø with ε + non-nullable accepting variable.
     for (final Variable v : bnf.V)
-      if (!isNullable(bnf, v))
+      if (!bnf.isNullable(v))
         δs.add(new δ<>(q0$, ε(), A.get(v), q0ø, new Word<>(A.get(v))));
     // Moving from q0$ to qσ with σ + appropriate variable.
     for (final DerivationRule r : bnf.rules)
-      if (isNullable(bnf, r.lhs))
+      if (bnf.isNullable(r.lhs))
         for (final SententialForm sf : r.rhs)
           for (final Verb σ : bnf.firsts(sf))
             if (!Constants.$$.equals(σ))
               δs.add(new δ<>(q0$, σ, A.get(r.lhs), typeNameMapping.get(σ),
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
     for (final Variable v : bnf.V)
-      if (isNullable(bnf, v))
+      if (bnf.isNullable(v))
         for (final Verb σ : bnf.Σ)
           if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
             δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ), Word.empty()));
@@ -163,9 +163,6 @@ public class LL1 extends Grammar {
     // Automaton gets stuck after reaching qT.
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
-  @SuppressWarnings("static-method") private boolean isNullable(final BNF bnf, final Symbol s) {
-    return bnf.isNullable(s);
-  }
   @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
@@ -178,7 +175,7 @@ public class LL1 extends Grammar {
           getAcceptingVariable(s.asVariable()) : //
           s.isVerb() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //
               s);
-      isAccepting &= isNullable(bnf, s);
+      isAccepting &= bnf.isNullable(s);
     }
     return new Word<>(reversed($));
   }
