@@ -23,7 +23,7 @@
 /**
  * Java classes in this package represent programs written with automatically generated fluent API.
  * Needless to say, these classes cannot be compiled before this fluent API was generated.
- * To generate the respective fluent APIs, run {@link ExamplesMainRunMeFirst}.
+ * To generate the respective fluent APIs, run {@link LoopOverLanguageDefinitions}.
  *
  * @since April 2019
  */

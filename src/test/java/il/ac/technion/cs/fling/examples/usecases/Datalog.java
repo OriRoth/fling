@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.*;
 
-import il.ac.technion.cs.fling.examples.ExamplesMainRunMeFirst;
+import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.*;
 import za.co.wstoop.jatalog.*;
@@ -16,7 +16,7 @@ import za.co.wstoop.jatalog.*;
 /**
  * This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
- * To generate the respective fluent APIs, run {@link ExamplesMainRunMeFirst}.
+ * To generate the respective fluent APIs, run {@link LoopOverLanguageDefinitions}.
  * 
  * @author Ori Roth
  * @since April 2019
