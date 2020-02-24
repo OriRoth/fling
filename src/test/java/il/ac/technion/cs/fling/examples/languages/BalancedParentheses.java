@@ -5,10 +5,10 @@ import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
-import il.ac.technion.cs.fling.adapters.JavaMediator;
+import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
+import il.ac.technion.cs.fling.examples.languages.BalancedParentheses.*;
 
-public class BalancedParentheses {
+public class BalancedParentheses implements FluentLanguageAPI<Σ, V> {
   public enum Σ implements Terminal {
     c, ↄ
   }
@@ -17,11 +17,17 @@ public class BalancedParentheses {
     P
   }
 
-  public static final BNF bnf = bnf(). //
-      start(P). //
-      derive(P).to(c, P, ↄ, P). //
-      derive(P).toEpsilon(). //
-      build();
-  public static final JavaMediator jm = new JavaMediator(bnf, //
-      "il.ac.technion.cs.fling.examples.generated", "BalancedParentheses", Σ.class);
+  @Override public Class<Σ> Σ() {
+    return Σ.class;
+  }
+  @Override public Class<V> V() {
+    return V.class;
+  }
+  @Override public il.ac.technion.cs.fling.BNF BNF() {
+    return bnf(). //
+        start(P). //
+        derive(P).to(c, P, ↄ, P). //
+        derive(P).toEpsilon(). //
+        build();
+  }
 }

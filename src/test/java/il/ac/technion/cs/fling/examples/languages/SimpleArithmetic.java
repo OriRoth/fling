@@ -11,10 +11,11 @@ import java.nio.file.*;
 import com.google.googlejavaformat.java.*;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
+import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
+import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.*;
 
-public class SimpleArithmetic {
+public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
   // Terminal symbols:
   public enum Σ implements Terminal {
     plus, mult, begin, end, i
@@ -25,31 +26,40 @@ public class SimpleArithmetic {
     E, E_, T, T_, F
   }
 
-  public static final BNF bnf = bnf(). // Start defining BNF
-      start(E). // Declare the start symbol
-      derive(E).to(T, E_). // E ::= T E'
-      derive(E_).to(plus, T, E_).orNone(). // E' ::= + T E' | ε
-      derive(T).to(F, T_). // T ::= F T'
-      derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ε
-      derive(F).to(begin, E, end).or(i.with(Integer.class)). // F ::= (E) | int
-      build(); // Yield BNF
-  public static JavaMediator jm = new JavaMediator(SimpleArithmetic.bnf, "il.ac.technion.cs.fling.examples.generated", "SimpleArithmetic",
-      SimpleArithmetic.Σ.class);
-
+  @Override public Class<Σ> Σ() {
+    return Σ.class;
+  }
+  @Override public Class<V> V() {
+    return V.class;
+  }
+  @Override public il.ac.technion.cs.fling.BNF BNF() {
+    // @formatter:off
+    return bnf(). // Start defining BNF
+        start(E). // Declare the start symbol
+        derive(E).to(T, E_). // E ::= T E'
+        derive(E_).to(plus, T, E_).orNone(). // E' ::= + T E' | ε
+        derive(T).to(F, T_). // T ::= F T'
+        derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ε
+        derive(F).to(begin, E, end).or(i.with(Integer.class)). // F ::= (E) | int
+        build(); // Yield BNF;
+    // @formatter:on
+  }
   public static void main(String[] args) //
       throws IOException, FormatterException {
-    JavaMediator jm = new JavaMediator(bnf, // Grammar definition
+    // @formatter:off
+    JavaMediator jm = new JavaMediator(new SimpleArithmetic().BNF(), // Grammar definition
         "il.ac.technion.cs.fling.examples.generated", // Output package name
         "SimpleArithmetic", // Output base class name
         Σ.class // Class of terminal symbols
     );
+    // @formatter:on
     writeToFile("SimpleArithmetic", jm.apiClass);
     writeToFile("SimpleArithmeticAST", jm.astClass);
     writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
   }
   private static void writeToFile(String fileName, String fileContent) //
       throws IOException, FormatterException {
-    String path = "./src/test/java/fling/examples/generated/";
+    String path = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     final Formatter formatter = new Formatter();
     final Path filePath = Paths.get(path + fileName + ".java");
     Files.write(filePath, singleton(formatter.formatSource(fileContent)), //

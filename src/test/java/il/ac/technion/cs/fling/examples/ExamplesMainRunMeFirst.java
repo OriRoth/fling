@@ -11,44 +11,36 @@ import org.junit.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
+import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.automata.*;
 import il.ac.technion.cs.fling.examples.languages.*;
 
 @SuppressWarnings("static-method") public class ExamplesMainRunMeFirst {
   private static final boolean FORMAT_OUTPUT = true;
+  @SuppressWarnings("rawtypes") private static final FluentLanguageAPI[] BNFAPIs = { //
+      new BalancedParentheses(), //
+      new TaggedBalancedParentheses(), //
+      new Datalog(), //
+      new SubFigure(), //
+      new ArithmeticExpression(), //
+      new BNF(), //
+      new RegularExpression(), //
+      new HTMLTable(), //
+      new SimpleArithmetic(), //
+  };
   private static final Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
     final Map<String, String> $ = new LinkedHashMap<>();
     $.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
     $.put("LongFall", LongFall.JavaFluentAPI);
     $.put("AnBn", AnBn.JavaFluentAPI);
     $.put("AeqB", AeqB.JavaFluentAPI);
-    $.put("BalancedParentheses", BalancedParentheses.jm.apiClass);
-    $.put("BalancedParenthesesAST", BalancedParentheses.jm.astClass);
-    $.put("BalancedParenthesesCompiler", BalancedParentheses.jm.astCompilerClass);
-    $.put("TaggedBalancedParentheses", TaggedBalancedParentheses.jm.apiClass);
-    $.put("TaggedBalancedParenthesesAST", TaggedBalancedParentheses.jm.astClass);
-    $.put("TaggedBalancedParenthesesCompiler", TaggedBalancedParentheses.jm.astCompilerClass);
-    $.put("Datalog", Datalog.jm.apiClass);
-    $.put("DatalogAST", Datalog.jm.astClass);
-    $.put("DatalogCompiler", Datalog.jm.astCompilerClass);
-    $.put("SubFigure", SubFigure.jm.apiClass);
-    $.put("SubFigureAST", SubFigure.jm.astClass);
-    $.put("SubFigureCompiler", SubFigure.jm.astCompilerClass);
-    $.put("ArithmeticExpression", ArithmeticExpression.jm.apiClass);
-    $.put("ArithmeticExpressionAST", ArithmeticExpression.jm.astClass);
-    $.put("ArithmeticExpressionCompiler", ArithmeticExpression.jm.astCompilerClass);
-    $.put("BNFAPI", BNF.jm.apiClass);
-    $.put("BNFAPIAST", BNF.jm.astClass);
-    $.put("BNFAPICompiler", BNF.jm.astCompilerClass);
-    $.put("RegularExpression", RegularExpression.jm.apiClass);
-    $.put("RegularExpressionAST", RegularExpression.jm.astClass);
-    $.put("RegularExpressionCompiler", RegularExpression.jm.astCompilerClass);
-    $.put("HTMLTable", HTMLTable.jm.apiClass);
-    $.put("HTMLTableAST", HTMLTable.jm.astClass);
-    $.put("HTMLTableCompiler", HTMLTable.jm.astCompilerClass);
-    $.put("SimpleArithmetic", SimpleArithmetic.jm.apiClass);
-    $.put("SimpleArithmeticAST", SimpleArithmetic.jm.astClass);
-    $.put("SimpleArithmeticCompiler", SimpleArithmetic.jm.astCompilerClass);
+    for (FluentLanguageAPI<?, ?> api : BNFAPIs) {
+      JavaMediator mediator = new JavaMediator(api.BNF(), //
+          "il.ac.technion.cs.fling.examples.generated", api.name(), api.Σ());
+      $.put(api.name(), mediator.apiClass);
+      $.put(api.name() + "AST", mediator.astClass);
+      $.put(api.name() + "Compiler", mediator.astCompilerClass);
+    }
     $.put("TableMaker", TableMaker.apiClass);
     return $;
   }).get();

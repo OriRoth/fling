@@ -16,13 +16,16 @@ import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
+import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
+import il.ac.technion.cs.fling.examples.languages.Datalog.*;
+
 /**
- * Fling input specifying the formal
+ * Fling input specifying the formal Datalog language.
  * 
  * @author Yossi Gil
  */
-public class Datalog {
+public class Datalog implements FluentLanguageAPI<Σ, V> {
   /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
     infer, fact, query, of, and, when, always, v, l
@@ -37,6 +40,13 @@ public class Datalog {
   public enum V implements Variable {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
     RuleHead, RuleBody, FirstClause, AdditionalClause, Term
+  }
+
+  @Override public Class<Σ> Σ() {
+    return Σ.class;
+  }
+  @Override public Class<V> V() {
+    return V.class;
   }
 
   /**
@@ -65,30 +75,32 @@ public class Datalog {
       derive(AdditionalClause).to(and.with(S), of.many(Term)). //
       derive(Term).to(l.with(S)).or(v.with(S)). //
       build();
-  /**
-   * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
-   * types/AST run-time compiler.
-   */
-  public static final JavaMediator jm = new JavaMediator(//
-      bnf, // use this BNF as language specification
-      "il.ac.technion.cs.fling.examples.generated", // Name of package in which output will reside
-      "Datalog", // Name of generated class,
-      Σ.class //
-  );
 
+  @Override public il.ac.technion.cs.fling.BNF BNF() {
+    return bnf;
+  }
   /**
    * Prints the Datalog API/AST types/AST run-time compiler to corresponding
    * files.
    */
   public static void main(String[] args) throws IOException, FormatterException {
+    /* The {@link JavaMediator} responsible for compiling the Java Datalog
+     * API/AST types/AST run-time compiler. */
+    JavaMediator jm = new JavaMediator(//
+        bnf, // use this BNF as language specification
+        // Name of package in which output will reside
+        "il.ac.technion.cs.fling.examples.generated",
+        // Name of generated class
+        "Datalog", Σ.class //
+    );
     Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
       final Map<String, String> $ = new LinkedHashMap<>();
-      $.put("Datalog", Datalog.jm.apiClass);
-      $.put("DatalogAST", Datalog.jm.astClass);
-      $.put("DatalogCompiler", Datalog.jm.astCompilerClass);
+      $.put("Datalog", jm.apiClass);
+      $.put("DatalogAST", jm.astClass);
+      $.put("DatalogCompiler", jm.astCompilerClass);
       return $;
     }).get();
-    String PATH = "./src/test/java/fling/examples/generated/";
+    String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {

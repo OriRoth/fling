@@ -254,7 +254,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
   private String printTerminalInclusionCondition(final Set<Verb> firsts) {
     return String.format("%s.included(_a.σ,%s)", //
-        il.ac.technion.cs.fling.internal.util.As.class.getCanonicalName(), //
+        il.ac.technion.cs.fling.internal.util.Is.class.getCanonicalName(), //
         firsts.stream() //
             .map(terminal -> String.format("%s.%s", //
                 Σ.getCanonicalName(), //
