@@ -1,7 +1,14 @@
-package fling.examples.usecases;
+package il.ac.technion.cs.fling.examples.languages;
 
 public interface Chars {
-  boolean member(char c);
+  boolean includes(char c);
+  default int size() {
+    int $ = 0;
+    for (int c = Character.MIN_VALUE; c <= Character.MAX_VALUE; ++c)
+      if (includes((char) c))
+        ++$;
+    return $;
+  }
 
   interface To {
     Chars to(char c);
@@ -11,7 +18,7 @@ public interface Chars {
     return new To() {
       @Override public Chars to(char to) {
         return new Chars() {
-          @Override public boolean member(char c) {
+          @Override public boolean includes(char c) {
             return c >= from && c <= to;
           }
         };
@@ -20,50 +27,50 @@ public interface Chars {
   }
   default Chars not() {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return !Chars.this.member(c);
+      @Override public boolean includes(char c) {
+        return !Chars.this.includes(c);
       }
     };
   }
   default Chars or(Chars other) {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return Chars.this.member(c) || other.member(c);
+      @Override public boolean includes(char c) {
+        return Chars.this.includes(c) || other.includes(c);
       }
     };
   }
   default Chars and(Chars other) {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return Chars.this.member(c) && other.member(c);
+      @Override public boolean includes(char c) {
+        return Chars.this.includes(c) && other.includes(c);
       }
     };
   }
   default Chars xor(Chars other) {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return Chars.this.member(c) ^ other.member(c);
+      @Override public boolean includes(char c) {
+        return Chars.this.includes(c) ^ other.includes(c);
       }
     };
   }
   default Chars except(Chars other) {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return Chars.this.member(c) && !other.member(c);
+      @Override public boolean includes(char c) {
+        return Chars.this.includes(c) && !other.includes(c);
       }
     };
   }
   default Chars or(char singleton) {
     return new Chars() {
-      @Override public boolean member(char c) {
-        return Chars.this.member(c) || c == singleton;
+      @Override public boolean includes(char c) {
+        return Chars.this.includes(c) || c == singleton;
       }
     };
   }
 
   /** No character */
   static Chars EMPTY = new Chars() {
-    @Override public boolean member(char c) {
+    @Override public boolean includes(char c) {
       return false;
     }
   };
