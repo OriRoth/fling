@@ -50,22 +50,26 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   }
   @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("%s* %s() {return nullptr;}", //
+    return String.format("%s %s(){return %s();}", //
         printType(returnType), //
-        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name());
+        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
+        printType(returnType));
   }
   @Override public String printTerminationMethod() {
-    return String.format("virtual void %s() const;", terminationMethodName);
+    return String.format("void %s(){};", terminationMethodName);
   }
   @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("virtual %s %s(%s) const;", printType(returnType), declaration.name.name(),
+    return String.format("%s %s(%s){return %s();};", //
+        printType(returnType), //
+        declaration.name.name(), //
         declaration.getInferredParameters().stream() //
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-            .collect(joining(",")));
+            .collect(joining(",")), //
+        printType(returnType));
   }
   @Override public String printTopInterface() {
-    return String.format("class TOP{public:virtual void %s() const;};", terminationMethodName);
+    return String.format("class TOP{public:void %s(){};};", terminationMethodName);
   }
   @Override public String printBotInterface() {
     return "class BOT{};";
