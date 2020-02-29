@@ -3,7 +3,7 @@ package il.ac.technion.cs.fling.examples.languages;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import static org.hamcrest.CoreMatchers.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 @SuppressWarnings("static-method") public class CharsTest {
   @Test void test() {

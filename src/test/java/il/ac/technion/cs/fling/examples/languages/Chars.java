@@ -70,7 +70,7 @@ public interface Chars {
 
   /** No character */
   static Chars EMPTY = new Chars() {
-    @Override public boolean includes(char c) {
+    @Override public boolean includes(@SuppressWarnings("unused") char c) {
       return false;
     }
   };
