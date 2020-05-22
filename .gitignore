@@ -100,7 +100,6 @@ $.*
 texput.*
 Untitled*
 .~lock.*
-_*
 
 # Prefixes // vim: +,/^\s*$/-1!sort -u
 a.out
@@ -148,3 +147,10 @@ out/
 .classpath
 .project
 .settings/
+
+# MacOS junk
+.DS_Store
+
+# IntelliJunk
+.idea/
+.iml

@@ -86,6 +86,23 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.1.0</version>
 			</plugin>
+			<plugin>				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<classpathScope>test</classpathScope>
+					<mainClass>il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
