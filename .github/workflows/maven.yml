@@ -16,4 +16,4 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -X install --file pom.xml
+      run: mvn -e install --file pom.xml
