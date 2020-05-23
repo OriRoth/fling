@@ -24,4 +24,4 @@ jobs:
     - name: Build with Maven
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
-      run: mvn -X -B compile --file pom.xml
+      run: mvn -B compile --file pom.xml
