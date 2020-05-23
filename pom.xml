@@ -51,6 +51,22 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<id>compile-generator</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>
+									test/java/il/ac/technion/cs/fling/examples/LoopOverLanguageDefinitions.java
+								</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 				<configuration>
 					<compilerId>eclipse</compilerId>
 				</configuration>
