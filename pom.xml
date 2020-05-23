@@ -51,22 +51,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.0</version>
-				<executions>
-					<execution>
-						<id>compile-generator</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>
-									test/java/il/ac/technion/cs/fling/examples/LoopOverLanguageDefinitions.java
-								</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
 				<configuration>
 					<compilerId>eclipse</compilerId>
 				</configuration>
@@ -101,24 +85,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.1.0</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.6.0</version>
-				<executions>
-					<execution>
-						<id>generate-languages</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<classpathScope>test</classpathScope>
-					<mainClass>il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions</mainClass>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
