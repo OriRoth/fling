@@ -37,7 +37,7 @@ public abstract class Grammar {
 		this.ebnf = ebnf;
 		this.namer = namer;
 		this.bnf = getBNF(ebnf);
-		this.normalizedEBNF = getNormalizedBNF(ebnf);
+		this.normalizedEBNF = normalize(ebnf,namer);
 		this.normalizedBNF = getBNF(normalizedEBNF);
 		subBNFs = new LinkedHashMap<>();
 		for (Variable head : bnf.headVariables)
@@ -65,9 +65,9 @@ public abstract class Grammar {
 						symbols.add(symbol);
 						continue;
 					}
-					Quantifier notation = symbol.asQuantifier();
-					Variable head = notation.extend(namer, extensionProducts::add, R::add);
-					extensionHeadsMapping.put(head, notation);
+					Quantifier q = symbol.asQuantifier();
+					Variable head = q.extend(namer, extensionProducts::add, R::add);
+					extensionHeadsMapping.put(head, q);
 					symbols.add(head);
 				}
 				rhs.add(new SententialForm(symbols));
@@ -84,14 +84,15 @@ public abstract class Grammar {
 	}
 
 	private BNF computeSubBNF(Variable v) {
-		Set<Verb> Σ = new LinkedHashSet<>();
-		Set<Variable> V = new LinkedHashSet<>();
+		final Set<Verb> Σ = new LinkedHashSet<>();
+		final Set<Variable> V = new LinkedHashSet<>();
 		V.add(v);
-		Set<DerivationRule> rs = new LinkedHashSet<>();
-		for (int previousSize = -1; previousSize < rs.size();) {
-			previousSize = rs.size();
+		final Set<DerivationRule> rs = new LinkedHashSet<>();
+		for (boolean more = true; more; ) {
+			more = false;
 			for (DerivationRule r : bnf.rules)
 				if (!rs.contains(r) && V.contains(r.lhs)) {
+					more = true;
 					rs.add(r);
 					r.variables().forEachOrdered(V::add);
 					r.verbs().forEachOrdered(Σ::add);
@@ -100,7 +101,7 @@ public abstract class Grammar {
 		return new BNF(Σ, V, rs, v, null, null, null, true);
 	}
 
-	private BNF getNormalizedBNF(BNF bnf) {
+	private static BNF normalize(BNF bnf,Namer namer) {
 		Set<Variable> V = new LinkedHashSet<>(bnf.V);
 		Set<DerivationRule> R = new LinkedHashSet<>();
 		for (Variable v : bnf.V) {
