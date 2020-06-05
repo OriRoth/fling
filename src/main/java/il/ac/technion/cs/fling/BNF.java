@@ -24,45 +24,25 @@ import il.ac.technion.cs.fling.internal.util.Counter;
  * @author Ori Roth
  */
 public class BNF {
-  /**
-   * Derivation rules collection.
-   */
+  /** Derivation rules collection */
   public final Set<DerivationRule> rules;
-  /**
-   * Set of nullable variables and notations.
-   */
+  /** Set of nullable variables and notations */
   public final Set<Symbol> nullables;
-  /**
-   * Maps variables and notations to their firsts set.
-   */
+  /** Maps variables and notations to their firsts set */
   public final Map<Symbol, Set<Verb>> firsts;
-  /**
-   * Maps variables and notations to their follows set.
-   */
+  /** Maps variables and notations to their follows set */
   public final Map<Variable, Set<Verb>> follows;
-  /**
-   * Verbs collection.
-   */
+  /** Verbs collection */
   public final Set<Verb> Σ;
-  /**
-   * Variables collection.
-   */
+  /** Variables collection */
   public final Set<Variable> V;
-  /**
-   * Start variable.
-   */
+  /** Start variable */
   public final Variable startVariable;
-  /**
-   * Head variables set, containing variables used as API parameters.
-   */
+  /** Head variables set, containing variables used as API parameters */
   public final Set<Variable> headVariables;
-  /**
-   * Maps generated variables to the notation originated them. Optional.
-   */
+  /** Maps generated variables to the notation originated them. Optional */
   public final Map<Variable, Notation> extensionHeadsMapping;
-  /**
-   * Set of generated variables.
-   */
+  /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
   public BNF(final Set<Verb> Σ, final Set<? extends Variable> V, final Set<DerivationRule> R, final Variable startVariable,
@@ -85,9 +65,7 @@ public class BNF {
     this.firsts = getFirsts();
     this.follows = getFollows();
   }
-  /**
-   * @return all grammar symbols.
-   */
+  /** @return all grammar symbols */
   public Set<Symbol> symbols() {
     final Set<Symbol> $ = new LinkedHashSet<>();
     $.addAll(Σ);
