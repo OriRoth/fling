@@ -131,7 +131,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         }
       } else if (child.isVariable()) {
         assert bnf.extensionHeadsMapping.containsKey(child);
-        final Notation notation = bnf.extensionHeadsMapping.get(child);
+        final Quantifier notation = bnf.extensionHeadsMapping.get(child);
         assert notation.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : //
         "notation is not Java compatible";
         final List<FieldNodeFragment> fields = getFieldsInClassContext(notation, usedNames);

@@ -41,12 +41,12 @@ public class BNF {
   /** Head variables set, containing variables used as API parameters */
   public final Set<Variable> headVariables;
   /** Maps generated variables to the notation originated them. Optional */
-  public final Map<Variable, Notation> extensionHeadsMapping;
+  public final Map<Variable, Quantifier> extensionHeadsMapping;
   /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
   public BNF(final Set<Verb> Σ, final Set<? extends Variable> V, final Set<DerivationRule> R, final Variable startVariable,
-      final Set<Variable> headVariables, final Map<Variable, Notation> extensionHeadsMapping, final Set<Variable> extensionProducts,
+      final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping, final Set<Variable> extensionProducts,
       final boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
     Σ.add(Constants.$$);

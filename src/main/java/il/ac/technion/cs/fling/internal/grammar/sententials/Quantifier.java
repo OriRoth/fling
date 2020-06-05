@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 
-public interface Notation extends Symbol {
+public interface Quantifier extends Symbol {
   Collection<Symbol> abbreviatedSymbols();
   Variable extend(Namer namer, Consumer<Variable> variableDeclaration, Consumer<DerivationRule> ruleDeclaration);
   List<FieldNodeFragment> getFields(Function<Symbol, List<FieldNodeFragment>> fieldTypesSolver,

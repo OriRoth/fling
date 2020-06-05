@@ -20,7 +20,7 @@ import il.ac.technion.cs.fling.Terminal;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.sententials.DerivationRule;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Notation;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Quantifier;
 import il.ac.technion.cs.fling.internal.grammar.sententials.SententialForm;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
@@ -54,7 +54,7 @@ public abstract class Grammar {
 	private BNF getBNF(BNF ebnf) {
 		Set<Variable> V = new LinkedHashSet<>(ebnf.V);
 		Set<DerivationRule> R = new LinkedHashSet<>();
-		Map<Variable, Notation> extensionHeadsMapping = new LinkedHashMap<>();
+		Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
 		Set<Variable> extensionProducts = new LinkedHashSet<>();
 		for (DerivationRule rule : ebnf.rules) {
 			List<SententialForm> rhs = new ArrayList<>();
@@ -65,7 +65,7 @@ public abstract class Grammar {
 						symbols.add(symbol);
 						continue;
 					}
-					Notation notation = symbol.asNotation();
+					Quantifier notation = symbol.asNotation();
 					Variable head = notation.extend(namer, extensionProducts::add, R::add);
 					extensionHeadsMapping.put(head, notation);
 					symbols.add(head);

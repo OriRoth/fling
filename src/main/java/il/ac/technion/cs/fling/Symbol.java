@@ -14,7 +14,7 @@ public interface Symbol extends Named {
     return this instanceof Verb || Constants.$$.equals(this);
   }
   default boolean isNotation() {
-    return this instanceof Notation;
+    return this instanceof Quantifier;
   }
   default Terminal asTerminal() {
     return (Terminal) this;
@@ -25,8 +25,8 @@ public interface Symbol extends Named {
   default Verb asVerb() {
     return (Verb) this;
   }
-  default Notation asNotation() {
-    return (Notation) this;
+  default Quantifier asNotation() {
+    return (Quantifier) this;
   }
   static NoneOrMore noneOrMore(final Symbol symbol) {
     return new NoneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
