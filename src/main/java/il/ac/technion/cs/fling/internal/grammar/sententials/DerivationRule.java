@@ -50,14 +50,30 @@ public class DerivationRule {
 	}
 
 	public Stream<Verb> verbs() {
-		return symbols().filter(Symbol::isVerb).map(Symbol::asVerb);
+		return Stream.concat(verbs(symbols()), verbs(quantifiedSymbols()));
 	}
+
 
 	public Stream<Variable> variables() {
-		return symbols().filter(Symbol::isVariable).map(Symbol::asVariable);
+		return Stream.concat(variables(symbols()), variables(quantifiedSymbols()));
 	}
 
-	public Stream<Symbol> symbols() {
+	private Stream<Verb> verbs(Stream<Symbol> symbols) {
+		return symbols.filter(Symbol::isVerb).map(Symbol::asVerb);
+	}
+
+	private Stream<Symbol> quantifiedSymbols() {
+		return quantifiers().map(Quantifier::symbol);
+	}
+
+	private static Stream<Variable> variables(Stream<Symbol> symbols) {
+		return symbols.filter(Symbol::isVariable).map(Symbol::asVariable);
+	}
+
+	private Stream<Quantifier> quantifiers() {
+		return symbols().filter(Symbol::isQuantifier).map(Symbol::asQuantifier);
+	}
+	private Stream<Symbol> symbols() {
 		return rhs.stream().flatMap(Collection::stream);
 	}
 }

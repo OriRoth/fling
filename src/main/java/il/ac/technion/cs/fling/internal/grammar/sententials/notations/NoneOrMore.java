@@ -19,7 +19,7 @@ public class NoneOrMore implements Quantifier {
 
 	public NoneOrMore(final Symbol symbol) {
 		Objects.requireNonNull(symbol);
-		assert !symbol.isNotation() : "nested notations are not supported";
+		assert !symbol.isQuantifier() : "nested notations are not supported";
 		this.symbol = symbol;
 	}
 

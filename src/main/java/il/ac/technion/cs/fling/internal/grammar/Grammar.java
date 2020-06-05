@@ -61,11 +61,11 @@ public abstract class Grammar {
 			for (SententialForm sf : rule.rhs) {
 				List<Symbol> symbols = new ArrayList<>();
 				for (Symbol symbol : sf) {
-					if (!symbol.isNotation()) {
+					if (!symbol.isQuantifier()) {
 						symbols.add(symbol);
 						continue;
 					}
-					Quantifier notation = symbol.asNotation();
+					Quantifier notation = symbol.asQuantifier();
 					Variable head = notation.extend(namer, extensionProducts::add, R::add);
 					extensionHeadsMapping.put(head, notation);
 					symbols.add(head);

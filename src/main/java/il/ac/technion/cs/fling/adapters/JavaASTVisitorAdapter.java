@@ -83,7 +83,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
     clazz.fields.stream() //
         .map(FieldNode::source) //
         .forEach(source -> {
-          assert !source.isNotation()
+          assert !source.isQuantifier()
               || source.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : "BNF uses a non-Java-compatible notation";
         });
     clazz.fields.stream() //

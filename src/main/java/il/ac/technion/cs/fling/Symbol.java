@@ -13,7 +13,7 @@ public interface Symbol extends Named {
   default boolean isVerb() {
     return this instanceof Verb || Constants.$$.equals(this);
   }
-  default boolean isNotation() {
+  default boolean isQuantifier() {
     return this instanceof Quantifier;
   }
   default Terminal asTerminal() {
@@ -25,7 +25,7 @@ public interface Symbol extends Named {
   default Verb asVerb() {
     return (Verb) this;
   }
-  default Quantifier asNotation() {
+  default Quantifier asQuantifier() {
     return (Quantifier) this;
   }
   static NoneOrMore noneOrMore(final Symbol symbol) {
