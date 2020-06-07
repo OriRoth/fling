@@ -66,7 +66,7 @@ public abstract class Grammar {
 						continue;
 					}
 					Quantifier q = symbol.asQuantifier();
-					Variable head = q.extend(namer, extensionProducts::add, R::add);
+					Variable head = q.expand(namer, extensionProducts::add, R::add);
 					extensionHeadsMapping.put(head, q);
 					symbols.add(head);
 				}

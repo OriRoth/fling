@@ -17,7 +17,7 @@ public interface Quantifier extends Symbol {
 
 	Collection<Symbol> abbreviatedSymbols();
 
-	Variable extend(Namer namer, Consumer<Variable> variableDeclaration, Consumer<DerivationRule> ruleDeclaration);
+	Variable expand(Namer namer, Consumer<Variable> variableDeclaration, Consumer<DerivationRule> ruleDeclaration);
 
 	List<FieldNodeFragment> getFields(Function<Symbol, List<FieldNodeFragment>> fieldTypesSolver,
 			Function<String, String> nameFromBaseSolver);

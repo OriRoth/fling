@@ -34,7 +34,7 @@ public class NaiveNamer implements Namer {
     final String name = variable.name() + astChildrenCounter.put(variable, astChildrenCounter.get(variable) + 1);
     return Variable.byName(name);
   }
-  @Override public Variable createNotationChild(final Symbol symbol) {
+  @Override public Variable createQuantificationChild(final Symbol symbol) {
     assert symbol.isVerb() || symbol.isVariable();
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);

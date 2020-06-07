@@ -14,34 +14,23 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).
 @JavaCompatibleNotation
-public class NoneOrMore implements Quantifier {
-	public final Symbol symbol;
+public class NoneOrMore extends QQ {
 
-	public NoneOrMore(final Symbol symbol) {
-		Objects.requireNonNull(symbol);
-		assert !symbol.isQuantifier() : "nested notations are not supported";
-		this.symbol = symbol;
+
+	public NoneOrMore(Symbol symbol) {
+		super(symbol);
 	}
 
-	@Override
-	public String name() {
-		return symbol.name() + "*";
-	}
 
 	@Override
-	public Variable extend(final Namer namer, final Consumer<Variable> variableDeclaration,
+	public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
 			final Consumer<DerivationRule> ruleDeclaration) {
-		final Variable head = namer.createNotationChild(symbol);
+		final Variable head = namer.createQuantificationChild(symbol);
 		variableDeclaration.accept(head);
 		ruleDeclaration.accept(new DerivationRule(head, asList(//
 				new SententialForm(symbol, head), //
 				new SententialForm())));
 		return head;
-	}
-
-	@Override
-	public Collection<Symbol> abbreviatedSymbols() {
-		return asList(symbol);
 	}
 
 	@Override
@@ -80,10 +69,7 @@ public class NoneOrMore implements Quantifier {
 		return firstsSolver.apply(symbol);
 	}
 
-	@Override
-	public String toString() {
-		return symbol + "*";
-	}
+
 
 	@SuppressWarnings("unchecked")
 	public static List<List<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
@@ -101,8 +87,9 @@ public class NoneOrMore implements Quantifier {
 		return $;
 	}
 
+
 	@Override
-	public Symbol symbol() {
-		return symbol;
+	String marker() {
+		return "*"; 
 	}
 }

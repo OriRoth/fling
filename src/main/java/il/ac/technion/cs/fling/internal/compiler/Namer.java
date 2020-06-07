@@ -25,7 +25,7 @@ public interface Namer {
    * @param symbol parent symbol
    * @return child variable
    */
-  Variable createNotationChild(Symbol symbol);
+  Variable createQuantificationChild(Symbol symbol);
   /**
    * Inner API type name.
    *

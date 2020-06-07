@@ -12,11 +12,10 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
-// TODO support nested notations (?).
 @JavaCompatibleNotation
-public class OneOrMore extends QQ {
+public class Optional extends QQ {
 
-	public OneOrMore(final Symbol symbol) {
+	public Optional(Symbol symbol) {
 		super(symbol);
 	}
 
@@ -24,21 +23,16 @@ public class OneOrMore extends QQ {
 	public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
 			final Consumer<DerivationRule> ruleDeclaration) {
 		final Variable head = namer.createQuantificationChild(symbol);
-		final Variable tail = namer.createQuantificationChild(symbol);
 		variableDeclaration.accept(head);
-		variableDeclaration.accept(tail);
-		ruleDeclaration.accept(new DerivationRule(head, asList( //
-				new SententialForm(symbol, tail))));
-		ruleDeclaration.accept(new DerivationRule(tail, asList(//
-				new SententialForm(symbol, tail), //
+		ruleDeclaration.accept(new DerivationRule(head, asList(//
+				new SententialForm(symbol), // 
 				new SententialForm())));
 		return head;
 	}
 
-
 	@Override
 	public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
-			@SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
+		 final Function<String, String> nameFromBaseSolver) {
 		// TODO manage inner symbol with no fields.
 		return fieldsSolver.apply(symbol).stream() //
 				.map(innerField -> new FieldNodeFragment( //
@@ -63,7 +57,7 @@ public class OneOrMore extends QQ {
 
 	@Override
 	public boolean isNullable(final Function<Symbol, Boolean> nullabilitySolver) {
-		return nullabilitySolver.apply(symbol);
+		return true;
 	}
 
 	@Override
@@ -90,6 +84,7 @@ public class OneOrMore extends QQ {
 
 	@Override
 	String marker() {
-		return "+";
+		return "?";
 	}
+
 }

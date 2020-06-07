@@ -31,7 +31,7 @@ public interface Symbol extends Named {
   static NoneOrMore noneOrMore(final Symbol symbol) {
     return new NoneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
   }
-  static OneOrMore oneOrMore(final Symbol symbol) {
+  static QQ oneOrMore(final Symbol symbol) {
     return new OneOrMore(!symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal()));
   }
 }
