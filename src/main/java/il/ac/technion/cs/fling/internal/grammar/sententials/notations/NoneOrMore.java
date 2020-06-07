@@ -14,7 +14,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).
 @JavaCompatibleQuantifier public class NoneOrMore extends Quantifier.Single {
-  public NoneOrMore(GeneralizedSymbol symbol) {
+  public NoneOrMore(Symbol symbol) {
     super(symbol);
   }
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
@@ -26,7 +26,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new ExtendedSententialForm())));
     return head;
   }
-  @Override public List<FieldNodeFragment> getFields(final Function<GeneralizedSymbol, List<FieldNodeFragment>> fieldsSolver,
+  @Override public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
     return fieldsSolver.apply(symbol).stream() //
@@ -48,10 +48,10 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         }) //
         .collect(toList());
   }
-  @SuppressWarnings("unused") @Override public boolean isNullable(final Function<GeneralizedSymbol, Boolean> nullabilitySolver) {
+  @SuppressWarnings("unused") @Override public boolean isNullable(final Function<Symbol, Boolean> nullabilitySolver) {
     return true;
   }
-  @Override public Set<Verb> getFirsts(final Function<GeneralizedSymbol, Set<Verb>> firstsSolver) {
+  @Override public Set<Verb> getFirsts(final Function<Symbol, Set<Verb>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode,

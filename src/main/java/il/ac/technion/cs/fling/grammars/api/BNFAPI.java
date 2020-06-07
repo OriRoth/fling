@@ -49,7 +49,7 @@ import il.ac.technion.cs.fling.*;
 
   interface q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø> {
     q0$__RuleTail1$_derivespecializeq0$q0ø<q0ø__Rule1$RuleBody$_q0$q0ø<q0$, q0ø>, q0ø__Rule1$into_q0$q0ø<q0$, q0ø>, q0$__Rule1$_q0$q0ø<q0$, q0ø>, q0$__Rule1$_q0$q0ø<q0$, q0ø>> to(
-        GeneralizedSymbol... symbols);
+        Symbol... symbols);
     q0$__Rule1$_q0$q0ø<q0$, q0ø> toEpsilon();
   }
 
@@ -60,7 +60,7 @@ import il.ac.technion.cs.fling.*;
   interface q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> extends $ {
     derive derive(Variable variable);
     specialize specialize(Variable variable);
-    q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> or(GeneralizedSymbol... symbols);
+    q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> or(Symbol... symbols);
     q0$__RuleTail1$_derivespecializeq0$q0ø<derive, specialize, q0$, q0ø> orNone();
   }
 
@@ -88,7 +88,7 @@ import il.ac.technion.cs.fling.*;
       this.w.add(new il.ac.technion.cs.fling.internal.compiler.Assignment(Σ.into, new Object[] { variables }));
       return self();
     }
-    public α to(GeneralizedSymbol... symbols) {
+    public α to(Symbol... symbols) {
       this.w.add(new il.ac.technion.cs.fling.internal.compiler.Assignment(Σ.to, new Object[] { symbols }));
       return self();
     }
@@ -99,7 +99,7 @@ import il.ac.technion.cs.fling.*;
     public α self() {
       return this;
     }
-    public α or(GeneralizedSymbol... symbols) {
+    public α or(Symbol... symbols) {
       this.w.add(new il.ac.technion.cs.fling.internal.compiler.Assignment(Σ.or, new Object[] { symbols }));
       return self();
     }

@@ -170,7 +170,7 @@ public class LL1 extends Grammar {
       final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
-    for (final GeneralizedSymbol s : reversed(sf)) {
+    for (final Symbol s : reversed(sf)) {
       $.add(s.isVariable() && isAccepting ? //
           getAcceptingVariable(s.asVariable()) : //
           s.isVerb() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //

@@ -38,7 +38,7 @@ public class EBNF {
 	}
 
 	/** @return all grammar symbols */
-	public Stream<GeneralizedSymbol> symbols() {
+	public Stream<Symbol> symbols() {
 		return Stream.concat(Σ.stream(), Γ.stream());
 	}
 

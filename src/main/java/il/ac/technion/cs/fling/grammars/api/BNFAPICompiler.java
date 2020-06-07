@@ -67,7 +67,7 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
     il.ac.technion.cs.fling.internal.compiler.Assignment _a;
     List<?> _b;
     _a = w.remove(0);
-    GeneralizedSymbol[] symbols = (GeneralizedSymbol[]) _a.arguments.get(0);
+    Symbol[] symbols = (Symbol[]) _a.arguments.get(0);
     _b = il.ac.technion.cs.fling.internal.grammar.sententials.notations.NoneOrMore.abbreviate(parse__RuleTail2(w), 1);
     List<RuleTail> ruleTail = (List<RuleTail>) _b.get(0);
     return new ConcreteDerivation(symbols, ruleTail);
@@ -82,7 +82,7 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
     il.ac.technion.cs.fling.internal.compiler.Assignment _a;
     List<?> _b;
     _a = w.remove(0);
-    GeneralizedSymbol[] symbols = (GeneralizedSymbol[]) _a.arguments.get(0);
+    Symbol[] symbols = (Symbol[]) _a.arguments.get(0);
     return new ConcreteDerivationTail(symbols);
   }
   public static EpsilonDerivationTail parse_RuleTail2(List<il.ac.technion.cs.fling.internal.compiler.Assignment> w) {

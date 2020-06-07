@@ -59,7 +59,7 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
    */
   public static final FancyEBNF bnf = bnf(). //
       start(Program). // This is the start symbol
-      derive(Program).to(GeneralizedSymbol.oneOrMore(Statement)). // Program ::= Statement*
+      derive(Program).to(Symbol.oneOrMore(Statement)). // Program ::= Statement*
       specialize(Statement).into(Fact, Rule, Query).
       /* Defines the rule Statement ::= Fact |Rule | Query, but also defines
        * that classes {@link Fact}, {@link Rule} and {@link Query} extend class
@@ -70,7 +70,7 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
       derive(Bodyless).to(always.with(S), of.many(Term)). //
       derive(WithBody).to(RuleHead, RuleBody). //
       derive(RuleHead).to(infer.with(S), of.many(Term)). //
-      derive(RuleBody).to(FirstClause, GeneralizedSymbol.noneOrMore(AdditionalClause)). //
+      derive(RuleBody).to(FirstClause, Symbol.noneOrMore(AdditionalClause)). //
       derive(FirstClause).to(when.with(S), of.many(Term)). //
       derive(AdditionalClause).to(and.with(S), of.many(Term)). //
       derive(Term).to(l.with(S)).or(v.with(S)). //

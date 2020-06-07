@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.GeneralizedSymbol.oneOrMore;
+import static il.ac.technion.cs.fling.Symbol.oneOrMore;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.V.*;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;

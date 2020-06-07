@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.grammar.types.TypeParameter;
 
-public class Verb implements Symbol {
+public class Verb implements SymbolX {
   public final Terminal source;
   public final List<TypeParameter> parameters;
 

@@ -30,11 +30,11 @@ public class BNF implements FluentLanguageAPI<Σ, V> {
     // @formatter:off
     return bnf(). //
         start(PlainBNF). //
-        derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), GeneralizedSymbol.noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
+        derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), Symbol.noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
         derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
         derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
-        derive(RuleBody).to(to.many(GeneralizedSymbol.class), GeneralizedSymbol.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
-        derive(RuleTail).to(or.many(GeneralizedSymbol.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
+        derive(RuleBody).to(to.many(Symbol.class), Symbol.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
+        derive(RuleTail).to(or.many(Symbol.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
         build();
     // @formatter:on
   }

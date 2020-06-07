@@ -2,13 +2,13 @@ package il.ac.technion.cs.fling.internal.grammar.sententials;
 
 import java.util.List;
 
-import il.ac.technion.cs.fling.Symbol;
+import il.ac.technion.cs.fling.SymbolX;
 
-public class SententialForm extends Word<Symbol> {
-  public SententialForm(final Symbol... symbols) {
+public class SententialForm extends Word<SymbolX> {
+  public SententialForm(final SymbolX... symbols) {
     super(symbols);
   }
-  public SententialForm(final List<Symbol> symbols) {
+  public SententialForm(final List<SymbolX> symbols) {
     super(symbols);
   }
 }

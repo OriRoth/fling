@@ -5,7 +5,7 @@ package il.ac.technion.cs.fling;
  * 
  * @author Ori Roth
  */
-public interface Variable extends Symbol {
+public interface Variable extends SymbolX {
   static Variable byName(final String name) {
     return new Variable() {
       @Override public String name() {

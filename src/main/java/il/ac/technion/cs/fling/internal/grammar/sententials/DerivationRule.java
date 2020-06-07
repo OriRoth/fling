@@ -6,8 +6,8 @@ import java.util.stream.*;
 import il.ac.technion.cs.fling.*;
 
 public class DerivationRule {
-  private static Stream<Variable> variables(Stream<GeneralizedSymbol> symbols) {
-    return symbols.filter(GeneralizedSymbol::isVariable).map(GeneralizedSymbol::asVariable);
+  private static Stream<Variable> variables(Stream<Symbol> symbols) {
+    return symbols.filter(Symbol::isVariable).map(Symbol::asVariable);
   }
 
   public final Variable lhs;
@@ -34,16 +34,16 @@ public class DerivationRule {
   public Variable lhs() {
     return lhs;
   }
-  private Stream<GeneralizedSymbol> quantifiedSymbols() {
+  private Stream<Symbol> quantifiedSymbols() {
     return quantifiers().flatMap(Quantifier::symbols);
   }
   private Stream<Quantifier> quantifiers() {
-    return symbols().filter(GeneralizedSymbol::isQuantifier).map(GeneralizedSymbol::asQuantifier);
+    return symbols().filter(Symbol::isQuantifier).map(Symbol::asQuantifier);
   }
   public List<ExtendedSententialForm> rhs() {
     return rhs;
   }
-  private Stream<GeneralizedSymbol> symbols() {
+  private Stream<Symbol> symbols() {
     return rhs.stream().flatMap(Collection::stream);
   }
   @Override public String toString() {
@@ -56,7 +56,7 @@ public class DerivationRule {
   public Stream<Verb> verbs() {
     return Stream.concat(verbs(symbols()), verbs(quantifiedSymbols()));
   }
-  private static Stream<Verb> verbs(Stream<GeneralizedSymbol> symbols) {
-    return symbols.filter(GeneralizedSymbol::isVerb).map(GeneralizedSymbol::asVerb);
+  private static Stream<Verb> verbs(Stream<Symbol> symbols) {
+    return symbols.filter(Symbol::isVerb).map(Symbol::asVerb);
   }
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.Named;
-import il.ac.technion.cs.fling.GeneralizedSymbol;
+import il.ac.technion.cs.fling.Symbol;
 import il.ac.technion.cs.fling.Terminal;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
@@ -59,8 +59,8 @@ public abstract class Grammar {
 		for (DerivationRule rule : ebnf.R) {
 			List<ExtendedSententialForm> rhs = new ArrayList<>();
 			for (ExtendedSententialForm sf : rule.rhs) {
-				List<GeneralizedSymbol> symbols = new ArrayList<>();
-				for (GeneralizedSymbol symbol : sf) {
+				List<Symbol> symbols = new ArrayList<>();
+				for (Symbol symbol : sf) {
 					if (!symbol.isQuantifier()) {
 						symbols.add(symbol);
 						continue;

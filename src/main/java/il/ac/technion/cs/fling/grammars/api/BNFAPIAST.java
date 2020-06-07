@@ -50,10 +50,10 @@ import il.ac.technion.cs.fling.*;
   }
 
   class ConcreteDerivation implements RuleBody {
-    public final GeneralizedSymbol[] to;
+    public final Symbol[] to;
     public final List<RuleTail> ruleTail;
 
-    public ConcreteDerivation(GeneralizedSymbol[] to, List<RuleTail> ruleTail) {
+    public ConcreteDerivation(Symbol[] to, List<RuleTail> ruleTail) {
       this.to = to;
       this.ruleTail = ruleTail;
     }
@@ -65,9 +65,9 @@ import il.ac.technion.cs.fling.*;
   }
 
   class ConcreteDerivationTail implements RuleTail {
-    public final GeneralizedSymbol[] or;
+    public final Symbol[] or;
 
-    public ConcreteDerivationTail(GeneralizedSymbol[] or) {
+    public ConcreteDerivationTail(Symbol[] or) {
       this.or = or;
     }
   }

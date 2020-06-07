@@ -8,7 +8,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.*;
  * 
  * @author Ori Roth
  */
-public interface Terminal extends Symbol {
+public interface Terminal extends SymbolX {
   /**
    * Assign parameter to this terminal.
    * 

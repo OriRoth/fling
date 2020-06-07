@@ -31,7 +31,7 @@ public class ASTCompiler {
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();
     final Map<Variable, List<Variable>> children = new LinkedHashMap<>();
-    final Map<Variable, List<GeneralizedSymbol>> fields = new LinkedHashMap<>();
+    final Map<Variable, List<Symbol>> fields = new LinkedHashMap<>();
     for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
@@ -43,7 +43,7 @@ public class ASTCompiler {
         // Alteration rule.
         children.put(v, new ArrayList<>());
         for (final ExtendedSententialForm sf : rhs)
-          for (final GeneralizedSymbol symbol : sf) {
+          for (final Symbol symbol : sf) {
             assert symbol.isVariable();
             final Variable child = symbol.asVariable();
             children.get(v).add(child);

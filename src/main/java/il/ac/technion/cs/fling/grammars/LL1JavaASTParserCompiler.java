@@ -72,7 +72,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private String printAbstractParentMethodBody(final Variable v) {
     final List<Variable> children = bnf.rhs(v).stream() //
         .map(sf -> sf.get(0)) //
-        .map(GeneralizedSymbol::asVariable) //
+        .map(Symbol::asVariable) //
         .collect(toList());
     final Optional<Variable> optionalNullableChild = children.stream() //
         .filter(bnf::isNullable) //
@@ -98,7 +98,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     return body.toString();
   }
   private String printConcreteChildMethodBody(final Variable v) {
-    final List<GeneralizedSymbol> children = bnf.rhs(v).get(0);
+    final List<Symbol> children = bnf.rhs(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListWild + " _b;");
@@ -107,7 +107,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     usedNames.put("_b", 1);
     final List<String> argumentNames = new ArrayList<>();
     // Consume input as necessary:
-    for (final GeneralizedSymbol child : children)
+    for (final Symbol child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
         final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
@@ -159,7 +159,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     return body.toString();
   }
   private String printConcreteExtensionChildMethodBody(final Variable v) {
-    final List<GeneralizedSymbol> children = bnf.rhs(v).get(0);
+    final List<Symbol> children = bnf.rhs(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListObject + " _b;");
@@ -178,7 +178,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
           "emptyList"));
     }
     // Consume input as necessary:
-    for (final GeneralizedSymbol child : children)
+    for (final Symbol child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
         final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
@@ -233,7 +233,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     else
       throw new RuntimeException("problem while creating real-time parser");
   }
-  private List<FieldNodeFragment> getFieldsInClassContext(final GeneralizedSymbol symbol, final Map<String, Integer> usedNames) {
+  private List<FieldNodeFragment> getFieldsInClassContext(final Symbol symbol, final Map<String, Integer> usedNames) {
     if (symbol.isVerb())
       return symbol.asVerb().parameters.stream() //
           .map(parameter -> FieldNodeFragment.of( //

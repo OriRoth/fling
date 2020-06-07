@@ -25,9 +25,9 @@ import il.ac.technion.cs.fling.internal.util.Counter;
  */
 public class FancyEBNF extends EBNF {
 	/** Set of nullable variables and notations */
-	public final Set<GeneralizedSymbol> nullables;
+	public final Set<Symbol> nullables;
 	/** Maps variables and notations to their firsts set */
-	public final Map<GeneralizedSymbol, Set<Verb>> firsts;
+	public final Map<Symbol, Set<Verb>> firsts;
 	/** Maps variables and notations to their follows set */
 	public final Map<Variable, Set<Verb>> follows;
 	/** Head variables set, containing variables used as API parameters */
@@ -59,7 +59,7 @@ public class FancyEBNF extends EBNF {
 	 * @param symbols sequence of grammar symbols
 	 * @return whether the sequence is nullable
 	 */
-	public boolean isNullable(final GeneralizedSymbol... symbols) {
+	public boolean isNullable(final Symbol... symbols) {
 		return isNullable(Arrays.asList(symbols));
 	}
 
@@ -67,18 +67,18 @@ public class FancyEBNF extends EBNF {
 	 * @param symbols sequence of grammar symbols
 	 * @return whether the sequence is nullable
 	 */
-	public boolean isNullable(final List<GeneralizedSymbol> symbols) {
+	public boolean isNullable(final List<Symbol> symbols) {
 		return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
 				symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
 	}
 
-	public Set<Verb> firsts(final GeneralizedSymbol... symbols) {
+	public Set<Verb> firsts(final Symbol... symbols) {
 		return firsts(Arrays.asList(symbols));
 	}
 
-	public Set<Verb> firsts(final Collection<GeneralizedSymbol> symbols) {
+	public Set<Verb> firsts(final Collection<Symbol> symbols) {
 		final Set<Verb> $ = new LinkedHashSet<>();
-		for (final GeneralizedSymbol s : symbols) {
+		for (final Symbol s : symbols) {
 			$.addAll(firsts.get(s));
 			if (!isNullable(s))
 				break;
@@ -101,7 +101,7 @@ public class FancyEBNF extends EBNF {
 					continue;
 				subR.add(rule);
 				for (final ExtendedSententialForm sf : rule.rhs)
-					for (final GeneralizedSymbol symbol : sf)
+					for (final Symbol symbol : sf)
 						if (symbol.isVerb())
 							subΣ.add(symbol.asVerb());
 						else if (symbol.isVariable())
@@ -115,12 +115,12 @@ public class FancyEBNF extends EBNF {
 		return new FancyEBNF(subΣ, subV, subR, ε, null, null, null, true);
 	}
 
-	public boolean isOriginalVariable(final GeneralizedSymbol symbol) {
+	public boolean isOriginalVariable(final Symbol symbol) {
 		return symbol.isVariable() && !extensionProducts.contains(symbol);
 	}
 
-	private Set<GeneralizedSymbol> getNullables() {
-		final Set<GeneralizedSymbol> $ = new LinkedHashSet<>();
+	private Set<Symbol> getNullables() {
+		final Set<Symbol> $ = new LinkedHashSet<>();
 		while ($.addAll(Γ.stream() //
 				.filter(v -> rhs(v).stream() //
 						.anyMatch(sf -> sf.stream().allMatch(symbol -> isNullable(symbol, $)))) //
@@ -129,7 +129,7 @@ public class FancyEBNF extends EBNF {
 		return $;
 	}
 
-	private boolean isNullable(final GeneralizedSymbol symbol, final Set<GeneralizedSymbol> knownNullables) {
+	private boolean isNullable(final Symbol symbol, final Set<Symbol> knownNullables) {
 		if (symbol.isVerb())
 			return false;
 		if (symbol.isVariable())
@@ -139,15 +139,15 @@ public class FancyEBNF extends EBNF {
 		throw new RuntimeException("problem while analyzing BNF");
 	}
 
-	private Map<GeneralizedSymbol, Set<Verb>> getFirsts() {
-		final Map<GeneralizedSymbol, Set<Verb>> $ = new LinkedHashMap<>();
+	private Map<Symbol, Set<Verb>> getFirsts() {
+		final Map<Symbol, Set<Verb>> $ = new LinkedHashMap<>();
 		Σ.forEach(σ -> $.put(σ, singleton(σ)));
 		Γ.forEach(v -> $.put(v, new LinkedHashSet<>()));
 		for (boolean changed = true; changed;) {
 			changed = false;
 			for (final Variable v : Γ)
 				for (final ExtendedSententialForm sf : rhs(v))
-					for (final GeneralizedSymbol symbol : sf) {
+					for (final Symbol symbol : sf) {
 						changed |= $.get(v).addAll(!symbol.isQuantifier() ? $.get(symbol) : //
 								symbol.asQuantifier().getFirsts($::get));
 						if (!isNullable(symbol))
@@ -170,7 +170,7 @@ public class FancyEBNF extends EBNF {
 						if (!sf.get(i).isVariable())
 							continue;
 						final Variable current = sf.get(i).asVariable();
-						final List<GeneralizedSymbol> rest = sf.subList(i, sf.size());
+						final List<Symbol> rest = sf.subList(i, sf.size());
 						changed |= $.get(current).addAll(firsts(rest));
 						if (isNullable(rest))
 							changed |= $.get(v).addAll($.get(current));
@@ -239,7 +239,7 @@ public class FancyEBNF extends EBNF {
 			return new Specialize(lhs);
 		}
 
-		void processSymbol(final GeneralizedSymbol symbol) {
+		void processSymbol(final Symbol symbol) {
 			assert !symbol.isTerminal();
 			if (symbol.isVerb()) {
 				Σ.add(symbol.asVerb());
@@ -278,7 +278,7 @@ public class FancyEBNF extends EBNF {
 				this.lhs = lhs;
 			}
 
-			public Builder to(final GeneralizedSymbol... sententialForm) {
+			public Builder to(final Symbol... sententialForm) {
 				final ExtendedSententialForm processedSententialForm = new ExtendedSententialForm(
 						Arrays.stream(sententialForm) //
 								.map(symbol -> {
@@ -331,7 +331,7 @@ public class FancyEBNF extends EBNF {
 				$.start(variable);
 				initialized = true;
 			}
-			Optional<GeneralizedSymbol> rhs = extractANTLRSentential($, rule.getChild(1), counter);
+			Optional<Symbol> rhs = extractANTLRSentential($, rule.getChild(1), counter);
 			if (rhs.isPresent())
 				$.derive(variable).to(rhs.get());
 			else
@@ -340,7 +340,7 @@ public class FancyEBNF extends EBNF {
 		return $.build();
 	}
 
-	private static Optional<GeneralizedSymbol> extractANTLRSentential(Builder $, Object element, Counter nameCounter) {
+	private static Optional<Symbol> extractANTLRSentential(Builder $, Object element, Counter nameCounter) {
 		if (element instanceof List) {
 			List<?> elements = (List<?>) element;
 			if (elements.isEmpty())
@@ -348,10 +348,10 @@ public class FancyEBNF extends EBNF {
 			if (elements.size() == 1)
 				return extractANTLRSentential($, elements.get(0), nameCounter);
 			Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
-			List<GeneralizedSymbol> items = new ArrayList<>();
+			List<Symbol> items = new ArrayList<>();
 			for (Object item : elements)
 				extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
-			$.derive(top).to(items.toArray(new GeneralizedSymbol[items.size()]));
+			$.derive(top).to(items.toArray(new Symbol[items.size()]));
 			return Optional.of(top);
 		}
 		if (element instanceof AltAST)
@@ -361,7 +361,7 @@ public class FancyEBNF extends EBNF {
 			if (block.getChildCount() <= 1)
 				return extractANTLRSentential($, block.getChildren(), nameCounter);
 			Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
-			List<GeneralizedSymbol> items = new ArrayList<>();
+			List<Symbol> items = new ArrayList<>();
 			for (Object item : block.getChildren())
 				extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
 			items.forEach(symbol -> $.derive(top).to(symbol));
@@ -370,14 +370,14 @@ public class FancyEBNF extends EBNF {
 		if (element instanceof RuleRefAST)
 			return Optional.of(Variable.byName(element.toString()));
 		if (element instanceof StarBlockAST) {
-			Optional<GeneralizedSymbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(),
+			Optional<Symbol> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(),
 					nameCounter);
-			return inner.map(GeneralizedSymbol::noneOrMore);
+			return inner.map(Symbol::noneOrMore);
 		}
 		if (element instanceof PlusBlockAST) {
-			Optional<GeneralizedSymbol> inner = extractANTLRSentential($, ((PlusBlockAST) element).getChildren(),
+			Optional<Symbol> inner = extractANTLRSentential($, ((PlusBlockAST) element).getChildren(),
 					nameCounter);
-			return inner.map(GeneralizedSymbol::oneOrMore);
+			return inner.map(Symbol::oneOrMore);
 		}
 		if (element instanceof TerminalAST) {
 			String name = ((TerminalAST) element).getText();

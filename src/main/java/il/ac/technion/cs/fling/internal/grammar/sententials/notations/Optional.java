@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 @JavaCompatibleQuantifier public class Optional extends Quantifier.Single {
-  public Optional(GeneralizedSymbol symbol) {
+  public Optional(Symbol symbol) {
     super(symbol);
   }
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
@@ -25,7 +25,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new ExtendedSententialForm())));
     return head;
   }
-  @Override public List<FieldNodeFragment> getFields(final Function<GeneralizedSymbol, List<FieldNodeFragment>> fieldsSolver,
+  @Override public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
     return fieldsSolver.apply(symbol).stream() //
@@ -47,10 +47,10 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         }) //
         .collect(toList());
   }
-  @Override public boolean isNullable(@SuppressWarnings("unused") final Function<GeneralizedSymbol, Boolean> nullabilitySolver) {
+  @Override public boolean isNullable(@SuppressWarnings("unused") final Function<Symbol, Boolean> nullabilitySolver) {
     return true;
   }
-  @Override public Set<Verb> getFirsts(final Function<GeneralizedSymbol, Set<Verb>> firstsSolver) {
+  @Override public Set<Verb> getFirsts(final Function<Symbol, Set<Verb>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   public static List<java.util.Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {

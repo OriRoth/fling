@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.GeneralizedSymbol.*;
+import static il.ac.technion.cs.fling.Symbol.*;
 
 import static il.ac.technion.cs.fling.examples.languages.Java.V.*;
 import static il.ac.technion.cs.fling.examples.languages.Java.Σ.*;
