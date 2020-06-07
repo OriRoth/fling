@@ -6,7 +6,7 @@ import java.util.*;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
+import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /**
@@ -84,7 +84,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         .map(FieldNode::source) //
         .forEach(source -> {
           assert !source.isQuantifier()
-              || source.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : "BNF uses a non-Java-compatible notation";
+              || source.getClass().isAnnotationPresent(JavaCompatibleQuantifier.class) : "BNF uses a non-Java-compatible notation";
         });
     clazz.fields.stream() //
         .map(FieldNode::getInferredFieldFragments) //

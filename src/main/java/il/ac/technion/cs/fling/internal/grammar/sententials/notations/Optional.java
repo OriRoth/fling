@@ -12,7 +12,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
-@JavaCompatibleNotation public class Optional extends Quantifier.Single {
+@JavaCompatibleQuantifier public class Optional extends Quantifier.Single {
   public Optional(GeneralizedSymbol symbol) {
     super(symbol);
   }

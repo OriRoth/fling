@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleNotation;
+import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.TypeParameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
@@ -132,12 +132,12 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       } else if (child.isVariable()) {
         assert bnf.extensionHeadsMapping.containsKey(child);
         final Quantifier notation = bnf.extensionHeadsMapping.get(child);
-        assert notation.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : //
+        assert notation.getClass().isAnnotationPresent(JavaCompatibleQuantifier.class) : //
         "notation is not Java compatible";
         final List<FieldNodeFragment> fields = getFieldsInClassContext(notation, usedNames);
         body.append(String.format("_b=%s.%s(parse_%s(w), %s);", //
             notation.getClass().getCanonicalName(), //
-            JavaCompatibleNotation.abbreviationMethodName, //
+            JavaCompatibleQuantifier.abbreviationMethodName, //
             child.name(), //
             fields.size()));
         int index = 0;
