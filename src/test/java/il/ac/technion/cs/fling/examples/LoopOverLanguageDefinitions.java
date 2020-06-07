@@ -24,6 +24,7 @@ import il.ac.technion.cs.fling.examples.languages.*;
       new SubFigure(), //
       new ArithmeticExpression(), //
       new BNF(), //
+      new EBNF(), //
       new RegularExpression(), //
       new HTMLTable(), //
       new SimpleArithmetic(), //

@@ -6,9 +6,8 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.BNF.*;
 
-public class BNF implements FluentLanguageAPI<Σ, V> {
+public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.V> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone
   }
@@ -30,7 +29,7 @@ public class BNF implements FluentLanguageAPI<Σ, V> {
     // @formatter:off
     return bnf(). //
         start(PlainBNF). //
-        derive(PlainBNF).to(Σ.bnf, start.with(Variable.class), Symbol.noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
+        derive(PlainBNF).to(bnf, start.with(Variable.class), Symbol.noneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
         derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
         derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
         derive(RuleBody).to(to.many(Symbol.class), Symbol.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(Symbol*) RuleTail* | toEpsilon()
