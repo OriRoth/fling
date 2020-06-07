@@ -112,8 +112,8 @@ public class NaiveNamer implements Namer {
           return variableVisitingSolver.apply(symbol.asVariable(), accessor);
         }
       });
-    if (symbol.isNotation())
-      return symbol.asNotation().getFields(s -> getFields(s, usedNames), baseName -> getNameFromBase(baseName, usedNames));
+    if (symbol.isQuantifier())
+      return symbol.asQuantifier().getFields(s -> getFields(s, usedNames), baseName -> getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
   protected void setInferredParametersIntermediateInMethod(final APICompiler.MethodDeclaration declaration) {

@@ -145,5 +145,6 @@ out/
 # User defined (add below this line) // vim: +,$!sort -u
 /target/
 /src/test/java/il/ac/technion/cs/fling/examples/generated/
-.settings
 .classpath
+.project
+.settings/

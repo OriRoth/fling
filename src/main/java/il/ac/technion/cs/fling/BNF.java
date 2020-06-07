@@ -24,49 +24,29 @@ import il.ac.technion.cs.fling.internal.util.Counter;
  * @author Ori Roth
  */
 public class BNF {
-  /**
-   * Derivation rules collection.
-   */
+  /** Derivation rules collection */
   public final Set<DerivationRule> rules;
-  /**
-   * Set of nullable variables and notations.
-   */
+  /** Set of nullable variables and notations */
   public final Set<Symbol> nullables;
-  /**
-   * Maps variables and notations to their firsts set.
-   */
+  /** Maps variables and notations to their firsts set */
   public final Map<Symbol, Set<Verb>> firsts;
-  /**
-   * Maps variables and notations to their follows set.
-   */
+  /** Maps variables and notations to their follows set */
   public final Map<Variable, Set<Verb>> follows;
-  /**
-   * Verbs collection.
-   */
+  /** Verbs collection */
   public final Set<Verb> Σ;
-  /**
-   * Variables collection.
-   */
+  /** Variables collection */
   public final Set<Variable> V;
-  /**
-   * Start variable.
-   */
+  /** Start variable */
   public final Variable startVariable;
-  /**
-   * Head variables set, containing variables used as API parameters.
-   */
+  /** Head variables set, containing variables used as API parameters */
   public final Set<Variable> headVariables;
-  /**
-   * Maps generated variables to the notation originated them. Optional.
-   */
-  public final Map<Variable, Notation> extensionHeadsMapping;
-  /**
-   * Set of generated variables.
-   */
+  /** Maps generated variables to the notation originated them. Optional */
+  public final Map<Variable, Quantifier> extensionHeadsMapping;
+  /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
   public BNF(final Set<Verb> Σ, final Set<? extends Variable> V, final Set<DerivationRule> R, final Variable startVariable,
-      final Set<Variable> headVariables, final Map<Variable, Notation> extensionHeadsMapping, final Set<Variable> extensionProducts,
+      final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping, final Set<Variable> extensionProducts,
       final boolean addStartSymbolDerivationRules) {
     this.Σ = Σ;
     Σ.add(Constants.$$);
@@ -85,9 +65,7 @@ public class BNF {
     this.firsts = getFirsts();
     this.follows = getFollows();
   }
-  /**
-   * @return all grammar symbols.
-   */
+  /** @return all grammar symbols */
   public Set<Symbol> symbols() {
     final Set<Symbol> $ = new LinkedHashSet<>();
     $.addAll(Σ);
@@ -114,7 +92,7 @@ public class BNF {
    */
   public boolean isNullable(final List<Symbol> symbols) {
     return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
-        symbol.isNotation() && symbol.asNotation().isNullable(this::isNullable));
+        symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
   }
   public Set<Verb> firsts(final Symbol... symbols) {
     return firsts(Arrays.asList(symbols));
@@ -173,8 +151,8 @@ public class BNF {
       return false;
     if (symbol.isVariable())
       return knownNullables.contains(symbol);
-    if (symbol.isNotation())
-      return symbol.asNotation().isNullable(s -> isNullable(s, knownNullables));
+    if (symbol.isQuantifier())
+      return symbol.asQuantifier().isNullable(s -> isNullable(s, knownNullables));
     throw new RuntimeException("problem while analyzing BNF");
   }
   private Map<Symbol, Set<Verb>> getFirsts() {
@@ -186,8 +164,8 @@ public class BNF {
       for (final Variable v : V)
         for (final SententialForm sf : rhs(v))
           for (final Symbol symbol : sf) {
-            changed |= $.get(v).addAll(!symbol.isNotation() ? $.get(symbol) : //
-                symbol.asNotation().getFirsts($::get));
+            changed |= $.get(v).addAll(!symbol.isQuantifier() ? $.get(symbol) : //
+                symbol.asQuantifier().getFirsts($::get));
             if (!isNullable(symbol))
               break;
           }
@@ -277,8 +255,8 @@ public class BNF {
         symbol.asVerb().parameters.stream() //
             .map(TypeParameter::declaredHeadVariables) //
             .forEach(heads::addAll);
-      } else if (symbol.isNotation())
-        symbol.asNotation().abbreviatedSymbols().forEach(this::processSymbol);
+      } else if (symbol.isQuantifier())
+        symbol.asQuantifier().abbreviatedSymbols().forEach(this::processSymbol);
       else if (symbol.isVariable()) {
         final Variable variable = symbol.asVariable();
         if (!V.contains(variable)) {

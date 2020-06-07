@@ -131,7 +131,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         }
       } else if (child.isVariable()) {
         assert bnf.extensionHeadsMapping.containsKey(child);
-        final Notation notation = bnf.extensionHeadsMapping.get(child);
+        final Quantifier notation = bnf.extensionHeadsMapping.get(child);
         assert notation.getClass().isAnnotationPresent(JavaCompatibleNotation.class) : //
         "notation is not Java compatible";
         final List<FieldNodeFragment> fields = getFieldsInClassContext(notation, usedNames);
@@ -244,8 +244,8 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       return singletonList(FieldNodeFragment.of( //
           getClassForVariable(symbol.asVariable()), //
           NaiveNamer.getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
-    if (symbol.isNotation())
-      return symbol.asNotation().getFields(s -> getFieldsInClassContext(s, usedNames),
+    if (symbol.isQuantifier())
+      return symbol.asQuantifier().getFields(s -> getFieldsInClassContext(s, usedNames),
           baseName -> NaiveNamer.getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
