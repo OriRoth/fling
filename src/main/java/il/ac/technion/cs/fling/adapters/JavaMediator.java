@@ -62,10 +62,10 @@ public class JavaMediator {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
       @Override public String printTerminationMethodReturnType() {
-        return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.startVariable);
+        return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
       }
       @Override public String printTerminationMethodConcreteBody() {
-        return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.startVariable);
+        return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
       }
       @Override protected String printAdditionalDeclarations() {
         return JavaMediator.this.printAdditionalDeclarations();
@@ -124,7 +124,7 @@ public class JavaMediator {
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.startVariable), "$", namer) {
+        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.ε), "$", namer) {
           @Override protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
@@ -138,10 +138,10 @@ public class JavaMediator {
             return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
           }
           @Override public String printTerminationMethodReturnType() {
-            return JavaMediator.this.printTerminationMethodReturnType(bnf.startVariable);
+            return JavaMediator.this.printTerminationMethodReturnType(bnf.ε);
           }
           @Override public String printTerminationMethodConcreteBody() {
-            return JavaMediator.this.printTerminationMethodConcreteBody(bnf.startVariable);
+            return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
           }
         } //
             .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //

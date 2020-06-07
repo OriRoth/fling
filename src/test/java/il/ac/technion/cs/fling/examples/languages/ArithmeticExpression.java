@@ -1,13 +1,25 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.*;
-import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.E;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.E_;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.F;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.T;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V.T_;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.begin;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.divide;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.end;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.minus;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.n;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.plus;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.times;
+import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.v;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
-import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.Terminal;
+import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.*;
+import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V;
+import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ;
 
 public class ArithmeticExpression implements FluentLanguageAPI<Σ, V> {
   public enum Σ implements Terminal {
@@ -24,7 +36,7 @@ public class ArithmeticExpression implements FluentLanguageAPI<Σ, V> {
   @Override public Class<V> V() {
     return V.class;
   }
-  @Override public BNF BNF() {
+  @Override public il.ac.technion.cs.fling.BNF BNF() {
     return bnf(). //
         start(E). //
         derive(E).to(T, E_). //

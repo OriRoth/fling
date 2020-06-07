@@ -31,19 +31,19 @@ public class ASTCompiler {
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();
     final Map<Variable, List<Variable>> children = new LinkedHashMap<>();
-    final Map<Variable, List<Symbol>> fields = new LinkedHashMap<>();
-    for (final Variable v : bnf.V) {
+    final Map<Variable, List<GeneralizedSymbol>> fields = new LinkedHashMap<>();
+    for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
-      final List<SententialForm> rhs = bnf.rhs(v);
+      final List<ExtendedSententialForm> rhs = bnf.rhs(v);
       if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable()))
         // Sequence rule.
         fields.put(v, rhs.get(0));
       else {
         // Alteration rule.
         children.put(v, new ArrayList<>());
-        for (final SententialForm sf : rhs)
-          for (final Symbol symbol : sf) {
+        for (final ExtendedSententialForm sf : rhs)
+          for (final GeneralizedSymbol symbol : sf) {
             assert symbol.isVariable();
             final Variable child = symbol.asVariable();
             children.get(v).add(child);
@@ -54,7 +54,7 @@ public class ASTCompiler {
       }
     }
     final Map<Variable, ClassNode> classes = new LinkedHashMap<>();
-    for (final Variable v : bnf.V)
+    for (final Variable v : bnf.Γ)
       if (Constants.S == v)
         continue;
       else if (fields.containsKey(v))
@@ -71,7 +71,7 @@ public class ASTCompiler {
             new ArrayList<>() // To be set later.
         ));
     // Set parents and children:
-    for (final Variable v : bnf.V) {
+    for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
       final ClassNode classNode = classes.get(v);

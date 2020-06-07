@@ -1,12 +1,11 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.Symbol.noneOrMore;
+import static il.ac.technion.cs.fling.GeneralizedSymbol.noneOrMore;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.*;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.HTMLTable.*;
 
@@ -25,7 +24,7 @@ public class HTMLTable implements FluentLanguageAPI<Σ, V> {
   @Override public Class<V> V() {
     return V.class;
   }
-  @Override public BNF BNF() {
+  @Override public il.ac.technion.cs.fling.BNF BNF() {
     return bnf(). //
         start(HTML). //
         derive(HTML).to(html.with(String.class), Table). //

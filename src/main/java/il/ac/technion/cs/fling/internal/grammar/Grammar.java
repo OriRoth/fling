@@ -15,13 +15,13 @@ import java.util.Set;
 import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.Named;
-import il.ac.technion.cs.fling.Symbol;
+import il.ac.technion.cs.fling.GeneralizedSymbol;
 import il.ac.technion.cs.fling.Terminal;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.sententials.DerivationRule;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.sententials.SententialForm;
+import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
 
@@ -52,15 +52,15 @@ public abstract class Grammar {
 	}
 
 	private BNF getBNF(BNF ebnf) {
-		Set<Variable> V = new LinkedHashSet<>(ebnf.V);
+		Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
 		Set<DerivationRule> R = new LinkedHashSet<>();
 		Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
 		Set<Variable> extensionProducts = new LinkedHashSet<>();
-		for (DerivationRule rule : ebnf.rules) {
-			List<SententialForm> rhs = new ArrayList<>();
-			for (SententialForm sf : rule.rhs) {
-				List<Symbol> symbols = new ArrayList<>();
-				for (Symbol symbol : sf) {
+		for (DerivationRule rule : ebnf.R) {
+			List<ExtendedSententialForm> rhs = new ArrayList<>();
+			for (ExtendedSententialForm sf : rule.rhs) {
+				List<GeneralizedSymbol> symbols = new ArrayList<>();
+				for (GeneralizedSymbol symbol : sf) {
 					if (!symbol.isQuantifier()) {
 						symbols.add(symbol);
 						continue;
@@ -70,12 +70,12 @@ public abstract class Grammar {
 					extensionHeadsMapping.put(head, q);
 					symbols.add(head);
 				}
-				rhs.add(new SententialForm(symbols));
+				rhs.add(new ExtendedSententialForm(symbols));
 			}
 			R.add(new DerivationRule(rule.lhs, rhs));
 		}
-		V.addAll(extensionProducts);
-		return new BNF(ebnf.Σ, V, R, ebnf.startVariable, ebnf.headVariables, extensionHeadsMapping, extensionProducts,
+		Γ.addAll(extensionProducts);
+		return new BNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts,
 				false);
 	}
 
@@ -90,7 +90,7 @@ public abstract class Grammar {
 		final Set<DerivationRule> rs = new LinkedHashSet<>();
 		for (boolean more = true; more; ) {
 			more = false;
-			for (DerivationRule r : bnf.rules)
+			for (DerivationRule r : bnf.R)
 				if (!rs.contains(r) && V.contains(r.lhs)) {
 					more = true;
 					rs.add(r);
@@ -102,10 +102,10 @@ public abstract class Grammar {
 	}
 
 	private static BNF normalize(BNF bnf,Namer namer) {
-		Set<Variable> V = new LinkedHashSet<>(bnf.V);
+		Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
 		Set<DerivationRule> R = new LinkedHashSet<>();
-		for (Variable v : bnf.V) {
-			List<SententialForm> rhs = bnf.rhs(v);
+		for (Variable v : bnf.Γ) {
+			List<ExtendedSententialForm> rhs = bnf.rhs(v);
 			assert rhs.size() > 0;
 			if (rhs.size() == 1) {
 				// Sequence (or redundant alteration).
@@ -113,7 +113,7 @@ public abstract class Grammar {
 				continue;
 			}
 			List<Variable> alteration = new ArrayList<>();
-			for (SententialForm sf : rhs)
+			for (ExtendedSententialForm sf : rhs)
 				if (sf.size() == 1 && sf.stream().allMatch(bnf::isOriginalVariable))
 					// Ready alteration variable.
 					alteration.add(sf.get(0).asVariable());
@@ -124,14 +124,14 @@ public abstract class Grammar {
 					R.add(new DerivationRule(a, Collections.singletonList(sf)));
 					alteration.add(a);
 				}
-			R.add(new DerivationRule(v, alteration.stream().map(a -> new SententialForm(a)).collect(toList())));
+			R.add(new DerivationRule(v, alteration.stream().map(a -> new ExtendedSententialForm(a)).collect(toList())));
 		}
-		return new BNF(bnf.Σ, V, R, bnf.startVariable, bnf.headVariables, bnf.extensionHeadsMapping,
+		return new BNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping,
 				bnf.extensionProducts, false);
 	}
 
 	public static boolean isSequenceRHS(BNF bnf, Variable v) {
-		List<SententialForm> rhs = bnf.rhs(v);
+		List<ExtendedSententialForm> rhs = bnf.rhs(v);
 		return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
 	}
 

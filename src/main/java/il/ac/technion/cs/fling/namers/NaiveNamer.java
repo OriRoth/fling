@@ -17,7 +17,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
-  private final Map<Symbol, Integer> notationsChildrenCounter = new HashMap<>();
+  private final Map<GeneralizedSymbol, Integer> notationsChildrenCounter = new HashMap<>();
   private final String packageName;
   private final String apiName;
 
@@ -34,7 +34,7 @@ public class NaiveNamer implements Namer {
     final String name = variable.name() + astChildrenCounter.put(variable, astChildrenCounter.get(variable) + 1);
     return Variable.byName(name);
   }
-  @Override public Variable createQuantificationChild(final Symbol symbol) {
+  @Override public Variable createQuantificationChild(final GeneralizedSymbol symbol) {
     assert symbol.isVerb() || symbol.isVariable();
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
@@ -84,7 +84,7 @@ public class NaiveNamer implements Namer {
     final Map<String, Integer> usedNames = new HashMap<>();
     fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
   }
-  private List<FieldNodeFragment> getFields(final Symbol symbol, final Map<String, Integer> usedNames) {
+  private List<FieldNodeFragment> getFields(final GeneralizedSymbol symbol, final Map<String, Integer> usedNames) {
     if (symbol.isVerb())
       return symbol.asVerb().parameters.stream() //
           .map(parameter -> {

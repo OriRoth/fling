@@ -1,7 +1,8 @@
 package il.ac.technion.cs.fling.examples.languages;
+import static il.ac.technion.cs.fling.GeneralizedSymbol.*;
 
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.*;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.*;
+import static il.ac.technion.cs.fling.examples.languages.Java.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import java.io.IOException;
@@ -18,17 +19,17 @@ import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
-import il.ac.technion.cs.fling.examples.languages.Datalog.*;
+import il.ac.technion.cs.fling.examples.languages.Java.*;
 
 /**
  * Fling input specifying the formal Datalog language.
  * 
  * @author Yossi Gil
  */
-public class Datalog implements FluentLanguageAPI<Σ, V> {
+public class Java implements FluentLanguageAPI<Σ, V> {
   /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
-    infer, fact, query, of, and, when, always, v, l
+	  name,number,variable, method
   }
 
   /**
@@ -38,8 +39,8 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
    * list of {@link Statement}, etc.
    */
   public enum V implements Variable {
-    Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
-    RuleHead, RuleBody, FirstClause, AdditionalClause, Term
+    Program, Statement, Expression, InfixExpression, PrefixExpression, 
+    Declaration, Header, Member, Field, Constructor, Method, Initializer
   }
 
   @Override public Class<Σ> Σ() {
@@ -59,21 +60,9 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
    */
   public static final BNF bnf = bnf(). //
       start(Program). // This is the start symbol
-      derive(Program).to(GeneralizedSymbol.oneOrMore(Statement)). // Program ::= Statement*
-      specialize(Statement).into(Fact, Rule, Query).
-      /* Defines the rule Statement ::= Fact |Rule | Query, but also defines
-       * that classes {@link Fact}, {@link Rule} and {@link Query} extend class
-       * {@link Statement} */
-      derive(Fact).to(fact.with(S), of.many(S)). // Fact ::= fact(S*) of(S*)
-      derive(Query).to(query.with(S), of.many(Term)). //
-      specialize(Rule).into(Bodyless, WithBody). //
-      derive(Bodyless).to(always.with(S), of.many(Term)). //
-      derive(WithBody).to(RuleHead, RuleBody). //
-      derive(RuleHead).to(infer.with(S), of.many(Term)). //
-      derive(RuleBody).to(FirstClause, GeneralizedSymbol.noneOrMore(AdditionalClause)). //
-      derive(FirstClause).to(when.with(S), of.many(Term)). //
-      derive(AdditionalClause).to(and.with(S), of.many(Term)). //
-      derive(Term).to(l.with(S)).or(v.with(S)). //
+      derive(Program).to(oneOrMore(Declaration)). //
+      derive(Declaration).to(Header, oneOrMore(Member)). //
+      specialize(Member).into(Field, Constructor, Method, Initializer).//
       build();
 
   @Override public il.ac.technion.cs.fling.BNF BNF() {

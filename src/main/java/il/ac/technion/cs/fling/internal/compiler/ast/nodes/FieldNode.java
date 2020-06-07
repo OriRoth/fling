@@ -6,13 +6,13 @@ import java.util.function.*;
 import il.ac.technion.cs.fling.*;
 
 public class FieldNode {
-  public final Symbol source;
+  public final GeneralizedSymbol source;
   private List<FieldNodeFragment> inferredFieldFragments;
 
-  public FieldNode(final Symbol source) {
+  public FieldNode(final GeneralizedSymbol source) {
     this.source = source;
   }
-  public Symbol source() {
+  public GeneralizedSymbol source() {
     return source;
   }
   public List<FieldNodeFragment> getInferredFieldFragments() {
