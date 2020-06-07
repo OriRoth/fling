@@ -31,7 +31,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     return fieldsSolver.apply(symbol).stream() //
         .map(innerField -> new FieldNodeFragment( //
             String.format("%s<%s>", //
-                List.class.getCanonicalName(), //
+                java.util.Optional.class.getCanonicalName(), //
                 ClassParameter.unPrimitiveType(innerField.parameterType)), //
             innerField.parameterName) {
           @Override public String visitingMethod(final BiFunction<Variable, String, String> variableVisitingSolver,
@@ -39,7 +39,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
             if (!symbol.isVariable())
               return null;
             final String streamingVariable = variableNamesGenerator.get();
-            return String.format("%s.stream().forEach(%s->%s)", //
+            return String.format("%s.ifPresent(%s->%s)", //
                 accessor, //
                 streamingVariable, //
                 variableVisitingSolver.apply(symbol.asVariable(), streamingVariable));
@@ -53,19 +53,10 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   @Override public Set<Verb> getFirsts(final Function<GeneralizedSymbol, Set<Verb>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
-  @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
-    final List<List<Object>> $ = new ArrayList<>();
-    for (int i = 0; i < fieldCount; ++i)
-      $.add(new ArrayList<>());
-    List<Object> currentRawNode = rawNode;
-    while (!currentRawNode.isEmpty()) {
-      assert currentRawNode.size() == fieldCount + 1;
-      final List<Object> rawArguments = currentRawNode.subList(0, fieldCount);
-      for (int i = 0; i < fieldCount; ++i)
-        $.get(i).add(rawArguments.get(i));
-      currentRawNode = (List<Object>) currentRawNode.get(fieldCount);
-    }
-    return $;
+  public static List<java.util.Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
+    // TODO support many fields
+    assert fieldCount == 1;
+    return asList(rawNode.isEmpty() ? java.util.Optional.empty() : java.util.Optional.of(rawNode.get(0)));
   }
   @Override public String marker() {
     return "?";

@@ -10,5 +10,6 @@ public class RuntimeTest {
     SubFigure.main(null);
     TableMaker.main(null);
     TaggedBalancedParentheses.main(null);
+    QuantifiersTestLanguage.main(null);
   }
 }

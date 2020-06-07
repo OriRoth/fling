@@ -28,7 +28,7 @@ public abstract class Quantifier implements GeneralizedSymbol {
 
     public Single(final GeneralizedSymbol symbol) {
       Objects.requireNonNull(symbol);
-      assert !symbol.isQuantifier() : "nested notations are not supported";
+      assert !symbol.isQuantifier() : "nested quantifiers are not supported";
       this.symbol = symbol;
     }
     public final GeneralizedSymbol symbol() {
