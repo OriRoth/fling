@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).
-@JavaCompatibleNotation public class NoneOrMore extends Quantifier.Single {
+@JavaCompatibleQuantifier public class NoneOrMore extends Quantifier.Single {
   public NoneOrMore(GeneralizedSymbol symbol) {
     super(symbol);
   }

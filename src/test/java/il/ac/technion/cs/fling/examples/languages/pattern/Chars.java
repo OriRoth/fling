@@ -11,11 +11,11 @@ interface Pattern {
       X{n,m}  X, at least n but not more than m times  
   
 */
- static Pattern maybe(Pattern p) {
+ static Pattern maybe(@SuppressWarnings("unused") Pattern p) {
   return null; 
  }
  class x implements Pattern{
-   {x x = new x();}
+   {@SuppressWarnings("unused") x x = new x();}
  }
 }
 public interface Chars {

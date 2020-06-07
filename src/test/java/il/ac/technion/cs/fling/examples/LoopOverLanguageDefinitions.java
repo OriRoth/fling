@@ -27,6 +27,7 @@ import il.ac.technion.cs.fling.examples.languages.*;
       new RegularExpression(), //
       new HTMLTable(), //
       new SimpleArithmetic(), //
+      new QuantifiersTestLanguage(), //
   };
   private static final Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
     final Map<String, String> $ = new LinkedHashMap<>();
