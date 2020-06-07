@@ -1,5 +1,23 @@
-package il.ac.technion.cs.fling.examples.languages;
+package il.ac.technion.cs.fling.examples.languages.pattern;
 
+
+interface Pattern {
+  /*
+      X?  X, once or not at all
+      X*  X, zero or more times
+      X+  X, one or more times
+      X{n}  X, exactly n times
+      X{n,} X, at least n times
+      X{n,m}  X, at least n but not more than m times  
+  
+*/
+ static Pattern maybe(Pattern p) {
+  return null; 
+ }
+ class x implements Pattern{
+   {x x = new x();}
+ }
+}
 public interface Chars {
   boolean includes(char c);
   default int size() {

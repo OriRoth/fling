@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.examples.languages;
+package il.ac.technion.cs.fling.examples.languages.pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
