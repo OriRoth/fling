@@ -6,7 +6,7 @@ import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.ScalaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
@@ -32,7 +32,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
   @Override public Class<V> V() {
     return V.class;
   }
-  @Override public BNF BNF() {
+  @Override public FancyEBNF BNF() {
     return bnf(). //
         start(Figure). //
         derive(Figure).to(load.with(String.class)). //

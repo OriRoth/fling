@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.GeneralizedSymbol;
@@ -26,14 +26,14 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
 
 public abstract class Grammar {
-	public final BNF ebnf;
+	public final FancyEBNF ebnf;
 	public final Namer namer;
-	public final BNF bnf;
-	public final BNF normalizedBNF;
-	public final BNF normalizedEBNF;
-	private final Map<Variable, BNF> subBNFs;
+	public final FancyEBNF bnf;
+	public final FancyEBNF normalizedBNF;
+	public final FancyEBNF normalizedEBNF;
+	private final Map<Variable, FancyEBNF> subBNFs;
 
-	public Grammar(BNF ebnf, Namer namer) {
+	public Grammar(FancyEBNF ebnf, Namer namer) {
 		this.ebnf = ebnf;
 		this.namer = namer;
 		this.bnf = getBNF(ebnf);
@@ -44,14 +44,14 @@ public abstract class Grammar {
 			subBNFs.put(head, computeSubBNF(head));
 	}
 
-	public abstract DPDA<Named, Verb, Named> buildAutomaton(BNF bnf);
+	public abstract DPDA<Named, Verb, Named> buildAutomaton(FancyEBNF bnf);
 
 	// TODO compute lazily.
 	public DPDA<Named, Verb, Named> toDPDA() {
 		return buildAutomaton(bnf);
 	}
 
-	private BNF getBNF(BNF ebnf) {
+	private FancyEBNF getBNF(FancyEBNF ebnf) {
 		Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
 		Set<DerivationRule> R = new LinkedHashSet<>();
 		Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
@@ -75,15 +75,15 @@ public abstract class Grammar {
 			R.add(new DerivationRule(rule.lhs, rhs));
 		}
 		Γ.addAll(extensionProducts);
-		return new BNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts,
+		return new FancyEBNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts,
 				false);
 	}
 
-	public BNF getSubBNF(Variable variable) {
+	public FancyEBNF getSubBNF(Variable variable) {
 		return subBNFs.get(variable);
 	}
 
-	private BNF computeSubBNF(Variable v) {
+	private FancyEBNF computeSubBNF(Variable v) {
 		final Set<Verb> Σ = new LinkedHashSet<>();
 		final Set<Variable> V = new LinkedHashSet<>();
 		V.add(v);
@@ -98,10 +98,10 @@ public abstract class Grammar {
 					r.verbs().forEachOrdered(Σ::add);
 				}
 		}
-		return new BNF(Σ, V, rs, v, null, null, null, true);
+		return new FancyEBNF(Σ, V, rs, v, null, null, null, true);
 	}
 
-	private static BNF normalize(BNF bnf,Namer namer) {
+	private static FancyEBNF normalize(FancyEBNF bnf,Namer namer) {
 		Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
 		Set<DerivationRule> R = new LinkedHashSet<>();
 		for (Variable v : bnf.Γ) {
@@ -126,11 +126,11 @@ public abstract class Grammar {
 				}
 			R.add(new DerivationRule(v, alteration.stream().map(a -> new ExtendedSententialForm(a)).collect(toList())));
 		}
-		return new BNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping,
+		return new FancyEBNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping,
 				bnf.extensionProducts, false);
 	}
 
-	public static boolean isSequenceRHS(BNF bnf, Variable v) {
+	public static boolean isSequenceRHS(FancyEBNF bnf, Variable v) {
 		List<ExtendedSententialForm> rhs = bnf.rhs(v);
 		return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
 	}

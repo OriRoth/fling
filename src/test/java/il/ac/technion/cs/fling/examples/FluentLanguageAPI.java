@@ -6,7 +6,7 @@ public interface FluentLanguageAPI<Σ extends Enum<Σ> & Terminal, V extends Enu
   default String name() {
     return this.getClass().getSimpleName();
   }
-  BNF BNF();
+  FancyEBNF BNF();
   // TODO consider getting enums via reflection
   Class<Σ> Σ();
   Class<V> V();

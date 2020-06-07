@@ -23,7 +23,7 @@ public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, V> {
   @Override public Class<V> V() {
     return V.class;
   }
-  @Override public il.ac.technion.cs.fling.BNF BNF() {
+  @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     return bnf(). //
         start(P). //
         derive(P).to(c.many(char.class), P, ↄ.with(AB), P). //

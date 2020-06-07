@@ -3,7 +3,7 @@ package il.ac.technion.cs.fling.examples.languages;
 import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
 
-import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaANTLRAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.grammars.LL1;
@@ -17,7 +17,7 @@ public class TableMaker {
     String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
     Tool tool = new Tool();
     Grammar grammar = tool.loadGrammar(grammarFilePath);
-    BNF bnf = BNF.fromANTLR(grammar);
+    FancyEBNF bnf = FancyEBNF.fromANTLR(grammar);
     String packageName = "il.ac.technion.cs.fling.examples.generated";
     String apiName = name;
     Namer namer = new NaiveNamer(packageName, apiName);

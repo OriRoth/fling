@@ -18,13 +18,13 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.*;
  * @author Ori Roth
  */
 public class LL1 extends Grammar {
-  public LL1(final BNF bnf, final Namer namer) {
+  public LL1(final FancyEBNF bnf, final Namer namer) {
     super(bnf, namer);
   }
   /**
    * Translate LL(1) BNF to DPDA.
    */
-  @Override public DPDA<Named, Verb, Named> buildAutomaton(final BNF bnf) {
+  @Override public DPDA<Named, Verb, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<Named> Q = new LinkedHashSet<>();
     final Set<Verb> Σ = new LinkedHashSet<>();
     final Set<Named> Γ = new LinkedHashSet<>();
@@ -166,7 +166,7 @@ public class LL1 extends Grammar {
   @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-  private Word<Named> getPossiblyAcceptingVariables(final BNF bnf, final Map<Verb, Named> typeNameMapping, final ExtendedSententialForm sf,
+  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Verb, Named> typeNameMapping, final ExtendedSententialForm sf,
       final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;

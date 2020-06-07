@@ -26,14 +26,14 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   @SuppressWarnings("rawtypes") private static final Class<? extends List> inputClass = List.class;
   private static final String ListObject = String.format("%s<%s>", List.class.getCanonicalName(), Object.class.getCanonicalName());
   private static final String ListWild = String.format("%s<?>", List.class.getCanonicalName());
-  private final BNF bnf;
+  private final FancyEBNF bnf;
   private final Class<Σ> Σ;
   private final Namer namer;
   private final String packageName;
   private final String apiName;
   private final String astClassesContainerName;
 
-  public LL1JavaASTParserCompiler(final BNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
+  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
       final String apiName, final String astClassesContainerName) {
     this.bnf = bnf;
     this.Σ = Σ;

@@ -18,9 +18,9 @@ public class ASTCompiler {
   /**
    * Input BNF.
    */
-  public final BNF bnf;
+  public final FancyEBNF bnf;
 
-  public ASTCompiler(final BNF bnf) {
+  public ASTCompiler(final FancyEBNF bnf) {
     this.bnf = bnf;
   }
   /**

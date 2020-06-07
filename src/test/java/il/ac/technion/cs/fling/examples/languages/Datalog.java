@@ -14,7 +14,7 @@ import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
@@ -57,7 +57,7 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
   /**
    * Datalog's grammar in Backus-Naur form.
    */
-  public static final BNF bnf = bnf(). //
+  public static final FancyEBNF bnf = bnf(). //
       start(Program). // This is the start symbol
       derive(Program).to(GeneralizedSymbol.oneOrMore(Statement)). // Program ::= Statement*
       specialize(Statement).into(Fact, Rule, Query).
@@ -76,7 +76,7 @@ public class Datalog implements FluentLanguageAPI<Σ, V> {
       derive(Term).to(l.with(S)).or(v.with(S)). //
       build();
 
-  @Override public il.ac.technion.cs.fling.BNF BNF() {
+  @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     return bnf;
   }
   /**

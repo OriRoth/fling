@@ -45,7 +45,7 @@ public class JavaMediator {
    */
   public final String astCompilerClass;
 
-  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final BNF bnf, final String packageName, final String apiName,
+  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final FancyEBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
     this.namer = new NaiveNamer(packageName, apiName);
     this.ll1 = new LL1(bnf, namer);
