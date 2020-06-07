@@ -24,7 +24,7 @@ public class QuantifiersTestLanguage implements FluentLanguageAPI<Σ, V> {
   @Override public Class<V> V() {
     return V.class;
   }
-  @Override public il.ac.technion.cs.fling.BNF BNF() {
+  @Override public FancyEBNF BNF() {
     return bnf(). //
         start(X). //
         derive(X).to(oneOrMore(a.with(int.class)), //
