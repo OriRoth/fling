@@ -1,4 +1,5 @@
 package il.ac.technion.cs.fling.examples.languages;
+
 import static il.ac.technion.cs.fling.GeneralizedSymbol.*;
 
 import static il.ac.technion.cs.fling.examples.languages.Java.V.*;
@@ -50,11 +51,6 @@ public class Java implements FluentLanguageAPI<Σ, V> {
     return V.class;
   }
 
-  /**
-   * Short name of {@link String}.class, used to specify the type of parameters
-   * to fluent API methods in grammar specification.
-   */
-  private static final Class<String> S = String.class;
   /**
    * Datalog's grammar in Backus-Naur form.
    */
