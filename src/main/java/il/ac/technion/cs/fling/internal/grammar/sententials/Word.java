@@ -21,12 +21,12 @@ public class Word<T> implements List<T> {
     inner = Collections.singletonList(t);
     verify();
   }
-  @SafeVarargs public Word(final T... origin) {
-    inner = Arrays.asList(origin);
+  @SafeVarargs public Word(final T... ts) {
+    inner = Arrays.asList(ts);
     verify();
   }
-  public Word(final Collection<T> origin) {
-    inner = new ArrayList<>(origin);
+  public Word(final Collection<T> ts) {
+    inner = new ArrayList<>(ts);
     verify();
   }
   public static <T> Word<T> empty() {
