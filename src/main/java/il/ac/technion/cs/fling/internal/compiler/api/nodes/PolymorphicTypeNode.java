@@ -12,23 +12,29 @@ public class PolymorphicTypeNode<T> {
     this.name = name;
     this.typeArguments = Collections.unmodifiableList(typeArguments);
   }
+
   public PolymorphicTypeNode(final T name) {
     this.name = name;
     this.typeArguments = Collections.emptyList();
   }
+
   private PolymorphicTypeNode() {
     this.name = null;
     this.typeArguments = null;
   }
+
   @SuppressWarnings("unchecked") public static <T> PolymorphicTypeNode<T> top() {
     return TOP;
   }
+
   @SuppressWarnings("unchecked") public static <T> PolymorphicTypeNode<T> bot() {
     return BOT;
   }
+
   public boolean isTop() {
     return this == TOP;
   }
+
   public boolean isBot() {
     return this == BOT;
   }

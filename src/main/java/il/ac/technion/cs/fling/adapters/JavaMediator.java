@@ -16,13 +16,11 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
-/**
- * Java adapters mediator. Connects fluent API, AST types and AST run-time
+/** Java adapters mediator. Connects fluent API, AST types and AST run-time
  * compiler generation given LL(1) grammars. AST visitor class definition is
  * also produced.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class JavaMediator {
   final LL1 ll1;
   private final Namer namer;
@@ -32,21 +30,15 @@ public class JavaMediator {
   private final JavaInterfacesASTAdapter astAdapter;
   private final Class<? extends Terminal> Σ;
   private final ASTParserCompiler parserCompiler;
-  /**
-   * API Java file contents.
-   */
+  /** API Java file contents. */
   public final String apiClass;
-  /**
-   * AST Java file contents. Includes the AST visitor class.
-   */
+  /** AST Java file contents. Includes the AST visitor class. */
   public final String astClass;
-  /**
-   * AST run-time compiler Java file contents.
-   */
+  /** AST run-time compiler Java file contents. */
   public final String astCompilerClass;
 
-  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final FancyEBNF bnf, final String packageName, final String apiName,
-      final Class<Σ> Σ) {
+  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final FancyEBNF bnf, final String packageName,
+      final String apiName, final Class<Σ> Σ) {
     this.namer = new NaiveNamer(packageName, apiName);
     this.ll1 = new LL1(bnf, namer);
     this.packageName = packageName;
@@ -55,18 +47,24 @@ public class JavaMediator {
       @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
+
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
-      @Override public String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+
+      @Override public String printConcreteImplementationMethodBody(final Token σ,
+          final List<ParameterFragment> parameters) {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
+
       @Override public String printTerminationMethodReturnType() {
         return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
       }
+
       @Override public String printTerminationMethodConcreteBody() {
         return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
       }
+
       @Override protected String printAdditionalDeclarations() {
         return JavaMediator.this.printAdditionalDeclarations();
       }
@@ -85,6 +83,7 @@ public class JavaMediator {
         .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
+
   protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
@@ -96,12 +95,14 @@ public class JavaMediator {
                 processedParameters.isEmpty() ? "" : ",", //
                 String.join(",", processedParameters)));
   }
+
   @SuppressWarnings("static-method") String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         List.class.getCanonicalName(), //
         Assignment.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
+
   String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
     assert σ.parameters.length == parameters.size();
     final List<String> processedParameters = processParameters(σ, parameters);
@@ -111,16 +112,19 @@ public class JavaMediator {
         σ.name(), //
         String.format("new Object[]{%s}", String.join(",", processedParameters)));
   }
+
   String printTerminationMethodReturnType(final Variable head) {
     return String.format("%s.%s.%s", //
         packageName, //
         apiName + "AST", //
         namer.getASTClassName(head));
   }
+
   String printTerminationMethodConcreteBody(final Variable head) {
     return String.format("return %s(w);", //
         parserCompiler.getParsingMethodName(head));
   }
+
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
@@ -128,18 +132,24 @@ public class JavaMediator {
           @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
+
           @Override public String printTopInterfaceBody() {
             return "";
           }
+
           @Override public String printConcreteImplementationClassBody() {
             return JavaMediator.this.printConcreteImplementationClassBody();
           }
-          @Override public String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+
+          @Override public String printConcreteImplementationMethodBody(final Token σ,
+              final List<ParameterFragment> parameters) {
             return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
           }
+
           @Override public String printTerminationMethodReturnType() {
             return JavaMediator.this.printTerminationMethodReturnType(bnf.ε);
           }
+
           @Override public String printTerminationMethodConcreteBody() {
             return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
           }
@@ -147,6 +157,7 @@ public class JavaMediator {
             .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
+
   private List<String> processParameters(final Token σ, final List<ParameterFragment> parameters) {
     Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     final List<String> processedParameters = new ArrayList<>();

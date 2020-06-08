@@ -9,6 +9,7 @@ public interface AbstractMethodNode<T, D> {
       this.declaration = declaration;
       this.returnType = returnType;
     }
+
     public D declaration() {
       return declaration;
     }
@@ -25,6 +26,7 @@ public interface AbstractMethodNode<T, D> {
       this.declaration = declaration;
       this.returnType = returnType;
     }
+
     public D declaration() {
       return declaration;
     }
@@ -36,6 +38,7 @@ public interface AbstractMethodNode<T, D> {
     public Chained(final D declaration) {
       this.declaration = declaration;
     }
+
     public D declaration() {
       return declaration;
     }
@@ -44,21 +47,27 @@ public interface AbstractMethodNode<T, D> {
   default boolean isStartMethod() {
     return this instanceof Start;
   }
+
   default boolean isTerminationMethod() {
     return this instanceof Termination;
   }
+
   default boolean isIntermediateMethod() {
     return this instanceof Intermediate;
   }
+
   default boolean isChainedMethod() {
     return this instanceof Chained;
   }
+
   default Start<T, D> asStartMethod() {
     return (Start<T, D>) this;
   }
+
   default Intermediate<T, D> asIntermediateMethod() {
     return (Intermediate<T, D>) this;
   }
+
   default Chained<?, D> asChainedMethod() {
     return (Chained<?, D>) this;
   }

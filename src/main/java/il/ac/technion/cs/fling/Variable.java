@@ -1,22 +1,23 @@
 package il.ac.technion.cs.fling;
 
-/**
- * Grammar sentential variable.
+/** Grammar sentential variable.
  * 
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public interface Variable extends SymbolX {
   static Variable byName(final String name) {
     return new Variable() {
       @Override public String name() {
         return name;
       }
+
       @Override public String toString() {
         return name;
       }
+
       @Override public int hashCode() {
         return name.hashCode();
       }
+
       @Override public boolean equals(final Object obj) {
         if (this == obj)
           return true;

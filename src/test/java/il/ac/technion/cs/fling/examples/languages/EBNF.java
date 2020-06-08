@@ -9,23 +9,25 @@ import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 
 public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
   public enum Σ implements Terminal {
-    bnf, start, derive, specialize, to, into, toEpsilon, or, orNone,
-    oneOrMore, twoOrMore,noneOrMore,optional,__
+    bnf, start, derive, specialize, to, into, toEpsilon, or, orNone, oneOrMore, twoOrMore, noneOrMore, optional, __
   }
 
   public enum V implements Variable {
-    EBNF, Rule, RuleBody, RuleTail, RuleItem,MySymbol
+    EBNF, Rule, RuleBody, RuleTail, RuleItem, MySymbol
   }
 
   @Override public String name() {
     return "EBNFAPI";
   }
+
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
+
   @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     // @formatter:off
     return bnf(). //

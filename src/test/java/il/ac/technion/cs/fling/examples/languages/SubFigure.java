@@ -29,9 +29,11 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
+
   @Override public FancyEBNF BNF() {
     return bnf(). //
         start(Figure). //
@@ -40,6 +42,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
         derive(Orientation).to(row).or(column). //
         build();
   }
+
   public static void main(String[] args) {
     SubFigure language = new SubFigure();
     Namer namer = new NaiveNamer("SubFigure");
@@ -48,7 +51,8 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     APICompiler compiler = new ReliableAPICompiler(dpda);
     PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
       // Ignore parameters:
-      @Override public String printParametersList(@SuppressWarnings("unused") final APICompiler.MethodDeclaration declaration) {
+      @Override public String printParametersList(
+          @SuppressWarnings("unused") final APICompiler.MethodDeclaration declaration) {
         return "";
       }
     };

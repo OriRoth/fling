@@ -11,19 +11,16 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 
-/**
- * LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
+/** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
  * 
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class LL1 extends Grammar {
   public LL1(final FancyEBNF bnf, final Namer namer) {
     super(bnf, namer);
   }
-  /**
-   * Translate LL(1) BNF to DPDA.
-   */
+
+  /** Translate LL(1) BNF to DPDA. */
   @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<Named> Q = new LinkedHashSet<>();
     final Set<Token> Σ = new LinkedHashSet<>();
@@ -60,7 +57,8 @@ public class LL1 extends Grammar {
     Γ.addAll(A.values());
     F.add(q0$);
     q0 = bnf.isNullable(Constants.S) ? q0$ : q0ø;
-    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new ExtendedSententialForm(Constants.$$, Constants.S), true);
+    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new ExtendedSententialForm(Constants.$$, Constants.S),
+        true);
     /* Computing automaton transitions for q0ø */
     // Moving from q0ø to q0$ with ε + $.
     δs.add(new δ<>(q0ø, ε(), Constants.$$, q0$, Word.empty()));
@@ -127,7 +125,8 @@ public class LL1 extends Grammar {
             final Named σState = typeNameMapping.get(σ);
             δs.add(new δ<>(σState, ε(), A.get(r.lhs), σState,
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
-            δs.add(new δ<>(σState, ε(), r.lhs, σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+            δs.add(new δ<>(σState, ε(), r.lhs, σState,
+                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
           }
     // Moving from qσ to qσ with ε + nullable variable.
     for (final Token σ : bnf.Σ)
@@ -163,11 +162,13 @@ public class LL1 extends Grammar {
     // Automaton gets stuck after reaching qT.
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
+
   @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Token, Named> typeNameMapping, final ExtendedSententialForm sf,
-      final boolean isFromQ0$) {
+
+  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Token, Named> typeNameMapping,
+      final ExtendedSententialForm sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
     for (final Symbol s : reversed(sf)) {

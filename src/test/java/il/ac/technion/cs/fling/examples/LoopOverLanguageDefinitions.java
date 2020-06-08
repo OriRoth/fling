@@ -67,6 +67,7 @@ import il.ac.technion.cs.fling.examples.languages.*;
       System.out.println("file " + file.getKey() + ".java written successfully.");
     }
   }
+
   public static void main(final String[] args) throws IOException, FormatterException {
     new LoopOverLanguageDefinitions().compile();
   }

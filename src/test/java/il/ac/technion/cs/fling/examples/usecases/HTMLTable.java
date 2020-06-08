@@ -65,6 +65,7 @@ public class HTMLTable {
         + "</html>\n", //
         page.html, toString(page.table, 0));
   }
+
   public static String toString(final Table table, final int depth) {
     return String.format("" //
         + "%s<table%s>\n" //
@@ -77,6 +78,7 @@ public class HTMLTable {
         table.row.stream().map(line -> toString(line, depth + 1)).collect(joining("\n")), //
         printTabs(depth));
   }
+
   public static String toString(final Header header, final int depth) {
     return String.format("" //
         + "%s<tr%s>\n" //
@@ -91,6 +93,7 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
+
   public static String toString(final Row r, final int depth) {
     return String.format("" //
         + "%s<tr%s>\n" //
@@ -106,9 +109,11 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
+
   private static String printOptions(String[] options) {
     return options.length == 0 ? "" : " " + String.join(" ", options);
   }
+
   private static String printTabs(int depth) {
     StringBuilder $ = new StringBuilder();
     for (int i = 0; i < depth; ++i)

@@ -13,36 +13,26 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
-/**
- * AeqB = {w in {a, b}* | #a in w = #b in w}.
+/** AeqB = {w in {a, b}* | #a in w = #b in w}.
  * 
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class AeqB {
-  /**
-   * Set of DPDA states.
-   */
+  /** Set of DPDA states. */
   enum Q implements Named {
     q0, q1
   }
 
-  /**
-   * Set of DPDA input letters.
-   */
+  /** Set of DPDA input letters. */
   enum Σ implements Terminal {
     a, b
   }
 
-  /**
-   * Set of DPDA stack symbols.
-   */
+  /** Set of DPDA stack symbols. */
   enum Γ implements Named {
     E, A, B
   }
 
-  /**
-   * DPDA accepting AeqB.
-   */
+  /** DPDA accepting AeqB. */
   public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
@@ -55,24 +45,18 @@ public class AeqB {
       .δ(q1, b, A, q1) //
       .δ(q1, b, B, q1, B, B) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AeqB", "$",
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AeqB")) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AeqB",
+      "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AeqB")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  /**
-   * C++ fluent API supporting method chains of the form
-   * <code>a()->b().a().b()...$();</code>
-   */
+  /** C++ fluent API supporting method chains of the form
+   * <code>a()->b().a().b()...$();</code> */
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  /**
-   * SML fluent API
-   */
+  /** SML fluent API */
   public static final String SMLFluentAPI = new SMLAPIAdapter("zzz", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 
-  /**
-   * Print C++ program to standard output.
-   */
+  /** Print C++ program to standard output. */
   public static void main(final String[] args) {
 //    System.out.println(CppFluentAPI);
     System.out.println(SMLFluentAPI);

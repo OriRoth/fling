@@ -36,8 +36,8 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AnBn", "$",
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AnBn",
+      "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AnBn")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());

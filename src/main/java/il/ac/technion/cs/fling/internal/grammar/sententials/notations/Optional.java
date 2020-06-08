@@ -16,6 +16,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   public Optional(Symbol symbol) {
     super(symbol);
   }
+
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
       final Consumer<DerivationRule> ruleDeclaration) {
     final Variable head = namer.createQuantificationChild(symbol);
@@ -25,6 +26,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new ExtendedSententialForm())));
     return head;
   }
+
   @Override public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
@@ -47,17 +49,21 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         }) //
         .collect(toList());
   }
+
   @Override public boolean isNullable(@SuppressWarnings("unused") final Function<Symbol, Boolean> nullabilitySolver) {
     return true;
   }
+
   @Override public Set<Token> getFirsts(final Function<Symbol, Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
+
   public static List<java.util.Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
     // TODO support many fields
     assert fieldCount == 1;
     return asList(rawNode.isEmpty() ? java.util.Optional.empty() : java.util.Optional.of(rawNode.get(0)));
   }
+
   @Override public String marker() {
     return "?";
   }

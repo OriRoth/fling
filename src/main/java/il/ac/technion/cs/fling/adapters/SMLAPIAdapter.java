@@ -11,11 +11,9 @@ import il.ac.technion.cs.fling.internal.compiler.api.*;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 
-/**
- * Prototypical SML API adapter.
+/** Prototypical SML API adapter.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   private final String terminationMethodName;
   private final Namer namer;
@@ -26,24 +24,28 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     this.namer = namer;
     this.firstDatatype = true;
   }
+
   @Override public String printFluentAPI(
       final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
-    return String.format("%s\n\n%s",
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining(" ")),
+    return String.format("%s\n\n%s", fluentAPI.interfaces.stream().map(this::printInterface).collect(joining(" ")),
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
   }
+
   @Override public String printTopType() {
     return "TOP";
   }
+
   @Override public String printBotType() {
     return "BOT";
   }
+
   @Override public String printIntermediateType(final APICompiler.TypeName name) {
     // TODO sanely check whether is type variable
     String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + printTypeName(name);
   }
+
   @Override public String printIntermediateType(final APICompiler.TypeName name,
       final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return typeArguments.isEmpty() ? printTypeName(name)
@@ -51,14 +53,17 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
             typeArguments.stream().map(this::printType).collect(joining(",")), //
             printTypeName(name));
   }
+
   @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, printType(returnType), name);
   }
+
   @Override public String printTerminationMethod() {
     return String.format("\t%s: TOP", terminationMethodName);
   }
+
   @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
     if (!declaration.getInferredParameters().isEmpty()) {
@@ -66,22 +71,28 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     }
     return String.format("\t%s: %s", declaration.name.name(), printType(returnType));
   }
+
   @Override public String printTopInterface() {
     return String.format("%s TOP = SUCCESS", getDatatypeKeyword());
   }
+
   @Override public String printBotInterface() {
     return String.format("%s BOT = FAILURE", getDatatypeKeyword());
   }
+
   @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
       final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("%s of {\n%s\n}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining(",\n")));
   }
+
   public String printTypeName(final APICompiler.TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
-  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+
+  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α,
+      final Set<Named> legalJumps) {
     assert q.name() != null && !q.name().isEmpty();
     return α == null ? q.name()
         : String.format("%s_%s%s", //
@@ -89,13 +100,15 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
+
   public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
     String name = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
     String variables = declaration.typeVariables.isEmpty() ? ""
-        : String.format("(%s) ", declaration.typeVariables.stream().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
-            name);
+        : String.format("(%s) ",
+            declaration.typeVariables.stream().map(Named::name).map(n -> "'" + n).collect(joining(", ")), name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
   }
+
   private String getDatatypeKeyword() {
     if (!firstDatatype)
       return "and";

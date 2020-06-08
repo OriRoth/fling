@@ -47,6 +47,7 @@ public class DPDATest {
     assertEquals(new Word<>(γ0, γ1), δ.getΑ());
     assertNull(dpda.δ(q0, Ↄ, γ0));
   }
+
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);

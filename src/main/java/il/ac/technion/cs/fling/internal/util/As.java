@@ -10,23 +10,28 @@ public class As {
     Collections.addAll($, items);
     return $;
   }
+
   public static <T> Word<T> word(final Collection<T> collection) {
     return new Word<>(collection);
   }
+
   @SafeVarargs public static final <T> List<T> list(final Collection<T>... collections) {
     final List<T> list = new ArrayList<>();
     for (final Collection<T> collection : collections)
       list.addAll(collection);
     return Collections.unmodifiableList(list);
   }
+
   public static final <T> List<T> reversed(final T[] ts) {
     return reversed(Arrays.asList(ts));
   }
+
   public static final <T> List<T> reversed(final List<T> ts) {
     final List<T> $ = new ArrayList<>(ts);
     Collections.reverse($);
     return $;
   }
+
   public static final <T> Word<T> reversed(final Word<T> w) {
     final List<T> $ = new ArrayList<>(w);
     Collections.reverse($);

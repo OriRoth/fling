@@ -1,17 +1,13 @@
 package il.ac.technion.cs.fling.automata;
 
-/**
- * Alphabet utilities.
+/** Alphabet utilities.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class Alphabet {
-  /**
-   * The empty word, ε.
+  /** The empty word, ε.
    *
    * @param <T> Terminal type
-   * @return ε value
-   */
+   * @return ε value */
   public static <T> T ε() {
     return null;
   }

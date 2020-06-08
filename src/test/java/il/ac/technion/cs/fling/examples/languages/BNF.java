@@ -19,12 +19,15 @@ public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.V> {
   @Override public String name() {
     return "BNFAPI";
   }
+
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
+
   @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     // @formatter:off
     return bnf(). //

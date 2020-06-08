@@ -17,6 +17,7 @@ public class DerivationRule {
     this.lhs = lhs;
     this.rhs = rhs;
   }
+
   @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
@@ -25,37 +26,47 @@ public class DerivationRule {
     final DerivationRule other = (DerivationRule) o;
     return lhs.equals(other.lhs) && rhs.equals(other.rhs);
   }
+
   @Override public int hashCode() {
     int $ = 1;
     $ = $ * 31 + lhs.hashCode();
     $ = $ * 31 + rhs.hashCode();
     return $;
   }
+
   public Variable lhs() {
     return lhs;
   }
+
   private Stream<Symbol> quantifiedSymbols() {
     return quantifiers().flatMap(Quantifier::symbols);
   }
+
   private Stream<Quantifier> quantifiers() {
     return symbols().filter(Symbol::isQuantifier).map(Symbol::asQuantifier);
   }
+
   public List<ExtendedSententialForm> rhs() {
     return rhs;
   }
+
   private Stream<Symbol> symbols() {
     return rhs.stream().flatMap(Collection::stream);
   }
+
   @Override public String toString() {
     return String.format("%s::=%s", lhs,
         String.join("|", rhs.stream().map(sf -> sf.isEmpty() ? "ε" : sf.toString()).collect(Collectors.toList())));
   }
+
   public Stream<Variable> variables() {
     return Stream.concat(variables(symbols()), variables(quantifiedSymbols()));
   }
+
   public Stream<Token> tokens() {
     return Stream.concat(tokens(symbols()), tokens(quantifiedSymbols()));
   }
+
   private static Stream<Token> tokens(Stream<Symbol> symbols) {
     return symbols.filter(Symbol::isToken).map(Symbol::asToken);
   }

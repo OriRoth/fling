@@ -29,9 +29,11 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
+
   @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     // @formatter:off
     return bnf(). // Start defining BNF
@@ -44,6 +46,7 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
         build(); // Yield BNF;
     // @formatter:on
   }
+
   public static void main(String[] args) //
       throws IOException, FormatterException {
     // @formatter:off
@@ -57,6 +60,7 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
     writeToFile("SimpleArithmeticAST", jm.astClass);
     writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
   }
+
   private static void writeToFile(String fileName, String fileContent) //
       throws IOException, FormatterException {
     String path = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";

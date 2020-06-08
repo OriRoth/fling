@@ -13,6 +13,7 @@ public class ConcreteClassNode extends ClassNode {
     this.parents = parents;
     this.fields = fields;
   }
+
   public List<FieldNode> getFields() {
     return fields;
   }

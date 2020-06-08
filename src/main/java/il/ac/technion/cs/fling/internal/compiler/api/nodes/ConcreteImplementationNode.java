@@ -8,6 +8,7 @@ public class ConcreteImplementationNode<T, D> {
   public ConcreteImplementationNode(final List<AbstractMethodNode<T, D>> methods) {
     this.methods = Collections.unmodifiableList(methods);
   }
+
   public List<AbstractMethodNode<T, D>> methods() {
     return methods;
   }

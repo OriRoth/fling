@@ -9,25 +9,20 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 
-/**
- * Abstract syntax tree compiler. Generates types corresponding to AST nodes.
+/** Abstract syntax tree compiler. Generates types corresponding to AST nodes.
  * 
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class ASTCompiler {
-  /**
-   * Input BNF.
-   */
+  /** Input BNF. */
   public final FancyEBNF bnf;
 
   public ASTCompiler(final FancyEBNF bnf) {
     this.bnf = bnf;
   }
-  /**
-   * Compiles BNF to AST types.
+
+  /** Compiles BNF to AST types.
    * 
-   * @return
-   */
+   * @return */
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();
     final Map<Variable, List<Variable>> children = new LinkedHashMap<>();

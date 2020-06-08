@@ -12,25 +12,32 @@ public class InterfaceNode<T, D, N> {
     this.declaration = name;
     this.methods = Collections.unmodifiableList(methods);
   }
+
   private InterfaceNode() {
     this.declaration = null;
     this.methods = null;
   }
+
   public N declaration() {
     return declaration;
   }
+
   public List<AbstractMethodNode<T, D>> methods() {
     return methods;
   }
+
   @SuppressWarnings("unchecked") public static <T, D, N> InterfaceNode<T, D, N> top() {
     return TOP;
   }
+
   @SuppressWarnings("unchecked") public static <T, D, N> InterfaceNode<T, D, N> bot() {
     return BOT;
   }
+
   public boolean isTop() {
     return this == TOP;
   }
+
   public boolean isBot() {
     return this == BOT;
   }

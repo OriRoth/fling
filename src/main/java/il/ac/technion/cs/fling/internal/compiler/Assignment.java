@@ -4,19 +4,13 @@ import java.util.*;
 
 import il.ac.technion.cs.fling.Terminal;
 
-/**
- * Recording of method call in fluent API invocation.
+/** Recording of method call in fluent API invocation.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class Assignment {
-  /**
-   * Inducing terminal.
-   */
+  /** Inducing terminal. */
   public final Terminal σ;
-  /**
-   * Arguments supplied.
-   */
+  /** Arguments supplied. */
   public final List<Object> arguments;
 
   public Assignment(final Terminal σ, final Object... arguments) {

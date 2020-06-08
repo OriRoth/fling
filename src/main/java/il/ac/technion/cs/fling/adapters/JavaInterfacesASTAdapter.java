@@ -6,12 +6,10 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.PolymorphicLanguageASTAdapterBase;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 
-/**
- * Java AST adapter. Abstract types translate to interfaces, while Concrete
+/** Java AST adapter. Abstract types translate to interfaces, while Concrete
  * types translate to classes implementing them.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 @SuppressWarnings("static-method") public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
   private final String packageName;
   private final String className;
@@ -22,6 +20,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
     this.className = className;
     this.namer = namer;
   }
+
   @Override public String printASTClass(final ASTCompilationUnitNode compilationUnit) {
     namer.name(compilationUnit);
     return String.format("package %s;\n import java.util.*;\n @SuppressWarnings(\"all\")public interface %s{%s%s}", //
@@ -32,6 +31,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
             .collect(joining()), //
         printAdditionalDeclarations(compilationUnit));
   }
+
   @Override public String printAbstractClass(final AbstractClassNode abstractClass) {
     return String.format("interface %s %s{}", //
         abstractClass.getClassName(), //
@@ -40,6 +40,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
                 .map(ClassNode::getClassName) //
                 .collect(joining(",")));
   }
+
   @Override public String printConcreteClass(final ConcreteClassNode concreteClass) {
     return String.format("public class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
@@ -51,27 +52,30 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
             .collect(joining()), //
         printConstructor(concreteClass));
   }
-  /**
-   * Additional definitions to be printed in the top class.
+
+  /** Additional definitions to be printed in the top class.
    *
    * @param compilationUnit AST
-   * @return additional definitions
-   */
-  @SuppressWarnings("unused") protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
+   * @return additional definitions */
+  @SuppressWarnings("unused") protected String printAdditionalDeclarations(
+      final ASTCompilationUnitNode compilationUnit) {
     return "";
   }
+
   public String printField(final String format, final String separator, final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format(format, //
             fragment.parameterType, fragment.parameterName)) //
         .collect(joining(separator));
   }
+
   public String constructorAssignment(final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format("this.%s = %s;", //
             fragment.parameterName, fragment.parameterName)) //
         .collect(joining());
   }
+
   public String printConstructor(final ConcreteClassNode concreteClass) {
     return String.format("public %s(%s){%s}", //
         concreteClass.getClassName(), //
@@ -84,6 +88,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
             .map(field -> constructorAssignment(field)) //
             .collect(joining()));
   }
+
   public boolean nonEmptyField(final FieldNode field) {
     return !field.source.isParameterized();
   }

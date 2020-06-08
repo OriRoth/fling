@@ -1,16 +1,17 @@
 package il.ac.technion.cs.fling.examples.usecases;
+
 import static il.ac.technion.cs.fling.examples.generated.SubFigure.row;
 
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.*;
-/**
- * This class demonstrates the use of automatically generated fluent API.
+
+/** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
- * To generate the respective fluent APIs, run {@link LoopOverLanguageDefinitions}.
+ * To generate the respective fluent APIs, run
+ * {@link LoopOverLanguageDefinitions}.
  * 
  * @author Yossi Gil
- * @since April 2019
- */
+ * @since April 2019 */
 public class SubFigure {
   // @formatter:off
   public static void main(final String[] args) {
@@ -47,12 +48,15 @@ public class SubFigure {
     }
     return $.toString().trim();
   }
-  private static void fillTable(final Figure fig, final char[][] table, final int i, final int j, final int h, final int w) {
+
+  private static void fillTable(final Figure fig, final char[][] table, final int i, final int j, final int h,
+      final int w) {
     if (fig instanceof Figure1)
       fillTable((Figure1) fig, table, i, j, h, w);
     else
       fillTable((Figure2) fig, table, i, j, h, w);
   }
+
   private static void fillTable(final Figure1 fig, final char[][] table, int i, int j, int h, int w) {
     i *= 5;
     h *= 5;
@@ -71,8 +75,9 @@ public class SubFigure {
     table[i + h / 2][j + w / 2 - 1] = n1;
     table[i + h / 2][j + w / 2] = n2;
   }
-  @SuppressWarnings("null") private static void fillTable(final Figure2 composite, final char[][] table, final int i, final int j,
-      final int h, final int w) {
+
+  @SuppressWarnings("null") private static void fillTable(final Figure2 composite, final char[][] table, final int i,
+      final int j, final int h, final int w) {
     if (isRow(composite.orientation)) {
       final int totalWidth = composite.figure.stream().map(SubFigure::getWidth).reduce(0, Integer::sum);
       int k = 0;
@@ -97,6 +102,7 @@ public class SubFigure {
       }
     }
   }
+
   @SuppressWarnings("null") public static int getHeight(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
@@ -109,6 +115,7 @@ public class SubFigure {
             .map(SubFigure::getHeight) //
             .reduce(Integer::sum).get();
   }
+
   @SuppressWarnings("null") public static int getWidth(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
@@ -121,6 +128,7 @@ public class SubFigure {
             .map(SubFigure::getWidth) //
             .reduce(Integer::sum).get();
   }
+
   public static boolean isRow(final Orientation orientation) {
     return orientation instanceof Orientation1;
   }

@@ -21,18 +21,21 @@ public class QuantifiersTestLanguage implements FluentLanguageAPI<Σ, V> {
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
+
   @Override public FancyEBNF BNF() {
     return bnf(). //
         start(X). //
         derive(X).to(oneOrMore(a.with(int.class)), //
             noneOrMore(b.with(int.class)), //
             optional(Y), //
-            optional(e.with(int.class))). //
+            optional(e.with(int.class)))
+        . //
         derive(Y).to(c.with(int.class)). //
-            or(d.with(int.class)). //
+        or(d.with(int.class)). //
         build();
   }
 }

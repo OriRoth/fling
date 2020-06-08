@@ -1,25 +1,26 @@
 package il.ac.technion.cs.fling.examples.languages.pattern;
 
-
 interface Pattern {
   /*
-      X?  X, once or not at all
-      X*  X, zero or more times
-      X+  X, one or more times
-      X{n}  X, exactly n times
-      X{n,} X, at least n times
-      X{n,m}  X, at least n but not more than m times  
-  
-*/
- static Pattern maybe(@SuppressWarnings("unused") Pattern p) {
-  return null; 
- }
- class x implements Pattern{
-   {@SuppressWarnings("unused") x x = new x();}
- }
+   * X? X, once or not at all X* X, zero or more times X+ X, one or more times
+   * X{n} X, exactly n times X{n,} X, at least n times X{n,m} X, at least n but
+   * not more than m times
+   * 
+   */
+  static Pattern maybe(@SuppressWarnings("unused") Pattern p) {
+    return null;
+  }
+
+  class x implements Pattern {
+    {
+      @SuppressWarnings("unused") x x = new x();
+    }
+  }
 }
+
 public interface Chars {
   boolean includes(char c);
+
   default int size() {
     int $ = 0;
     for (int c = Character.MIN_VALUE; c <= Character.MAX_VALUE; ++c)
@@ -43,6 +44,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars not() {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -50,6 +52,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars or(Chars other) {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -57,6 +60,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars and(Chars other) {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -64,6 +68,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars xor(Chars other) {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -71,6 +76,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars except(Chars other) {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -78,6 +84,7 @@ public interface Chars {
       }
     };
   }
+
   default Chars or(char singleton) {
     return new Chars() {
       @Override public boolean includes(char c) {
@@ -118,8 +125,8 @@ public interface Chars {
   static final Chars ALNUM = ALPHA.or(DIGIT);
   /** \p{Punct} Punctuation: One of !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ */
   static final Chars PUNCT = Chars.of("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
-  static final Chars PUNCT1 = Chars.of('!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', '-', '.', '/', ';', '<', '=', '>',
-      '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}');
+  static final Chars PUNCT1 = Chars.of('!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', '-', '.', '/', ';', '<',
+      '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}');
   /** \p{Graph} A visible character: [\p{Alnum}\p{Punct}] */
   static final Chars GRAPH = ALNUM.or(PUNCT);
   /** \p{Print} A printable character: [\p{Graph}\x20] */
@@ -137,6 +144,7 @@ public interface Chars {
       $ = $.or(c);
     return $;
   }
+
   static Chars of(String... ss) {
     Chars $ = Chars.EMPTY;
     for (String s : ss)

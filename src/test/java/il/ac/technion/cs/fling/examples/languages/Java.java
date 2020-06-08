@@ -22,38 +22,33 @@ import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.examples.languages.Java.*;
 
-/**
- * Fling input specifying the formal Datalog language.
+/** Fling input specifying the formal Datalog language.
  * 
- * @author Yossi Gil
- */
+ * @author Yossi Gil */
 public class Java implements FluentLanguageAPI<Σ, V> {
   /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
-	  name,number,variable, method
+    name, number, variable, method
   }
 
-  /**
-   * Set of non-terminals, i.e., abstract concepts of fluent API; these names
+  /** Set of non-terminals, i.e., abstract concepts of fluent API; these names
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
-   * list of {@link Statement}, etc.
-   */
+   * list of {@link Statement}, etc. */
   public enum V implements Variable {
-    Program, Statement, Expression, InfixExpression, PrefixExpression, 
-    Declaration, Header, Member, Field, Constructor, Method, Initializer
+    Program, Statement, Expression, InfixExpression, PrefixExpression, Declaration, Header, Member, Field, Constructor,
+    Method, Initializer
   }
 
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
+
   @Override public Class<V> V() {
     return V.class;
   }
 
-  /**
-   * Datalog's grammar in Backus-Naur form.
-   */
+  /** Datalog's grammar in Backus-Naur form. */
   public static final FancyEBNF bnf = bnf(). //
       start(Program). // This is the start symbol
       derive(Program).to(oneOrMore(Declaration)). //
@@ -64,13 +59,14 @@ public class Java implements FluentLanguageAPI<Σ, V> {
   @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
     return bnf;
   }
-  /**
-   * Prints the Datalog API/AST types/AST run-time compiler to corresponding
-   * files.
-   */
+
+  /** Prints the Datalog API/AST types/AST run-time compiler to corresponding
+   * files. */
   public static void main(String[] args) throws IOException, FormatterException {
-    /* The {@link JavaMediator} responsible for compiling the Java Datalog
-     * API/AST types/AST run-time compiler. */
+    /*
+     * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
+     * types/AST run-time compiler.
+     */
     JavaMediator jm = new JavaMediator(//
         bnf, // use this BNF as language specification
         // Name of package in which output will reside

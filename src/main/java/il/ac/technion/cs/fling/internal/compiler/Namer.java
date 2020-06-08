@@ -5,60 +5,50 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 
-/**
- * Names elements in the generated code.
+/** Names elements in the generated code.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public interface Namer {
-  /**
-   * Create new variable subject to the given.
+  /** Create new variable subject to the given.
    *
    * @param variable parent variable
-   * @return child variable
-   */
+   * @return child variable */
   // TODO add context to variable creation.
   Variable createASTChild(Variable variable);
-  /**
-   * Create new variable subject to given symbol in notation's context.
+
+  /** Create new variable subject to given symbol in notation's context.
    *
    * @param symbol parent symbol
-   * @return child variable
-   */
+   * @return child variable */
   Variable createQuantificationChild(Symbol symbol);
-  /**
-   * Inner API type name.
+
+  /** Inner API type name.
    *
    * @param variable inducing head variable
-   * @return API type name
-   */
+   * @return API type name */
   String headVariableClassName(Variable variable);
-  /**
-   * Inner API acceptance type name.
+
+  /** Inner API acceptance type name.
    *
-   * @return API type name
-   */
+   * @return API type name */
   String headVariableConclusionTypeName();
-  /**
-   * AST type name of given variable
+
+  /** AST type name of given variable
    *
    * @param variable inducing variable
-   * @return AST type name
-   */
+   * @return AST type name */
   String getASTClassName(Variable variable);
-  /**
-   * Name elements within given AST. Declarations pending naming are types and
+
+  /** Name elements within given AST. Declarations pending naming are types and
    * fields.
    *
-   * @param compilationUnit AST
-   */
+   * @param compilationUnit AST */
   void name(ASTCompilationUnitNode compilationUnit);
-  /**
-   * Name elements within given API. Declarations pending naming are method
+
+  /** Name elements within given API. Declarations pending naming are method
    * parameters.
    *
-   * @param fluentAPI API
-   */
+   * @param fluentAPI API */
   void name(
       APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI);
 }

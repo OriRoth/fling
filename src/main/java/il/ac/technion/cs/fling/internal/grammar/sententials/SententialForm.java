@@ -8,6 +8,7 @@ public class SententialForm extends Word<SymbolX> {
   public SententialForm(final SymbolX... symbols) {
     super(symbols);
   }
+
   public SententialForm(final List<SymbolX> symbols) {
     super(symbols);
   }

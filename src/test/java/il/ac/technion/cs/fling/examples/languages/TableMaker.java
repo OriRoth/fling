@@ -23,6 +23,7 @@ public class TableMaker {
     Namer namer = new NaiveNamer(packageName, apiName);
     LL1 ll1 = new LL1(bnf, namer);
     JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
-    apiClass = adapter.printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
+    apiClass = adapter
+        .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
   }
 }

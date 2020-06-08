@@ -7,14 +7,13 @@ import java.util.stream.*;
 
 import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
 
-/**
- * Deterministic pushdown automaton (DPDA) supporting acceptance by final state.
+/** Deterministic pushdown automaton (DPDA) supporting acceptance by final
+ * state.
  *
  * @author Ori Roth
  * @param <Q> states type
  * @param <Σ> alphabet type
- * @param <Γ> stack symbols type
- */
+ * @param <Γ> stack symbols type */
 public class DPDA<Q, Σ, Γ> {
   public final Set<Q> Q;
   public final Set<Σ> Σ;
@@ -35,47 +34,48 @@ public class DPDA<Q, Σ, Γ> {
     this.γ0 = γ0;
     verify();
   }
-  public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Class<Q> Q, final Class<Σ> Σ,
-      final Class<Γ> Γ) {
+
+  public static <Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> Builder<Q, Σ, Γ> dpda(final Class<Q> Q,
+      final Class<Σ> Σ, final Class<Γ> Γ) {
     return new Builder<>(Q, Σ, Γ);
   }
+
   public Stream<Q> Q() {
     return Q.stream();
   }
+
   public Stream<Σ> Σ() {
     return Σ.stream();
   }
+
   public Stream<Γ> Γ() {
     return Γ.stream();
   }
-  /**
-   * @param q current state
+
+  /** @param q current state
    * @param σ current input letter
    * @param γ current stack symbol
-   * @return matching transition
-   */
+   * @return matching transition */
   public δ<Q, Σ, Γ> δ(final Q q, final Σ σ, final Γ γ) {
     for (final δ<Q, Σ, Γ> δ : δs)
       if (δ.match(q, σ, γ))
         return δ;
     return null;
   }
-  /**
-   * @param q a state
-   * @return whether this is an accepting state
-   */
+
+  /** @param q a state
+   * @return whether this is an accepting state */
   public boolean isAccepting(final Q q) {
     return F.contains(q);
   }
-  /**
-   * Returns matching consolidated transition, i.e., the result of the multiple
+
+  /** Returns matching consolidated transition, i.e., the result of the multiple
    * transitions initiated by the received configuration.
    *
    * @param q current state
    * @param σ current input letter
    * @param γ current stack symbol
-   * @return matching consolidated transition
-   */
+   * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
     Q q$ = q;
     Word<Γ> s = new Word<>(γ);
@@ -95,16 +95,15 @@ public class DPDA<Q, Σ, Γ> {
       q$ = δ$.q$;
     }
   }
-  /**
-   * Returns matching consolidated transition, i.e., the result of the multiple
-   * transitions initiated by the received configuration. The returned
-   * transition does not contain stack symbol.
+
+  /** Returns matching consolidated transition, i.e., the result of the multiple
+   * transitions initiated by the received configuration. The returned transition
+   * does not contain stack symbol.
    *
    * @param q current state
    * @param σ current input letter
    * @param α current stack
-   * @return matching consolidated transition
-   */
+   * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
     Q q$ = q;
     Word<Γ> s = new Word<>(α);
@@ -124,6 +123,7 @@ public class DPDA<Q, Σ, Γ> {
       q$ = δ$.q$;
     }
   }
+
   private void verify() {
     final Map<Q, Set<δ<Q, Σ, Γ>>> seenTransitions = new HashMap<>();
     Q.forEach(q -> seenTransitions.put(q, new HashSet<>()));
@@ -133,10 +133,12 @@ public class DPDA<Q, Σ, Γ> {
           final Optional<δ<Q, Σ, Γ>> δ2 = seenTransitions.get(q).stream().filter(δ$ -> δ.γ.equals(δ$.γ))
               .filter(δ$ -> δ$.σ == ε() || δ$.σ.equals(δ.σ)).findAny();
           if (δ2.isPresent())
-            throw new RuntimeException(String.format("determinism broke in state %s with transitions %s and %s", q, δ2.get(), δ));
+            throw new RuntimeException(
+                String.format("determinism broke in state %s with transitions %s and %s", q, δ2.get(), δ));
           seenTransitions.get(q).add(δ);
         }
   }
+
   @Override public String toString() {
     return String.format("" //
         + "Q=%s\n" //
@@ -148,10 +150,8 @@ public class DPDA<Q, Σ, Γ> {
         + "δs=\t%s", Q, Σ, Γ, F, q0, γ0, δs.stream().map(Object::toString).collect(Collectors.joining("\n\t")));
   }
 
-  /**
-   * {@link DPDA} builder. Does not check the correctness of the automaton,
-   * i.e., it assumes it is deterministic and cannot loop infinitely.
-   */
+  /** {@link DPDA} builder. Does not check the correctness of the automaton, i.e.,
+   * it assumes it is deterministic and cannot loop infinitely. */
   public static class Builder<Q extends Enum<Q>, Σ extends Enum<Σ>, Γ extends Enum<Γ>> {
     private final Class<Q> Q;
     private final Class<Σ> Σ;
@@ -166,22 +166,27 @@ public class DPDA<Q, Σ, Γ> {
       this.Σ = Σ;
       this.Γ = Γ;
     }
+
     @SafeVarargs public final Builder<Q, Σ, Γ> δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Γ... α) {
       δs.add(new δ<>(q, σ, γ, q$, new Word<>(α)));
       return this;
     }
+
     @SafeVarargs public final Builder<Q, Σ, Γ> F(final Q... qs) {
       Collections.addAll(F, qs);
       return this;
     }
+
     @SuppressWarnings("hiding") public Builder<Q, Σ, Γ> q0(final Q q0) {
       this.q0 = q0;
       return this;
     }
+
     @SafeVarargs @SuppressWarnings("hiding") public final Builder<Q, Σ, Γ> γ0(final Γ... γ0) {
       this.γ0 = new Word<>(γ0);
       return this;
     }
+
     public DPDA<Q, Σ, Γ> go() {
       assert q0 != null;
       assert γ0 != null;
@@ -189,9 +194,7 @@ public class DPDA<Q, Σ, Γ> {
     }
   }
 
-  /**
-   * An automaton edge. A set of edges is a transition function.
-   */
+  /** An automaton edge. A set of edges is a transition function. */
   public static class δ<Q, Σ, Γ> {
     public final Q q;
     public final Σ σ;
@@ -206,29 +209,35 @@ public class DPDA<Q, Σ, Γ> {
       this.q$ = q$;
       this.α = α == null ? null : new Word<>(α);
     }
-    /**
-     * @param currentq current state
+
+    /** @param currentq current state
      * @param currentσ current input letter
      * @param currentγ current stack symbol
-     * @return whether this edge describes the next transition
-     */
+     * @return whether this edge describes the next transition */
     public boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
-      return q.equals(currentq) && (this.σ == null ? currentσ == null : this.σ.equals(currentσ)) && this.γ.equals(currentγ);
+      return q.equals(currentq) && (this.σ == null ? currentσ == null : this.σ.equals(currentσ))
+          && this.γ.equals(currentγ);
     }
+
     @Override public int hashCode() {
-      return 31 * (q$.hashCode() + 31 * (γ.hashCode() + 31 * (31 * (q.hashCode() + 31) + (σ == null ? 1 : σ.hashCode()))))
+      return 31
+          * (q$.hashCode() + 31 * (γ.hashCode() + 31 * (31 * (q.hashCode() + 31) + (σ == null ? 1 : σ.hashCode()))))
           + getΑ().hashCode();
     }
+
     @Override public boolean equals(final Object o) {
       return o == this || o instanceof δ && equals((δ<?, ?, ?>) o);
     }
+
     private boolean equals(final δ<?, ?, ?> other) {
       return q.equals(other.q) && (σ == ε() && other.σ == ε() || σ != ε() && σ.equals(other.σ)) && γ.equals(other.γ)
           && q$.equals(other.q$) && getΑ().equals(other.getΑ());
     }
+
     @Override public String toString() {
       return String.format("<%s,%s,%s,%s,%s>", q, σ != ε() ? σ : "ε", γ, q$, getΑ());
     }
+
     public Word<Γ> getΑ() {
       return α;
     }

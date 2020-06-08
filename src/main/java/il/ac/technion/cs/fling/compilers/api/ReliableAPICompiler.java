@@ -13,16 +13,15 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 
-/**
- * {@link APICompiler} generating (possibly) exponential number of API types.
+/** {@link APICompiler} generating (possibly) exponential number of API types.
  * Supported method chains compiles only when prefix of legal word.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 public class ReliableAPICompiler extends APICompiler {
   public ReliableAPICompiler(DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
+
   @Override protected List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
     List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
@@ -43,28 +42,30 @@ public class ReliableAPICompiler extends APICompiler {
     }
     return $;
   }
+
   @Override protected List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return list( //
         fixedInterfaces(), //
         types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
   }
+
   @SuppressWarnings("static-method") private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
     return Arrays.asList(InterfaceNode.top());
   }
+
   @SuppressWarnings("unused") @Override protected ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation() {
     return new ConcreteImplementationNode<>(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
         .map(σ -> new AbstractMethodNode.Chained<TypeName, MethodDeclaration>(new MethodDeclaration(σ))) //
         .collect(toList()));
   }
-  /**
-   * Get type name given a state and stack symbols to push. If this type is not
+
+  /** Get type name given a state and stack symbols to push. If this type is not
    * present, it is created.
    *
    * @param q current state
    * @param α current stack symbols to be pushed
-   * @return type name
-   */
+   * @return type name */
   private TypeName encodedName(final Named q, final Word<Named> α, Set<Named> legalJumps) {
     final TypeName $ = new TypeName(q, α, legalJumps);
     if (types.containsKey($))
@@ -76,6 +77,7 @@ public class ReliableAPICompiler extends APICompiler {
     types.put($, body == null ? InterfaceNode.bot() : body);
     return types.get($).isBot() ? null : $;
   }
+
   private boolean shallowIsBot(TypeName type) {
     if (dpda.isAccepting(type.q))
       return false;
@@ -92,8 +94,9 @@ public class ReliableAPICompiler extends APICompiler {
     }
     return true;
   }
-  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α,
-      Set<Named> legalJumps) {
+
+  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
+      final Word<Named> α, Set<Named> legalJumps) {
     List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
     $.addAll(dpda.Σ().map(σ -> //
     new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
@@ -105,20 +108,20 @@ public class ReliableAPICompiler extends APICompiler {
         : new InterfaceNode<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
             Collections.unmodifiableList($));
   }
-  /**
-   * Computes the type representing the state of the automaton after consuming
-   * an input letter.
+
+  /** Computes the type representing the state of the automaton after consuming an
+   * input letter.
    *
-   * @param q current state
-   * @param α all known information about the top of the stack
+   * @param q          current state
+   * @param α          all known information about the top of the stack
    * @param legalJumps
-   * @param σ current input letter
-   * @return next state type
-   */
+   * @param σ          current input letter
+   * @return next state type */
   private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, Set<Named> legalJumps, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
     return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), legalJumps, false);
   }
+
   private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, Set<Named> legalJumps,
       boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
@@ -129,8 +132,9 @@ public class ReliableAPICompiler extends APICompiler {
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
-  private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α, Set<Named> legalJumps,
-      boolean isInitialType) {
+
+  private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
+      Set<Named> legalJumps, boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
@@ -152,12 +156,14 @@ public class ReliableAPICompiler extends APICompiler {
             encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()), //
             new ArrayList<>(typeArguments.values()));
   }
+
   private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, Set<Named> legalJumps,
       boolean isInitialType) {
     return !legalJumps.contains(δ.q$) ? bot() : //
         isInitialType ? top() : //
             typeVariables.get(δ.q$);
   }
+
   private List<PolymorphicTypeNode<TypeName>> getTypeArguments(Set<Named> legalJumps, boolean isInitialType) {
     return !isInitialType ? //
         dpda.Q() //
@@ -165,7 +171,7 @@ public class ReliableAPICompiler extends APICompiler {
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> PolymorphicTypeNode.<TypeName> top()) //
+            .map(q -> PolymorphicTypeNode.<TypeName>top()) //
             .collect(toList());
   }
 }

@@ -1,4 +1,5 @@
 package il.ac.technion.cs.fling.adapters;
+
 import static java.util.stream.Collectors.joining;
 
 import java.util.*;
@@ -9,11 +10,9 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
-/**
- * Java adapter printing AST visitor class given AST type definitions.
+/** Java adapter printing AST visitor class given AST type definitions.
  *
- * @author Ori Roth
- */
+ * @author Ori Roth */
 @SuppressWarnings("static-method") public class JavaASTVisitorAdapter {
   private static final String VISITOR_CLASS_NAME = "Visitor";
   private final String packageName;
@@ -25,6 +24,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
     this.astClassName = astClassName;
     this.namer = namer;
   }
+
   public String printASTVisitorClass(final ASTCompilationUnitNode compilationUnit) {
     return String.format("public static class %s{%s%s}", //
         VISITOR_CLASS_NAME, //
@@ -37,11 +37,13 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
             .map(this::printWhileVisitingMethod) //
             .collect(joining()));
   }
+
   public String printVisitMethod(final ClassNode clazz) {
     return clazz.isAbstract() ? //
         printVisitMethod(clazz.asAbstract()) : //
         printVisitMethod(clazz.asConcrete());
   }
+
   public String printVisitMethod(final AbstractClassNode clazz) {
     final Variable source = clazz.source;
     final String parameterName = getNodeParameterName(source);
@@ -50,6 +52,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         parameterName, //
         printVisitMethodBody(clazz, parameterName));
   }
+
   public String printVisitMethod(final ConcreteClassNode clazz) {
     final Variable source = clazz.source;
     final String parameterName = getNodeParameterName(source);
@@ -58,6 +61,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         parameterName, //
         printVisitMethodBody(clazz, parameterName));
   }
+
   public String printWhileVisitingMethod(final ConcreteClassNode clazz) {
     final Variable source = clazz.source;
     final String parameterName = getNodeParameterName(source);
@@ -66,6 +70,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         parameterName, //
         Exception.class.getCanonicalName());
   }
+
   private String printVisitMethodBody(final AbstractClassNode clazz, final String parameterName) {
     return clazz.children.stream() //
         .map(child -> String.format("if(%s instanceof %s)%s;", //
@@ -74,6 +79,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
             variableVisitingMethod(child.source, parameterName))) //
         .collect(joining("else "));
   }
+
   private String printVisitMethodBody(final ConcreteClassNode clazz, final String parameterName) {
     final StringBuilder $ = new StringBuilder();
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
@@ -83,8 +89,8 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
     clazz.fields.stream() //
         .map(FieldNode::source) //
         .forEach(source -> {
-          assert !source.isQuantifier()
-              || source.getClass().isAnnotationPresent(JavaCompatibleQuantifier.class) : "BNF uses a non-Java-compatible notation";
+          assert !source.isQuantifier() || source.getClass()
+              .isAnnotationPresent(JavaCompatibleQuantifier.class) : "BNF uses a non-Java-compatible notation";
         });
     clazz.fields.stream() //
         .map(FieldNode::getInferredFieldFragments) //
@@ -100,17 +106,20 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         .forEach($::append);
     return $.toString();
   }
+
   private String getASTVariableClassName(final Variable variable) {
     return String.format("%s.%s.%s", //
         packageName, //
         astClassName, //
         namer.getASTClassName(variable));
   }
+
   private String variableVisitingMethod(final Variable variable, final String access) {
     return String.format("visit((%s)%s)", //
         getASTVariableClassName(variable), //
         access);
   }
+
   private String getNodeParameterName(final Variable variable) {
     return NaiveNamer.lowerCamelCase(variable.name());
   }

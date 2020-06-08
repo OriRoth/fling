@@ -35,8 +35,8 @@ public class LongFall {
       .δ(q1, ε(), g1, q1) //
       .δ(q1, ε(), g0, q0, g0) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "LongFall", "$",
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall")) //
+  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated",
+      "LongFall", "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("LongFall")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());

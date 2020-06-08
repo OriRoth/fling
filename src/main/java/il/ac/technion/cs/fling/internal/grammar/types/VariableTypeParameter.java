@@ -11,15 +11,19 @@ public class VariableTypeParameter implements Parameter {
   public VariableTypeParameter(final Variable variable) {
     this.variable = variable;
   }
+
   @Override public String baseParameterName() {
     return NaiveNamer.lowerCamelCase(variable.name());
   }
+
   @Override public Set<Variable> declaredHeadVariables() {
     return Collections.singleton(variable);
   }
+
   @Override public int hashCode() {
     return variable.hashCode();
   }
+
   @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
@@ -28,6 +32,7 @@ public class VariableTypeParameter implements Parameter {
     final VariableTypeParameter other = (VariableTypeParameter) obj;
     return variable.equals(other.variable);
   }
+
   @Override public String toString() {
     return variable.name();
   }
