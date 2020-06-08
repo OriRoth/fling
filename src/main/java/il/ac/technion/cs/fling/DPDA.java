@@ -8,7 +8,7 @@ import java.util.stream.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** Deterministic pushdown automaton (DPDA) supporting acceptance by final
- * state.
+ * state (not by empty stack as other DPDAs do)
  *
  * @author Ori Roth
  * @param <Q> states type
