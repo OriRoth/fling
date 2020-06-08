@@ -1,17 +1,34 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
 import static il.ac.technion.cs.fling.examples.generated.Datalog.fact;
-import static il.ac.technion.cs.fling.examples.generated.Datalog.Term.*;
+import static il.ac.technion.cs.fling.examples.generated.Datalog.Term.l;
+import static il.ac.technion.cs.fling.examples.generated.Datalog.Term.v;
 import static il.ac.technion.cs.fling.examples.usecases.Datalog.DatalogPrinter.print;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST;
-import il.ac.technion.cs.fling.examples.generated.DatalogAST.*;
-import za.co.wstoop.jatalog.*;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.AdditionalClause;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Bodyless;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Fact;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Query;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.RuleBody;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.RuleHead;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Term;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Term1;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Term2;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.WithBody;
+import za.co.wstoop.jatalog.DatalogException;
+import za.co.wstoop.jatalog.Expr;
+import za.co.wstoop.jatalog.Jatalog;
 
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.

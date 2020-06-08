@@ -3,7 +3,10 @@ package il.ac.technion.cs.fling.internal.compiler.api;
 import java.util.List;
 
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
 
 public interface PolymorphicLanguageAPIBaseAdapter {
   String printFluentAPI(

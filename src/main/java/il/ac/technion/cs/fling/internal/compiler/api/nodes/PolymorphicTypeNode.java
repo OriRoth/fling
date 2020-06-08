@@ -1,6 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler.api.nodes;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class PolymorphicTypeNode<T> {
   public final T name;

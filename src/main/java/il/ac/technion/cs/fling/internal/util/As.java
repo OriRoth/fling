@@ -1,6 +1,12 @@
 package il.ac.technion.cs.fling.internal.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 

@@ -1,9 +1,11 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import java.util.*;
-import java.util.stream.*;
-
-import il.ac.technion.cs.fling.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ERule {
   public final Variable variable;

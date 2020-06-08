@@ -1,6 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 

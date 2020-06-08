@@ -1,10 +1,21 @@
 package il.ac.technion.cs.fling.internal.compiler.api;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.Named;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.ConcreteImplementationNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** Encodes deterministic pushdown automaton ({@link DPDA}) as type declarations
  * constituting proper fluent API of the automaton's language. The automaton is

@@ -2,16 +2,24 @@ package il.ac.technion.cs.fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.*;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
+import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method

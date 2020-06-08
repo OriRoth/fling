@@ -1,6 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 

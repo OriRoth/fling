@@ -3,8 +3,7 @@ package il.ac.technion.cs.fling.grammars.api;
 import java.util.Arrays;
 import java.util.List;
 
-import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 

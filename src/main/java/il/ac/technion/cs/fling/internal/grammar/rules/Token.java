@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.*;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

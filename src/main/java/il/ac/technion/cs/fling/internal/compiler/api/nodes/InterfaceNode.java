@@ -1,6 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler.api.nodes;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class InterfaceNode<T, D, N> {
   @SuppressWarnings("rawtypes") private static final InterfaceNode TOP = new InterfaceNode();

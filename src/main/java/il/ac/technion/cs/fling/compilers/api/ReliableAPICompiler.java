@@ -1,17 +1,32 @@
 package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.*;
-import static il.ac.technion.cs.fling.internal.util.As.*;
+import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.bot;
+import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.top;
+import static il.ac.technion.cs.fling.internal.util.As.list;
+import static il.ac.technion.cs.fling.internal.util.As.word;
 import static java.util.stream.Collectors.toList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
+import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.ConcreteImplementationNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
+import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** {@link APICompiler} generating (possibly) exponential number of API types.
  * Supported method chains compiles only when prefix of legal word.

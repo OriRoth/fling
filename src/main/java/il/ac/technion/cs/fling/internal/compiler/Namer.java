@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;

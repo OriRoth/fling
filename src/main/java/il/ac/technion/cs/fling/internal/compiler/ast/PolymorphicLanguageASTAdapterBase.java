@@ -1,6 +1,9 @@
 package il.ac.technion.cs.fling.internal.compiler.ast;
 
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
 
 public interface PolymorphicLanguageASTAdapterBase {
   String printASTClass(ASTCompilationUnitNode compilationUnit);
