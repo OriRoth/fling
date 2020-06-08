@@ -90,6 +90,6 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
   }
 
   public boolean nonEmptyField(final FieldNode field) {
-    return !field.source.isParameterized();
+    return !field.source.isToken() || field.source.isParameterized();
   }
 }

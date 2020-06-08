@@ -18,7 +18,6 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.examples.languages.Datalog.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
