@@ -1,7 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
-import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.X;
-import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.Y1;
+import static il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguage.a;
+
+import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.*;
 
 public class QuantifiersTestLanguage {
   public static void main(String[] args) {
