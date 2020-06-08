@@ -2,7 +2,17 @@ package il.ac.technion.cs.fling.examples.usecases;
 
 import static il.ac.technion.cs.fling.examples.generated.SimpleArithmetic.i;
 
-import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.*;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.E;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.E_;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.E_1;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.E_2;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.F;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.F1;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.F2;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.T;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.T_;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.T_1;
+import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.T_2;
 
 @SuppressWarnings("unused") public class SimpleArithmeticUseCase {
   public static void main(String[] args) {

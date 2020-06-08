@@ -1,12 +1,11 @@
 package il.ac.technion.cs.fling.examples;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 
 import il.ac.technion.cs.fling.adapters.JavaMediator;
-import il.ac.technion.cs.fling.examples.languages.*;
+import il.ac.technion.cs.fling.examples.languages.BNF;
 import il.ac.technion.cs.fling.examples.languages.BalancedParentheses;
+import il.ac.technion.cs.fling.examples.languages.Datalog;
 
 class CreationTest {
   @Test public void checkDatalog() {

@@ -1,19 +1,31 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.*;
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.E;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.E_;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.F;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.T;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.T_;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.begin;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.end;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.i;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.mult;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.plus;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static java.util.Collections.singleton;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
-import com.google.googlejavaformat.java.*;
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.*;
+import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V;
+import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 

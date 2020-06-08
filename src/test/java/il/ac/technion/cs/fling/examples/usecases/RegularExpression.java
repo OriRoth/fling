@@ -1,7 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
 import static il.ac.technion.cs.fling.examples.generated.RegularExpression.re;
-import static il.ac.technion.cs.fling.examples.generated.RegularExpression.RE.*;
+import static il.ac.technion.cs.fling.examples.generated.RegularExpression.RE.anyDigit;
+import static il.ac.technion.cs.fling.examples.generated.RegularExpression.RE.exactly;
 
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 

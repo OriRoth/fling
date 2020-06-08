@@ -1,25 +1,48 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.*;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.AdditionalClause;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Bodyless;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Fact;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.FirstClause;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Program;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Query;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Rule;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.RuleBody;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.RuleHead;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Statement;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Term;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.V.WithBody;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.always;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.and;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.fact;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.infer;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.l;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.of;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.query;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.v;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.when;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.*;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.oneOrMore;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.Datalog.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Fling input specifying the formal Datalog language.

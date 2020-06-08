@@ -2,11 +2,17 @@ package il.ac.technion.cs.fling.examples.automata;
 
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Q.*;
-import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Γ.*;
-import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.*;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Q.q0;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Q.q1;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Q.q2;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Γ.γ0;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Γ.γ1;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.c;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.Ↄ;
+import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.ↄ;
 
-import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;

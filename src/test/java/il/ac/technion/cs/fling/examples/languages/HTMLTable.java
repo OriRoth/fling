@@ -1,13 +1,25 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.*;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Cell;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.HTML;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Header;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Row;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Table;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Td;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Th;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Tr;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.end;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.html;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.table;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.td;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.th;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.tr;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.¢;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.HTMLTable.*;
+import il.ac.technion.cs.fling.examples.languages.HTMLTable.V;
+import il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;

@@ -2,10 +2,17 @@ package il.ac.technion.cs.fling.examples.automata;
 
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.*;
-import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.*;
-import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.*;
-import static org.junit.Assert.*;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.q0;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.q1;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.q2;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.γ0;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.γ1;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.c;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.Ↄ;
+import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.ↄ;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
