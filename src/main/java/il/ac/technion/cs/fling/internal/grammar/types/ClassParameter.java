@@ -34,7 +34,7 @@ public class ClassParameter implements StringTypeParameter {
   }
 
   @Override public String toString() {
-    return parameterClass.getCanonicalName();
+    return parameterClass.getSimpleName();
   }
 
   public static String unPrimitiveType(final String typeName) {

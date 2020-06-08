@@ -69,7 +69,7 @@ public class ERule {
   }
 
   @Override public String toString() {
-    return String.format("%s::=%s", variable,
+    return String.format("%s->%s", variable,
         String.join("|", bodies().map(b -> b.isEmpty() ? "ε" : b.toString()).collect(Collectors.toList())));
   }
 

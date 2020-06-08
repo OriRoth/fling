@@ -130,7 +130,7 @@ public class FancyEBNF extends EBNF {
               changed |= set.addAll(symbol.asQuantifier().getFirsts($::get));
             else {
               Set<Token> c = $.get(symbol);
-              assert c != null : this + ":" + symbol;
+              assert c != null : this + ":\n" + symbol;
               changed |= set.addAll(c);
             }
             if (!isNullable(symbol))
@@ -208,10 +208,6 @@ public class FancyEBNF extends EBNF {
     private final Set<Variable> heads = new LinkedHashSet<>();
     private Variable start;
 
-    private Stream<Body> rhs(final Variable v) {
-      return R.stream().filter(r -> r.of(v)).flatMap(ERule::bodies);
-    }
-
     public Derive derive(final Variable variable) {
       V.add(variable);
       return new Derive(variable);
@@ -271,7 +267,14 @@ public class FancyEBNF extends EBNF {
       }
 
       public Builder to(final TempComponent... cs) {
-        R.add(new ERule(variable, new Body(normalize(cs))));
+        List<Component> normalize = normalize(cs);
+        return to(normalize);
+      }
+
+      private Builder to(List<Component> cs) {
+        for (Component c:cs)
+          add(c);
+        R.add(new ERule(variable, new Body(cs)));
         return Builder.this;
       }
 
