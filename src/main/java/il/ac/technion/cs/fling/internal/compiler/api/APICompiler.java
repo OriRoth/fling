@@ -4,7 +4,7 @@ import java.util.*;
 
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** Encodes deterministic pushdown automaton ({@link DPDA}) as type declarations
  * constituting proper fluent API of the automaton's language. The automaton is

@@ -7,6 +7,9 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, V> {
   public enum Σ implements Terminal {
@@ -31,7 +34,7 @@ public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, V> {
         derive(P).to(c.many(char.class), P, ↄ.with(AB), P). //
         derive(P).toEpsilon(). //
         derive(AB).to(a). //
-        derive(AB).to(Symbol.oneOrMore(b.with(int.class))). //
+        derive(AB).to(Quantifiers.oneOrMore(b.with(int.class))). //
         build();
   }
 }

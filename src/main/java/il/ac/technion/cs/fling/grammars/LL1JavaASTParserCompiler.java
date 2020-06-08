@@ -10,8 +10,8 @@ import il.ac.technion.cs.fling.internal.compiler.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
@@ -73,9 +73,9 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
 
   private String printAbstractParentMethodBody(final Variable v) {
-    final List<Variable> children = bnf.forms(v)//
+    final List<Variable> children = bnf.bodies(v)//
         .map(sf -> sf.get(0)) //
-        .map(Symbol::asVariable) //
+        .map(Component::asVariable) //
         .collect(toList());
     final Optional<Variable> optionalNullableChild = children.stream() //
         .filter(bnf::isNullable) //
@@ -103,7 +103,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
 
   private String printConcreteChildMethodBody(final Variable v) {
 
-    final List<Symbol> children = bnf.formsList(v).get(0);
+    final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListWild + " _b;");
@@ -112,7 +112,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     usedNames.put("_b", 1);
     final List<String> argumentNames = new ArrayList<>();
     // Consume input as necessary:
-    for (final Symbol child : children)
+    for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
         final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
@@ -165,7 +165,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
 
   private String printConcreteExtensionChildMethodBody(final Variable v) {
-    final List<Symbol> children = bnf.formsList(v).get(0);
+    final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListObject + " _b;");
@@ -184,7 +184,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
           "emptyList"));
     }
     // Consume input as necessary:
-    for (final Symbol child : children)
+    for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
         final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
@@ -241,7 +241,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       throw new RuntimeException("problem while creating real-time parser");
   }
 
-  private List<FieldNodeFragment> getFieldsInClassContext(final Symbol symbol, final Map<String, Integer> usedNames) {
+  private List<FieldNodeFragment> getFieldsInClassContext(final Component symbol, final Map<String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
           .map(parameter -> FieldNodeFragment.of( //

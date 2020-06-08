@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** {@link APICompiler} generating (possibly) exponential number of API types.
  * Supported method chains compiles only when prefix of legal word.

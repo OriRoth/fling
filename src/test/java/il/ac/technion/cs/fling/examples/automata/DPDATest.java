@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public class DPDATest {
   enum Q {

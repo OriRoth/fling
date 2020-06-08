@@ -4,6 +4,8 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** Names elements in the generated code.
  *
@@ -20,7 +22,7 @@ public interface Namer {
    *
    * @param symbol parent symbol
    * @return child variable */
-  Variable createQuantificationChild(Symbol symbol);
+  Variable createQuantificationChild(Component symbol);
 
   /** Inner API type name.
    *

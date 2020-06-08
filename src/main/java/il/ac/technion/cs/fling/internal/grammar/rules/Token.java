@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.grammar.sententials;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.Objects.requireNonNull;
 
@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 
 /** Represents a <strong>token</strong> of the fluent API grammar, which has two
@@ -16,7 +15,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
  * @see Terminal
  * @author Yossi Gil
  * @since 2020-06-07 */
-public final class Token implements SymbolX {
+public final class Token implements Symbol {
   public final Terminal terminal;
   public final Parameter[] parameters;
 

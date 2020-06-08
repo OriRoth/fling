@@ -5,7 +5,7 @@ import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import java.util.*;
 import java.util.stream.*;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** Deterministic pushdown automaton (DPDA) supporting acceptance by final
  * state.

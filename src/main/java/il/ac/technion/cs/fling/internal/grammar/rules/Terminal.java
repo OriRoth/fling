@@ -1,12 +1,12 @@
-package il.ac.technion.cs.fling;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.internal.grammar.types.*;
 
-/** Language terminal symbol---atom.
+/** Language terminal symbol, never occurs in grammar; 
  * 
+ * @see Token
  * @author Ori Roth */
-public interface Terminal extends SymbolX {
+public interface Terminal extends TempSymbol {
   @Override default Token normalize() {
     return new Token(this);
   }

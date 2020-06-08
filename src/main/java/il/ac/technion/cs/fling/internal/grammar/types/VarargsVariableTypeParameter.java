@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.grammar.types;
 
 import java.util.*;
 
-import il.ac.technion.cs.fling.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 public class VarargsVariableTypeParameter implements Parameter {

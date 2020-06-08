@@ -23,7 +23,7 @@
  */
 /**
  * <p>
- * Extended grammar notations.
+ * Grammar components.
  *
  * @since April 2019 */
-package il.ac.technion.cs.fling.internal.grammar.sententials.notations;
+package il.ac.technion.cs.fling.internal.grammar.rules;

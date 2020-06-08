@@ -1,12 +1,10 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.Symbol.oneOrMore;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.V.*;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.ScalaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
@@ -14,7 +12,10 @@ import il.ac.technion.cs.fling.examples.languages.SubFigure.*;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 public class SubFigure implements FluentLanguageAPI<Σ, V> {
@@ -38,7 +39,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     return bnf(). //
         start(Figure). //
         derive(Figure).to(load.with(String.class)). //
-        derive(Figure).to(Orientation, oneOrMore(Figure), seal). //
+        derive(Figure).to(Orientation, Quantifiers.oneOrMore(Figure), seal). //
         derive(Orientation).to(row).or(column). //
         build();
   }

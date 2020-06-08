@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.util;
 
 import java.util.*;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public class As {
   @SafeVarargs public static <T> Set<T> set(final T... items) {

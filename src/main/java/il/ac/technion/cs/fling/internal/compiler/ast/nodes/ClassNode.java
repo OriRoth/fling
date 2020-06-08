@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.ast.nodes;
 
-import il.ac.technion.cs.fling.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public abstract class ClassNode {
   public final Variable source;

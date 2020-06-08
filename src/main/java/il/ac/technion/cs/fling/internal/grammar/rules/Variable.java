@@ -1,9 +1,9 @@
-package il.ac.technion.cs.fling;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
 /** Grammar sentential variable.
  * 
  * @author Ori Roth */
-public interface Variable extends SymbolX {
+public interface Variable extends Symbol {
   static Variable byName(final String name) {
     return new Variable() {
       @Override public String name() {

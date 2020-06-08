@@ -4,10 +4,10 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.*;
 
-import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /** Java adapter printing AST visitor class given AST type definitions.

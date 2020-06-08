@@ -7,6 +7,8 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.RegularExpression.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class RegularExpression implements FluentLanguageAPI<Σ, V> {
   public enum Σ implements Terminal {

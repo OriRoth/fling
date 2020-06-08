@@ -10,7 +10,7 @@ import org.antlr.v4.tool.Grammar;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
 // TODO handle API function parameters
 public class JavaANTLRAPIAdapter extends JavaAPIAdapter {

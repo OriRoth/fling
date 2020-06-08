@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.*;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** Scala API adapter.
  *

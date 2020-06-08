@@ -9,7 +9,7 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
@@ -57,8 +57,7 @@ public class LL1 extends Grammar {
     Γ.addAll(A.values());
     F.add(q0$);
     q0 = bnf.isNullable(Constants.S) ? q0$ : q0ø;
-    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new ExtendedSententialForm(Constants.$$, Constants.S),
-        true);
+    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new Body(Constants.$$, Constants.S), true);
     /* Computing automaton transitions for q0ø */
     // Moving from q0ø to q0$ with ε + $.
     δs.add(new δ<>(q0ø, ε(), Constants.$$, q0$, Word.empty()));
@@ -68,14 +67,14 @@ public class LL1 extends Grammar {
         δs.add(new δ<>(q0ø, ε(), A.get(v), q0$, new Word<>(A.get(v))));
     // Moving from q0ø to qσ with σ + appropriate variable.
     for (final ERule r : bnf.R)
-      for (final ExtendedSententialForm sf : r.rhs())
-        for (final Token σ : bnf.firsts(sf))
+      for (final Body b : r.bodiesList())
+        for (final Token σ : bnf.firsts(b))
           if (!Constants.$$.equals(σ)) {
             δs.add(new δ<>(q0ø, σ, r.variable, typeNameMapping.get(σ),
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, false))));
             if (!bnf.isNullable(r.variable))
               δs.add(new δ<>(q0ø, σ, A.get(r.variable), typeNameMapping.get(σ),
-                  reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+                  reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, true))));
           }
     for (final Variable v : bnf.Γ)
       for (final Token σ : bnf.Σ)
@@ -102,7 +101,7 @@ public class LL1 extends Grammar {
     for (final ERule r : bnf.R)
       if (bnf.isNullable(r.variable))
 
-        for (final ExtendedSententialForm sf : r.rhs())
+        for (final Body sf : r.bodiesList())
           for (final Token σ : bnf.firsts(sf))
             if (!Constants.$$.equals(σ))
               δs.add(new δ<>(q0$, σ, A.get(r.variable), typeNameMapping.get(σ),
@@ -120,14 +119,14 @@ public class LL1 extends Grammar {
         δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty()));
     // Moving from qσ to qσ with ε + appropriate variable.
     for (final ERule r : bnf.R)
-      for (final ExtendedSententialForm sf : r.rhs())
-        for (final Token σ : bnf.firsts(sf))
+      for (final Body b : r.bodiesList())
+        for (final Token σ : bnf.firsts(b))
           if (!Constants.$$.equals(σ)) {
             final Named σState = typeNameMapping.get(σ);
             δs.add(new δ<>(σState, ε(), A.get(r.variable), σState,
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, true))));
             δs.add(new δ<>(σState, ε(), r.variable, σState,
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, false))));
           }
     // Moving from qσ to qσ with ε + nullable variable.
     for (final Token σ : bnf.Σ)
@@ -144,7 +143,7 @@ public class LL1 extends Grammar {
         final Set<Named> legalTops = new HashSet<>();
         legalTops.add(typeNameMapping.get(σ));
         for (final ERule r : bnf.R)
-          for (final ExtendedSententialForm sf : r.rhs())
+          for (final Body sf : r.bodiesList())
             if (bnf.firsts(sf).contains(σ)) {
               legalTops.add(r.variable);
               legalTops.add(getAcceptingVariable(r.variable));
@@ -168,16 +167,16 @@ public class LL1 extends Grammar {
     return Named.by(v.name() + "$");
   }
 
-  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Token, Named> typeNameMapping,
-      final ExtendedSententialForm sf, final boolean isFromQ0$) {
+  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF e, final Map<Token, Named> typeNameMapping,
+      final Body sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
-    for (final Symbol s : reversed(sf)) {
+    for (final Component s : reversed(sf)) {
       $.add(s.isVariable() && isAccepting ? //
           getAcceptingVariable(s.asVariable()) : //
           s.isToken() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //
               s);
-      isAccepting &= bnf.isNullable(s);
+      isAccepting &= e.isNullable(s);
     }
     return new Word<>(reversed($));
   }

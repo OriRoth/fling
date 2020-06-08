@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.grammar.sententials.notations;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -6,10 +6,9 @@ import static java.util.stream.Collectors.toList;
 import java.util.*;
 import java.util.function.*;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 // TODO support nested notations (?).
@@ -25,14 +24,14 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
     ruleDeclaration.accept(new ERule(head, asList( //
-        new ExtendedSententialForm(symbol, tail))));
+        new Body(symbol, tail))));
     ruleDeclaration.accept(new ERule(tail, asList(//
-        new ExtendedSententialForm(symbol, tail), //
-        new ExtendedSententialForm())));
+        new Body(symbol, tail), //
+        new Body())));
     return head;
   }
 
-  @Override public List<FieldNodeFragment> getFields(final Function<Symbol, List<FieldNodeFragment>> fieldsSolver,
+  @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     // TODO manage inner symbol with no fields.
     return fieldsSolver.apply(symbol).stream() //
@@ -55,11 +54,11 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         .collect(toList());
   }
 
-  @Override public boolean isNullable(final Function<Symbol, Boolean> nullabilitySolver) {
+  @Override public boolean isNullable(final Function<Component, Boolean> nullabilitySolver) {
     return nullabilitySolver.apply(symbol);
   }
 
-  @Override public Set<Token> getFirsts(final Function<Symbol, Set<Token>> firstsSolver) {
+  @Override public Set<Token> getFirsts(final Function<Component, Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
 

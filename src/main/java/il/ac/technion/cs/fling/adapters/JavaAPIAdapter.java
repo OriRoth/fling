@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.*;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method

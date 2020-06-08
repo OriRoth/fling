@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.compiler;
 
 import java.util.*;
 
-import il.ac.technion.cs.fling.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 
 /** Recording of method call in fluent API invocation.
  *

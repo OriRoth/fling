@@ -1,9 +1,12 @@
-package il.ac.technion.cs.fling;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.notations.*;
+import il.ac.technion.cs.fling.Named;
 
-public interface Symbol extends Named {
+/** A component of a body of a {@link ERule}
+ * 
+ * @author Yossi Gil
+ * @since 2020-06-07 */
+public interface TempComponent extends Named {
   default boolean isTerminal() {
     return this instanceof Terminal || Constants.$.equals(this);
   }
@@ -37,23 +40,11 @@ public interface Symbol extends Named {
     return (Quantifier) this;
   }
 
-  static Optional optional(final Symbol symbol) {
-    return new Optional(!symbol.isTerminal() ? symbol : new Token(symbol.asTerminal()));
-  }
-
-  static NoneOrMore noneOrMore(final Symbol symbol) {
-    return new NoneOrMore(!symbol.isTerminal() ? symbol : new Token(symbol.asTerminal()));
-  }
-
-  static OneOrMore oneOrMore(final Symbol symbol) {
-    return new OneOrMore(!symbol.isTerminal() ? symbol : new Token(symbol.asTerminal()));
-  }
-
   default boolean isParameterized() {
     return false;
   }
 
-  default Symbol normalize() {
-    return this;
-  }
+  Component normalize();
+
+
 }

@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.grammar.sententials;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import il.ac.technion.cs.fling.*;
 

@@ -15,11 +15,11 @@ import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ
 import static il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ.v;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
-import il.ac.technion.cs.fling.Terminal;
-import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.V;
 import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression.Σ;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class ArithmeticExpression implements FluentLanguageAPI<Σ, V> {
   public enum Σ implements Terminal {

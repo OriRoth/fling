@@ -6,6 +6,10 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
   public enum Σ implements Terminal {
@@ -32,11 +36,11 @@ public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
     // @formatter:off
     return bnf(). //
         start(EBNF). //
-        derive(EBNF).to(bnf, start.with(Variable.class), Symbol.oneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
+        derive(EBNF).to(bnf, start.with(Variable.class), Quantifiers.oneOrMore(Rule)). // PlainBNF ::= start(Symbol) Rule*
         derive(Rule).to(specialize.with(Variable.class), into.many(Variable.class)). // Rule ::= specialize(Variable) into(Variable*)
         derive(Rule).to(derive.with(Variable.class), RuleBody). // Rule ::= derive(Variable) RuleBody
-        derive(RuleBody).to(to.many(RuleItem), Symbol.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(RuleItem*) RuleTail* | toEpsilon()
-        derive(RuleTail).to(or.many(Symbol.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
+        derive(RuleBody).to(to.many(RuleItem), Quantifiers.noneOrMore(RuleTail)).or(toEpsilon). // RuleBody ::= to(RuleItem*) RuleTail* | toEpsilon()
+        derive(RuleTail).to(or.many(Component.class)).or(orNone). // RuleTail ::= or(Symbol*) | orNone()
         derive(RuleItem)//
         	.to(noneOrMore.with(RuleItem))//
         	.or(oneOrMore.with(RuleItem))//
@@ -44,7 +48,7 @@ public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
         	.or(optional.with(RuleItem))//
         	.or(MySymbol)//
         	.
-        derive(MySymbol).to(__.with(Symbol.class)).//
+        derive(MySymbol).to(__.with(Component.class)).//
         build();
     // @formatter:on
   }

@@ -56,16 +56,30 @@ import il.ac.technion.cs.fling.examples.languages.*;
       Files.createDirectory(outputFolder);
       System.out.println("directory " + PATH + " created successfully");
     }
-    final Formatter formatter = new Formatter();
     for (final Entry<String, String> file : files.entrySet()) {
-      final Path filePath = Paths.get(PATH + file.getKey() + ".java");
-      if (Files.exists(filePath))
-        Files.delete(filePath);
-      Files.write(filePath, Collections.singleton(FORMAT_OUTPUT ? //
-          formatter.formatSource(file.getValue()) : //
-          file.getValue() //
-      ), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-      System.out.println("file " + file.getKey() + ".java written successfully.");
+      String fileName = file.getKey();
+      String content = file.getValue();
+      compile(fileName, content);
+      System.out.println("file " + fileName + ".java written successfully.");
+    }
+  }
+
+  private void compile(String fileName, String content) throws IOException {
+    final Path filePath = Paths.get(PATH + fileName + ".java");
+    if (Files.exists(filePath))
+      Files.delete(filePath);
+    Files.write(filePath, Collections.singleton(FORMAT_OUTPUT ? //
+        format(content) : //
+        content //
+    ), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+  }
+
+  private String format(String content) {
+    try {
+      return new Formatter().formatSource(content);
+    } catch (FormatterException e) {
+      e.printStackTrace();
+      return content;
     }
   }
 

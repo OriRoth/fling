@@ -1,10 +1,10 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.Symbol.*;
-
 import static il.ac.technion.cs.fling.examples.languages.Java.V.*;
 import static il.ac.technion.cs.fling.examples.languages.Java.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Component.*;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifier.*;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -19,8 +19,10 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.examples.languages.Java.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** Fling input specifying the formal Datalog language.
  * 
@@ -51,8 +53,8 @@ public class Java implements FluentLanguageAPI<Σ, V> {
   /** Datalog's grammar in Backus-Naur form. */
   public static final FancyEBNF bnf = bnf(). //
       start(Program). // This is the start symbol
-      derive(Program).to(oneOrMore(Declaration)). //
-      derive(Declaration).to(Header, oneOrMore(Member)). //
+      derive(Program).to(Quantifiers.oneOrMore(Declaration)). //
+      derive(Declaration).to(Header, Quantifiers.oneOrMore(Member)). //
       specialize(Member).into(Field, Constructor, Method, Initializer).//
       build();
 

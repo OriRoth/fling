@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.grammar.sententials.notations;
+package il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers;
 
 import java.lang.annotation.*;
 

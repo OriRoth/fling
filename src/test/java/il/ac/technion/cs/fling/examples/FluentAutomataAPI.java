@@ -1,6 +1,8 @@
 package il.ac.technion.cs.fling.examples;
 
 import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public interface FluentAutomataAPI<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
   default String name() {

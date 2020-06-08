@@ -12,7 +12,7 @@ import il.ac.technion.cs.fling.internal.compiler.*;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 

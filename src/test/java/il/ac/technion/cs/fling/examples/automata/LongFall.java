@@ -10,7 +10,8 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.*;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 public class LongFall {

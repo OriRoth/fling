@@ -14,6 +14,8 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
   // Terminal symbols:

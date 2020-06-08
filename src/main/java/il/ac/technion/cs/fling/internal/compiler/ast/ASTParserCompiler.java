@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.ast;
 
-import il.ac.technion.cs.fling.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public interface ASTParserCompiler {
   /** @return run-time parser program */

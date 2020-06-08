@@ -5,10 +5,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.Constants;
-import il.ac.technion.cs.fling.internal.grammar.sententials.ERule;
-import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Body;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
+import il.ac.technion.cs.fling.internal.grammar.rules.Symbol;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** An extended Backus-Naur form specification of a formal Language, represented
  * as a set of {@link #R} of extended derivation rules {@link ERule}.
@@ -53,20 +55,20 @@ public class EBNF {
     return R.stream().filter(r -> r.of(v));
   }
 
-  /** @return all grammar symbols */
+  /** @return stream of all grammar symbols */
   public Stream<Symbol> symbols() {
     return Stream.concat(Σ.stream(), Γ.stream());
   }
 
   /** @param v a variable
    * @return stream of right hand sides of all its derivation rule */
-  public final Stream<ExtendedSententialForm> forms(final Variable v) {
-    return rules(v).flatMap(ERule::forms);
+  public final Stream<Body> bodies(final Variable v) {
+    return rules(v).flatMap(ERule::bodies);
   }
 
   /** @param v a variable
    * @return a list of the right hand side of all its derivation rule */
-  public final List<ExtendedSententialForm> formsList(final Variable v) {
-    return rules(v).flatMap(ERule::forms).collect(Collectors.toList());
+  public final List<Body> bodiesList(final Variable v) {
+    return rules(v).flatMap(ERule::bodies).collect(Collectors.toList());
   }
 }

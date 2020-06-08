@@ -7,7 +7,7 @@ import java.util.*;
 
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 /** Abstract syntax tree compiler. Generates types corresponding to AST nodes.
  * 
@@ -26,19 +26,19 @@ public class ASTCompiler {
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();
     final Map<Variable, List<Variable>> children = new LinkedHashMap<>();
-    final Map<Variable, List<Symbol>> fields = new LinkedHashMap<>();
+    final Map<Variable, List<Component>> fields = new LinkedHashMap<>();
     for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
-      final List<ExtendedSententialForm> rhs = bnf.formsList(v);
+      final List<Body> rhs = bnf.bodiesList(v);
       if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable()))
         // Sequence rule.
         fields.put(v, rhs.get(0));
       else {
         // Alteration rule.
         children.put(v, new ArrayList<>());
-        for (final ExtendedSententialForm sf : rhs)
-          for (final Symbol symbol : sf) {
+        for (final Body sf : rhs)
+          for (final Component symbol : sf) {
             assert symbol.isVariable();
             final Variable child = symbol.asVariable();
             children.get(v).add(child);

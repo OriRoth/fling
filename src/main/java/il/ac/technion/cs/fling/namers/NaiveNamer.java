@@ -14,10 +14,12 @@ import il.ac.technion.cs.fling.internal.compiler.api.nodes.*;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
-  private final Map<Symbol, Integer> notationsChildrenCounter = new HashMap<>();
+  private final Map<Component, Integer> notationsChildrenCounter = new HashMap<>();
   private final String packageName;
   private final String apiName;
 
@@ -37,7 +39,7 @@ public class NaiveNamer implements Namer {
     return Variable.byName(name);
   }
 
-  @Override public Variable createQuantificationChild(final Symbol symbol) {
+  @Override public Variable createQuantificationChild(final Component symbol) {
     assert symbol.isToken() || symbol.isVariable();
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
@@ -94,7 +96,7 @@ public class NaiveNamer implements Namer {
     fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
   }
 
-  private List<FieldNodeFragment> getFields(final Symbol symbol, final Map<String, Integer> usedNames) {
+  private List<FieldNodeFragment> getFields(final Component symbol, final Map<String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
           .map(parameter -> {

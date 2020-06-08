@@ -4,16 +4,18 @@ import java.util.List;
 import java.util.function.*;
 
 import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class FieldNode {
-  public final Symbol source;
+  public final Component source;
   private List<FieldNodeFragment> inferredFieldFragments;
 
-  public FieldNode(final Symbol source) {
+  public FieldNode(final Component source) {
     this.source = source;
   }
 
-  public Symbol source() {
+  public Component source() {
     return source;
   }
 
