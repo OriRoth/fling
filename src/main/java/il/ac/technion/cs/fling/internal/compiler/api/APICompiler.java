@@ -83,12 +83,6 @@ public abstract class APICompiler {
       this.legalJumps = null;
     }
 
-    TypeName() {
-      this.q = null;
-      this.α = null;
-      this.legalJumps = null;
-    }
-
     @Override public int hashCode() {
       int $ = 1;
       if (q != null)

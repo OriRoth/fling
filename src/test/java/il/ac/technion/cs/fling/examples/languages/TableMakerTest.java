@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-class TableMakerTest {
+public class TableMakerTest {
 
-  @Test void test() {
+  @Test public void test() {
     assertNotNull(new TableMaker().apiClass);
   }
 
