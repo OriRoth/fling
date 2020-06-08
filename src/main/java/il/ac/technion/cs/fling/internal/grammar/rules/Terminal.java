@@ -1,6 +1,9 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import il.ac.technion.cs.fling.internal.grammar.types.*;
+import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.VarargsClassParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.VarargsVariableTypeParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
 
 /** Language terminal symbol, never occurs in grammar; 
  * 

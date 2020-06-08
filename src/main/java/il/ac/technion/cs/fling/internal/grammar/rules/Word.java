@@ -2,8 +2,16 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** An unmodifiable finite sequence. Supports stack notations.
  *

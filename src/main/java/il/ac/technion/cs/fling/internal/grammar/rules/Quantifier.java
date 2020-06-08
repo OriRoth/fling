@@ -1,9 +1,10 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import static java.util.Arrays.asList;
-
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;

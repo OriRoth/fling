@@ -2,17 +2,25 @@ package il.ac.technion.cs.fling.adapters;
 
 import static java.util.stream.Collectors.joining;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.compilers.ast.ASTCompiler;
-import il.ac.technion.cs.fling.grammars.*;
-import il.ac.technion.cs.fling.internal.compiler.*;
+import il.ac.technion.cs.fling.grammars.LL1;
+import il.ac.technion.cs.fling.grammars.LL1JavaASTParserCompiler;
+import il.ac.technion.cs.fling.internal.compiler.Assignment;
+import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 

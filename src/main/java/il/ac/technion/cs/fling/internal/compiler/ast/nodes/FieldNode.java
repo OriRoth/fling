@@ -1,9 +1,9 @@
 package il.ac.technion.cs.fling.internal.compiler.ast.nodes;
 
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 

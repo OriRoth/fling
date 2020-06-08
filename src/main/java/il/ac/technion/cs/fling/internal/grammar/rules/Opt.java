@@ -3,8 +3,12 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
