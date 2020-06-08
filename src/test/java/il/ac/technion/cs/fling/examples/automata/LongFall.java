@@ -2,12 +2,17 @@ package il.ac.technion.cs.fling.examples.automata;
 
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.*;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.*;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.*;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.q0;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.q1;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.g0;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.g1;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.a;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.b;
 
-import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.adapters.*;
+import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.Named;
+import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
+import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;

@@ -2,12 +2,18 @@ package il.ac.technion.cs.fling.examples.automata;
 
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.AnBn.Q.*;
-import static il.ac.technion.cs.fling.examples.automata.AnBn.Γ.*;
-import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.*;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Q.q0;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Q.q1;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Q.q2;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Γ.E;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Γ.X;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.a;
+import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.b;
 
-import il.ac.technion.cs.fling.*;
-import il.ac.technion.cs.fling.adapters.*;
+import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.Named;
+import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
+import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;

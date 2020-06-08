@@ -1,8 +1,8 @@
 package il.ac.technion.cs.fling.examples.languages.pattern;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
 
 @SuppressWarnings("static-method") public class CharsTest {

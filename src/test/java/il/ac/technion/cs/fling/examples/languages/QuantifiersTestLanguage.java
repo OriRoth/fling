@@ -1,11 +1,18 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.V.*;
-import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.V.X;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.V.Y;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.a;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.b;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.c;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.d;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.e;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.*;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.oneOrMore;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.optional;
 
-import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;

@@ -1,12 +1,16 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V.*;
-import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V.AB;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V.P;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.a;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.b;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.c;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.ↄ;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.*;
+import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V;
+import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;

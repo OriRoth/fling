@@ -1,25 +1,35 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.Java.V.*;
-import static il.ac.technion.cs.fling.examples.languages.Java.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Constructor;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Declaration;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Field;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Header;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Initializer;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Member;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Method;
+import static il.ac.technion.cs.fling.examples.languages.Java.V.Program;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Component.*;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifier.*;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.Java.*;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
+import il.ac.technion.cs.fling.examples.languages.Java.V;
+import il.ac.technion.cs.fling.examples.languages.Java.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;

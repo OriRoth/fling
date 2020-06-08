@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;

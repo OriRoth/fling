@@ -1,12 +1,23 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.RegularExpression.V.*;
-import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.*;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.V.Expression;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.V.RE;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.V.Tail;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.and;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.anyChar;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.anyDigit;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.either;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.exactly;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.noneOrMore;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.oneOrMore;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.option;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.or;
+import static il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ.re;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
-import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.RegularExpression.*;
+import il.ac.technion.cs.fling.examples.languages.RegularExpression.V;
+import il.ac.technion.cs.fling.examples.languages.RegularExpression.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 

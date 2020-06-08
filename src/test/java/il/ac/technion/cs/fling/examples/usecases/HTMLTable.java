@@ -3,7 +3,11 @@ package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.HTMLTable.html;
 import static java.util.stream.Collectors.joining;
 
-import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.*;
+import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Cell1;
+import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.HTML;
+import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Header;
+import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Row;
+import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Table;
 
 public class HTMLTable {
   // @formatter:off
