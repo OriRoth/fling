@@ -52,9 +52,10 @@ public final class Token implements SymbolX {
   }
 
   @Override public String toString() {
-    return String.format("%s<%s>", //
-        name(), //
-        parameters().map(Object::toString).collect(Collectors.joining(", ")));
+    String $ = name();
+    if (parameters.length != 0)
+    $ += String.format("<%s>", parameters().map(Object::toString).collect(Collectors.joining(", ")));
+    return $;
   }
 
   @Override public boolean isToken() {

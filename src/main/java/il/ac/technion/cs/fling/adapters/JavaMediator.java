@@ -80,7 +80,7 @@ public class JavaMediator {
         apiName + "AST");
     this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
     this.apiClass = apiAdapter
-        .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
+        .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
 

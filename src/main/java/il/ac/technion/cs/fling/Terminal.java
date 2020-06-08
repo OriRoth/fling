@@ -7,6 +7,10 @@ import il.ac.technion.cs.fling.internal.grammar.types.*;
  * 
  * @author Ori Roth */
 public interface Terminal extends SymbolX {
+  @Override default Token normalize() {
+    return new Token(this);
+  }
+
   /** Associate parameter with this terminal
    * 
    * @param clazz parameter type

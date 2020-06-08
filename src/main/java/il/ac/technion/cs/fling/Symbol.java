@@ -52,4 +52,8 @@ public interface Symbol extends Named {
   default boolean isParameterized() {
     return false;
   }
+
+  default Symbol normalize() {
+    return this;
+  }
 }

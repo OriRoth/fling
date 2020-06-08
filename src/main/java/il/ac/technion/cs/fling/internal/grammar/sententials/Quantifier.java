@@ -16,7 +16,7 @@ public abstract class Quantifier implements Symbol {
   public abstract Collection<Symbol> abbreviatedSymbols();
 
   public abstract Variable expand(Namer namer, Consumer<Variable> variableDeclaration,
-      Consumer<DerivationRule> ruleDeclaration);
+      Consumer<ERule> ruleDeclaration);
 
   public abstract List<FieldNodeFragment> getFields(Function<Symbol, List<FieldNodeFragment>> fieldTypesSolver,
       Function<String, String> nameFromBaseSolver);

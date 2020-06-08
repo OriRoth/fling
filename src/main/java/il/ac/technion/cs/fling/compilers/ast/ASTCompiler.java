@@ -30,7 +30,7 @@ public class ASTCompiler {
     for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
-      final List<ExtendedSententialForm> rhs = bnf.rhs(v);
+      final List<ExtendedSententialForm> rhs = bnf.formsList(v);
       if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable()))
         // Sequence rule.
         fields.put(v, rhs.get(0));

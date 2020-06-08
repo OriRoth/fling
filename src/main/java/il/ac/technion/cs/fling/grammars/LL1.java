@@ -67,14 +67,14 @@ public class LL1 extends Grammar {
       if (bnf.isNullable(v))
         δs.add(new δ<>(q0ø, ε(), A.get(v), q0$, new Word<>(A.get(v))));
     // Moving from q0ø to qσ with σ + appropriate variable.
-    for (final DerivationRule r : bnf.R)
-      for (final ExtendedSententialForm sf : r.rhs)
+    for (final ERule r : bnf.R)
+      for (final ExtendedSententialForm sf : r.rhs())
         for (final Token σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
-            δs.add(new δ<>(q0ø, σ, r.lhs, typeNameMapping.get(σ),
+            δs.add(new δ<>(q0ø, σ, r.variable, typeNameMapping.get(σ),
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
-            if (!bnf.isNullable(r.lhs))
-              δs.add(new δ<>(q0ø, σ, A.get(r.lhs), typeNameMapping.get(σ),
+            if (!bnf.isNullable(r.variable))
+              δs.add(new δ<>(q0ø, σ, A.get(r.variable), typeNameMapping.get(σ),
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
           }
     for (final Variable v : bnf.Γ)
@@ -99,12 +99,13 @@ public class LL1 extends Grammar {
       if (!bnf.isNullable(v))
         δs.add(new δ<>(q0$, ε(), A.get(v), q0ø, new Word<>(A.get(v))));
     // Moving from q0$ to qσ with σ + appropriate variable.
-    for (final DerivationRule r : bnf.R)
-      if (bnf.isNullable(r.lhs))
-        for (final ExtendedSententialForm sf : r.rhs)
+    for (final ERule r : bnf.R)
+      if (bnf.isNullable(r.variable))
+
+        for (final ExtendedSententialForm sf : r.rhs())
           for (final Token σ : bnf.firsts(sf))
             if (!Constants.$$.equals(σ))
-              δs.add(new δ<>(q0$, σ, A.get(r.lhs), typeNameMapping.get(σ),
+              δs.add(new δ<>(q0$, σ, A.get(r.variable), typeNameMapping.get(σ),
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
     for (final Variable v : bnf.Γ)
       if (bnf.isNullable(v))
@@ -118,14 +119,14 @@ public class LL1 extends Grammar {
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty()));
     // Moving from qσ to qσ with ε + appropriate variable.
-    for (final DerivationRule r : bnf.R)
-      for (final ExtendedSententialForm sf : r.rhs)
+    for (final ERule r : bnf.R)
+      for (final ExtendedSententialForm sf : r.rhs())
         for (final Token σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
             final Named σState = typeNameMapping.get(σ);
-            δs.add(new δ<>(σState, ε(), A.get(r.lhs), σState,
+            δs.add(new δ<>(σState, ε(), A.get(r.variable), σState,
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
-            δs.add(new δ<>(σState, ε(), r.lhs, σState,
+            δs.add(new δ<>(σState, ε(), r.variable, σState,
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
           }
     // Moving from qσ to qσ with ε + nullable variable.
@@ -142,11 +143,11 @@ public class LL1 extends Grammar {
       if (!Constants.$$.equals(σ)) {
         final Set<Named> legalTops = new HashSet<>();
         legalTops.add(typeNameMapping.get(σ));
-        for (final DerivationRule r : bnf.R)
-          for (final ExtendedSententialForm sf : r.rhs)
+        for (final ERule r : bnf.R)
+          for (final ExtendedSententialForm sf : r.rhs())
             if (bnf.firsts(sf).contains(σ)) {
-              legalTops.add(r.lhs);
-              legalTops.add(getAcceptingVariable(r.lhs));
+              legalTops.add(r.variable);
+              legalTops.add(getAcceptingVariable(r.variable));
             }
         bnf.Γ.stream() //
             .filter(bnf::isNullable) //

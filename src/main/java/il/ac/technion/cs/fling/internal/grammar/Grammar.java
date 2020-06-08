@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.Symbol;
 import il.ac.technion.cs.fling.Terminal;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.grammar.sententials.DerivationRule;
+import il.ac.technion.cs.fling.internal.grammar.sententials.ERule;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Quantifier;
 import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
@@ -53,12 +53,12 @@ public abstract class Grammar {
 
   private FancyEBNF getBNF(FancyEBNF ebnf) {
     Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
-    Set<DerivationRule> R = new LinkedHashSet<>();
+    Set<ERule> R = new LinkedHashSet<>();
     Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
     Set<Variable> extensionProducts = new LinkedHashSet<>();
-    for (DerivationRule rule : ebnf.R) {
+    for (ERule rule : ebnf.R) {
       List<ExtendedSententialForm> rhs = new ArrayList<>();
-      for (ExtendedSententialForm sf : rule.rhs) {
+      for (ExtendedSententialForm sf : rule.rhs()) {
         List<Symbol> symbols = new ArrayList<>();
         for (Symbol symbol : sf) {
           if (!symbol.isQuantifier()) {
@@ -72,7 +72,7 @@ public abstract class Grammar {
         }
         rhs.add(new ExtendedSententialForm(symbols));
       }
-      R.add(new DerivationRule(rule.lhs, rhs));
+      R.add(new ERule(rule.variable, rhs));
     }
     Γ.addAll(extensionProducts);
     return new FancyEBNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts, false);
@@ -86,11 +86,11 @@ public abstract class Grammar {
     final Set<Token> Σ = new LinkedHashSet<>();
     final Set<Variable> V = new LinkedHashSet<>();
     V.add(v);
-    final Set<DerivationRule> rs = new LinkedHashSet<>();
+    final Set<ERule> rs = new LinkedHashSet<>();
     for (boolean more = true; more;) {
       more = false;
-      for (DerivationRule r : bnf.R)
-        if (!rs.contains(r) && V.contains(r.lhs)) {
+      for (ERule r : bnf.R)
+        if (!rs.contains(r) && V.contains(r.variable)) {
           more = true;
           rs.add(r);
           r.variables().forEachOrdered(V::add);
@@ -102,13 +102,13 @@ public abstract class Grammar {
 
   private static FancyEBNF normalize(FancyEBNF bnf, Namer namer) {
     Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
-    Set<DerivationRule> R = new LinkedHashSet<>();
+    Set<ERule> R = new LinkedHashSet<>();
     for (Variable v : bnf.Γ) {
-      List<ExtendedSententialForm> rhs = bnf.rhs(v);
-      assert rhs.size() > 0;
+      List<ExtendedSententialForm> rhs = bnf.formsList(v);
+      assert rhs.size() > 0: v.toString() + " in: " + bnf;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
-        R.add(new DerivationRule(v, rhs));
+        R.add(new ERule(v, rhs));
         continue;
       }
       List<Variable> alteration = new ArrayList<>();
@@ -120,17 +120,17 @@ public abstract class Grammar {
           // Create a suitable child variable.
           Variable a = namer.createASTChild(v);
           V.add(a);
-          R.add(new DerivationRule(a, Collections.singletonList(sf)));
+          R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
         }
-      R.add(new DerivationRule(v, alteration.stream().map(a -> new ExtendedSententialForm(a)).collect(toList())));
+      R.add(new ERule(v, alteration.stream().map(a -> new ExtendedSententialForm(a)).collect(toList())));
     }
     return new FancyEBNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts,
         false);
   }
 
   public static boolean isSequenceRHS(FancyEBNF bnf, Variable v) {
-    List<ExtendedSententialForm> rhs = bnf.rhs(v);
+    List<ExtendedSententialForm> rhs = bnf.formsList(v);
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
 

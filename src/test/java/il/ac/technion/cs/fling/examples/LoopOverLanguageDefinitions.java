@@ -16,6 +16,11 @@ import il.ac.technion.cs.fling.examples.automata.*;
 import il.ac.technion.cs.fling.examples.languages.*;
 
 @SuppressWarnings("static-method") public class LoopOverLanguageDefinitions {
+  @Test public void checkBNF() {
+    BNF x = new BNF();
+    new JavaMediator(x.BNF(), "", x.name(), x.Σ());
+  }
+
   private static final boolean FORMAT_OUTPUT = true;
   @SuppressWarnings("rawtypes") private static final FluentLanguageAPI[] BNFAPIs = { //
       new BalancedParentheses(), //

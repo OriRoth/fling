@@ -73,7 +73,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
 
   private String printAbstractParentMethodBody(final Variable v) {
-    final List<Variable> children = bnf.rhs(v).stream() //
+    final List<Variable> children = bnf.forms(v)//
         .map(sf -> sf.get(0)) //
         .map(Symbol::asVariable) //
         .collect(toList());
@@ -102,7 +102,8 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
 
   private String printConcreteChildMethodBody(final Variable v) {
-    final List<Symbol> children = bnf.rhs(v).get(0);
+
+    final List<Symbol> children = bnf.formsList(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListWild + " _b;");
@@ -164,7 +165,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
 
   private String printConcreteExtensionChildMethodBody(final Variable v) {
-    final List<Symbol> children = bnf.rhs(v).get(0);
+    final List<Symbol> children = bnf.formsList(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Assignment.class.getCanonicalName() + " _a;");
     body.append(ListObject + " _b;");

@@ -47,7 +47,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     SubFigure language = new SubFigure();
     Namer namer = new NaiveNamer("SubFigure");
     LL1 ll1 = new LL1(language.BNF(), namer);
-    DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reachableSubBNF());
+    DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     APICompiler compiler = new ReliableAPICompiler(dpda);
     PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
       // Ignore parameters:

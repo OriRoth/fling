@@ -19,10 +19,10 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   }
 
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
-      final Consumer<DerivationRule> ruleDeclaration) {
+      final Consumer<ERule> ruleDeclaration) {
     final Variable head = namer.createQuantificationChild(symbol);
     variableDeclaration.accept(head);
-    ruleDeclaration.accept(new DerivationRule(head, asList(//
+    ruleDeclaration.accept(new ERule(head, asList(//
         new ExtendedSententialForm(symbol, head), //
         new ExtendedSententialForm())));
     return head;
