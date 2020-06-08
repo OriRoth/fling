@@ -122,7 +122,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     }
 
     public FancyEBNF build() {
-      return FancyEBNF.toBNF(parse_PlainBNF(w));
+      return new PlainBNFImporter(parse_PlainBNF(w)).getEbnf();
     }
   }
 }

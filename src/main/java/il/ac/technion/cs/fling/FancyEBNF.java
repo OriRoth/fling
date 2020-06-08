@@ -1,16 +1,29 @@
 package il.ac.technion.cs.fling;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.antlr.v4.tool.ast.*;
-
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Body;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
+import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 
 /** An extended Backus-Naur form specification of formal Language, collection of
@@ -161,44 +174,6 @@ public class FancyEBNF extends EBNF {
     }
     Γ.forEach(s -> $.put(s, unmodifiableSet($.get(s))));
     return unmodifiableMap($);
-  }
-
-  public static FancyEBNF toBNF(final PlainBNF b) {
-    final Builder $ = new Builder();
-    $.start(b.start);
-    for (final Rule rule : b.rules)
-      if (rule instanceof Derivation) {
-        // Derivation rule.
-        convert($, (Derivation) rule);
-      } else {
-        // Specialization rule.
-        final Specialization specializationRule = (Specialization) rule;
-        $.specialize(specializationRule.specialize).into(specializationRule.into);
-      }
-    try {
-      return $.build();
-    } catch (Exception e) {
-      throw new RuntimeException(
-          b + "problem while analyzing BNF, make sure the grammar adheres its class description (LL/LR/etc)", e);
-    }
-  }
-
-  private static void convert(final Builder $, final Derivation derivation) {
-    Variable variable = derivation.derive;
-    if (derivation.ruleBody instanceof ConcreteDerivation) {
-      // Concrete derivation rule.
-      ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
-      $.derive(variable).to((concrete).to);
-      for (RuleTail tail : concrete.ruleTail)
-        if (tail instanceof ConcreteDerivationTail)
-          // Concrete tail.
-          $.derive(variable).to(((ConcreteDerivationTail) tail).or);
-        else
-          // Epsilon tail.
-          $.derive(variable).toEpsilon();
-    } else
-      // Epsilon derivation rule.
-      $.derive(variable).toEpsilon();
   }
 
   static class Builder {

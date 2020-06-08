@@ -37,14 +37,14 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
   class Derivation implements Rule {
     @Override public String toString() {
-      return derive + "->" + ruleBody;
+      return variable + "->" + ruleBody;
     }
 
-    public final Variable derive;
+    public final Variable variable;
     public final RuleBody ruleBody;
 
     public Derivation(Variable derive, RuleBody ruleBody) {
-      this.derive = derive;
+      this.variable = derive;
       this.ruleBody = ruleBody;
     }
   }
