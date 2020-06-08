@@ -129,8 +129,14 @@ public class FancyEBNF extends EBNF {
       for (final Variable v : Γ)
         for (final ExtendedSententialForm sf : formsList(v))
           for (final Symbol symbol : sf) {
-            changed |= $.get(v).addAll(!symbol.isQuantifier() ? $.get(symbol) : //
-                symbol.asQuantifier().getFirsts($::get));
+            Set<Token> set = $.get(v);
+            if (symbol.isQuantifier())
+              changed |= set.addAll(symbol.asQuantifier().getFirsts($::get));
+            else {
+              Set<Token> c = $.get(symbol);
+              assert c != null : this + ":" + symbol;
+              changed |= set.addAll(c);
+            }
             if (!isNullable(symbol))
               break;
           }
@@ -161,28 +167,13 @@ public class FancyEBNF extends EBNF {
     return unmodifiableMap($);
   }
 
-  public static FancyEBNF toBNF(final PlainBNF specification) {
+  public static FancyEBNF toBNF(final PlainBNF b) {
     final Builder $ = new Builder();
-    $.start(specification.start);
-    for (final Rule rule : specification.rule)
+    $.start(b.start);
+    for (final Rule rule : b.rules)
       if (rule instanceof Derivation) {
         // Derivation rule.
-        final Derivation derivation = (Derivation) rule;
-        Variable variable = derivation.derive;
-        if (derivation.ruleBody instanceof ConcreteDerivation) {
-          // Concrete derivation rule.
-          ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
-          $.derive(variable).to((concrete).to);
-          for (RuleTail tail : concrete.ruleTail)
-            if (tail instanceof ConcreteDerivationTail)
-              // Concrete tail.
-              $.derive(variable).to(((ConcreteDerivationTail) tail).or);
-            else
-              // Epsilon tail.
-              $.derive(variable).toEpsilon();
-        } else
-          // Epsilon derivation rule.
-          $.derive(variable).toEpsilon();
+        convert($, (Derivation) rule);
       } else {
         // Specialization rule.
         final Specialization specializationRule = (Specialization) rule;
@@ -192,8 +183,26 @@ public class FancyEBNF extends EBNF {
       return $.build();
     } catch (Exception e) {
       throw new RuntimeException(
-          "problem while analyzing BNF, make sure the grammar adheres its class description (LL/LR/etc)", e);
+          b + "problem while analyzing BNF, make sure the grammar adheres its class description (LL/LR/etc)", e);
     }
+  }
+
+  private static void convert(final Builder $, final Derivation derivation) {
+    Variable variable = derivation.derive;
+    if (derivation.ruleBody instanceof ConcreteDerivation) {
+      // Concrete derivation rule.
+      ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
+      $.derive(variable).to((concrete).to);
+      for (RuleTail tail : concrete.ruleTail)
+        if (tail instanceof ConcreteDerivationTail)
+          // Concrete tail.
+          $.derive(variable).to(((ConcreteDerivationTail) tail).or);
+        else
+          // Epsilon tail.
+          $.derive(variable).toEpsilon();
+    } else
+      // Epsilon derivation rule.
+      $.derive(variable).toEpsilon();
   }
 
   private static class Builder {
@@ -241,7 +250,31 @@ public class FancyEBNF extends EBNF {
       return this;
     }
 
+    Quantifier add(Quantifier q) {
+      q.abbreviatedSymbols().forEach(this::add);
+      return q;
+    }
+
+    Variable add(Variable v) {
+      V.add(v);
+      return v;
+    }
+
+    Token add(Token t) {
+      Σ.add(t);
+      t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
+      return t;
+    }
+
     Symbol add(Symbol s) {
+      assert !s.isTerminal();
+      if (s instanceof Token)
+        return add((Token) s);
+      if (s instanceof Quantifier)
+        return add((Quantifier) s);
+      if (s instanceof Variable) 
+        return add ((Variable) s);
+      assert false: s + ":" +  this;
       return s;
     }
 

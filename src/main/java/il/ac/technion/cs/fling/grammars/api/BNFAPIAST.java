@@ -1,5 +1,6 @@
 package il.ac.technion.cs.fling.grammars.api;
 
+import java.util.Arrays;
 import java.util.List;
 
 import il.ac.technion.cs.fling.*;
@@ -9,12 +10,16 @@ import il.ac.technion.cs.fling.*;
  * @author Ori Roth */
 @SuppressWarnings("all") public interface BNFAPIAST {
   class PlainBNF {
-    public final Variable start;
-    public final List<Rule> rule;
+    @Override public String toString() {
+      return "<" + start + "," + rules + ">";
+    }
 
-    public PlainBNF(Variable start, List<Rule> rule) {
+    public final Variable start;
+    public final List<Rule> rules;
+
+    public PlainBNF(Variable start, List<Rule> rules) {
       this.start = start;
-      this.rule = rule;
+      this.rules = rules;
     }
   }
 
@@ -28,6 +33,10 @@ import il.ac.technion.cs.fling.*;
   }
 
   class Derivation implements Rule {
+    @Override public String toString() {
+      return derive + "->" + ruleBody;
+    }
+
     public final Variable derive;
     public final RuleBody ruleBody;
 
@@ -48,6 +57,10 @@ import il.ac.technion.cs.fling.*;
   }
 
   class ConcreteDerivation implements RuleBody {
+    @Override public String toString() {
+      return Arrays.toString(to) + "," + ruleTail;
+    }
+
     public final Symbol[] to;
     public final List<RuleTail> ruleTail;
 
@@ -58,7 +71,9 @@ import il.ac.technion.cs.fling.*;
   }
 
   class EpsilonDerivation implements RuleBody {
-    public EpsilonDerivation() {
+
+    @Override public String toString() {
+      return "ε";
     }
   }
 
@@ -82,7 +97,7 @@ import il.ac.technion.cs.fling.*;
       } catch (java.lang.Exception __) {
         __.printStackTrace();
       }
-      plainBNF.rule.stream().forEach(_x_ -> visit((Rule) _x_));
+      plainBNF.rules.stream().forEach(_x_ -> visit((Rule) _x_));
     }
 
     public final void visit(Rule rule) {

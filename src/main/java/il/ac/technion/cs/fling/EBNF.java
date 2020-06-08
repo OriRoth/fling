@@ -1,9 +1,5 @@
 package il.ac.technion.cs.fling;
 
-import static java.util.Collections.unmodifiableSet;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,8 +10,8 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.ERule;
 import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 
-/** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form <code>V ::= w X | Y z.</code>
+/** An extended Backus-Naur form specification of a formal Language, represented
+ * as a set of {@link #R} of extended derivation rules {@link ERule}.
  * 
  * @author Yossi Gil */
 public class EBNF {
