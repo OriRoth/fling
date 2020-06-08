@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,18 +48,7 @@ public final class Token implements Symbol {
     if (!(obj instanceof Token))
       return false;
     Token other = (Token) obj;
-    return equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
-  }
-
-  private static boolean equals(Parameter[] ps1, Parameter[] ps2) {
-    if (ps1 == ps2)
-      return true;
-    if (ps1.length != ps2.length)
-      return false;
-    for (int i = 0; i < ps1.length; ++i)
-      if (!ps1[i].equals(ps2[i]))
-        return false;
-    return true;
+    return Arrays.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
   }
 
   @Override public String toString() {

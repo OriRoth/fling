@@ -91,19 +91,25 @@ public class FancyEBNF extends EBNF {
   /** Return a possibly smaller BNF including only rules reachable form start
    * symbol */
   private static FancyEBNF reduce(EBNF b) {
-    final Set<Variable> Γ = new LinkedHashSet<>(Collections.singleton(b.ε));
+    final Set<Variable> Γ = new LinkedHashSet<>();
     final Set<ERule> R = new LinkedHashSet<>();
     final Set<Token> Σ = new LinkedHashSet<>();
 
-    for (;;)
-      for (Variable v : Γ) {
+    final Set<Variable> newVariables = new LinkedHashSet<>();
+    newVariables.add(b.ε);
+    while(!newVariables.isEmpty()) {
+      Γ.addAll(newVariables);
+      final Set<Variable> currentVariables = new LinkedHashSet<>();
+      currentVariables.addAll(newVariables);
+      newVariables.clear();
+      for (Variable v : currentVariables) {
         b.rules(v).forEachOrdered(R::add);
         b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
-        Set<Variable> vs = b.rules(v).flatMap(ERule::variables).collect(Collectors.toSet());
-        if (Γ.containsAll(vs))
-          return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
-        Γ.addAll(vs);
+        b.rules(v).flatMap(ERule::variables) //
+          .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
       }
+    }
+    return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
   }
 
   public boolean isOriginalVariable(final Component symbol) {
@@ -184,18 +190,18 @@ public class FancyEBNF extends EBNF {
     private Variable start;
 
     public Derive derive(final Variable variable) {
-      V.add(variable);
+      add(variable);
       return new Derive(variable);
     }
 
     public Specialize specialize(final Variable variable) {
-      V.add(variable);
+      add(variable);
       return new Specialize(variable);
     }
 
 
     public final Builder start(final Variable v) {
-      V.add(v);
+      add(v);
       start = v;
       return this;
     }
