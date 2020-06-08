@@ -47,13 +47,24 @@ public final class Token implements Symbol {
     if (!(obj instanceof Token))
       return false;
     Token other = (Token) obj;
-    return Objects.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
+    return equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
+  }
+
+  private static boolean equals(Parameter[] ps1, Parameter[] ps2) {
+    if (ps1 == ps2)
+      return true;
+    if (ps1.length != ps2.length)
+      return false;
+    for (int i = 0; i < ps1.length; ++i)
+      if (!ps1[i].equals(ps2[i]))
+        return false;
+    return true;
   }
 
   @Override public String toString() {
     String $ = name();
     if (parameters.length != 0)
-    $ += String.format("<%s>", parameters().map(Object::toString).collect(Collectors.joining(", ")));
+      $ += String.format("<%s>", parameters().map(Object::toString).collect(Collectors.joining(", ")));
     return $;
   }
 
