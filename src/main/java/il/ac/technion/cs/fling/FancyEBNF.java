@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling;
 
-import static il.ac.technion.cs.fling.internal.grammar.rules.Constants.intermediateVariableName;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -8,14 +7,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.antlr.runtime.tree.Tree;
-import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.*;
 
 import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
-import il.ac.technion.cs.fling.internal.util.Counter;
 
 /** An extended Backus-Naur form specification of formal Language, collection of
  * derivation rules of the form <code>V ::= w X | Y z.</code>, augmented with
@@ -205,7 +201,7 @@ public class FancyEBNF extends EBNF {
       $.derive(variable).toEpsilon();
   }
 
-  private static class Builder {
+  static class Builder {
     private final Set<Token> Σ = new LinkedHashSet<>();
     private final Set<Variable> V = new LinkedHashSet<>();
     private final Set<ERule> R = new LinkedHashSet<>();
@@ -310,77 +306,6 @@ public class FancyEBNF extends EBNF {
       }
     }
 
-  }
-
-  public static FancyEBNF fromANTLR(Grammar grammar) {
-    assert grammar.ast.getChildCount() == 2 : "ANTLR grammar is not simplified";
-    Builder $ = new Builder();
-    boolean initialized = false;
-    Tree rules = grammar.ast.getChild(1);
-    Counter counter = new Counter();
-    for (int i = 0; i < rules.getChildCount(); ++i) {
-      Tree rule = rules.getChild(i);
-      assert rule.getChildCount() == 2;
-      String variableName = rule.getChild(0).getText();
-      Variable variable = Variable.byName(variableName);
-      if (!initialized) {
-        // Assume first ANTLR variable is start variable.
-        $.start(variable);
-        initialized = true;
-      }
-      Optional<Component> rhs = extractANTLRSentential($, rule.getChild(1), counter);
-      if (rhs.isPresent())
-        $.derive(variable).to(rhs.get());
-      else
-        $.derive(variable).toEpsilon();
-    }
-    return $.build();
-  }
-
-  private static Optional<Component> extractANTLRSentential(Builder $, Object element, Counter nameCounter) {
-    if (element instanceof List) {
-      List<?> elements = (List<?>) element;
-      if (elements.isEmpty())
-        return Optional.empty();
-      if (elements.size() == 1)
-        return extractANTLRSentential($, elements.get(0), nameCounter);
-      Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
-      List<Component> items = new ArrayList<>();
-      for (Object item : elements)
-        extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
-      $.derive(top).to(items.toArray(new Component[items.size()]));
-      return Optional.of(top);
-    }
-    if (element instanceof AltAST)
-      return extractANTLRSentential($, ((AltAST) element).getChildren(), nameCounter);
-    if (element instanceof BlockAST) {
-      BlockAST block = (BlockAST) element;
-      if (block.getChildCount() <= 1)
-        return extractANTLRSentential($, block.getChildren(), nameCounter);
-      Variable top = Variable.byName(intermediateVariableName + nameCounter.getAndInc());
-      List<Component> items = new ArrayList<>();
-      for (Object item : block.getChildren())
-        extractANTLRSentential($, item, nameCounter).ifPresent(items::add);
-      items.forEach(symbol -> $.derive(top).to(symbol));
-      return Optional.of(top);
-    }
-    if (element instanceof RuleRefAST)
-      return Optional.of(Variable.byName(element.toString()));
-    if (element instanceof StarBlockAST) {
-      Optional<Component> inner = extractANTLRSentential($, ((StarBlockAST) element).getChildren(), nameCounter);
-      return inner.map(Quantifiers::noneOrMore);
-    }
-    if (element instanceof PlusBlockAST) {
-      Optional<Component> inner = extractANTLRSentential($, ((PlusBlockAST) element).getChildren(), nameCounter);
-      return inner.map(Quantifiers::oneOrMore);
-    }
-    if (element instanceof TerminalAST) {
-      String name = ((TerminalAST) element).getText();
-      name = name.substring(1, name.length() - 1);
-      // Assume simple terminal.
-      return Optional.of(Terminal.byName(name).normalize());
-    }
-    throw new RuntimeException(String.format("Grammar element %s no supported", element.getClass().getSimpleName()));
   }
 
   public FancyEBNF reduce() {

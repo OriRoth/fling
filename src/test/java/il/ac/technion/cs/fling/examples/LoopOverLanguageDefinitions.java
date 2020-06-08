@@ -44,12 +44,12 @@ import il.ac.technion.cs.fling.examples.languages.*;
       $.put(api.name() + "AST", mediator.astClass);
       $.put(api.name() + "Compiler", mediator.astCompilerClass);
     }
-    $.put("TableMaker", TableMaker.apiClass);
+    $.put("TableMaker", new TableMaker().apiClass);
     return $;
   }).get();
   private static final String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
 
-  @Test public void compile() throws IOException, FormatterException {
+  @Test public void compile() throws IOException {
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {
@@ -83,7 +83,7 @@ import il.ac.technion.cs.fling.examples.languages.*;
     }
   }
 
-  public static void main(final String[] args) throws IOException, FormatterException {
+  public static void main(final String[] args) throws IOException {
     new LoopOverLanguageDefinitions().compile();
   }
 }

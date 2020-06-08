@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import il.ac.technion.cs.fling.*;
-
 public interface Constants {
   Terminal $ = new Terminal() {
     @Override public String name() {
