@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
 import static il.ac.technion.cs.fling.examples.automata.AnBn.CppFluentAPI;
-import static il.ac.technion.cs.fling.examples.generated.AnBn.α.*;
+import static il.ac.technion.cs.fling.examples.generated.AnBn.a;
 
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 

@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
-import static il.ac.technion.cs.fling.examples.generated.ArithmeticExpression.α.v;
+import static il.ac.technion.cs.fling.examples.generated.ArithmeticExpression.v;
 
 public class ArithmeticExpression {
   public static void compilationTest() {
