@@ -82,19 +82,25 @@ public class FancyEBNF extends EBNF {
   /** Return a possibly smaller BNF including only rules reachable form start
    * symbol */
   private static FancyEBNF reduce(EBNF b) {
-    final Set<Variable> Γ = new LinkedHashSet<>(Collections.singleton(b.ε));
+    final Set<Variable> Γ = new LinkedHashSet<>();
     final Set<ERule> R = new LinkedHashSet<>();
     final Set<Token> Σ = new LinkedHashSet<>();
 
-    for (;;)
-      for (Variable v : Γ) {
+    final Set<Variable> newVariables = new LinkedHashSet<>();
+    newVariables.add(b.ε);
+    while(!newVariables.isEmpty()) {
+      Γ.addAll(newVariables);
+      final Set<Variable> currentVariables = new LinkedHashSet<>();
+      currentVariables.addAll(newVariables);
+      newVariables.clear();
+      for (Variable v : currentVariables) {
         b.rules(v).forEachOrdered(R::add);
         b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
-        Set<Variable> vs = b.rules(v).flatMap(ERule::variables).collect(Collectors.toSet());
-        if (Γ.containsAll(vs))
-          return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
-        Γ.addAll(vs);
+        b.rules(v).flatMap(ERule::variables) //
+          .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
       }
+    }
+    return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
   }
 
   public boolean isOriginalVariable(final Symbol symbol) {
@@ -212,17 +218,13 @@ public class FancyEBNF extends EBNF {
     private final Set<Variable> heads = new LinkedHashSet<>();
     private Variable start;
 
-    private Stream<ExtendedSententialForm> rhs(final Variable v) {
-      return R.stream().filter(r -> r.of(v)).flatMap(ERule::forms);
-    }
-
     public Derive derive(final Variable variable) {
-      V.add(variable);
+      processSymbol(variable);
       return new Derive(variable);
     }
 
     public Specialize specialize(final Variable variable) {
-      V.add(variable);
+      processSymbol(variable);
       return new Specialize(variable);
     }
 
@@ -239,43 +241,14 @@ public class FancyEBNF extends EBNF {
         final Variable variable = symbol.asVariable();
         if (!V.contains(variable)) {
           V.add(variable);
-          R.add(new ERule(variable, new ArrayList<>()));
         }
       }
     }
 
     public final Builder start(final Variable v) {
-      V.add(v);
+      processSymbol(v);
       start = v;
       return this;
-    }
-
-    Quantifier add(Quantifier q) {
-      q.abbreviatedSymbols().forEach(this::add);
-      return q;
-    }
-
-    Variable add(Variable v) {
-      V.add(v);
-      return v;
-    }
-
-    Token add(Token t) {
-      Σ.add(t);
-      t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
-      return t;
-    }
-
-    Symbol add(Symbol s) {
-      assert !s.isTerminal();
-      if (s instanceof Token)
-        return add((Token) s);
-      if (s instanceof Quantifier)
-        return add((Quantifier) s);
-      if (s instanceof Variable) 
-        return add ((Variable) s);
-      assert false: s + ":" +  this;
-      return s;
     }
 
     public FancyEBNF build() {
@@ -292,8 +265,10 @@ public class FancyEBNF extends EBNF {
       }
 
       public Builder to(final Symbol... ss) {
-        for (int i = 0; i < ss.length; ++i)
-          ss[i] = add(ss[i].normalize());
+        for (int i=0 ; i<ss.length ; ++i) {
+          ss[i] = ss[i].normalize();
+          Builder.this.processSymbol(ss[i]);
+        }
         R.add(new ERule(variable, new ExtendedSententialForm(ss)));
         return Builder.this;
       }

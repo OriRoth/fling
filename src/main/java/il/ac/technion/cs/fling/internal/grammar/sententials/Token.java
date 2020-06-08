@@ -39,7 +39,7 @@ public final class Token implements SymbolX {
   }
 
   @Override public int hashCode() {
-    return Objects.hash(parameters, terminal);
+    return Objects.hash(Arrays.deepHashCode(parameters), terminal);
   }
 
   @Override public boolean equals(Object obj) {
@@ -48,7 +48,7 @@ public final class Token implements SymbolX {
     if (!(obj instanceof Token))
       return false;
     Token other = (Token) obj;
-    return Objects.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
+    return Arrays.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
   }
 
   @Override public String toString() {
