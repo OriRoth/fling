@@ -20,7 +20,7 @@ public final class Token implements SymbolX {
   public final Terminal terminal;
   public final Parameter[] parameters;
 
-  /** POJO instantiate of this class */
+  /** POJO instantiation of this class */
   public Token(final Terminal terminal, final Parameter... parameters) {
     this.terminal = requireNonNull(terminal);
     this.parameters = parameters;
