@@ -35,7 +35,7 @@ public class NaiveNamer implements Namer {
     return Variable.byName(name);
   }
   @Override public Variable createQuantificationChild(final Symbol symbol) {
-    assert symbol.isVerb() || symbol.isVariable();
+    assert symbol.isToken() || symbol.isVariable();
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
     final String name = "_" + symbol.name() + notationsChildrenCounter.put(symbol, notationsChildrenCounter.get(symbol) + 1);
@@ -85,8 +85,8 @@ public class NaiveNamer implements Namer {
     fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
   }
   private List<FieldNodeFragment> getFields(final Symbol symbol, final Map<String, Integer> usedNames) {
-    if (symbol.isVerb())
-      return symbol.asVerb().parameters.stream() //
+    if (symbol.isToken())
+      return symbol.asToken().parameters() //
           .map(parameter -> {
             String typeName;
             if (parameter.isStringTypeParameter())
@@ -118,7 +118,7 @@ public class NaiveNamer implements Namer {
   }
   protected void setInferredParametersIntermediateInMethod(final APICompiler.MethodDeclaration declaration) {
     final Map<String, Integer> usedNames = new HashMap<>();
-    declaration.setInferredParameters(declaration.name.parameters.stream() //
+    declaration.setInferredParameters(declaration.name.parameters() //
         .map(parameter -> {
           String typeName;
           if (parameter.isStringTypeParameter())

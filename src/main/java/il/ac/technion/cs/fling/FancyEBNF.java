@@ -13,7 +13,7 @@ import org.antlr.v4.tool.ast.*;
 
 import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
-import il.ac.technion.cs.fling.internal.grammar.types.TypeParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.internal.util.Counter;
 
 /**
@@ -27,9 +27,9 @@ public class FancyEBNF extends EBNF {
 	/** Set of nullable variables and notations */
 	public final Set<Symbol> nullables;
 	/** Maps variables and notations to their firsts set */
-	public final Map<Symbol, Set<Verb>> firsts;
+	public final Map<Symbol, Set<Token>> firsts;
 	/** Maps variables and notations to their follows set */
-	public final Map<Variable, Set<Verb>> follows;
+	public final Map<Variable, Set<Token>> follows;
 	/** Head variables set, containing variables used as API parameters */
 	public final Set<Variable> headVariables;
 	/** Maps generated variables to the notation originated them. Optional */
@@ -37,7 +37,7 @@ public class FancyEBNF extends EBNF {
 	/** Set of generated variables */
 	public final Set<Variable> extensionProducts;
 
-	public FancyEBNF(final Set<Verb> Σ, final Set<Variable> Γ, final Set<DerivationRule> R,
+	public FancyEBNF(final Set<Token> Σ, final Set<Variable> Γ, final Set<DerivationRule> R,
 			final Variable startVariable, final Set<Variable> headVariables,
 			final Map<Variable, Quantifier> extensionHeadsMapping, final Set<Variable> extensionProducts,
 			final boolean addStartSymbolDerivationRules) {
@@ -72,12 +72,12 @@ public class FancyEBNF extends EBNF {
 				symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
 	}
 
-	public Set<Verb> firsts(final Symbol... symbols) {
+	public Set<Token> firsts(final Symbol... symbols) {
 		return firsts(Arrays.asList(symbols));
 	}
 
-	public Set<Verb> firsts(final Collection<Symbol> symbols) {
-		final Set<Verb> $ = new LinkedHashSet<>();
+	public Set<Token> firsts(final Collection<Symbol> symbols) {
+		final Set<Token> $ = new LinkedHashSet<>();
 		for (final Symbol s : symbols) {
 			$.addAll(firsts.get(s));
 			if (!isNullable(s))
@@ -88,7 +88,7 @@ public class FancyEBNF extends EBNF {
 
 	public FancyEBNF reachableSubBNF() {
 		final Set<DerivationRule> subR = new LinkedHashSet<>();
-		final Set<Verb> subΣ = new LinkedHashSet<>();
+		final Set<Token> subΣ = new LinkedHashSet<>();
 		final Set<Variable> subV = new LinkedHashSet<>();
 		Set<Variable> newSubV = new LinkedHashSet<>();
 		newSubV.add(ε);
@@ -102,8 +102,8 @@ public class FancyEBNF extends EBNF {
 				subR.add(rule);
 				for (final ExtendedSententialForm sf : rule.rhs)
 					for (final Symbol symbol : sf)
-						if (symbol.isVerb())
-							subΣ.add(symbol.asVerb());
+						if (symbol.isToken())
+							subΣ.add(symbol.asToken());
 						else if (symbol.isVariable())
 							newestSubV.add(symbol.asVariable());
 						else
@@ -130,7 +130,7 @@ public class FancyEBNF extends EBNF {
 	}
 
 	private boolean isNullable(final Symbol symbol, final Set<Symbol> knownNullables) {
-		if (symbol.isVerb())
+		if (symbol.isToken())
 			return false;
 		if (symbol.isVariable())
 			return knownNullables.contains(symbol);
@@ -139,8 +139,8 @@ public class FancyEBNF extends EBNF {
 		throw new RuntimeException("problem while analyzing BNF");
 	}
 
-	private Map<Symbol, Set<Verb>> getFirsts() {
-		final Map<Symbol, Set<Verb>> $ = new LinkedHashMap<>();
+	private Map<Symbol, Set<Token>> getFirsts() {
+		final Map<Symbol, Set<Token>> $ = new LinkedHashMap<>();
 		Σ.forEach(σ -> $.put(σ, singleton(σ)));
 		Γ.forEach(v -> $.put(v, new LinkedHashSet<>()));
 		for (boolean changed = true; changed;) {
@@ -158,8 +158,8 @@ public class FancyEBNF extends EBNF {
 		return unmodifiableMap($);
 	}
 
-	private Map<Variable, Set<Verb>> getFollows() {
-		final Map<Variable, Set<Verb>> $ = new LinkedHashMap<>();
+	private Map<Variable, Set<Token>> getFollows() {
+		final Map<Variable, Set<Token>> $ = new LinkedHashMap<>();
 		Γ.forEach(v -> $.put(v, new LinkedHashSet<>()));
 		$.get(Constants.S).add(Constants.$$);
 		for (boolean changed = true; changed;) {
@@ -217,7 +217,7 @@ public class FancyEBNF extends EBNF {
 
 	@Deprecated
 	private static class Builder {
-		private final Set<Verb> Σ;
+		private final Set<Token> Σ;
 		private final Set<Variable> V;
 		private final Set<DerivationRule> R;
 		private Variable start;
@@ -241,10 +241,10 @@ public class FancyEBNF extends EBNF {
 
 		void processSymbol(final Symbol symbol) {
 			assert !symbol.isTerminal();
-			if (symbol.isVerb()) {
-				Σ.add(symbol.asVerb());
-				symbol.asVerb().parameters.stream() //
-						.map(TypeParameter::declaredHeadVariables) //
+			if (symbol.isToken()) {
+				Σ.add(symbol.asToken());
+				symbol.asToken().parameters() //
+						.map(Parameter::declaredHeadVariables) //
 						.forEach(heads::addAll);
 			} else if (symbol.isQuantifier())
 				symbol.asQuantifier().abbreviatedSymbols().forEach(this::processSymbol);
@@ -282,7 +282,7 @@ public class FancyEBNF extends EBNF {
 				final ExtendedSententialForm processedSententialForm = new ExtendedSententialForm(
 						Arrays.stream(sententialForm) //
 								.map(symbol -> {
-									return !symbol.isTerminal() ? symbol : new Verb(symbol.asTerminal());
+									return !symbol.isTerminal() ? symbol : new Token(symbol.asTerminal());
 								}) //
 								.collect(Collectors.toList()));
 				processedSententialForm.forEach(Builder.this::processSymbol);

@@ -85,6 +85,6 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
             .collect(joining()));
   }
   public boolean nonEmptyField(final FieldNode field) {
-    return !field.source.isVerb() || !field.source.asVerb().parameters.isEmpty();
+    return !field.source.isParameterized();
   }
 }

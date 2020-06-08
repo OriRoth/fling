@@ -12,7 +12,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
 import il.ac.technion.cs.fling.internal.grammar.sententials.notations.JavaCompatibleQuantifier;
-import il.ac.technion.cs.fling.internal.grammar.types.TypeParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /**
@@ -116,10 +116,10 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             variableName, //
             child.name()));
         argumentNames.add(variableName);
-      } else if (child.isVerb()) {
+      } else if (child.isToken()) {
         body.append("_a=w.remove(0);");
         int index = 0;
-        for (final TypeParameter parameter : child.asVerb().parameters) {
+        for (final Parameter parameter : child.asToken().parameters) {
           final String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
           final String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
@@ -187,10 +187,10 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             variableName, //
             child.name()));
         argumentNames.add(variableName);
-      } else if (child.isVerb()) {
+      } else if (child.isToken()) {
         body.append("_a=w.remove(0);");
         int index = 0;
-        for (final TypeParameter parameter : child.asVerb().parameters) {
+        for (final Parameter parameter : child.asToken().parameters) {
           final String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
           final String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
@@ -217,7 +217,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.join(",", argumentNames)));
     return body.toString();
   }
-  private String getTypeName(final TypeParameter parameter) {
+  private String getTypeName(final Parameter parameter) {
     if (parameter.isStringTypeParameter())
       return parameter.asStringTypeParameter().typeName();
     else if (parameter.isVariableTypeParameter())
@@ -234,8 +234,8 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       throw new RuntimeException("problem while creating real-time parser");
   }
   private List<FieldNodeFragment> getFieldsInClassContext(final Symbol symbol, final Map<String, Integer> usedNames) {
-    if (symbol.isVerb())
-      return symbol.asVerb().parameters.stream() //
+    if (symbol.isToken())
+      return symbol.asToken().parameters() //
           .map(parameter -> FieldNodeFragment.of( //
               getTypeName(parameter), //
               NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames))) //
@@ -252,7 +252,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   @SuppressWarnings("static-method") protected String getBaseParameterName(final Variable variable) {
     return NaiveNamer.lowerCamelCase(variable.name());
   }
-  private String printTerminalInclusionCondition(final Set<Verb> firsts) {
+  private String printTerminalInclusionCondition(final Set<Token> firsts) {
     return String.format("%s.included(_a.σ,%s)", //
         il.ac.technion.cs.fling.internal.util.Is.class.getCanonicalName(), //
         firsts.stream() //

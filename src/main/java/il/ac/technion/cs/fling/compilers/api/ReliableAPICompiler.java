@@ -20,7 +20,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.*;
  * @author Ori Roth
  */
 public class ReliableAPICompiler extends APICompiler {
-  public ReliableAPICompiler(DPDA<Named, Verb, Named> dpda) {
+  public ReliableAPICompiler(DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
   @Override protected List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
@@ -28,8 +28,8 @@ public class ReliableAPICompiler extends APICompiler {
     if (dpda.F.contains(dpda.q0))
       $.add(new AbstractMethodNode.Start<>(new MethodDeclaration(Constants.$$), //
           PolymorphicTypeNode.top()));
-    for (Verb σ : dpda.Σ) {
-      δ<Named, Verb, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+    for (Token σ : dpda.Σ) {
+      δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
       AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
@@ -79,8 +79,8 @@ public class ReliableAPICompiler extends APICompiler {
   private boolean shallowIsBot(TypeName type) {
     if (dpda.isAccepting(type.q))
       return false;
-    for (Verb σ : dpda.Σ) {
-      δ<Named, Verb, Named> δ = dpda.δδ(type.q, σ, type.α);
+    for (Token σ : dpda.Σ) {
+      δ<Named, Token, Named> δ = dpda.δδ(type.q, σ, type.α);
       if (δ == null)
         continue;
       if (!δ.getΑ().isEmpty())
@@ -115,13 +115,13 @@ public class ReliableAPICompiler extends APICompiler {
    * @param σ current input letter
    * @return next state type
    */
-  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, Set<Named> legalJumps, final Verb σ) {
-    final δ<Named, Verb, Named> δ = dpda.δδ(q, σ, α.top());
+  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, Set<Named> legalJumps, final Token σ) {
+    final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
     return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), legalJumps, false);
   }
   private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, Set<Named> legalJumps,
       boolean isInitialType) {
-    final δ<Named, Verb, Named> δ = dpda.δδ(q, ε(), α.top());
+    final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       TypeName name = encodedName(q, α, legalJumps);
       return name == null ? bot() : //
@@ -129,7 +129,7 @@ public class ReliableAPICompiler extends APICompiler {
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
-  private PolymorphicTypeNode<TypeName> common(final δ<Named, Verb, Named> δ, final Word<Named> α, Set<Named> legalJumps,
+  private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α, Set<Named> legalJumps,
       boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
@@ -152,7 +152,7 @@ public class ReliableAPICompiler extends APICompiler {
             encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()), //
             new ArrayList<>(typeArguments.values()));
   }
-  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Verb, Named> δ, Set<Named> legalJumps,
+  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, Set<Named> legalJumps,
       boolean isInitialType) {
     return !legalJumps.contains(δ.q$) ? bot() : //
         isInitialType ? top() : //

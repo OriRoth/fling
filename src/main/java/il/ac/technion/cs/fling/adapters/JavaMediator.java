@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragme
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.sententials.*;
-import il.ac.technion.cs.fling.internal.grammar.types.TypeParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /**
@@ -52,13 +52,13 @@ public class JavaMediator {
     this.packageName = packageName;
     this.apiName = apiName;
     this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
-      @Override protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+      @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
-      @Override public String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+      @Override public String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
       @Override public String printTerminationMethodReturnType() {
@@ -85,7 +85,7 @@ public class JavaMediator {
         .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reachableSubBNF())).compileFluentAPI());
     this.astCompilerClass = parserCompiler.printParserClass();
   }
-  protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+  protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
@@ -102,8 +102,8 @@ public class JavaMediator {
         Assignment.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
-  String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
-    assert σ.parameters.size() == parameters.size();
+  String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+    assert σ.parameters.length == parameters.size();
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s,%s));", //
         Assignment.class.getCanonicalName(), //
@@ -125,7 +125,7 @@ public class JavaMediator {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
         .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.ε), "$", namer) {
-          @Override protected String printStartMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+          @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
           @Override public String printTopInterfaceBody() {
@@ -134,7 +134,7 @@ public class JavaMediator {
           @Override public String printConcreteImplementationClassBody() {
             return JavaMediator.this.printConcreteImplementationClassBody();
           }
-          @Override public String printConcreteImplementationMethodBody(final Verb σ, final List<ParameterFragment> parameters) {
+          @Override public String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
           }
           @Override public String printTerminationMethodReturnType() {
@@ -147,11 +147,11 @@ public class JavaMediator {
             .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
-  private List<String> processParameters(final Verb σ, final List<ParameterFragment> parameters) {
+  private List<String> processParameters(final Token σ, final List<ParameterFragment> parameters) {
     Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     final List<String> processedParameters = new ArrayList<>();
     for (int i = 0; i < parameters.size(); ++i) {
-      final TypeParameter parameter = σ.parameters.get(i);
+      final Parameter parameter = σ.parameters[i];
       final ParameterFragment declaration = parameters.get(i);
       if (parameter.isVariableTypeParameter())
         processedParameters.add(String.format("((%s.%s.%s.α)%s).$()", //

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Constants;
 import il.ac.technion.cs.fling.internal.grammar.sententials.DerivationRule;
 import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 
 /**
  * An extended Backus-Naur form specification of formal Language, collection of
@@ -20,16 +20,16 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
  * @author Yossi Gil
  */
 public class EBNF {
-	/** Verbs collection */
-	public final Set<Verb> Σ;
-	/** Variables collection */
+	/** Tokens' vocabulary */ 
+	public final Set<Token> Σ;
+	/** Variables' vocabulary */
 	public final Set<Variable> Γ;
 	/** Start variable */
 	public final Variable ε;
 	/** Derivation rules collection */
 	public final Set<DerivationRule> R;
 
-	public EBNF(Set<Verb> Σ, Set<Variable> Γ, Variable ε, Set<DerivationRule> R) {
+	public EBNF(Set<Token> Σ, Set<Variable> Γ, Variable ε, Set<DerivationRule> R) {
 		this.Σ = Σ;
 		this.Γ = Γ;
 		this.ε = ε;

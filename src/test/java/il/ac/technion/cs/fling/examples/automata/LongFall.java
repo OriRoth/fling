@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.*;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 public class LongFall {
@@ -26,7 +26,7 @@ public class LongFall {
     g0, g1
   }
 
-  public static final DPDA<Named, Verb, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(g0, g1) //

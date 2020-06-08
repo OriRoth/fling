@@ -53,10 +53,10 @@ public class DerivationRule {
   public Stream<Variable> variables() {
     return Stream.concat(variables(symbols()), variables(quantifiedSymbols()));
   }
-  public Stream<Verb> verbs() {
-    return Stream.concat(verbs(symbols()), verbs(quantifiedSymbols()));
+  public Stream<Token> tokens() {
+    return Stream.concat(tokens(symbols()), tokens(quantifiedSymbols()));
   }
-  private static Stream<Verb> verbs(Stream<Symbol> symbols) {
-    return symbols.filter(Symbol::isVerb).map(Symbol::asVerb);
+  private static Stream<Token> tokens(Stream<Symbol> symbols) {
+    return symbols.filter(Symbol::isToken).map(Symbol::asToken);
   }
 }

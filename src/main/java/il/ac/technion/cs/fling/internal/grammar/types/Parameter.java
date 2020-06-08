@@ -4,7 +4,7 @@ import java.util.*;
 
 import il.ac.technion.cs.fling.Variable;
 
-public interface TypeParameter {
+public interface Parameter {
   String baseParameterName();
   default Set<Variable> declaredHeadVariables() {
     return Collections.emptySet();

@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling;
 
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.internal.grammar.types.*;
 
 /**
@@ -10,40 +10,40 @@ import il.ac.technion.cs.fling.internal.grammar.types.*;
  */
 public interface Terminal extends SymbolX {
   /**
-   * Assign parameter to this terminal.
+   * Associate parameter with this terminal 
    * 
-   * @param parameterClass parameter type
-   * @return corresponding verb
+   * @param clazz parameter type
+   * @return newly created token
    */
-  default Verb with(final Class<?> parameterClass) {
-    return new Verb(this, new ClassParameter(parameterClass));
+  default Token with(final Class<?> clazz) {
+    return new Token(this, new ClassParameter(clazz));
   }
   /**
    * Assign parameter varargs to this terminal.
    * 
    * @param parameterClass parameter type
-   * @return corresponding verb
+   * @return newly created token
    */
-  default Verb many(final Class<?> parameterClass) {
-    return new Verb(this, new VarargsClassParameter(parameterClass));
+  default Token many(final Class<?> parameterClass) {
+    return new Token(this, new VarargsClassParameter(parameterClass));
   }
   /**
    * Assign variable as parameter to this terminal.
    * 
    * @param variable parameter variable
-   * @return corresponding verb
+   * @return newly created token
    */
-  default Verb with(final Variable variable) {
-    return new Verb(this, new VariableTypeParameter(variable));
+  default Token with(final Variable variable) {
+    return new Token(this, new VariableTypeParameter(variable));
   }
   /**
    * Assign variable as varargs parameter to this terminal.
    * 
    * @param variable parameter variable
-   * @return corresponding verb
+   * @return newly created token
    */
-  default Verb many(final Variable variable) {
-    return new Verb(this, new VarargsVariableTypeParameter(variable));
+  default Token many(final Variable variable) {
+    return new Token(this, new VarargsVariableTypeParameter(variable));
   }
   public static Terminal byName(final String name) {
     return new Terminal() {

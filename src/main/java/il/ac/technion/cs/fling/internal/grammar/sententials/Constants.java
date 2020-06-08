@@ -11,7 +11,7 @@ public interface Constants {
       return "$";
     }
   };
-  Verb $$ = new Verb($);
+  Token $$ = new Token($);
   Variable S = new Variable() {
     @Override public String name() {
       return "S";

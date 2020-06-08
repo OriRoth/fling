@@ -10,7 +10,7 @@ import org.antlr.v4.tool.Grammar;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 
 // TODO handle API function parameters
 public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
@@ -27,7 +27,7 @@ public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
         String.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
-  @Override protected String printConcreteImplementationMethodBody(Verb σ,
+  @Override protected String printConcreteImplementationMethodBody(Token σ,
       @SuppressWarnings("unused") List<ParameterFragment> parameters) {
     return String.format("w.add(\"%s\");", σ.name());
   }
@@ -62,7 +62,7 @@ public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
         IOException.class.getCanonicalName(), //
         RuntimeException.class.getCanonicalName());
   }
-  @Override protected String printStartMethodBody(Verb σ, @SuppressWarnings("unused") List<ParameterFragment> parameters) {
+  @Override protected String printStartMethodBody(Token σ, @SuppressWarnings("unused") List<ParameterFragment> parameters) {
     return String.format("return new α().%s();", σ.name());
   }
 }

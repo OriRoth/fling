@@ -14,7 +14,7 @@ import il.ac.technion.cs.fling.examples.languages.SubFigure.*;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.*;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 public class SubFigure implements FluentLanguageAPI<Σ, V> {
@@ -44,7 +44,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     SubFigure language = new SubFigure();
     Namer namer = new NaiveNamer("SubFigure");
     LL1 ll1 = new LL1(language.BNF(), namer);
-    DPDA<Named, Verb, Named> dpda = ll1.buildAutomaton(ll1.bnf.reachableSubBNF());
+    DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reachableSubBNF());
     APICompiler compiler = new ReliableAPICompiler(dpda);
     PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
       // Ignore parameters:

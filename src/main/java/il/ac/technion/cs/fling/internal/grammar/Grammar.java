@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.sententials.DerivationRule;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Quantifier;
 import il.ac.technion.cs.fling.internal.grammar.sententials.ExtendedSententialForm;
-import il.ac.technion.cs.fling.internal.grammar.sententials.Verb;
+import il.ac.technion.cs.fling.internal.grammar.sententials.Token;
 import il.ac.technion.cs.fling.internal.grammar.sententials.Word;
 
 public abstract class Grammar {
@@ -44,10 +44,10 @@ public abstract class Grammar {
 			subBNFs.put(head, computeSubBNF(head));
 	}
 
-	public abstract DPDA<Named, Verb, Named> buildAutomaton(FancyEBNF bnf);
+	public abstract DPDA<Named, Token, Named> buildAutomaton(FancyEBNF bnf);
 
 	// TODO compute lazily.
-	public DPDA<Named, Verb, Named> toDPDA() {
+	public DPDA<Named, Token, Named> toDPDA() {
 		return buildAutomaton(bnf);
 	}
 
@@ -84,7 +84,7 @@ public abstract class Grammar {
 	}
 
 	private FancyEBNF computeSubBNF(Variable v) {
-		final Set<Verb> Σ = new LinkedHashSet<>();
+		final Set<Token> Σ = new LinkedHashSet<>();
 		final Set<Variable> V = new LinkedHashSet<>();
 		V.add(v);
 		final Set<DerivationRule> rs = new LinkedHashSet<>();
@@ -95,7 +95,7 @@ public abstract class Grammar {
 					more = true;
 					rs.add(r);
 					r.variables().forEachOrdered(V::add);
-					r.verbs().forEachOrdered(Σ::add);
+					r.tokens().forEachOrdered(Σ::add);
 				}
 		}
 		return new FancyEBNF(Σ, V, rs, v, null, null, null, true);
@@ -136,12 +136,12 @@ public abstract class Grammar {
 	}
 
 	@SuppressWarnings({ "null", "unused" })
-	public static DPDA<Named, Verb, Named> cast(DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
+	public static DPDA<Named, Token, Named> cast(DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
 		return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
-				dpda.Σ().map(Verb::new).collect(toSet()), //
+				dpda.Σ().map(Token::new).collect(toSet()), //
 				new LinkedHashSet<>(dpda.Γ), //
 				dpda.δs.stream() //
-						.map(δ -> new DPDA.δ<Named, Verb, Named>(δ.q, δ.σ == ε() ? ε() : new Verb(δ.σ), δ.γ, δ.q$,
+						.map(δ -> new DPDA.δ<Named, Token, Named>(δ.q, δ.σ == ε() ? ε() : new Token(δ.σ), δ.γ, δ.q$,
 								new Word<>(δ.getΑ().stream() //
 										.map(Named.class::cast) //
 										.collect(toList())))) //

@@ -24,20 +24,20 @@ public class LL1 extends Grammar {
   /**
    * Translate LL(1) BNF to DPDA.
    */
-  @Override public DPDA<Named, Verb, Named> buildAutomaton(final FancyEBNF bnf) {
+  @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<Named> Q = new LinkedHashSet<>();
-    final Set<Verb> Σ = new LinkedHashSet<>();
+    final Set<Token> Σ = new LinkedHashSet<>();
     final Set<Named> Γ = new LinkedHashSet<>();
-    final Set<δ<Named, Verb, Named>> δs = new LinkedHashSet<>();
+    final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     Named q0;
     Word<Named> γ0;
     Σ.addAll(bnf.Σ);
     Σ.remove(Constants.$$);
     // TODO use namer to determine type names.
-    final Map<Verb, Named> typeNameMapping = new LinkedHashMap<>();
+    final Map<Token, Named> typeNameMapping = new LinkedHashMap<>();
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
-    for (final Verb v : Σ) {
+    for (final Token v : Σ) {
       final String name = v.name();
       if (!usedNames.containsKey(name)) {
         usedNames.put(name, 2);
@@ -71,7 +71,7 @@ public class LL1 extends Grammar {
     // Moving from q0ø to qσ with σ + appropriate variable.
     for (final DerivationRule r : bnf.R)
       for (final ExtendedSententialForm sf : r.rhs)
-        for (final Verb σ : bnf.firsts(sf))
+        for (final Token σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
             δs.add(new δ<>(q0ø, σ, r.lhs, typeNameMapping.get(σ),
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
@@ -80,17 +80,17 @@ public class LL1 extends Grammar {
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
           }
     for (final Variable v : bnf.Γ)
-      for (final Verb σ : bnf.Σ)
+      for (final Token σ : bnf.Σ)
         if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ) && bnf.isNullable(v))
           δs.add(new δ<>(q0ø, σ, v, typeNameMapping.get(σ), Word.empty()));
     // Moving from q0ø to q0ø with σ + σ.
-    for (final Verb σ : bnf.Σ)
+    for (final Token σ : bnf.Σ)
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(q0ø, σ, typeNameMapping.get(σ), q0ø, Word.empty()));
     // Get stuck in q0ø with σ + inappropriate variable.
     /* Computing automaton transitions for q0$ */
     // Moving from q0$ to q0ø with ε + terminal.
-    for (final Verb σ : bnf.Σ)
+    for (final Token σ : bnf.Σ)
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(q0$, ε(), typeNameMapping.get(σ), q0ø, new Word<>(typeNameMapping.get(σ))));
     // Moving from q0$ to q0ø with ε + non-accepting variable.
@@ -104,25 +104,25 @@ public class LL1 extends Grammar {
     for (final DerivationRule r : bnf.R)
       if (bnf.isNullable(r.lhs))
         for (final ExtendedSententialForm sf : r.rhs)
-          for (final Verb σ : bnf.firsts(sf))
+          for (final Token σ : bnf.firsts(sf))
             if (!Constants.$$.equals(σ))
               δs.add(new δ<>(q0$, σ, A.get(r.lhs), typeNameMapping.get(σ),
                   reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
     for (final Variable v : bnf.Γ)
       if (bnf.isNullable(v))
-        for (final Verb σ : bnf.Σ)
+        for (final Token σ : bnf.Σ)
           if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
             δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ), Word.empty()));
     // Get stuck in q0$ with σ + inappropriate variable.
     /* Computing automaton transitions for qσ */
     // Moving from qσ to q0$ with ε + σ.
-    for (final Verb σ : bnf.Σ)
+    for (final Token σ : bnf.Σ)
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty()));
     // Moving from qσ to qσ with ε + appropriate variable.
     for (final DerivationRule r : bnf.R)
       for (final ExtendedSententialForm sf : r.rhs)
-        for (final Verb σ : bnf.firsts(sf))
+        for (final Token σ : bnf.firsts(sf))
           if (!Constants.$$.equals(σ)) {
             final Named σState = typeNameMapping.get(σ);
             δs.add(new δ<>(σState, ε(), A.get(r.lhs), σState,
@@ -130,7 +130,7 @@ public class LL1 extends Grammar {
             δs.add(new δ<>(σState, ε(), r.lhs, σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
           }
     // Moving from qσ to qσ with ε + nullable variable.
-    for (final Verb σ : bnf.Σ)
+    for (final Token σ : bnf.Σ)
       if (!Constants.$$.equals(σ))
         for (final Variable v : bnf.Γ)
           if (bnf.isNullable(v) && !bnf.firsts(v).contains(σ)) {
@@ -139,7 +139,7 @@ public class LL1 extends Grammar {
             δs.add(new δ<>(σState, ε(), A.get(v), σState, Word.empty()));
           }
     // Moving from qσ to qT with ε + inappropriate, non-nullable symbol.
-    for (final Verb σ : bnf.Σ)
+    for (final Token σ : bnf.Σ)
       if (!Constants.$$.equals(σ)) {
         final Set<Named> legalTops = new HashSet<>();
         legalTops.add(typeNameMapping.get(σ));
@@ -166,14 +166,14 @@ public class LL1 extends Grammar {
   @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Verb, Named> typeNameMapping, final ExtendedSententialForm sf,
+  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF bnf, final Map<Token, Named> typeNameMapping, final ExtendedSententialForm sf,
       final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
     for (final Symbol s : reversed(sf)) {
       $.add(s.isVariable() && isAccepting ? //
           getAcceptingVariable(s.asVariable()) : //
-          s.isVerb() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //
+          s.isToken() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //
               s);
       isAccepting &= bnf.isNullable(s);
     }

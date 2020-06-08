@@ -55,7 +55,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   @Override public boolean isNullable(final Function<Symbol, Boolean> nullabilitySolver) {
     return nullabilitySolver.apply(symbol);
   }
-  @Override public Set<Verb> getFirsts(final Function<Symbol, Set<Verb>> firstsSolver) {
+  @Override public Set<Token> getFirsts(final Function<Symbol, Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode,

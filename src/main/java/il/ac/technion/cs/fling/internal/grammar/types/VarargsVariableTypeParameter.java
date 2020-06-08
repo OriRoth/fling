@@ -5,7 +5,7 @@ import java.util.*;
 import il.ac.technion.cs.fling.Variable;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
-public class VarargsVariableTypeParameter implements TypeParameter {
+public class VarargsVariableTypeParameter implements Parameter {
   public final Variable variable;
 
   public VarargsVariableTypeParameter(final Variable variable) {

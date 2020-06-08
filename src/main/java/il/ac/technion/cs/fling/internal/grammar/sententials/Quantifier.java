@@ -17,7 +17,7 @@ public abstract class Quantifier implements Symbol {
   public abstract List<FieldNodeFragment> getFields(Function<Symbol, List<FieldNodeFragment>> fieldTypesSolver,
       Function<String, String> nameFromBaseSolver);
   public abstract boolean isNullable(Function<Symbol, Boolean> nullabilitySolver);
-  public abstract Set<Verb> getFirsts(Function<Symbol, Set<Verb>> firstsSolver);
+  public abstract Set<Token> getFirsts(Function<Symbol, Set<Token>> firstsSolver);
 
   public static abstract class Single extends Quantifier {
     @Override public Stream<Symbol> symbols() {

@@ -18,7 +18,7 @@ public abstract class APICompiler {
   /**
    * Inducing automaton.
    */
-  public final DPDA<Named, Verb, Named> dpda;
+  public final DPDA<Named, Token, Named> dpda;
   /**
    * Compiled types.
    */
@@ -28,7 +28,7 @@ public abstract class APICompiler {
    */
   protected final Map<Named, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
-  public APICompiler(final DPDA<Named, Verb, Named> dpda) {
+  public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
     this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
@@ -126,16 +126,12 @@ public abstract class APICompiler {
    * @author Ori Roth
    */
   public class MethodDeclaration {
-    /**
-     * Inducing verb.
-     */
-    public final Verb name;
-    /**
-     * Inferred verb parameters. Pending computation.
-     */
+    /** Inducing token. */
+    public final Token name;
+    /** Inferred token parameters. Pending computation. */
     private List<ParameterFragment> inferredParameters;
 
-    public MethodDeclaration(final Verb name) {
+    public MethodDeclaration(final Token name) {
       this.name = name;
     }
     /**
@@ -148,7 +144,7 @@ public abstract class APICompiler {
       return inferredParameters;
     }
     /**
-     * Set verb's inferred parameters.
+     * Set token's inferred parameters.
      *
      * @param inferredParameters parameters
      */
@@ -158,7 +154,7 @@ public abstract class APICompiler {
   }
 
   /**
-   * Parameter declaration inferred from verb. Single verb may define multiple
+   * Parameter declaration inferred from token. Single token may define multiple
    * parameters.
    *
    * @author Ori Roth

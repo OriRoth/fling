@@ -50,7 +50,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   @Override public boolean isNullable(@SuppressWarnings("unused") final Function<Symbol, Boolean> nullabilitySolver) {
     return true;
   }
-  @Override public Set<Verb> getFirsts(final Function<Symbol, Set<Verb>> firstsSolver) {
+  @Override public Set<Token> getFirsts(final Function<Symbol, Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbol);
   }
   public static List<java.util.Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
