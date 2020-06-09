@@ -80,10 +80,10 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
 
   private String printVisitMethodBody(final AbstractClassNode clazz, final String parameterName) {
     return clazz.children.stream() //
-        .map(child -> String.format("if(%s instanceof %s)%s;", //
+        .map(child -> String.format("if(%s instanceof %s)%s", //
             parameterName, //
             getASTVariableClassName(child.source), //
-            variableVisitingMethod(child.source, parameterName))) //
+            variableVisitingStatement(child.source, parameterName))) //
         .collect(joining("else "));
   }
 
@@ -102,14 +102,13 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
     clazz.fields.stream() //
         .map(FieldNode::getInferredFieldFragments) //
         .flatMap(List::stream) //
-        .map(field -> field.visitingMethod(//
-            this::variableVisitingMethod, //
+        .map(field -> field.visitingStatement(//
+            this::variableVisitingStatement, //
             String.format("%s.%s", //
                 parameterName, //
                 field.parameterName), //
             () -> NaiveNamer.getNameFromBase("_x_", usedNames)))
         .filter(Objects::nonNull) //
-        .map(method -> method + ";") //
         .forEach($::append);
     return $.toString();
   }
@@ -121,8 +120,8 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
         namer.getASTClassName(variable));
   }
 
-  private String variableVisitingMethod(final Variable variable, final String access) {
-    return String.format("visit((%s)%s)", //
+  private String variableVisitingStatement(final Variable variable, final String access) {
+    return String.format("{visit((%s)%s);}", //
         getASTVariableClassName(variable), //
         access);
   }

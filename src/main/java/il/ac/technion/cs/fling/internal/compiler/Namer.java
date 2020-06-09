@@ -1,5 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler;
 
+import java.util.List;
+
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
@@ -21,7 +23,7 @@ public interface Namer {
    *
    * @param symbol parent symbol
    * @return child variable */
-  Variable createQuantificationChild(Component symbol);
+  Variable createQuantificationChild(List<? extends Component> inner);
 
   /** Inner API type name.
    *

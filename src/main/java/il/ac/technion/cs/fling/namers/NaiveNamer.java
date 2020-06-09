@@ -23,8 +23,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
@@ -48,8 +47,9 @@ public class NaiveNamer implements Namer {
     return Variable.byName(name);
   }
 
-  @Override public Variable createQuantificationChild(final Component symbol) {
-    assert symbol.isToken() || symbol.isVariable();
+  @Override public Variable createQuantificationChild(final List<? extends Component> symbols) {
+    Component symbol = symbols.isEmpty() || !symbols.get(0).isToken() && !symbols.get(0).isVariable() ? //
+        Constants.$$ : symbols.get(0);
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
     final String name = "_" + symbol.name()
@@ -127,7 +127,7 @@ public class NaiveNamer implements Namer {
       return singletonList(new FieldNodeFragment( //
           getASTClassName(symbol.asVariable()), //
           getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)) {
-        @SuppressWarnings("unused") @Override public String visitingMethod(
+        @SuppressWarnings("unused") @Override public String visitingStatement(
             final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
             final Supplier<String> variableNamesGenerator) {
           return variableVisitingSolver.apply(symbol.asVariable(), accessor);

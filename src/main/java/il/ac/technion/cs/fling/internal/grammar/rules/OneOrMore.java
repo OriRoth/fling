@@ -1,70 +1,80 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
-// TODO support nested notations (?).
-@JavaCompatibleQuantifier public class OneOrMore extends Quantifier.Single {
-  public OneOrMore(final Symbol symbol) {
-    super(symbol);
+@JavaCompatibleQuantifier public class OneOrMore extends Quantifier.Sequence {
+  public OneOrMore(List<Symbol> symbols) {
+    super(symbols);
   }
 
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
-    final Variable head = namer.createQuantificationChild(symbol);
-    final Variable tail = namer.createQuantificationChild(symbol);
+    List<Component> expandedSymbols = new ArrayList<>();
+    for (Symbol s : symbols)
+      expandedSymbols.add(!s.isQuantifier() ? s : //
+        s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
+    final Variable head = namer.createQuantificationChild(symbols);
+    final Variable tail = namer.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
+    List<Component> rhs = new ArrayList<>();
+    rhs.addAll(expandedSymbols);
+    rhs.add(tail);
     ruleDeclaration.accept(new ERule(head, asList( //
-        new Body(symbol, tail))));
+        new Body(rhs))));
     ruleDeclaration.accept(new ERule(tail, asList(//
-        new Body(symbol, tail), //
+        new Body(rhs), //
         new Body())));
     return head;
   }
+  
+  @Override protected String getVisitingStatement(Symbol symbol, BiFunction<Variable, String, String> variableVisitingSolver,
+      String accessor, Supplier<String> variableNamesGenerator) {
+    if (!symbol.isVariable() && !symbol.isQuantifier())
+      return null;
+    final String streamingVariable = variableNamesGenerator.get();
+    String action = symbol.isVariable() ? //
+        variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
+        String.format("{%s}", symbol.asQuantifier().symbols() //
+            .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable, variableNamesGenerator)));
+    return String.format("{%s.stream().forEach(%s->%s);}", //
+        accessor, //
+        streamingVariable, //
+        action);
+  }
 
-  @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
-      @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
-    // TODO manage inner symbol with no fields.
-    return fieldsSolver.apply(symbol).stream() //
-        .map(innerField -> new FieldNodeFragment( //
+  @Override public List<FieldNodeFragment> getFields(Function<Component, List<FieldNodeFragment>> fieldsSolver,
+      @SuppressWarnings("unused") Function<String, String> nameFromBaseSolver) {
+    List<FieldNodeFragment> $ = new ArrayList<>();
+    for (Symbol symbol : symbols)
+      for (FieldNodeFragment rawField : fieldsSolver.apply(symbol))
+        $.add(new FieldNodeFragment( //
             String.format("%s<%s>", //
                 List.class.getCanonicalName(), //
-                ClassParameter.unPrimitiveType(innerField.parameterType)), //
-            innerField.parameterName) {
-          @Override public String visitingMethod(final BiFunction<Variable, String, String> variableVisitingSolver,
+                ClassParameter.unPrimitiveType(rawField.parameterType)), //
+            rawField.parameterName) {
+          @Override public String visitingStatement(final BiFunction<Variable, String, String> variableVisitingSolver,
               final String accessor, final Supplier<String> variableNamesGenerator) {
-            if (!symbol.isVariable())
-              return null;
-            final String streamingVariable = variableNamesGenerator.get();
-            return String.format("%s.stream().forEach(%s->%s)", //
-                accessor, //
-                streamingVariable, //
-                variableVisitingSolver.apply(symbol.asVariable(), streamingVariable));
+            return getVisitingStatement(symbol, variableVisitingSolver, accessor, variableNamesGenerator);
           }
-        }) //
-        .collect(toList());
+        });
+    return $;
   }
 
-  @Override public boolean isNullable(final Function<Component, Boolean> nullabilitySolver) {
-    return nullabilitySolver.apply(symbol);
+  @Override public boolean isNullable(Predicate<Component> nullabilitySolver) {
+    return symbols().allMatch(nullabilitySolver);
   }
 
-  @Override public Set<Token> getFirsts(final Function<Component, Set<Token>> firstsSolver) {
-    return firstsSolver.apply(symbol);
+  @Override public Set<Token> getFirsts(final Function<List<? extends Component>, Set<Token>> firstsSolver) {
+    return firstsSolver.apply(symbols);
   }
 
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode,

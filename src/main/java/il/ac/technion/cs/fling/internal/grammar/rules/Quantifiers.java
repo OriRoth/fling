@@ -1,17 +1,22 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
+import java.util.*;
+
 public interface Quantifiers {
-
-  static Opt optional(final TempComponent s) {
-    return new Opt((Symbol) s.normalize());
+  static Opt optional(final TempComponent s, final TempComponent... ss) {
+    return new Opt(normalize(s, ss));
   }
-
-  static NoneOrMore noneOrMore(final TempComponent s) {
-    return new NoneOrMore((Symbol) s.normalize());
+  static NoneOrMore noneOrMore(final TempComponent s, final TempComponent... ss) {
+    return new NoneOrMore(normalize(s, ss));
   }
-
-  static OneOrMore oneOrMore(final TempComponent s) {
-    return new OneOrMore((Symbol) s.normalize());
+  static OneOrMore oneOrMore(final TempComponent s, final TempComponent... ss) {
+    return new OneOrMore(normalize(s, ss));
   }
-
+  static List<Symbol> normalize(final TempComponent s, final TempComponent... ss) {
+    List<Symbol> $ = new ArrayList<>();
+    $.add((Symbol) s.normalize());
+    Arrays.stream(ss).map(TempComponent::normalize).map(Symbol.class::cast) //
+        .forEach($::add);
+    return $;
+  }
 }

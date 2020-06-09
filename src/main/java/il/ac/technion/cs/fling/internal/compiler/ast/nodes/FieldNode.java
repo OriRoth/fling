@@ -42,7 +42,7 @@ public class FieldNode {
       return new FieldNodeFragment(parameterType, parameterName);
     }
 
-    @SuppressWarnings({ "static-method", "unused" }) public String visitingMethod(
+    @SuppressWarnings({ "static-method", "unused" }) public String visitingStatement(
         final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
         final Supplier<String> variableNamesGenerator) {
       return null;

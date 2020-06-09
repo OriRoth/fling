@@ -145,7 +145,15 @@ public class FancyEBNF extends EBNF {
           for (final Component symbol : sf) {
             Set<Token> set = $.get(v);
             if (symbol.isQuantifier())
-              changed |= set.addAll(symbol.asQuantifier().getFirsts($::get));
+              changed |= set.addAll(symbol.asQuantifier().getFirsts(ss -> { //
+                Set<Token> firsts = new LinkedHashSet<>();
+                for (Component s : ss) {
+                  firsts.addAll($.get(s));
+                  if (!symbol.asQuantifier().isNullable(this::isNullable))
+                    break;
+                }
+                return firsts;
+              }));
             else {
               Set<Token> c = $.get(symbol);
               assert c != null : this + ":\n" + symbol;
