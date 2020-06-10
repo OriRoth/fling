@@ -5,7 +5,6 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +19,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
@@ -30,7 +28,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
  * lots of services which found shelter in this class.
  * 
  * @author Ori Roth */
-public class FancyEBNF extends EBNF {
+public class FancyEBNF extends EBNF.Decorator {
   /** Set of nullable variables and notations */
   public final Set<Component> nullables;
   /** Maps variables and notations to their firsts set */
@@ -44,13 +42,13 @@ public class FancyEBNF extends EBNF {
   /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
-  public FancyEBNF(final Set<Token> Σ, final Set<Variable> Γ, final Set<ERule> R, final Variable startVariable,
+  public FancyEBNF(EBNF ebnf,
       final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
       final Set<Variable> extensionProducts, final boolean addStartSymbolDerivationRules) {
-    super(Σ, Γ, startVariable, R);
+    super(ebnf);
     if (addStartSymbolDerivationRules) {
       this.Γ.add(Constants.S);
-      R.add(new ERule(Constants.S, new Body(startVariable)));
+      R.add(new ERule(Constants.S, new Body(ebnf.ε)));
     }
     this.headVariables = headVariables;
     this.extensionHeadsMapping = extensionHeadsMapping == null ? Collections.emptyMap() : extensionHeadsMapping;
@@ -108,7 +106,7 @@ public class FancyEBNF extends EBNF {
           .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
       }
     }
-    return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
+    return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
   }
 
   public boolean isOriginalVariable(final Component symbol) {
@@ -189,117 +187,14 @@ public class FancyEBNF extends EBNF {
     return unmodifiableMap($);
   }
 
-  static class Builder {
-    private final Set<Token> Σ = new LinkedHashSet<>();
-    private final Set<Variable> V = new LinkedHashSet<>();
-    private final Set<ERule> R = new LinkedHashSet<>();
-    private final Set<Variable> heads = new LinkedHashSet<>();
-    private Variable start;
-
-    public Derive derive(final Variable variable) {
-      add(variable);
-      return new Derive(variable);
-    }
-
-    public Specialize specialize(final Variable variable) {
-      add(variable);
-      return new Specialize(variable);
-    }
-
-
-    public final Builder start(final Variable v) {
-      add(v);
-      start = v;
-      return this;
-    }
-
-    Quantifier add(Quantifier q) {
-      q.symbols().forEach(this::add);
-      return q;
-    }
-
-    Variable add(Variable v) {
-      V.add(v);
-      return v;
-    }
-
-    Token add(Token t) {
-      Σ.add(t);
-      t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
-      return t;
-    }
-
-    Component add(Component s) {
-      assert !s.isTerminal();
-      if (s instanceof Token)
-        return add((Token) s);
-      if (s instanceof Quantifier)
-        return add((Quantifier) s);
-      if (s instanceof Variable) 
-        return add ((Variable) s);
-      assert false: s + ":" +  this;
-      return s;
-    }
-
-    public FancyEBNF build() {
-      assert start != null : "declare a start variable";
-      return new FancyEBNF(Σ, V, R, start, heads, null, null, true);
-    }
-
-    public class Derive {
-      private final Variable variable;
-      private Body form;
-
-      public Derive(final Variable variable) {
-        this.variable = variable;
-      }
-
-      public Builder to(final TempComponent... cs) {
-        List<Component> normalize = normalize(cs);
-        return to(normalize);
-      }
-
-      private Builder to(List<Component> cs) {
-        for (Component c:cs)
-          add(c);
-        R.add(new ERule(variable, new Body(cs)));
-        return Builder.this;
-      }
-
-      private List<Component> normalize(final TempComponent... cs) {
-        List<Component> $ = new ArrayList<>();
-        for (TempComponent c: cs)
-          $.add(c.normalize());
-        return $;
-      }
-
-      public Builder toEpsilon() {
-        R.add(new ERule(variable));
-        return Builder.this;
-      }
-    }
-
-    public class Specialize {
-      private final Variable variable;
-
-      public Specialize(final Variable variable) {
-        this.variable = variable;
-      }
-
-      public Builder into(final Variable... vs) {
-        List<Body> forms = new ArrayList<>();
-        for (final Variable v : vs) {
-          forms.add(new Body(v));
-          V.add(v);
-        }
-        R.add(new ERule(variable, forms));
-        return Builder.this;
-      }
-    }
-
-  }
-
   public FancyEBNF reduce() {
     return reduce(this);
+  }
+  
+  public static FancyEBNF from(EBNF source) {
+    Set<Variable> heads = new LinkedHashSet<>();
+    source.Σ.forEach(t -> t.parameters() //
+        .map(Parameter::declaredHeadVariables).forEach(heads::addAll));
+    return new FancyEBNF(source, heads, null, null, true);
   }
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import il.ac.technion.cs.fling.FancyEBNF;
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.compilers.ast.ASTCompiler;
 import il.ac.technion.cs.fling.grammars.LL1;
@@ -45,10 +45,10 @@ public class JavaMediator {
   /** AST run-time compiler Java file contents. */
   public final String astCompilerClass;
 
-  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final FancyEBNF bnf, final String packageName,
+  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName,
       final String apiName, final Class<Σ> Σ) {
     this.namer = new NaiveNamer(packageName, apiName);
-    this.ll1 = new LL1(bnf, namer);
+    this.ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
     this.apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {

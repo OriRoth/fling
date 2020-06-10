@@ -5,8 +5,7 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPICompiler.parse_PlainBNF
 import java.util.ArrayList;
 import java.util.List;
 
-import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.PlainBNFImporter;
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
@@ -33,7 +32,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
   }
 
   interface $ {
-    FancyEBNF build();
+    EBNF build();
   }
 
   interface q0$_$_q0$<q0$> extends $ {
@@ -123,7 +122,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
       return self();
     }
 
-    public FancyEBNF build() {
+    public EBNF build() {
       return new PlainBNFImporter(parse_PlainBNF(w)).getEbnf();
     }
   }

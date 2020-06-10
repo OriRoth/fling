@@ -26,7 +26,7 @@ public class TableMaker {
     String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
     Tool tool = new Tool();
     Grammar grammar = tool.loadGrammar(grammarFilePath);
-    FancyEBNF bnf = new ANTLRImporter(grammar).getEbnf();
+    FancyEBNF bnf = FancyEBNF.from(new ANTLRImporter(grammar).getEbnf());
     String packageName = "il.ac.technion.cs.fling.examples.generated";
     String apiName = name;
     Namer namer = new NaiveNamer(packageName, apiName);

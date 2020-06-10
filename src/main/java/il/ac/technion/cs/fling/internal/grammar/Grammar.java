@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.Named;
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
@@ -75,7 +73,7 @@ public abstract class Grammar {
       R.add(new ERule(r.variable, rhs));
     }
     Γ.addAll(extensionProducts);
-    return new FancyEBNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts, false);
+    return new FancyEBNF(new EBNF(ebnf.Σ, Γ, ebnf.ε, R), ebnf.headVariables, extensionHeadsMapping, extensionProducts, false);
   }
 
   public FancyEBNF getSubBNF(Variable variable) {
@@ -97,7 +95,7 @@ public abstract class Grammar {
           r.tokens().forEachOrdered(Σ::add);
         }
     }
-    return new FancyEBNF(Σ, V, rs, v, null, null, null, true);
+    return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
 
   private static FancyEBNF normalize(FancyEBNF bnf, Namer namer) {
@@ -125,7 +123,7 @@ public abstract class Grammar {
         }
       R.add(new ERule(v, alteration.stream().map(a -> new Body(a)).collect(toList())));
     }
-    return new FancyEBNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts,
+    return new FancyEBNF(new EBNF(bnf.Σ, V, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts,
         false);
   }
 
