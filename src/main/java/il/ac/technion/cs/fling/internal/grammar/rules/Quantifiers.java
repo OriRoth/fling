@@ -1,6 +1,8 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public interface Quantifiers {
   static Opt optional(final TempComponent s, final TempComponent... ss) {

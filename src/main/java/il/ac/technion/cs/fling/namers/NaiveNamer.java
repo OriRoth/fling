@@ -23,7 +23,9 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();

@@ -1,10 +1,21 @@
 package il.ac.technion.cs.fling;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Body;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
+import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
+import il.ac.technion.cs.fling.internal.grammar.rules.Symbol;
+import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** An extended Backus-Naur form specification of a formal Language, represented
  * as a set of {@link #R} of extended derivation rules {@link ERule}.
