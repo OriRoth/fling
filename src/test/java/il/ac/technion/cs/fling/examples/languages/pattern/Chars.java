@@ -34,11 +34,7 @@ public interface Chars {
   }
 
   static To from(char from) {
-    return to -> new Chars() {
-      @Override public boolean includes(char c) {
-        return c >= from && c <= to;
-      }
-    };
+    return to -> (Chars) c -> c >= from && c <= to;
   }
 
   default Chars not() {

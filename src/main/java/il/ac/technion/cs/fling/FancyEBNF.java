@@ -200,7 +200,6 @@ public class FancyEBNF extends EBNF.Decorator {
     private final Set<Variable> V = new LinkedHashSet<>();
     private final Set<ERule> R = new LinkedHashSet<>();
     private final Set<Variable> heads = new LinkedHashSet<>();
-    private Variable start;
 
     public Derive derive(final Variable variable) {
       add(variable);
@@ -214,7 +213,6 @@ public class FancyEBNF extends EBNF.Decorator {
 
     public final Builder start(final Variable v) {
       add(v);
-      start = v;
       return this;
     }
 
