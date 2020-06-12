@@ -32,7 +32,7 @@ public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
       final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining())) //
         .replace("$", "τ");
   }

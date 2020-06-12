@@ -89,7 +89,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
             .collect(joining(",")), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //
-            .map(field -> constructorAssignment(field)) //
+            .map(this::constructorAssignment) //
             .collect(joining()));
   }
 

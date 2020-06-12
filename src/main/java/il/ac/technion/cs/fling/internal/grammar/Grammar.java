@@ -123,7 +123,7 @@ public abstract class Grammar {
           R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
         }
-      R.add(new ERule(v, alteration.stream().map(a -> new Body(a)).collect(toList())));
+      R.add(new ERule(v, alteration.stream().map(Body::new).collect(toList())));
     }
     return new FancyEBNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts,
         false);

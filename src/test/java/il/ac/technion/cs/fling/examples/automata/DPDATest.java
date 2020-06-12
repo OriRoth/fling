@@ -33,7 +33,7 @@ public class DPDATest {
     γ0, γ1
   }
 
-  DPDA<Q, Σ, Γ> dpda = //
+  final DPDA<Q, Σ, Γ> dpda = //
       dpda(Q.class, Σ.class, Γ.class) //
           .q0(q0) //
           .F(q0) //

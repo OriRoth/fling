@@ -14,7 +14,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * @author Yossi Gil
  * @since 2020-05-08 */
 public class PlainBNFImporter {
-  FancyEBNF.Builder  builder = new FancyEBNF.Builder();
+  final FancyEBNF.Builder  builder = new FancyEBNF.Builder();
   public PlainBNFImporter(PlainBNF bnf) {
     this.bnf = bnf;
     this.ebnf = go();

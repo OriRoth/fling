@@ -34,7 +34,7 @@ public class CppAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot())
             .map(i -> printInterfaceDeclaration(i.declaration) + ";").collect(joining()), //
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining()), //
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
   }
 

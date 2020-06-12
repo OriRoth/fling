@@ -46,7 +46,7 @@ public interface Terminal extends TempSymbol {
     return new Token(this, new VarargsVariableTypeParameter(variable));
   }
 
-  public static Terminal byName(final String name) {
+  static Terminal byName(final String name) {
     return new Terminal() {
       @Override public String name() {
         return name;

@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.compiler.api.nodes;
 
 public interface AbstractMethodNode<T, D> {
-  public static class Start<T, D> implements AbstractMethodNode<T, D> {
+  class Start<T, D> implements AbstractMethodNode<T, D> {
     public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 
@@ -15,10 +15,10 @@ public interface AbstractMethodNode<T, D> {
     }
   }
 
-  public static class Termination<T, D> implements AbstractMethodNode<T, D> {
+  class Termination<T, D> implements AbstractMethodNode<T, D> {
   }
 
-  public static class Intermediate<T, D> implements AbstractMethodNode<T, D> {
+  class Intermediate<T, D> implements AbstractMethodNode<T, D> {
     public final D declaration;
     public final PolymorphicTypeNode<T> returnType;
 
@@ -32,7 +32,7 @@ public interface AbstractMethodNode<T, D> {
     }
   }
 
-  public static class Chained<T, D> implements AbstractMethodNode<T, D> {
+  class Chained<T, D> implements AbstractMethodNode<T, D> {
     public final D declaration;
 
     public Chained(final D declaration) {

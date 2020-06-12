@@ -34,7 +34,7 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
       final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
-        fluentAPI.interfaces.stream().map(i -> printInterface(i)).collect(joining("\n")), //
+        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining("\n")), //
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
   }
 

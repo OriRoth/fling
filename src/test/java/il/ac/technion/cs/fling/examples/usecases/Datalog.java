@@ -91,7 +91,7 @@ public class Datalog {
     }
 
     public static void print(final Fact fact) {
-      System.out.println(format("%s(%s).", fact.fact, Arrays.stream(fact.of).collect(joining(","))));
+      System.out.println(format("%s(%s).", fact.fact, String.join(",", fact.of)));
     }
 
     public static void print(final Query query) {
@@ -119,7 +119,7 @@ public class Datalog {
    * 
    * @author Ori Roth */
   public static class DatalogRunner extends DatalogAST.Visitor {
-    Jatalog j = new Jatalog();
+    final Jatalog j = new Jatalog();
 
     @Override public void whileVisiting(final Fact fact) throws DatalogException {
       j.fact(fact.fact, fact.of);

@@ -2,14 +2,7 @@ package il.ac.technion.cs.fling;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -223,7 +216,7 @@ public class DPDA<Q, Σ, Γ> {
      * @param currentγ current stack symbol
      * @return whether this edge describes the next transition */
     public boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
-      return q.equals(currentq) && (this.σ == null ? currentσ == null : this.σ.equals(currentσ))
+      return q.equals(currentq) && (Objects.equals(this.σ, currentσ))
           && this.γ.equals(currentγ);
     }
 

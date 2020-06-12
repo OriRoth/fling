@@ -175,7 +175,7 @@ public class Word<T> implements List<T> {
   }
 
   private void verify() {
-    inner.stream().forEach(Objects::requireNonNull);
+    inner.forEach(Objects::requireNonNull);
   }
 
   public static <T> Word<T> of(Stream<T> s) {
