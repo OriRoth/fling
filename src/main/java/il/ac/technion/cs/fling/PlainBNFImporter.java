@@ -9,21 +9,21 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.RuleTail;
 import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.Specialization;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-/** Convert a {@link PlainBNF} into a {@link FancyEBNF}
+/** Convert a {@link PlainBNF} into a {@link EBNF}
  * 
  * @author Yossi Gil
  * @since 2020-05-08 */
 public class PlainBNFImporter {
-  final FancyEBNF.Builder  builder = new FancyEBNF.Builder();
+  EBNF.Builder builder = new EBNF.Builder();
   public PlainBNFImporter(PlainBNF bnf) {
     this.bnf = bnf;
     this.ebnf = go();
   }
 
-  private final FancyEBNF ebnf;
+  private final EBNF ebnf;
   private final PlainBNF bnf;
 
-  private FancyEBNF go() {
+  private EBNF go() {
     builder.start(bnf.start);
     for (final Rule rule : bnf.rules) {
       if (rule instanceof Derivation) {
@@ -65,7 +65,7 @@ public class PlainBNFImporter {
       builder.derive(variable).toEpsilon();
   }
 
-  public FancyEBNF getEbnf() {
+  public EBNF getEbnf() {
     return ebnf;
   }
 

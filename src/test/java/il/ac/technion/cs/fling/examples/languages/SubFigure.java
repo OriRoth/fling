@@ -43,7 +43,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     return V.class;
   }
 
-  @Override public FancyEBNF BNF() {
+  @Override public il.ac.technion.cs.fling.EBNF BNF() {
     return bnf(). //
         start(Figure). //
         derive(Figure).to(load.with(String.class)). //
@@ -55,7 +55,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
   public static void main(String[] args) {
     SubFigure language = new SubFigure();
     Namer namer = new NaiveNamer("SubFigure");
-    LL1 ll1 = new LL1(language.BNF(), namer);
+    LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
     DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     APICompiler compiler = new ReliableAPICompiler(dpda);
     PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {

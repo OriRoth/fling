@@ -21,14 +21,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.util.Counter;
 
-/** Class to convert an ANTLR grammar into {@link FancyEBNF}
+/** Class to convert an ANTLR grammar into {@link EBNF}
  * 
  * @author Yossi Gil
  * @since 2020-06-08 */
-public class ANTLRImporter extends FancyEBNF.Builder {
-
+public class ANTLRImporter extends EBNF.Builder {
   private final Grammar grammar;
-  private final FancyEBNF ebnf;
+  private final EBNF ebnf;
   private final Counter nameCounter = new Counter();
 
   /** @return the ANTLR grammar */
@@ -37,7 +36,7 @@ public class ANTLRImporter extends FancyEBNF.Builder {
   }
 
   /** @return the ebnf */
-  public FancyEBNF getEbnf() {
+  public EBNF getEbnf() {
     return ebnf;
   }
 
@@ -48,7 +47,7 @@ public class ANTLRImporter extends FancyEBNF.Builder {
     this.ebnf = go();
   }
 
-  private FancyEBNF go() {
+  private EBNF go() {
     boolean initialized = false;
     Tree rules = grammar.ast.getChild(1);
     for (int i = 0; i < rules.getChildCount(); ++i) {

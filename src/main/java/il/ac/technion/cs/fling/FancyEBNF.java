@@ -30,28 +30,26 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
  * lots of services which found shelter in this class.
  * 
  * @author Ori Roth */
-public class FancyEBNF extends EBNF {
-  /** Maps generated variables to the notation originated them. Optional */
-  public final Map<Variable, Quantifier> extensionHeadsMapping;
-  /** Set of generated variables */
-  public final Set<Variable> extensionProducts;
+public class FancyEBNF extends EBNF.Decorator {
+  /** Set of nullable variables and notations */
+  public final Set<Component> nullables;
   /** Maps variables and notations to their firsts set */
   public final Map<Component, Set<Token>> firsts;
   /** Maps variables and notations to their follows set */
   public final Map<Variable, Set<Token>> follows;
   /** Head variables set, containing variables used as API parameters */
   public final Set<Variable> headVariables;
-  /** Set of nullable variables and notations */
-  public final Set<Component> nullables;
+  /** Maps generated variables to the notation originated them. Optional */
+  public final Map<Variable, Quantifier> extensionHeadsMapping;
+  /** Set of generated variables */
+  public final Set<Variable> extensionProducts;
 
-  /** Instantiate this class */
-  public FancyEBNF(final Set<Token> Σ, final Set<Variable> Γ, final Set<ERule> R, final Variable startVariable,
-      final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
+  public FancyEBNF(EBNF ebnf, final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
       final Set<Variable> extensionProducts, final boolean addStartSymbolDerivationRules) {
-    super(Σ, Γ, startVariable, R);
+    super(ebnf);
     if (addStartSymbolDerivationRules) {
       this.Γ.add(Constants.S);
-      R.add(new ERule(Constants.S, new Body(startVariable)));
+      R.add(new ERule(Constants.S, new Body(ebnf.ε)));
     }
     this.headVariables = headVariables;
     this.extensionHeadsMapping = extensionHeadsMapping == null ? Collections.emptyMap() : extensionHeadsMapping;
@@ -59,6 +57,23 @@ public class FancyEBNF extends EBNF {
     this.nullables = getNullables();
     this.firsts = getFirsts();
     this.follows = getFollows();
+  }
+
+  /** @param symbols sequence of grammar symbols
+   * @return whether the sequence is nullable */
+  public boolean isNullable(final Component... symbols) {
+    return isNullable(Arrays.asList(symbols));
+  }
+
+  /** @param symbols sequence of grammar symbols
+   * @return whether the sequence is nullable */
+  public boolean isNullable(final List<Component> symbols) {
+    return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
+        symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
+  }
+
+  public Set<Token> firsts(final Component... symbols) {
+    return firsts(Arrays.asList(symbols));
   }
 
   public Set<Token> firsts(final Collection<Component> symbols) {
@@ -71,8 +86,51 @@ public class FancyEBNF extends EBNF {
     return unmodifiableSet($);
   }
 
-  public Set<Token> firsts(final Component... symbols) {
-    return firsts(Arrays.asList(symbols));
+  /** Return a possibly smaller BNF including only rules reachable form start
+   * symbol */
+  private static FancyEBNF reduce(EBNF b) {
+    final Set<Variable> Γ = new LinkedHashSet<>();
+    final Set<ERule> R = new LinkedHashSet<>();
+    final Set<Token> Σ = new LinkedHashSet<>();
+
+    final Set<Variable> newVariables = new LinkedHashSet<>();
+    newVariables.add(b.ε);
+    while (!newVariables.isEmpty()) {
+      Γ.addAll(newVariables);
+      final Set<Variable> currentVariables = new LinkedHashSet<>();
+      currentVariables.addAll(newVariables);
+      newVariables.clear();
+      for (Variable v : currentVariables) {
+        b.rules(v).forEachOrdered(R::add);
+        b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
+        b.rules(v).flatMap(ERule::variables) //
+            .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
+      }
+    }
+    return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
+  }
+
+  public boolean isOriginalVariable(final Component symbol) {
+    return symbol.isVariable() && !extensionProducts.contains(symbol);
+  }
+
+  private Set<Component> getNullables() {
+    final Set<Component> $ = new LinkedHashSet<>();
+    while ($.addAll(Γ.stream() //
+        .filter(v -> bodies(v).anyMatch(sf -> sf.stream().allMatch(symbol -> isNullable(symbol, $)))) //
+        .collect(toSet())))
+      ;
+    return $;
+  }
+
+  private boolean isNullable(final Component symbol, final Set<Component> knownNullables) {
+    if (symbol.isToken())
+      return false;
+    if (symbol.isVariable())
+      return knownNullables.contains(symbol);
+    if (symbol.isQuantifier())
+      return symbol.asQuantifier().isNullable(s -> isNullable(s, knownNullables));
+    throw new RuntimeException("problem while analyzing BNF");
   }
 
   private Map<Component, Set<Token>> getFirsts() {
@@ -96,7 +154,9 @@ public class FancyEBNF extends EBNF {
                 return firsts;
               }));
             else {
-              changed |= set.addAll($.get(symbol));
+              Set<Token> c = $.get(symbol);
+              assert c != null : this + ":\n" + symbol;
+              changed |= set.addAll(c);
             }
             if (!isNullable(symbol))
               break;
@@ -128,109 +188,19 @@ public class FancyEBNF extends EBNF {
     return unmodifiableMap($);
   }
 
-  private Set<Component> getNullables() {
-    final Set<Component> $ = new LinkedHashSet<>();
-    while ($.addAll(Γ.stream() //
-        .filter(v -> bodies(v).anyMatch(sf -> sf.stream().allMatch(symbol -> isNullable(symbol, $)))) //
-        .collect(toSet())))
-      ;
-    return $;
-  }
-
-  /** @param symbols sequence of grammar symbols
-   * @return whether the sequence is nullable */
-  public boolean isNullable(final Component... symbols) {
-    return isNullable(Arrays.asList(symbols));
-  }
-
-  private boolean isNullable(final Component c, final Set<Component> knownNullables) {
-    if (c.isToken())
-      return false;
-    if (c.isVariable())
-      return knownNullables.contains(c);
-    if (c.isQuantifier())
-      return c.asQuantifier().isNullable(s -> isNullable(s, knownNullables));
-    throw new RuntimeException("problem while analyzing BNF");
-  }
-
-  /** @param symbols sequence of grammar symbols
-   * @return whether the sequence is nullable */
-  public boolean isNullable(final List<Component> symbols) {
-    return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
-        symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
-  }
-
-  public boolean isOriginalVariable(final Component symbol) {
-    return symbol.isVariable() && !extensionProducts.contains(symbol);
-  }
-
-  public FancyEBNF reduce() {
-    return reduce(this);
-  }
-
-  /** Return a possibly smaller BNF including only rules reachable form start
-   * symbol */
-  private static FancyEBNF reduce(EBNF b) {
-    final Set<Variable> Γ = new LinkedHashSet<>();
-    final Set<ERule> R = new LinkedHashSet<>();
-    final Set<Token> Σ = new LinkedHashSet<>();
-
-    final Set<Variable> newVariables = new LinkedHashSet<>();
-    newVariables.add(b.ε);
-    while (!newVariables.isEmpty()) {
-      Γ.addAll(newVariables);
-      final Set<Variable> currentVariables = new LinkedHashSet<>();
-      currentVariables.addAll(newVariables);
-      newVariables.clear();
-      for (Variable v : currentVariables) {
-        b.rules(v).forEachOrdered(R::add);
-        b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
-        b.rules(v).flatMap(ERule::variables) //
-            .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
-      }
-    }
-    return new FancyEBNF(Σ, Γ, R, b.ε, null, null, null, true);
+  public static FancyEBNF from(EBNF source) {
+    Set<Variable> heads = new LinkedHashSet<>();
+    source.Σ.forEach(t -> t.parameters() //
+        .map(Parameter::declaredHeadVariables).forEach(heads::addAll));
+    return new FancyEBNF(source, heads, null, null, true);
   }
 
   static class Builder {
-    private final Set<Variable> heads = new LinkedHashSet<>();
-    private final Set<ERule> R = new LinkedHashSet<>();
-    private Variable start;
-    private final Set<Variable> V = new LinkedHashSet<>();
     private final Set<Token> Σ = new LinkedHashSet<>();
-
-    Component add(Component s) {
-      assert !s.isTerminal();
-      if (s instanceof Token)
-        return add((Token) s);
-      if (s instanceof Quantifier)
-        return add((Quantifier) s);
-      if (s instanceof Variable)
-        return add((Variable) s);
-      assert false : s + ":" + this;
-      return s;
-    }
-
-    Quantifier add(Quantifier q) {
-      q.symbols().forEach(this::add);
-      return q;
-    }
-
-    Token add(Token t) {
-      Σ.add(t);
-      t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
-      return t;
-    }
-
-    Variable add(Variable v) {
-      V.add(v);
-      return v;
-    }
-
-    public FancyEBNF build() {
-      assert start != null : "declare a start variable";
-      return new FancyEBNF(Σ, V, R, start, heads, null, null, true);
-    }
+    private final Set<Variable> V = new LinkedHashSet<>();
+    private final Set<ERule> R = new LinkedHashSet<>();
+    private final Set<Variable> heads = new LinkedHashSet<>();
+    private Variable start;
 
     public Derive derive(final Variable variable) {
       add(variable);
@@ -248,19 +218,45 @@ public class FancyEBNF extends EBNF {
       return this;
     }
 
+    Quantifier add(Quantifier q) {
+      q.symbols().forEach(this::add);
+      return q;
+    }
+
+    Variable add(Variable v) {
+      V.add(v);
+      return v;
+    }
+
+    Token add(Token t) {
+      Σ.add(t);
+      t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
+      return t;
+    }
+
+    Component add(Component s) {
+      assert !s.isTerminal();
+      if (s instanceof Token)
+        return add((Token) s);
+      if (s instanceof Quantifier)
+        return add((Quantifier) s);
+      if (s instanceof Variable)
+        return add((Variable) s);
+      assert false : s + ":" + this;
+      return s;
+    }
+
     public class Derive {
-      private Body form;
       private final Variable variable;
+      private Body form;
 
       public Derive(final Variable variable) {
         this.variable = variable;
       }
 
-      private List<Component> normalize(final TempComponent... cs) {
-        List<Component> $ = new ArrayList<>();
-        for (TempComponent c : cs)
-          $.add(c.normalize());
-        return $;
+      public Builder to(final TempComponent... cs) {
+        List<Component> normalize = normalize(cs);
+        return to(normalize);
       }
 
       private Builder to(List<Component> cs) {
@@ -270,9 +266,11 @@ public class FancyEBNF extends EBNF {
         return Builder.this;
       }
 
-      public Builder to(final TempComponent... cs) {
-        List<Component> normalize = normalize(cs);
-        return to(normalize);
+      private List<Component> normalize(final TempComponent... cs) {
+        List<Component> $ = new ArrayList<>();
+        for (TempComponent c : cs)
+          $.add(c.normalize());
+        return $;
       }
 
       public Builder toEpsilon() {
@@ -299,5 +297,9 @@ public class FancyEBNF extends EBNF {
       }
     }
 
+  }
+
+  public FancyEBNF reduce() {
+    return reduce(this);
   }
 }

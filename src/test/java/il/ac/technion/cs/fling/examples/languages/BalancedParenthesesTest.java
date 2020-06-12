@@ -9,7 +9,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 
 import il.ac.technion.cs.fling.EBNF;
-import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 
 @SuppressWarnings({ "boxing", "static-method" }) class BalancedParenthesesTest {
@@ -44,7 +43,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
   }
 
   @Test void test4() {
-    FancyEBNF b = new BalancedParentheses().BNF();
+    EBNF b = new BalancedParentheses().BNF();
     assertThat(b + "", is("EBNF[Σ=[c, ↄ, $], Γ=[P, S], ε=P, R=[P->cPↄP, P->ε, S->P]]"));
   }
 

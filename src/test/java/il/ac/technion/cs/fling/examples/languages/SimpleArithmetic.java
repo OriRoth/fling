@@ -48,7 +48,7 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
     return V.class;
   }
 
-  @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
+  @Override public il.ac.technion.cs.fling.EBNF BNF() {
     // @formatter:off
     return bnf(). // Start defining BNF
         start(E). // Declare the start symbol

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
@@ -75,7 +76,8 @@ public abstract class Grammar {
       R.add(new ERule(r.variable, rhs));
     }
     Γ.addAll(extensionProducts);
-    return new FancyEBNF(ebnf.Σ, Γ, R, ebnf.ε, ebnf.headVariables, extensionHeadsMapping, extensionProducts, false);
+    return new FancyEBNF(new EBNF(ebnf.Σ, Γ, ebnf.ε, R), ebnf.headVariables, extensionHeadsMapping, extensionProducts,
+        false);
   }
 
   public FancyEBNF getSubBNF(Variable variable) {
@@ -97,7 +99,7 @@ public abstract class Grammar {
           r.tokens().forEachOrdered(Σ::add);
         }
     }
-    return new FancyEBNF(Σ, V, rs, v, null, null, null, true);
+    return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
 
   private static FancyEBNF normalize(FancyEBNF bnf, Namer namer) {
@@ -105,7 +107,7 @@ public abstract class Grammar {
     Set<ERule> R = new LinkedHashSet<>();
     for (Variable v : bnf.Γ) {
       List<Body> rhs = bnf.bodiesList(v);
-      assert rhs.size() > 0: v.toString() + " in: " + bnf;
+      assert rhs.size() > 0 : v.toString() + " in: " + bnf;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
         R.add(new ERule(v, rhs));
@@ -125,8 +127,8 @@ public abstract class Grammar {
         }
       R.add(new ERule(v, alteration.stream().map(Body::new).collect(toList())));
     }
-    return new FancyEBNF(bnf.Σ, V, R, bnf.ε, bnf.headVariables, bnf.extensionHeadsMapping, bnf.extensionProducts,
-        false);
+    return new FancyEBNF(new EBNF(bnf.Σ, V, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping,
+        bnf.extensionProducts, false);
   }
 
   public static boolean isSequenceRHS(FancyEBNF bnf, Variable v) {

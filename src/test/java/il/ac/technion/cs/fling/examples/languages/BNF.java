@@ -42,7 +42,7 @@ public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.V> {
     return V.class;
   }
 
-  @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
+  @Override public il.ac.technion.cs.fling.EBNF BNF() {
     // @formatter:off
     return bnf(). //
         start(PlainBNF). //

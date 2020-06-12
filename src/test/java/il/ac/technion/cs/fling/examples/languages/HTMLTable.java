@@ -41,7 +41,7 @@ public class HTMLTable implements FluentLanguageAPI<Σ, V> {
     return V.class;
   }
 
-  @Override public il.ac.technion.cs.fling.FancyEBNF BNF() {
+  @Override public il.ac.technion.cs.fling.EBNF BNF() {
     return bnf(). //
         start(HTML). //
         derive(HTML).to(html.with(String.class), Table). //
