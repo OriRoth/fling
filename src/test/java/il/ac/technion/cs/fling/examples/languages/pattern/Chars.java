@@ -12,7 +12,7 @@ interface Pattern {
   }
 
   class x implements Pattern {
-    {
+    static {
       @SuppressWarnings("unused") x x = new x();
     }
   }
@@ -34,71 +34,39 @@ public interface Chars {
   }
 
   static To from(char from) {
-    return new To() {
-      @Override public Chars to(char to) {
-        return new Chars() {
-          @Override public boolean includes(char c) {
-            return c >= from && c <= to;
-          }
-        };
+    return to -> new Chars() {
+      @Override public boolean includes(char c) {
+        return c >= from && c <= to;
       }
     };
   }
 
   default Chars not() {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return !Chars.this.includes(c);
-      }
-    };
+    return c -> !Chars.this.includes(c);
   }
 
   default Chars or(Chars other) {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return Chars.this.includes(c) || other.includes(c);
-      }
-    };
+    return c -> Chars.this.includes(c) || other.includes(c);
   }
 
   default Chars and(Chars other) {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return Chars.this.includes(c) && other.includes(c);
-      }
-    };
+    return c -> Chars.this.includes(c) && other.includes(c);
   }
 
   default Chars xor(Chars other) {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return Chars.this.includes(c) ^ other.includes(c);
-      }
-    };
+    return c -> Chars.this.includes(c) ^ other.includes(c);
   }
 
   default Chars except(Chars other) {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return Chars.this.includes(c) && !other.includes(c);
-      }
-    };
+    return c -> Chars.this.includes(c) && !other.includes(c);
   }
 
   default Chars or(char singleton) {
-    return new Chars() {
-      @Override public boolean includes(char c) {
-        return Chars.this.includes(c) || c == singleton;
-      }
-    };
+    return c -> Chars.this.includes(c) || c == singleton;
   }
 
   /** No character */
-  Chars EMPTY = new Chars() {
-    @Override public boolean includes(@SuppressWarnings("unused") char c) {
-      return false;
-    }
-  };
+  Chars EMPTY = c -> false;
   /** . Any character */
   Chars ANY = EMPTY.not();
   /** \d A digit: [0-9] aka \p{Digit} a decimal digit: [0-9] */

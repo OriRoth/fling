@@ -113,13 +113,11 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
         // Name of generated class
         "Datalog", Σ.class //
     );
-    Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
-      final Map<String, String> $ = new LinkedHashMap<>();
-      $.put("Datalog", jm.apiClass);
-      $.put("DatalogAST", jm.astClass);
-      $.put("DatalogCompiler", jm.astCompilerClass);
-      return $;
-    }).get();
+    final Map<String, String> $ = new LinkedHashMap<>();
+    $.put("Datalog", jm.apiClass);
+    $.put("DatalogAST", jm.astClass);
+    $.put("DatalogCompiler", jm.astCompilerClass);
+    Map<String, String> files = $;
     String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);

@@ -52,7 +52,7 @@ public class TaggedBalancedParentheses {
     if (p.ↄ instanceof AB1)
       $.append("@a").append('\n');
     else
-      $.append("@b" + ((AB2) p.ↄ).b).append('\n');
+      $.append("@b").append(((AB2) p.ↄ).b).append('\n');
     $.append(traverse(p.p2, depth));
     return $.toString();
   }

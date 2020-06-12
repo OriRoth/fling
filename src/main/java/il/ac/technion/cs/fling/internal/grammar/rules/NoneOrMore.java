@@ -23,8 +23,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
     final Variable head = namer.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
-    List<Component> rhs = new ArrayList<>();
-    rhs.addAll(expandedSymbols);
+      List<Component> rhs = new ArrayList<>(expandedSymbols);
     rhs.add(head);
     ruleDeclaration.accept(new ERule(head, asList(//
         new Body(rhs), //

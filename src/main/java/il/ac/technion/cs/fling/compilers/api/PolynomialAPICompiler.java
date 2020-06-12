@@ -84,9 +84,8 @@ public class PolynomialAPICompiler extends APICompiler {
 
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
       final Word<Named> α) {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
-    $.addAll(dpda.Σ().map(σ -> //
-    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
+    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
+            new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(toList()));
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //

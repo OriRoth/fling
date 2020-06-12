@@ -112,11 +112,10 @@ public class ReliableAPICompiler extends APICompiler {
 
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
       final Word<Named> α, Set<Named> legalJumps) {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
-    $.addAll(dpda.Σ().map(σ -> //
-    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
-        .filter(method -> !method.returnType.isBot()) //
-        .collect(toList()));
+    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
+            new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
+            .filter(method -> !method.returnType.isBot()) //
+            .collect(toList()));
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
     return $.isEmpty() ? null

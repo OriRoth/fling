@@ -63,7 +63,7 @@ public abstract class APICompiler {
   /** Type name node declaration.
    *
    * @author Ori Roth */
-  public class TypeName {
+  public static class TypeName {
     /** Inducing state. */
     public final Named q;
     /** Inducing stack symbols. */
@@ -113,7 +113,7 @@ public abstract class APICompiler {
   /** Method node declaration.
    *
    * @author Ori Roth */
-  public class MethodDeclaration {
+  public static class MethodDeclaration {
     /** Inducing token. */
     public final Token name;
     /** Inferred token parameters. Pending computation. */
@@ -170,7 +170,7 @@ public abstract class APICompiler {
   /** Type node declaration.
    *
    * @author Ori Roth */
-  public class InterfaceDeclaration {
+  public static class InterfaceDeclaration {
     /** Inducing state. */
     public final Named q;
     /** Inducing stack symbols. */
@@ -179,7 +179,7 @@ public abstract class APICompiler {
     public final Set<Named> legalJumps;
     /** Referenced states (type variables). */
     // TODO remove duplicate field.
-    @SuppressWarnings("hiding") public final Word<Named> typeVariables;
+    public final Word<Named> typeVariables;
     public final boolean isAccepting;
 
     public InterfaceDeclaration(final Named q, final Word<Named> α, final Set<Named> legalJumps,

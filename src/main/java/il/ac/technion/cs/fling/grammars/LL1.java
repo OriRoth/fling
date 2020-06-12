@@ -34,14 +34,11 @@ public class LL1 extends Grammar {
 
   /** Translate LL(1) BNF to DPDA. */
   @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
-    final Set<Named> Q = new LinkedHashSet<>();
-    final Set<Token> Σ = new LinkedHashSet<>();
-    final Set<Named> Γ = new LinkedHashSet<>();
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     Named q0;
     Word<Named> γ0;
-    Σ.addAll(bnf.Σ);
+    final Set<Token> Σ = new LinkedHashSet<>(bnf.Σ);
     Σ.remove(Constants.$$);
     // TODO use namer to determine type names.
     final Map<Token, Named> typeNameMapping = new LinkedHashMap<>();
@@ -54,12 +51,12 @@ public class LL1 extends Grammar {
       } else
         typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
     }
-    Q.addAll(typeNameMapping.values());
+    final Set<Named> Q = new LinkedHashSet<>(typeNameMapping.values());
     final Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø"), qT = Named.by("qT");
     Q.add(q0$);
     Q.add(q0ø);
     Q.add(qT);
-    Γ.addAll(typeNameMapping.values());
+    final Set<Named> Γ = new LinkedHashSet<>(typeNameMapping.values());
     Γ.add(Constants.$$);
     Γ.addAll(bnf.Γ);
     assert Γ.contains(Constants.S);
