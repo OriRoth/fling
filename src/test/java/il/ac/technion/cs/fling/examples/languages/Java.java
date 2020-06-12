@@ -45,7 +45,7 @@ public class Java implements FluentLanguageAPI<Σ, V> {
   /** Set of non-terminals, i.e., abstract concepts of fluent API; these names
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
-   * list of {@link Statement}, etc. */
+   * list of {@link #Statement}, etc. */
   public enum V implements Variable {
     Program, Statement, Expression, InfixExpression, PrefixExpression, Declaration, Header, Member, Field, Constructor,
     Method, Initializer
@@ -89,7 +89,6 @@ public class Java implements FluentLanguageAPI<Σ, V> {
     $.put("Datalog", jm.apiClass);
     $.put("DatalogAST", jm.astClass);
     $.put("DatalogCompiler", jm.astCompilerClass);
-    Map<String, String> files = $;
     String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
@@ -98,7 +97,7 @@ public class Java implements FluentLanguageAPI<Σ, V> {
       System.out.println("directory " + PATH + " created successfully");
     }
     final Formatter formatter = new Formatter();
-    for (final Entry<String, String> file : files.entrySet()) {
+    for (final Entry<String, String> file : $.entrySet()) {
       final Path filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);

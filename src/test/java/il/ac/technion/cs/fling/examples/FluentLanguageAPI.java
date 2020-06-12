@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.examples;
 
-import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;

@@ -9,38 +9,37 @@ public interface Component extends TempComponent {
     return this;
   }
 
-  default boolean isTerminal() {
+  @Override default boolean isTerminal() {
     return this instanceof Terminal || Constants.$.equals(this);
   }
 
-  default boolean isVariable() {
+  @Override default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);
   }
 
   /** @return true iff receiver is {@Link Token} */
-  default boolean isToken() {
+  @Override default boolean isToken() {
     return false;
   }
 
-  default boolean isQuantifier() {
+  @Override default boolean isQuantifier() {
     return this instanceof Quantifier;
   }
 
-  default Terminal asTerminal() {
+  @Override default Terminal asTerminal() {
     return (Terminal) this;
   }
 
-  default Variable asVariable() {
+  @Override default Variable asVariable() {
     return (Variable) this;
   }
 
-  default Quantifier asQuantifier() {
+  @Override default Quantifier asQuantifier() {
     return (Quantifier) this;
   }
 
-  default boolean isParameterized() {
+  @Override default boolean isParameterized() {
     return false;
   }
-
 
 }

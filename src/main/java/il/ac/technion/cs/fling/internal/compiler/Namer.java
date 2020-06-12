@@ -21,7 +21,7 @@ public interface Namer {
 
   /** Create new variable subject to given symbol in notation's context.
    *
-   * @param symbol parent symbol
+   * @param inner parent symbol
    * @return child variable */
   Variable createQuantificationChild(List<? extends Component> inner);
 

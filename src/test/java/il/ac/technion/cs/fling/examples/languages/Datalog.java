@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
@@ -44,6 +43,7 @@ import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+
 /** Fling input specifying the formal Datalog language.
  * 
  * @author Yossi Gil */
@@ -56,7 +56,7 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
   /** Set of non-terminals, i.e., abstract concepts of fluent API; these names
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
-   * list of {@link Statement}, etc. */
+   * list of {@link #Statement}, etc. */
   public enum V implements Variable {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
     RuleHead, RuleBody, FirstClause, AdditionalClause, Term
@@ -117,7 +117,6 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
     $.put("Datalog", jm.apiClass);
     $.put("DatalogAST", jm.astClass);
     $.put("DatalogCompiler", jm.astCompilerClass);
-    Map<String, String> files = $;
     String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
@@ -126,7 +125,7 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
       System.out.println("directory " + PATH + " created successfully");
     }
     final Formatter formatter = new Formatter();
-    for (final Entry<String, String> file : files.entrySet()) {
+    for (final Entry<String, String> file : $.entrySet()) {
       final Path filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);
