@@ -86,24 +86,24 @@ public abstract class Grammar {
 
   private FancyEBNF computeSubBNF(final Variable v) {
     final Set<Token> Σ = new LinkedHashSet<>();
-    final Set<Variable> Γ = new LinkedHashSet<>();
-    Γ.add(v);
+    final Set<Variable> V = new LinkedHashSet<>();
+    V.add(v);
     final Set<ERule> rs = new LinkedHashSet<>();
     for (boolean more = true; more;) {
       more = false;
       for (final ERule r : bnf.R)
-        if (!rs.contains(r) && Γ.contains(r.variable)) {
+        if (!rs.contains(r) && V.contains(r.variable)) {
           more = true;
           rs.add(r);
-          r.variables().forEachOrdered(Γ::add);
+          r.variables().forEachOrdered(V::add);
           r.tokens().forEachOrdered(Σ::add);
         }
     }
-    return new FancyEBNF(new EBNF(Σ, Γ, v, rs), null, null, null, true);
+    return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
 
   private static FancyEBNF normalize(final FancyEBNF bnf, final Namer namer) {
-    final Set<Variable> Γ = new LinkedHashSet<>(bnf.Γ);
+    final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
       final List<Body> rhs = bnf.bodiesList(v);
@@ -121,13 +121,13 @@ public abstract class Grammar {
         else {
           // Create a suitable child variable.
           final Variable a = namer.createASTChild(v);
-          Γ.add(a);
+          V.add(a);
           R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
         }
       R.add(new ERule(v, alteration.stream().map(Body::new).collect(toList())));
     }
-    return new FancyEBNF(new EBNF(bnf.Σ, Γ, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping,
+    return new FancyEBNF(new EBNF(bnf.Σ, V, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping,
         bnf.extensionProducts, false);
   }
 
@@ -142,7 +142,7 @@ public abstract class Grammar {
         dpda.Σ().map(Token::new).collect(toSet()), //
         new LinkedHashSet<>(dpda.Γ), //
         dpda.δs.stream() //
-            .map(δ -> new DPDA.δ<>(δ.q, δ.σ == ε() ? ε() : new Token(δ.σ), δ.γ, δ.q$,
+            .map(δ -> new DPDA.δ<Named, Token, Named>(δ.q, δ.σ == ε() ? ε() : new Token(δ.σ), δ.γ, δ.q$,
                 new Word<>(δ.getΑ().stream() //
                     .map(Named.class::cast) //
                     .collect(toList())))) //
