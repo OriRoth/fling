@@ -149,7 +149,7 @@ public class JavaGenerator extends AbstractGenerator {
   public String printConcreteImplementation(final CompilationUnit fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
-        printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
+        printConcreteImplementationClassBody(), fluentAPI.body.methods.stream() //
             .map(Method::asChainedMethod) //
             .map(Chained::declaration) //
             .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //

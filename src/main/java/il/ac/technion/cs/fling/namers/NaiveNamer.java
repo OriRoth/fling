@@ -87,7 +87,7 @@ public class NaiveNamer implements Namer {
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
-    fluentAPI.concreteImplementation.methods.stream() //
+    fluentAPI.body.methods.stream() //
         .map(Method::asChainedMethod) //
         .map(Chained::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
