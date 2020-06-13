@@ -188,7 +188,7 @@ public class ReliableAPICompiler extends APICompiler {
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> Type.<TypeName>top()) //
+            .map(q -> Type.top()) //
             .collect(toList());
   }
 }

@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 
-public interface PolymorphicLanguageAPIBaseAdapter {
+public interface APIGenerator {
   String printFluentAPI(CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI);
 
   String topTypeName();

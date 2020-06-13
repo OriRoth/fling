@@ -9,7 +9,7 @@ public class Type {
   public final TypeName name;
   public final List<Type> arguments;
 
-  public Type(TypeName name) {
+  public Type(final TypeName name) {
     this(name, Collections.emptyList());
   }
 
