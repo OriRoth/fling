@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
-import il.ac.technion.cs.fling.Named;
-
 /** A component of a body of a {@link ERule}
  * 
  * @author Yossi Gil

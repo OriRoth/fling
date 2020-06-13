@@ -6,7 +6,6 @@ import org.antlr.v4.tool.Grammar;
 import il.ac.technion.cs.fling.ANTLRImporter;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.adapters.JavaANTLRAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.grammars.LL1;
@@ -15,6 +14,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclar
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 

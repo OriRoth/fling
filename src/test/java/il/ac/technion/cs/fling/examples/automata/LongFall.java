@@ -10,11 +10,11 @@ import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.a;
 import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
 import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;

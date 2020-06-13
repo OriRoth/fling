@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import il.ac.technion.cs.fling.Named;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
@@ -14,6 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNod
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** Prototypical SML API adapter.

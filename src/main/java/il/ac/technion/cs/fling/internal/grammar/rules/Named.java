@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling;
+package il.ac.technion.cs.fling.internal.grammar.rules;
 
 /** Named entity.
  * 
