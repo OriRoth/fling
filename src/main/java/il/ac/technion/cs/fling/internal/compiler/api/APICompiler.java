@@ -43,7 +43,7 @@ public abstract class APICompiler {
   /** Compile API concrete implementation.
    *
    * @return concrete implementation */
-  protected abstract TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation();
+  protected abstract TypeBody complieConcreteImplementation();
 
   /** Compile API static start methods.
    *

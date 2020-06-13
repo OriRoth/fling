@@ -71,8 +71,8 @@ public class ReliableAPICompiler extends APICompiler {
     return Arrays.asList(Interface.top());
   }
 
-  @SuppressWarnings("unused") @Override protected TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation() {
-    return new TypeBody<>(dpda.Σ() //
+  @Override protected TypeBody complieConcreteImplementation() {
+    return new TypeBody(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
         .map(σ -> new Method.Chained(new MethodDeclaration(σ))) //
         .collect(toList()));

@@ -60,8 +60,8 @@ public class PolynomialAPICompiler extends APICompiler {
     return list(fixedInterfaces(), types.values());
   }
 
-  @SuppressWarnings("unused") @Override protected TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation() {
-    return new TypeBody<>(dpda.Σ() //
+  @SuppressWarnings("unused") @Override protected TypeBody complieConcreteImplementation() {
+    return new TypeBody(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
         .map(σ -> new Method.Chained(new MethodDeclaration(σ))) //
         .collect(toList()));
