@@ -10,10 +10,8 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
@@ -73,7 +71,7 @@ public class NaiveNamer implements Namer {
         .forEach(this::setInferredFieldsInClass);
   }
 
-  @Override public void name(final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  @Override public void name(final CompilationUnit fluentAPI) {
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //

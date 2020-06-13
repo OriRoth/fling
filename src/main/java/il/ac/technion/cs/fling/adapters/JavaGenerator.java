@@ -38,8 +38,7 @@ public class JavaGenerator extends AbstractGenerator {
     this.className = className;
   }
 
-  @Override public String printFluentAPI(
-      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
@@ -147,8 +146,7 @@ public class JavaGenerator extends AbstractGenerator {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
 
-  public String printConcreteImplementation(
-      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  public String printConcreteImplementation(final CompilationUnit fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //

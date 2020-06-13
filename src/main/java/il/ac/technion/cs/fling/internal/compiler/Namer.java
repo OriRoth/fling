@@ -2,9 +2,6 @@ package il.ac.technion.cs.fling.internal.compiler;
 
 import java.util.List;
 
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
@@ -54,5 +51,5 @@ public interface Namer {
    * parameters.
    *
    * @param fluentAPI API */
-  void name(CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI);
+  void name(CompilationUnit fluentAPI);
 }

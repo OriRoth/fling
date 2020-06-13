@@ -36,8 +36,8 @@ public abstract class APICompiler {
    * undefined.
    *
    * @return compiled API */
-  public CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
-    return new CompilationUnit<>(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
+  public CompilationUnit compileFluentAPI() {
+    return new CompilationUnit(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
   }
 
   /** Compile API concrete implementation.

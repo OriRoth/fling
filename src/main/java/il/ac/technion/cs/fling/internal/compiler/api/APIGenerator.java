@@ -8,7 +8,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 
 public interface APIGenerator {
-  String printFluentAPI(CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI);
+  String printFluentAPI(CompilationUnit fluentAPI);
 
   String topTypeName();
 

@@ -28,8 +28,7 @@ public class SMLGenerator extends AbstractGenerator {
     firstDatatype = true;
   }
 
-  @Override public String printFluentAPI(
-      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n\n%s", fluentAPI.interfaces.stream().map(this::printInterface).collect(joining(" ")),
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));

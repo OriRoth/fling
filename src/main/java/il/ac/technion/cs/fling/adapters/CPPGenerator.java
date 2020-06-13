@@ -26,8 +26,7 @@ public class CPPGenerator extends AbstractGenerator {
     super(terminationMethodName, namer);
   }
 
-  @Override public String printFluentAPI(
-      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s%s", //
         fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot())

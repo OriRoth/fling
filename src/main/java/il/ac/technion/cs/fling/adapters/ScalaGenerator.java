@@ -27,8 +27,7 @@ public class ScalaGenerator extends AbstractGenerator {
     super(terminationMethodName, namer);
   }
 
-  @Override public String printFluentAPI(
-      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
+  @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
         fluentAPI.interfaces.stream().map(this::printInterface).collect(joining("\n")), //
