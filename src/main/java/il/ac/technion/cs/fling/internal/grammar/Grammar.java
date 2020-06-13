@@ -136,7 +136,7 @@ public abstract class Grammar {
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
 
-  @SuppressWarnings({ "null", "unused" }) public static DPDA<Named, Token, Named> cast(
+  @SuppressWarnings({ "unused" }) public static DPDA<Named, Token, Named> cast(
       final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
     return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
         dpda.Σ().map(Token::new).collect(toSet()), //

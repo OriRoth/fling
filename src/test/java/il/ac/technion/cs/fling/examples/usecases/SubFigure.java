@@ -80,8 +80,8 @@ public class SubFigure {
     table[i + h / 2][j + w / 2] = n2;
   }
 
-  @SuppressWarnings("null") private static void fillTable(final Figure2 composite, final char[][] table, final int i,
-      final int j, final int h, final int w) {
+  private static void fillTable(final Figure2 composite, final char[][] table, final int i, final int j, final int h,
+      final int w) {
     if (isRow(composite.orientation)) {
       final int totalWidth = composite.figure.stream().map(SubFigure::getWidth).reduce(0, Integer::sum);
       int k = 0;
