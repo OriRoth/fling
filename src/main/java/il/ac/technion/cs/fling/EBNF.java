@@ -138,7 +138,6 @@ public class EBNF {
 
     public class Derive {
       private final Variable variable;
-      private Body form;
 
       public Derive(final Variable variable) {
         this.variable = variable;
