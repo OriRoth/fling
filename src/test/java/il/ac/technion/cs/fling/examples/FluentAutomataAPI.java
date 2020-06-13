@@ -4,7 +4,7 @@ import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public interface FluentAutomataAPI<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
+public interface FluentAutomataAPI<Σ extends Enum<Σ> & Terminal, Γ extends Enum<Γ> & Variable> {
   default String name() {
     return getClass().getSimpleName();
   }
@@ -14,5 +14,5 @@ public interface FluentAutomataAPI<Σ extends Enum<Σ> & Terminal, V extends Enu
   // TODO consider getting enums via reflection
   Class<Σ> Σ();
 
-  Class<V> V();
+  Class<Γ> Γ();
 }

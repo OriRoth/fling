@@ -1,10 +1,10 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.E;
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.E_;
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.F;
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.T;
-import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V.T_;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.E;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.E_;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.F;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.T;
+import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.T_;
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.begin;
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.end;
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.i;
@@ -24,19 +24,19 @@ import com.google.googlejavaformat.java.FormatterException;
 
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.V;
+import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ;
 import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
+public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
   // Terminal symbols:
   public enum Σ implements Terminal {
     plus, mult, begin, end, i
   }
 
   // Non-terminal symbols:
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     E, E_, T, T_, F
   }
 
@@ -44,8 +44,8 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

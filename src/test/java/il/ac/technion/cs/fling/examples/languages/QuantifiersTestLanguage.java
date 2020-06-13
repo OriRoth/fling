@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.V.X;
-import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.V.Y;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Γ.X;
+import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Γ.Y;
 import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.a;
 import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.b;
 import static il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage.Σ.c;
@@ -17,12 +17,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public class QuantifiersTestLanguage
-    implements FluentLanguageAPI<QuantifiersTestLanguage.Σ, QuantifiersTestLanguage.V> {
+    implements FluentLanguageAPI<QuantifiersTestLanguage.Σ, QuantifiersTestLanguage.Γ> {
   public enum Σ implements Terminal {
     a, b, c, d, e
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     X, Y
   }
 
@@ -30,8 +30,8 @@ public class QuantifiersTestLanguage
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

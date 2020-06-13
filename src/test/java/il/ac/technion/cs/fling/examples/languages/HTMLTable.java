@@ -1,13 +1,13 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Cell;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.HTML;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Header;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Row;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Table;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Td;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Th;
-import static il.ac.technion.cs.fling.examples.languages.HTMLTable.V.Tr;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Cell;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.HTML;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Header;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Row;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Table;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Td;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Th;
+import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Tr;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.end;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.html;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.table;
@@ -18,18 +18,18 @@ import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.¢;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.HTMLTable.V;
+import il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ;
 import il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class HTMLTable implements FluentLanguageAPI<Σ, V> {
+public class HTMLTable implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     html, table, tr, th, td, end, ¢
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     HTML, Table, Header, Row, Tr, Th, Td, Cell
   }
 
@@ -37,8 +37,8 @@ public class HTMLTable implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

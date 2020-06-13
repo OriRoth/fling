@@ -1,17 +1,17 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.AdditionalClause;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Bodyless;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Fact;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.FirstClause;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Program;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Query;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Rule;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.RuleBody;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.RuleHead;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Statement;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.Term;
-import static il.ac.technion.cs.fling.examples.languages.Datalog.V.WithBody;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.AdditionalClause;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Bodyless;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Fact;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.FirstClause;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Program;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Query;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Rule;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.RuleBody;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.RuleHead;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Statement;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Term;
+import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.WithBody;
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.always;
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.and;
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.fact;
@@ -47,7 +47,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Fling input specifying the formal Datalog language.
  * 
  * @author Yossi Gil */
-public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
+public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
   /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
     infer, fact, query, of, and, when, always, v, l
@@ -57,7 +57,7 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
    * list of {@link #Statement}, etc. */
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
     RuleHead, RuleBody, FirstClause, AdditionalClause, Term
   }
@@ -66,8 +66,8 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   /** Short name of {@link String}.class, used to specify the type of parameters

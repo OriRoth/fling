@@ -1,9 +1,9 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.BNF.V.PlainBNF;
-import static il.ac.technion.cs.fling.examples.languages.BNF.V.Rule;
-import static il.ac.technion.cs.fling.examples.languages.BNF.V.RuleBody;
-import static il.ac.technion.cs.fling.examples.languages.BNF.V.RuleTail;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.PlainBNF;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.Rule;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.RuleBody;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.RuleTail;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.bnf;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.derive;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.into;
@@ -21,12 +21,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.V> {
+public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.Γ> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     PlainBNF, Rule, RuleBody, RuleTail
   }
 
@@ -38,8 +38,8 @@ public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

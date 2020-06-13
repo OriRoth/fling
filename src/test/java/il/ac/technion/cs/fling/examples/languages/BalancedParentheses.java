@@ -1,22 +1,22 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.V.P;
+import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Γ.P;
 import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.c;
 import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.ↄ;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.BalancedParentheses.V;
+import il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Γ;
 import il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class BalancedParentheses implements FluentLanguageAPI<Σ, V> {
+public class BalancedParentheses implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     c, ↄ
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     P
   }
 
@@ -24,8 +24,8 @@ public class BalancedParentheses implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

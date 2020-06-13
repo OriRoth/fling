@@ -84,7 +84,7 @@ public class EBNF {
 
   static class Builder {
     private final Set<Token> Σ = new LinkedHashSet<>();
-    private final Set<Variable> V = new LinkedHashSet<>();
+    private final Set<Variable> Γ = new LinkedHashSet<>();
     private final Set<ERule> R = new LinkedHashSet<>();
     private Variable start;
 
@@ -110,7 +110,7 @@ public class EBNF {
     }
 
     Variable add(final Variable v) {
-      V.add(v);
+      Γ.add(v);
       return v;
     }
 
@@ -133,7 +133,7 @@ public class EBNF {
 
     public EBNF build() {
       assert start != null : "declare a start variable";
-      return new EBNF(Σ, V, start, R);
+      return new EBNF(Σ, Γ, start, R);
     }
 
     public class Derive {
@@ -179,7 +179,7 @@ public class EBNF {
         final List<Body> forms = new ArrayList<>();
         for (final Variable v : vs) {
           forms.add(new Body(v));
-          V.add(v);
+          Γ.add(v);
         }
         R.add(new ERule(variable, forms));
         return Builder.this;

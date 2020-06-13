@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.V.Figure;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.V.Orientation;
+import static il.ac.technion.cs.fling.examples.languages.SubFigure.Γ.Figure;
+import static il.ac.technion.cs.fling.examples.languages.SubFigure.Γ.Orientation;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.column;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.load;
 import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.row;
@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.adapters.ScalaGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.SubFigure.V;
+import il.ac.technion.cs.fling.examples.languages.SubFigure.Γ;
 import il.ac.technion.cs.fling.examples.languages.SubFigure.Σ;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
@@ -27,12 +27,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
-public class SubFigure implements FluentLanguageAPI<Σ, V> {
+public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     load, row, column, seal
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     Figure, Orientation
   }
 
@@ -40,8 +40,8 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

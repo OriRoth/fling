@@ -20,7 +20,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     PlainBNF, Rule, RuleBody, RuleTail
   }
 

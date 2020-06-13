@@ -24,7 +24,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 
   @Test void test2() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.ε, equalTo(BalancedParentheses.V.P));
+    assertThat(b.ε, equalTo(BalancedParentheses.Γ.P));
   }
 
   @Test void test3() {
@@ -54,7 +54,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 
   @Test void test6() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Γ, hasItems(BalancedParentheses.V.values()));
+    assertThat(b.Γ, hasItems(BalancedParentheses.Γ.values()));
   }
 
   @Test void test7() {

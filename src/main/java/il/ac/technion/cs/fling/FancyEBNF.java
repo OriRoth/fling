@@ -26,7 +26,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 
 /** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form <code>V ::= w X | Y z.</code>, augmented with
+ * derivation rules of the form <code>v ::= w X | Y z.</code>, augmented with
  * lots of services which found shelter in this class.
  * 
  * @author Ori Roth */
@@ -198,7 +198,7 @@ public class FancyEBNF extends EBNF.Decorator {
 
   static class Builder {
     private final Set<Token> Σ = new LinkedHashSet<>();
-    private final Set<Variable> V = new LinkedHashSet<>();
+    private final Set<Variable> Γ = new LinkedHashSet<>();
     private final Set<ERule> R = new LinkedHashSet<>();
     private final Set<Variable> heads = new LinkedHashSet<>();
 
@@ -223,7 +223,7 @@ public class FancyEBNF extends EBNF.Decorator {
     }
 
     Variable add(final Variable v) {
-      V.add(v);
+      Γ.add(v);
       return v;
     }
 
@@ -289,7 +289,7 @@ public class FancyEBNF extends EBNF.Decorator {
         final List<Body> forms = new ArrayList<>();
         for (final Variable v : vs) {
           forms.add(new Body(v));
-          V.add(v);
+          Γ.add(v);
         }
         R.add(new ERule(variable, forms));
         return Builder.this;

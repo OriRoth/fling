@@ -1,13 +1,13 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Constructor;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Declaration;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Field;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Header;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Initializer;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Member;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Method;
-import static il.ac.technion.cs.fling.examples.languages.Java.V.Program;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Constructor;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Declaration;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Field;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Header;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Initializer;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Member;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Method;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Program;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
-import il.ac.technion.cs.fling.examples.languages.Java.V;
+import il.ac.technion.cs.fling.examples.languages.Java.Γ;
 import il.ac.technion.cs.fling.examples.languages.Java.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
@@ -35,7 +35,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Fling input specifying the formal Datalog language.
  * 
  * @author Yossi Gil */
-public class Java implements FluentLanguageAPI<Σ, V> {
+public class Java implements FluentLanguageAPI<Σ, Γ> {
   /** Set of terminals, i.e., method names of generated fluent API. */
   public enum Σ implements Terminal {
     name, number, variable, method
@@ -45,7 +45,7 @@ public class Java implements FluentLanguageAPI<Σ, V> {
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
    * list of {@link #Statement}, etc. */
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     Program, Statement, Expression, InfixExpression, PrefixExpression, Declaration, Header, Member, Field, Constructor,
     Method, Initializer
   }
@@ -54,8 +54,8 @@ public class Java implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   /** Datalog's grammar in Backus-Naur form. */

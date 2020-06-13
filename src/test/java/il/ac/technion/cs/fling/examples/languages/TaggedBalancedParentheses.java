@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V.AB;
-import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V.P;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Γ.AB;
+import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Γ.P;
 import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.a;
 import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.b;
 import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ.c;
@@ -9,18 +9,18 @@ import static il.ac.technion.cs.fling.examples.languages.TaggedBalancedParenthes
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.V;
+import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Γ;
 import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, V> {
+public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     c, ↄ, a, b
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     P, AB
   }
 
@@ -28,8 +28,8 @@ public class TaggedBalancedParentheses implements FluentLanguageAPI<Σ, V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {

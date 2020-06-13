@@ -1,11 +1,11 @@
 package il.ac.technion.cs.fling.examples.languages;
 
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.EBNF;
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.MySymbol;
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.Rule;
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.RuleBody;
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.RuleItem;
-import static il.ac.technion.cs.fling.examples.languages.EBNF.V.RuleTail;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.EBNF;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.MySymbol;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.Rule;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.RuleBody;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.RuleItem;
+import static il.ac.technion.cs.fling.examples.languages.EBNF.Γ.RuleTail;
 import static il.ac.technion.cs.fling.examples.languages.EBNF.Σ.__;
 import static il.ac.technion.cs.fling.examples.languages.EBNF.Σ.bnf;
 import static il.ac.technion.cs.fling.examples.languages.EBNF.Σ.derive;
@@ -28,12 +28,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
+public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.Γ> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone, oneOrMore, twoOrMore, noneOrMore, optional, __
   }
 
-  public enum V implements Variable {
+  public enum Γ implements Variable {
     EBNF, Rule, RuleBody, RuleTail, RuleItem, MySymbol
   }
 
@@ -45,8 +45,8 @@ public class EBNF implements FluentLanguageAPI<EBNF.Σ, EBNF.V> {
     return Σ.class;
   }
 
-  @Override public Class<V> V() {
-    return V.class;
+  @Override public Class<Γ> Γ() {
+    return Γ.class;
   }
 
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
