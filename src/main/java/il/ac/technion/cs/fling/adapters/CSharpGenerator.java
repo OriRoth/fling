@@ -7,10 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -24,7 +26,7 @@ public class CSharpGenerator extends AbstractGenerator {
   }
 
   @Override public String printFluentAPI(
-      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
         fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
@@ -40,19 +42,17 @@ public class CSharpGenerator extends AbstractGenerator {
     return "BOT";
   }
 
-  @Override public String typeName(final APICompiler.TypeName name) {
+  @Override public String typeName(final TypeName name) {
     return printTypeName(name);
   }
 
-  @Override public String typeName(final APICompiler.TypeName name,
-      final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
+  @Override public String typeName(final TypeName name, final List<PolymorphicType<TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
 
-  @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String startMethod(final MethodDeclaration declaration, final PolymorphicType<TypeName> returnType) {
     return String.format("public static %s %s(){return new %s();}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -63,8 +63,8 @@ public class CSharpGenerator extends AbstractGenerator {
     return String.format("public void %s(){}", terminationMethodName);
   }
 
-  @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printIntermediateMethod(final MethodDeclaration declaration,
+      final PolymorphicType<TypeName> returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
         printType(returnType), //
         declaration.name.name(), //
@@ -80,14 +80,14 @@ public class CSharpGenerator extends AbstractGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
-      final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration,
+      final List<AbstractMethod<TypeName, MethodDeclaration>> methods) {
     return String.format("%s{%s}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
   }
 
-  public String printTypeName(final APICompiler.TypeName name) {
+  public String printTypeName(final TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
 
@@ -101,14 +101,13 @@ public class CSharpGenerator extends AbstractGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(
-      final APICompiler.MethodDeclaration declaration) {
+  @SuppressWarnings("static-method") public String printParametersList(final MethodDeclaration declaration) {
     return declaration.getInferredParameters().stream() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }
 
-  public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     return declaration.typeVariables.isEmpty()
         ? String.format("public class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
         : String.format("public class %s<%s>%s", //

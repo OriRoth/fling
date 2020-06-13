@@ -50,7 +50,7 @@ public class JavaMediator {
     ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    final JavaAPIAdapter apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
+    final JavaGenerator apiAdapter = new JavaGenerator(packageName, apiName, "$", namer) {
       @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
@@ -135,7 +135,7 @@ public class JavaMediator {
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaAPIAdapter(null, namer.headVariableClassName(bnf.ε), "$", namer) {
+        .map(bnf -> new JavaGenerator(null, namer.headVariableClassName(bnf.ε), "$", namer) {
           @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }

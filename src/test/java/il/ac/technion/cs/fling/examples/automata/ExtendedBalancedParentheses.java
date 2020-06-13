@@ -12,7 +12,7 @@ import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParenthe
 import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.ↄ;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
+import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -45,7 +45,7 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
       .go());
-  public static final String fluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated",
+  public static final String fluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated",
       "ExtendedBalancedParentheses", "$",
       new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());

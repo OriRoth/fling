@@ -26,4 +26,4 @@
  * Fluent API compiler output AST nodes.
  *
  * @since April 2019 */
-package il.ac.technion.cs.fling.internal.compiler.api.nodes;
+package il.ac.technion.cs.fling.internal.compiler.api.dom;

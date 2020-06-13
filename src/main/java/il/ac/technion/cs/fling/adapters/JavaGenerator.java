@@ -8,13 +8,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Chained;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -25,11 +27,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  * chains.
  *
  * @author Ori Roth */
-public class JavaAPIAdapter extends AbstractGenerator {
+public class JavaGenerator extends AbstractGenerator {
   private final String packageName;
   private final String className;
 
-  public JavaAPIAdapter(final String packageName, final String className, final String terminationMethodName,
+  public JavaGenerator(final String packageName, final String className, final String terminationMethodName,
       final Namer namer) {
     super(terminationMethodName, namer);
     this.packageName = packageName;
@@ -37,7 +39,7 @@ public class JavaAPIAdapter extends AbstractGenerator {
   }
 
   @Override public String printFluentAPI(
-      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
@@ -61,19 +63,18 @@ public class JavaAPIAdapter extends AbstractGenerator {
     return "ø";
   }
 
-  @Override public String typeName(final APICompiler.TypeName name) {
+  @Override public String typeName(final TypeName name) {
     return printTypeName(name);
   }
 
-  @Override public String typeName(final APICompiler.TypeName name,
-      final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
+  @Override public String typeName(final TypeName name, final List<PolymorphicType<TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
 
-  @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String startMethod(final MethodDeclaration declaration,
+      final PolymorphicType<TypeName> returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -89,8 +90,8 @@ public class JavaAPIAdapter extends AbstractGenerator {
         terminationMethodName);
   }
 
-  @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String printIntermediateMethod(final MethodDeclaration declaration,
+      final PolymorphicType<TypeName> returnType) {
     return String.format("%s %s(%s);", //
         printType(returnType), //
         declaration.name.name(), //
@@ -113,8 +114,8 @@ public class JavaAPIAdapter extends AbstractGenerator {
     return "interface ø {}";
   }
 
-  @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
-      final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration,
+      final List<AbstractMethod<TypeName, MethodDeclaration>> methods) {
     return String.format("interface %s%s{%s}", //
         printInterfaceDeclaration(declaration), //
         !declaration.isAccepting ? "" : " extends " + topTypeName(), //
@@ -124,11 +125,11 @@ public class JavaAPIAdapter extends AbstractGenerator {
             .collect(joining()));
   }
 
-  public String printTypeName(final APICompiler.TypeName name) {
+  public String printTypeName(final TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
 
-  public String printTypeName(final APICompiler.InterfaceDeclaration declaration) {
+  public String printTypeName(final InterfaceDeclaration declaration) {
     return printTypeName(declaration.q, declaration.α, declaration.legalJumps);
   }
 
@@ -140,22 +141,21 @@ public class JavaAPIAdapter extends AbstractGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
         declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
   }
 
-  public String printTypeName(
-      final InterfaceNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> interfaze) {
+  public String printTypeName(final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> interfaze) {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
 
   public String printConcreteImplementation(
-      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
-            .map(AbstractMethodNode::asChainedMethod) //
+            .map(AbstractMethod::asChainedMethod) //
             .map(Chained::declaration) //
             .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
                 declaration.name.name(), //

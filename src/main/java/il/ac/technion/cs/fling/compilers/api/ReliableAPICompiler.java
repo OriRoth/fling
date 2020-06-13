@@ -1,8 +1,8 @@
 package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.bot;
-import static il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode.top;
+import static il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType.bot;
+import static il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType.top;
 import static il.ac.technion.cs.fling.internal.util.As.list;
 import static il.ac.technion.cs.fling.internal.util.As.word;
 import static java.util.stream.Collectors.toList;
@@ -19,10 +19,10 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.ConcreteImplementationNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -37,17 +37,17 @@ public class ReliableAPICompiler extends APICompiler {
     super(dpda);
   }
 
-  @Override protected List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
+  @Override protected List<AbstractMethod<TypeName, MethodDeclaration>> compileStartMethods() {
+    final List<AbstractMethod<TypeName, MethodDeclaration>> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
-      $.add(new AbstractMethodNode.Start<>(new MethodDeclaration(Constants.$$), //
-          PolymorphicTypeNode.top()));
+      $.add(new AbstractMethod.Start<>(new MethodDeclaration(Constants.$$), //
+          PolymorphicType.top()));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      final AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
-          new AbstractMethodNode.Start<>(new MethodDeclaration(σ), //
+      final AbstractMethod.Start<TypeName, MethodDeclaration> startMethod = //
+          new AbstractMethod.Start<>(new MethodDeclaration(σ), //
               consolidate(δ.q$, //
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
@@ -58,20 +58,20 @@ public class ReliableAPICompiler extends APICompiler {
     return $;
   }
 
-  @Override protected List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
+  @Override protected List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
     return list( //
         fixedInterfaces(), //
         types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
   }
 
-  @SuppressWarnings("static-method") private List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
-    return Arrays.asList(InterfaceNode.top());
+  @SuppressWarnings("static-method") private List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
+    return Arrays.asList(Interfac.top());
   }
 
-  @SuppressWarnings("unused") @Override protected ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation() {
-    return new ConcreteImplementationNode<>(dpda.Σ() //
+  @SuppressWarnings("unused") @Override protected TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation() {
+    return new TypeBody<>(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
-        .map(σ -> new AbstractMethodNode.Chained<TypeName, MethodDeclaration>(new MethodDeclaration(σ))) //
+        .map(σ -> new AbstractMethod.Chained<TypeName, MethodDeclaration>(new MethodDeclaration(σ))) //
         .collect(toList()));
   }
 
@@ -86,10 +86,10 @@ public class ReliableAPICompiler extends APICompiler {
     if (types.containsKey($))
       return types.get($).isBot() ? null : $;
     types.put($, shallowIsBot($) ? //
-        InterfaceNode.bot() : //
-        InterfaceNode.top()); // Pending computation.
-    final InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> body = encodedBody(q, α, legalJumps);
-    types.put($, body == null ? InterfaceNode.bot() : body);
+        Interfac.bot() : //
+        Interfac.top()); // Pending computation.
+    final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> body = encodedBody(q, α, legalJumps);
+    types.put($, body == null ? Interfac.bot() : body);
     return types.get($).isBot() ? null : $;
   }
 
@@ -110,16 +110,16 @@ public class ReliableAPICompiler extends APICompiler {
     return true;
   }
 
-  private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
+  private Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
       final Word<Named> α, final Set<Named> legalJumps) {
-    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
-    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
+    final List<AbstractMethod<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
+    new AbstractMethod.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
         .filter(method -> !method.returnType.isBot()) //
         .collect(toList()));
     if (dpda.isAccepting(q))
-      $.add(new AbstractMethodNode.Termination<>());
+      $.add(new AbstractMethod.Termination<>());
     return $.isEmpty() ? null
-        : new InterfaceNode<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
+        : new Interfac<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
             Collections.unmodifiableList($));
   }
 
@@ -131,55 +131,55 @@ public class ReliableAPICompiler extends APICompiler {
    * @param legalJumps
    * @param σ          current input letter
    * @return next state type */
-  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, final Set<Named> legalJumps,
+  private PolymorphicType<TypeName> next(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), legalJumps, false);
+    return δ == null ? PolymorphicType.bot() : common(δ, α.pop(), legalJumps, false);
   }
 
-  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
+  private PolymorphicType<TypeName> consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       final TypeName name = encodedName(q, α, legalJumps);
       return name == null ? bot() : //
-          new PolymorphicTypeNode<>(name, getTypeArguments(legalJumps, isInitialType));
+          new PolymorphicType<>(name, getTypeArguments(legalJumps, isInitialType));
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
 
-  private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
+  private PolymorphicType<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
       final Set<Named> legalJumps, final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
       final TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
       return name == null ? bot() : //
-          new PolymorphicTypeNode<>(name, getTypeArguments(legalJumps, isInitialType));
+          new PolymorphicType<>(name, getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
-    final Map<Named, PolymorphicTypeNode<TypeName>> typeArguments = new LinkedHashMap<>();
+    final Map<Named, PolymorphicType<TypeName>> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
-      final PolymorphicTypeNode<TypeName> argument = consolidate(q, α, legalJumps, isInitialType);
+      final PolymorphicType<TypeName> argument = consolidate(q, α, legalJumps, isInitialType);
       if (!argument.isBot())
         typeArguments.put(q, argument);
     }
     final TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
     return name == null ? bot() : //
-        new PolymorphicTypeNode<>( //
+        new PolymorphicType<>( //
             encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()), //
             new ArrayList<>(typeArguments.values()));
   }
 
-  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
+  private PolymorphicType<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
       final boolean isInitialType) {
     return !legalJumps.contains(δ.q$) ? bot() : //
         isInitialType ? top() : //
             typeVariables.get(δ.q$);
   }
 
-  private List<PolymorphicTypeNode<TypeName>> getTypeArguments(final Set<Named> legalJumps,
+  private List<PolymorphicType<TypeName>> getTypeArguments(final Set<Named> legalJumps,
       final boolean isInitialType) {
     return !isInitialType ? //
         dpda.Q() //
@@ -187,7 +187,7 @@ public class ReliableAPICompiler extends APICompiler {
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> PolymorphicTypeNode.<TypeName>top()) //
+            .map(q -> PolymorphicType.<TypeName>top()) //
             .collect(toList());
   }
 }

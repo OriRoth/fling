@@ -12,7 +12,7 @@ import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
-import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
+import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.adapters.SMLGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -53,7 +53,7 @@ public class AeqB {
       .δ(q1, b, A, q1) //
       .δ(q1, b, B, q1, B, B) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AeqB",
+  public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AeqB")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** C++ fluent API supporting method chains of the form

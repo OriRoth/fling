@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.examples.languages.Datalog;
 @SuppressWarnings("static-method") class CreationTest {
   @Test public void checkDatalog() {
     final Datalog x = new Datalog();
-    JavaMediator y = new JavaMediator(x.BNF(), "", x.name(), x.Σ());
+    final JavaMediator y = new JavaMediator(x.BNF(), "", x.name(), x.Σ());
   }
 
   @Test public void checkBNF() {

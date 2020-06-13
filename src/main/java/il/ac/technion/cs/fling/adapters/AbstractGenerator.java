@@ -4,7 +4,7 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 
 abstract class AbstractGenerator implements PolymorphicLanguageAPIBaseAdapter {
-  protected AbstractGenerator(String terminationMethodName, Namer namer) {
+  protected AbstractGenerator(final String terminationMethodName, final Namer namer) {
     this.namer = namer;
     this.terminationMethodName = terminationMethodName;
   }

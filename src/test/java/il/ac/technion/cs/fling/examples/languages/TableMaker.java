@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
@@ -34,7 +34,7 @@ public class TableMaker {
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
     final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
-    final APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI = reliableAPICompiler
+    final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI = reliableAPICompiler
         .compileFluentAPI();
     apiClass = adapter.printFluentAPI(compileFluentAPI);
   }

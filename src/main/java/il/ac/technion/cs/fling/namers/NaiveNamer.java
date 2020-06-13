@@ -12,12 +12,12 @@ import java.util.function.Supplier;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Chained;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Intermediate;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode.Start;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Chained;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Intermediate;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Start;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
@@ -72,24 +72,24 @@ public class NaiveNamer implements Namer {
   }
 
   @Override public void name(
-      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
-        .map(InterfaceNode::methods) //
+        .map(Interfac::methods) //
         .flatMap(List::stream) //
-        .filter(AbstractMethodNode::isIntermediateMethod) //
-        .map(AbstractMethodNode::asIntermediateMethod) //
+        .filter(AbstractMethod::isIntermediateMethod) //
+        .map(AbstractMethod::asIntermediateMethod) //
         .map(Intermediate::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
     fluentAPI.startMethods.stream() //
-        .map(AbstractMethodNode::asStartMethod) //
+        .map(AbstractMethod::asStartMethod) //
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
     fluentAPI.concreteImplementation.methods.stream() //
-        .map(AbstractMethodNode::asChainedMethod) //
+        .map(AbstractMethod::asChainedMethod) //
         .map(Chained::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
   }

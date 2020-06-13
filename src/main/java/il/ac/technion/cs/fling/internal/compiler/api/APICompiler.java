@@ -8,11 +8,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.ConcreteImplementationNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.InterfaceNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -27,37 +27,37 @@ public abstract class APICompiler {
   /** Inducing automaton. */
   public final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
-  protected final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types = new LinkedHashMap<>();
+  protected final Map<TypeName, Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> types = new LinkedHashMap<>();
   /** Mapping of terminals to type variable nodes. */
-  protected final Map<Named, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
+  protected final Map<Named, PolymorphicType<TypeName>> typeVariables = new LinkedHashMap<>();
 
   public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
-    dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
+    dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicType<>(new TypeName(q))));
   }
 
   /** Compile fluent API. The object's state after calling this method is
    * undefined.
    *
    * @return compiled API */
-  public APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
-    return new APICompilationUnitNode<>(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
+  public CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI() {
+    return new CompilationUnit<>(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
   }
 
   /** Compile API concrete implementation.
    *
    * @return concrete implementation */
-  protected abstract ConcreteImplementationNode<TypeName, MethodDeclaration> complieConcreteImplementation();
+  protected abstract TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation();
 
   /** Compile API static start methods.
    *
    * @return compiled methods */
-  protected abstract List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods();
+  protected abstract List<AbstractMethod<TypeName, MethodDeclaration>> compileStartMethods();
 
   /** Compile API types.
    *
    * @return compiled types */
-  protected abstract List<InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces();
+  protected abstract List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces();
 
   /** Type name node declaration.
    *

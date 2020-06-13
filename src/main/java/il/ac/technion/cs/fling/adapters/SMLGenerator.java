@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
-import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -27,7 +27,7 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String printFluentAPI(
-      final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n\n%s", fluentAPI.interfaces.stream().map(this::printInterface).collect(joining(" ")),
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
@@ -48,15 +48,15 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String typeName(final APICompiler.TypeName name,
-      final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
+      final List<PolymorphicType<APICompiler.TypeName>> typeArguments) {
     return typeArguments.isEmpty() ? printTypeName(name)
         : String.format("(%s) %s", //
             typeArguments.stream().map(this::printType).collect(joining(",")), //
             printTypeName(name));
   }
 
-  @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+  @Override public String startMethod(final APICompiler.MethodDeclaration declaration,
+      final PolymorphicType<APICompiler.TypeName> returnType) {
     final String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, printType(returnType), name);
   }
@@ -66,7 +66,7 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
+      final PolymorphicType<APICompiler.TypeName> returnType) {
     if (!declaration.getInferredParameters().isEmpty()) {
       throw new RuntimeException("fluent API function parameters are not suported");
     }
@@ -82,7 +82,7 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
-      final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+      final List<AbstractMethod<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
     return String.format("%s of {\n%s\n}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining(",\n")));

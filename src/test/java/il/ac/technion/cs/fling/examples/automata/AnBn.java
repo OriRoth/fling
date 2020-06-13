@@ -12,7 +12,7 @@ import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
-import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
+import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -43,7 +43,7 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AnBn",
+  public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AnBn",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CPPGenerator("$", new NaiveNamer("AnBn")) //
