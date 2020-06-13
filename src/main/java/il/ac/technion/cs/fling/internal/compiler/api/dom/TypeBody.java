@@ -4,13 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class TypeBody<T, D> {
-  public final List<AbstractMethod<T, D>> methods;
+  public final List<AbstractMethod> methods;
 
-  public TypeBody(final List<AbstractMethod<T, D>> methods) {
+  public TypeBody(final List<AbstractMethod> methods) {
     this.methods = Collections.unmodifiableList(methods);
   }
 
-  public List<AbstractMethod<T, D>> methods() {
+  public List<AbstractMethod> methods() {
     return methods;
   }
 }

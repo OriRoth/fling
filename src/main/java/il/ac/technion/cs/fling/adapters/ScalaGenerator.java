@@ -8,12 +8,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -47,13 +47,13 @@ public class ScalaGenerator extends AbstractGenerator {
     return printTypeName(name);
   }
 
-  @Override public String typeName(final TypeName name, final List<PolymorphicType<TypeName>> typeArguments) {
+  @Override public String typeName(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s[%s]", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
 
-  @Override public String startMethod(final MethodDeclaration declaration, final PolymorphicType<TypeName> returnType) {
+  @Override public String startMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
         printType(returnType), //
@@ -64,8 +64,7 @@ public class ScalaGenerator extends AbstractGenerator {
     return String.format("def %s():Unit={}", terminationMethodName);
   }
 
-  @Override public String printIntermediateMethod(final MethodDeclaration declaration,
-      final PolymorphicType<TypeName> returnType) {
+  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
     final String _returnType = printType(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
@@ -83,8 +82,7 @@ public class ScalaGenerator extends AbstractGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String printInterface(final InterfaceDeclaration declaration,
-      final List<AbstractMethod<TypeName, MethodDeclaration>> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration, final List<AbstractMethod> methods) {
     return String.format("%s(%s){\n%s\n}", //
         printInterfaceDeclaration(declaration), //
         printClassParameters(declaration.typeVariables), //
@@ -127,15 +125,15 @@ public class ScalaGenerator extends AbstractGenerator {
         .collect(joining(","));
   }
 
-  public String printTypeInstantiation(final PolymorphicType<TypeName> returnType) {
+  public String printTypeInstantiation(final Type returnType) {
     final String _returnType = printType(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
         && !_returnType.contains("_") ? //
             "__" + _returnType
             : String.format("new %s(%s)", _returnType, //
-                returnType.typeArguments == null ? "" : //
-                    returnType.typeArguments.stream() //
+                returnType.arguments == null ? "" : //
+                    returnType.arguments.stream() //
                         .map(this::printTypeInstantiation) //
                         .collect(joining(",")));
   }

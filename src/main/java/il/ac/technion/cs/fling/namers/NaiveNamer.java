@@ -10,14 +10,16 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
+import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Intermediate;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Start;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
@@ -71,8 +73,7 @@ public class NaiveNamer implements Namer {
         .forEach(this::setInferredFieldsInClass);
   }
 
-  @Override public void name(
-      final CompilationUnit<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+  @Override public void name(final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
@@ -141,7 +142,7 @@ public class NaiveNamer implements Namer {
     throw new RuntimeException("problem while building AST types");
   }
 
-  protected void setInferredParametersIntermediateInMethod(final APICompiler.MethodDeclaration declaration) {
+  protected void setInferredParametersIntermediateInMethod(final MethodDeclaration declaration) {
     final Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters() //
         .map(parameter -> {

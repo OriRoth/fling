@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -48,13 +48,13 @@ public class CPPGenerator extends AbstractGenerator {
     return printTypeName(name);
   }
 
-  @Override public String typeName(final TypeName name, final List<PolymorphicType<TypeName>> typeArguments) {
+  @Override public String typeName(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
         typeArguments.stream().map(this::printType).collect(joining(",")));
   }
 
-  @Override public String startMethod(final MethodDeclaration declaration, final PolymorphicType<TypeName> returnType) {
+  @Override public String startMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("%s %s(){return %s();}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -65,8 +65,7 @@ public class CPPGenerator extends AbstractGenerator {
     return String.format("void %s(){};", terminationMethodName);
   }
 
-  @Override public String printIntermediateMethod(final MethodDeclaration declaration,
-      final PolymorphicType<TypeName> returnType) {
+  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("%s %s(%s){return %s();};", //
         printType(returnType), //
         declaration.name.name(), //
@@ -84,8 +83,7 @@ public class CPPGenerator extends AbstractGenerator {
     return "class BOT{};";
   }
 
-  @Override public String printInterface(final InterfaceDeclaration declaration,
-      final List<AbstractMethod<TypeName, MethodDeclaration>> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration, final List<AbstractMethod> methods) {
     return String.format("%s{public:%s};", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));

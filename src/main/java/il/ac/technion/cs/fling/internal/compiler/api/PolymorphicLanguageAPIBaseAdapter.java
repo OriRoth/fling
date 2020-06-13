@@ -2,13 +2,10 @@ package il.ac.technion.cs.fling.internal.compiler.api;
 
 import java.util.List;
 
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.InterfaceDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 
 public interface PolymorphicLanguageAPIBaseAdapter {
   String printFluentAPI(CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI);
@@ -19,21 +16,21 @@ public interface PolymorphicLanguageAPIBaseAdapter {
 
   String typeName(TypeName name);
 
-  String typeName(TypeName name, List<PolymorphicType<TypeName>> typeArguments);
+  String typeName(TypeName name, List<Type> typeArguments);
 
-  default String printType(final PolymorphicType<TypeName> type) {
+  default String printType(final Type type) {
     return type.isTop() ? topTypeName()
         : type.isBot() ? bottomTypeName()
-            : type.typeArguments.isEmpty() ? typeName(type.name) : typeName(type.name, type.typeArguments);
+            : type.arguments.isEmpty() ? typeName(type.name) : typeName(type.name, type.arguments);
   }
 
-  String startMethod(MethodDeclaration declaration, PolymorphicType<TypeName> returnType);
+  String startMethod(MethodDeclaration declaration, Type returnType);
 
   String printTerminationMethod();
 
-  String printIntermediateMethod(MethodDeclaration declaration, PolymorphicType<TypeName> returnType);
+  String printIntermediateMethod(MethodDeclaration declaration, Type returnType);
 
-  default String printMethod(final AbstractMethod<TypeName, MethodDeclaration> method) {
+  default String printMethod(final AbstractMethod method) {
     return method.isStartMethod() ? startMethod(method.asStartMethod().declaration, method.asStartMethod().returnType) : //
         method.isTerminationMethod() ? printTerminationMethod() : //
             printIntermediateMethod(method.asIntermediateMethod().declaration,
@@ -44,8 +41,7 @@ public interface PolymorphicLanguageAPIBaseAdapter {
 
   String printBotInterface();
 
-  String printInterface(InterfaceDeclaration declaration,
-      List<AbstractMethod<TypeName, MethodDeclaration>> methods);
+  String printInterface(InterfaceDeclaration declaration, List<AbstractMethod> methods);
 
   default String printInterface(final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> interfaze) {
     return interfaze.isTop() ? printTopInterface()

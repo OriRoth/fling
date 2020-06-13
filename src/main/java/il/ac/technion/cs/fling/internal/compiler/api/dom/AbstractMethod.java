@@ -1,45 +1,47 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
-public interface AbstractMethod<T, D> {
-  class Start<T, D> implements AbstractMethod<T, D> {
-    public final D declaration;
-    public final PolymorphicType<T> returnType;
+import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 
-    public Start(final D declaration, final PolymorphicType<T> returnType) {
+public interface AbstractMethod {
+  class Start implements AbstractMethod {
+    public final MethodDeclaration declaration;
+    public final Type returnType;
+
+    public Start(final MethodDeclaration declaration, final Type returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
 
-    public D declaration() {
+    public MethodDeclaration declaration() {
       return declaration;
     }
   }
 
-  class Termination<T, D> implements AbstractMethod<T, D> {
+  class Termination implements AbstractMethod {
   }
 
-  class Intermediate<T, D> implements AbstractMethod<T, D> {
-    public final D declaration;
-    public final PolymorphicType<T> returnType;
+  class Intermediate implements AbstractMethod {
+    public final MethodDeclaration declaration;
+    public final Type returnType;
 
-    public Intermediate(final D declaration, final PolymorphicType<T> returnType) {
+    public Intermediate(final MethodDeclaration declaration, final Type returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
 
-    public D declaration() {
+    public MethodDeclaration declaration() {
       return declaration;
     }
   }
 
-  class Chained<T, D> implements AbstractMethod<T, D> {
-    public final D declaration;
+  class Chained implements AbstractMethod {
+    public final MethodDeclaration declaration;
 
-    public Chained(final D declaration) {
+    public Chained(final MethodDeclaration declaration) {
       this.declaration = declaration;
     }
 
-    public D declaration() {
+    public MethodDeclaration declaration() {
       return declaration;
     }
   }
@@ -60,15 +62,15 @@ public interface AbstractMethod<T, D> {
     return this instanceof Chained;
   }
 
-  default Start<T, D> asStartMethod() {
-    return (Start<T, D>) this;
+  default Start asStartMethod() {
+    return (Start) this;
   }
 
-  default Intermediate<T, D> asIntermediateMethod() {
-    return (Intermediate<T, D>) this;
+  default Intermediate asIntermediateMethod() {
+    return (Intermediate) this;
   }
 
-  default Chained<?, D> asChainedMethod() {
-    return (Chained<?, D>) this;
+  default Chained asChainedMethod() {
+    return (Chained) this;
   }
 }

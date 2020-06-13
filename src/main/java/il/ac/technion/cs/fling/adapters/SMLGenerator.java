@@ -7,10 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.PolymorphicType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -27,7 +29,7 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String printFluentAPI(
-      final CompilationUnit<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
+      final CompilationUnit<TypeName, MethodDeclaration, InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n\n%s", fluentAPI.interfaces.stream().map(this::printInterface).collect(joining(" ")),
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
@@ -41,22 +43,20 @@ public class SMLGenerator extends AbstractGenerator {
     return "BOT";
   }
 
-  @Override public String typeName(final APICompiler.TypeName name) {
+  @Override public String typeName(final TypeName name) {
     // TODO sanely check whether is type variable
     final String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + printTypeName(name);
   }
 
-  @Override public String typeName(final APICompiler.TypeName name,
-      final List<PolymorphicType<APICompiler.TypeName>> typeArguments) {
+  @Override public String typeName(final TypeName name, final List<Type> typeArguments) {
     return typeArguments.isEmpty() ? printTypeName(name)
         : String.format("(%s) %s", //
             typeArguments.stream().map(this::printType).collect(joining(",")), //
             printTypeName(name));
   }
 
-  @Override public String startMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicType<APICompiler.TypeName> returnType) {
+  @Override public String startMethod(final MethodDeclaration declaration, final Type returnType) {
     final String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, printType(returnType), name);
   }
@@ -65,8 +65,7 @@ public class SMLGenerator extends AbstractGenerator {
     return String.format("\t%s: TOP", terminationMethodName);
   }
 
-  @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
-      final PolymorphicType<APICompiler.TypeName> returnType) {
+  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
     if (!declaration.getInferredParameters().isEmpty()) {
       throw new RuntimeException("fluent API function parameters are not suported");
     }
@@ -81,14 +80,13 @@ public class SMLGenerator extends AbstractGenerator {
     return String.format("%s BOT = FAILURE", getDatatypeKeyword());
   }
 
-  @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
-      final List<AbstractMethod<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration, final List<AbstractMethod> methods) {
     return String.format("%s of {\n%s\n}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining(",\n")));
   }
 
-  public String printTypeName(final APICompiler.TypeName name) {
+  public String printTypeName(final TypeName name) {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
 
@@ -102,7 +100,7 @@ public class SMLGenerator extends AbstractGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
+  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     final String name = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
     final String variables = declaration.typeVariables.isEmpty() ? ""
         : String.format("(%s) ",
