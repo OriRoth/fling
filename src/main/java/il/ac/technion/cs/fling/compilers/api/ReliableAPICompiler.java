@@ -33,20 +33,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class ReliableAPICompiler extends APICompiler {
-  public ReliableAPICompiler(DPDA<Named, Token, Named> dpda) {
+  public ReliableAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
 
   @Override protected List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
+    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new AbstractMethodNode.Start<>(new MethodDeclaration(Constants.$$), //
           PolymorphicTypeNode.top()));
-    for (Token σ : dpda.Σ) {
-      δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+    for (final Token σ : dpda.Σ) {
+      final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
+      final AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
           new AbstractMethodNode.Start<>(new MethodDeclaration(σ), //
               consolidate(δ.q$, //
                   dpda.γ0.pop().push(δ.getΑ()), //
@@ -81,23 +81,23 @@ public class ReliableAPICompiler extends APICompiler {
    * @param q current state
    * @param α current stack symbols to be pushed
    * @return type name */
-  private TypeName encodedName(final Named q, final Word<Named> α, Set<Named> legalJumps) {
+  private TypeName encodedName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final TypeName $ = new TypeName(q, α, legalJumps);
     if (types.containsKey($))
       return types.get($).isBot() ? null : $;
     types.put($, shallowIsBot($) ? //
         InterfaceNode.bot() : //
         InterfaceNode.top()); // Pending computation.
-    InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> body = encodedBody(q, α, legalJumps);
+    final InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> body = encodedBody(q, α, legalJumps);
     types.put($, body == null ? InterfaceNode.bot() : body);
     return types.get($).isBot() ? null : $;
   }
 
-  private boolean shallowIsBot(TypeName type) {
+  private boolean shallowIsBot(final TypeName type) {
     if (dpda.isAccepting(type.q))
       return false;
-    for (Token σ : dpda.Σ) {
-      δ<Named, Token, Named> δ = dpda.δδ(type.q, σ, type.α);
+    for (final Token σ : dpda.Σ) {
+      final δ<Named, Token, Named> δ = dpda.δδ(type.q, σ, type.α);
       if (δ == null)
         continue;
       if (!δ.getΑ().isEmpty())
@@ -111,8 +111,8 @@ public class ReliableAPICompiler extends APICompiler {
   }
 
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
-      final Word<Named> α, Set<Named> legalJumps) {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
+                                                                                       final Word<Named> α, final Set<Named> legalJumps) {
+    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>(dpda.Σ().map(σ -> //
             new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
             .filter(method -> !method.returnType.isBot()) //
             .collect(toList()));
@@ -131,16 +131,16 @@ public class ReliableAPICompiler extends APICompiler {
    * @param legalJumps
    * @param σ          current input letter
    * @return next state type */
-  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, Set<Named> legalJumps, final Token σ) {
+  private PolymorphicTypeNode<TypeName> next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
     return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), legalJumps, false);
   }
 
-  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, Set<Named> legalJumps,
-      boolean isInitialType) {
+  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
+                                                    final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
-      TypeName name = encodedName(q, α, legalJumps);
+      final TypeName name = encodedName(q, α, legalJumps);
       return name == null ? bot() : //
           new PolymorphicTypeNode<>(name, getTypeArguments(legalJumps, isInitialType));
     }
@@ -148,37 +148,37 @@ public class ReliableAPICompiler extends APICompiler {
   }
 
   private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
-      Set<Named> legalJumps, boolean isInitialType) {
+                                               final Set<Named> legalJumps, final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
-      TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
+      final TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
       return name == null ? bot() : //
           new PolymorphicTypeNode<>(name, getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
-    Map<Named, PolymorphicTypeNode<TypeName>> typeArguments = new LinkedHashMap<>();
-    for (Named q : dpda.Q) {
-      PolymorphicTypeNode<TypeName> argument = consolidate(q, α, legalJumps, isInitialType);
+    final Map<Named, PolymorphicTypeNode<TypeName>> typeArguments = new LinkedHashMap<>();
+    for (final Named q : dpda.Q) {
+      final PolymorphicTypeNode<TypeName> argument = consolidate(q, α, legalJumps, isInitialType);
       if (!argument.isBot())
         typeArguments.put(q, argument);
     }
-    TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
+    final TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
     return name == null ? bot() : //
         new PolymorphicTypeNode<>( //
             encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()), //
             new ArrayList<>(typeArguments.values()));
   }
 
-  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, Set<Named> legalJumps,
-      boolean isInitialType) {
+  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
+                                                        final boolean isInitialType) {
     return !legalJumps.contains(δ.q$) ? bot() : //
         isInitialType ? top() : //
             typeVariables.get(δ.q$);
   }
 
-  private List<PolymorphicTypeNode<TypeName>> getTypeArguments(Set<Named> legalJumps, boolean isInitialType) {
+  private List<PolymorphicTypeNode<TypeName>> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
     return !isInitialType ? //
         dpda.Q() //
             .filter(legalJumps::contains) //

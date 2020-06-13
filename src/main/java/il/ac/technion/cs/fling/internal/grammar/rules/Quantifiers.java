@@ -15,7 +15,7 @@ public interface Quantifiers {
     return new OneOrMore(normalize(s, ss));
   }
   static List<Symbol> normalize(final TempComponent s, final TempComponent... ss) {
-    List<Symbol> $ = new ArrayList<>();
+    final List<Symbol> $ = new ArrayList<>();
     $.add((Symbol) s.normalize());
     Arrays.stream(ss).map(TempComponent::normalize).map(Symbol.class::cast) //
         .forEach($::add);

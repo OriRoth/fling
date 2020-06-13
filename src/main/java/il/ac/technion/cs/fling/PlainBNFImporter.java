@@ -15,9 +15,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * @since 2020-05-08 */
 public class PlainBNFImporter {
   final EBNF.Builder builder = new EBNF.Builder();
-  public PlainBNFImporter(PlainBNF bnf) {
+  public PlainBNFImporter(final PlainBNF bnf) {
     this.bnf = bnf;
-    this.ebnf = go();
+      ebnf = go();
   }
 
   private final EBNF ebnf;
@@ -37,7 +37,7 @@ public class PlainBNFImporter {
     }
     try {
       return builder.build();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new RuntimeException(
           bnf + "problem while analyzing BNF, make sure the grammar adheres its class description (LL/LR/etc)", e);
     }
@@ -48,12 +48,12 @@ public class PlainBNFImporter {
   }
 
   void convert(final Derivation derivation) {
-    Variable variable = derivation.variable;
+    final Variable variable = derivation.variable;
     if (derivation.ruleBody instanceof ConcreteDerivation) {
       // Concrete derivation rule.
-      ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
+      final ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
       builder.derive(variable).to((concrete).to);
-      for (RuleTail tail : concrete.ruleTail)
+      for (final RuleTail tail : concrete.ruleTail)
         if (tail instanceof ConcreteDerivationTail)
           // Concrete tail.
           builder.derive(variable).to(((ConcreteDerivationTail) tail).or);

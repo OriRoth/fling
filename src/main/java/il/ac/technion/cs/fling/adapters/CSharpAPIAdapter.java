@@ -97,7 +97,7 @@ public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   }
 
   public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    String qn = q.name();
+    final String qn = q.name();
     // TODO: manage this HACK
     return α == null ? qn.contains("_") ? qn : typeVariableName(q)
         : String.format("%s_%s%s", //
@@ -126,7 +126,7 @@ public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
         );
   }
 
-  public String typeVariableName(Named typeVariable) {
+  public String typeVariableName(final Named typeVariable) {
     return "_" + typeVariable.name();
   }
 }

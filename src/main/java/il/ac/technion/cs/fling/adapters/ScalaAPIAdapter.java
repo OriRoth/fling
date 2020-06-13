@@ -71,8 +71,8 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
 
   @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    String _returnType = printType(returnType);
-    String returnValue = printTypeInstantiation(returnType);
+    final String _returnType = printType(returnType);
+    final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
         declaration.name.name(), //
         printParametersList(declaration), //
@@ -102,7 +102,7 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
 
   @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α,
       final Set<Named> legalJumps) {
-    String qn = q.name();
+    final String qn = q.name();
     return α == null ? qn
         : String.format("%s_%s%s", //
             q.name(), //
@@ -118,8 +118,8 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   }
 
   public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
-    String typeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    String typeParameters = declaration.typeVariables.stream().map(Named::name) //
+    final String typeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+    final String typeParameters = declaration.typeVariables.stream().map(Named::name) //
         .collect(Collectors.joining(","));
     return String.format("class %s", //
         declaration.typeVariables.isEmpty() ? //
@@ -127,14 +127,14 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
             : String.format("%s[%s]", typeName, typeParameters));
   }
 
-  @SuppressWarnings("static-method") private String printClassParameters(Word<Named> typeVariables) {
+  @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
     return typeVariables.stream().map(Named::name) //
         .map(var -> String.format("val __%s:%s", var, var)) //
         .collect(joining(","));
   }
 
-  public String printTypeInstantiation(PolymorphicTypeNode<TypeName> returnType) {
-    String _returnType = printType(returnType);
+  public String printTypeInstantiation(final PolymorphicTypeNode<TypeName> returnType) {
+    final String _returnType = printType(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
         && !_returnType.contains("_") ? //

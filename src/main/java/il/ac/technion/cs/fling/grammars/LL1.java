@@ -38,8 +38,8 @@ public class LL1 extends Grammar {
   @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
-    Named q0;
-    Word<Named> γ0;
+    final Named q0;
+    final Word<Named> γ0;
     final Set<Token> Σ = new LinkedHashSet<>(bnf.Σ);
     Σ.remove(Constants.$$);
     // TODO use namer to determine type names.

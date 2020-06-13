@@ -6,7 +6,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public interface FluentAutomataAPI<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> {
   default String name() {
-    return this.getClass().getSimpleName();
+    return getClass().getSimpleName();
   }
 
   EBNF BNF();

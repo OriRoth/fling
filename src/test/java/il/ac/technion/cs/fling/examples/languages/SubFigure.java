@@ -52,20 +52,20 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
         build();
   }
 
-  public static void main(String[] args) {
-    SubFigure language = new SubFigure();
-    Namer namer = new NaiveNamer("SubFigure");
-    LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
-    DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
-    APICompiler compiler = new ReliableAPICompiler(dpda);
-    PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
+  public static void main(final String[] args) {
+    final SubFigure language = new SubFigure();
+    final Namer namer = new NaiveNamer("SubFigure");
+    final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
+    final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
+    final APICompiler compiler = new ReliableAPICompiler(dpda);
+    final PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
       // Ignore parameters:
       @Override public String printParametersList(
           @SuppressWarnings("unused") final APICompiler.MethodDeclaration declaration) {
         return "";
       }
     };
-    String output = adapter.printFluentAPI(compiler.compileFluentAPI());
+    final String output = adapter.printFluentAPI(compiler.compileFluentAPI());
     System.out.println(output);
   }
 }

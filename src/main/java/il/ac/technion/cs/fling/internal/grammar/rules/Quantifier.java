@@ -32,7 +32,7 @@ public abstract class Quantifier implements Component {
       BiFunction<Variable, String, String> variableVisitingSolver, //
       final String accessor, final Supplier<String> variableNamesGenerator);
 
-  protected int fieldCount(Symbol s) {
+  protected int fieldCount(final Symbol s) {
     assert !s.isTerminal();
     if (s.isToken())
       return s.isParameterized() ? 1 : 0;
@@ -44,7 +44,7 @@ public abstract class Quantifier implements Component {
     return 0;
   }
 
-  public static abstract class Sequence extends Quantifier {
+  public abstract static class Sequence extends Quantifier {
     public final List<Symbol> symbols;
 
     @Override public Stream<Symbol> symbols() {
@@ -67,7 +67,7 @@ public abstract class Quantifier implements Component {
       return symbols().mapToInt(this::fieldCount).sum();
     }
     protected void verify() {
-      for (Symbol s : symbols)
+      for (final Symbol s : symbols)
         if (fieldCount(s) > 1)
           throw new RuntimeException("complex nested quantifiers are not supported");
       if (symbols.isEmpty() || fieldCount() == 0)

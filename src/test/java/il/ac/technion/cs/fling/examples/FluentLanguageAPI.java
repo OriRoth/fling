@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 public interface FluentLanguageAPI<Σ extends Enum<Σ> & Terminal, V extends Enum<V> & Variable> extends Quantifiers{
   default String name() {
-    return this.getClass().getSimpleName();
+    return getClass().getSimpleName();
   }
 
   EBNF BNF();

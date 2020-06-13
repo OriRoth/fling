@@ -1,4 +1,12 @@
-The first general and practical solution of the fluent API problem is presented. We give an algorithm that given a deterministic context free language (equivalently, LR(k), k≥0 language) encodes it in an unbounded parametric polymorphism type system employing only a polynomial number of types. The theoretical result is employed in an actual tool Fling—a fluent API compiler-compiler in the style of YACC, tailored for embedding DSLs in polymorphic, object-oriented languages.
+Fling is the first general and practical solution of the fluent API problem. The implementation 
+includes an algorithm that takes a deterministic context free language 
+(equivalently, LR(k), k≥0 language) and encodes it in an unbounded 
+parametric polymorphism type system employing only a polynomial number of types. 
+The theoretical result is employed in an actual tool Fling—a fluent API compiler-compiler 
+in the venue of YACC, tailored for embedding DSLs in polymorphic, object-oriented languages.
+
+
+
 
 # Fling
 

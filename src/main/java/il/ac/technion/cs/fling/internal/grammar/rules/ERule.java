@@ -11,7 +11,7 @@ public class ERule {
   public final Variable variable;
   private final List<Body> bodies = new ArrayList<>();
 
-  public boolean of(Variable v) {
+  public boolean of(final Variable v) {
     return v.equals(variable);
   }
 
@@ -34,8 +34,8 @@ public class ERule {
     Objects.requireNonNull(variable);
     Objects.requireNonNull(forms);
     this.variable = variable;
-    this.bodies.addAll(forms);
-    assert this.bodies.size() > 0;
+      bodies.addAll(forms);
+    assert bodies.size() > 0;
   }
 
   public Stream<Body> bodies() {
@@ -87,11 +87,11 @@ public class ERule {
     return bodies().flatMap(Collection::stream);
   }
 
-  private static Stream<Token> tokens(Stream<Component> symbols) {
+  private static Stream<Token> tokens(final Stream<Component> symbols) {
     return symbols.filter(Component::isToken).map(Component::asToken);
   }
 
-  private static Stream<Variable> variables(Stream<Component> symbols) {
+  private static Stream<Variable> variables(final Stream<Component> symbols) {
     return symbols.filter(Component::isVariable).map(Component::asVariable);
   }
 }

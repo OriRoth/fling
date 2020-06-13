@@ -46,11 +46,11 @@ public class JavaMediator {
 
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
-    this.namer = new NaiveNamer(packageName, apiName);
-    this.ll1 = new LL1(FancyEBNF.from(bnf), namer);
+      namer = new NaiveNamer(packageName, apiName);
+      ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    JavaAPIAdapter apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
+    final JavaAPIAdapter apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
       @Override
       protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
@@ -83,19 +83,19 @@ public class JavaMediator {
       }
     };
     final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
-    JavaInterfacesASTAdapter astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
+    final JavaInterfacesASTAdapter astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
       @Override
       protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
         return astVisitorAdapter.printASTVisitorClass(compilationUnit);
       }
     };
     this.Σ = Σ;
-    this.parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
+      parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
-    this.astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
-    this.apiClass = apiAdapter
+      astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
+      apiClass = apiAdapter
         .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
-    this.astCompilerClass = parserCompiler.printParserClass();
+      astCompilerClass = parserCompiler.printParserClass();
   }
 
   protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {

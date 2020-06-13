@@ -114,12 +114,12 @@ public class HTMLTable {
         printTabs(depth));
   }
 
-  private static String printOptions(String[] options) {
+  private static String printOptions(final String[] options) {
     return options.length == 0 ? "" : " " + String.join(" ", options);
   }
 
-  private static String printTabs(int depth) {
-    StringBuilder $ = new StringBuilder();
+  private static String printTabs(final int depth) {
+    final StringBuilder $ = new StringBuilder();
     for (int i = 0; i < depth; ++i)
       $.append('\t');
     return $.toString();

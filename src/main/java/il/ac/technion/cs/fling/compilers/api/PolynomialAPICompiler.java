@@ -30,20 +30,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class PolynomialAPICompiler extends APICompiler {
-  private PolynomialAPICompiler(DPDA<Named, Token, Named> dpda) {
+  private PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
 
   @Override protected List<AbstractMethodNode<TypeName, MethodDeclaration>> compileStartMethods() {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
+    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new AbstractMethodNode.Start<>(new MethodDeclaration(Constants.$$), //
           PolymorphicTypeNode.top()));
-    for (Token σ : dpda.Σ) {
-      δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+    for (final Token σ : dpda.Σ) {
+      final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
+      final AbstractMethodNode.Start<TypeName, MethodDeclaration> startMethod = //
           new AbstractMethodNode.Start<>(new MethodDeclaration(σ), //
               consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
       if (!startMethod.returnType.isBot())
@@ -84,7 +84,7 @@ public class PolynomialAPICompiler extends APICompiler {
 
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
       final Word<Named> α) {
-    List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = dpda.Σ().map(σ -> //
+    final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = dpda.Σ().map(σ -> //
             new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(java.util.stream.Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
@@ -104,14 +104,14 @@ public class PolynomialAPICompiler extends APICompiler {
     return δ == null ? PolymorphicTypeNode.bot() : common(δ, α.pop(), false);
   }
 
-  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, boolean isInitialType) {
+  private PolymorphicTypeNode<TypeName> consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     return δ == null ? new PolymorphicTypeNode<>(encodedName(q, α), getTypeArguments(isInitialType))
         : common(δ, α.pop(), isInitialType);
   }
 
   private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
-      boolean isInitialType) {
+                                               final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);
@@ -123,11 +123,11 @@ public class PolynomialAPICompiler extends APICompiler {
         dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
 
-  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, boolean isInitialType) {
+  private PolymorphicTypeNode<TypeName> getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
   }
 
-  private List<PolymorphicTypeNode<TypeName>> getTypeArguments(boolean isInitialType) {
+  private List<PolymorphicTypeNode<TypeName>> getTypeArguments(final boolean isInitialType) {
     return !isInitialType ? list(typeVariables.values())
         : dpda.Q()
             .map(q$ -> dpda.isAccepting(q$) ? PolymorphicTypeNode.<TypeName>top() : PolymorphicTypeNode.<TypeName>bot())

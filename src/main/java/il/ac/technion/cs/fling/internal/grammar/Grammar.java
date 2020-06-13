@@ -34,14 +34,14 @@ public abstract class Grammar {
   public final FancyEBNF normalizedEBNF;
   private final Map<Variable, FancyEBNF> subBNFs;
 
-  public Grammar(FancyEBNF ebnf, Namer namer) {
+  public Grammar(final FancyEBNF ebnf, final Namer namer) {
     this.ebnf = ebnf;
     this.namer = namer;
-    this.bnf = getBNF(ebnf);
-    this.normalizedEBNF = normalize(ebnf, namer);
-    this.normalizedBNF = getBNF(normalizedEBNF);
+      bnf = getBNF(ebnf);
+      normalizedEBNF = normalize(ebnf, namer);
+      normalizedBNF = getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
-    for (Variable head : bnf.headVariables)
+    for (final Variable head : bnf.headVariables)
       subBNFs.put(head, computeSubBNF(head));
   }
 
@@ -52,22 +52,22 @@ public abstract class Grammar {
     return buildAutomaton(bnf);
   }
 
-  private FancyEBNF getBNF(FancyEBNF ebnf) {
-    Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
-    Set<ERule> R = new LinkedHashSet<>();
-    Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
-    Set<Variable> extensionProducts = new LinkedHashSet<>();
-    for (ERule r : ebnf.R) {
-      List<Body> rhs = new ArrayList<>();
-      for (Body b : r.bodiesList()) {
-        List<Component> cs = new ArrayList<>();
-        for (Component c : b) {
+  private FancyEBNF getBNF(final FancyEBNF ebnf) {
+    final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
+    final Set<ERule> R = new LinkedHashSet<>();
+    final Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
+    final Set<Variable> extensionProducts = new LinkedHashSet<>();
+    for (final ERule r : ebnf.R) {
+      final List<Body> rhs = new ArrayList<>();
+      for (final Body b : r.bodiesList()) {
+        final List<Component> cs = new ArrayList<>();
+        for (final Component c : b) {
           if (!c.isQuantifier()) {
             cs.add(c);
             continue;
           }
-          Quantifier q = c.asQuantifier();
-          Variable head = q.expand(namer, extensionProducts::add, R::add);
+          final Quantifier q = c.asQuantifier();
+          final Variable head = q.expand(namer, extensionProducts::add, R::add);
           extensionHeadsMapping.put(head, q);
           cs.add(head);
         }
@@ -80,18 +80,18 @@ public abstract class Grammar {
         false);
   }
 
-  public FancyEBNF getSubBNF(Variable variable) {
+  public FancyEBNF getSubBNF(final Variable variable) {
     return subBNFs.get(variable);
   }
 
-  private FancyEBNF computeSubBNF(Variable v) {
+  private FancyEBNF computeSubBNF(final Variable v) {
     final Set<Token> Σ = new LinkedHashSet<>();
     final Set<Variable> V = new LinkedHashSet<>();
     V.add(v);
     final Set<ERule> rs = new LinkedHashSet<>();
     for (boolean more = true; more;) {
       more = false;
-      for (ERule r : bnf.R)
+      for (final ERule r : bnf.R)
         if (!rs.contains(r) && V.contains(r.variable)) {
           more = true;
           rs.add(r);
@@ -102,25 +102,25 @@ public abstract class Grammar {
     return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
 
-  private static FancyEBNF normalize(FancyEBNF bnf, Namer namer) {
-    Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
-    Set<ERule> R = new LinkedHashSet<>();
-    for (Variable v : bnf.Γ) {
-      List<Body> rhs = bnf.bodiesList(v);
-      assert rhs.size() > 0 : v.toString() + " in: " + bnf;
+  private static FancyEBNF normalize(final FancyEBNF bnf, final Namer namer) {
+    final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
+    final Set<ERule> R = new LinkedHashSet<>();
+    for (final Variable v : bnf.Γ) {
+      final List<Body> rhs = bnf.bodiesList(v);
+      assert rhs.size() > 0 : v + " in: " + bnf;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
         R.add(new ERule(v, rhs));
         continue;
       }
-      List<Variable> alteration = new ArrayList<>();
-      for (Body sf : rhs)
+      final List<Variable> alteration = new ArrayList<>();
+      for (final Body sf : rhs)
         if (sf.size() == 1 && sf.stream().allMatch(bnf::isOriginalVariable))
           // Ready alteration variable.
           alteration.add(sf.get(0).asVariable());
         else {
           // Create a suitable child variable.
-          Variable a = namer.createASTChild(v);
+          final Variable a = namer.createASTChild(v);
           V.add(a);
           R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
@@ -131,13 +131,13 @@ public abstract class Grammar {
         bnf.extensionProducts, false);
   }
 
-  public static boolean isSequenceRHS(FancyEBNF bnf, Variable v) {
-    List<Body> rhs = bnf.bodiesList(v);
+  public static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
+    final List<Body> rhs = bnf.bodiesList(v);
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
 
   @SuppressWarnings({ "null", "unused" }) public static DPDA<Named, Token, Named> cast(
-      DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
+          final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
     return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
         dpda.Σ().map(Token::new).collect(toSet()), //
         new LinkedHashSet<>(dpda.Γ), //

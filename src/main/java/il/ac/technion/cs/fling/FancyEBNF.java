@@ -44,19 +44,19 @@ public class FancyEBNF extends EBNF.Decorator {
   /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
-  public FancyEBNF(EBNF ebnf, final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
-      final Set<Variable> extensionProducts, final boolean addStartSymbolDerivationRules) {
+  public FancyEBNF(final EBNF ebnf, final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
+                   final Set<Variable> extensionProducts, final boolean addStartSymbolDerivationRules) {
     super(ebnf);
     if (addStartSymbolDerivationRules) {
-      this.Γ.add(Constants.S);
+      Γ.add(Constants.S);
       R.add(new ERule(Constants.S, new Body(ebnf.ε)));
     }
     this.headVariables = headVariables;
     this.extensionHeadsMapping = extensionHeadsMapping == null ? Collections.emptyMap() : extensionHeadsMapping;
     this.extensionProducts = extensionProducts == null ? Collections.emptySet() : extensionProducts;
-    this.nullables = getNullables();
-    this.firsts = getFirsts();
-    this.follows = getFollows();
+    nullables = getNullables();
+    firsts = getFirsts();
+    follows = getFollows();
   }
 
   /** @param symbols sequence of grammar symbols
@@ -88,7 +88,7 @@ public class FancyEBNF extends EBNF.Decorator {
 
   /** Return a possibly smaller BNF including only rules reachable form start
    * symbol */
-  private static FancyEBNF reduce(EBNF b) {
+  private static FancyEBNF reduce(final EBNF b) {
     final Set<Variable> Γ = new LinkedHashSet<>();
     final Set<ERule> R = new LinkedHashSet<>();
     final Set<Token> Σ = new LinkedHashSet<>();
@@ -100,7 +100,7 @@ public class FancyEBNF extends EBNF.Decorator {
       final Set<Variable> currentVariables = new LinkedHashSet<>();
       currentVariables.addAll(newVariables);
       newVariables.clear();
-      for (Variable v : currentVariables) {
+      for (final Variable v : currentVariables) {
         b.rules(v).forEachOrdered(R::add);
         b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
         b.rules(v).flatMap(ERule::variables) //
@@ -142,11 +142,11 @@ public class FancyEBNF extends EBNF.Decorator {
       for (final Variable v : Γ)
         for (final Body sf : bodiesList(v))
           for (final Component symbol : sf) {
-            Set<Token> set = $.get(v);
+            final Set<Token> set = $.get(v);
             if (symbol.isQuantifier())
               changed |= set.addAll(symbol.asQuantifier().getFirsts(ss -> { //
-                Set<Token> firsts = new LinkedHashSet<>();
-                for (Component s : ss) {
+                final Set<Token> firsts = new LinkedHashSet<>();
+                for (final Component s : ss) {
                   firsts.addAll($.get(s));
                   if (!symbol.asQuantifier().isNullable(this::isNullable))
                     break;
@@ -154,7 +154,7 @@ public class FancyEBNF extends EBNF.Decorator {
                 return firsts;
               }));
             else {
-              Set<Token> c = $.get(symbol);
+              final Set<Token> c = $.get(symbol);
               assert c != null : this + ":\n" + symbol;
               changed |= set.addAll(c);
             }
@@ -188,8 +188,8 @@ public class FancyEBNF extends EBNF.Decorator {
     return unmodifiableMap($);
   }
 
-  public static FancyEBNF from(EBNF source) {
-    Set<Variable> heads = new LinkedHashSet<>();
+  public static FancyEBNF from(final EBNF source) {
+    final Set<Variable> heads = new LinkedHashSet<>();
     source.Σ.forEach(t -> t.parameters() //
         .map(Parameter::declaredHeadVariables).forEach(heads::addAll));
     return new FancyEBNF(source, heads, null, null, true);
@@ -216,23 +216,23 @@ public class FancyEBNF extends EBNF.Decorator {
       return this;
     }
 
-    Quantifier add(Quantifier q) {
+    Quantifier add(final Quantifier q) {
       q.symbols().forEach(this::add);
       return q;
     }
 
-    Variable add(Variable v) {
+    Variable add(final Variable v) {
       V.add(v);
       return v;
     }
 
-    Token add(Token t) {
+    Token add(final Token t) {
       Σ.add(t);
       t.parameters().map(Parameter::declaredHeadVariables).forEach(heads::addAll);
       return t;
     }
 
-    Component add(Component s) {
+    Component add(final Component s) {
       assert !s.isTerminal();
       if (s instanceof Token)
         return add((Token) s);
@@ -253,20 +253,20 @@ public class FancyEBNF extends EBNF.Decorator {
       }
 
       public Builder to(final TempComponent... cs) {
-        List<Component> normalize = normalize(cs);
+        final List<Component> normalize = normalize(cs);
         return to(normalize);
       }
 
-      private Builder to(List<Component> cs) {
-        for (Component c : cs)
+      private Builder to(final List<Component> cs) {
+        for (final Component c : cs)
           add(c);
         R.add(new ERule(variable, new Body(cs)));
         return Builder.this;
       }
 
       private List<Component> normalize(final TempComponent... cs) {
-        List<Component> $ = new ArrayList<>();
-        for (TempComponent c : cs)
+        final List<Component> $ = new ArrayList<>();
+        for (final TempComponent c : cs)
           $.add(c.normalize());
         return $;
       }
@@ -285,7 +285,7 @@ public class FancyEBNF extends EBNF.Decorator {
       }
 
       public Builder into(final Variable... vs) {
-        List<Body> forms = new ArrayList<>();
+        final List<Body> forms = new ArrayList<>();
         for (final Variable v : vs) {
           forms.add(new Body(v));
           V.add(v);

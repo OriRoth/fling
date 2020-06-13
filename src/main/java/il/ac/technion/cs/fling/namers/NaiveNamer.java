@@ -50,7 +50,7 @@ public class NaiveNamer implements Namer {
   }
 
   @Override public Variable createQuantificationChild(final List<? extends Component> symbols) {
-    Component symbol = symbols.isEmpty() || !symbols.get(0).isToken() && !symbols.get(0).isVariable() ? //
+    final Component symbol = symbols.isEmpty() || !symbols.get(0).isToken() && !symbols.get(0).isVariable() ? //
         Constants.$$ : symbols.get(0);
     if (!notationsChildrenCounter.containsKey(symbol))
       notationsChildrenCounter.put(symbol, 1);
@@ -111,7 +111,7 @@ public class NaiveNamer implements Namer {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
           .map(parameter -> {
-            String typeName;
+            final String typeName;
             if (parameter.isStringTypeParameter())
               typeName = parameter.asStringTypeParameter().typeName();
             else if (parameter.isVariableTypeParameter())
@@ -145,7 +145,7 @@ public class NaiveNamer implements Namer {
     final Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters() //
         .map(parameter -> {
-          String typeName;
+          final String typeName;
           if (parameter.isStringTypeParameter())
             typeName = parameter.asStringTypeParameter().parameterTypeName();
           else if (parameter.isVariableTypeParameter())

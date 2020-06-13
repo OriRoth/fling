@@ -72,12 +72,12 @@ public class Java implements FluentLanguageAPI<Σ, V> {
 
   /** Prints the Datalog API/AST types/AST run-time compiler to corresponding
    * files. */
-  public static void main(String[] args) throws IOException, FormatterException {
+  public static void main(final String[] args) throws IOException, FormatterException {
     /*
      * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
      * types/AST run-time compiler.
      */
-    JavaMediator jm = new JavaMediator(//
+    final JavaMediator jm = new JavaMediator(//
         bnf, // use this BNF as language specification
         // Name of package in which output will reside
         "il.ac.technion.cs.fling.examples.generated",
@@ -88,7 +88,7 @@ public class Java implements FluentLanguageAPI<Σ, V> {
     $.put("Datalog", jm.apiClass);
     $.put("DatalogAST", jm.astClass);
     $.put("DatalogCompiler", jm.astCompilerClass);
-    String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
+    final String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {

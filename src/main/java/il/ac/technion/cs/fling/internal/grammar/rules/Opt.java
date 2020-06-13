@@ -18,17 +18,17 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 
 @JavaCompatibleQuantifier public class Opt extends Quantifier.Sequence {
-  public Opt(List<Symbol> symbols) {
+  public Opt(final List<Symbol> symbols) {
     super(symbols);
   }
 
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
-    List<Component> expandedSymbols = new ArrayList<>();
-    for (Symbol s : symbols)
+    final List<Component> expandedSymbols = new ArrayList<>();
+    for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
         s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
-    Variable head = namer.createQuantificationChild(symbols);
+    final Variable head = namer.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
     ruleDeclaration.accept(new ERule(head, asList(//
         new Body(expandedSymbols), //
@@ -36,12 +36,12 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     return head;
   }
   
-  @Override protected String getVisitingStatement(Symbol symbol, BiFunction<Variable, String, String> variableVisitingSolver,
-      String accessor, Supplier<String> variableNamesGenerator) {
+  @Override protected String getVisitingStatement(final Symbol symbol, final BiFunction<Variable, String, String> variableVisitingSolver,
+                                                  final String accessor, final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
     final String streamingVariable = variableNamesGenerator.get();
-    String action = symbol.isVariable() ? //
+    final String action = symbol.isVariable() ? //
         variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
         String.format("{%s}", symbol.asQuantifier().symbols() //
             .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable, variableNamesGenerator)));
@@ -51,11 +51,11 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         action);
   }
   
-  @Override public List<FieldNodeFragment> getFields(Function<Component, List<FieldNodeFragment>> fieldsSolver,
-      @SuppressWarnings("unused") Function<String, String> nameFromBaseSolver) {
-    List<FieldNodeFragment> $ = new ArrayList<>();
-    for (Symbol symbol : symbols)
-      for (FieldNodeFragment rawField : fieldsSolver.apply(symbol))
+  @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
+                                                     @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
+    final List<FieldNodeFragment> $ = new ArrayList<>();
+    for (final Symbol symbol : symbols)
+      for (final FieldNodeFragment rawField : fieldsSolver.apply(symbol))
         $.add(new FieldNodeFragment( //
             String.format("%s<%s>", //
                 Optional.class.getCanonicalName(), //
@@ -69,7 +69,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     return $;
   }
 
-  @Override public boolean isNullable(@SuppressWarnings("unused") Predicate<Component> nullabilitySolver) {
+  @Override public boolean isNullable(@SuppressWarnings("unused") final Predicate<Component> nullabilitySolver) {
     return true;
   }
 

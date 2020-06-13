@@ -24,8 +24,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
   protected final String grammarFileResourcePath;
 
-  public JavaANTLRAPIAdapter(String grammarFileResourcePath, String packageName, String className,
-      String terminationMethodName, Namer namer) {
+  public JavaANTLRAPIAdapter(final String grammarFileResourcePath, final String packageName, final String className,
+                             final String terminationMethodName, final Namer namer) {
     super(packageName, className, terminationMethodName, namer);
     this.grammarFileResourcePath = grammarFileResourcePath;
   }
@@ -37,8 +37,8 @@ public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
         LinkedList.class.getCanonicalName());
   }
 
-  @Override protected String printConcreteImplementationMethodBody(Token σ,
-      @SuppressWarnings("unused") List<ParameterFragment> parameters) {
+  @Override protected String printConcreteImplementationMethodBody(final Token σ,
+                                                                   @SuppressWarnings("unused") final List<ParameterFragment> parameters) {
     return String.format("w.add(\"%s\");", σ.name());
   }
 
@@ -75,8 +75,8 @@ public class JavaANTLRAPIAdapter extends JavaAPIAdapter {
         RuntimeException.class.getCanonicalName());
   }
 
-  @Override protected String printStartMethodBody(Token σ,
-      @SuppressWarnings("unused") List<ParameterFragment> parameters) {
+  @Override protected String printStartMethodBody(final Token σ,
+                                                  @SuppressWarnings("unused") final List<ParameterFragment> parameters) {
     return String.format("return new α().%s();", σ.name());
   }
 }

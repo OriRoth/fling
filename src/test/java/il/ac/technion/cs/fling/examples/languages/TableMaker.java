@@ -23,18 +23,18 @@ public class TableMaker {
   public final String apiClass;
 
   public TableMaker() {
-    String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
-    Tool tool = new Tool();
-    Grammar grammar = tool.loadGrammar(grammarFilePath);
-    FancyEBNF bnf = FancyEBNF.from(new ANTLRImporter(grammar).getEbnf());
-    String packageName = "il.ac.technion.cs.fling.examples.generated";
-    String apiName = name;
-    Namer namer = new NaiveNamer(packageName, apiName);
-    LL1 ll1 = new LL1(bnf, namer);
-    JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
-    DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
-    ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
-    APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI = reliableAPICompiler
+    final String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
+    final Tool tool = new Tool();
+    final Grammar grammar = tool.loadGrammar(grammarFilePath);
+    final FancyEBNF bnf = FancyEBNF.from(new ANTLRImporter(grammar).getEbnf());
+    final String packageName = "il.ac.technion.cs.fling.examples.generated";
+    final String apiName = name;
+    final Namer namer = new NaiveNamer(packageName, apiName);
+    final LL1 ll1 = new LL1(bnf, namer);
+    final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, "$", namer);
+    final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
+    final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
+    final APICompilationUnitNode<TypeName, MethodDeclaration, InterfaceDeclaration> compileFluentAPI = reliableAPICompiler
         .compileFluentAPI();
     apiClass = adapter.printFluentAPI(compileFluentAPI);
   }

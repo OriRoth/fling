@@ -178,7 +178,7 @@ public class Word<T> implements List<T> {
     inner.forEach(Objects::requireNonNull);
   }
 
-  public static <T> Word<T> of(Stream<T> s) {
+  public static <T> Word<T> of(final Stream<T> s) {
     return new Word<>(s.collect(toList()));
   }
 }

@@ -35,7 +35,7 @@ public class EBNF {
   /** Derivation rules collection */
   public final Set<ERule> R;
 
-  public EBNF(Set<Token> Σ, Set<Variable> Γ, Variable ε, Set<ERule> R) {
+  public EBNF(final Set<Token> Σ, final Set<Variable> Γ, final Variable ε, final Set<ERule> R) {
     this.Σ = Σ;
     this.Γ = Γ;
     this.ε = ε;
@@ -44,8 +44,8 @@ public class EBNF {
     verify();
   }
   
-  public static abstract class Decorator extends EBNF {
-    public Decorator(EBNF ebnf) {
+  public abstract static class Decorator extends EBNF {
+    public Decorator(final EBNF ebnf) {
       super(ebnf.Σ, ebnf.Γ, ebnf.ε, ebnf.R);
     }
   }
@@ -61,7 +61,7 @@ public class EBNF {
   }
 
   /** @return all rules defining a variable */
-  public Stream<ERule> rules(Variable v) {
+  public Stream<ERule> rules(final Variable v) {
     return R.stream().filter(r -> r.of(v));
   }
 
@@ -106,22 +106,22 @@ public class EBNF {
       return this;
     }
 
-    Quantifier add(Quantifier q) {
+    Quantifier add(final Quantifier q) {
       q.symbols().forEach(this::add);
       return q;
     }
 
-    Variable add(Variable v) {
+    Variable add(final Variable v) {
       V.add(v);
       return v;
     }
 
-    Token add(Token t) {
+    Token add(final Token t) {
       Σ.add(t);
       return t;
     }
 
-    Component add(Component s) {
+    Component add(final Component s) {
       assert !s.isTerminal();
       if (s instanceof Token)
         return add((Token) s);
@@ -147,20 +147,20 @@ public class EBNF {
       }
 
       public Builder to(final TempComponent... cs) {
-        List<Component> normalize = normalize(cs);
+        final List<Component> normalize = normalize(cs);
         return to(normalize);
       }
 
-      private Builder to(List<Component> cs) {
-        for (Component c:cs)
+      private Builder to(final List<Component> cs) {
+        for (final Component c:cs)
           add(c);
         R.add(new ERule(variable, new Body(cs)));
         return Builder.this;
       }
 
       private List<Component> normalize(final TempComponent... cs) {
-        List<Component> $ = new ArrayList<>();
-        for (TempComponent c: cs)
+        final List<Component> $ = new ArrayList<>();
+        for (final TempComponent c: cs)
           $.add(c.normalize());
         return $;
       }
@@ -179,7 +179,7 @@ public class EBNF {
       }
 
       public Builder into(final Variable... vs) {
-        List<Body> forms = new ArrayList<>();
+        final List<Body> forms = new ArrayList<>();
         for (final Variable v : vs) {
           forms.add(new Body(v));
           V.add(v);

@@ -27,7 +27,7 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   public SMLAPIAdapter(final String terminationMethodName, final Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.namer = namer;
-    this.firstDatatype = true;
+      firstDatatype = true;
   }
 
   @Override public String printFluentAPI(
@@ -47,7 +47,7 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
 
   @Override public String printIntermediateType(final APICompiler.TypeName name) {
     // TODO sanely check whether is type variable
-    String prefix = name.α == null && name.legalJumps == null ? "'" : "";
+    final String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + printTypeName(name);
   }
 
@@ -61,7 +61,7 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
 
   @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
+    final String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, printType(returnType), name);
   }
 
@@ -107,8 +107,8 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   }
 
   public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
-    String name = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    String variables = declaration.typeVariables.isEmpty() ? ""
+    final String name = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+    final String variables = declaration.typeVariables.isEmpty() ? ""
         : String.format("(%s) ",
             declaration.typeVariables.stream().map(Named::name).map(n -> "'" + n).collect(joining(", ")), name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);

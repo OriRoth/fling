@@ -76,14 +76,14 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
       System.out.println("directory " + PATH + " created successfully");
     }
     for (final Entry<String, String> file : files.entrySet()) {
-      String fileName = file.getKey();
-      String content = file.getValue();
+      final String fileName = file.getKey();
+      final String content = file.getValue();
       compile(fileName, content);
       System.out.println("file " + fileName + ".java written successfully.");
     }
   }
 
-  private void compile(String fileName, String content) throws IOException {
+  private void compile(final String fileName, final String content) throws IOException {
     final Path filePath = Paths.get(PATH + fileName + ".java");
     if (Files.exists(filePath))
       Files.delete(filePath);
@@ -93,10 +93,10 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
     ), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
   }
 
-  private String format(String content) {
+  private String format(final String content) {
     try {
       return new Formatter().formatSource(content);
-    } catch (FormatterException e) {
+    } catch (final FormatterException e) {
       e.printStackTrace();
       return content;
     }
