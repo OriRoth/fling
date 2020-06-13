@@ -115,7 +115,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     return body.toString();
   }
 
-  private String printConcreteChildMethodBody(final Variable v) {
+  @SuppressWarnings("boxing") private String printConcreteChildMethodBody(final Variable v) {
 
     final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();

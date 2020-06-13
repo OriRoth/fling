@@ -35,7 +35,7 @@ public class LL1 extends Grammar {
   }
 
   /** Translate LL(1) BNF to DPDA. */
-  @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
+  @SuppressWarnings("boxing") @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     final Named q0;

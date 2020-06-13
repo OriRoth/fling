@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
@@ -56,7 +56,7 @@ public class PolynomialAPICompiler extends APICompiler {
     return $;
   }
 
-  @Override protected List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
+  @Override protected List<Interface> compileInterfaces() {
     return list(fixedInterfaces(), types.values());
   }
 
@@ -67,8 +67,8 @@ public class PolynomialAPICompiler extends APICompiler {
         .collect(toList()));
   }
 
-  @SuppressWarnings("static-method") private List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
-    return Arrays.asList(Interfac.top(), Interfac.bot());
+  @SuppressWarnings("static-method") private List<Interface> fixedInterfaces() {
+    return Arrays.asList(Interface.top(), Interface.bot());
   }
 
   /** Get type name given a state and stack symbols to push. If this type is not
@@ -86,12 +86,12 @@ public class PolynomialAPICompiler extends APICompiler {
     return $;
   }
 
-  private Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α) {
+  private Interface encodedBody(final Named q, final Word<Named> α) {
     final List<Method> $ = dpda.Σ().map(σ -> //
     new Method.Intermediate(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
-    return new Interfac<>(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //
+    return new Interface(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //
         Collections.unmodifiableList($));
   }
 

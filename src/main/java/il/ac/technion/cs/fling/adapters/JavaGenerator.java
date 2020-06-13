@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
@@ -143,7 +143,7 @@ public class JavaGenerator extends AbstractGenerator {
         declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
   }
 
-  public String printTypeName(final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> interfaze) {
+  public String printTypeName(final Interface interfaze) {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
 

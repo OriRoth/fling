@@ -6,7 +6,7 @@ import java.util.Map;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
@@ -23,7 +23,7 @@ public abstract class APICompiler {
   /** Inducing automaton. */
   public final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
-  protected final Map<TypeName, Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> types = new LinkedHashMap<>();
+  protected final Map<TypeName, Interface> types = new LinkedHashMap<>();
   /** Mapping of terminals to type variable nodes. */
   protected final Map<Named, Type> typeVariables = new LinkedHashMap<>();
 
@@ -53,5 +53,5 @@ public abstract class APICompiler {
   /** Compile API types.
    *
    * @return compiled types */
-  protected abstract List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces();
+  protected abstract List<Interface> compileInterfaces();
 }

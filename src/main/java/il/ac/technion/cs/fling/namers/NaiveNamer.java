@@ -15,7 +15,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Intermediate;
@@ -77,7 +77,7 @@ public class NaiveNamer implements Namer {
     // Set intermediate methods parameter names:
     fluentAPI.interfaces.stream() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
-        .map(Interfac::methods) //
+        .map(Interface::methods) //
         .flatMap(List::stream) //
         .filter(Method::isIntermediateMethod) //
         .map(Method::asIntermediateMethod) //

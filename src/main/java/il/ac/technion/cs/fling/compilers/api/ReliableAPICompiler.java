@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
@@ -61,14 +61,14 @@ public class ReliableAPICompiler extends APICompiler {
     return $;
   }
 
-  @Override protected List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> compileInterfaces() {
+  @Override protected List<Interface> compileInterfaces() {
     return list( //
         fixedInterfaces(), //
         types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
   }
 
-  @SuppressWarnings("static-method") private List<Interfac<TypeName, MethodDeclaration, InterfaceDeclaration>> fixedInterfaces() {
-    return Arrays.asList(Interfac.top());
+  @SuppressWarnings("static-method") private List<Interface> fixedInterfaces() {
+    return Arrays.asList(Interface.top());
   }
 
   @SuppressWarnings("unused") @Override protected TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation() {
@@ -89,10 +89,10 @@ public class ReliableAPICompiler extends APICompiler {
     if (types.containsKey($))
       return types.get($).isBot() ? null : $;
     types.put($, shallowIsBot($) ? //
-        Interfac.bot() : //
-        Interfac.top()); // Pending computation.
-    final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> body = encodedBody(q, α, legalJumps);
-    types.put($, body == null ? Interfac.bot() : body);
+        Interface.bot() : //
+        Interface.top()); // Pending computation.
+    final Interface body = encodedBody(q, α, legalJumps);
+    types.put($, body == null ? Interface.bot() : body);
     return types.get($).isBot() ? null : $;
   }
 
@@ -113,8 +113,7 @@ public class ReliableAPICompiler extends APICompiler {
     return true;
   }
 
-  private Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α,
-      final Set<Named> legalJumps) {
+  private Interface encodedBody(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final List<Method> $ = new ArrayList<>(dpda.Σ().map(σ -> //
     new Method.Intermediate(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
         .filter(method -> !method.returnType.isBot()) //
@@ -122,7 +121,7 @@ public class ReliableAPICompiler extends APICompiler {
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
     return $.isEmpty() ? null
-        : new Interfac<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
+        : new Interface(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
             Collections.unmodifiableList($));
   }
 
