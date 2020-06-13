@@ -105,10 +105,11 @@ public class CSharpGenerator extends AbstractGenerator {
   }
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
+    String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty()
-        ? String.format("public class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
+        ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
-            printTypeName(declaration.q, declaration.α, declaration.legalJumps), //
+            printTypeName, //
             declaration.parameters().map(this::typeVariableName) //
                 .collect(Collectors.joining(",")),
             declaration.parameters().map(this::typeVariableName) //
