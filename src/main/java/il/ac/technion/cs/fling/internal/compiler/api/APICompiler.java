@@ -27,13 +27,12 @@ public abstract class APICompiler {
   /** Inducing automaton. */
   public final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
-  protected final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types;
+  protected final Map<TypeName, InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration>> types = new LinkedHashMap<>();
   /** Mapping of terminals to type variable nodes. */
   protected final Map<Named, PolymorphicTypeNode<TypeName>> typeVariables = new LinkedHashMap<>();
 
   public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
-    this.types = new LinkedHashMap<>();
     dpda.Q().forEach(q -> typeVariables.put(q, new PolymorphicTypeNode<>(new TypeName(q))));
   }
 
@@ -79,8 +78,8 @@ public abstract class APICompiler {
 
     TypeName(final Named q) {
       this.q = q;
-      this.α = null;
-      this.legalJumps = null;
+      α = null;
+      legalJumps = null;
     }
 
     @Override public int hashCode() {
@@ -192,11 +191,11 @@ public abstract class APICompiler {
     }
 
     InterfaceDeclaration() {
-      this.q = null;
-      this.α = null;
-      this.legalJumps = null;
-      this.typeVariables = null;
-      this.isAccepting = false;
+      q = null;
+      α = null;
+      legalJumps = null;
+      typeVariables = null;
+      isAccepting = false;
     }
   }
 }
