@@ -23,7 +23,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * @author Yossi Gil */
 public class EBNF {
   @Override public String toString() {
-    return "EBNF[Σ=" + Σ + ", Γ=" + Γ + ", ε=" + ε + ", R=" + R + "]";
+    return "<Σ=" + Σ + ", Γ=" + Γ + ", ε=" + ε + ", R=" + R + ">";
   }
 
   /** Tokens' vocabulary */

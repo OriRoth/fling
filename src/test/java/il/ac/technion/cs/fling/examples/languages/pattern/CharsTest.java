@@ -5,7 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
-@SuppressWarnings("static-method") public class CharsTest {
+@SuppressWarnings({ "boxing", "static-method" }) public class CharsTest {
   @Test public void test() {
     assertThat(Chars.EMPTY.size(), is(0));
   }

@@ -39,7 +39,7 @@ public final class Token implements Symbol {
   }
 
   @Override public int hashCode() {
-    return Objects.hash(Arrays.deepHashCode(parameters), terminal);
+    return 31 * Arrays.deepHashCode(parameters) + Objects.hash(terminal);
   }
 
   @Override public boolean equals(final Object obj) {
