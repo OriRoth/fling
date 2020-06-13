@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-public class TableMakerTest {
+@SuppressWarnings("static-method") public class TableMakerTest {
 
   @Test public void test() {
     assertNotNull(new TableMaker().apiClass);

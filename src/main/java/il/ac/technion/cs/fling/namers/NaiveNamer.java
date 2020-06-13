@@ -73,7 +73,7 @@ public class NaiveNamer implements Namer {
 
   @Override public void name(final CompilationUnit fluentAPI) {
     // Set intermediate methods parameter names:
-    fluentAPI.interfaces.stream() //
+    fluentAPI.interfaces() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
         .map(Interface::methods) //
         .flatMap(List::stream) //
@@ -82,7 +82,7 @@ public class NaiveNamer implements Namer {
         .map(Intermediate::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
-    fluentAPI.startMethods.stream() //
+    fluentAPI.startMethods() //
         .map(Method::asStartMethod) //
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);

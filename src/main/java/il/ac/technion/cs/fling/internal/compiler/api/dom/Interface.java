@@ -21,10 +21,6 @@ public class Interface {
     methods = null;
   }
 
-  public InterfaceDeclaration declaration() {
-    return declaration;
-  }
-
   public List<Method> methods() {
     return methods;
   }

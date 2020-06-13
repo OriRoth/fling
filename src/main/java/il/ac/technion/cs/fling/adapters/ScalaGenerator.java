@@ -30,8 +30,8 @@ public class ScalaGenerator extends AbstractGenerator {
   @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining("\n")), //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
+        fluentAPI.interfaces().map(this::printInterface).collect(joining("\n")), //
+        fluentAPI.startMethods().map(this::printMethod).collect(joining("\n")));
   }
 
   @Override public String topTypeName() {

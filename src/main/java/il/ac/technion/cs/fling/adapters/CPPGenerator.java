@@ -29,10 +29,10 @@ public class CPPGenerator extends AbstractGenerator {
   @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s%s", //
-        fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot())
+        fluentAPI.interfaces().filter(i -> !i.isTop() && !i.isBot())
             .map(i -> printInterfaceDeclaration(i.declaration) + ";").collect(joining()), //
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
+        fluentAPI.interfaces().map(this::printInterface).collect(joining()), //
+        fluentAPI.startMethods().map(this::printMethod).collect(joining()));
   }
 
   @Override public String topTypeName() {

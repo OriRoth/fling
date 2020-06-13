@@ -44,8 +44,8 @@ public class JavaGenerator extends AbstractGenerator {
         startComment(), //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()), //
-        fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
+        fluentAPI.startMethods().map(this::printMethod).collect(joining()), //
+        fluentAPI.interfaces().map(this::printInterface).collect(joining()), //
         printConcreteImplementation(fluentAPI), //
         printAdditionalDeclarations());
   }
@@ -148,7 +148,7 @@ public class JavaGenerator extends AbstractGenerator {
 
   public String printConcreteImplementation(final CompilationUnit fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
-        fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
+        fluentAPI.interfaces().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.body.methods.stream() //
             .map(Method::asChainedMethod) //
             .map(Chained::declaration) //
