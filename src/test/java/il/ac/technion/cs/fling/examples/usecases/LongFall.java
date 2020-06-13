@@ -1,7 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
 
 import static il.ac.technion.cs.fling.examples.automata.LongFall.CppFluentAPI;
-import static il.ac.technion.cs.fling.examples.generated.LongFall.*;
+import static il.ac.technion.cs.fling.examples.generated.LongFall.a;
+import static il.ac.technion.cs.fling.examples.generated.LongFall.b;
 
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 
