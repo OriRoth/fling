@@ -84,7 +84,7 @@ public class ScalaGenerator extends AbstractGenerator {
   @Override public String printInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
         printInterfaceDeclaration(declaration), //
-        printClassParameters(declaration.typeVariables), //
+        printClassParameters(declaration.parameters), //
         methods.stream().map(this::printMethod).collect(joining("\n")));
   }
 
@@ -110,10 +110,10 @@ public class ScalaGenerator extends AbstractGenerator {
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     final String typeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    final String typeParameters = declaration.typeVariables.stream().map(Named::name) //
+    final String typeParameters = declaration.parameters().map(Named::name) //
         .collect(Collectors.joining(","));
     return String.format("class %s", //
-        declaration.typeVariables.isEmpty() ? //
+        declaration.parameters.isEmpty() ? //
             typeName //
             : String.format("%s[%s]", typeName, typeParameters));
   }

@@ -139,7 +139,7 @@ public class JavaGenerator extends AbstractGenerator {
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
-        declaration.typeVariables.stream().map(Named::name).collect(Collectors.joining(",")));
+        declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
 
   public String printTypeName(final Interface interfaze) {

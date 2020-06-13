@@ -100,9 +100,9 @@ public class SMLGenerator extends AbstractGenerator {
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     final String name = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    final String variables = declaration.typeVariables.isEmpty() ? ""
-        : String.format("(%s) ",
-            declaration.typeVariables.stream().map(Named::name).map(n -> "'" + n).collect(joining(", ")), name);
+    final String variables = declaration.parameters.isEmpty() ? ""
+        : String.format("(%s) ", declaration.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
+            name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
   }
 

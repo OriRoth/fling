@@ -102,10 +102,10 @@ public class CPPGenerator extends AbstractGenerator {
   }
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
-    return declaration.typeVariables.isEmpty()
+    return declaration.parameters.isEmpty()
         ? String.format("class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
         : String.format("template<%s>class %s",
-            declaration.typeVariables.stream().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
+            declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
             printTypeName(declaration.q, declaration.α, declaration.legalJumps));
   }
 }

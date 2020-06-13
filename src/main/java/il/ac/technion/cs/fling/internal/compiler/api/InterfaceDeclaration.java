@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling.internal.compiler.api;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -17,8 +18,7 @@ public class InterfaceDeclaration {
   /** Referenced states (type variables). */
   public final Set<Named> legalJumps;
   /** Referenced states (type variables). */
-  // TODO remove duplicate field.
-  public final Word<Named> typeVariables;
+  public final Word<Named> parameters;
   public final boolean isAccepting;
 
   public InterfaceDeclaration(final Named q, final Word<Named> α, final Set<Named> legalJumps,
@@ -26,7 +26,7 @@ public class InterfaceDeclaration {
     this.q = q;
     this.α = α;
     this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
-    this.typeVariables = typeVariables;
+    this.parameters = typeVariables;
     this.isAccepting = isAccepting;
   }
 
@@ -34,7 +34,12 @@ public class InterfaceDeclaration {
     q = null;
     α = null;
     legalJumps = null;
-    typeVariables = null;
+    parameters = null;
     isAccepting = false;
   }
+
+  public Stream<Named> parameters() {
+    return parameters.stream();
+  }
+
 }
