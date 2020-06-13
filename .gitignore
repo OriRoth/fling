@@ -100,7 +100,6 @@ $.*
 texput.*
 Untitled*
 .~lock.*
-_*
 
 # Prefixes // vim: +,/^\s*$/-1!sort -u
 a.out
