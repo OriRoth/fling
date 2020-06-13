@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.util.Counter;
 
 /** Class to convert an ANTLR grammar into {@link EBNF}
- * 
+ *
  * @author Yossi Gil
  * @since 2020-06-08 */
 public class ANTLRImporter extends EBNF.Builder {

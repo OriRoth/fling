@@ -56,8 +56,8 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
     $.put("LongFall", LongFall.JavaFluentAPI);
     $.put("AnBn", AnBn.JavaFluentAPI);
     $.put("AeqB", AeqB.JavaFluentAPI);
-    for (FluentLanguageAPI<?, ?> api : BNFAPIs) {
-      JavaMediator mediator = new JavaMediator(api.BNF(), //
+    for (final FluentLanguageAPI<?, ?> api : BNFAPIs) {
+      final JavaMediator mediator = new JavaMediator(api.BNF(), //
           "il.ac.technion.cs.fling.examples.generated", api.name(), api.Σ());
       $.put(api.name(), mediator.apiClass);
       $.put(api.name() + "AST", mediator.astClass);

@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
 /** Grammar sentential variable.
- * 
+ *
  * @author Ori Roth */
 public interface Variable extends Symbol {
   static Variable byName(final String name) {

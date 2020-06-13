@@ -65,9 +65,8 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
-    if (!declaration.getInferredParameters().isEmpty()) {
+    if (!declaration.getInferredParameters().isEmpty())
       throw new RuntimeException("fluent API function parameters are not suported");
-    }
     return String.format("\t%s: %s", declaration.name.name(), printType(returnType));
   }
 

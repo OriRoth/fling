@@ -9,7 +9,7 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
  * {@link LoopOverLanguageDefinitions}.
- * 
+ *
  * @author Yossi Gil
  * @since April 2019 */
 public class AnBn {

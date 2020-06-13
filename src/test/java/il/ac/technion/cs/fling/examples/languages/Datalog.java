@@ -45,7 +45,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** Fling input specifying the formal Datalog language.
- * 
+ *
  * @author Yossi Gil */
 public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
   /** Set of terminals, i.e., method names of generated fluent API. */

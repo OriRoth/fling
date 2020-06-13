@@ -31,7 +31,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /** Compiles BNF to run-time LL(1) compiler, generating AST from sequence of
  * terminals.
- * 
+ *
  * @author Ori Roth
  * @param <Σ> terminals enum */
 public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements ASTParserCompiler {

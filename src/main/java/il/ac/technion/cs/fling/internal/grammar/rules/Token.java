@@ -12,7 +12,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** Represents a <strong>token</strong> of the fluent API grammar, which has two
  * components: a {@link Terminal}, which is the function name, and the possibly
  * empty list of arguments.
- * 
+ *
  * @see Terminal
  * @author Yossi Gil
  * @since 2020-06-07 */
@@ -30,7 +30,7 @@ public final class Token implements Symbol {
     return parameters.length != 0;
   }
 
-  public final Stream<Parameter> parameters() {
+  public Stream<Parameter> parameters() {
     return Stream.of(parameters);
   }
 

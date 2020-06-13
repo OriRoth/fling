@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
 /** Named entity.
- * 
+ *
  * @author Ori Roth */
 public interface Named {
   /** @return name */

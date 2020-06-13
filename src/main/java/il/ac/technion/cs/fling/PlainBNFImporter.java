@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.Specialization;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** Convert a {@link PlainBNF} into a {@link EBNF}
- * 
+ *
  * @author Yossi Gil
  * @since 2020-05-08 */
 public class PlainBNFImporter {
@@ -53,7 +53,7 @@ public class PlainBNFImporter {
     if (derivation.ruleBody instanceof ConcreteDerivation) {
       // Concrete derivation rule.
       final ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
-      builder.derive(variable).to((concrete).to);
+      builder.derive(variable).to(concrete.to);
       for (final RuleTail tail : concrete.ruleTail)
         if (tail instanceof ConcreteDerivationTail)
           // Concrete tail.

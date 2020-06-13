@@ -34,7 +34,7 @@ import za.co.wstoop.jatalog.Jatalog;
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
  * {@link LoopOverLanguageDefinitions}.
- * 
+ *
  * @author Ori Roth
  * @since April 2019 */
 public class Datalog {
@@ -53,7 +53,7 @@ public class Datalog {
   }
 
   /** Prints Datalog program.
-   * 
+   *
    * @author Ori Roth */
   public static class DatalogPrinter extends DatalogAST.Visitor {
     @Override public void whileVisiting(final Fact fact) {
@@ -116,7 +116,7 @@ public class Datalog {
   }
 
   /** Runs Datalog program using {@link Jatalog}.
-   * 
+   *
    * @author Ori Roth */
   public static class DatalogRunner extends DatalogAST.Visitor {
     final Jatalog j = new Jatalog();

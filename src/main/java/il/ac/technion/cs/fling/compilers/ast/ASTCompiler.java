@@ -20,7 +20,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** Abstract syntax tree compiler. Generates types corresponding to AST nodes.
- * 
+ *
  * @author Ori Roth */
 public class ASTCompiler {
   /** Input BNF. */
@@ -31,7 +31,7 @@ public class ASTCompiler {
   }
 
   /** Compiles BNF to AST types.
-   * 
+   *
    * @return */
   public ASTCompilationUnitNode compileAST() {
     final Map<Variable, List<Variable>> parents = new LinkedHashMap<>();

@@ -28,7 +28,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** An extended Backus-Naur form specification of formal Language, collection of
  * derivation rules of the form <code>v ::= w X | Y z.</code>, augmented with
  * lots of services which found shelter in this class.
- * 
+ *
  * @author Ori Roth */
 public class FancyEBNF extends EBNF.Decorator {
   /** Set of nullable variables and notations */
@@ -247,7 +247,6 @@ public class FancyEBNF extends EBNF.Decorator {
 
     public class Derive {
       private final Variable variable;
-      private Body form;
 
       public Derive(final Variable variable) {
         this.variable = variable;

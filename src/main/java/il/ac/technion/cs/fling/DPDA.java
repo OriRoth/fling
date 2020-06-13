@@ -224,7 +224,7 @@ public class DPDA<Q, Σ, Γ> {
      * @param currentγ current stack symbol
      * @return whether this edge describes the next transition */
     public boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
-      return q.equals(currentq) && (Objects.equals(σ, currentσ)) && γ.equals(currentγ);
+      return q.equals(currentq) && Objects.equals(σ, currentσ) && γ.equals(currentγ);
     }
 
     @Override public int hashCode() {

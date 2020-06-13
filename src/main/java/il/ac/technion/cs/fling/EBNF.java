@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
 /** An extended Backus-Naur form specification of a formal Language, represented
  * as a set of {@link #R} of extended derivation rules {@link ERule}.
- * 
+ *
  * @author Yossi Gil */
 public class EBNF {
   @Override public String toString() {

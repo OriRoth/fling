@@ -27,7 +27,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
- * 
+ *
  * @author Ori Roth */
 public class LL1 extends Grammar {
   public LL1(final FancyEBNF bnf, final Namer namer) {

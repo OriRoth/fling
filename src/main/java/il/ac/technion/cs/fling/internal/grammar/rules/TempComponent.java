@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 
 /** A component of a body of a {@link ERule}
- * 
+ *
  * @author Yossi Gil
  * @since 2020-06-07 */
 public interface TempComponent extends Named {

@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
 
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
- * 
+ *
  * @author Ori Roth */
 public class AeqB {
   /** Set of DPDA states. */
