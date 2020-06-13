@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.compiler.api;
 
 import java.util.List;
 
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
@@ -30,7 +30,7 @@ public interface APIGenerator {
 
   String printIntermediateMethod(MethodDeclaration declaration, Type returnType);
 
-  default String printMethod(final AbstractMethod method) {
+  default String printMethod(final Method method) {
     return method.isStartMethod() ? startMethod(method.asStartMethod().declaration, method.asStartMethod().returnType) : //
         method.isTerminationMethod() ? printTerminationMethod() : //
             printIntermediateMethod(method.asIntermediateMethod().declaration,
@@ -41,7 +41,7 @@ public interface APIGenerator {
 
   String printBotInterface();
 
-  String printInterface(InterfaceDeclaration declaration, List<AbstractMethod> methods);
+  String printInterface(InterfaceDeclaration declaration, List<Method> methods);
 
   default String printInterface(final Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> interfaze) {
     return interfaze.isTop() ? printTopInterface()

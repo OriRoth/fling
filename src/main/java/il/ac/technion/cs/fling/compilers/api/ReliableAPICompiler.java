@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
@@ -40,17 +40,17 @@ public class ReliableAPICompiler extends APICompiler {
     super(dpda);
   }
 
-  @Override protected List<AbstractMethod> compileStartMethods() {
-    final List<AbstractMethod> $ = new ArrayList<>();
+  @Override protected List<Method> compileStartMethods() {
+    final List<Method> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
-      $.add(new AbstractMethod.Start(new MethodDeclaration(Constants.$$), //
+      $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
           top()));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      final AbstractMethod.Start startMethod = //
-          new AbstractMethod.Start(new MethodDeclaration(σ), //
+      final Method.Start startMethod = //
+          new Method.Start(new MethodDeclaration(σ), //
               consolidate(δ.q$, //
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
@@ -74,7 +74,7 @@ public class ReliableAPICompiler extends APICompiler {
   @SuppressWarnings("unused") @Override protected TypeBody<TypeName, MethodDeclaration> complieConcreteImplementation() {
     return new TypeBody<>(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
-        .map(σ -> new AbstractMethod.Chained(new MethodDeclaration(σ))) //
+        .map(σ -> new Method.Chained(new MethodDeclaration(σ))) //
         .collect(toList()));
   }
 
@@ -115,12 +115,12 @@ public class ReliableAPICompiler extends APICompiler {
 
   private Interfac<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q, final Word<Named> α,
       final Set<Named> legalJumps) {
-    final List<AbstractMethod> $ = new ArrayList<>(dpda.Σ().map(σ -> //
-    new AbstractMethod.Intermediate(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
+    final List<Method> $ = new ArrayList<>(dpda.Σ().map(σ -> //
+    new Method.Intermediate(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
         .filter(method -> !method.returnType.isBot()) //
         .collect(toList()));
     if (dpda.isAccepting(q))
-      $.add(new AbstractMethod.Termination());
+      $.add(new Method.Termination());
     return $.isEmpty() ? null
         : new Interfac<>(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
             Collections.unmodifiableList($));

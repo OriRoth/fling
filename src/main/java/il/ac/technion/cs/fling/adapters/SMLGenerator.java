@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -80,7 +80,7 @@ public class SMLGenerator extends AbstractGenerator {
     return String.format("%s BOT = FAILURE", getDatatypeKeyword());
   }
 
-  @Override public String printInterface(final InterfaceDeclaration declaration, final List<AbstractMethod> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s of {\n%s\n}", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining(",\n")));

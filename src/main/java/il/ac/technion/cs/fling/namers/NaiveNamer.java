@@ -14,10 +14,10 @@ import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Chained;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Intermediate;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Start;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Intermediate;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Start;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
@@ -79,18 +79,18 @@ public class NaiveNamer implements Namer {
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
         .map(Interfac::methods) //
         .flatMap(List::stream) //
-        .filter(AbstractMethod::isIntermediateMethod) //
-        .map(AbstractMethod::asIntermediateMethod) //
+        .filter(Method::isIntermediateMethod) //
+        .map(Method::asIntermediateMethod) //
         .map(Intermediate::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
     fluentAPI.startMethods.stream() //
-        .map(AbstractMethod::asStartMethod) //
+        .map(Method::asStartMethod) //
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
     fluentAPI.concreteImplementation.methods.stream() //
-        .map(AbstractMethod::asChainedMethod) //
+        .map(Method::asChainedMethod) //
         .map(Chained::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
   }

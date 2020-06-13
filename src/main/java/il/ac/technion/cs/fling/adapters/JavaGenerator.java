@@ -12,8 +12,8 @@ import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod.Chained;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
@@ -112,7 +112,7 @@ public class JavaGenerator extends AbstractGenerator {
     return "interface ø {}";
   }
 
-  @Override public String printInterface(final InterfaceDeclaration declaration, final List<AbstractMethod> methods) {
+  @Override public String printInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("interface %s%s{%s}", //
         printInterfaceDeclaration(declaration), //
         !declaration.isAccepting ? "" : " extends " + topTypeName(), //
@@ -152,7 +152,7 @@ public class JavaGenerator extends AbstractGenerator {
     return String.format("static class α implements %s{%s%s%s}", //
         fluentAPI.interfaces.stream().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.concreteImplementation.methods.stream() //
-            .map(AbstractMethod::asChainedMethod) //
+            .map(Method::asChainedMethod) //
             .map(Chained::declaration) //
             .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
                 declaration.name.name(), //

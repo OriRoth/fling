@@ -2,8 +2,8 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 
-public interface AbstractMethod {
-  class Start implements AbstractMethod {
+public interface Method {
+  class Start implements Method {
     public final MethodDeclaration declaration;
     public final Type returnType;
 
@@ -17,10 +17,10 @@ public interface AbstractMethod {
     }
   }
 
-  class Termination implements AbstractMethod {
+  class Termination implements Method {
   }
 
-  class Intermediate implements AbstractMethod {
+  class Intermediate implements Method {
     public final MethodDeclaration declaration;
     public final Type returnType;
 
@@ -34,7 +34,7 @@ public interface AbstractMethod {
     }
   }
 
-  class Chained implements AbstractMethod {
+  class Chained implements Method {
     public final MethodDeclaration declaration;
 
     public Chained(final MethodDeclaration declaration) {

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.AbstractMethod;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interfac;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
@@ -48,7 +48,7 @@ public abstract class APICompiler {
   /** Compile API static start methods.
    *
    * @return compiled methods */
-  protected abstract List<AbstractMethod> compileStartMethods();
+  protected abstract List<Method> compileStartMethods();
 
   /** Compile API types.
    *

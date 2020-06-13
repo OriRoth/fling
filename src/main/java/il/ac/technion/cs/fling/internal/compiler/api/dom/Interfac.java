@@ -7,9 +7,9 @@ public class Interfac<T, D, N> {
   @SuppressWarnings("rawtypes") private static final Interfac TOP = new Interfac();
   @SuppressWarnings("rawtypes") private static final Interfac BOT = new Interfac();
   public final N declaration;
-  public final List<AbstractMethod> methods;
+  public final List<Method> methods;
 
-  public Interfac(final N name, final List<AbstractMethod> methods) {
+  public Interfac(final N name, final List<Method> methods) {
     declaration = name;
     this.methods = Collections.unmodifiableList(methods);
   }
@@ -23,7 +23,7 @@ public class Interfac<T, D, N> {
     return declaration;
   }
 
-  public List<AbstractMethod> methods() {
+  public List<Method> methods() {
     return methods;
   }
 
