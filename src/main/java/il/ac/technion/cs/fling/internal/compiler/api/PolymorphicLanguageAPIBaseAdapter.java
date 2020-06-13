@@ -12,20 +12,20 @@ public interface PolymorphicLanguageAPIBaseAdapter {
   String printFluentAPI(
       APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI);
 
-  String printTopType();
+  String topTypeName();
 
-  String printBotType();
+  String bottomTypeName();
 
-  String printIntermediateType(APICompiler.TypeName name);
+  String typeName(APICompiler.TypeName name);
 
-  String printIntermediateType(APICompiler.TypeName name,
+  String typeName(APICompiler.TypeName name,
       List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments);
 
   default String printType(final PolymorphicTypeNode<APICompiler.TypeName> type) {
-    return type.isTop() ? printTopType()
-        : type.isBot() ? printBotType()
-            : type.typeArguments.isEmpty() ? printIntermediateType(type.name)
-                : printIntermediateType(type.name, type.typeArguments);
+    return type.isTop() ? topTypeName()
+        : type.isBot() ? bottomTypeName()
+            : type.typeArguments.isEmpty() ? typeName(type.name)
+                : typeName(type.name, type.typeArguments);
   }
 
   String printStartMethod(MethodDeclaration declaration, PolymorphicTypeNode<APICompiler.TypeName> returnType);

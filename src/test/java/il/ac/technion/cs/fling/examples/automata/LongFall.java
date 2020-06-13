@@ -10,7 +10,7 @@ import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.a;
 import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
+import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -44,6 +44,6 @@ public class LongFall {
   public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated",
       "LongFall", "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("LongFall")) //
+  public static final String CppFluentAPI = new CPPGenerator("$", new NaiveNamer("LongFall")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 }

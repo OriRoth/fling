@@ -11,9 +11,9 @@ import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.a;
 import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
+import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
-import il.ac.technion.cs.fling.adapters.SMLAPIAdapter;
+import il.ac.technion.cs.fling.adapters.SMLGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -58,10 +58,10 @@ public class AeqB {
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
-  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AeqB")) //
+  public static final String CppFluentAPI = new CPPGenerator("$", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** SML fluent API */
-  public static final String SMLFluentAPI = new SMLAPIAdapter("zzz", new NaiveNamer("AeqB")) //
+  public static final String SMLFluentAPI = new SMLGenerator("zzz", new NaiveNamer("AeqB")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 
   /** Print C++ program to standard output. */

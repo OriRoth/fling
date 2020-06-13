@@ -11,7 +11,7 @@ import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.a;
 import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.b;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.adapters.CppAPIAdapter;
+import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaAPIAdapter;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -46,6 +46,6 @@ public class AnBn {
   public static final String JavaFluentAPI = new JavaAPIAdapter("il.ac.technion.cs.fling.examples.generated", "AnBn",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CppAPIAdapter("$", new NaiveNamer("AnBn")) //
+  public static final String CppFluentAPI = new CPPGenerator("$", new NaiveNamer("AnBn")) //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
 }

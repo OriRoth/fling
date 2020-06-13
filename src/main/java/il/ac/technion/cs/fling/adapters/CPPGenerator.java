@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
@@ -16,40 +15,38 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
-/** C# API adapter.
+/** C++ API adapter.
  *
  * @author Ori Roth */
-public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
-  private final String terminationMethodName;
-  private final Namer namer;
+public class CPPGenerator extends AbstractGenerator {
 
-  public CSharpAPIAdapter(final String terminationMethodName, final Namer namer) {
-    this.terminationMethodName = terminationMethodName;
-    this.namer = namer;
+  public CPPGenerator(final String terminationMethodName, final Namer namer) {
+    super(terminationMethodName, namer);
   }
 
   @Override public String printFluentAPI(
       final APICompilationUnitNode<APICompiler.TypeName, APICompiler.MethodDeclaration, APICompiler.InterfaceDeclaration> fluentAPI) {
     namer.name(fluentAPI);
-    return String.format("%s%s", //
+    return String.format("%s%s%s", //
+        fluentAPI.interfaces.stream().filter(i -> !i.isTop() && !i.isBot())
+            .map(i -> printInterfaceDeclaration(i.declaration) + ";").collect(joining()), //
         fluentAPI.interfaces.stream().map(this::printInterface).collect(joining()), //
-        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining())) //
-        .replace("$", "τ");
+        fluentAPI.startMethods.stream().map(this::printMethod).collect(joining()));
   }
 
-  @Override public String printTopType() {
+  @Override public String topTypeName() {
     return "TOP";
   }
 
-  @Override public String printBotType() {
+  @Override public String bottomTypeName() {
     return "BOT";
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name) {
+  @Override public String typeName(final APICompiler.TypeName name) {
     return printTypeName(name);
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name,
+  @Override public String typeName(final APICompiler.TypeName name,
       final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
@@ -58,36 +55,38 @@ public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
 
   @Override public String printStartMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("public static %s %s(){return new %s();}", //
+    return String.format("%s %s(){return %s();}", //
         printType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
         printType(returnType));
   }
 
   @Override public String printTerminationMethod() {
-    return String.format("public void %s(){}", terminationMethodName);
+    return String.format("void %s(){};", terminationMethodName);
   }
 
   @Override public String printIntermediateMethod(final APICompiler.MethodDeclaration declaration,
       final PolymorphicTypeNode<APICompiler.TypeName> returnType) {
-    return String.format("public %s %s(%s){return new %s();}", //
+    return String.format("%s %s(%s){return %s();};", //
         printType(returnType), //
         declaration.name.name(), //
-        printParametersList(declaration), //
+        declaration.getInferredParameters().stream() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+            .collect(joining(",")), //
         printType(returnType));
   }
 
   @Override public String printTopInterface() {
-    return String.format("public class TOP{public void %s(){}}", terminationMethodName);
+    return String.format("class TOP{public:void %s(){};};", terminationMethodName);
   }
 
   @Override public String printBotInterface() {
-    return "private class BOT{}";
+    return "class BOT{};";
   }
 
   @Override public String printInterface(final APICompiler.InterfaceDeclaration declaration,
       final List<AbstractMethodNode<APICompiler.TypeName, APICompiler.MethodDeclaration>> methods) {
-    return String.format("%s{%s}", //
+    return String.format("%s{public:%s};", //
         printInterfaceDeclaration(declaration), //
         methods.stream().map(this::printMethod).collect(joining()));
   }
@@ -96,37 +95,20 @@ public class CSharpAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
     return printTypeName(name.q, name.α, name.legalJumps);
   }
 
-  public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final String qn = q.name();
-    // TODO: manage this HACK
-    return α == null ? qn.contains("_") ? qn : typeVariableName(q)
+  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α,
+      final Set<Named> legalJumps) {
+    return α == null ? q.name()
         : String.format("%s_%s%s", //
             q.name(), //
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(
-      final APICompiler.MethodDeclaration declaration) {
-    return declaration.getInferredParameters().stream() //
-        .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-        .collect(joining(","));
-  }
-
   public String printInterfaceDeclaration(final APICompiler.InterfaceDeclaration declaration) {
     return declaration.typeVariables.isEmpty()
-        ? String.format("public class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
-        : String.format("public class %s<%s>%s", //
-            printTypeName(declaration.q, declaration.α, declaration.legalJumps), //
-            declaration.typeVariables.stream().map(this::typeVariableName) //
-                .collect(Collectors.joining(",")),
-            declaration.typeVariables.stream().map(this::typeVariableName) //
-                .map(n -> "where " + n + ":new()") //
-                .collect(Collectors.joining("")) //
-        );
-  }
-
-  public String typeVariableName(final Named typeVariable) {
-    return "_" + typeVariable.name();
+        ? String.format("class %s", printTypeName(declaration.q, declaration.α, declaration.legalJumps))
+        : String.format("template<%s>class %s",
+            declaration.typeVariables.stream().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
+            printTypeName(declaration.q, declaration.α, declaration.legalJumps));
   }
 }

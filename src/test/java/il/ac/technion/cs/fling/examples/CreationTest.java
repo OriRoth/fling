@@ -7,10 +7,10 @@ import il.ac.technion.cs.fling.examples.languages.BNF;
 import il.ac.technion.cs.fling.examples.languages.BalancedParentheses;
 import il.ac.technion.cs.fling.examples.languages.Datalog;
 
-class CreationTest {
+@SuppressWarnings("static-method") class CreationTest {
   @Test public void checkDatalog() {
     final Datalog x = new Datalog();
-    new JavaMediator(x.BNF(), "", x.name(), x.Σ());
+    JavaMediator y = new JavaMediator(x.BNF(), "", x.name(), x.Σ());
   }
 
   @Test public void checkBNF() {

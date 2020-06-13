@@ -103,7 +103,7 @@ public class JavaMediator {
                 String.join(",", processedParameters)));
   }
 
-  @SuppressWarnings("static-method") String printConcreteImplementationClassBody() {
+  String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         List.class.getCanonicalName(), //
         Assignment.class.getCanonicalName(), //

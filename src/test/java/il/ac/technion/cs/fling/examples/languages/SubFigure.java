@@ -10,7 +10,7 @@ import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.adapters.ScalaAPIAdapter;
+import il.ac.technion.cs.fling.adapters.ScalaGenerator;
 import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.SubFigure.V;
@@ -58,7 +58,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, V> {
     final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
     final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     final APICompiler compiler = new ReliableAPICompiler(dpda);
-    final PolymorphicLanguageAPIBaseAdapter adapter = new ScalaAPIAdapter("$", namer) {
+    final PolymorphicLanguageAPIBaseAdapter adapter = new ScalaGenerator("$", namer) {
       // Ignore parameters:
       @Override public String printParametersList(
           @SuppressWarnings("unused") final APICompiler.MethodDeclaration declaration) {

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
@@ -19,14 +18,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Prototypical SML API adapter.
  *
  * @author Ori Roth */
-public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
-  private final String terminationMethodName;
-  private final Namer namer;
+public class SMLGenerator extends AbstractGenerator {
   private boolean firstDatatype;
 
-  public SMLAPIAdapter(final String terminationMethodName, final Namer namer) {
-    this.terminationMethodName = terminationMethodName;
-    this.namer = namer;
+  public SMLGenerator(final String terminationMethodName, final Namer namer) {
+    super(terminationMethodName, namer);
     firstDatatype = true;
   }
 
@@ -37,21 +33,21 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
   }
 
-  @Override public String printTopType() {
+  @Override public String topTypeName() {
     return "TOP";
   }
 
-  @Override public String printBotType() {
+  @Override public String bottomTypeName() {
     return "BOT";
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name) {
+  @Override public String typeName(final APICompiler.TypeName name) {
     // TODO sanely check whether is type variable
     final String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + printTypeName(name);
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name,
+  @Override public String typeName(final APICompiler.TypeName name,
       final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return typeArguments.isEmpty() ? printTypeName(name)
         : String.format("(%s) %s", //

@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.PolymorphicLanguageAPIBaseAdapter;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.APICompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.AbstractMethodNode;
 import il.ac.technion.cs.fling.internal.compiler.api.nodes.PolymorphicTypeNode;
@@ -21,13 +20,10 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Scala API adapter.
  *
  * @author Ori Roth */
-public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
-  private final String terminationMethodName;
-  private final Namer namer;
+public class ScalaGenerator extends AbstractGenerator {
 
-  public ScalaAPIAdapter(final String terminationMethodName, final Namer namer) {
-    this.terminationMethodName = terminationMethodName;
-    this.namer = namer;
+  public ScalaGenerator(final String terminationMethodName, final Namer namer) {
+    super(terminationMethodName, namer);
   }
 
   @Override public String printFluentAPI(
@@ -38,19 +34,19 @@ public class ScalaAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
         fluentAPI.startMethods.stream().map(this::printMethod).collect(joining("\n")));
   }
 
-  @Override public String printTopType() {
+  @Override public String topTypeName() {
     return "TOP";
   }
 
-  @Override public String printBotType() {
+  @Override public String bottomTypeName() {
     return "BOT";
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name) {
+  @Override public String typeName(final APICompiler.TypeName name) {
     return printTypeName(name);
   }
 
-  @Override public String printIntermediateType(final APICompiler.TypeName name,
+  @Override public String typeName(final APICompiler.TypeName name,
       final List<PolymorphicTypeNode<APICompiler.TypeName>> typeArguments) {
     return String.format("%s[%s]", //
         printTypeName(name), //
