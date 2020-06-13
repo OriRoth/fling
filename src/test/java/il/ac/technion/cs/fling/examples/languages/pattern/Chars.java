@@ -89,8 +89,8 @@ public interface Chars {
   Chars ALNUM = ALPHA.or(DIGIT);
   /** \p{Punct} Punctuation: One of !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ */
   Chars PUNCT = of("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
-  Chars PUNCT1 = of('!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', '-', '.', '/', ';', '<',
-      '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}');
+  Chars PUNCT1 = of('!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', '-', '.', '/', ';', '<', '=', '>', '?', '@',
+      '[', '\\', ']', '^', '_', '`', '{', '|', '}');
   /** \p{Graph} A visible character: [\p{Alnum}\p{Punct}] */
   Chars GRAPH = ALNUM.or(PUNCT);
   /** \p{Print} A printable character: [\p{Graph}\x20] */

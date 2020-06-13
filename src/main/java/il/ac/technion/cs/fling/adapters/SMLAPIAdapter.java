@@ -27,7 +27,7 @@ public class SMLAPIAdapter implements PolymorphicLanguageAPIBaseAdapter {
   public SMLAPIAdapter(final String terminationMethodName, final Namer namer) {
     this.terminationMethodName = terminationMethodName;
     this.namer = namer;
-      firstDatatype = true;
+    firstDatatype = true;
   }
 
   @Override public String printFluentAPI(

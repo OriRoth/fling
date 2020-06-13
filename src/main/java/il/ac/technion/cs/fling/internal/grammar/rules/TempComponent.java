@@ -46,5 +46,4 @@ public interface TempComponent extends Named {
 
   Component normalize();
 
-
 }

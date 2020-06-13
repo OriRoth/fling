@@ -16,12 +16,12 @@ public class PolymorphicTypeNode<T> {
 
   public PolymorphicTypeNode(final T name) {
     this.name = name;
-      typeArguments = Collections.emptyList();
+    typeArguments = Collections.emptyList();
   }
 
   private PolymorphicTypeNode() {
-      name = null;
-      typeArguments = null;
+    name = null;
+    typeArguments = null;
   }
 
   @SuppressWarnings("unchecked") public static <T> PolymorphicTypeNode<T> top() {

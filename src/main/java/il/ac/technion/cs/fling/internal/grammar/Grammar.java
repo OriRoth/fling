@@ -37,9 +37,9 @@ public abstract class Grammar {
   public Grammar(final FancyEBNF ebnf, final Namer namer) {
     this.ebnf = ebnf;
     this.namer = namer;
-      bnf = getBNF(ebnf);
-      normalizedEBNF = normalize(ebnf, namer);
-      normalizedBNF = getBNF(normalizedEBNF);
+    bnf = getBNF(ebnf);
+    normalizedEBNF = normalize(ebnf, namer);
+    normalizedBNF = getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
     for (final Variable head : bnf.headVariables)
       subBNFs.put(head, computeSubBNF(head));
@@ -137,7 +137,7 @@ public abstract class Grammar {
   }
 
   @SuppressWarnings({ "null", "unused" }) public static DPDA<Named, Token, Named> cast(
-          final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
+      final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
     return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
         dpda.Σ().map(Token::new).collect(toSet()), //
         new LinkedHashSet<>(dpda.Γ), //

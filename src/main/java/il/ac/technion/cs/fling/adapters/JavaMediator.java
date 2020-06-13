@@ -46,56 +46,49 @@ public class JavaMediator {
 
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
-      namer = new NaiveNamer(packageName, apiName);
-      ll1 = new LL1(FancyEBNF.from(bnf), namer);
+    namer = new NaiveNamer(packageName, apiName);
+    ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
     final JavaAPIAdapter apiAdapter = new JavaAPIAdapter(packageName, apiName, "$", namer) {
-      @Override
-      protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+      @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
 
-      @Override
-      public String printConcreteImplementationClassBody() {
+      @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
 
-      @Override
-      public String printConcreteImplementationMethodBody(final Token σ,
-                                                          final List<ParameterFragment> parameters) {
+      @Override public String printConcreteImplementationMethodBody(final Token σ,
+          final List<ParameterFragment> parameters) {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
 
-      @Override
-      public String printTerminationMethodReturnType() {
+      @Override public String printTerminationMethodReturnType() {
         return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
       }
 
-      @Override
-      public String printTerminationMethodConcreteBody() {
+      @Override public String printTerminationMethodConcreteBody() {
         return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
       }
 
-      @Override
-      protected String printAdditionalDeclarations() {
+      @Override protected String printAdditionalDeclarations() {
         return JavaMediator.this.printAdditionalDeclarations();
       }
     };
     final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
     final JavaInterfacesASTAdapter astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
-      @Override
-      protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
+      @Override protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
         return astVisitorAdapter.printASTVisitorClass(compilationUnit);
       }
     };
     this.Σ = Σ;
-      parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
+    parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
-      astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
-      apiClass = apiAdapter
+    astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
+    apiClass = apiAdapter
         .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
-      astCompilerClass = parserCompiler.printParserClass();
+    astCompilerClass = parserCompiler.printParserClass();
   }
 
   protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {

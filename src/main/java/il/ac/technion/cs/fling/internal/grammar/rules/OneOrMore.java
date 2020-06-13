@@ -26,12 +26,12 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     final List<Component> expandedSymbols = new ArrayList<>();
     for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
-        s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
+          s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
     final Variable head = namer.createQuantificationChild(symbols);
     final Variable tail = namer.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
-      final List<Component> rhs = new ArrayList<>(expandedSymbols);
+    final List<Component> rhs = new ArrayList<>(expandedSymbols);
     rhs.add(tail);
     ruleDeclaration.accept(new ERule(head, asList( //
         new Body(rhs))));
@@ -40,16 +40,18 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new Body())));
     return head;
   }
-  
-  @Override protected String getVisitingStatement(final Symbol symbol, final BiFunction<Variable, String, String> variableVisitingSolver,
-                                                  final String accessor, final Supplier<String> variableNamesGenerator) {
+
+  @Override protected String getVisitingStatement(final Symbol symbol,
+      final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
+      final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
     final String streamingVariable = variableNamesGenerator.get();
     final String action = symbol.isVariable() ? //
         variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
         String.format("{%s}", symbol.asQuantifier().symbols() //
-            .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable, variableNamesGenerator)));
+            .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable,
+                variableNamesGenerator)));
     return String.format("{%s.stream().forEach(%s->%s);}", //
         accessor, //
         streamingVariable, //
@@ -57,7 +59,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   }
 
   @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
-                                                     @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
+      @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     final List<FieldNodeFragment> $ = new ArrayList<>();
     for (final Symbol symbol : symbols)
       for (final FieldNodeFragment rawField : fieldsSolver.apply(symbol))

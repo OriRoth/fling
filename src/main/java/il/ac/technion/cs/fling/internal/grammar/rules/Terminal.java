@@ -5,7 +5,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.VarargsClassParameter;
 import il.ac.technion.cs.fling.internal.grammar.types.VarargsVariableTypeParameter;
 import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
 
-/** Language terminal symbol, never occurs in grammar; 
+/** Language terminal symbol, never occurs in grammar;
  * 
  * @see Token
  * @author Ori Roth */

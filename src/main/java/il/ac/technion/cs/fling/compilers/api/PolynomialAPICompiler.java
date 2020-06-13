@@ -85,7 +85,8 @@ public class PolynomialAPICompiler extends APICompiler {
   private InterfaceNode<TypeName, MethodDeclaration, InterfaceDeclaration> encodedBody(final Named q,
       final Word<Named> α) {
     final List<AbstractMethodNode<TypeName, MethodDeclaration>> $ = dpda.Σ().map(σ -> //
-            new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ))).collect(java.util.stream.Collectors.toList());
+    new AbstractMethodNode.Intermediate<>(new MethodDeclaration(σ), next(q, α, σ)))
+        .collect(java.util.stream.Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(new AbstractMethodNode.Termination<>());
     return new InterfaceNode<>(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //
@@ -111,7 +112,7 @@ public class PolynomialAPICompiler extends APICompiler {
   }
 
   private PolymorphicTypeNode<TypeName> common(final δ<Named, Token, Named> δ, final Word<Named> α,
-                                               final boolean isInitialType) {
+      final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);

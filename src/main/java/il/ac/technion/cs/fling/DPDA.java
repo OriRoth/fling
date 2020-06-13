@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
-/** Deterministic pushdown automaton (DPDA) supporting acceptance by final
- * state (not by empty stack as other DPDAs do)
+/** Deterministic pushdown automaton (DPDA) supporting acceptance by final state
+ * (not by empty stack as other DPDAs do)
  *
  * @author Ori Roth
  * @param <Q> states type
@@ -224,8 +224,7 @@ public class DPDA<Q, Σ, Γ> {
      * @param currentγ current stack symbol
      * @return whether this edge describes the next transition */
     public boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
-      return q.equals(currentq) && (Objects.equals(σ, currentσ))
-          && γ.equals(currentγ);
+      return q.equals(currentq) && (Objects.equals(σ, currentσ)) && γ.equals(currentγ);
     }
 
     @Override public int hashCode() {

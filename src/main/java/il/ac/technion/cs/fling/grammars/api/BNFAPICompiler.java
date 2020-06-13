@@ -89,7 +89,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     List<?> _b;
     _a = w.remove(0);
     Object object = _a.arguments.get(0);
-    assert object instanceof TempComponent[]: object;
+    assert object instanceof TempComponent[] : object;
     TempComponent[] symbols = (TempComponent[]) object;
     _b = il.ac.technion.cs.fling.internal.grammar.rules.NoneOrMore.abbreviate(parse__RuleTail2(w), 1);
     List<RuleTail> ruleTail = (List<RuleTail>) _b.get(0);

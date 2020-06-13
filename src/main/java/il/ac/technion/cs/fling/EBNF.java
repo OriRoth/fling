@@ -43,7 +43,7 @@ public class EBNF {
     Σ.add(Constants.$$);
     verify();
   }
-  
+
   public abstract static class Decorator extends EBNF {
     public Decorator(final EBNF ebnf) {
       super(ebnf.Σ, ebnf.Γ, ebnf.ε, ebnf.R);
@@ -82,7 +82,6 @@ public class EBNF {
     return rules(v).flatMap(ERule::bodies).collect(Collectors.toList());
   }
 
-
   static class Builder {
     private final Set<Token> Σ = new LinkedHashSet<>();
     private final Set<Variable> V = new LinkedHashSet<>();
@@ -98,7 +97,6 @@ public class EBNF {
       add(variable);
       return new Specialize(variable);
     }
-
 
     public final Builder start(final Variable v) {
       add(v);
@@ -127,9 +125,9 @@ public class EBNF {
         return add((Token) s);
       if (s instanceof Quantifier)
         return add((Quantifier) s);
-      if (s instanceof Variable) 
-        return add ((Variable) s);
-      assert false: s + ":" +  this;
+      if (s instanceof Variable)
+        return add((Variable) s);
+      assert false : s + ":" + this;
       return s;
     }
 
@@ -152,7 +150,7 @@ public class EBNF {
       }
 
       private Builder to(final List<Component> cs) {
-        for (final Component c:cs)
+        for (final Component c : cs)
           add(c);
         R.add(new ERule(variable, new Body(cs)));
         return Builder.this;
@@ -160,7 +158,7 @@ public class EBNF {
 
       private List<Component> normalize(final TempComponent... cs) {
         final List<Component> $ = new ArrayList<>();
-        for (final TempComponent c: cs)
+        for (final TempComponent c : cs)
           $.add(c.normalize());
         return $;
       }

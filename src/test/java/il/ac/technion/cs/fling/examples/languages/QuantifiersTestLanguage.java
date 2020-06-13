@@ -15,7 +15,9 @@ import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.optiona
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-public class QuantifiersTestLanguage implements FluentLanguageAPI<QuantifiersTestLanguage.Σ, QuantifiersTestLanguage.V> {
+
+public class QuantifiersTestLanguage
+    implements FluentLanguageAPI<QuantifiersTestLanguage.Σ, QuantifiersTestLanguage.V> {
   public enum Σ implements Terminal {
     a, b, c, d, e
   }

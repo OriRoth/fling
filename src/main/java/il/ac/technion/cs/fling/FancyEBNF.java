@@ -44,8 +44,9 @@ public class FancyEBNF extends EBNF.Decorator {
   /** Set of generated variables */
   public final Set<Variable> extensionProducts;
 
-  public FancyEBNF(final EBNF ebnf, final Set<Variable> headVariables, final Map<Variable, Quantifier> extensionHeadsMapping,
-                   final Set<Variable> extensionProducts, final boolean addStartSymbolDerivationRules) {
+  public FancyEBNF(final EBNF ebnf, final Set<Variable> headVariables,
+      final Map<Variable, Quantifier> extensionHeadsMapping, final Set<Variable> extensionProducts,
+      final boolean addStartSymbolDerivationRules) {
     super(ebnf);
     if (addStartSymbolDerivationRules) {
       Γ.add(Constants.S);

@@ -15,9 +15,10 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * @since 2020-05-08 */
 public class PlainBNFImporter {
   final EBNF.Builder builder = new EBNF.Builder();
+
   public PlainBNFImporter(final PlainBNF bnf) {
     this.bnf = bnf;
-      ebnf = go();
+    ebnf = go();
   }
 
   private final EBNF ebnf;
@@ -29,7 +30,7 @@ public class PlainBNFImporter {
       if (rule instanceof Derivation) {
         convert((Derivation) rule);
         continue;
-      } 
+      }
       if (rule instanceof Specialization) {
         convert((Specialization) rule);
         continue;

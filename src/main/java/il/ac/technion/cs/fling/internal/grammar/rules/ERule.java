@@ -34,7 +34,7 @@ public class ERule {
     Objects.requireNonNull(variable);
     Objects.requireNonNull(forms);
     this.variable = variable;
-      bodies.addAll(forms);
+    bodies.addAll(forms);
     assert bodies.size() > 0;
   }
 
@@ -72,7 +72,7 @@ public class ERule {
 
   @Override public String toString() {
     return String.format("%s->%s", variable,
-            bodies().map(b -> b.isEmpty() ? "ε" : b.toString()).collect(Collectors.joining("|")));
+        bodies().map(b -> b.isEmpty() ? "ε" : b.toString()).collect(Collectors.joining("|")));
   }
 
   public Stream<Variable> variables() {

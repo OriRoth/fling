@@ -10,13 +10,13 @@ public class InterfaceNode<T, D, N> {
   public final List<AbstractMethodNode<T, D>> methods;
 
   public InterfaceNode(final N name, final List<AbstractMethodNode<T, D>> methods) {
-      declaration = name;
+    declaration = name;
     this.methods = Collections.unmodifiableList(methods);
   }
 
   private InterfaceNode() {
-      declaration = null;
-      methods = null;
+    declaration = null;
+    methods = null;
   }
 
   public N declaration() {

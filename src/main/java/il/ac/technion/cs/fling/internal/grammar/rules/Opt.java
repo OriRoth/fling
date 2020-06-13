@@ -27,7 +27,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     final List<Component> expandedSymbols = new ArrayList<>();
     for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
-        s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
+          s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
     final Variable head = namer.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
     ruleDeclaration.accept(new ERule(head, asList(//
@@ -35,24 +35,26 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new Body())));
     return head;
   }
-  
-  @Override protected String getVisitingStatement(final Symbol symbol, final BiFunction<Variable, String, String> variableVisitingSolver,
-                                                  final String accessor, final Supplier<String> variableNamesGenerator) {
+
+  @Override protected String getVisitingStatement(final Symbol symbol,
+      final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
+      final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
     final String streamingVariable = variableNamesGenerator.get();
     final String action = symbol.isVariable() ? //
         variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
         String.format("{%s}", symbol.asQuantifier().symbols() //
-            .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable, variableNamesGenerator)));
+            .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable,
+                variableNamesGenerator)));
     return String.format("{%s.ifPresent(%s->%s);}", //
         accessor, //
         streamingVariable, //
         action);
   }
-  
+
   @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
-                                                     @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
+      @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     final List<FieldNodeFragment> $ = new ArrayList<>();
     for (final Symbol symbol : symbols)
       for (final FieldNodeFragment rawField : fieldsSolver.apply(symbol))
@@ -80,7 +82,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
   public static List<Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
     final List<Optional<Object>> $ = new ArrayList<>();
     if (rawNode.isEmpty()) {
-      for (int i=0 ; i<fieldCount ; ++i)
+      for (int i = 0; i < fieldCount; ++i)
         $.add(Optional.empty());
       return $;
     }
