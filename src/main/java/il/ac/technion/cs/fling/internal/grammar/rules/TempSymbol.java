@@ -4,5 +4,5 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
  * 
  * @author Yossi Gil */
 public interface TempSymbol extends TempComponent {
-  Symbol normalize();
+  @Override Symbol normalize();
 }
