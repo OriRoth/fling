@@ -81,4 +81,109 @@ public class EBNF {
   public final List<Body> bodiesList(final Variable v) {
     return rules(v).flatMap(ERule::bodies).collect(Collectors.toList());
   }
+
+  static class Builder {
+    private final Set<Token> Σ = new LinkedHashSet<>();
+    private final Set<Variable> Γ = new LinkedHashSet<>();
+    private final Set<ERule> R = new LinkedHashSet<>();
+    private Variable start;
+
+    public Derive derive(final Variable variable) {
+      add(variable);
+      return new Derive(variable);
+    }
+
+    public Specialize specialize(final Variable variable) {
+      add(variable);
+      return new Specialize(variable);
+    }
+
+    public final Builder start(final Variable v) {
+      add(v);
+      start = v;
+      return this;
+    }
+
+    Quantifier add(final Quantifier q) {
+      q.symbols().forEach(this::add);
+      return q;
+    }
+
+    Variable add(final Variable v) {
+      Γ.add(v);
+      return v;
+    }
+
+    Token add(final Token t) {
+      Σ.add(t);
+      return t;
+    }
+
+    Component add(final Component s) {
+      assert !s.isTerminal();
+      if (s instanceof Token)
+        return add((Token) s);
+      if (s instanceof Quantifier)
+        return add((Quantifier) s);
+      if (s instanceof Variable)
+        return add((Variable) s);
+      assert false : s + ":" + this;
+      return s;
+    }
+
+    public EBNF build() {
+      assert start != null : "declare a start variable";
+      return new EBNF(Σ, Γ, start, R);
+    }
+
+    public class Derive {
+      private final Variable variable;
+
+      public Derive(final Variable variable) {
+        this.variable = variable;
+      }
+
+      public Builder to(final TempComponent... cs) {
+        final List<Component> normalize = normalize(cs);
+        return to(normalize);
+      }
+
+      private Builder to(final List<Component> cs) {
+        for (final Component c : cs)
+          add(c);
+        R.add(new ERule(variable, new Body(cs)));
+        return Builder.this;
+      }
+
+      private List<Component> normalize(final TempComponent... cs) {
+        final List<Component> $ = new ArrayList<>();
+        for (final TempComponent c : cs)
+          $.add(c.normalize());
+        return $;
+      }
+
+      public Builder toEpsilon() {
+        R.add(new ERule(variable));
+        return Builder.this;
+      }
+    }
+
+    public class Specialize {
+      private final Variable variable;
+
+      public Specialize(final Variable variable) {
+        this.variable = variable;
+      }
+
+      public Builder into(final Variable... vs) {
+        final List<Body> forms = new ArrayList<>();
+        for (final Variable v : vs) {
+          forms.add(new Body(v));
+          Γ.add(v);
+        }
+        R.add(new ERule(variable, forms));
+        return Builder.this;
+      }
+    }
+  }
 }
