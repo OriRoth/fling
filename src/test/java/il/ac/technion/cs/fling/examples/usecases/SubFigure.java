@@ -107,7 +107,7 @@ public class SubFigure {
     }
   }
 
-  @SuppressWarnings("null") public static int getHeight(final Figure fig) {
+  public static int getHeight(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
     final Figure2 composite = (Figure2) fig;

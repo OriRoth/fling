@@ -21,45 +21,41 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class CSharpGenerator extends APIGenerator {
-  public CSharpGenerator(final String endName, final Namer namer) {
+  public CSharpGenerator(final Namer namer, final String endName) {
     super(namer, endName);
   }
 
-  @Override public String renderCompilationUnit(final CompilationUnit fluentAPI) {
+  @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
         fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
-        fluentAPI.startMethods().map(this::renderMethod).collect(joining())) //
+        fluentAPI.startMethods().map(this::render).collect(joining())) //
         .replace("$", "τ");
   }
 
-  @Override public String renderTypeMonomorphic(final TypeName name) {
-    return printTypeName(name);
-  }
-
-  @Override public String renderTypePolymorphic(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s<%s>", //
-        printTypeName(name), //
-        typeArguments.stream().map(this::renderType).collect(joining(",")));
+        render(name), //
+        typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
   @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("public static %s %s(){return new %s();}", //
-        renderType(returnType), //
+        render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
-        renderType(returnType));
+        render(returnType));
   }
 
   @Override public String renderTerminationMethod() {
     return String.format("public void %s(){}", endName);
   }
 
-  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
-        renderType(returnType), //
+        render(returnType), //
         declaration.name.name(), //
         printParametersList(declaration), //
-        renderType(returnType));
+        render(returnType));
   }
 
   @Override public String renderInterfaceTop() {
@@ -70,17 +66,17 @@ public class CSharpGenerator extends APIGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String renderInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s{%s}", //
-        printInterfaceDeclaration(declaration), //
-        methods.stream().map(this::renderMethod).collect(joining()));
+        render(declaration), //
+        methods.stream().map(this::render).collect(joining()));
   }
 
-  public String printTypeName(final TypeName name) {
-    return printTypeName(name.q, name.α, name.legalJumps);
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
   }
 
-  public String printTypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final String qn = q.name();
     // TODO: manage this HACK
     return α == null ? qn.contains("_") ? qn : typeVariableName(q)
@@ -96,8 +92,8 @@ public class CSharpGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
-    final String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+  public String render(final InterfaceDeclaration declaration) {
+    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //
@@ -111,5 +107,9 @@ public class CSharpGenerator extends APIGenerator {
 
   public String typeVariableName(final Named typeVariable) {
     return "_" + typeVariable.name();
+  }
+
+  @Override protected String comment(String comment) {
+    return String.format("/* %s */", comment);
   }
 }

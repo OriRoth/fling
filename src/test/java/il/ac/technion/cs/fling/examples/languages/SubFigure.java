@@ -65,7 +65,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
         return "";
       }
     };
-    final String output = adapter.renderCompilationUnit(compiler.compileFluentAPI());
+    final String output = adapter.render(compiler.compileFluentAPI());
     System.out.println(output);
   }
 }

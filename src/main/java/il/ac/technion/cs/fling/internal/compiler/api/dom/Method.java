@@ -43,7 +43,7 @@ public interface Method {
     }
 
     @Override public String render(final APIGenerator g) {
-      return g.printIntermediateMethod(declaration, returnType);
+      return g.render(declaration, returnType);
     }
   }
 

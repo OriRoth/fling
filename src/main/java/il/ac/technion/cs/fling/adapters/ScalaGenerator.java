@@ -27,27 +27,27 @@ public class ScalaGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String renderCompilationUnit(final CompilationUnit fluentAPI) {
+  @Override protected String comment(String comment) {
+    return String.format("/* %s */", comment);
+  }
+
+  @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
         fluentAPI.interfaces().map(this::renderInterface).collect(joining("\n")), //
-        fluentAPI.startMethods().map(this::renderMethod).collect(joining("\n")));
+        fluentAPI.startMethods().map(this::render).collect(joining("\n")));
   }
 
-  @Override public String renderTypeMonomorphic(final TypeName name) {
-    return printTypeName(name);
-  }
-
-  @Override public String renderTypePolymorphic(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s[%s]", //
-        printTypeName(name), //
-        typeArguments.stream().map(this::renderType).collect(joining(",")));
+        render(name), //
+        typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
   @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
-        renderType(returnType), //
+        render(returnType), //
         printTypeInstantiation(returnType));
   }
 
@@ -55,8 +55,8 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("def %s():Unit={}", endName);
   }
 
-  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
-    final String _returnType = renderType(returnType);
+  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
+    final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
         declaration.name.name(), //
@@ -73,19 +73,18 @@ public class ScalaGenerator extends APIGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String renderInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
-        printInterfaceDeclaration(declaration), //
+        render(declaration), //
         printClassParameters(declaration.parameters), //
-        methods.stream().map(this::renderMethod).collect(joining("\n")));
+        methods.stream().map(this::render).collect(joining("\n")));
   }
 
-  public String printTypeName(final TypeName name) {
-    return printTypeName(name.q, name.α, name.legalJumps);
+  public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
   }
 
-  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α,
-      final Set<Named> legalJumps) {
+  public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final String qn = q.name();
     return α == null ? qn
         : String.format("%s_%s%s", //
@@ -100,8 +99,8 @@ public class ScalaGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
-    final String typeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+  public String render(final InterfaceDeclaration declaration) {
+    final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
     final String typeParameters = declaration.parameters().map(Named::name) //
         .collect(Collectors.joining(","));
     return String.format("class %s", //
@@ -117,7 +116,7 @@ public class ScalaGenerator extends APIGenerator {
   }
 
   public String printTypeInstantiation(final Type returnType) {
-    final String _returnType = renderType(returnType);
+    final String _returnType = render(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
         && !_returnType.contains("_") ? //

@@ -5,6 +5,8 @@ import java.util.List;
 
 import il.ac.technion.cs.fling.adapters.APIGenerator;
 
+/** @author Yossi Gil
+ * @since 2020- */
 public class Interface {
   private static final Interface TOP = new Interface() {
     @Override public String render(final APIGenerator g) {
@@ -50,6 +52,6 @@ public class Interface {
   }
 
   public String render(final APIGenerator g) {
-    return g.renderInterface(declaration, methods);
+    return g.render(declaration, methods);
   }
 }

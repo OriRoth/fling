@@ -45,7 +45,7 @@ public class AnBn {
       .go());
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AnBn",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
-          .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
+          .render(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AnBn")) //
-      .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
+      .render(new ReliableAPICompiler(dpda).compileFluentAPI());
 }

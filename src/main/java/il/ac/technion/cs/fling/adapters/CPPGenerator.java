@@ -30,44 +30,40 @@ public class CPPGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String renderCompilationUnit(final CompilationUnit fluentAPI) {
+  @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s%s", //
-        fluentAPI.interfaces().filter(i -> !i.isTop() && !i.isBot())
-            .map(i -> printInterfaceDeclaration(i.declaration) + ";").collect(joining()), //
+        fluentAPI.interfaces().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";")
+            .collect(joining()), //
         fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
-        fluentAPI.startMethods().map(this::renderMethod).collect(joining()));
+        fluentAPI.startMethods().map(this::render).collect(joining()));
   }
 
-  @Override public String renderTypeMonomorphic(final TypeName name) {
-    return printTypeName(name);
-  }
-
-  @Override public String renderTypePolymorphic(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s<%s>", //
-        printTypeName(name), //
-        typeArguments.stream().map(this::renderType).collect(joining(",")));
+        render(name), //
+        typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
   @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("%s %s(){return %s();}", //
-        renderType(returnType), //
+        render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
-        renderType(returnType));
+        render(returnType));
   }
 
   @Override public String renderTerminationMethod() {
     return String.format("void %s(){};", endName);
   }
 
-  @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
     return String.format("%s %s(%s){return %s();};", //
-        renderType(returnType), //
+        render(returnType), //
         declaration.name.name(), //
         declaration.parmeters() //
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
             .collect(joining(",")), //
-        renderType(returnType));
+        render(returnType));
   }
 
   @Override public String renderInterfaceTop() {
@@ -78,18 +74,17 @@ public class CPPGenerator extends APIGenerator {
     return "class BOT{};";
   }
 
-  @Override public String renderInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s{public:%s};", //
-        printInterfaceDeclaration(declaration), //
-        methods.stream().map(this::renderMethod).collect(joining()));
+        render(declaration), //
+        methods.stream().map(this::render).collect(joining()));
   }
 
-  public String printTypeName(final TypeName name) {
-    return printTypeName(name.q, name.α, name.legalJumps);
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
   }
 
-  @SuppressWarnings("static-method") public String printTypeName(final Named q, final Word<Named> α,
-      final Set<Named> legalJumps) {
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     return α == null ? q.name()
         : String.format("%s_%s%s", //
             q.name(), //
@@ -97,11 +92,16 @@ public class CPPGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
-    final String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+  @Override public String render(final InterfaceDeclaration declaration) {
+    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
         : String.format("template<%s>class %s",
             declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
             printTypeName);
+  }
+
+  @Override protected String comment(String initialComment) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

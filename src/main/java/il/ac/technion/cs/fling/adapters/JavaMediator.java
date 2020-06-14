@@ -50,7 +50,7 @@ public class JavaMediator {
     ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    final JavaGenerator apiAdapter = new JavaGenerator(packageName, apiName, "$", namer) {
+    final APIGenerator apiAdapter = new JavaGenerator(packageName, apiName, "$", namer) {
       @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
@@ -87,7 +87,7 @@ public class JavaMediator {
         apiName + "AST");
     astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
     apiClass = apiAdapter
-        .renderCompilationUnit(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
+        .render(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
     astCompilerClass = parserCompiler.printParserClass();
   }
 
@@ -161,7 +161,7 @@ public class JavaMediator {
             return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
           }
         } //
-            .renderCompilationUnit(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+            .render(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
 

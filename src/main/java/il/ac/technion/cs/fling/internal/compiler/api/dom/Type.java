@@ -32,7 +32,7 @@ public interface Type {
     protected final TypeName name;
 
     @Override public String render(final APIGenerator g) {
-      return g.renderTypeMonomorphic(name);
+      return g.render(name);
     }
 
     public Polymorphic with(final List<Type> arguments) {
@@ -43,7 +43,7 @@ public interface Type {
 
   class Polymorphic extends Monomorphic {
     @Override public String render(final APIGenerator g) {
-      return g.renderTypePolymorphic(name, arguments);
+      return g.render(name, arguments);
     }
 
     @Override public Stream<Type> arguments() {

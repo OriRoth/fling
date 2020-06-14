@@ -32,6 +32,6 @@ public class TableMaker {
     final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
     final CompilationUnit compileFluentAPI = reliableAPICompiler.compileFluentAPI();
-    apiClass = adapter.renderCompilationUnit(compileFluentAPI);
+    apiClass = adapter.render(compileFluentAPI);
   }
 }

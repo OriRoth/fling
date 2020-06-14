@@ -43,7 +43,7 @@ public class LongFall {
       .go());
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "LongFall",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall")) //
-          .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
+          .render(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("LongFall")) //
-      .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
+      .render(new ReliableAPICompiler(dpda).compileFluentAPI());
 }
