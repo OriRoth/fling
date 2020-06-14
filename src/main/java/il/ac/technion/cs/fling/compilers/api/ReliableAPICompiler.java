@@ -1,15 +1,12 @@
 package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.compiler.api.dom.Type.bot;
-import static il.ac.technion.cs.fling.internal.compiler.api.dom.Type.top;
 import static il.ac.technion.cs.fling.internal.util.As.list;
 import static il.ac.technion.cs.fling.internal.util.As.word;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,13 +16,13 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -40,11 +37,11 @@ public class ReliableAPICompiler extends APICompiler {
     super(dpda);
   }
 
-  @Override protected List<Method> compileStartMethods() {
-    final List<Method> $ = new ArrayList<>();
+  @Override protected List<Method.Start> compileStartMethods() {
+    final List<Method.Start> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
-          top()));
+          Type.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -55,7 +52,7 @@ public class ReliableAPICompiler extends APICompiler {
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
                   true));
-      if (!startMethod.returnType.isBot())
+      if (!(startMethod.returnType == Type.BOTTOM))
         $.add(startMethod);
     }
     return $;
@@ -91,8 +88,8 @@ public class ReliableAPICompiler extends APICompiler {
     types.put($, shallowIsBot($) ? //
         Interface.bot() : //
         Interface.top()); // Pending computation.
-    final Interface body = encodedBody(q, α, legalJumps);
-    types.put($, body == null ? Interface.bot() : body);
+    final Interface i = encodeInterface(q, α, legalJumps);
+    types.put($, i == null ? Interface.bot() : i);
     return types.get($).isBot() ? null : $;
   }
 
@@ -113,16 +110,14 @@ public class ReliableAPICompiler extends APICompiler {
     return true;
   }
 
-  private Interface encodedBody(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final List<Method> $ = new ArrayList<>(dpda.Σ().map(σ -> //
-    new Method.Intermediate(new MethodDeclaration(σ), next(q, α, legalJumps, σ))) //
-        .filter(method -> !method.returnType.isBot()) //
-        .collect(toList()));
+  private Interface encodeInterface(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+    final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, legalJumps, σ))) //
+        .filter(m -> m.returnType != Type.BOTTOM) //
+        .collect(toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
     return $.isEmpty() ? null
-        : new Interface(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), //
-            Collections.unmodifiableList($));
+        : new Interface(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an
@@ -135,7 +130,7 @@ public class ReliableAPICompiler extends APICompiler {
    * @return next state type */
   private Type next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? bot() : common(δ, α.pop(), legalJumps, false);
+    return δ == null ? Type.BOTTOM : common(δ, α.pop(), legalJumps, false);
   }
 
   private Type consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
@@ -143,8 +138,7 @@ public class ReliableAPICompiler extends APICompiler {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       final TypeName name = encodedName(q, α, legalJumps);
-      return name == null ? bot() : //
-          new Type(name, getTypeArguments(legalJumps, isInitialType));
+      return name == null ? Type.BOTTOM : Type.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
@@ -155,28 +149,25 @@ public class ReliableAPICompiler extends APICompiler {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
       final TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
-      return name == null ? bot() : //
-          new Type(name, getTypeArguments(legalJumps, isInitialType));
+      return name == null ? Type.BOTTOM : Type.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
     final Map<Named, Type> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
       final Type argument = consolidate(q, α, legalJumps, isInitialType);
-      if (!argument.isBot())
+      if (!(argument == Type.BOTTOM))
         typeArguments.put(q, argument);
     }
     final TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
-    return name == null ? bot() : //
-        new Type( //
-            encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()), //
-            new ArrayList<>(typeArguments.values()));
+    return name == null ? Type.BOTTOM : //
+        Type.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet())).with(new ArrayList<>(typeArguments.values()));
   }
 
   private Type getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    return !legalJumps.contains(δ.q$) ? bot() : //
-        isInitialType ? top() : //
+    return !legalJumps.contains(δ.q$) ? Type.BOTTOM : //
+        isInitialType ? Type.TOP : //
             typeVariables.get(δ.q$);
   }
 
@@ -187,7 +178,7 @@ public class ReliableAPICompiler extends APICompiler {
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> Type.top()) //
+            .map(q -> Type.TOP) //
             .collect(toList());
   }
 }

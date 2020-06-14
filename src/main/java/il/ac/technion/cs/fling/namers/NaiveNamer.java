@@ -77,13 +77,12 @@ public class NaiveNamer implements Namer {
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
         .map(Interface::methods) //
         .flatMap(List::stream) //
-        .filter(Method::isIntermediateMethod) //
-        .map(Method::asIntermediateMethod) //
+        .filter(m -> m instanceof Method.Intermediate) //
+        .map(m -> (Method.Intermediate) m) //
         .map(Intermediate::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
     fluentAPI.startMethods() //
-        .map(Method::asStartMethod) //
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:

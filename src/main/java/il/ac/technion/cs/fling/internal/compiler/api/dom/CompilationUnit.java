@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class CompilationUnit {
-  private final List<Method> startMethods;
+  private final List<Method.Start> startMethods;
   private final List<Interface> interfaces;
 
   public Stream<Interface> interfaces() {
@@ -13,13 +13,13 @@ public class CompilationUnit {
 
   public final TypeBody body;
 
-  public CompilationUnit(final List<Method> startMethods, final List<Interface> interfaces, final TypeBody body) {
+  public CompilationUnit(final List<Method.Start> startMethods, final List<Interface> interfaces, final TypeBody body) {
     this.startMethods = startMethods;
     this.interfaces = interfaces;
     this.body = body;
   }
 
-  public Stream<Method> startMethods() {
+  public Stream<Method.Start> startMethods() {
     return startMethods.stream();
   }
 }

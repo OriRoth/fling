@@ -10,6 +10,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
@@ -29,7 +30,7 @@ public abstract class APICompiler {
 
   public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
-    dpda.Q().forEach(q -> typeVariables.put(q, new Type(new TypeName(q))));
+    dpda.Q().forEach(q -> typeVariables.put(q, Type.of(new TypeName(q))));
   }
 
   /** Compile fluent API. The object's state after calling this method is
@@ -48,7 +49,7 @@ public abstract class APICompiler {
   /** Compile API static start methods.
    *
    * @return compiled methods */
-  protected abstract List<Method> compileStartMethods();
+  protected abstract List<Method.Start> compileStartMethods();
 
   /** Compile API types.
    *

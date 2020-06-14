@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.compiler.api;
+package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,20 +22,12 @@ public class InterfaceDeclaration {
   public final boolean isAccepting;
 
   public InterfaceDeclaration(final Named q, final Word<Named> α, final Set<Named> legalJumps,
-      final Word<Named> typeVariables, final boolean isAccepting) {
+      final Word<Named> parameters, final boolean isAccepting) {
     this.q = q;
     this.α = α;
     this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
-    this.parameters = typeVariables;
+    this.parameters = parameters;
     this.isAccepting = isAccepting;
-  }
-
-  InterfaceDeclaration() {
-    q = null;
-    α = null;
-    legalJumps = null;
-    parameters = null;
-    isAccepting = false;
   }
 
   public Stream<Named> parameters() {

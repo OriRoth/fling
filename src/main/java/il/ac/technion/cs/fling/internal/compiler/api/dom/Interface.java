@@ -3,11 +3,19 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import java.util.Collections;
 import java.util.List;
 
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
+import il.ac.technion.cs.fling.adapters.APIGenerator;
 
 public class Interface {
-  private static final Interface TOP = new Interface();
-  private static final Interface BOT = new Interface();
+  private static final Interface TOP = new Interface() {
+    @Override public String render(final APIGenerator g) {
+      return g.renderInterfaceTop();
+    }
+  };
+  private static final Interface BOTTOM = new Interface() {
+    @Override public String render(final APIGenerator g) {
+      return g.renderInterfaceBottom();
+    }
+  };
   public final InterfaceDeclaration declaration;
   public final List<Method> methods;
 
@@ -30,7 +38,7 @@ public class Interface {
   }
 
   public static Interface bot() {
-    return BOT;
+    return BOTTOM;
   }
 
   public boolean isTop() {
@@ -38,6 +46,10 @@ public class Interface {
   }
 
   public boolean isBot() {
-    return this == BOT;
+    return this == BOTTOM;
+  }
+
+  public String render(final APIGenerator g) {
+    return g.renderInterface(declaration, methods);
   }
 }

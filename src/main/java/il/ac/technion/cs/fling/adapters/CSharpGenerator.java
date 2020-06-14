@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -25,55 +25,55 @@ public class CSharpGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
+  @Override public String renderCompilationUnit(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
-        fluentAPI.interfaces().map(this::printInterface).collect(joining()), //
-        fluentAPI.startMethods().map(this::printMethod).collect(joining())) //
+        fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
+        fluentAPI.startMethods().map(this::renderMethod).collect(joining())) //
         .replace("$", "τ");
   }
 
-  @Override public String typeName(final TypeName name) {
+  @Override public String renderTypeMonomorphic(final TypeName name) {
     return printTypeName(name);
   }
 
-  @Override public String typeName(final TypeName name, final List<Type> typeArguments) {
+  @Override public String renderTypePolymorphic(final TypeName name, final List<Type> typeArguments) {
     return String.format("%s<%s>", //
         printTypeName(name), //
-        typeArguments.stream().map(this::printType).collect(joining(",")));
+        typeArguments.stream().map(this::renderType).collect(joining(",")));
   }
 
-  @Override public String startMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("public static %s %s(){return new %s();}", //
-        printType(returnType), //
+        renderType(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
-        printType(returnType));
+        renderType(returnType));
   }
 
-  @Override public String printTerminationMethod() {
+  @Override public String renderTerminationMethod() {
     return String.format("public void %s(){}", endName);
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
-        printType(returnType), //
+        renderType(returnType), //
         declaration.name.name(), //
         printParametersList(declaration), //
-        printType(returnType));
+        renderType(returnType));
   }
 
-  @Override public String printTopInterface() {
+  @Override public String renderInterfaceTop() {
     return String.format("public class TOP{public void %s(){}}", endName);
   }
 
-  @Override public String printBotInterface() {
+  @Override public String renderInterfaceBottom() {
     return "private class BOT{}";
   }
 
-  @Override public String printInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String renderInterface(final InterfaceDeclaration declaration, final List<Method> methods) {
     return String.format("%s{%s}", //
         printInterfaceDeclaration(declaration), //
-        methods.stream().map(this::printMethod).collect(joining()));
+        methods.stream().map(this::renderMethod).collect(joining()));
   }
 
   public String printTypeName(final TypeName name) {
@@ -91,13 +91,13 @@ public class CSharpGenerator extends APIGenerator {
   }
 
   @SuppressWarnings("static-method") public String printParametersList(final MethodDeclaration declaration) {
-    return declaration.getInferredParameters().stream() //
+    return declaration.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
-    String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
+    final String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //

@@ -55,14 +55,14 @@ public class AeqB {
       .go());
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB",
       "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AeqB")) //
-          .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+          .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AeqB"), "$") //
-      .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+  public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AeqB")) //
+      .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** SML fluent API */
   public static final String SMLFluentAPI = new SMLGenerator("zzz", new NaiveNamer("AeqB")) //
-      .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+      .renderCompilationUnit(new ReliableAPICompiler(dpda).compileFluentAPI());
 
   /** Print C++ program to standard output. */
   public static void main(final String[] args) {

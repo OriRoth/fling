@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.compiler.api;
+package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -10,24 +10,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Type name node declaration.
  *
  * @author Ori Roth */
-public class TypeName {
-  /** Inducing state. */
-  public final Named q;
+public class TypeName extends SimpleTypeName {
   /** Inducing stack symbols. */
   public final Word<Named> α;
   /** Referenced states (type variables). */
   public final Set<Named> legalJumps;
 
   public TypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    this.q = q;
+    super(q);
     this.α = α;
     this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
   }
 
-  TypeName(final Named q) {
-    this.q = q;
-    α = null;
-    legalJumps = null;
+  public TypeName(final Named q) {
+    this(q, null, null);
   }
 
   @Override public int hashCode() {

@@ -1,28 +1,25 @@
 package il.ac.technion.cs.fling.compilers.api;
 
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.compiler.api.dom.Type.bot;
-import static il.ac.technion.cs.fling.internal.compiler.api.dom.Type.top;
 import static il.ac.technion.cs.fling.internal.util.As.list;
 import static il.ac.technion.cs.fling.internal.util.As.word;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -38,11 +35,11 @@ public class PolynomialAPICompiler extends APICompiler {
     super(dpda);
   }
 
-  @Override protected List<Method> compileStartMethods() {
-    final List<Method> $ = new ArrayList<>();
+  @Override protected List<Method.Start> compileStartMethods() {
+    final List<Method.Start> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
-          Type.top()));
+          Type.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -50,7 +47,7 @@ public class PolynomialAPICompiler extends APICompiler {
       final Method.Start startMethod = //
           new Method.Start(new MethodDeclaration(σ), //
               consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
-      if (!startMethod.returnType.isBot())
+      if (!(startMethod.returnType == Type.BOTTOM))
         $.add(startMethod);
     }
     return $;
@@ -82,17 +79,15 @@ public class PolynomialAPICompiler extends APICompiler {
     if (types.containsKey($))
       return $;
     types.put($, null); // Pending computation.
-    types.put($, encodedBody(q, α));
+    types.put($, encodeInterface(q, α));
     return $;
   }
 
-  private Interface encodedBody(final Named q, final Word<Named> α) {
-    final List<Method> $ = dpda.Σ().map(σ -> //
-    new Method.Intermediate(new MethodDeclaration(σ), next(q, α, σ))).collect(Collectors.toList());
+  private Interface encodeInterface(final Named q, final Word<Named> α) {
+    final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, σ))).collect(Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
-    return new Interface(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), //
-        Collections.unmodifiableList($));
+    return new Interface(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an
@@ -104,32 +99,33 @@ public class PolynomialAPICompiler extends APICompiler {
    * @return next state type */
   private Type next(final Named q, final Word<Named> α, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? Type.bot() : common(δ, α.pop(), false);
+    return δ == null ? Type.BOTTOM : common(δ, α.pop(), false);
   }
 
   private Type consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
-    return δ == null ? new Type(encodedName(q, α), getTypeArguments(isInitialType)) : common(δ, α.pop(), isInitialType);
+    return δ == null ? Type.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
+        : common(δ, α.pop(), isInitialType);
   }
 
   private Type common(final δ<Named, Token, Named> δ, final Word<Named> α, final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);
-      return new Type(encodedName(δ.q$, δ.getΑ()), getTypeArguments(isInitialType));
+      return Type.of(encodedName(δ.q$, δ.getΑ())).with(getTypeArguments(isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, isInitialType);
-    return new Type(encodedName(δ.q$, δ.getΑ()), //
-        dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
+    return Type.of(encodedName(δ.q$, δ.getΑ()))
+        .with(dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
 
   private Type getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
-    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top() : bot();
+    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? Type.TOP : Type.BOTTOM;
   }
 
   private List<Type> getTypeArguments(final boolean isInitialType) {
     return !isInitialType ? list(typeVariables.values())
-        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? Type.top() : Type.bot()).collect(toList());
+        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? Type.TOP : Type.BOTTOM).collect(toList());
   }
 }

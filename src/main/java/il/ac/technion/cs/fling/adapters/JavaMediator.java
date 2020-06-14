@@ -87,7 +87,7 @@ public class JavaMediator {
         apiName + "AST");
     astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
     apiClass = apiAdapter
-        .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
+        .renderCompilationUnit(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
     astCompilerClass = parserCompiler.printParserClass();
   }
 
@@ -161,7 +161,7 @@ public class JavaMediator {
             return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
           }
         } //
-            .printFluentAPI(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+            .renderCompilationUnit(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
         .collect(joining());
   }
 
