@@ -60,7 +60,7 @@ public abstract class APIGenerator {
 
   public abstract String render(TypeName name, List<Type> typeArguments);
 
-  final String renderInterface(final Interface i) {
+  final String render(final Interface i) {
     return i.render(this);
   }
 

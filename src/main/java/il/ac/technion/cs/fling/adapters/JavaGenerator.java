@@ -47,7 +47,7 @@ public class JavaGenerator extends APIGenerator {
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
         fluentAPI.startMethods().map(this::render).collect(joining()), //
-        fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
+        fluentAPI.interfaces().map(this::render).collect(joining()), //
         printConcreteImplementation(fluentAPI), //
         printAdditionalDeclarations());
   }

@@ -34,7 +34,7 @@ public class ScalaGenerator extends APIGenerator {
   @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
-        fluentAPI.interfaces().map(this::renderInterface).collect(joining("\n")), //
+        fluentAPI.interfaces().map(this::render).collect(joining("\n")), //
         fluentAPI.startMethods().map(this::render).collect(joining("\n")));
   }
 

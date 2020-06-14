@@ -41,7 +41,7 @@ public class SMLGenerator extends APIGenerator {
 
   @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
-    return String.format("%s\n\n%s", fluentAPI.interfaces().map(this::renderInterface).collect(joining(" ")),
+    return String.format("%s\n\n%s", fluentAPI.interfaces().map(this::render).collect(joining(" ")),
         fluentAPI.startMethods().map(this::render).collect(joining("\n")));
   }
 

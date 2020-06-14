@@ -35,7 +35,7 @@ public class CPPGenerator extends APIGenerator {
     return String.format("%s%s%s", //
         fluentAPI.interfaces().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";")
             .collect(joining()), //
-        fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
+        fluentAPI.interfaces().map(this::render).collect(joining()), //
         fluentAPI.startMethods().map(this::render).collect(joining()));
   }
 

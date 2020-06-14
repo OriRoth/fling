@@ -28,7 +28,7 @@ public class CSharpGenerator extends APIGenerator {
   @Override public String render(final CompilationUnit fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
-        fluentAPI.interfaces().map(this::renderInterface).collect(joining()), //
+        fluentAPI.interfaces().map(this::render).collect(joining()), //
         fluentAPI.startMethods().map(this::render).collect(joining())) //
         .replace("$", "τ");
   }
