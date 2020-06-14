@@ -17,8 +17,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public abstract class APIGenerator {
   public final String bottomName;
-  protected final String endName;
-  protected final Namer namer;
+  final String endName;
+  final Namer namer;
   public final String topName;
 
   protected APIGenerator(final Namer namer) {

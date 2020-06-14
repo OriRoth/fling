@@ -76,7 +76,7 @@ public class CSharpGenerator extends APIGenerator {
     return render(name.q, name.α, name.legalJumps);
   }
 
-  public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final String qn = q.name();
     // TODO: manage this HACK
     return α == null ? qn.contains("_") ? qn : typeVariableName(q)
@@ -92,7 +92,7 @@ public class CSharpGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final InterfaceDeclaration declaration) {
     final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //

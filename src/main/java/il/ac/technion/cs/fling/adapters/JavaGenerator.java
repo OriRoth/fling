@@ -103,7 +103,7 @@ public class JavaGenerator extends APIGenerator {
             .collect(joining()));
   }
 
-  public String render(final TypeName name) {
+  @Override public String render(final TypeName name) {
     return render(name.q, name.α, name.legalJumps);
   }
 
@@ -111,7 +111,7 @@ public class JavaGenerator extends APIGenerator {
     return render(declaration.q, declaration.α, declaration.legalJumps);
   }
 
-  public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     return α == null ? q.name()
         : String.format("%s_%s%s", //
             q.name(), //
@@ -119,7 +119,7 @@ public class JavaGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final InterfaceDeclaration declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
         declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
   }

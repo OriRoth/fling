@@ -80,11 +80,11 @@ public class ScalaGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining("\n")));
   }
 
-  public String render(final TypeName name) {
+  @Override public String render(final TypeName name) {
     return render(name.q, name.α, name.legalJumps);
   }
 
-  public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final String qn = q.name();
     return α == null ? qn
         : String.format("%s_%s%s", //
@@ -99,10 +99,9 @@ public class ScalaGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final InterfaceDeclaration declaration) {
     final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    final String typeParameters = declaration.parameters().map(Named::name) //
-        .collect(Collectors.joining(","));
+    final String typeParameters = declaration.parameters().map(Named::name).collect(Collectors.joining(","));
     return String.format("class %s", //
         declaration.parameters.isEmpty() ? //
             typeName //
