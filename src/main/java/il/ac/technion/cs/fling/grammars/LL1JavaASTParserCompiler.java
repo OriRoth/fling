@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Assignment;
+import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
@@ -78,7 +78,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         bnf.isOriginalVariable(v) ? getClassForVariable(v) : ListObject, //
         v.name(), //
         inputClass.getCanonicalName(), //
-        Assignment.class.getCanonicalName(), //
+        Invocation.class.getCanonicalName(), //
         !bnf.isOriginalVariable(v) ? //
             printConcreteExtensionChildMethodBody(v) : //
             Grammar.isSequenceRHS(bnf, v) ? //
@@ -100,7 +100,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       body.append(String.format("if(w.isEmpty())return parse_%s(w);", //
           optionalNullableChild.get().name()));
     // Read input letter:
-    body.append(Assignment.class.getCanonicalName()).append(" _a = w.get(0);");
+    body.append(Invocation.class.getCanonicalName()).append(" _a = w.get(0);");
     // Diverge by firsts sets:
     children.stream() //
         .filter(child -> !optionalNullableChild.isPresent() || !child.equals(optionalNullableChild.get())) //
@@ -119,7 +119,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
 
     final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
-    body.append(Assignment.class.getCanonicalName()).append(" _a;");
+    body.append(Invocation.class.getCanonicalName()).append(" _a;");
     body.append(ListWild).append(" _b;");
     final Map<String, Integer> usedNames = new HashMap<>();
     usedNames.put("_a", 1);
@@ -181,7 +181,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private String printConcreteExtensionChildMethodBody(final Variable v) {
     final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
-    body.append(Assignment.class.getCanonicalName()).append(" _a;");
+    body.append(Invocation.class.getCanonicalName()).append(" _a;");
     body.append(ListObject).append(" _b;");
     final Map<String, Integer> usedNames = new HashMap<>();
     usedNames.put("_a", 1);

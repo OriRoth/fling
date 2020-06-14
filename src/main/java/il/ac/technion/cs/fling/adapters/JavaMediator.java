@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.compilers.ast.ASTCompiler;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.grammars.LL1JavaASTParserCompiler;
-import il.ac.technion.cs.fling.internal.compiler.Assignment;
+import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
@@ -96,7 +96,7 @@ public class JavaMediator {
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
             : String.format("α.w.add(new %s(%s.%s%s%s));", //
-                Assignment.class.getCanonicalName(), //
+                Invocation.class.getCanonicalName(), //
                 Σ.getCanonicalName(), //
                 σ.name(), //
                 processedParameters.isEmpty() ? "" : ",", //
@@ -106,7 +106,7 @@ public class JavaMediator {
   String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         List.class.getCanonicalName(), //
-        Assignment.class.getCanonicalName(), //
+        Invocation.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
 
@@ -114,7 +114,7 @@ public class JavaMediator {
     assert σ.parameters.length == parameters.size();
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s,%s));", //
-        Assignment.class.getCanonicalName(), //
+        Invocation.class.getCanonicalName(), //
         Σ.getCanonicalName(), //
         σ.name(), //
         String.format("new Object[]{%s}", String.join(",", processedParameters)));

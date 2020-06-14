@@ -8,7 +8,7 @@ import java.util.List;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.PlainBNFImporter;
-import il.ac.technion.cs.fling.internal.compiler.Assignment;
+import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
@@ -30,7 +30,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
    * @return BNF builder API */
   static q0ø__Rule1$start_q0$q0ø<q0$_$_q0$<$>, $> bnf() {
     final α α = new α();
-    α.w.add(new Assignment(Σ.bnf));
+    α.w.add(new Invocation(Σ.bnf));
     return α;
   }
 
@@ -74,40 +74,40 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
   static class α implements $, q0$_$_q0$, q0ø__Rule1$start_q0$q0ø, q0$__Rule1$_q0$q0ø, q0ø__Rule1$RuleBody$_q0$q0ø,
       q0ø__Rule1$into_q0$q0ø, q0$__RuleTail1$_derivespecializeq0$q0ø {
-    public List<il.ac.technion.cs.fling.internal.compiler.Assignment> w = new ArrayList<>();
+    public List<il.ac.technion.cs.fling.internal.compiler.Invocation> w = new ArrayList<>();
 
     public α bnf() {
-      this.w.add(new Assignment(Σ.bnf, new Object[] {}));
+      this.w.add(new Invocation(Σ.bnf, new Object[] {}));
       return self();
     }
 
     @Override public α start(final Variable variable) {
-      this.w.add(new Assignment(Σ.start, new Object[] { variable }));
+      this.w.add(new Invocation(Σ.start, new Object[] { variable }));
       return self();
     }
 
     @Override public α derive(final Variable variable) {
-      this.w.add(new Assignment(Σ.derive, new Object[] { variable }));
+      this.w.add(new Invocation(Σ.derive, new Object[] { variable }));
       return self();
     }
 
     @Override public α specialize(final Variable variable) {
-      this.w.add(new Assignment(Σ.specialize, new Object[] { variable }));
+      this.w.add(new Invocation(Σ.specialize, new Object[] { variable }));
       return self();
     }
 
     @Override public α into(final Variable... variables) {
-      this.w.add(new Assignment(Σ.into, new Object[] { variables }));
+      this.w.add(new Invocation(Σ.into, new Object[] { variables }));
       return self();
     }
 
     @Override public α to(final TempComponent... symbols) {
-      this.w.add(new Assignment(Σ.to, new Object[] { symbols }));
+      this.w.add(new Invocation(Σ.to, new Object[] { symbols }));
       return self();
     }
 
     @Override public α toEpsilon() {
-      this.w.add(new Assignment(Σ.toEpsilon, new Object[] {}));
+      this.w.add(new Invocation(Σ.toEpsilon, new Object[] {}));
       return self();
     }
 
@@ -116,12 +116,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     }
 
     @Override public α or(final TempComponent... symbols) {
-      this.w.add(new Assignment(Σ.or, new Object[] { symbols }));
+      this.w.add(new Invocation(Σ.or, new Object[] { symbols }));
       return self();
     }
 
     @Override public α orNone() {
-      this.w.add(new Assignment(Σ.orNone, new Object[] {}));
+      this.w.add(new Invocation(Σ.orNone, new Object[] {}));
       return self();
     }
 
