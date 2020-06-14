@@ -34,7 +34,7 @@ public interface Method {
     public final Type returnType;
 
     public Intermediate(final Token σ, final Type returnType) {
-      this.declaration = new MethodDeclaration(σ);
+        declaration = new MethodDeclaration(σ);
       this.returnType = returnType;
     }
 

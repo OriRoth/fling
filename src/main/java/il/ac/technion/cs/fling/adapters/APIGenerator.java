@@ -32,33 +32,33 @@ public abstract class APIGenerator {
     this.topName = topName;
   }
 
-  abstract public String renderInterface(InterfaceDeclaration declaration, List<Method> methods);
+  public abstract String renderInterface(InterfaceDeclaration declaration, List<Method> methods);
 
-  abstract public String printIntermediateMethod(MethodDeclaration declaration, Type returnType);
+  public abstract String printIntermediateMethod(MethodDeclaration declaration, Type returnType);
 
-  abstract public String renderCompilationUnit(CompilationUnit fluentAPI);
+  public abstract String renderCompilationUnit(CompilationUnit fluentAPI);
 
   final String renderInterface(final Interface i) {
     return i.render(this);
   }
 
-  abstract public String renderInterfaceBottom();
+  public abstract String renderInterfaceBottom();
 
-  abstract public String renderInterfaceTop();
+  public abstract String renderInterfaceTop();
 
   final String renderMethod(final Method m) {
     return m.render(this);
   }
 
-  abstract public String renderMethod(MethodDeclaration declaration, Type returnType);
+  public abstract String renderMethod(MethodDeclaration declaration, Type returnType);
 
-  abstract public String renderTerminationMethod();
+  public abstract String renderTerminationMethod();
 
   public final String renderType(final Type t) {
     return t.render(this);
   }
 
-  abstract public String renderTypeMonomorphic(TypeName name);
+  public abstract String renderTypeMonomorphic(TypeName name);
 
-  abstract public String renderTypePolymorphic(TypeName name, List<Type> typeArguments);
+  public abstract String renderTypePolymorphic(TypeName name, List<Type> typeArguments);
 }

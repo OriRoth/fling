@@ -24,7 +24,7 @@ public interface Type {
 
   Type BOTTOM = g -> g.bottomName;
 
-  public static class Monomorphic implements Type {
+  class Monomorphic implements Type {
     Monomorphic(final TypeName name) {
       this.name = name;
     }
@@ -41,7 +41,7 @@ public interface Type {
 
   }
 
-  public static class Polymorphic extends Monomorphic {
+  class Polymorphic extends Monomorphic {
     @Override public String render(final APIGenerator g) {
       return g.renderTypePolymorphic(name, arguments);
     }
