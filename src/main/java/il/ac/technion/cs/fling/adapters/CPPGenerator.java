@@ -100,8 +100,7 @@ public class CPPGenerator extends APIGenerator {
             printTypeName);
   }
 
-  @Override protected String comment(String initialComment) {
-    // TODO Auto-generated method stub
-    return null;
+  @Override protected String comment(String comment) {
+    return "/* " + comment + "*/";
   }
 }
