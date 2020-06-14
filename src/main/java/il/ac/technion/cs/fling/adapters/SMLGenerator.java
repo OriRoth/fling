@@ -20,11 +20,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Prototypical SML API adapter.
  *
  * @author Ori Roth */
-public class SMLGenerator extends AbstractGenerator {
+public class SMLGenerator extends APIGenerator {
   private boolean firstDatatype;
 
-  public SMLGenerator(final String terminationMethodName, final Namer namer) {
-    super(terminationMethodName, namer);
+  public SMLGenerator(final String endName, final Namer namer) {
+    super(namer, endName);
     firstDatatype = true;
   }
 
@@ -32,14 +32,6 @@ public class SMLGenerator extends AbstractGenerator {
     namer.name(fluentAPI);
     return String.format("%s\n\n%s", fluentAPI.interfaces().map(this::printInterface).collect(joining(" ")),
         fluentAPI.startMethods().map(this::printMethod).collect(joining("\n")));
-  }
-
-  @Override public String topTypeName() {
-    return "TOP";
-  }
-
-  @Override public String bottomTypeName() {
-    return "BOT";
   }
 
   @Override public String typeName(final TypeName name) {
@@ -56,12 +48,12 @@ public class SMLGenerator extends AbstractGenerator {
   }
 
   @Override public String startMethod(final MethodDeclaration declaration, final Type returnType) {
-    final String name = Constants.$$.equals(declaration.name) ? terminationMethodName : declaration.name.name();
+    final String name = Constants.$$.equals(declaration.name) ? endName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, printType(returnType), name);
   }
 
   @Override public String printTerminationMethod() {
-    return String.format("\t%s: TOP", terminationMethodName);
+    return String.format("\t%s: TOP", endName);
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {

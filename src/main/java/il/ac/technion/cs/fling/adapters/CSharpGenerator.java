@@ -20,9 +20,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** C# API adapter.
  *
  * @author Ori Roth */
-public class CSharpGenerator extends AbstractGenerator {
-  public CSharpGenerator(final String terminationMethodName, final Namer namer) {
-    super(terminationMethodName, namer);
+public class CSharpGenerator extends APIGenerator {
+  public CSharpGenerator(final String endName, final Namer namer) {
+    super(namer, endName);
   }
 
   @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
@@ -31,14 +31,6 @@ public class CSharpGenerator extends AbstractGenerator {
         fluentAPI.interfaces().map(this::printInterface).collect(joining()), //
         fluentAPI.startMethods().map(this::printMethod).collect(joining())) //
         .replace("$", "τ");
-  }
-
-  @Override public String topTypeName() {
-    return "TOP";
-  }
-
-  @Override public String bottomTypeName() {
-    return "BOT";
   }
 
   @Override public String typeName(final TypeName name) {
@@ -59,7 +51,7 @@ public class CSharpGenerator extends AbstractGenerator {
   }
 
   @Override public String printTerminationMethod() {
-    return String.format("public void %s(){}", terminationMethodName);
+    return String.format("public void %s(){}", endName);
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
@@ -71,7 +63,7 @@ public class CSharpGenerator extends AbstractGenerator {
   }
 
   @Override public String printTopInterface() {
-    return String.format("public class TOP{public void %s(){}}", terminationMethodName);
+    return String.format("public class TOP{public void %s(){}}", endName);
   }
 
   @Override public String printBotInterface() {
@@ -106,8 +98,7 @@ public class CSharpGenerator extends AbstractGenerator {
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    return declaration.parameters.isEmpty()
-        ? String.format("public class %s", printTypeName)
+    return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //
             declaration.parameters().map(this::typeVariableName) //

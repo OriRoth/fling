@@ -58,7 +58,7 @@ public class AeqB {
           .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
-  public static final String CppFluentAPI = new CPPGenerator("$", new NaiveNamer("AeqB")) //
+  public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AeqB"), "$") //
       .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
   /** SML fluent API */
   public static final String SMLFluentAPI = new SMLGenerator("zzz", new NaiveNamer("AeqB")) //

@@ -20,10 +20,10 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** C++ API adapter.
  *
  * @author Ori Roth */
-public class CPPGenerator extends AbstractGenerator {
+public class CPPGenerator extends APIGenerator {
 
-  public CPPGenerator(final String terminationMethodName, final Namer namer) {
-    super(terminationMethodName, namer);
+  public CPPGenerator(final Namer namer, final String endName) {
+    super(namer, endName);
   }
 
   @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
@@ -33,14 +33,6 @@ public class CPPGenerator extends AbstractGenerator {
             .map(i -> printInterfaceDeclaration(i.declaration) + ";").collect(joining()), //
         fluentAPI.interfaces().map(this::printInterface).collect(joining()), //
         fluentAPI.startMethods().map(this::printMethod).collect(joining()));
-  }
-
-  @Override public String topTypeName() {
-    return "TOP";
-  }
-
-  @Override public String bottomTypeName() {
-    return "BOT";
   }
 
   @Override public String typeName(final TypeName name) {
@@ -61,7 +53,7 @@ public class CPPGenerator extends AbstractGenerator {
   }
 
   @Override public String printTerminationMethod() {
-    return String.format("void %s(){};", terminationMethodName);
+    return String.format("void %s(){};", endName);
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
@@ -75,7 +67,7 @@ public class CPPGenerator extends AbstractGenerator {
   }
 
   @Override public String printTopInterface() {
-    return String.format("class TOP{public:void %s(){};};", terminationMethodName);
+    return String.format("class TOP{public:void %s(){};};", endName);
   }
 
   @Override public String printBotInterface() {
@@ -103,8 +95,7 @@ public class CPPGenerator extends AbstractGenerator {
 
   public String printInterfaceDeclaration(final InterfaceDeclaration declaration) {
     String printTypeName = printTypeName(declaration.q, declaration.α, declaration.legalJumps);
-    return declaration.parameters.isEmpty()
-        ? String.format("class %s", printTypeName)
+    return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
         : String.format("template<%s>class %s",
             declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
             printTypeName);

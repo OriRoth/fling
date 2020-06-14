@@ -21,10 +21,10 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Scala API adapter.
  *
  * @author Ori Roth */
-public class ScalaGenerator extends AbstractGenerator {
+public class ScalaGenerator extends APIGenerator {
 
-  public ScalaGenerator(final String terminationMethodName, final Namer namer) {
-    super(terminationMethodName, namer);
+  public ScalaGenerator(final String endName, final Namer namer) {
+    super(namer, endName);
   }
 
   @Override public String printFluentAPI(final CompilationUnit fluentAPI) {
@@ -32,14 +32,6 @@ public class ScalaGenerator extends AbstractGenerator {
     return String.format("%s\n%s", //
         fluentAPI.interfaces().map(this::printInterface).collect(joining("\n")), //
         fluentAPI.startMethods().map(this::printMethod).collect(joining("\n")));
-  }
-
-  @Override public String topTypeName() {
-    return "TOP";
-  }
-
-  @Override public String bottomTypeName() {
-    return "BOT";
   }
 
   @Override public String typeName(final TypeName name) {
@@ -60,7 +52,7 @@ public class ScalaGenerator extends AbstractGenerator {
   }
 
   @Override public String printTerminationMethod() {
-    return String.format("def %s():Unit={}", terminationMethodName);
+    return String.format("def %s():Unit={}", endName);
   }
 
   @Override public String printIntermediateMethod(final MethodDeclaration declaration, final Type returnType) {
@@ -74,7 +66,7 @@ public class ScalaGenerator extends AbstractGenerator {
   }
 
   @Override public String printTopInterface() {
-    return String.format("class TOP{\ndef %s():Unit={}\n}", terminationMethodName);
+    return String.format("class TOP{\ndef %s():Unit={}\n}", endName);
   }
 
   @Override public String printBotInterface() {

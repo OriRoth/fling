@@ -13,6 +13,10 @@ public class Type {
     this(name, Collections.emptyList());
   }
 
+  public String render() {
+    return null;
+  }
+
   private Type() {
     this(null);
   }
