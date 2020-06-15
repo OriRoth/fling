@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -31,11 +31,11 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("/* %s */", comment);
   }
 
-  @Override public String render(final Model fluentAPI) {
-    namer.name(fluentAPI);
+  @Override public String render(final Model m) {
+    namer.name(m);
     return String.format("%s\n%s", //
-        fluentAPI.types().map(this::render).collect(joining("\n")), //
-        fluentAPI.startMethods().map(this::render).collect(joining("\n")));
+        m.types().map(this::render).collect(joining("\n")), //
+        m.starts().map(this::render).collect(joining("\n")));
   }
 
   @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
@@ -44,7 +44,7 @@ public class ScalaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
         render(returnType), //
@@ -55,7 +55,7 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("def %s():Unit={}", endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
     final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
@@ -73,7 +73,7 @@ public class ScalaGenerator extends APIGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
         render(declaration), //
         printClassParameters(declaration.parameters), //
@@ -93,13 +93,13 @@ public class ScalaGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodDeclaration declaration) {
+  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature declaration) {
     return declaration.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }
 
-  @Override public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final TypeSignature declaration) {
     final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
     final String typeParameters = declaration.parameters().map(Named::name).collect(Collectors.joining(","));
     return String.format("class %s", //

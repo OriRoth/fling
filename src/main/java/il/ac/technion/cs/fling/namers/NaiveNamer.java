@@ -10,14 +10,14 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Intermediate;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Start;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
@@ -71,24 +71,24 @@ public class NaiveNamer implements Namer {
         .forEach(this::setInferredFieldsInClass);
   }
 
-  @Override public void name(final Model fluentAPI) {
+  @Override public void name(final Model m) {
     // Set intermediate methods parameter names:
-    fluentAPI.types() //
-        .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
+    m.types() //
+        .filter(i -> !i.isBot() && !i.isTop()) //
         .map(Type::methods) //
         .flatMap(List::stream) //
-        .filter(m -> m instanceof Method.Intermediate) //
-        .map(m -> (Method.Intermediate) m) //
+        .filter(mm -> mm instanceof Method.Intermediate) //
+        .map(mm -> (Method.Intermediate) mm) //
         .map(Intermediate::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
-    fluentAPI.startMethods() //
+    m.starts() //
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
-    fluentAPI.body.methods.stream() //
+    m.body.methods() //
         .map(Method::asChainedMethod) //
-        .map(Chained::declaration) //
+        .map(Chained::signature) //
         .forEach(this::setInferredParametersIntermediateInMethod);
   }
 
@@ -139,7 +139,7 @@ public class NaiveNamer implements Namer {
     throw new RuntimeException("problem while building AST types");
   }
 
-  protected void setInferredParametersIntermediateInMethod(final MethodDeclaration declaration) {
+  protected void setInferredParametersIntermediateInMethod(final MethodSignature declaration) {
     final Map<String, Integer> usedNames = new HashMap<>();
     declaration.setInferredParameters(declaration.name.parameters() //
         .map(parameter -> {
@@ -160,7 +160,7 @@ public class NaiveNamer implements Namer {
                 headVariableConclusionTypeName());
           else
             throw new RuntimeException("problem while naming API types");
-          return ParameterFragment.of( //
+          return MethodParameter.of( //
               typeName, //
               getNameFromBase(parameter.baseParameterName(), usedNames));
         }).collect(toList()));

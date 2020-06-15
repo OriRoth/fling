@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -25,11 +25,11 @@ public class CSharpGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String render(final Model fluentAPI) {
-    namer.name(fluentAPI);
+  @Override public String render(final Model m) {
+    namer.name(m);
     return String.format("%s%s", //
-        fluentAPI.types().map(this::render).collect(joining()), //
-        fluentAPI.startMethods().map(this::render).collect(joining())) //
+        m.types().map(this::render).collect(joining()), //
+        m.starts().map(this::render).collect(joining())) //
         .replace("$", "τ");
   }
 
@@ -39,7 +39,7 @@ public class CSharpGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("public static %s %s(){return new %s();}", //
         render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -50,7 +50,7 @@ public class CSharpGenerator extends APIGenerator {
     return String.format("public void %s(){}", endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
         render(returnType), //
         declaration.name.name(), //
@@ -66,7 +66,7 @@ public class CSharpGenerator extends APIGenerator {
     return "private class BOT{}";
   }
 
-  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
     return String.format("%s{%s}", //
         render(declaration), //
         methods.stream().map(this::render).collect(joining()));
@@ -86,13 +86,13 @@ public class CSharpGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodDeclaration declaration) {
+  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature declaration) {
     return declaration.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }
 
-  @Override public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final TypeSignature declaration) {
     final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //

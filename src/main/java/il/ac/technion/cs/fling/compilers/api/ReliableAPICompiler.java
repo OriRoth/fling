@@ -17,9 +17,9 @@ import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
@@ -40,14 +40,14 @@ public class ReliableAPICompiler extends APICompiler {
   @Override protected List<Method.Start> compileStartMethods() {
     final List<Method.Start> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
-      $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
+      $.add(new Method.Start(new MethodSignature(Constants.$$), //
           SkeletonType.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
       final Method.Start startMethod = //
-          new Method.Start(new MethodDeclaration(σ), //
+          new Method.Start(new MethodSignature(σ), //
               consolidate(δ.q$, //
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
@@ -61,7 +61,7 @@ public class ReliableAPICompiler extends APICompiler {
   @Override protected List<Type> compileInterfaces() {
     return list( //
         fixedInterfaces(), //
-        types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
+        types.values().stream().filter(i -> !i.isBot()).collect(toList()));
   }
 
   @SuppressWarnings("static-method") private List<Type> fixedInterfaces() {
@@ -71,7 +71,7 @@ public class ReliableAPICompiler extends APICompiler {
   @Override protected TypeBody complieConcreteImplementation() {
     return new TypeBody(dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
-        .map(σ -> new Method.Chained(new MethodDeclaration(σ))) //
+        .map(σ -> new Method.Chained(new MethodSignature(σ))) //
         .collect(toList()));
   }
 
@@ -117,7 +117,7 @@ public class ReliableAPICompiler extends APICompiler {
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
     return $.isEmpty() ? null
-        : new Type(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
+        : new Type(new TypeSignature(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an

@@ -7,9 +7,9 @@ import java.util.Set;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -38,17 +38,17 @@ public abstract class APIGenerator {
 
   protected abstract String comment(String text);
 
-  public abstract String render(Model fluentAPI);
+  public abstract String render(Model m);
 
-  abstract String render(InterfaceDeclaration declaration);
+  abstract String render(TypeSignature declaration);
 
-  public abstract String render(InterfaceDeclaration declaration, List<Method> methods);
+  public abstract String render(TypeSignature declaration, List<Method> methods);
 
   final String render(final Method m) {
     return m.render(this);
   }
 
-  public abstract String render(MethodDeclaration declaration, SkeletonType returnType);
+  public abstract String render(MethodSignature declaration, SkeletonType returnType);
 
   abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
 
@@ -68,7 +68,7 @@ public abstract class APIGenerator {
 
   public abstract String renderInterfaceTop();
 
-  public abstract String renderMethod(MethodDeclaration declaration, SkeletonType returnType);
+  public abstract String renderMethod(MethodSignature declaration, SkeletonType returnType);
 
   public abstract String renderTerminationMethod();
 

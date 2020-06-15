@@ -50,6 +50,6 @@ public interface Namer {
   /** Name elements within given API. Declarations pending naming are method
    * parameters.
    *
-   * @param fluentAPI API */
-  void name(Model fluentAPI);
+   * @param m API */
+  void name(Model m);
 }

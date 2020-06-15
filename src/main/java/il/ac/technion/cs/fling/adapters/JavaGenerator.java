@@ -7,15 +7,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -40,15 +40,15 @@ public class JavaGenerator extends APIGenerator {
     this.className = className;
   }
 
-  @Override public String render(final Model fluentAPI) {
-    namer.name(fluentAPI);
+  @Override public String render(final Model m) {
+    namer.name(m);
     return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
-        fluentAPI.startMethods().map(this::render).collect(joining()), //
-        fluentAPI.types().map(this::render).collect(joining()), //
-        printConcreteImplementation(fluentAPI), //
+        m.starts().map(this::render).collect(joining()), //
+        m.types().map(this::render).collect(joining()), //
+        printConcreteImplementation(m), //
         printAdditionalDeclarations());
   }
 
@@ -58,7 +58,7 @@ public class JavaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -72,7 +72,7 @@ public class JavaGenerator extends APIGenerator {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("%s %s(%s);", //
         render(returnType), //
         declaration.name.name(), //
@@ -93,7 +93,7 @@ public class JavaGenerator extends APIGenerator {
     return "interface ø {}";
   }
 
-  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
     return String.format("interface %s%s{%s}", //
         render(declaration), //
         !declaration.isAccepting ? "" : " extends " + topName, //
@@ -107,7 +107,7 @@ public class JavaGenerator extends APIGenerator {
     return render(name.q, name.α, name.legalJumps);
   }
 
-  public String printTypeName(final InterfaceDeclaration declaration) {
+  public String printTypeName(final TypeSignature declaration) {
     return render(declaration.q, declaration.α, declaration.legalJumps);
   }
 
@@ -119,21 +119,21 @@ public class JavaGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @Override public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final TypeSignature declaration) {
     return String.format("%s<%s>", printTypeName(declaration), //
         declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
 
-  public String printTypeName(final Type interfaze) {
-    return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
+  public String printTypeName(final Type i) {
+    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.declaration);
   }
 
-  public String printConcreteImplementation(final Model fluentAPI) {
+  public String printConcreteImplementation(final Model m) {
     return String.format("static class α implements %s{%s%s%s}", //
-        fluentAPI.types().map(this::printTypeName).collect(joining(",")), //
-        printConcreteImplementationClassBody(), fluentAPI.body.methods.stream() //
+        m.types().map(this::printTypeName).collect(joining(",")), //
+        printConcreteImplementationClassBody(), m.body.methods() //
             .map(Method::asChainedMethod) //
-            .map(Chained::declaration) //
+            .map(Chained::signature) //
             .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
                 declaration.name.name(), //
                 declaration.parmeters() //
@@ -155,7 +155,7 @@ public class JavaGenerator extends APIGenerator {
    * @param parameters method parameters
    * @return method body */
   @SuppressWarnings("unused") protected String printStartMethodBody(final Token σ,
-      final List<ParameterFragment> parameters) {
+      final List<MethodParameter> parameters) {
     return "return new α();";
   }
 
@@ -173,7 +173,7 @@ public class JavaGenerator extends APIGenerator {
    * @param parameters method parameters
    * @return method body */
   @SuppressWarnings("unused") protected String printConcreteImplementationMethodBody(final Token σ,
-      final List<ParameterFragment> parameters) {
+      final List<MethodParameter> parameters) {
     return "";
   }
 

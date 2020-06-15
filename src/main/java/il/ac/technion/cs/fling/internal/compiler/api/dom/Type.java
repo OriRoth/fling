@@ -18,10 +18,10 @@ public class Type {
       return g.renderInterfaceBottom();
     }
   };
-  public final InterfaceDeclaration declaration;
+  public final TypeSignature declaration;
   public final List<Method> methods;
 
-  public Type(final InterfaceDeclaration declaration, final List<Method> methods) {
+  public Type(final TypeSignature declaration, final List<Method> methods) {
     this.declaration = declaration;
     this.methods = Collections.unmodifiableList(methods);
   }

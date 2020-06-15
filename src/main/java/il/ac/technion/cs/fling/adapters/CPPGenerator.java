@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -30,13 +30,13 @@ public class CPPGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String render(final Model fluentAPI) {
-    namer.name(fluentAPI);
+  @Override public String render(final Model m) {
+    namer.name(m);
     return String.format("%s%s%s", //
-        fluentAPI.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";")
+        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";")
             .collect(joining()), //
-        fluentAPI.types().map(this::render).collect(joining()), //
-        fluentAPI.startMethods().map(this::render).collect(joining()));
+        m.types().map(this::render).collect(joining()), //
+        m.starts().map(this::render).collect(joining()));
   }
 
   @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
@@ -45,7 +45,7 @@ public class CPPGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("%s %s(){return %s();}", //
         render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -56,7 +56,7 @@ public class CPPGenerator extends APIGenerator {
     return String.format("void %s(){};", endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
     return String.format("%s %s(%s){return %s();};", //
         render(returnType), //
         declaration.name.name(), //
@@ -74,7 +74,7 @@ public class CPPGenerator extends APIGenerator {
     return "class BOT{};";
   }
 
-  @Override public String render(final InterfaceDeclaration declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
     return String.format("%s{public:%s};", //
         render(declaration), //
         methods.stream().map(this::render).collect(joining()));
@@ -92,7 +92,7 @@ public class CPPGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @Override public String render(final InterfaceDeclaration declaration) {
+  @Override public String render(final TypeSignature declaration) {
     final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
     return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
         : String.format("template<%s>class %s",

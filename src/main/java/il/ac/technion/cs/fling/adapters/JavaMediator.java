@@ -15,7 +15,7 @@ import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.grammars.LL1JavaASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -51,7 +51,7 @@ public class JavaMediator {
     this.packageName = packageName;
     this.apiName = apiName;
     final APIGenerator apiAdapter = new JavaGenerator(packageName, apiName, "$", namer) {
-      @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+      @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
         return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
 
@@ -60,7 +60,7 @@ public class JavaMediator {
       }
 
       @Override public String printConcreteImplementationMethodBody(final Token σ,
-          final List<ParameterFragment> parameters) {
+          final List<MethodParameter> parameters) {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
 
@@ -91,7 +91,7 @@ public class JavaMediator {
     astCompilerClass = parserCompiler.printParserClass();
   }
 
-  protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+  protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
@@ -110,7 +110,7 @@ public class JavaMediator {
         LinkedList.class.getCanonicalName());
   }
 
-  String printConcreteImplementationMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+  String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
     assert σ.parameters.length == parameters.size();
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s,%s));", //
@@ -136,7 +136,7 @@ public class JavaMediator {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
         .map(bnf -> new JavaGenerator(null, namer.headVariableClassName(bnf.ε), "$", namer) {
-          @Override protected String printStartMethodBody(final Token σ, final List<ParameterFragment> parameters) {
+          @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
 
@@ -149,7 +149,7 @@ public class JavaMediator {
           }
 
           @Override public String printConcreteImplementationMethodBody(final Token σ,
-              final List<ParameterFragment> parameters) {
+              final List<MethodParameter> parameters) {
             return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
           }
 
@@ -165,12 +165,12 @@ public class JavaMediator {
         .collect(joining());
   }
 
-  private List<String> processParameters(final Token σ, final List<ParameterFragment> parameters) {
+  private List<String> processParameters(final Token σ, final List<MethodParameter> parameters) {
     Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     final List<String> processedParameters = new ArrayList<>();
     for (int i = 0; i < parameters.size(); ++i) {
       final Parameter parameter = σ.parameters[i];
-      final ParameterFragment declaration = parameters.get(i);
+      final MethodParameter declaration = parameters.get(i);
       if (parameter.isVariableTypeParameter())
         processedParameters.add(String.format("((%s.%s.%s.α)%s).$()", //
             packageName, //

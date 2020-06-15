@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.tool.Grammar;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
 // TODO handle API function parameters
@@ -38,7 +38,7 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
   }
 
   @Override protected String printConcreteImplementationMethodBody(final Token σ,
-      @SuppressWarnings("unused") final List<ParameterFragment> parameters) {
+      @SuppressWarnings("unused") final List<MethodParameter> parameters) {
     return String.format("w.add(\"%s\");", σ.name());
   }
 
@@ -76,7 +76,7 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
   }
 
   @Override protected String printStartMethodBody(final Token σ,
-      @SuppressWarnings("unused") final List<ParameterFragment> parameters) {
+      @SuppressWarnings("unused") final List<MethodParameter> parameters) {
     return String.format("return new α().%s();", σ.name());
   }
 }

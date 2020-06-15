@@ -3,17 +3,22 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import il.ac.technion.cs.fling.adapters.APIGenerator;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
+/** Models methods in the fluent API model
+ * 
+ * @author Yossi Gil
+ *
+ * @since 2020-06-15 */
 public interface Method {
   class Start implements Method {
-    public final MethodDeclaration declaration;
+    public final MethodSignature declaration;
     public final SkeletonType returnType;
 
-    public Start(final MethodDeclaration declaration, final SkeletonType returnType) {
+    public Start(final MethodSignature declaration, final SkeletonType returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
 
-    public MethodDeclaration declaration() {
+    public MethodSignature declaration() {
       return declaration;
     }
 
@@ -29,15 +34,15 @@ public interface Method {
   }
 
   class Intermediate implements Method {
-    public final MethodDeclaration declaration;
+    public final MethodSignature declaration;
     public final SkeletonType returnType;
 
     public Intermediate(final Token σ, final SkeletonType returnType) {
-        declaration = new MethodDeclaration(σ);
+      declaration = new MethodSignature(σ);
       this.returnType = returnType;
     }
 
-    public MethodDeclaration declaration() {
+    public MethodSignature declaration() {
       return declaration;
     }
 
@@ -47,31 +52,23 @@ public interface Method {
   }
 
   class Chained implements Method {
-    public final MethodDeclaration declaration;
+    public final MethodSignature signature;
 
-    public Chained(final MethodDeclaration declaration) {
-      this.declaration = declaration;
+    public Chained(final MethodSignature signature) {
+      this.signature = signature;
     }
 
-    public MethodDeclaration declaration() {
-      return declaration;
+    public MethodSignature signature() {
+      return signature;
     }
 
     @Override public String render(final APIGenerator g) {
-      return null;
+      throw new RuntimeException("Unimplemented yet" + g);
     }
-  }
-
-  default boolean isStartMethod() {
-    return this instanceof Start;
   }
 
   default boolean isTerminationMethod() {
     return this instanceof Termination;
-  }
-
-  default boolean isChainedMethod() {
-    return this instanceof Chained;
   }
 
   default Chained asChainedMethod() {

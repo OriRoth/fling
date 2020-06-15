@@ -52,7 +52,7 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
   };
   private static final Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
     final Map<String, String> $ = new LinkedHashMap<>();
-    $.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.fluentAPI);
+    $.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.m);
     $.put("LongFall", LongFall.JavaFluentAPI);
     $.put("AnBn", AnBn.JavaFluentAPI);
     $.put("AeqB", AeqB.JavaFluentAPI);

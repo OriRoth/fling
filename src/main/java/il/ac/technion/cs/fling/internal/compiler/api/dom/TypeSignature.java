@@ -7,10 +7,13 @@ import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
-/** Type node declaration.
+/** Models the signature of a type in the fluent API model, including components
+ * of the type name and the formal parameters
+ * 
+ * @author Yossi Gil
  *
- * @author Ori Roth */
-public class InterfaceDeclaration {
+ * @since 2020-06-15 */
+public class TypeSignature {
   /** Inducing state. */
   public final Named q;
   /** Inducing stack symbols. */
@@ -21,8 +24,8 @@ public class InterfaceDeclaration {
   public final Word<Named> parameters;
   public final boolean isAccepting;
 
-  public InterfaceDeclaration(final Named q, final Word<Named> α, final Set<Named> legalJumps,
-      final Word<Named> parameters, final boolean isAccepting) {
+  public TypeSignature(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Word<Named> parameters,
+      final boolean isAccepting) {
     this.q = q;
     this.α = α;
     this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);

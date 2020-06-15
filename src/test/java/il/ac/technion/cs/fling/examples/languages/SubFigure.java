@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.examples.languages.SubFigure.Σ;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
@@ -61,7 +61,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
     final APICompiler compiler = new ReliableAPICompiler(dpda);
     final APIGenerator adapter = new ScalaGenerator("$", namer) {
       // Ignore parameters:
-      @Override public String printParametersList(@SuppressWarnings("unused") final MethodDeclaration declaration) {
+      @Override public String printParametersList(@SuppressWarnings("unused") final MethodSignature declaration) {
         return "";
       }
     };
