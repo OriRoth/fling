@@ -43,7 +43,7 @@ public abstract class APIGenerator {
 
   public final String go(Model m) {
     namer.name(m);
-    return startComment() + render(m);
+    return startComment() + "\n\n" + render(m);
   }
 
   public abstract String render(MethodSignature s, SkeletonType t);

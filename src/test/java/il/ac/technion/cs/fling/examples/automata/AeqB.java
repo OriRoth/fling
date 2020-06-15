@@ -66,7 +66,7 @@ public class AeqB {
 
   /** Print C++ program to standard output. */
   public static void main(final String[] args) {
-//    System.out.println(CppFluentAPI);
-    System.out.println(SMLFluentAPI);
+    System.out.println(CppFluentAPI);
+    // System.out.println(SMLFluentAPI);
   }
 }

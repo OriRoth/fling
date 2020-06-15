@@ -31,7 +31,7 @@ public class CPPGenerator extends APIGenerator {
   }
 
   @Override public String render(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("%s %s(%s){return %s();};", //
+    return String.format("%s %s(%s) { return %s(); }", //
         render(returnType), //
         s.name.name(), //
         s.parmeters() //
@@ -61,15 +61,15 @@ public class CPPGenerator extends APIGenerator {
   @Override public String render(final TypeSignature s) {
     final String printTypeName = render(s.q, s.α, s.legalJumps);
     return s.parameters.isEmpty() ? String.format("class %s", printTypeName)
-        : String.format("template<%s>class %s",
-            s.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
+        : String.format("template <%s> class %s",
+            s.parameters().map(q -> "typename " + q.name()).collect(Collectors.joining(", ")), //
             printTypeName);
   }
 
   @Override public String render(final TypeSignature s, final List<Method> methods) {
-    return String.format("%s{public:%s};", //
+    return String.format("%s {\n\tpublic:\n\t\t%s\n};\n", //
         render(s), //
-        methods.stream().map(this::render).collect(joining()));
+        methods.stream().map(this::render).collect(joining("\n\t\t")));
   }
 
   @Override public String renderInterfaceBottom() {
@@ -77,11 +77,11 @@ public class CPPGenerator extends APIGenerator {
   }
 
   @Override public String renderInterfaceTop() {
-    return String.format("class TOP{public:void %s(){};};", endName);
+    return String.format("class TOP{\n\tpublic:\n\tvoid %s(){};};", endName);
   }
 
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("%s %s(){return %s();}", //
+    return String.format("%s %s() { return %s(); }\n", //
         render(returnType), //
         Constants.$$.equals(s.name) ? "__" : s.name.name(), //
         render(returnType));
@@ -97,7 +97,7 @@ public class CPPGenerator extends APIGenerator {
 
   @Override String render(final Model m) {
     return String.format("%s%s%s", //
-        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.signature) + ";").collect(joining()), //
+        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.signature) + ";\n").collect(joining()), //
         m.types().map(this::render).collect(joining()), //
         m.starts().map(this::render).collect(joining()));
   }
