@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -38,15 +38,6 @@ public class CPPGenerator extends APIGenerator {
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
             .collect(joining(",")), //
         render(returnType));
-  }
-
-  @Override public String render(final Model m) {
-    namer.name(m);
-    return String.format("%s%s%s", //
-        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";")
-            .collect(joining()), //
-        m.types().map(this::render).collect(joining()), //
-        m.starts().map(this::render).collect(joining()));
   }
 
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
@@ -102,5 +93,12 @@ public class CPPGenerator extends APIGenerator {
 
   @Override protected String comment(String comment) {
     return "/* " + comment + "*/";
+  }
+
+  @Override String render(final Model m) {
+    return String.format("%s%s%s", //
+        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";").collect(joining()), //
+        m.types().map(this::render).collect(joining()), //
+        m.starts().map(this::render).collect(joining()));
   }
 }

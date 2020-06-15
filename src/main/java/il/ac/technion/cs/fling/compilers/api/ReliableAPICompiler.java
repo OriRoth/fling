@@ -17,10 +17,10 @@ import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -68,11 +68,11 @@ public class ReliableAPICompiler extends APICompiler {
     return Arrays.asList(Type.top());
   }
 
-  @Override protected TypeBody complieConcreteImplementation() {
-    return new TypeBody(dpda.Σ() //
+  @Override protected List<Chained> extraMethods() {
+    return dpda.Σ() //
         .filter(σ -> Constants.$$ != σ) //
         .map(σ -> new Method.Chained(new MethodSignature(σ))) //
-        .collect(toList()));
+        .collect(toList());
   }
 
   /** Get type name given a state and stack symbols to push. If this type is not

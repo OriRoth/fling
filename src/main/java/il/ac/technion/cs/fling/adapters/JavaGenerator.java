@@ -39,7 +39,7 @@ public class JavaGenerator extends APIGenerator {
   public String printConcreteImplementation(final Model m) {
     return String.format("static class α implements %s{%s%s%s}", //
         m.types().map(this::printTypeName).collect(joining(",")), //
-        printConcreteImplementationClassBody(), m.body.methods() //
+        printConcreteImplementationClassBody(), m.methods() //
             .map(Method::asChainedMethod) //
             .map(Chained::signature) //
             .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
@@ -78,8 +78,7 @@ public class JavaGenerator extends APIGenerator {
             .collect(joining(",")));
   }
 
-  @Override public String render(final Model m) {
-    namer.name(m);
+  @Override String render(final Model m) {
     return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //

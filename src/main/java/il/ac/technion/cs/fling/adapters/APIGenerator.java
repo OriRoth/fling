@@ -5,21 +5,21 @@ import java.util.List;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public abstract class APIGenerator {
   public final String bottomName;
   public final String topName;
+  private final Namer namer;
   final String endName;
-  final Namer namer;
 
   protected APIGenerator(final Namer namer) {
     this(namer, "$");
@@ -36,9 +36,12 @@ public abstract class APIGenerator {
     this(namer, endName, "BOTTOM", "TOP");
   }
 
-  public abstract String render(MethodSignature s, SkeletonType t);
+  public final String go(Model m) {
+    namer.name(m);
+    return render(m);
+  }
 
-  public abstract String render(Model m);
+  public abstract String render(MethodSignature s, SkeletonType t);
 
   public final String render(final SkeletonType t) {
     return t.render(this);
@@ -63,6 +66,8 @@ public abstract class APIGenerator {
   final String render(final Method m) {
     return m.render(this);
   }
+
+  abstract String render(Model m);
 
   abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
 

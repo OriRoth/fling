@@ -12,20 +12,23 @@ import java.util.stream.Stream;
 public class Model {
   private final List<Method.Start> starts;
   private final List<Type> types;
+  private List<Method.Chained> methods;
 
   public Stream<Type> types() {
     return types.stream();
   }
 
-  public final TypeBody body;
-
-  public Model(final List<Method.Start> starts, final List<Type> types, final TypeBody body) {
+  public Model(final List<Method.Start> starts, final List<Type> types, final List<Method.Chained> methods) {
     this.starts = starts;
     this.types = types;
-    this.body = body;
+    this.methods = methods;
   }
 
   public Stream<Method.Start> starts() {
     return starts.stream();
+  }
+
+  public Stream<Method.Chained> methods() {
+    return methods.stream();
   }
 }

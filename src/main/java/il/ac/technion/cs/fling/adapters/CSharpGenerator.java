@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -37,24 +37,6 @@ public class CSharpGenerator extends APIGenerator {
         s.name.name(), //
         printParametersList(s), //
         render(returnType));
-  }
-
-  @Override public String render(final Model m) {
-    namer.name(m);
-    return String.format("%s%s", //
-        m.types().map(this::render).collect(joining()), //
-        m.starts().map(this::render).collect(joining())) //
-        .replace("$", "τ");
-  }
-
-  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final String qn = q.name();
-    // TODO: manage this HACK
-    return α == null ? qn.contains("_") ? qn : typeVariableName(q)
-        : String.format("%s_%s%s", //
-            q.name(), //
-            α.stream().map(Named::name).collect(Collectors.joining()), //
-            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
   @Override public String render(final TypeName name) {
@@ -111,5 +93,22 @@ public class CSharpGenerator extends APIGenerator {
 
   @Override protected String comment(String comment) {
     return String.format("/* %s */", comment);
+  }
+
+  @Override String render(final Model m) {
+    return String.format("%s%s", //
+        m.types().map(this::render).collect(joining()), //
+        m.starts().map(this::render).collect(joining())) //
+        .replace("$", "τ");
+  }
+
+  @Override String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+    final String qn = q.name();
+    // TODO: manage this HACK
+    return α == null ? qn.contains("_") ? qn : typeVariableName(q)
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 }

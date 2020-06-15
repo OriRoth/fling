@@ -86,7 +86,7 @@ public class NaiveNamer implements Namer {
         .map(Start::declaration) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
-    m.body.methods() //
+    m.methods() //
         .map(Method::asChainedMethod) //
         .map(Chained::signature) //
         .forEach(this::setInferredParametersIntermediateInMethod);

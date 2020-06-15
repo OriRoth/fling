@@ -48,5 +48,5 @@ public class ExtendedBalancedParentheses {
   public static final String m = new JavaGenerator("il.ac.technion.cs.fling.examples.generated",
       "ExtendedBalancedParentheses", "$",
       new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses")) //
-          .render(new ReliableAPICompiler(dpda).compileFluentAPI());
+          .go(new ReliableAPICompiler(dpda).compileFluentAPI());
 }

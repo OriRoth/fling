@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -38,13 +38,13 @@ public abstract class APICompiler {
    *
    * @return compiled API */
   public Model compileFluentAPI() {
-    return new Model(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
+    return new Model(compileStartMethods(), compileInterfaces(), extraMethods());
   }
 
   /** Compile API concrete implementation.
    *
    * @return concrete implementation */
-  protected abstract TypeBody complieConcreteImplementation();
+  protected abstract List<Chained> extraMethods();
 
   /** Compile API static start methods.
    *
