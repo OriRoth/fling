@@ -27,105 +27,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class JavaGenerator extends APIGenerator {
-  private final String packageName;
   private final String className;
-
-  @Override protected String comment(String comment) {
-    return String.format("/* %s */", comment);
-  }
+  private final String packageName;
 
   public JavaGenerator(final String packageName, final String className, final String endName, final Namer namer) {
     super(namer, endName, "ø", "$");
     this.packageName = packageName;
     this.className = className;
-  }
-
-  @Override public String render(final Model m) {
-    namer.name(m);
-    return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
-        startComment(), //
-        packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
-        className, //
-        m.starts().map(this::render).collect(joining()), //
-        m.types().map(this::render).collect(joining()), //
-        printConcreteImplementation(m), //
-        printAdditionalDeclarations());
-  }
-
-  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
-    return String.format("%s<%s>", //
-        render(name), //
-        typeArguments.stream().map(this::render).collect(joining(",")));
-  }
-
-  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("public static %s %s(%s) {%s}", //
-        render(returnType), //
-        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
-        s.parmeters() //
-            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-            .collect(joining(",")), //
-        printStartMethodBody(s.name, s.getInferredParameters()));
-  }
-
-  @Override public String renderTerminationMethod() {
-    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
-  }
-
-  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("%s %s(%s);", //
-        render(returnType), //
-        s.name.name(), //
-        s.parmeters() //
-            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-            .collect(joining(",")));
-  }
-
-  @Override public String renderInterfaceTop() {
-    return String.format("interface ${%s}", printTopInterfaceBody());
-  }
-
-  public String printTopInterfaceBody() {
-    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
-  }
-
-  @Override public String renderInterfaceBottom() {
-    return "interface ø {}";
-  }
-
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
-    return String.format("interface %s%s{%s}", //
-        render(declaration), //
-        !declaration.isAccepting ? "" : " extends " + topName, //
-        methods.stream() //
-            .filter(method -> !method.isTerminationMethod()) //
-            .map(this::render) //
-            .collect(joining()));
-  }
-
-  @Override public String render(final TypeName name) {
-    return render(name.q, name.α, name.legalJumps);
-  }
-
-  public String printTypeName(final TypeSignature declaration) {
-    return render(declaration.q, declaration.α, declaration.legalJumps);
-  }
-
-  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    return α == null ? q.name()
-        : String.format("%s_%s%s", //
-            q.name(), //
-            α.stream().map(Named::name).collect(Collectors.joining()), //
-            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
-  }
-
-  @Override public String render(final TypeSignature declaration) {
-    return String.format("%s<%s>", printTypeName(declaration), //
-        declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
-  }
-
-  public String printTypeName(final Type i) {
-    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.declaration);
   }
 
   public String printConcreteImplementation(final Model m) {
@@ -149,14 +57,103 @@ public class JavaGenerator extends APIGenerator {
             printTerminationMethodConcreteBody()));
   }
 
-  /** Start static method body.
+  public String printTopInterfaceBody() {
+    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
+  }
+
+  public String printTypeName(final Type i) {
+    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.declaration);
+  }
+
+  public String printTypeName(final TypeSignature declaration) {
+    return render(declaration.q, declaration.α, declaration.legalJumps);
+  }
+
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+    return String.format("%s %s(%s);", //
+        render(returnType), //
+        s.name.name(), //
+        s.parmeters() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+            .collect(joining(",")));
+  }
+
+  @Override public String render(final Model m) {
+    namer.name(m);
+    return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
+        startComment(), //
+        packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
+        className, //
+        m.starts().map(this::render).collect(joining()), //
+        m.types().map(this::render).collect(joining()), //
+        printConcreteImplementation(m), //
+        printAdditionalDeclarations());
+  }
+
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+    return α == null ? q.name()
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
+  }
+
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
+  }
+
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
+    return String.format("%s<%s>", //
+        render(name), //
+        typeArguments.stream().map(this::render).collect(joining(",")));
+  }
+
+  @Override public String render(final TypeSignature declaration) {
+    return String.format("%s<%s>", printTypeName(declaration), //
+        declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
+  }
+
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+    return String.format("interface %s%s{%s}", //
+        render(declaration), //
+        !declaration.isAccepting ? "" : " extends " + topName, //
+        methods.stream() //
+            .filter(method -> !method.isTerminationMethod()) //
+            .map(this::render) //
+            .collect(joining()));
+  }
+
+  @Override public String renderInterfaceBottom() {
+    return "interface ø {}";
+  }
+
+  @Override public String renderInterfaceTop() {
+    return String.format("interface ${%s}", printTopInterfaceBody());
+  }
+
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
+    return String.format("public static %s %s(%s) {%s}", //
+        render(returnType), //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
+        s.parmeters() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+            .collect(joining(",")), //
+        printStartMethodBody(s.name, s.getInferredParameters()));
+  }
+
+  @Override public String renderTerminationMethod() {
+    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
+  }
+
+  @Override protected String comment(String comment) {
+    return String.format("/* %s */", comment);
+  }
+
+  /** Additional declaration within the top class.
    *
-   * @param σ          inducing token
-   * @param parameters method parameters
-   * @return method body */
-  @SuppressWarnings("unused") protected String printStartMethodBody(final Token σ,
-      final List<MethodParameter> parameters) {
-    return "return new α();";
+   * @return additional declarations */
+  protected String printAdditionalDeclarations() {
+    return "";
   }
 
   /** Prints additional definition in concrete implementation class's body.
@@ -177,11 +174,14 @@ public class JavaGenerator extends APIGenerator {
     return "";
   }
 
-  /** Return type of the termination method.
+  /** Start static method body.
    *
-   * @return return type */
-  protected String printTerminationMethodReturnType() {
-    return "void";
+   * @param σ          inducing token
+   * @param parameters method parameters
+   * @return method body */
+  @SuppressWarnings("unused") protected String printStartMethodBody(final Token σ,
+      final List<MethodParameter> parameters) {
+    return "return new α();";
   }
 
   /** Concrete implementation's termination method body. Might be used to create
@@ -192,10 +192,10 @@ public class JavaGenerator extends APIGenerator {
     return "";
   }
 
-  /** Additional declaration within the top class.
+  /** Return type of the termination method.
    *
-   * @return additional declarations */
-  protected String printAdditionalDeclarations() {
-    return "";
+   * @return return type */
+  protected String printTerminationMethodReturnType() {
+    return "void";
   }
 }

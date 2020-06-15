@@ -30,6 +30,16 @@ public class CPPGenerator extends APIGenerator {
     super(namer, endName);
   }
 
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+    return String.format("%s %s(%s){return %s();};", //
+        render(returnType), //
+        s.name.name(), //
+        s.parmeters() //
+            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+            .collect(joining(",")), //
+        render(returnType));
+  }
+
   @Override public String render(final Model m) {
     namer.name(m);
     return String.format("%s%s%s", //
@@ -39,10 +49,44 @@ public class CPPGenerator extends APIGenerator {
         m.starts().map(this::render).collect(joining()));
   }
 
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+    return α == null ? q.name()
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
+  }
+
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
+  }
+
   @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return String.format("%s<%s>", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
+  }
+
+  @Override public String render(final TypeSignature declaration) {
+    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
+    return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
+        : String.format("template<%s>class %s",
+            declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
+            printTypeName);
+  }
+
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+    return String.format("%s{public:%s};", //
+        render(declaration), //
+        methods.stream().map(this::render).collect(joining()));
+  }
+
+  @Override public String renderInterfaceBottom() {
+    return "class BOT{};";
+  }
+
+  @Override public String renderInterfaceTop() {
+    return String.format("class TOP{public:void %s(){};};", endName);
   }
 
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
@@ -54,50 +98,6 @@ public class CPPGenerator extends APIGenerator {
 
   @Override public String renderTerminationMethod() {
     return String.format("void %s(){};", endName);
-  }
-
-  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("%s %s(%s){return %s();};", //
-        render(returnType), //
-        s.name.name(), //
-        s.parmeters() //
-            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-            .collect(joining(",")), //
-        render(returnType));
-  }
-
-  @Override public String renderInterfaceTop() {
-    return String.format("class TOP{public:void %s(){};};", endName);
-  }
-
-  @Override public String renderInterfaceBottom() {
-    return "class BOT{};";
-  }
-
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
-    return String.format("%s{public:%s};", //
-        render(declaration), //
-        methods.stream().map(this::render).collect(joining()));
-  }
-
-  @Override public String render(final TypeName name) {
-    return render(name.q, name.α, name.legalJumps);
-  }
-
-  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    return α == null ? q.name()
-        : String.format("%s_%s%s", //
-            q.name(), //
-            α.stream().map(Named::name).collect(Collectors.joining()), //
-            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
-  }
-
-  @Override public String render(final TypeSignature declaration) {
-    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
-        : String.format("template<%s>class %s",
-            declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
-            printTypeName);
   }
 
   @Override protected String comment(String comment) {

@@ -42,8 +42,9 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
     return String.format("w.add(\"%s\");", σ.name());
   }
 
-  @Override protected String printTerminationMethodReturnType() {
-    return ParserRuleContext.class.getCanonicalName();
+  @Override protected String printStartMethodBody(final Token σ,
+      @SuppressWarnings("unused") final List<MethodParameter> parameters) {
+    return String.format("return new α().%s();", σ.name());
   }
 
   @Override protected String printTerminationMethodConcreteBody() {
@@ -75,8 +76,7 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
         RuntimeException.class.getCanonicalName());
   }
 
-  @Override protected String printStartMethodBody(final Token σ,
-      @SuppressWarnings("unused") final List<MethodParameter> parameters) {
-    return String.format("return new α().%s();", σ.name());
+  @Override protected String printTerminationMethodReturnType() {
+    return ParserRuleContext.class.getCanonicalName();
   }
 }

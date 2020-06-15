@@ -17,16 +17,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public abstract class APIGenerator {
   public final String bottomName;
+  public final String topName;
   final String endName;
   final Namer namer;
-  public final String topName;
 
   protected APIGenerator(final Namer namer) {
     this(namer, "$");
-  }
-
-  APIGenerator(final Namer namer, final String endName) {
-    this(namer, endName, "BOTTOM", "TOP");
   }
 
   protected APIGenerator(final Namer namer, final String endName, final String bottomName, final String topName) {
@@ -36,21 +32,13 @@ public abstract class APIGenerator {
     this.topName = topName;
   }
 
-  protected abstract String comment(String text);
-
-  public abstract String render(Model m);
-
-  abstract String render(TypeSignature declaration);
-
-  public abstract String render(TypeSignature declaration, List<Method> methods);
-
-  final String render(final Method m) {
-    return m.render(this);
+  APIGenerator(final Namer namer, final String endName) {
+    this(namer, endName, "BOTTOM", "TOP");
   }
 
   public abstract String render(MethodSignature s, SkeletonType t);
 
-  abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
+  public abstract String render(Model m);
 
   public final String render(final SkeletonType t) {
     return t.render(this);
@@ -60,9 +48,7 @@ public abstract class APIGenerator {
 
   public abstract String render(TypeName name, List<SkeletonType> typeArguments);
 
-  final String render(final Type i) {
-    return i.render(this);
-  }
+  public abstract String render(TypeSignature declaration, List<Method> methods);
 
   public abstract String renderInterfaceBottom();
 
@@ -71,6 +57,20 @@ public abstract class APIGenerator {
   public abstract String renderMethod(MethodSignature s, SkeletonType t);
 
   public abstract String renderTerminationMethod();
+
+  protected abstract String comment(String text);
+
+  final String render(final Method m) {
+    return m.render(this);
+  }
+
+  abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
+
+  final String render(final Type i) {
+    return i.render(this);
+  }
+
+  abstract String render(TypeSignature declaration);
 
   final String startComment() {
     return comment(initialComment());

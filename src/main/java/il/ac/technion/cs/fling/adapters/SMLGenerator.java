@@ -28,41 +28,16 @@ public class SMLGenerator extends APIGenerator {
     firstDatatype = true;
   }
 
-  @Override protected String comment(String comment) {
-    return String.format("(* %s *)", comment);
-  }
-
-  private String getDatatypeKeyword() {
-    if (!firstDatatype)
-      return "and";
-    firstDatatype = false;
-    return "datatype";
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+    if (!s.getInferredParameters().isEmpty())
+      throw new RuntimeException("fluent API function parameters are not suported");
+    return String.format("\t%s: %s", s.name.name(), render(returnType));
   }
 
   @Override public String render(final Model m) {
     namer.name(m);
     return String.format("%s\n\n%s", m.types().map(this::render).collect(joining(" ")),
         m.starts().map(this::render).collect(joining("\n")));
-  }
-
-  @Override public String render(final TypeSignature declaration) {
-    final String name = render(declaration.q, declaration.α, declaration.legalJumps);
-    final String variables = declaration.parameters.isEmpty() ? ""
-        : String.format("(%s) ", declaration.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
-            name);
-    return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
-  }
-
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
-    return String.format("%s of {\n%s\n}", //
-        render(declaration), //
-        methods.stream().map(this::render).collect(joining(",\n")));
-  }
-
-  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
-    if (!s.getInferredParameters().isEmpty())
-      throw new RuntimeException("fluent API function parameters are not suported");
-    return String.format("\t%s: %s", s.name.name(), render(returnType));
   }
 
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
@@ -87,6 +62,20 @@ public class SMLGenerator extends APIGenerator {
             render(name));
   }
 
+  @Override public String render(final TypeSignature declaration) {
+    final String name = render(declaration.q, declaration.α, declaration.legalJumps);
+    final String variables = declaration.parameters.isEmpty() ? ""
+        : String.format("(%s) ", declaration.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
+            name);
+    return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
+  }
+
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+    return String.format("%s of {\n%s\n}", //
+        render(declaration), //
+        methods.stream().map(this::render).collect(joining(",\n")));
+  }
+
   @Override public String renderInterfaceBottom() {
     return String.format("%s BOT = FAILURE", getDatatypeKeyword());
   }
@@ -102,5 +91,16 @@ public class SMLGenerator extends APIGenerator {
 
   @Override public String renderTerminationMethod() {
     return String.format("\t%s: TOP", endName);
+  }
+
+  private String getDatatypeKeyword() {
+    if (!firstDatatype)
+      return "and";
+    firstDatatype = false;
+    return "datatype";
+  }
+
+  @Override protected String comment(String comment) {
+    return String.format("(* %s *)", comment);
   }
 }

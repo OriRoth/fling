@@ -27,90 +27,9 @@ public class ScalaGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override protected String comment(String comment) {
-    return String.format("/* %s */", comment);
-  }
-
-  @Override public String render(final Model m) {
-    namer.name(m);
-    return String.format("%s\n%s", //
-        m.types().map(this::render).collect(joining("\n")), //
-        m.starts().map(this::render).collect(joining("\n")));
-  }
-
-  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
-    return String.format("%s[%s]", //
-        render(name), //
-        typeArguments.stream().map(this::render).collect(joining(",")));
-  }
-
-  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("def %s():%s=%s", //
-        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
-        render(returnType), //
-        printTypeInstantiation(returnType));
-  }
-
-  @Override public String renderTerminationMethod() {
-    return String.format("def %s():Unit={}", endName);
-  }
-
-  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
-    final String _returnType = render(returnType);
-    final String returnValue = printTypeInstantiation(returnType);
-    return String.format("def %s(%s):%s=%s", //
-        s.name.name(), //
-        printParametersList(s), //
-        _returnType, //
-        returnValue);
-  }
-
-  @Override public String renderInterfaceTop() {
-    return String.format("class TOP{\ndef %s():Unit={}\n}", endName);
-  }
-
-  @Override public String renderInterfaceBottom() {
-    return "private class BOT{}";
-  }
-
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
-    return String.format("%s(%s){\n%s\n}", //
-        render(declaration), //
-        printClassParameters(declaration.parameters), //
-        methods.stream().map(this::render).collect(joining("\n")));
-  }
-
-  @Override public String render(final TypeName name) {
-    return render(name.q, name.α, name.legalJumps);
-  }
-
-  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final String qn = q.name();
-    return α == null ? qn
-        : String.format("%s_%s%s", //
-            q.name(), //
-            α.stream().map(Named::name).collect(Collectors.joining()), //
-            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
-  }
-
   @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
     return s.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-        .collect(joining(","));
-  }
-
-  @Override public String render(final TypeSignature declaration) {
-    final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    final String typeParameters = declaration.parameters().map(Named::name).collect(Collectors.joining(","));
-    return String.format("class %s", //
-        declaration.parameters.isEmpty() ? //
-            typeName //
-            : String.format("%s[%s]", typeName, typeParameters));
-  }
-
-  @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
-    return typeVariables.stream().map(Named::name) //
-        .map(var -> String.format("val __%s:%s", var, var)) //
         .collect(joining(","));
   }
 
@@ -124,5 +43,86 @@ public class ScalaGenerator extends APIGenerator {
                 returnType.arguments() //
                     .map(this::printTypeInstantiation) //
                     .collect(joining(",")));
+  }
+
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+    final String _returnType = render(returnType);
+    final String returnValue = printTypeInstantiation(returnType);
+    return String.format("def %s(%s):%s=%s", //
+        s.name.name(), //
+        printParametersList(s), //
+        _returnType, //
+        returnValue);
+  }
+
+  @Override public String render(final Model m) {
+    namer.name(m);
+    return String.format("%s\n%s", //
+        m.types().map(this::render).collect(joining("\n")), //
+        m.starts().map(this::render).collect(joining("\n")));
+  }
+
+  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+    final String qn = q.name();
+    return α == null ? qn
+        : String.format("%s_%s%s", //
+            q.name(), //
+            α.stream().map(Named::name).collect(Collectors.joining()), //
+            legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
+  }
+
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
+  }
+
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
+    return String.format("%s[%s]", //
+        render(name), //
+        typeArguments.stream().map(this::render).collect(joining(",")));
+  }
+
+  @Override public String render(final TypeSignature declaration) {
+    final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
+    final String typeParameters = declaration.parameters().map(Named::name).collect(Collectors.joining(","));
+    return String.format("class %s", //
+        declaration.parameters.isEmpty() ? //
+            typeName //
+            : String.format("%s[%s]", typeName, typeParameters));
+  }
+
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+    return String.format("%s(%s){\n%s\n}", //
+        render(declaration), //
+        printClassParameters(declaration.parameters), //
+        methods.stream().map(this::render).collect(joining("\n")));
+  }
+
+  @Override public String renderInterfaceBottom() {
+    return "private class BOT{}";
+  }
+
+  @Override public String renderInterfaceTop() {
+    return String.format("class TOP{\ndef %s():Unit={}\n}", endName);
+  }
+
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
+    return String.format("def %s():%s=%s", //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
+        render(returnType), //
+        printTypeInstantiation(returnType));
+  }
+
+  @Override public String renderTerminationMethod() {
+    return String.format("def %s():Unit={}", endName);
+  }
+
+  @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
+    return typeVariables.stream().map(Named::name) //
+        .map(var -> String.format("val __%s:%s", var, var)) //
+        .collect(joining(","));
+  }
+
+  @Override protected String comment(String comment) {
+    return String.format("/* %s */", comment);
   }
 }

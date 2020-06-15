@@ -15,14 +15,34 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
  *
  * @author Ori Roth */
 public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
-  private final String packageName;
   private final String className;
   private final Namer namer;
+  private final String packageName;
 
   public JavaInterfacesASTAdapter(final String packageName, final String className, final Namer namer) {
     this.packageName = packageName;
     this.className = className;
     this.namer = namer;
+  }
+
+  public String constructorAssignment(final FieldNode field) {
+    return field.getInferredFieldFragments().stream() //
+        .map(fragment -> String.format("this.%s = %s;", //
+            fragment.parameterName, fragment.parameterName)) //
+        .collect(joining());
+  }
+
+  public boolean nonEmptyField(final FieldNode field) {
+    return !field.source.isToken() || field.source.isParameterized();
+  }
+
+  @Override public String printAbstractClass(final AbstractClassNode abstractClass) {
+    return String.format("interface %s %s{}", //
+        abstractClass.getClassName(), //
+        abstractClass.parents.isEmpty() ? "" : //
+            "extends " + abstractClass.parents.stream() //
+                .map(ClassNode::getClassName) //
+                .collect(joining(",")));
   }
 
   @Override public String printASTClass(final ASTCompilationUnitNode compilationUnit) {
@@ -36,15 +56,6 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
         printAdditionalDeclarations(compilationUnit));
   }
 
-  @Override public String printAbstractClass(final AbstractClassNode abstractClass) {
-    return String.format("interface %s %s{}", //
-        abstractClass.getClassName(), //
-        abstractClass.parents.isEmpty() ? "" : //
-            "extends " + abstractClass.parents.stream() //
-                .map(ClassNode::getClassName) //
-                .collect(joining(",")));
-  }
-
   @Override public String printConcreteClass(final ConcreteClassNode concreteClass) {
     return String.format("public class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
@@ -55,29 +66,6 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
             .map(field -> printField("public final %s %s;", "", field)) //
             .collect(joining()), //
         printConstructor(concreteClass));
-  }
-
-  /** Additional definitions to be printed in the top class.
-   *
-   * @param compilationUnit AST
-   * @return additional definitions */
-  @SuppressWarnings("unused") protected String printAdditionalDeclarations(
-      final ASTCompilationUnitNode compilationUnit) {
-    return "";
-  }
-
-  public String printField(final String format, final String separator, final FieldNode field) {
-    return field.getInferredFieldFragments().stream() //
-        .map(fragment -> String.format(format, //
-            fragment.parameterType, fragment.parameterName)) //
-        .collect(joining(separator));
-  }
-
-  public String constructorAssignment(final FieldNode field) {
-    return field.getInferredFieldFragments().stream() //
-        .map(fragment -> String.format("this.%s = %s;", //
-            fragment.parameterName, fragment.parameterName)) //
-        .collect(joining());
   }
 
   public String printConstructor(final ConcreteClassNode concreteClass) {
@@ -93,7 +81,19 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
             .collect(joining()));
   }
 
-  public boolean nonEmptyField(final FieldNode field) {
-    return !field.source.isToken() || field.source.isParameterized();
+  public String printField(final String format, final String separator, final FieldNode field) {
+    return field.getInferredFieldFragments().stream() //
+        .map(fragment -> String.format(format, //
+            fragment.parameterType, fragment.parameterName)) //
+        .collect(joining(separator));
+  }
+
+  /** Additional definitions to be printed in the top class.
+   *
+   * @param compilationUnit AST
+   * @return additional definitions */
+  @SuppressWarnings("unused") protected String printAdditionalDeclarations(
+      final ASTCompilationUnitNode compilationUnit) {
+    return "";
   }
 }

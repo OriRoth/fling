@@ -25,29 +25,10 @@ public class CSharpGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String render(final Model m) {
-    namer.name(m);
-    return String.format("%s%s", //
-        m.types().map(this::render).collect(joining()), //
-        m.starts().map(this::render).collect(joining())) //
-        .replace("$", "τ");
-  }
-
-  @Override public String render(final TypeName name, final List<SkeletonType> arguments) {
-    return String.format("%s<%s>", //
-        render(name), //
-        arguments.stream().map(this::render).collect(joining(",")));
-  }
-
-  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
-    return String.format("public static %s %s(){return new %s();}", //
-        render(returnType), //
-        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
-        render(returnType));
-  }
-
-  @Override public String renderTerminationMethod() {
-    return String.format("public void %s(){}", endName);
+  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
+    return s.parmeters() //
+        .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+        .collect(joining(","));
   }
 
   @Override public String render(final MethodSignature s, final SkeletonType returnType) {
@@ -58,22 +39,12 @@ public class CSharpGenerator extends APIGenerator {
         render(returnType));
   }
 
-  @Override public String renderInterfaceTop() {
-    return String.format("public class TOP{public void %s(){}}", endName);
-  }
-
-  @Override public String renderInterfaceBottom() {
-    return "private class BOT{}";
-  }
-
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
-    return String.format("%s{%s}", //
-        render(declaration), //
-        methods.stream().map(this::render).collect(joining()));
-  }
-
-  @Override public String render(final TypeName name) {
-    return render(name.q, name.α, name.legalJumps);
+  @Override public String render(final Model m) {
+    namer.name(m);
+    return String.format("%s%s", //
+        m.types().map(this::render).collect(joining()), //
+        m.starts().map(this::render).collect(joining())) //
+        .replace("$", "τ");
   }
 
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
@@ -86,10 +57,14 @@ public class CSharpGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
-    return s.parmeters() //
-        .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-        .collect(joining(","));
+  @Override public String render(final TypeName name) {
+    return render(name.q, name.α, name.legalJumps);
+  }
+
+  @Override public String render(final TypeName name, final List<SkeletonType> arguments) {
+    return String.format("%s<%s>", //
+        render(name), //
+        arguments.stream().map(this::render).collect(joining(",")));
   }
 
   @Override public String render(final TypeSignature declaration) {
@@ -103,6 +78,31 @@ public class CSharpGenerator extends APIGenerator {
                 .map(n -> "where " + n + ":new()") //
                 .collect(Collectors.joining("")) //
         );
+  }
+
+  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+    return String.format("%s{%s}", //
+        render(declaration), //
+        methods.stream().map(this::render).collect(joining()));
+  }
+
+  @Override public String renderInterfaceBottom() {
+    return "private class BOT{}";
+  }
+
+  @Override public String renderInterfaceTop() {
+    return String.format("public class TOP{public void %s(){}}", endName);
+  }
+
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
+    return String.format("public static %s %s(){return new %s();}", //
+        render(returnType), //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
+        render(returnType));
+  }
+
+  @Override public String renderTerminationMethod() {
+    return String.format("public void %s(){}", endName);
   }
 
   public String typeVariableName(final Named typeVariable) {

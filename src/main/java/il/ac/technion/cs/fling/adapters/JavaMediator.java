@@ -31,18 +31,18 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
  *
  * @author Ori Roth */
 public class JavaMediator {
-  final LL1 ll1;
-  private final Namer namer;
-  final String packageName;
-  final String apiName;
-  private final Class<? extends Terminal> Σ;
-  private final ASTParserCompiler parserCompiler;
   /** API Java file contents. */
   public final String apiClass;
   /** AST Java file contents. Includes the AST visitor class. */
   public final String astClass;
   /** AST run-time compiler Java file contents. */
   public final String astCompilerClass;
+  private final Namer namer;
+  private final ASTParserCompiler parserCompiler;
+  private final Class<? extends Terminal> Σ;
+  final String apiName;
+  final LL1 ll1;
+  final String packageName;
 
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
@@ -51,10 +51,6 @@ public class JavaMediator {
     this.packageName = packageName;
     this.apiName = apiName;
     final APIGenerator apiAdapter = new JavaGenerator(packageName, apiName, "$", namer) {
-      @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
-        return JavaMediator.this.printStartMethodBody(σ, parameters);
-      }
-
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
@@ -64,16 +60,20 @@ public class JavaMediator {
         return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
       }
 
-      @Override public String printTerminationMethodReturnType() {
-        return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
-      }
-
       @Override public String printTerminationMethodConcreteBody() {
         return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
       }
 
+      @Override public String printTerminationMethodReturnType() {
+        return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
+      }
+
       @Override protected String printAdditionalDeclarations() {
         return JavaMediator.this.printAdditionalDeclarations();
+      }
+
+      @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
+        return JavaMediator.this.printStartMethodBody(σ, parameters);
       }
     };
     final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
@@ -89,80 +89,6 @@ public class JavaMediator {
     apiClass = apiAdapter
         .render(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
     astCompilerClass = parserCompiler.printParserClass();
-  }
-
-  protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
-    final List<String> processedParameters = processParameters(σ, parameters);
-    return String.format("α α=new α();%sreturn α;", //
-        Constants.$$.equals(σ) ? "" //
-            : String.format("α.w.add(new %s(%s.%s%s%s));", //
-                Invocation.class.getCanonicalName(), //
-                Σ.getCanonicalName(), //
-                σ.name(), //
-                processedParameters.isEmpty() ? "" : ",", //
-                String.join(",", processedParameters)));
-  }
-
-  String printConcreteImplementationClassBody() {
-    return String.format("public %s<%s> w=new %s();", //
-        List.class.getCanonicalName(), //
-        Invocation.class.getCanonicalName(), //
-        LinkedList.class.getCanonicalName());
-  }
-
-  String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
-    assert σ.parameters.length == parameters.size();
-    final List<String> processedParameters = processParameters(σ, parameters);
-    return String.format("this.w.add(new %s(%s.%s,%s));", //
-        Invocation.class.getCanonicalName(), //
-        Σ.getCanonicalName(), //
-        σ.name(), //
-        String.format("new Object[]{%s}", String.join(",", processedParameters)));
-  }
-
-  String printTerminationMethodReturnType(final Variable head) {
-    return String.format("%s.%s.%s", //
-        packageName, //
-        apiName + "AST", //
-        namer.getASTClassName(head));
-  }
-
-  String printTerminationMethodConcreteBody(final Variable head) {
-    return String.format("return %s(w);", //
-        parserCompiler.getParsingMethodName(head));
-  }
-
-  String printAdditionalDeclarations() {
-    return ll1.ebnf.headVariables.stream() //
-        .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaGenerator(null, namer.headVariableClassName(bnf.ε), "$", namer) {
-          @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
-            return JavaMediator.this.printStartMethodBody(σ, parameters);
-          }
-
-          @Override public String printTopInterfaceBody() {
-            return "";
-          }
-
-          @Override public String printConcreteImplementationClassBody() {
-            return JavaMediator.this.printConcreteImplementationClassBody();
-          }
-
-          @Override public String printConcreteImplementationMethodBody(final Token σ,
-              final List<MethodParameter> parameters) {
-            return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
-          }
-
-          @Override public String printTerminationMethodReturnType() {
-            return JavaMediator.this.printTerminationMethodReturnType(bnf.ε);
-          }
-
-          @Override public String printTerminationMethodConcreteBody() {
-            return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
-          }
-        } //
-            .render(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
-        .collect(joining());
   }
 
   private List<String> processParameters(final Token σ, final List<MethodParameter> parameters) {
@@ -196,5 +122,79 @@ public class JavaMediator {
         throw new RuntimeException("problem while processing API parameters");
     }
     return processedParameters;
+  }
+
+  protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
+    final List<String> processedParameters = processParameters(σ, parameters);
+    return String.format("α α=new α();%sreturn α;", //
+        Constants.$$.equals(σ) ? "" //
+            : String.format("α.w.add(new %s(%s.%s%s%s));", //
+                Invocation.class.getCanonicalName(), //
+                Σ.getCanonicalName(), //
+                σ.name(), //
+                processedParameters.isEmpty() ? "" : ",", //
+                String.join(",", processedParameters)));
+  }
+
+  String printAdditionalDeclarations() {
+    return ll1.ebnf.headVariables.stream() //
+        .map(ll1::getSubBNF) //
+        .map(bnf -> new JavaGenerator(null, namer.headVariableClassName(bnf.ε), "$", namer) {
+          @Override public String printConcreteImplementationClassBody() {
+            return JavaMediator.this.printConcreteImplementationClassBody();
+          }
+
+          @Override public String printConcreteImplementationMethodBody(final Token σ,
+              final List<MethodParameter> parameters) {
+            return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
+          }
+
+          @Override public String printTerminationMethodConcreteBody() {
+            return JavaMediator.this.printTerminationMethodConcreteBody(bnf.ε);
+          }
+
+          @Override public String printTerminationMethodReturnType() {
+            return JavaMediator.this.printTerminationMethodReturnType(bnf.ε);
+          }
+
+          @Override public String printTopInterfaceBody() {
+            return "";
+          }
+
+          @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
+            return JavaMediator.this.printStartMethodBody(σ, parameters);
+          }
+        } //
+            .render(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+        .collect(joining());
+  }
+
+  String printConcreteImplementationClassBody() {
+    return String.format("public %s<%s> w=new %s();", //
+        List.class.getCanonicalName(), //
+        Invocation.class.getCanonicalName(), //
+        LinkedList.class.getCanonicalName());
+  }
+
+  String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
+    assert σ.parameters.length == parameters.size();
+    final List<String> processedParameters = processParameters(σ, parameters);
+    return String.format("this.w.add(new %s(%s.%s,%s));", //
+        Invocation.class.getCanonicalName(), //
+        Σ.getCanonicalName(), //
+        σ.name(), //
+        String.format("new Object[]{%s}", String.join(",", processedParameters)));
+  }
+
+  String printTerminationMethodConcreteBody(final Variable head) {
+    return String.format("return %s(w);", //
+        parserCompiler.getParsingMethodName(head));
+  }
+
+  String printTerminationMethodReturnType(final Variable head) {
+    return String.format("%s.%s.%s", //
+        packageName, //
+        apiName + "AST", //
+        namer.getASTClassName(head));
   }
 }
