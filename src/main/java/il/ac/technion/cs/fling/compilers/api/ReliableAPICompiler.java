@@ -16,11 +16,11 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -41,7 +41,7 @@ public class ReliableAPICompiler extends APICompiler {
     final List<Method.Start> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
-          Type.TOP));
+          SkeletonType.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -52,20 +52,20 @@ public class ReliableAPICompiler extends APICompiler {
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
                   true));
-      if (!(startMethod.returnType == Type.BOTTOM))
+      if (!(startMethod.returnType == SkeletonType.BOTTOM))
         $.add(startMethod);
     }
     return $;
   }
 
-  @Override protected List<Interface> compileInterfaces() {
+  @Override protected List<Type> compileInterfaces() {
     return list( //
         fixedInterfaces(), //
         types.values().stream().filter(interfaze -> !interfaze.isBot()).collect(toList()));
   }
 
-  @SuppressWarnings("static-method") private List<Interface> fixedInterfaces() {
-    return Arrays.asList(Interface.top());
+  @SuppressWarnings("static-method") private List<Type> fixedInterfaces() {
+    return Arrays.asList(Type.top());
   }
 
   @Override protected TypeBody complieConcreteImplementation() {
@@ -86,10 +86,10 @@ public class ReliableAPICompiler extends APICompiler {
     if (types.containsKey($))
       return types.get($).isBot() ? null : $;
     types.put($, shallowIsBot($) ? //
-        Interface.bot() : //
-        Interface.top()); // Pending computation.
-    final Interface i = encodeInterface(q, α, legalJumps);
-    types.put($, i == null ? Interface.bot() : i);
+        Type.bot() : //
+        Type.top()); // Pending computation.
+    final Type i = encodeInterface(q, α, legalJumps);
+    types.put($, i == null ? Type.bot() : i);
     return types.get($).isBot() ? null : $;
   }
 
@@ -110,14 +110,14 @@ public class ReliableAPICompiler extends APICompiler {
     return true;
   }
 
-  private Interface encodeInterface(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  private Type encodeInterface(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, legalJumps, σ))) //
-        .filter(m -> m.returnType != Type.BOTTOM) //
+        .filter(m -> m.returnType != SkeletonType.BOTTOM) //
         .collect(toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
     return $.isEmpty() ? null
-        : new Interface(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
+        : new Type(new InterfaceDeclaration(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an
@@ -128,57 +128,57 @@ public class ReliableAPICompiler extends APICompiler {
    * @param legalJumps
    * @param σ          current input letter
    * @return next state type */
-  private Type next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
+  private SkeletonType next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? Type.BOTTOM : common(δ, α.pop(), legalJumps, false);
+    return δ == null ? SkeletonType.BOTTOM : common(δ, α.pop(), legalJumps, false);
   }
 
-  private Type consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
+  private SkeletonType consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       final TypeName name = encodedName(q, α, legalJumps);
-      return name == null ? Type.BOTTOM : Type.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? SkeletonType.BOTTOM : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
 
-  private Type common(final δ<Named, Token, Named> δ, final Word<Named> α, final Set<Named> legalJumps,
+  private SkeletonType common(final δ<Named, Token, Named> δ, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
       final TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
-      return name == null ? Type.BOTTOM : Type.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? SkeletonType.BOTTOM : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
-    final Map<Named, Type> typeArguments = new LinkedHashMap<>();
+    final Map<Named, SkeletonType> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
-      final Type argument = consolidate(q, α, legalJumps, isInitialType);
-      if (!(argument == Type.BOTTOM))
+      final SkeletonType argument = consolidate(q, α, legalJumps, isInitialType);
+      if (!(argument == SkeletonType.BOTTOM))
         typeArguments.put(q, argument);
     }
     final TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
-    return name == null ? Type.BOTTOM : //
-        Type.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet())).with(new ArrayList<>(typeArguments.values()));
+    return name == null ? SkeletonType.BOTTOM : //
+        SkeletonType.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet())).with(new ArrayList<>(typeArguments.values()));
   }
 
-  private Type getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
+  private SkeletonType getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    return !legalJumps.contains(δ.q$) ? Type.BOTTOM : //
-        isInitialType ? Type.TOP : //
+    return !legalJumps.contains(δ.q$) ? SkeletonType.BOTTOM : //
+        isInitialType ? SkeletonType.TOP : //
             typeVariables.get(δ.q$);
   }
 
-  private List<Type> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
+  private List<SkeletonType> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
     return !isInitialType ? //
         dpda.Q() //
             .filter(legalJumps::contains) //
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> Type.TOP) //
+            .map(q -> SkeletonType.TOP) //
             .collect(toList());
   }
 }

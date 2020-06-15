@@ -1,15 +1,14 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 import il.ac.technion.cs.fling.adapters.APIGenerator;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
 public interface Method {
   class Start implements Method {
     public final MethodDeclaration declaration;
-    public final Type returnType;
+    public final SkeletonType returnType;
 
-    public Start(final MethodDeclaration declaration, final Type returnType) {
+    public Start(final MethodDeclaration declaration, final SkeletonType returnType) {
       this.declaration = declaration;
       this.returnType = returnType;
     }
@@ -31,9 +30,9 @@ public interface Method {
 
   class Intermediate implements Method {
     public final MethodDeclaration declaration;
-    public final Type returnType;
+    public final SkeletonType returnType;
 
-    public Intermediate(final Token σ, final Type returnType) {
+    public Intermediate(final Token σ, final SkeletonType returnType) {
         declaration = new MethodDeclaration(σ);
       this.returnType = returnType;
     }

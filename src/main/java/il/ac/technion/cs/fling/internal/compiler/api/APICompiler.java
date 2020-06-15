@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -24,21 +24,21 @@ public abstract class APICompiler {
   /** Inducing automaton. */
   public final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
-  protected final Map<TypeName, Interface> types = new LinkedHashMap<>();
+  protected final Map<TypeName, Type> types = new LinkedHashMap<>();
   /** Mapping of terminals to type variable nodes. */
-  protected final Map<Named, Type> typeVariables = new LinkedHashMap<>();
+  protected final Map<Named, SkeletonType> typeVariables = new LinkedHashMap<>();
 
   public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
-    dpda.Q().forEach(q -> typeVariables.put(q, Type.of(new TypeName(q))));
+    dpda.Q().forEach(q -> typeVariables.put(q, SkeletonType.of(new TypeName(q))));
   }
 
   /** Compile fluent API. The object's state after calling this method is
    * undefined.
    *
    * @return compiled API */
-  public CompilationUnit compileFluentAPI() {
-    return new CompilationUnit(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
+  public Model compileFluentAPI() {
+    return new Model(compileStartMethods(), compileInterfaces(), complieConcreteImplementation());
   }
 
   /** Compile API concrete implementation.
@@ -54,5 +54,5 @@ public abstract class APICompiler {
   /** Compile API types.
    *
    * @return compiled types */
-  protected abstract List<Interface> compileInterfaces();
+  protected abstract List<Type> compileInterfaces();
 }

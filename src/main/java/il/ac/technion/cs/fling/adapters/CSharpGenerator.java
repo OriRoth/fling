@@ -7,11 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -25,21 +25,21 @@ public class CSharpGenerator extends APIGenerator {
     super(namer, endName);
   }
 
-  @Override public String render(final CompilationUnit fluentAPI) {
+  @Override public String render(final Model fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s%s", //
-        fluentAPI.interfaces().map(this::render).collect(joining()), //
+        fluentAPI.types().map(this::render).collect(joining()), //
         fluentAPI.startMethods().map(this::render).collect(joining())) //
         .replace("$", "τ");
   }
 
-  @Override public String render(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return String.format("%s<%s>", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
     return String.format("public static %s %s(){return new %s();}", //
         render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -50,7 +50,7 @@ public class CSharpGenerator extends APIGenerator {
     return String.format("public void %s(){}", endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
         render(returnType), //
         declaration.name.name(), //

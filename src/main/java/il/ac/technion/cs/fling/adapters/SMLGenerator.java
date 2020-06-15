@@ -7,11 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -39,9 +39,9 @@ public class SMLGenerator extends APIGenerator {
     return "datatype";
   }
 
-  @Override public String render(final CompilationUnit fluentAPI) {
+  @Override public String render(final Model fluentAPI) {
     namer.name(fluentAPI);
-    return String.format("%s\n\n%s", fluentAPI.interfaces().map(this::render).collect(joining(" ")),
+    return String.format("%s\n\n%s", fluentAPI.types().map(this::render).collect(joining(" ")),
         fluentAPI.startMethods().map(this::render).collect(joining("\n")));
   }
 
@@ -59,7 +59,7 @@ public class SMLGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining(",\n")));
   }
 
-  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
     if (!declaration.getInferredParameters().isEmpty())
       throw new RuntimeException("fluent API function parameters are not suported");
     return String.format("\t%s: %s", declaration.name.name(), render(returnType));
@@ -80,7 +80,7 @@ public class SMLGenerator extends APIGenerator {
     return prefix + render(name.q, name.α, name.legalJumps);
   }
 
-  @Override public String render(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return typeArguments.isEmpty() ? render(name)
         : String.format("(%s) %s", //
             typeArguments.stream().map(this::render).collect(joining(",")), //
@@ -95,7 +95,7 @@ public class SMLGenerator extends APIGenerator {
     return String.format("%s TOP = SUCCESS", getDatatypeKeyword());
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
     final String name = Constants.$$.equals(declaration.name) ? endName : declaration.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, render(returnType), name);
   }

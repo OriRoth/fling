@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -38,7 +38,7 @@ public abstract class APIGenerator {
 
   protected abstract String comment(String text);
 
-  public abstract String render(CompilationUnit fluentAPI);
+  public abstract String render(Model fluentAPI);
 
   abstract String render(InterfaceDeclaration declaration);
 
@@ -48,19 +48,19 @@ public abstract class APIGenerator {
     return m.render(this);
   }
 
-  public abstract String render(MethodDeclaration declaration, Type returnType);
+  public abstract String render(MethodDeclaration declaration, SkeletonType returnType);
 
   abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
 
-  public final String render(final Type t) {
+  public final String render(final SkeletonType t) {
     return t.render(this);
   }
 
   public abstract String render(TypeName name);
 
-  public abstract String render(TypeName name, List<Type> typeArguments);
+  public abstract String render(TypeName name, List<SkeletonType> typeArguments);
 
-  final String render(final Interface i) {
+  final String render(final Type i) {
     return i.render(this);
   }
 
@@ -68,7 +68,7 @@ public abstract class APIGenerator {
 
   public abstract String renderInterfaceTop();
 
-  public abstract String renderMethod(MethodDeclaration declaration, Type returnType);
+  public abstract String renderMethod(MethodDeclaration declaration, SkeletonType returnType);
 
   public abstract String renderTerminationMethod();
 

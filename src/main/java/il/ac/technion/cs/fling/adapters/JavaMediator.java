@@ -15,7 +15,7 @@ import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.grammars.LL1JavaASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;

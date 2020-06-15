@@ -10,11 +10,11 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Intermediate;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Start;
@@ -71,11 +71,11 @@ public class NaiveNamer implements Namer {
         .forEach(this::setInferredFieldsInClass);
   }
 
-  @Override public void name(final CompilationUnit fluentAPI) {
+  @Override public void name(final Model fluentAPI) {
     // Set intermediate methods parameter names:
-    fluentAPI.interfaces() //
+    fluentAPI.types() //
         .filter(interfaze -> !interfaze.isBot() && !interfaze.isTop()) //
-        .map(Interface::methods) //
+        .map(Type::methods) //
         .flatMap(List::stream) //
         .filter(m -> m instanceof Method.Intermediate) //
         .map(m -> (Method.Intermediate) m) //

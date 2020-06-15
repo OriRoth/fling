@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -39,7 +39,7 @@ public class PolynomialAPICompiler extends APICompiler {
     final List<Method.Start> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
       $.add(new Method.Start(new MethodDeclaration(Constants.$$), //
-          Type.TOP));
+          SkeletonType.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -47,13 +47,13 @@ public class PolynomialAPICompiler extends APICompiler {
       final Method.Start startMethod = //
           new Method.Start(new MethodDeclaration(σ), //
               consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
-      if (!(startMethod.returnType == Type.BOTTOM))
+      if (!(startMethod.returnType == SkeletonType.BOTTOM))
         $.add(startMethod);
     }
     return $;
   }
 
-  @Override protected List<Interface> compileInterfaces() {
+  @Override protected List<Type> compileInterfaces() {
     return list(fixedInterfaces(), types.values());
   }
 
@@ -64,8 +64,8 @@ public class PolynomialAPICompiler extends APICompiler {
         .collect(toList()));
   }
 
-  @SuppressWarnings("static-method") private List<Interface> fixedInterfaces() {
-    return Arrays.asList(Interface.top(), Interface.bot());
+  @SuppressWarnings("static-method") private List<Type> fixedInterfaces() {
+    return Arrays.asList(Type.top(), Type.bot());
   }
 
   /** Get type name given a state and stack symbols to push. If this type is not
@@ -83,11 +83,11 @@ public class PolynomialAPICompiler extends APICompiler {
     return $;
   }
 
-  private Interface encodeInterface(final Named q, final Word<Named> α) {
+  private Type encodeInterface(final Named q, final Word<Named> α) {
     final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, σ))).collect(Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
-    return new Interface(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), $);
+    return new Type(new InterfaceDeclaration(q, α, null, word(dpda.Q), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an
@@ -97,35 +97,35 @@ public class PolynomialAPICompiler extends APICompiler {
    * @param α all known information about the top of the stack
    * @param σ current input letter
    * @return next state type */
-  private Type next(final Named q, final Word<Named> α, final Token σ) {
+  private SkeletonType next(final Named q, final Word<Named> α, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? Type.BOTTOM : common(δ, α.pop(), false);
+    return δ == null ? SkeletonType.BOTTOM : common(δ, α.pop(), false);
   }
 
-  private Type consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
+  private SkeletonType consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
-    return δ == null ? Type.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
+    return δ == null ? SkeletonType.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
         : common(δ, α.pop(), isInitialType);
   }
 
-  private Type common(final δ<Named, Token, Named> δ, final Word<Named> α, final boolean isInitialType) {
+  private SkeletonType common(final δ<Named, Token, Named> δ, final Word<Named> α, final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);
-      return Type.of(encodedName(δ.q$, δ.getΑ())).with(getTypeArguments(isInitialType));
+      return SkeletonType.of(encodedName(δ.q$, δ.getΑ())).with(getTypeArguments(isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, isInitialType);
-    return Type.of(encodedName(δ.q$, δ.getΑ()))
+    return SkeletonType.of(encodedName(δ.q$, δ.getΑ()))
         .with(dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
 
-  private Type getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
-    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? Type.TOP : Type.BOTTOM;
+  private SkeletonType getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
+    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? SkeletonType.TOP : SkeletonType.BOTTOM;
   }
 
-  private List<Type> getTypeArguments(final boolean isInitialType) {
+  private List<SkeletonType> getTypeArguments(final boolean isInitialType) {
     return !isInitialType ? list(typeVariables.values())
-        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? Type.TOP : Type.BOTTOM).collect(toList());
+        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? SkeletonType.TOP : SkeletonType.BOTTOM).collect(toList());
   }
 }

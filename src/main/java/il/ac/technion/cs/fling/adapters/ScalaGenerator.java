@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -31,20 +31,20 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("/* %s */", comment);
   }
 
-  @Override public String render(final CompilationUnit fluentAPI) {
+  @Override public String render(final Model fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s", //
-        fluentAPI.interfaces().map(this::render).collect(joining("\n")), //
+        fluentAPI.types().map(this::render).collect(joining("\n")), //
         fluentAPI.startMethods().map(this::render).collect(joining("\n")));
   }
 
-  @Override public String render(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
         render(returnType), //
@@ -55,7 +55,7 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("def %s():Unit={}", endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
     final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
@@ -114,7 +114,7 @@ public class ScalaGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  public String printTypeInstantiation(final Type returnType) {
+  public String printTypeInstantiation(final SkeletonType returnType) {
     final String _returnType = render(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //

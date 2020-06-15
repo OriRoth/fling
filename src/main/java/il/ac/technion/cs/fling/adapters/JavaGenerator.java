@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
-import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.CompilationUnit;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Interface;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.InterfaceDeclaration;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -40,25 +40,25 @@ public class JavaGenerator extends APIGenerator {
     this.className = className;
   }
 
-  @Override public String render(final CompilationUnit fluentAPI) {
+  @Override public String render(final Model fluentAPI) {
     namer.name(fluentAPI);
     return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         startComment(), //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
         fluentAPI.startMethods().map(this::render).collect(joining()), //
-        fluentAPI.interfaces().map(this::render).collect(joining()), //
+        fluentAPI.types().map(this::render).collect(joining()), //
         printConcreteImplementation(fluentAPI), //
         printAdditionalDeclarations());
   }
 
-  @Override public String render(final TypeName name, final List<Type> typeArguments) {
+  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return String.format("%s<%s>", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String renderMethod(final MethodDeclaration declaration, final SkeletonType returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         render(returnType), //
         Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
@@ -72,7 +72,7 @@ public class JavaGenerator extends APIGenerator {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName);
   }
 
-  @Override public String render(final MethodDeclaration declaration, final Type returnType) {
+  @Override public String render(final MethodDeclaration declaration, final SkeletonType returnType) {
     return String.format("%s %s(%s);", //
         render(returnType), //
         declaration.name.name(), //
@@ -124,13 +124,13 @@ public class JavaGenerator extends APIGenerator {
         declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
 
-  public String printTypeName(final Interface interfaze) {
+  public String printTypeName(final Type interfaze) {
     return interfaze.isTop() ? "$" : interfaze.isBot() ? "ø" : printTypeName(interfaze.declaration);
   }
 
-  public String printConcreteImplementation(final CompilationUnit fluentAPI) {
+  public String printConcreteImplementation(final Model fluentAPI) {
     return String.format("static class α implements %s{%s%s%s}", //
-        fluentAPI.interfaces().map(this::printTypeName).collect(joining(",")), //
+        fluentAPI.types().map(this::printTypeName).collect(joining(",")), //
         printConcreteImplementationClassBody(), fluentAPI.body.methods.stream() //
             .map(Method::asChainedMethod) //
             .map(Chained::declaration) //

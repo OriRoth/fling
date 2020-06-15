@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling.internal.compiler.api;
+package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 /** Parameter declaration inferred from token. Single token may define multiple
  * parameters.

@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.tool.Grammar;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
-import il.ac.technion.cs.fling.internal.compiler.api.ParameterFragment;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ParameterFragment;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 
 // TODO handle API function parameters

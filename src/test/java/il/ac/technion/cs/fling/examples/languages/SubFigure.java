@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.examples.languages.SubFigure.Σ;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.MethodDeclaration;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodDeclaration;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;

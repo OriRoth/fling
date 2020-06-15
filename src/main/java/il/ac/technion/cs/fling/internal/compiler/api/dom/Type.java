@@ -2,60 +2,56 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import il.ac.technion.cs.fling.adapters.APIGenerator;
 
-/** A representation of a type, which may, or may not take parameters.
- *
- * @author yogi */
-public interface Type {
-  String render(APIGenerator g);
-
-  static Monomorphic of(final TypeName n) {
-    return new Monomorphic(n);
-  }
-
-  default Stream<Type> arguments() {
-    return Stream.empty();
-  }
-
-  Type TOP = g -> g.topName;
-
-  Type BOTTOM = g -> g.bottomName;
-
-  class Monomorphic implements Type {
-    Monomorphic(final TypeName name) {
-      this.name = name;
-    }
-
-    protected final TypeName name;
-
+/** @author Yossi Gil
+ * @since 2020- */
+public class Type {
+  private static final Type TOP = new Type() {
     @Override public String render(final APIGenerator g) {
-      return g.render(name);
+      return g.renderInterfaceTop();
     }
-
-    public Polymorphic with(final List<Type> arguments) {
-      return new Polymorphic(name, arguments);
-    }
-
-  }
-
-  class Polymorphic extends Monomorphic {
+  };
+  private static final Type BOTTOM = new Type() {
     @Override public String render(final APIGenerator g) {
-      return g.render(name, arguments);
+      return g.renderInterfaceBottom();
     }
+  };
+  public final InterfaceDeclaration declaration;
+  public final List<Method> methods;
 
-    @Override public Stream<Type> arguments() {
-      return arguments.stream();
-    }
-
-    private final List<Type> arguments;
-
-    Polymorphic(final TypeName name, final List<Type> arguments) {
-      super(name);
-      this.arguments = Collections.unmodifiableList(arguments);
-    }
+  public Type(final InterfaceDeclaration declaration, final List<Method> methods) {
+    this.declaration = declaration;
+    this.methods = Collections.unmodifiableList(methods);
   }
 
+  private Type() {
+    declaration = null;
+    methods = null;
+  }
+
+  public List<Method> methods() {
+    return methods;
+  }
+
+  public static Type top() {
+    return TOP;
+  }
+
+  public static Type bot() {
+    return BOTTOM;
+  }
+
+  public boolean isTop() {
+    return this == TOP;
+  }
+
+  public boolean isBot() {
+    return this == BOTTOM;
+  }
+
+  public String render(final APIGenerator g) {
+    return g.render(declaration, methods);
+  }
 }
