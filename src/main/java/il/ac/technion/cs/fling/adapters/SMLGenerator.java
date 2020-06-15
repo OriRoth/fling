@@ -24,7 +24,7 @@ public class SMLGenerator extends APIGenerator {
   private boolean firstDatatype;
 
   public SMLGenerator(final Namer namer, final String endName) {
-    super(namer, endName);
+    super(namer);
     firstDatatype = true;
   }
 
@@ -64,8 +64,7 @@ public class SMLGenerator extends APIGenerator {
   @Override public String render(final TypeSignature s) {
     final String name = render(s.q, s.α, s.legalJumps);
     final String variables = s.parameters.isEmpty() ? ""
-        : String.format("(%s) ", s.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
-            name);
+        : String.format("(%s) ", s.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")), name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
   }
 
@@ -75,21 +74,21 @@ public class SMLGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining(",\n")));
   }
 
-  @Override public String renderInterfaceBottom() {
+  @Override public String renderTypeBottom() {
     return String.format("%s BOT = FAILURE", getDatatypeKeyword());
   }
 
-  @Override public String renderInterfaceTop() {
+  @Override public String renderTypeTop() {
     return String.format("%s TOP = SUCCESS", getDatatypeKeyword());
   }
 
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
-    final String name = Constants.$$.equals(s.name) ? endName : s.name.name();
+    final String name = Constants.$$.equals(s.name) ? endName() : s.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, render(returnType), name);
   }
 
   @Override public String renderTerminationMethod() {
-    return String.format("\t%s: TOP", endName);
+    return String.format("\t%s: TOP", endName());
   }
 
   private String getDatatypeKeyword() {

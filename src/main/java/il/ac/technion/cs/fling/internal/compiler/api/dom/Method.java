@@ -63,7 +63,7 @@ public interface Method {
     }
 
     @Override public String render(final APIGenerator g) {
-      throw new RuntimeException("Unimplemented yet" + g);
+      return signature + "";
     }
   }
 

@@ -58,7 +58,7 @@ public class ReliableAPICompiler extends APICompiler {
     return $;
   }
 
-  @Override protected List<Type> compileInterfaces() {
+  @Override protected List<Type> types() {
     return list( //
         fixedInterfaces(), //
         types.values().stream().filter(i -> !i.isBot()).collect(toList()));
@@ -88,7 +88,7 @@ public class ReliableAPICompiler extends APICompiler {
     types.put($, shallowIsBot($) ? //
         Type.bot() : //
         Type.top()); // Pending computation.
-    final Type i = encodeInterface(q, α, legalJumps);
+    final Type i = encodeType(q, α, legalJumps);
     types.put($, i == null ? Type.bot() : i);
     return types.get($).isBot() ? null : $;
   }
@@ -110,7 +110,7 @@ public class ReliableAPICompiler extends APICompiler {
     return true;
   }
 
-  private Type encodeInterface(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  private Type encodeType(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, legalJumps, σ))) //
         .filter(m -> m.type != SkeletonType.BOTTOM) //
         .collect(toList());

@@ -38,7 +38,7 @@ public abstract class APICompiler {
    *
    * @return compiled API */
   public Model compileFluentAPI() {
-    return new Model(compileStartMethods(), compileInterfaces(), extraMethods());
+    return new Model(compileStartMethods(), types(), extraMethods());
   }
 
   /** Compile API concrete implementation.
@@ -54,5 +54,5 @@ public abstract class APICompiler {
   /** Compile API types.
    *
    * @return compiled types */
-  protected abstract List<Type> compileInterfaces();
+  protected abstract List<Type> types();
 }

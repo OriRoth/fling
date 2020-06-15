@@ -13,6 +13,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public class MethodSignature {
   /** Inducing token. */
   public final Token name;
+
+  @Override public String toString() {
+    return "MethodSignature [name=" + name + ", parameters=" + parameters + "]";
+  }
+
   /** Inferred token parameters. Pending computation. */
   private List<MethodParameter> parameters;
 
@@ -35,7 +40,7 @@ public class MethodSignature {
     this.parameters = parameters;
   }
 
-  public Stream<MethodParameter> parmeters() {
+  public Stream<MethodParameter> parameters() {
     return getInferredParameters().stream();
   }
 }

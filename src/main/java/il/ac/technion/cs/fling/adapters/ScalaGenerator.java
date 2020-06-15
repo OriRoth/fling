@@ -21,15 +21,19 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Scala API adapter.
  *
  * @author Ori Roth */
-public class ScalaGenerator extends APIGenerator {
+public class ScalaGenerator extends CLikeGenerator {
 
-  public ScalaGenerator(final String endName, final Namer namer) {
-    super(namer, endName);
+  public ScalaGenerator(final Namer namer) {
+    super(namer);
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
-    return s.parmeters() //
-        .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+  public String printParametersList(final MethodSignature s) {
+    return
+
+    s.parameters()
+
+        //
+        .map(p -> String.format("%s %s", p.type, p.name)) //
         .collect(joining(","));
   }
 
@@ -96,12 +100,12 @@ public class ScalaGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining("\n")));
   }
 
-  @Override public String renderInterfaceBottom() {
+  @Override public String renderTypeBottom() {
     return "private class BOT{}";
   }
 
-  @Override public String renderInterfaceTop() {
-    return String.format("class TOP{\ndef %s():Unit={}\n}", endName);
+  @Override public String renderTypeTop() {
+    return String.format("class TOP{\ndef %s():Unit={}\n}", endName());
   }
 
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
@@ -112,7 +116,7 @@ public class ScalaGenerator extends APIGenerator {
   }
 
   @Override public String renderTerminationMethod() {
-    return String.format("def %s():Unit={}", endName);
+    return String.format("def %s():Unit={}", endName());
   }
 
   @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
@@ -121,7 +125,4 @@ public class ScalaGenerator extends APIGenerator {
         .collect(joining(","));
   }
 
-  @Override protected String comment(String comment) {
-    return String.format("/* %s */", comment);
-  }
 }

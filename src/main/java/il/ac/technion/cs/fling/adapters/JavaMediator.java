@@ -101,7 +101,7 @@ public class JavaMediator {
             packageName, //
             apiName, //
             namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
-            declaration.parameterName));
+            declaration.name));
       else if (parameter.isVarargsTypeParameter()) {
         final String αClass = String.format("%s.%s.%s.α", //
             packageName, //
@@ -109,14 +109,14 @@ public class JavaMediator {
             namer.headVariableClassName(parameter.asVarargsVariableTypeParameter().variable));
         processedParameters.add(String.format("%s.stream(%s).map(%s.class::cast).map(%s::$).toArray(%s.%s.%s[]::new)", //
             Arrays.class.getCanonicalName(), //
-            declaration.parameterName, //
+            declaration.name, //
             αClass, //
             αClass, //
             packageName, //
             apiName + "AST", //
             namer.getASTClassName(parameter.asVarargsVariableTypeParameter().variable)));
       } else if (parameter.isStringTypeParameter())
-        processedParameters.add(declaration.parameterName);
+        processedParameters.add(declaration.name);
       else
         throw new RuntimeException("problem while processing API parameters");
     }

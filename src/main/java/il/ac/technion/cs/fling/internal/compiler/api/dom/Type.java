@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
-import java.util.Collections;
 import java.util.List;
 
 import il.ac.technion.cs.fling.adapters.APIGenerator;
@@ -10,12 +9,12 @@ import il.ac.technion.cs.fling.adapters.APIGenerator;
 public class Type {
   private static final Type TOP = new Type() {
     @Override public String render(final APIGenerator g) {
-      return g.renderInterfaceTop();
+      return g.renderTypeTop();
     }
   };
   private static final Type BOTTOM = new Type() {
     @Override public String render(final APIGenerator g) {
-      return g.renderInterfaceBottom();
+      return g.renderTypeBottom();
     }
   };
   public final TypeSignature signature;
@@ -23,7 +22,7 @@ public class Type {
 
   public Type(final TypeSignature signature, final List<Method> methods) {
     this.signature = signature;
-    this.methods = Collections.unmodifiableList(methods);
+    this.methods = methods;
   }
 
   private Type() {

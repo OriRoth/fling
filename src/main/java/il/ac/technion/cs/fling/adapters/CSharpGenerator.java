@@ -5,9 +5,11 @@ import static java.util.stream.Collectors.joining;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
@@ -22,17 +24,16 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  * @author Ori Roth */
 public class CSharpGenerator extends APIGenerator {
   public CSharpGenerator(final Namer namer) {
-    this(namer, "$");
+    super(namer);
   }
 
-  public CSharpGenerator(final Namer namer, final String endName) {
-    super(namer, endName);
+  public String printParametersList(final MethodSignature s) {
+    Stream<MethodParameter> parmeters = s.parameters();
+    return render(parmeters);
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
-    return s.parmeters() //
-        .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
-        .collect(joining(","));
+  @Override String render(Stream<MethodParameter> ps) {
+    return ps.map(p -> String.format("%s %s", p.type, p.name)).collect(joining(","));
   }
 
   @Override public String render(final MethodSignature s, final SkeletonType returnType) {
@@ -72,12 +73,12 @@ public class CSharpGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining()));
   }
 
-  @Override public String renderInterfaceBottom() {
+  @Override public String renderTypeBottom() {
     return "private class BOT{}";
   }
 
-  @Override public String renderInterfaceTop() {
-    return String.format("public class TOP{public void %s(){}}", endName);
+  @Override public String renderTypeTop() {
+    return String.format("public class TOP { public void %s(){} }", endName());
   }
 
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
@@ -88,7 +89,7 @@ public class CSharpGenerator extends APIGenerator {
   }
 
   @Override public String renderTerminationMethod() {
-    return String.format("public void %s(){}", endName);
+    return String.format("public void %s(){}", endName());
   }
 
   public String typeVariableName(final Named typeVariable) {

@@ -29,7 +29,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *
  * @author Ori Roth */
-@SuppressWarnings("static-method") public class AeqB {
+public class AeqB {
   /** Set of DPDA states. */
   enum Q implements Named {
     q0, q1

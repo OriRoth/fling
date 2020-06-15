@@ -55,8 +55,8 @@ public class PolynomialAPICompiler extends APICompiler {
     return $;
   }
 
-  @Override protected List<Type> compileInterfaces() {
-    return list(fixedInterfaces(), types.values());
+  @Override protected List<Type> types() {
+    return list(fixedTypes(), types.values());
   }
 
   @Override protected List<Chained> extraMethods() {
@@ -66,7 +66,7 @@ public class PolynomialAPICompiler extends APICompiler {
         .collect(toList());
   }
 
-  @SuppressWarnings("static-method") private List<Type> fixedInterfaces() {
+  @SuppressWarnings("static-method") private List<Type> fixedTypes() {
     return Arrays.asList(Type.top(), Type.bot());
   }
 

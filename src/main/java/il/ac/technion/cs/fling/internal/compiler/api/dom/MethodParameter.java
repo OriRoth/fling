@@ -6,13 +6,13 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
  * @author Ori Roth */
 public class MethodParameter {
   /** Parameter type name. */
-  public final String parameterType;
+  public final String type;
   /** Parameter variable name. */
-  public final String parameterName;
+  public final String name;
 
   private MethodParameter(final String parameterType, final String parameterName) {
-    this.parameterType = parameterType;
-    this.parameterName = parameterName;
+    this.type = parameterType;
+    this.name = parameterName;
   }
 
   public static MethodParameter of(final String parameterType, final String parameterName) {

@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,9 +19,9 @@ public interface SkeletonType {
     return Stream.empty();
   }
 
-  SkeletonType TOP = g -> g.topName;
+  SkeletonType TOP = g -> g.topName();
 
-  SkeletonType BOTTOM = g -> g.bottomName;
+  SkeletonType BOTTOM = g -> g.bottomName();
 
   class Monomorphic implements SkeletonType {
     Monomorphic(final TypeName name) {
@@ -54,7 +53,7 @@ public interface SkeletonType {
 
     Polymorphic(final TypeName name, final List<SkeletonType> arguments) {
       super(name);
-      this.arguments = Collections.unmodifiableList(arguments);
+      this.arguments = arguments;
     }
   }
 

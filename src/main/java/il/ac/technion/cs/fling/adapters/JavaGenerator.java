@@ -26,12 +26,14 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  * chains.
  *
  * @author Ori Roth */
-public class JavaGenerator extends APIGenerator {
+public class JavaGenerator extends CLikeGenerator {
   private final String className;
   private final String packageName;
 
   public JavaGenerator(final Namer namer, final String packageName, final String className, final String endName) {
-    super(namer, endName, "ø", "$");
+    super(namer);
+    this.bottomName("ø");
+    this.topName("$");
     this.packageName = packageName;
     this.className = className;
   }
@@ -42,27 +44,27 @@ public class JavaGenerator extends APIGenerator {
         printConcreteImplementationClassBody(), m.methods() //
             .map(Method::asChainedMethod) //
             .map(Chained::signature) //
-            .map(declaration -> String.format("public α %s(%s){%sreturn this;}", //
-                declaration.name.name(), //
-                declaration.parmeters() //
+            .map(s -> String.format("public α %s(%s){%sreturn this;}", //
+                s.name.name(), //
+                s.parameters() //
                     .map(parameter -> String.format("%s %s", //
-                        parameter.parameterType, //
-                        parameter.parameterName)) //
+                        parameter.type, //
+                        parameter.name)) //
                     .collect(joining(",")), //
-                printConcreteImplementationMethodBody(declaration.name, declaration.getInferredParameters()))) //
+                printConcreteImplementationMethodBody(s.name, s.getInferredParameters()))) //
             .collect(joining()),
         String.format("public %s %s(){%s}", //
             printTerminationMethodReturnType(), //
-            endName, //
+            endName(), //
             printTerminationMethodConcreteBody()));
   }
 
   public String printTopInterfaceBody() {
-    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
+    return String.format("%s %s();", printTerminationMethodReturnType(), endName());
   }
 
-  public String printTypeName(final Type i) {
-    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.signature);
+  public String printTypeName(final Type t) {
+    return t.isTop() ? "$" : t.isBot() ? "ø" : printTypeName(t.signature);
   }
 
   public String render1(TypeSignature s) {
@@ -99,8 +101,8 @@ public class JavaGenerator extends APIGenerator {
     return String.format("%s %s(%s);", //
         render(returnType), //
         s.name.name(), //
-        s.parmeters() //
-            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+        s.parameters() //
+            .map(parameter -> String.format("%s %s", parameter.type, parameter.name)) //
             .collect(joining(",")));
   }
 
@@ -135,18 +137,18 @@ public class JavaGenerator extends APIGenerator {
   @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("interface %s%s{%s}", //
         render(s), //
-        !s.isAccepting ? "" : " extends " + topName, //
+        !s.isAccepting ? "" : " extends " + topName(), //
         methods.stream() //
             .filter(method -> !method.isTerminationMethod()) //
             .map(this::render) //
             .collect(joining()));
   }
 
-  @Override public String renderInterfaceBottom() {
+  @Override public String renderTypeBottom() {
     return "interface ø {}";
   }
 
-  @Override public String renderInterfaceTop() {
+  @Override public String renderTypeTop() {
     return String.format("interface ${%s}", printTopInterfaceBody());
   }
 
@@ -154,18 +156,14 @@ public class JavaGenerator extends APIGenerator {
     return String.format("public static %s %s(%s) {%s}", //
         render(returnType), //
         Constants.$$.equals(s.name) ? "__" : s.name.name(), //
-        s.parmeters() //
-            .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
+        s.parameters() //
+            .map(parameter -> String.format("%s %s", parameter.type, parameter.name)) //
             .collect(joining(",")), //
         printStartMethodBody(s.name, s.getInferredParameters()));
   }
 
   @Override public String renderTerminationMethod() {
-    return String.format("%s %s();", printTerminationMethodReturnType(), endName);
-  }
-
-  @Override protected String comment(String comment) {
-    return String.format("/* %s */", comment);
+    return String.format("%s %s();", printTerminationMethodReturnType(), endName());
   }
 
   /** Additional declaration within the top class.

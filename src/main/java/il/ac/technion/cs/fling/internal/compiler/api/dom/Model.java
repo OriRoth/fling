@@ -10,9 +10,9 @@ import java.util.stream.Stream;
  *
  * @since 2020-06-15 */
 public class Model {
-  private final List<Method.Start> starts;
-  private final List<Type> types;
-  private List<Method.Chained> methods;
+  public final List<Method.Start> starts;
+  public final List<Type> types;
+  public final List<Method.Chained> methods;
 
   public Stream<Type> types() {
     return types.stream();

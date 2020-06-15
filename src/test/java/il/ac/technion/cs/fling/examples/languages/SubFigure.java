@@ -59,7 +59,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
     final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
     final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     final APICompiler compiler = new ReliableAPICompiler(dpda);
-    final APIGenerator adapter = new ScalaGenerator("$", namer) {
+    final APIGenerator adapter = new ScalaGenerator(namer) {
       // Ignore parameters:
       @Override public String printParametersList(@SuppressWarnings("unused") final MethodSignature declaration) {
         return "";
