@@ -62,11 +62,11 @@ public class JavaGenerator extends APIGenerator {
   }
 
   public String printTypeName(final Type i) {
-    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.declaration);
+    return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.signature);
   }
 
-  public String printTypeName(final TypeSignature declaration) {
-    return render(declaration.q, declaration.α, declaration.legalJumps);
+  public String printTypeName(final TypeSignature s) {
+    return render(s.q, s.α, s.legalJumps);
   }
 
   @Override public String render(final MethodSignature s, final SkeletonType returnType) {
@@ -79,8 +79,7 @@ public class JavaGenerator extends APIGenerator {
   }
 
   @Override String render(final Model m) {
-    return String.format("%s\n%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
-        startComment(), //
+    return String.format("%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
         className, //
         m.starts().map(this::render).collect(joining()), //
@@ -107,15 +106,15 @@ public class JavaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String render(final TypeSignature declaration) {
-    return String.format("%s<%s>", printTypeName(declaration), //
-        declaration.parameters().map(Named::name).collect(Collectors.joining(",")));
+  @Override public String render(final TypeSignature s) {
+    return String.format("%s<%s>", printTypeName(s), //
+        s.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
 
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("interface %s%s{%s}", //
-        render(declaration), //
-        !declaration.isAccepting ? "" : " extends " + topName, //
+        render(s), //
+        !s.isAccepting ? "" : " extends " + topName, //
         methods.stream() //
             .filter(method -> !method.isTerminationMethod()) //
             .map(this::render) //

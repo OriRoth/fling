@@ -15,6 +15,11 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
+/** Abstract base of all code generators.
+ * 
+ * @author Yossi Gil
+ *
+ * @since 2020-06-15 */
 public abstract class APIGenerator {
   public final String bottomName;
   public final String topName;
@@ -38,7 +43,7 @@ public abstract class APIGenerator {
 
   public final String go(Model m) {
     namer.name(m);
-    return render(m);
+    return startComment() + render(m);
   }
 
   public abstract String render(MethodSignature s, SkeletonType t);
@@ -51,7 +56,7 @@ public abstract class APIGenerator {
 
   public abstract String render(TypeName name, List<SkeletonType> typeArguments);
 
-  public abstract String render(TypeSignature declaration, List<Method> methods);
+  public abstract String render(TypeSignature s, List<Method> methods);
 
   public abstract String renderInterfaceBottom();
 
@@ -75,9 +80,9 @@ public abstract class APIGenerator {
     return i.render(this);
   }
 
-  abstract String render(TypeSignature declaration);
+  abstract String render(TypeSignature s);
 
-  final String startComment() {
+  private String startComment() {
     return comment(initialComment());
   }
 

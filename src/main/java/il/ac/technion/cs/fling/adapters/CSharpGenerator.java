@@ -49,22 +49,22 @@ public class CSharpGenerator extends APIGenerator {
         arguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String render(final TypeSignature declaration) {
-    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    return declaration.parameters.isEmpty() ? String.format("public class %s", printTypeName)
+  @Override public String render(final TypeSignature s) {
+    final String printTypeName = render(s.q, s.α, s.legalJumps);
+    return s.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //
-            declaration.parameters().map(this::typeVariableName) //
+            s.parameters().map(this::typeVariableName) //
                 .collect(Collectors.joining(",")),
-            declaration.parameters().map(this::typeVariableName) //
+            s.parameters().map(this::typeVariableName) //
                 .map(n -> "where " + n + ":new()") //
                 .collect(Collectors.joining("")) //
         );
   }
 
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("%s{%s}", //
-        render(declaration), //
+        render(s), //
         methods.stream().map(this::render).collect(joining()));
   }
 

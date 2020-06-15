@@ -18,16 +18,16 @@ public class Type {
       return g.renderInterfaceBottom();
     }
   };
-  public final TypeSignature declaration;
+  public final TypeSignature signature;
   public final List<Method> methods;
 
-  public Type(final TypeSignature declaration, final List<Method> methods) {
-    this.declaration = declaration;
+  public Type(final TypeSignature signature, final List<Method> methods) {
+    this.signature = signature;
     this.methods = Collections.unmodifiableList(methods);
   }
 
   private Type() {
-    declaration = null;
+    signature = null;
     methods = null;
   }
 
@@ -52,6 +52,6 @@ public class Type {
   }
 
   public String render(final APIGenerator g) {
-    return g.render(declaration, methods);
+    return g.render(signature, methods);
   }
 }

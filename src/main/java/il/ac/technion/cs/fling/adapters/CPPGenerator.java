@@ -58,17 +58,17 @@ public class CPPGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String render(final TypeSignature declaration) {
-    final String printTypeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    return declaration.parameters.isEmpty() ? String.format("class %s", printTypeName)
+  @Override public String render(final TypeSignature s) {
+    final String printTypeName = render(s.q, s.α, s.legalJumps);
+    return s.parameters.isEmpty() ? String.format("class %s", printTypeName)
         : String.format("template<%s>class %s",
-            declaration.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
+            s.parameters().map(q -> "class " + q.name()).collect(Collectors.joining(",")), //
             printTypeName);
   }
 
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("%s{public:%s};", //
-        render(declaration), //
+        render(s), //
         methods.stream().map(this::render).collect(joining()));
   }
 
@@ -97,7 +97,7 @@ public class CPPGenerator extends APIGenerator {
 
   @Override String render(final Model m) {
     return String.format("%s%s%s", //
-        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.declaration) + ";").collect(joining()), //
+        m.types().filter(i -> !i.isTop() && !i.isBot()).map(i -> render(i.signature) + ";").collect(joining()), //
         m.types().map(this::render).collect(joining()), //
         m.starts().map(this::render).collect(joining()));
   }

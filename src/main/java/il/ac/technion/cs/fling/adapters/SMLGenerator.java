@@ -61,17 +61,17 @@ public class SMLGenerator extends APIGenerator {
             render(name));
   }
 
-  @Override public String render(final TypeSignature declaration) {
-    final String name = render(declaration.q, declaration.α, declaration.legalJumps);
-    final String variables = declaration.parameters.isEmpty() ? ""
-        : String.format("(%s) ", declaration.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
+  @Override public String render(final TypeSignature s) {
+    final String name = render(s.q, s.α, s.legalJumps);
+    final String variables = s.parameters.isEmpty() ? ""
+        : String.format("(%s) ", s.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")),
             name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
   }
 
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("%s of {\n%s\n}", //
-        render(declaration), //
+        render(s), //
         methods.stream().map(this::render).collect(joining(",\n")));
   }
 

@@ -80,19 +80,19 @@ public class ScalaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String render(final TypeSignature declaration) {
-    final String typeName = render(declaration.q, declaration.α, declaration.legalJumps);
-    final String typeParameters = declaration.parameters().map(Named::name).collect(Collectors.joining(","));
+  @Override public String render(final TypeSignature s) {
+    final String typeName = render(s.q, s.α, s.legalJumps);
+    final String typeParameters = s.parameters().map(Named::name).collect(Collectors.joining(","));
     return String.format("class %s", //
-        declaration.parameters.isEmpty() ? //
+        s.parameters.isEmpty() ? //
             typeName //
             : String.format("%s[%s]", typeName, typeParameters));
   }
 
-  @Override public String render(final TypeSignature declaration, final List<Method> methods) {
+  @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
-        render(declaration), //
-        printClassParameters(declaration.parameters), //
+        render(s), //
+        printClassParameters(s.parameters), //
         methods.stream().map(this::render).collect(joining("\n")));
   }
 
