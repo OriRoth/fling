@@ -1,8 +1,10 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 
-import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -17,7 +19,7 @@ public class TypeSignature {
   /** Inducing state. */
   public final Named q;
   /** Inducing stack symbols. */
-  public final Word<Named> α;
+  public final @NonNull Word<Named> α;
   /** Referenced states (type variables). */
   public final Set<Named> legalJumps;
   /** Referenced states (type variables). */
@@ -26,9 +28,12 @@ public class TypeSignature {
 
   public TypeSignature(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Word<Named> parameters,
       final boolean isAccepting) {
+    Objects.requireNonNull(q);
+    Objects.requireNonNull(α);
+    Objects.requireNonNull(parameters);
     this.q = q;
     this.α = α;
-    this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
+    this.legalJumps = legalJumps;
     this.parameters = parameters;
     this.isAccepting = isAccepting;
   }

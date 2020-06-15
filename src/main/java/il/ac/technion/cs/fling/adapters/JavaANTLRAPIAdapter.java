@@ -26,7 +26,7 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
 
   public JavaANTLRAPIAdapter(final String grammarFileResourcePath, final String packageName, final String className,
       final String endName, final Namer namer) {
-    super(packageName, className, endName, namer);
+    super(namer, packageName, className, endName);
     this.grammarFileResourcePath = grammarFileResourcePath;
   }
 

@@ -21,6 +21,10 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class CSharpGenerator extends APIGenerator {
+  public CSharpGenerator(final Namer namer) {
+    this(namer, "$");
+  }
+
   public CSharpGenerator(final Namer namer, final String endName) {
     super(namer, endName);
   }

@@ -43,8 +43,8 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AnBn",
-      "$", new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn")) //
+  public static final String JavaFluentAPI = new JavaGenerator(new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn"), "il.ac.technion.cs.fling.examples.generated",
+      "AnBn", "$") //
           .go(new ReliableAPICompiler(dpda).compileFluentAPI());
   public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AnBn")) //
       .go(new ReliableAPICompiler(dpda).compileFluentAPI());

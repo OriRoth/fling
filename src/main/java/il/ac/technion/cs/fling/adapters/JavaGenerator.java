@@ -30,7 +30,7 @@ public class JavaGenerator extends APIGenerator {
   private final String className;
   private final String packageName;
 
-  public JavaGenerator(final String packageName, final String className, final String endName, final Namer namer) {
+  public JavaGenerator(final Namer namer, final String packageName, final String className, final String endName) {
     super(namer, endName, "ø", "$");
     this.packageName = packageName;
     this.className = className;
@@ -65,7 +65,33 @@ public class JavaGenerator extends APIGenerator {
     return i.isTop() ? "$" : i.isBot() ? "ø" : printTypeName(i.signature);
   }
 
-  public String printTypeName(final TypeSignature s) {
+  public String render1(TypeSignature s) {
+    return s.α == null ? s.q.name()
+        : String.format("%s_%s%s", //
+            s.q.name(), //
+            render(s.α), //
+            s.legalJumps == null ? "" : "_" + s.legalJumps.stream().map(Named::name).collect(Collectors.joining()));
+  }
+
+  public String render2(final TypeSignature s) {
+    return String.format("%s<%s>", s.α == null ? s.q.name()
+        : String.format("%s_%s%s", //
+            s.q.name(), //
+            render(s.α), //
+            s.legalJumps == null ? "" : "_" + s.legalJumps.stream().map(Named::name).collect(Collectors.joining())), //
+        s.parameters().map(Named::name).collect(Collectors.joining(",")));
+  }
+
+  private String render(Word<Named> α) {
+    return α.stream().map(Named::name).collect(Collectors.joining());
+  }
+
+  @Override public String render(final TypeSignature s) {
+    return String.format("%s<%s>", printTypeName(s), //
+        s.parameters().map(Named::name).collect(Collectors.joining(",")));
+  }
+
+  String printTypeName(final TypeSignature s) {
     return render(s.q, s.α, s.legalJumps);
   }
 
@@ -104,11 +130,6 @@ public class JavaGenerator extends APIGenerator {
     return String.format("%s<%s>", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
-  }
-
-  @Override public String render(final TypeSignature s) {
-    return String.format("%s<%s>", printTypeName(s), //
-        s.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
 
   @Override public String render(final TypeSignature s, final List<Method> methods) {

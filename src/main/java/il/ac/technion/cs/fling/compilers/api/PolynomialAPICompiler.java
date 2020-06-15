@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
@@ -31,7 +33,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class PolynomialAPICompiler extends APICompiler {
-  private PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
+  public PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
 
@@ -74,7 +76,7 @@ public class PolynomialAPICompiler extends APICompiler {
    * @param q current state
    * @param α current stack symbols to be pushed
    * @return type name */
-  private TypeName encodedName(final Named q, final Word<Named> α) {
+  private TypeName encodedName(final Named q, final @NonNull Word<Named> α) {
     final TypeName $ = new TypeName(q, α, null);
     if (types.containsKey($))
       return $;
