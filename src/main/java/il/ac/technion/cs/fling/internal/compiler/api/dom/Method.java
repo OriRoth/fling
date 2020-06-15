@@ -10,20 +10,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @since 2020-06-15 */
 public interface Method {
   class Start implements Method {
-    public final MethodSignature declaration;
-    public final SkeletonType returnType;
+    public final MethodSignature signature;
+    public final SkeletonType type;
 
-    public Start(final MethodSignature declaration, final SkeletonType returnType) {
-      this.declaration = declaration;
-      this.returnType = returnType;
+    public Start(final MethodSignature declaration, final SkeletonType type) {
+      this.signature = declaration;
+      this.type = type;
     }
 
     public MethodSignature declaration() {
-      return declaration;
+      return signature;
     }
 
     @Override public String render(final APIGenerator g) {
-      return g.renderMethod(declaration, returnType);
+      return g.renderMethod(signature, type);
     }
   }
 
@@ -35,11 +35,11 @@ public interface Method {
 
   class Intermediate implements Method {
     public final MethodSignature declaration;
-    public final SkeletonType returnType;
+    public final SkeletonType type;
 
-    public Intermediate(final Token σ, final SkeletonType returnType) {
+    public Intermediate(final Token σ, final SkeletonType type) {
       declaration = new MethodSignature(σ);
-      this.returnType = returnType;
+      this.type = type;
     }
 
     public MethodSignature declaration() {
@@ -47,7 +47,7 @@ public interface Method {
     }
 
     @Override public String render(final APIGenerator g) {
-      return g.render(declaration, returnType);
+      return g.render(declaration, type);
     }
   }
 

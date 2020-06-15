@@ -48,7 +48,7 @@ public abstract class APIGenerator {
     return m.render(this);
   }
 
-  public abstract String render(MethodSignature declaration, SkeletonType returnType);
+  public abstract String render(MethodSignature s, SkeletonType t);
 
   abstract String render(Named q, Word<Named> α, Set<Named> legalJumps);
 
@@ -68,7 +68,7 @@ public abstract class APIGenerator {
 
   public abstract String renderInterfaceTop();
 
-  public abstract String renderMethod(MethodSignature declaration, SkeletonType returnType);
+  public abstract String renderMethod(MethodSignature s, SkeletonType t);
 
   public abstract String renderTerminationMethod();
 

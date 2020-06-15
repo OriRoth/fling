@@ -44,9 +44,9 @@ public class ScalaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
     return String.format("def %s():%s=%s", //
-        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
         render(returnType), //
         printTypeInstantiation(returnType));
   }
@@ -55,12 +55,12 @@ public class ScalaGenerator extends APIGenerator {
     return String.format("def %s():Unit={}", endName);
   }
 
-  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
     final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
-        declaration.name.name(), //
-        printParametersList(declaration), //
+        s.name.name(), //
+        printParametersList(s), //
         _returnType, //
         returnValue);
   }
@@ -93,8 +93,8 @@ public class ScalaGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature declaration) {
-    return declaration.parmeters() //
+  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
+    return s.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }

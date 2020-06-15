@@ -59,10 +59,10 @@ public class SMLGenerator extends APIGenerator {
         methods.stream().map(this::render).collect(joining(",\n")));
   }
 
-  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
-    if (!declaration.getInferredParameters().isEmpty())
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+    if (!s.getInferredParameters().isEmpty())
       throw new RuntimeException("fluent API function parameters are not suported");
-    return String.format("\t%s: %s", declaration.name.name(), render(returnType));
+    return String.format("\t%s: %s", s.name.name(), render(returnType));
   }
 
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
@@ -95,8 +95,8 @@ public class SMLGenerator extends APIGenerator {
     return String.format("%s TOP = SUCCESS", getDatatypeKeyword());
   }
 
-  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
-    final String name = Constants.$$.equals(declaration.name) ? endName : declaration.name.name();
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
+    final String name = Constants.$$.equals(s.name) ? endName : s.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, render(returnType), name);
   }
 

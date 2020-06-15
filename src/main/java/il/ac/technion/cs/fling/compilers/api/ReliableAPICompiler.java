@@ -16,13 +16,13 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.APICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeBody;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -52,7 +52,7 @@ public class ReliableAPICompiler extends APICompiler {
                   dpda.γ0.pop().push(δ.getΑ()), //
                   new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
                   true));
-      if (!(startMethod.returnType == SkeletonType.BOTTOM))
+      if (!(startMethod.type == SkeletonType.BOTTOM))
         $.add(startMethod);
     }
     return $;
@@ -112,12 +112,11 @@ public class ReliableAPICompiler extends APICompiler {
 
   private Type encodeInterface(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final List<Method> $ = dpda.Σ().map(σ -> new Method.Intermediate(σ, next(q, α, legalJumps, σ))) //
-        .filter(m -> m.returnType != SkeletonType.BOTTOM) //
+        .filter(m -> m.type != SkeletonType.BOTTOM) //
         .collect(toList());
     if (dpda.isAccepting(q))
       $.add(new Method.Termination());
-    return $.isEmpty() ? null
-        : new Type(new TypeSignature(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
+    return $.isEmpty() ? null : new Type(new TypeSignature(q, α, legalJumps, word(legalJumps), dpda.isAccepting(q)), $);
   }
 
   /** Computes the type representing the state of the automaton after consuming an
@@ -138,7 +137,8 @@ public class ReliableAPICompiler extends APICompiler {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       final TypeName name = encodedName(q, α, legalJumps);
-      return name == null ? SkeletonType.BOTTOM : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? SkeletonType.BOTTOM
+          : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
@@ -149,7 +149,8 @@ public class ReliableAPICompiler extends APICompiler {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
       final TypeName name = encodedName(δ.q$, δ.getΑ(), legalJumps);
-      return name == null ? SkeletonType.BOTTOM : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? SkeletonType.BOTTOM
+          : SkeletonType.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
@@ -161,7 +162,8 @@ public class ReliableAPICompiler extends APICompiler {
     }
     final TypeName name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
     return name == null ? SkeletonType.BOTTOM : //
-        SkeletonType.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet())).with(new ArrayList<>(typeArguments.values()));
+        SkeletonType.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()))
+            .with(new ArrayList<>(typeArguments.values()));
   }
 
   private SkeletonType getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,

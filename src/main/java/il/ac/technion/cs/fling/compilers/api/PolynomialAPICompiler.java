@@ -47,7 +47,7 @@ public class PolynomialAPICompiler extends APICompiler {
       final Method.Start startMethod = //
           new Method.Start(new MethodSignature(σ), //
               consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
-      if (!(startMethod.returnType == SkeletonType.BOTTOM))
+      if (!(startMethod.type == SkeletonType.BOTTOM))
         $.add(startMethod);
     }
     return $;

@@ -33,16 +33,16 @@ public class CSharpGenerator extends APIGenerator {
         .replace("$", "τ");
   }
 
-  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
+  @Override public String render(final TypeName name, final List<SkeletonType> arguments) {
     return String.format("%s<%s>", //
         render(name), //
-        typeArguments.stream().map(this::render).collect(joining(",")));
+        arguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
     return String.format("public static %s %s(){return new %s();}", //
         render(returnType), //
-        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
         render(returnType));
   }
 
@@ -50,11 +50,11 @@ public class CSharpGenerator extends APIGenerator {
     return String.format("public void %s(){}", endName);
   }
 
-  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
         render(returnType), //
-        declaration.name.name(), //
-        printParametersList(declaration), //
+        s.name.name(), //
+        printParametersList(s), //
         render(returnType));
   }
 
@@ -86,8 +86,8 @@ public class CSharpGenerator extends APIGenerator {
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
 
-  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature declaration) {
-    return declaration.parmeters() //
+  @SuppressWarnings("static-method") public String printParametersList(final MethodSignature s) {
+    return s.parmeters() //
         .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
         .collect(joining(","));
   }

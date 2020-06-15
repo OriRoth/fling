@@ -58,25 +58,25 @@ public class JavaGenerator extends APIGenerator {
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
 
-  @Override public String renderMethod(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         render(returnType), //
-        Constants.$$.equals(declaration.name) ? "__" : declaration.name.name(), //
-        declaration.parmeters() //
+        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
+        s.parmeters() //
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
             .collect(joining(",")), //
-        printStartMethodBody(declaration.name, declaration.getInferredParameters()));
+        printStartMethodBody(s.name, s.getInferredParameters()));
   }
 
   @Override public String renderTerminationMethod() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName);
   }
 
-  @Override public String render(final MethodSignature declaration, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
     return String.format("%s %s(%s);", //
         render(returnType), //
-        declaration.name.name(), //
-        declaration.parmeters() //
+        s.name.name(), //
+        s.parmeters() //
             .map(parameter -> String.format("%s %s", parameter.parameterType, parameter.parameterName)) //
             .collect(joining(",")));
   }
