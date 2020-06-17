@@ -10,6 +10,7 @@ import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.γ1;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.c;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.Ↄ;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.ↄ;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -60,5 +61,7 @@ public class DPDATest {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
     assertEquals(q2, δ.q$);
     assertTrue(δ.getΑ().isEmpty());
+    assertThat(δ.getΑ()).isEmpty();
+    assertThat(q2).isEqualTo(δ.q$);
   }
 }
