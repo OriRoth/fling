@@ -14,7 +14,7 @@ public class Method {
     NamedMethod(Token name) {
       this.name = name;
     }
-    public Method returning(Type.Instantiation returnType) {
+    public Method returning(Type.Grounded returnType) {
       return new Method(name, returnType);
     }
   }
@@ -26,10 +26,10 @@ public class Method {
   /** Inferred token parameters. Pending computation. */
   private List<MethodParameter> parameters = null;
   /** Return type of this method */
-  public final Type.Instantiation type;
+  public final Type.Grounded type;
   /** @param name
    * @param type */
-  private Method(Token name, Type.Instantiation type) {
+  private Method(Token name, Type.Grounded type) {
     this.name = name;
     this.type = type;
   }
@@ -50,6 +50,6 @@ public class Method {
     return getInferredParameters().stream();
   }
   public static Method termination() {
-    return named(Constants.$$).returning(Type.Instantiation.TOP);
+    return named(Constants.$$).returning(Type.Grounded.TOP);
   }
 }

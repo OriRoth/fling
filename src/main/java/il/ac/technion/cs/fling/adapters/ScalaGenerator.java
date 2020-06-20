@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -20,7 +21,7 @@ public class ScalaGenerator extends CLikeGenerator {
   private String printParametersList(final MethodSignature s) {
     return render(s.parameters());
   }
-  public String printTypeInstantiation(final Instantiation returnType) {
+  public String printTypeInstantiation(final Grounded returnType) {
     final String _returnType = render(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
@@ -31,7 +32,7 @@ public class ScalaGenerator extends CLikeGenerator {
                     .map(this::printTypeInstantiation) //
                     .collect(joining(",")));
   }
-  @Override public String render(final MethodSignature s, final Instantiation returnType) {
+  @Override public String render(final MethodSignature s, final Grounded returnType) {
     final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
@@ -53,7 +54,7 @@ public class ScalaGenerator extends CLikeGenerator {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  @Override public String renderInstnatiation(final QAlphaTypeName name, final List<Instantiation> typeArguments) {
+  @Override public String renderInstnatiation(final QAlphaTypeName name, final List<Grounded> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
@@ -78,7 +79,7 @@ public class ScalaGenerator extends CLikeGenerator {
   @Override public String renderTypeTop() {
     return String.format("class TOP{\ndef %s():Unit={}\n}", endName());
   }
-  @Override public String renderMethod(final MethodSignature s, final Instantiation returnType) {
+  @Override public String renderMethod(final MethodSignature s, final Grounded returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(s.name) ? "__" : s.name.name(), //
         render(returnType), //

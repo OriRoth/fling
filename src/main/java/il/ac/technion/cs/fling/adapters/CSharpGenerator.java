@@ -7,6 +7,7 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 /** C# API adapter.
@@ -20,7 +21,7 @@ public class CSharpGenerator extends CLikeGenerator {
     Stream<MethodParameter> parmeters = s.parameters();
     return render(parmeters);
   }
-  @Override public String render(final Method s, final Instantiation returnType) {
+  @Override public String render(final Method s, final Type.Grounded returnType) {
     return String.format("public %s %s(%s){return new %s();}", //
         render(returnType), //
         s.name.name(), //
@@ -30,7 +31,7 @@ public class CSharpGenerator extends CLikeGenerator {
   @Override public String render(final Name name) {
     return render(name.q, name.α, name.legalJumps);
   }
-  private String render(final Name name, final List<Instantiation> arguments) {
+  private String render(final Name name, final List<Type.Grounded> arguments) {
     return String.format("%s<%s>", //
         render(name), //
         arguments.stream().map(this::render).collect(joining(",")));
@@ -52,7 +53,7 @@ public class CSharpGenerator extends CLikeGenerator {
         render(s), //
         methods.stream().map(this::renderInstnatiation).collect(joining()));
   }
-  @Override public String renderMethod(final Method s, final Instantiation returnType) {
+  @Override public String renderMethod(final Method s, final Type.Grounded returnType) {
     return String.format("public static %s %s(){return new %s();}", //
         render(returnType), //
         Constants.$$.equals(s.name) ? "__" : s.name.name(), //

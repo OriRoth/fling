@@ -8,6 +8,7 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -20,7 +21,7 @@ public class SMLGenerator extends APIGenerator {
     super(namer);
     firstDatatype = true;
   }
-  @Override public String render(final MethodSignature s, final Instantiation returnType) {
+  @Override public String render(final MethodSignature s, final Grounded returnType) {
     if (!s.getInferredParameters().isEmpty())
       throw new RuntimeException("fluent API function parameters are not suported");
     return String.format("\t%s: %s", s.name.name(), render(returnType));
@@ -42,7 +43,7 @@ public class SMLGenerator extends APIGenerator {
     final String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + render(name.q, name.α, name.legalJumps);
   }
-  @Override public String renderInstnatiation(final Name name, final List<Instantiation> typeArguments) {
+  @Override public String renderInstnatiation(final Name name, final List<Grounded> typeArguments) {
     return typeArguments.isEmpty() ? render(name)
         : String.format("(%s) %s", //
             typeArguments.stream().map(this::render).collect(joining(",")), //
@@ -65,7 +66,7 @@ public class SMLGenerator extends APIGenerator {
   @Override public String renderTypeTop() {
     return String.format("%s TOP = SUCCESS", getDatatypeKeyword());
   }
-  @Override public String renderMethod(final MethodSignature s, final Instantiation returnType) {
+  @Override public String renderMethod(final MethodSignature s, final Grounded returnType) {
     final String name = Constants.$$.equals(s.name) ? endName() : s.name.name();
     return String.format("fun main (%s:%s) = let\nin %s end", name, render(returnType), name);
   }

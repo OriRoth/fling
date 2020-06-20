@@ -28,7 +28,7 @@ public class ReliableAPICompiler extends APICompiler {
   @Override protected List<Method> startMethods() {
     final List<Method> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
-      $.add(Method.named(Constants.$$).returning(Type.Instantiation.TOP));
+      $.add(Method.named(Constants.$$).returning(Type.Grounded.TOP));
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -37,7 +37,7 @@ public class ReliableAPICompiler extends APICompiler {
           dpda.γ0.pop().push(δ.getΑ()), //
           new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
           true));
-      if (!(m.type == Type.Instantiation.BOTTOM))
+      if (!(m.type == Type.Grounded.BOTTOM))
         $.add(m);
     }
     return $;
@@ -77,7 +77,7 @@ public class ReliableAPICompiler extends APICompiler {
   }
   private Type encodeType(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final List<Method> $ = dpda.Σ().map(σ -> Method.named(σ).returning(next(q, α, legalJumps, σ))) //
-        .filter(m -> m.type != Type.Instantiation.BOTTOM) //
+        .filter(m -> m.type != Type.Grounded.BOTTOM) //
         .collect(toList());
     if (dpda.isAccepting(q))
       $.add(Method.termination());
@@ -92,56 +92,56 @@ public class ReliableAPICompiler extends APICompiler {
    * @param legalJumps
    * @param σ          current input letter
    * @return next state type */
-  private Type.Instantiation next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
+  private Type.Grounded next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
-    return δ == null ? Type.Instantiation.BOTTOM : common(δ, α.pop(), legalJumps, false);
+    return δ == null ? Type.Grounded.BOTTOM : common(δ, α.pop(), legalJumps, false);
   }
-  private Type.Instantiation consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
+  private Type.Grounded consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
       final Type.Name name = encodedName(q, α, legalJumps);
-      return name == null ? Type.Instantiation.BOTTOM
-          : Type.Instantiation.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? Type.Grounded.BOTTOM
+          : Type.Grounded.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     return common(δ, α.pop(), legalJumps, isInitialType);
   }
-  private Type.Instantiation common(final δ<Named, Token, Named> δ, final Word<Named> α, final Set<Named> legalJumps,
+  private Type.Grounded common(final δ<Named, Token, Named> δ, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
       final Type.Name name = encodedName(δ.q$, δ.getΑ(), legalJumps);
-      return name == null ? Type.Instantiation.BOTTOM
-          : Type.Instantiation.of(name).with(getTypeArguments(legalJumps, isInitialType));
+      return name == null ? Type.Grounded.BOTTOM
+          : Type.Grounded.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, legalJumps, isInitialType);
-    final Map<Named, Type.Instantiation> typeArguments = new LinkedHashMap<>();
+    final Map<Named, Type.Grounded> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
-      final Type.Instantiation argument = consolidate(q, α, legalJumps, isInitialType);
-      if (!(argument == Type.Instantiation.BOTTOM))
+      final Type.Grounded argument = consolidate(q, α, legalJumps, isInitialType);
+      if (!(argument == Type.Grounded.BOTTOM))
         typeArguments.put(q, argument);
     }
     final Type.Name name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
-    return name == null ? Type.Instantiation.BOTTOM : //
-        Type.Instantiation.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()))
+    return name == null ? Type.Grounded.BOTTOM : //
+        Type.Grounded.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()))
             .with(new ArrayList<>(typeArguments.values()));
   }
-  private Type.Instantiation getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
+  private Type.Grounded getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    return !legalJumps.contains(δ.q$) ? Type.Instantiation.BOTTOM : //
-        isInitialType ? Type.Instantiation.TOP : //
+    return !legalJumps.contains(δ.q$) ? Type.Grounded.BOTTOM : //
+        isInitialType ? Type.Grounded.TOP : //
             typeVariables.get(δ.q$);
   }
-  private List<Type.Instantiation> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
+  private List<Type.Grounded> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
     return !isInitialType ? //
         dpda.Q() //
             .filter(legalJumps::contains) //
             .map(typeVariables::get) //
             .collect(toList()) //
         : legalJumps.stream() //
-            .map(q -> Type.Instantiation.TOP) //
+            .map(q -> Type.Grounded.TOP) //
             .collect(toList());
   }
 }

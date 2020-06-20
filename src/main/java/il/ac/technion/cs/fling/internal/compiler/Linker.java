@@ -51,5 +51,5 @@ public interface Linker {
    * parameters.
    *
    * @param m API */
-  void name(Model m);
+  void link(Model m);
 }

@@ -67,7 +67,7 @@ public class NaiveNamer implements Linker {
         .forEach(this::setInferredFieldsInClass);
   }
 
-  @Override public void name(final Model m) {
+  @Override public void link(final Model m) {
     // Set intermediate methods parameter names:
     m.types() //
         .flatMap(Type::methods) //

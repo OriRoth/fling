@@ -25,10 +25,10 @@ public abstract class APICompiler {
     add(Type.named(Type.Name.TOP).accepting());
   }
   /** Mapping of terminals to type variable nodes. */
-  protected final Map<Named, Type.Instantiation> typeVariables = new LinkedHashMap<>();
+  protected final Map<Named, Type.Grounded> typeVariables = new LinkedHashMap<>();
   public APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
-    dpda.Q().forEach(q -> typeVariables.put(q, Type.Instantiation.of(Type.Name.q(q))));
+    dpda.Q().forEach(q -> typeVariables.put(q, Type.Grounded.of(Type.Name.q(q))));
   }
   /** Compile fluent API. The object's state after calling this method is
    * undefined.

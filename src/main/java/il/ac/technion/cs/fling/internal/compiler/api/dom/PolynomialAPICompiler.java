@@ -22,8 +22,8 @@ public class PolynomialAPICompiler extends APICompiler {
   public PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
-  final Type.Instantiation top = Type.Instantiation.of(Type.Name.TOP);
-  final Type.Instantiation bottom = Type.Instantiation.of(Type.Name.BOTTOM);
+  final Type.Grounded top = Type.Grounded.of(Type.Name.TOP);
+  final Type.Grounded bottom = Type.Grounded.of(Type.Name.BOTTOM);
   @Override protected List<Method> startMethods() {
     final List<Method> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
@@ -65,30 +65,30 @@ public class PolynomialAPICompiler extends APICompiler {
    * @param α all known information about the top of the stack
    * @param σ current input letter
    * @return next state type */
-  private Type.Instantiation next(final Named q, final Word<Named> α, final Token σ) {
+  private Type.Grounded next(final Named q, final Word<Named> α, final Token σ) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
     return δ == null ? bottom : common(δ, α.pop(), false);
   }
-  private Type.Instantiation consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
+  private Type.Grounded consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
     final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
-    return δ == null ? Type.Instantiation.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
+    return δ == null ? Type.Grounded.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
         : common(δ, α.pop(), isInitialType);
   }
-  private Type.Instantiation common(final δ<Named, Token, Named> δ, final Word<Named> α, final boolean isInitialType) {
+  private Type.Grounded common(final δ<Named, Token, Named> δ, final Word<Named> α, final boolean isInitialType) {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, isInitialType);
-      return Type.Instantiation.of(encodedName(δ.q$, δ.getΑ())).with(getTypeArguments(isInitialType));
+      return Type.Grounded.of(encodedName(δ.q$, δ.getΑ())).with(getTypeArguments(isInitialType));
     }
     if (δ.getΑ().isEmpty())
       return consolidate(δ.q$, α, isInitialType);
-    return Type.Instantiation.of(encodedName(δ.q$, δ.getΑ()))
+    return Type.Grounded.of(encodedName(δ.q$, δ.getΑ()))
         .with(dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
-  private Type.Instantiation getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
+  private Type.Grounded getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
     return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top : bottom;
   }
-  private List<Type.Instantiation> getTypeArguments(final boolean isInitialType) {
+  private List<Type.Grounded> getTypeArguments(final boolean isInitialType) {
     return !isInitialType ? list(typeVariables.values())
         : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList());
   }

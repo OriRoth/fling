@@ -71,16 +71,16 @@ public class Type {
    * @author Yossi Gil
    *
    * @since 2020-06-19 */
-  public interface Instantiation {
+  public interface Grounded {
     default public String render(APIGenerator g) {
       throw new RuntimeException(this + ": " + g);
     }
-    static Instantiation BOTTOM = Instantiation.of(Type.Name.BOTTOM);
-    static Instantiation TOP = Instantiation.of(Type.Name.TOP);
-    static Plain of(final Type.Name n) {
-      return new Plain(n);
+    static Grounded BOTTOM = Grounded.of(Type.Name.BOTTOM);
+    static Grounded TOP = Grounded.of(Type.Name.TOP);
+    static Leaf of(final Type.Name n) {
+      return new Leaf(n);
     }
-    class Plain implements Instantiation {
+    class Leaf implements Grounded {
       @Override public int hashCode() {
         return Objects.hash(name);
       }
@@ -91,28 +91,28 @@ public class Type {
           return false;
         if (getClass() != obj.getClass())
           return false;
-        Plain other = (Plain) obj;
+        Leaf other = (Leaf) obj;
         return Objects.equals(name, other.name);
       }
       @Override public String render(APIGenerator g) {
         return g.toString(this);
       }
       public final Name name;
-      Plain(final Type.Name name) {
+      Leaf(final Type.Name name) {
         this.name = name;
       }
-      public final Parametrized with(final List<Instantiation> arguments) {
-        return new Parametrized(arguments);
+      public final InnerNode with(final List<Grounded> arguments) {
+        return new InnerNode(arguments);
       }
-      public class Parametrized implements Instantiation {
+      public class InnerNode implements Grounded {
         @Override public String render(APIGenerator g) {
           return g.toString(this);
         }
-        final List<Instantiation> arguments;
-        Parametrized(final List<Instantiation> arguments) {
+        final List<Grounded> arguments;
+        InnerNode(final List<Grounded> arguments) {
           this.arguments = arguments;
         }
-        public Stream<Instantiation> arguments() {
+        public Stream<Grounded> arguments() {
           return arguments.stream();
         }
         @Override public int hashCode() {
@@ -125,15 +125,15 @@ public class Type {
             return false;
           if (getClass() != that.getClass())
             return false;
-          return equals((Parametrized) that);
+          return equals((InnerNode) that);
         }
-        private boolean equals(Parametrized other) {
+        private boolean equals(InnerNode other) {
           if (!outer().equals(other.outer()))
             return false;
           return Objects.equals(arguments, other.arguments);
         }
-        public Plain outer() {
-          return Plain.this;
+        public Leaf outer() {
+          return Leaf.this;
         }
       }
     }
