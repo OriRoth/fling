@@ -21,12 +21,12 @@ public interface Named {
         return name.hashCode();
       }
 
-      @Override public boolean equals(final Object obj) {
-        if (this == obj)
+      @Override public boolean equals(final Object o) {
+        if (this == o)
           return true;
-        if (!(obj instanceof Named))
+        if (!(o instanceof Named))
           return false;
-        return name.equals(((Named) obj).name());
+        return name.equals(((Named) o).name());
       }
     };
   }

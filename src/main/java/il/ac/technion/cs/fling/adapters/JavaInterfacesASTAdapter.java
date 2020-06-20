@@ -1,8 +1,7 @@
 package il.ac.technion.cs.fling.adapters;
 
 import static java.util.stream.Collectors.joining;
-
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.PolymorphicLanguageASTAdapterBase;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
@@ -16,10 +15,10 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
  * @author Ori Roth */
 public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
   private final String className;
-  private final Namer namer;
+  private final Linker namer;
   private final String packageName;
 
-  public JavaInterfacesASTAdapter(final String packageName, final String className, final Namer namer) {
+  public JavaInterfacesASTAdapter(final String packageName, final String className, final Linker namer) {
     this.packageName = packageName;
     this.className = className;
     this.namer = namer;

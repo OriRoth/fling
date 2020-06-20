@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
@@ -22,7 +22,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
     super(symbols);
   }
 
-  @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
+  @Override public Variable expand(final Linker namer, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
     final List<Component> expandedSymbols = new ArrayList<>();
     for (final Symbol s : symbols)

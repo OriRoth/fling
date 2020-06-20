@@ -14,7 +14,7 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
@@ -30,7 +30,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class LL1 extends Grammar {
-  public LL1(final FancyEBNF bnf, final Namer namer) {
+  public LL1(final FancyEBNF bnf, final Linker namer) {
     super(bnf, namer);
   }
 

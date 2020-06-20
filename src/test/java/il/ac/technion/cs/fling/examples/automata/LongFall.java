@@ -12,7 +12,7 @@ import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.b;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
-import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
@@ -41,9 +41,10 @@ public class LongFall {
       .δ(q1, ε(), g1, q1) //
       .δ(q1, ε(), g0, q0, g0) //
       .go());
-  public static final String JavaFluentAPI = new JavaGenerator(new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall"), "il.ac.technion.cs.fling.examples.generated",
-      "LongFall", "$") //
-          .go(new ReliableAPICompiler(dpda).compileFluentAPI());
+  public static final String JavaFluentAPI = new JavaGenerator(
+      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "LongFall"),
+      "il.ac.technion.cs.fling.examples.generated", "LongFall") //
+          .go(new ReliableAPICompiler(dpda).makeModel());
   public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("LongFall")) //
-      .go(new ReliableAPICompiler(dpda).compileFluentAPI());
+      .go(new ReliableAPICompiler(dpda).makeModel());
 }

@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Names elements in the generated code.
  *
  * @author Ori Roth */
-public interface Namer {
+public interface Linker {
   /** Create new variable subject to the given.
    *
    * @param variable parent variable

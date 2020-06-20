@@ -42,12 +42,12 @@ public final class Token implements Symbol {
     return 31 * Arrays.deepHashCode(parameters) + Objects.hash(terminal);
   }
 
-  @Override public boolean equals(final Object obj) {
-    if (this == obj)
+  @Override public boolean equals(final Object o) {
+    if (this == o)
       return true;
-    if (!(obj instanceof Token))
+    if (!(o instanceof Token))
       return false;
-    final Token other = (Token) obj;
+    final Token other = (Token) o;
     return Arrays.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
   }
 

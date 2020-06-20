@@ -15,7 +15,7 @@ import java.util.Set;
 
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -41,12 +41,12 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private static final String ListWild = String.format("%s<?>", List.class.getCanonicalName());
   private final FancyEBNF bnf;
   private final Class<Σ> Σ;
-  private final Namer namer;
+  private final Linker namer;
   private final String packageName;
   private final String apiName;
   private final String astClassesContainerName;
 
-  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
+  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Linker namer, final String packageName,
       final String apiName, final String astClassesContainerName) {
     this.bnf = bnf;
     this.Σ = Σ;

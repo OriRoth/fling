@@ -1,13 +1,11 @@
 package il.ac.technion.cs.fling.adapters;
 
 import static java.util.stream.Collectors.joining;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
@@ -22,9 +20,10 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
  * @author Ori Roth */
 @SuppressWarnings("static-method") public class JavaASTVisitorAdapter {
   private final String astClassName;
-  private final Namer namer;
+  private final Linker namer;
   private final String packageName;
-  public JavaASTVisitorAdapter(final String packageName, final String astClassName, final Namer namer) {
+
+  public JavaASTVisitorAdapter(final String packageName, final String astClassName, final Linker namer) {
     this.packageName = packageName;
     this.astClassName = astClassName;
     this.namer = namer;

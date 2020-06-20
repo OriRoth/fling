@@ -1,21 +1,19 @@
 package il.ac.technion.cs.fling.adapters;
 
 import static java.util.stream.Collectors.joining;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
 import il.ac.technion.cs.fling.compilers.ast.ASTCompiler;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.grammars.LL1JavaASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -37,7 +35,7 @@ public class JavaMediator {
   public final String astClass;
   /** AST run-time compiler Java file contents. */
   public final String astCompilerClass;
-  private final Namer namer;
+  private final Linker namer;
   private final ASTParserCompiler parserCompiler;
   private final Class<? extends Terminal> Σ;
   final String apiName;
@@ -50,7 +48,7 @@ public class JavaMediator {
     ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;
-    final APIGenerator apiAdapter = new JavaGenerator(namer, packageName, apiName, "$") {
+    final APIGenerator apiAdapter = new JavaGenerator(namer, packageName, apiName) {
       @Override public String printConcreteImplementationClassBody() {
         return JavaMediator.this.printConcreteImplementationClassBody();
       }
@@ -86,7 +84,7 @@ public class JavaMediator {
     parserCompiler = new LL1JavaASTParserCompiler<>(ll1.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
     astClass = astAdapter.printASTClass(new ASTCompiler(ll1.normalizedEBNF).compileAST());
-    apiClass = apiAdapter.go(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).compileFluentAPI());
+    apiClass = apiAdapter.go(new ReliableAPICompiler(ll1.buildAutomaton(ll1.bnf.reduce())).makeModel());
     astCompilerClass = parserCompiler.printParserClass();
   }
 
@@ -138,7 +136,7 @@ public class JavaMediator {
   String printAdditionalDeclarations() {
     return ll1.ebnf.headVariables.stream() //
         .map(ll1::getSubBNF) //
-        .map(bnf -> new JavaGenerator(namer, null, namer.headVariableClassName(bnf.ε), "$") {
+        .map(bnf -> new JavaGenerator(namer, null, namer.headVariableClassName(bnf.ε)) {
           @Override public String printConcreteImplementationClassBody() {
             return JavaMediator.this.printConcreteImplementationClassBody();
           }
@@ -164,7 +162,7 @@ public class JavaMediator {
             return JavaMediator.this.printStartMethodBody(σ, parameters);
           }
         } //
-            .go(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).compileFluentAPI())) //
+            .go(new ReliableAPICompiler(ll1.buildAutomaton(bnf)).makeModel())) //
         .collect(joining());
   }
 

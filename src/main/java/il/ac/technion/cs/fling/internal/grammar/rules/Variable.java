@@ -18,12 +18,12 @@ public interface Variable extends Symbol {
         return name.hashCode();
       }
 
-      @Override public boolean equals(final Object obj) {
-        if (this == obj)
+      @Override public boolean equals(final Object o) {
+        if (this == o)
           return true;
-        if (!(obj instanceof Variable))
+        if (!(o instanceof Variable))
           return false;
-        final Variable other = (Variable) obj;
+        final Variable other = (Variable) o;
         return name().equals(other.name());
       }
     };

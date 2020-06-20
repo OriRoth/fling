@@ -15,7 +15,7 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
@@ -28,13 +28,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 
 public abstract class Grammar {
   public final FancyEBNF ebnf;
-  public final Namer namer;
+  public final Linker namer;
   public final FancyEBNF bnf;
   public final FancyEBNF normalizedBNF;
   public final FancyEBNF normalizedEBNF;
   private final Map<Variable, FancyEBNF> subBNFs;
 
-  public Grammar(final FancyEBNF ebnf, final Namer namer) {
+  public Grammar(final FancyEBNF ebnf, final Linker namer) {
     this.ebnf = ebnf;
     this.namer = namer;
     bnf = getBNF(ebnf);
@@ -102,7 +102,7 @@ public abstract class Grammar {
     return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
 
-  private static FancyEBNF normalize(final FancyEBNF bnf, final Namer namer) {
+  private static FancyEBNF normalize(final FancyEBNF bnf, final Linker namer) {
     final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
