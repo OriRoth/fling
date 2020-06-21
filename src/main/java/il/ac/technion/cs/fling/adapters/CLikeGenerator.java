@@ -59,4 +59,7 @@ public abstract class CLikeGenerator extends APIGenerator {
         render(m.parameters())//
     );
   }
+  final String methodInvocation(final Method m) {
+    return String.format("%s(%s)", render(m.name), m.parameters().map(p -> p.name).collect(joining(", ")));
+  }
 }

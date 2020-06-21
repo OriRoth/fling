@@ -72,7 +72,7 @@ public class Type {
    *
    * @since 2020-06-19 */
   public interface Grounded {
-    public default String render(final APIGenerator g) {
+    default String render(final APIGenerator g) {
       throw new RuntimeException(this + ": " + g);
     }
     Grounded BOTTOM = Grounded.of(Type.Name.BOTTOM);

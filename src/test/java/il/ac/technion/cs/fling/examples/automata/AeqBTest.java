@@ -49,12 +49,12 @@ public class AeqBTest {
       .δ(q1, b, B, q1, B, B) //
       .go());
   @Test public void test1() {
-    final Model m = new PolynomialAPICompiler(dpda).makeModel();
+    final Model m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
     System.out.println(new CPPGenerator(namer).go(m));
   }
   @Test public void test2() {
-    final Model m = new PolynomialAPICompiler(dpda).makeModel();
+    final Model m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
     System.out.println(
         new JavaGenerator(namer, getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));

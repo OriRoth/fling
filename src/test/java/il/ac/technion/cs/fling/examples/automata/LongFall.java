@@ -44,7 +44,7 @@ public class LongFall {
   public static final String JavaFluentAPI = new JavaGenerator(
       new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "LongFall"),
       "il.ac.technion.cs.fling.examples.generated", "LongFall") //
-          .go(new ReliableAPICompiler(dpda).makeModel());
+          .go(new ReliableAPICompiler(dpda).go());
   public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("LongFall")) //
-      .go(new ReliableAPICompiler(dpda).makeModel());
+      .go(new ReliableAPICompiler(dpda).go());
 }

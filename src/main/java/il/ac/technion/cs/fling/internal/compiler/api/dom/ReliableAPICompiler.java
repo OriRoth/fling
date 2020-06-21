@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -19,16 +19,20 @@ import il.ac.technion.cs.fling.internal.util.As;
  *
  * @author Ori Roth */
 public class ReliableAPICompiler extends APICompiler {
+  private static final Name TOP = Type.Name.TOP;
+  private static final Type topType = Type.named(TOP);
+  private static final Name BOTTOM = Type.Name.BOTTOM;
+  private static final Type bottomType = Type.named(BOTTOM);
   public ReliableAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
   {
-    add(Type.named(Type.Name.TOP).accepting());
+    add(topType.accepting());
   }
   @Override protected List<Method> startMethods() {
     final List<Method> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
-      $.add(Method.named(Constants.$$).returning(Type.Grounded.TOP));
+      $.add(Method.termination());
     for (final Token σ : dpda.Σ) {
       final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
@@ -37,7 +41,7 @@ public class ReliableAPICompiler extends APICompiler {
           dpda.γ0.pop().push(δ.getΑ()), //
           new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
           true));
-      if (!(m.type == Type.Grounded.BOTTOM))
+      if (m.type != Type.Grounded.BOTTOM)
         $.add(m);
     }
     return $;
@@ -51,13 +55,11 @@ public class ReliableAPICompiler extends APICompiler {
   private Type.Name encodedName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final Type.Name.q.α.β $ = Type.Name.q(q).α(α).β(legalJumps);
     if (types.containsKey($))
-      return Type.Name.BOTTOM.equals(types.get($).name) ? null : $;
-    types.put($, shallowIsBot($) ? //
-        Type.named(Type.Name.BOTTOM) : //
-          Type.named(Type.Name.TOP)); // Pending computation.
+      return BOTTOM.equals(types.get($).name) ? null : $;
+    types.put($, shallowIsBot($) ? bottomType : topType); // Pending computation.
     final Type i = encodeType(q, α, legalJumps);
-    types.put($, i == null ? Type.named(Type.Name.BOTTOM) : i);
-    return Type.Name.BOTTOM.equals(types.get($).name) ? null : $;
+    types.put($, i == null ? bottomType : i);
+    return BOTTOM.equals(types.get($).name) ? null : $;
   }
   private boolean shallowIsBot(final Type.Name.q.α.β n) {
     if (dpda.isAccepting(n.q()))

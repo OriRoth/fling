@@ -24,7 +24,7 @@ public class Method {
   /** Inducing token. */
   public final Token name;
   /** Inferred token parameters. Pending computation. */
-  private List<MethodParameter> parameters = null;
+  private List<MethodParameter> parameters;
   /** Return type of this method */
   public final Type.Grounded type;
   /** @param name

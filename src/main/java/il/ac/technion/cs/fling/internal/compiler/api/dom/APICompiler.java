@@ -34,7 +34,7 @@ public abstract class APICompiler {
    * undefined.
    *
    * @return compiled API */
-  public Model makeModel() {
+  public Model go() {
     return new Model(startMethods(), types());
   }
   /** Compile API static start methods.

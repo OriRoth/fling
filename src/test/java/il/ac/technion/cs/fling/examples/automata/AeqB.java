@@ -55,31 +55,31 @@ public class AeqB {
   public static final String JavaFluentAPI = new JavaGenerator(
       new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AeqB"),
       "il.ac.technion.cs.fling.examples.generated", "AeqB") //
-          .go(new ReliableAPICompiler(dpda).makeModel());
+          .go(new ReliableAPICompiler(dpda).go());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
   public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AeqB")) //
-      .go(new ReliableAPICompiler(dpda).makeModel());
+      .go(new ReliableAPICompiler(dpda).go());
   /** SML fluent API */
   public static final String SMLFluentAPI = new SMLGenerator(new NaiveLinker("AeqB"), "zzz") //
-      .go(new ReliableAPICompiler(dpda).makeModel());
+      .go(new ReliableAPICompiler(dpda).go());
   private final NaiveLinker namer2 = new NaiveLinker("AeqB");
   @Test public void test1() {
-    final Model m = new ReliableAPICompiler(dpda).makeModel();
+    final Model m = new ReliableAPICompiler(dpda).go();
     new JavaGenerator(namer, "il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new CSharpGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
   }
   @Test public void test2() {
-    final Model m = new PolynomialAPICompiler(dpda).makeModel();
+    final Model m = new PolynomialAPICompiler(dpda).go();
     new JavaGenerator(namer, "il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
     new CSharpGenerator(namer2).go(m);
   }
   @Test public void test3() {
-    final Model m = new PolynomialAPICompiler(dpda).makeModel();
+    final Model m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer2).go(m);
   }
   /** Print C++ program to standard output. */

@@ -31,7 +31,7 @@ public class TableMaker {
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, namer);
     final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
-    final Model compileFluentAPI = reliableAPICompiler.makeModel();
+    final Model compileFluentAPI = reliableAPICompiler.go();
     apiClass = adapter.go(compileFluentAPI);
   }
 }

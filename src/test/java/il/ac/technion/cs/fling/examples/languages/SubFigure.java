@@ -59,7 +59,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
     final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     final APICompiler compiler = new ReliableAPICompiler(dpda);
     final APIGenerator adapter = new ScalaGenerator(namer);
-    final String output = adapter.go(compiler.makeModel());
+    final String output = adapter.go(compiler.go());
     System.out.println(output);
   }
 }

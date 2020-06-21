@@ -34,7 +34,7 @@ public class JavaGenerator extends CLikeGenerator {
     ____();
     linef("@SuppressWarnings(\"all\") public interface %s { ", className).indent();
     commentf("%d start methods", m.starts().count());
-    m.starts().forEach(this::visit);
+    m.starts().forEach(this::visitStartMethod);
     ____();
     commentf("%d interfact types", m.types().count());
     m.types().forEach(this::visit);
@@ -56,6 +56,13 @@ public class JavaGenerator extends CLikeGenerator {
       $ += " extends " + topName();
     return $;
   }
+  void visitStartMethod(final Method m) {
+    linef("public %s { ", fullMethodSignature(m)).indent();
+    linef("α $ = new α();");
+    linef("$.%s;", methodInvocation(m));
+    linef("return $;");
+    unindent().line("}");
+  }
   @Override void visit(final Method m) {
     linef("public %s;", fullMethodSignature(m));
   }
@@ -64,7 +71,7 @@ public class JavaGenerator extends CLikeGenerator {
         .indent();
     implementingClassClassBody();
     lines(m.methods().map(mm -> //
-    String.format("public α %s {%s return this; }", //
+    String.format("public %s {%s return this; }", //
         fullMethodSignature(mm), //
         implementingClassMethodBody(mm.name, mm.parameters()))));
     linef("public %s %s(){%s}", printTerminationMethodReturnType(), endName(), printTerminationMethodConcreteBody());
