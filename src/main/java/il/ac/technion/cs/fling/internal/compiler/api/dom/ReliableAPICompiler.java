@@ -49,15 +49,15 @@ public class ReliableAPICompiler extends APICompiler {
    * @param α current stack symbols to be pushed
    * @return type name */
   private Type.Name encodedName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final Type.Name $ = Type.Name.q(q).α(α).β(legalJumps);
+    final Type.Name.q.α.β $ = Type.Name.q(q).α(α).β(legalJumps);
     if (types.containsKey($))
-      return types.get($).isBot() ? null : $;
+      return Type.Name.BOTTOM.equals(types.get($).name) ? null : $;
     types.put($, shallowIsBot($) ? //
-        Type.bot() : //
-        Type.top()); // Pending computation.
+        Type.named(Type.Name.BOTTOM) : //
+          Type.named(Type.Name.TOP)); // Pending computation.
     final Type i = encodeType(q, α, legalJumps);
-    types.put($, i == null ? Type.bot() : i);
-    return types.get($).isBot() ? null : $;
+    types.put($, i == null ? Type.named(Type.Name.BOTTOM) : i);
+    return Type.Name.BOTTOM.equals(types.get($).name) ? null : $;
   }
   private boolean shallowIsBot(final Type.Name.q.α.β n) {
     if (dpda.isAccepting(n.q()))
