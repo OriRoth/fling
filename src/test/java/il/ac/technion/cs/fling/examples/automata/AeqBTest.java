@@ -11,6 +11,7 @@ import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.b;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
+import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -47,10 +48,16 @@ public class AeqBTest {
       .δ(q1, b, A, q1) //
       .δ(q1, b, B, q1, B, B) //
       .go());
-  @Test public void test3() {
+  @Test public void test1() {
     Model m = new PolynomialAPICompiler(dpda).makeModel();
     new CPPGenerator(namer).go(m);
     System.out.println(new CPPGenerator(namer).go(m));
+  }
+  @Test public void test2() {
+    Model m = new PolynomialAPICompiler(dpda).makeModel();
+    new CPPGenerator(namer).go(m);
+    System.out.println(
+        new JavaGenerator(namer, getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
   }
   private NaiveNamer namer = new NaiveNamer("AeqB");
 }

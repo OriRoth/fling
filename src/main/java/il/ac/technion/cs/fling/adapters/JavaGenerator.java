@@ -2,11 +2,13 @@ package il.ac.technion.cs.fling.adapters;
 import static java.util.stream.Collectors.joining;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -27,14 +29,12 @@ public class JavaGenerator extends CLikeGenerator {
     endName("$");
   }
   @Override public void visit(final Model m) {
-    indent();
-    if (packageName == null)
+    if (packageName != null)
       linef("package %s;", packageName);
     ____();
     line("import java.util.*;");
     ____();
-    linef("@SuppressWarnings(\"all\") public interface %s { ", className);
-    indent();
+    linef("@SuppressWarnings(\"all\") public interface %s { ", className).indent();
     commentf("%d start methods", m.starts().count());
     m.starts().forEach(this::visit);
     ____();
@@ -43,11 +43,9 @@ public class JavaGenerator extends CLikeGenerator {
     ____();
     commentf("Class implementing %d interfaces with %d methods", m.types().count(), m.methods().count());
     implementingClass(m);
-    unindent();
-    line("}");
+    unindent().line("}");
   }
   @Override void visit(Type t) {
-    // !t.isAccepting ? "" : " extends " + topName(), //
     line(fullName(t) + " {").indent();
     t.methods().forEach(this::visit);
     unindent().line("}");
@@ -60,10 +58,20 @@ public class JavaGenerator extends CLikeGenerator {
       return $;
     return $ + String.format(" <%s>", t.parameters().map(Named::name).collect(Collectors.joining(", ")));
   }
+  String f(Type.Name x) {
+    return render(x);
+  }
   private String implementingClass(final Model m) {
-    return String.format("static class α implements %s{%s%s%s}", //
-        m.types().map(Type::name).map(this::render).collect(joining(",")), //
-        implementingClassClassBody(), m.methods() //
+    line("static class α implements ").indent();
+    Stream<Type> types = m.types();
+    Stream<Name> map = types.map(Type::name);
+    map.map(this::f)
+    
+    .collect(joining(",\n"));
+    
+    indent(); 
+    implementingClassClassBody(); 
+    m.methods() //
             .map(s -> String.format("public α %s(%s){%sreturn this;}", //
                 s.name.name(), //
                 s.parameters() //

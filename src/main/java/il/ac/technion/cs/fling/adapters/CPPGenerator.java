@@ -49,7 +49,7 @@ public class CPPGenerator extends CLikeGenerator {
   @Override void visit(Method m) {
     line(fullMethodSignature(m) + " {").indent();
     linef("return %s();", render(m.type));
-    unindent().line("};");
+    unindent().line("}");
   }
   @Override void visit(Type t) {
     line(fullName(t) + " {").indent();
