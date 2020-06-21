@@ -57,7 +57,7 @@ public class AeqBTest {
     final Model m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
     System.out.println(
-        new JavaGenerator(namer, getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
+        new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
   }
   private final NaiveLinker namer = new NaiveLinker("AeqB");
 }

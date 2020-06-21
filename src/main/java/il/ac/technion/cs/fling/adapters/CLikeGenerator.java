@@ -31,7 +31,7 @@ public abstract class CLikeGenerator extends APIGenerator {
     return ps.map(p -> p.type + " " + p.name).collect(joining(", "));
   }
   @Override public String renderInstnatiation(final Type.Name name, final List<Type.Grounded> arguments) {
-    return String.format("%s <%>", render(name), arguments.stream().map(this::render).collect(joining(", ")));
+    return String.format("%s <%s>", render(name), arguments.stream().map(this::render).collect(joining(", ")));
   }
   @Override String fullName(final Type t) {
     // TODO Auto-generated method stub

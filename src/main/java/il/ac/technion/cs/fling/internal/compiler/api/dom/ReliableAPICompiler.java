@@ -27,7 +27,7 @@ public class ReliableAPICompiler extends APICompiler {
     super(dpda);
   }
   {
-    add(topType.accepting());
+    add(topType);
   }
   @Override protected List<Method> startMethods() {
     final List<Method> $ = new ArrayList<>();

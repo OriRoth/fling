@@ -6,7 +6,7 @@ import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.X;
 import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.Y1;
 
 public class QuantifiersTestLanguage {
-  @SuppressWarnings("boxing") public static void main(final String[] args) {
+  public static void main(final String[] args) {
     final X x1 = a(1).$();
     assert x1.a.size() == 1;
     assert x1.a.get(0) == 1;

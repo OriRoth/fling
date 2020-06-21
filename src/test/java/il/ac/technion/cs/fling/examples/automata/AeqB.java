@@ -53,8 +53,8 @@ public class AeqB {
       .go());
   public static final NaiveLinker namer = new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AeqB");
   public static final String JavaFluentAPI = new JavaGenerator(
-      new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AeqB"),
-      "il.ac.technion.cs.fling.examples.generated", "AeqB") //
+      "il.ac.technion.cs.fling.examples.generated",
+      "AeqB") //
           .go(new ReliableAPICompiler(dpda).go());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
@@ -66,14 +66,14 @@ public class AeqB {
   private final NaiveLinker namer2 = new NaiveLinker("AeqB");
   @Test public void test1() {
     final Model m = new ReliableAPICompiler(dpda).go();
-    new JavaGenerator(namer, "il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
+    new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new CSharpGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
   }
   @Test public void test2() {
     final Model m = new PolynomialAPICompiler(dpda).go();
-    new JavaGenerator(namer, "il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
+    new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
     new CSharpGenerator(namer2).go(m);

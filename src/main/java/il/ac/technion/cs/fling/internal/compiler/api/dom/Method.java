@@ -1,5 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -9,6 +10,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  *
  * @since 2020-06-15 */
 public class Method {
+  @Override public int hashCode() {
+    return Objects.hash(name, parameters, type);
+  }
+  @Override public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Method other = (Method) obj;
+    return Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters)
+        && Objects.equals(type, other.type);
+  }
   public static class NamedMethod {
     private final Token name;
     NamedMethod(final Token name) {

@@ -94,14 +94,14 @@ public class NaiveLinker implements Linker {
   private List<FieldNodeFragment> getFields(final Component symbol, final Map<String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
-          .map(parameter -> {
+          .map(p -> {
             final String typeName;
-            if (parameter.isStringTypeParameter())
-              typeName = parameter.asStringTypeParameter().typeName();
-            else if (parameter.isVariableTypeParameter())
-              typeName = getASTClassName(parameter.asVariableTypeParameter().variable);
-            else if (parameter.isVarargsTypeParameter())
-              typeName = getASTClassName(parameter.asVarargsVariableTypeParameter().variable) + "[]";
+            if (p.isStringTypeParameter())
+              typeName = p.asStringTypeParameter().typeName();
+            else if (p.isVariableTypeParameter())
+              typeName = getASTClassName(p.asVariableTypeParameter().variable);
+            else if (p.isVarargsTypeParameter())
+              typeName = getASTClassName(p.asVarargsVariableTypeParameter().variable) + "[]";
             else
               throw new RuntimeException("problem while naming AST types");
             return FieldNodeFragment.of( //

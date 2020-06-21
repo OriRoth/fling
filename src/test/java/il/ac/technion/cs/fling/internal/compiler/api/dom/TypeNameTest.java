@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public class TypeNameTest {
@@ -34,25 +35,29 @@ public class TypeNameTest {
   final Type.Name.q.α.β nαβa = n.α(α).β(β);
   final Type.Name.q.α.β nαβb = n.α(α).β(βa);
   final Type.Name.q.α.β nαβc = n.α(α).β(βb);
+  final Name TOP = Type.Name.TOP;
+  final Type topType = Type.named(TOP);
+  final Name BOTTOM = Type.Name.BOTTOM;
+  final Type bottomType = Type.named(BOTTOM);
   Type.Name[] names = { Type.Name.TOP, Type.Name.BOTTOM, Type.Name.END, n, nα, nαβ };
-  @Test void test00() {
+  @Test public void test00() {
     assertThat(Type.Name.q(q)).isNotNull();
     assertThat(Type.Name.q(q1)).isNotNull();
     assertThat(Type.Name.q(q2)).isNotNull();
   }
-  @Test void test01() {
+  @Test public void test01() {
     assertThat(Type.Name.q(q)).isEqualTo(Type.Name.q(q));
     assertThat(Type.Name.q(q)).isEqualTo(Type.Name.q(qa));
     assertThat(Type.Name.q(q)).isEqualTo(Type.Name.q(qb));
     assertThat(Type.Name.q(qa)).isEqualTo(Type.Name.q(q));
     assertThat(Type.Name.q(qb)).isEqualTo(Type.Name.q(q));
   }
-  @Test void test02() {
+  @Test public void test02() {
     assertThat(Type.Name.q(q).hashCode()).isEqualTo(Type.Name.q(q).hashCode());
     assertThat(Type.Name.q(q).hashCode()).isEqualTo(Type.Name.q(qa).hashCode());
     assertThat(Type.Name.q(q).hashCode()).isEqualTo(Type.Name.q(qb).hashCode());
   }
-  @Test void test03() {
+  @Test public void test03() {
     assertThat(Type.Name.q(q)).isNotEqualTo(Type.Name.q(q1));
     assertThat(Type.Name.q(q2).hashCode()).isNotEqualTo(Type.Name.q(q1).hashCode());
     assertThat(Type.Name.q(q)).isNotEqualTo(Type.Name.q(q2));
@@ -61,13 +66,13 @@ public class TypeNameTest {
     assertThat(Type.Name.q(q1)).isNotEqualTo(Type.Name.q(q2));
     assertThat(Type.Name.q(q2)).isNotEqualTo(Type.Name.q(q1));
   }
-  @Test void test04() {
+  @Test public void test04() {
     assertThat(Type.Name.q(q).hashCode()).isNotEqualTo(Type.Name.q(q1).hashCode());
   }
-  @Test void test05() {
+  @Test public void test05() {
     assertThat(nα).isEqualTo(nαa);
   }
-  @Test void test06() {
+  @Test public void test06() {
     final SoftAssertions softly = new SoftAssertions();
     softly.assertThat(nα).isEqualTo(nα);
     softly.assertThat(nα).isEqualTo(nαa);
@@ -102,19 +107,30 @@ public class TypeNameTest {
     softly.assertThat(nα).isEqualTo(nαd);
     softly.assertAll();
   }
-  @Test void test07() {
+  @Test public void test07() {
     assertThat(nαβb).isEqualTo(nαβ);
   }
-  @Test void test08() {
+  @Test public void test08() {
     assertThat(nαβ).isEqualTo(nαβa);
   }
-  @Test void test09() {
+  @Test public void test09() {
     assertThat(nαβ).isEqualTo(nαβb);
   }
-  @Test void test10() {
+  @Test public void test10() {
     assertThat(nαβ).isEqualTo(nαβc);
   }
-  @Test void test11() {
+  @Test public void test11() {
     assertThat(nαβ.hashCode()).isEqualTo(nαβc.hashCode());
+  }
+  @Test public void test12() {
+    final Set<Type> types = new LinkedHashSet<>();
+    types.add(topType);
+    types.add(Type.named(Type.Name.TOP));
+    types.add(topType);
+    assertThat(types.size()).isEqualTo(1);
+    types.add(bottomType);
+    types.add(Type.named(Type.Name.BOTTOM));
+    types.add(bottomType);
+    assertThat(types.size()).isEqualTo(2);
   }
 }

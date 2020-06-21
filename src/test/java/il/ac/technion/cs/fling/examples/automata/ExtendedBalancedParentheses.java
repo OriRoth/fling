@@ -18,7 +18,6 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class ExtendedBalancedParentheses {
   enum Q implements Named {
@@ -46,7 +45,7 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ0, q0, γ0) //
       .go());
   public static final String m = new JavaGenerator(
-      new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses"),
-      "il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses") //
+      "il.ac.technion.cs.fling.examples.generated",
+      "ExtendedBalancedParentheses") //
           .go(new ReliableAPICompiler(dpda).go());
 }

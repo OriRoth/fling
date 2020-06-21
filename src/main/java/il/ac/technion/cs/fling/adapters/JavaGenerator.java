@@ -2,7 +2,6 @@ package il.ac.technion.cs.fling.adapters;
 import static java.util.stream.Collectors.joining;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
@@ -10,6 +9,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method
  * chains.
@@ -18,8 +18,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public class JavaGenerator extends CLikeGenerator {
   private final String className;
   private final String packageName;
-  public JavaGenerator(final Linker namer, final String packageName, final String className) {
-    super(namer);
+  public JavaGenerator(final String packageName, final String className) {
+    super(new NaiveLinker(packageName, className));
     this.packageName = packageName;
     this.className = className;
     bottomName("ø");
@@ -36,7 +36,7 @@ public class JavaGenerator extends CLikeGenerator {
     commentf("%d start methods", m.starts().count());
     m.starts().forEach(this::visitStartMethod);
     ____();
-    commentf("%d interfact types", m.types().count());
+    commentf("%d interface types", m.types().count());
     m.types().forEach(this::visit);
     ____();
     commentf("Class implementing %d interfaces with %d methods", m.types().count(), m.methods().count());

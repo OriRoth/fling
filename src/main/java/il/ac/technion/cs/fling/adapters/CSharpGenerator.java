@@ -36,7 +36,7 @@ public class CSharpGenerator extends CLikeGenerator {
         render(name), //
         arguments.stream().map(this::render).collect(joining(",")));
   }
-  @Override public String render(final QAlphaTypeName s) {
+  @Override public String render(final Type.Name s) {
     final String printTypeName = render(s.q, s.α, s.legalJumps);
     return s.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
