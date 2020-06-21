@@ -39,7 +39,7 @@ public class CSharpGenerator extends CLikeGenerator {
   @Override public String render(final Type.Name s) {
     final String printTypeName = render(s.q, s.α, s.legalJumps);
     return s.parameters.isEmpty() ? String.format("public class %s", printTypeName)
-        : String.format("public class %s<%s>%s", //
+        : String.format("public class %s<%s> %s", //
             printTypeName, //
             s.parameters().map(this::typeVariableName) //
                 .collect(Collectors.joining(",")),

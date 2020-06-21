@@ -8,6 +8,9 @@ import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.B;
 import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.E;
 import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.a;
 import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.b;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
@@ -56,8 +59,20 @@ public class AeqBTest {
   @Test public void test2() {
     final Model m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
-    System.out.println(
+    System.out.println(new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
+  }
+  @Test public void test3() {
+    final Model m = new PolynomialAPICompiler(dpda).go();
+    CompilationUnit cu = parse(
         new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
+    System.out.println(cu);
+  }
+  static CompilationUnit parse(String javaSource) {
+    ASTParser parser = ASTParser.newParser(AST.JLS13);
+    parser.setSource(javaSource.toCharArray());
+    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+    final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+    return cu;
   }
   private final NaiveLinker namer = new NaiveLinker("AeqB");
 }

@@ -57,7 +57,7 @@ public class JavaGenerator extends CLikeGenerator {
     return $;
   }
   void visitStartMethod(final Method m) {
-    linef("public %s { ", fullMethodSignature(m)).indent();
+    linef("public static %s { ", fullMethodSignature(m)).indent();
     linef("α $ = new α();");
     linef("$.%s;", methodInvocation(m));
     linef("return $;");
