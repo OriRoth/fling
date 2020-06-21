@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-@SuppressWarnings({ "static-method" }) public class CharsTest {
+@SuppressWarnings("static-method")
+public class CharsTest {
   @Test public void test() {
     assertThat(Chars.EMPTY.size()).isEqualTo(0);
   }

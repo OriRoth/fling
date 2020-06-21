@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class VarargsVariableTypeParameter implements Parameter {
   public final Variable variable;
@@ -15,7 +15,7 @@ public class VarargsVariableTypeParameter implements Parameter {
   }
 
   @Override public String baseParameterName() {
-    return NaiveNamer.lowerCamelCase(variable.name() + "s");
+    return NaiveLinker.lowerCamelCase(variable.name() + "s");
   }
 
   @Override public Set<Variable> declaredHeadVariables() {
@@ -26,14 +26,14 @@ public class VarargsVariableTypeParameter implements Parameter {
     return Objects.hash(variable);
   }
 
-  @Override public boolean equals(Object o) {
+  @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
     if (o == null)
       return false;
     if (getClass() != o.getClass())
       return false;
-    VarargsVariableTypeParameter other = (VarargsVariableTypeParameter) o;
+    final VarargsVariableTypeParameter other = (VarargsVariableTypeParameter) o;
     return Objects.equals(variable, other.variable);
   }
 

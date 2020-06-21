@@ -120,8 +120,7 @@ public class HTMLTable {
 
   private static String printTabs(final int depth) {
     final StringBuilder $ = new StringBuilder();
-    for (int i = 0; i < depth; ++i)
-      $.append('\t');
+    $.append("\t".repeat(Math.max(0, depth)));
     return $.toString();
   }
 }

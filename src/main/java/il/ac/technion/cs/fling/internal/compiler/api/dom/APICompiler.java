@@ -17,7 +17,7 @@ public abstract class APICompiler {
   public final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
   protected final Map<Type.Name, Type> types = new LinkedHashMap<>();
-  void add(Type t) {
+  void add(final Type t) {
     types.put(t.name, t);
   }
   {

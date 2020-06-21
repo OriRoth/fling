@@ -18,7 +18,7 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class AnBn {
   enum Q implements Named {
@@ -44,9 +44,9 @@ public class AnBn {
       .δ(q1, ε(), E, q2) //
       .go());
   public static final String JavaFluentAPI = new JavaGenerator(
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn"),
+      new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AnBn"),
       "il.ac.technion.cs.fling.examples.generated", "AnBn") //
           .go(new ReliableAPICompiler(dpda).makeModel());
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AnBn")) //
+  public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AnBn")) //
       .go(new ReliableAPICompiler(dpda).makeModel());
 }

@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 /** Java adapter printing AST visitor class given AST type definitions.
  *
@@ -83,7 +83,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
   }
 
   private String getNodeParameterName(final Variable variable) {
-    return NaiveNamer.lowerCamelCase(variable.name());
+    return NaiveLinker.lowerCamelCase(variable.name());
   }
 
   private String printVisitMethodBody(final AbstractClassNode clazz, final String parameterName) {
@@ -115,7 +115,7 @@ import il.ac.technion.cs.fling.namers.NaiveNamer;
             String.format("%s.%s", //
                 parameterName, //
                 field.parameterName), //
-            () -> NaiveNamer.getNameFromBase("_x_", usedNames)))
+            () -> NaiveLinker.getNameFromBase("_x_", usedNames)))
         .filter(Objects::nonNull) //
         .forEach($::append);
     return $.toString();

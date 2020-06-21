@@ -1,4 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
+import org.eclipse.jdt.annotation.NonNull;
+
 import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +42,7 @@ public class Word<T> implements List<T> {
   @SuppressWarnings("unused") @Override public void add(final int index, final T element) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean addAll(final Collection<? extends T> c) {
+  @Override public boolean addAll(@NonNull final Collection<? extends T> c) {
     throw new UnsupportedOperationException(c + "");
   }
   @SuppressWarnings("unused") @Override public boolean addAll(final int index, final Collection<? extends T> c) {
@@ -64,13 +66,13 @@ public class Word<T> implements List<T> {
   @Override public boolean isEmpty() {
     return inner.isEmpty();
   }
-  @Override public Iterator<T> iterator() {
+  @Override public @NonNull Iterator<T> iterator() {
     return inner.iterator();
   }
   @Override public int lastIndexOf(final Object o) {
     return inner.lastIndexOf(o);
   }
-  @Override public ListIterator<T> listIterator() {
+  @Override @NonNull public ListIterator<T> listIterator() {
     return inner.listIterator();
   }
   @Override public ListIterator<T> listIterator(final int index) {
@@ -82,10 +84,10 @@ public class Word<T> implements List<T> {
   @SuppressWarnings("unused") @Override public T remove(final int index) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean removeAll(final Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean removeAll(final @NonNull Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean retainAll(final Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean retainAll(final @NonNull Collection<?> c) {
     throw new UnsupportedOperationException();
   }
   @SuppressWarnings("unused") @Override public T set(final int index, final T element) {
@@ -94,13 +96,13 @@ public class Word<T> implements List<T> {
   @Override public int size() {
     return inner.size();
   }
-  @Override public List<T> subList(final int fromIndex, final int toIndex) {
+  @Override public @NonNull List<T> subList(final int fromIndex, final int toIndex) {
     return inner.subList(fromIndex, toIndex);
   }
-  @Override public Object[] toArray() {
+  @Override public @NonNull Object[] toArray() {
     return inner.toArray();
   }
-  @Override public <U> U[] toArray(final U[] a) {
+  @Override public <U> @NonNull U[] toArray(final U[] a) {
     return inner.toArray(a);
   }
   public T top() {
@@ -141,7 +143,7 @@ public class Word<T> implements List<T> {
   public static <T> Word<T> of(final Stream<T> s) {
     return new Word<>(s.collect(toList()));
   }
-  @SafeVarargs public static <T> Word<T> of(T... ts) {
+  @SafeVarargs public static <T> Word<T> of(final T... ts) {
     return new Word<>(Arrays.asList(ts));
   }
 }

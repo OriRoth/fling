@@ -21,7 +21,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 /** Java adapters mediator. Connects fluent API, AST types and AST run-time
  * compiler generation given LL(1) grammars. AST visitor class definition is
@@ -44,7 +44,7 @@ public class JavaMediator {
 
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
-    namer = new NaiveNamer(packageName, apiName);
+    namer = new NaiveLinker(packageName, apiName);
     ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
     this.apiName = apiName;

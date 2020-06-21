@@ -24,7 +24,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
@@ -54,7 +54,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
 
   public static void main(final String[] args) {
     final SubFigure language = new SubFigure();
-    final Linker namer = new NaiveNamer("SubFigure");
+    final Linker namer = new NaiveLinker("SubFigure");
     final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
     final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.reduce());
     final APICompiler compiler = new ReliableAPICompiler(dpda);

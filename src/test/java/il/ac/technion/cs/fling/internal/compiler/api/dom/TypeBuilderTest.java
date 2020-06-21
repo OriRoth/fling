@@ -4,8 +4,8 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 @SuppressWarnings("static-method") public class TypeBuilderTest {
-  Named n1 = Named.by("TypeNameT1");
-  Named n2 = Named.by("World");
+  final Named n1 = Named.by("TypeNameT1");
+  final Named n2 = Named.by("World");
   @Test public void test0() {
     Type.named(n1);
   }
@@ -31,24 +31,24 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Named;
     assertThat(Type.named(n1).hashCode()).isNotEqualTo(Type.named(n2).hashCode());
   }
   @Test public void test8() {
-    Type t = Type.named(n1);
-    SoftAssertions softly = new SoftAssertions();
+    final Type t = Type.named(n1);
+    final SoftAssertions softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isFalse();
     softly.assertAll();
   }
   @Test public void test9() {
-    Type t = Type.named(Type.Name.BOTTOM);
-    SoftAssertions softly = new SoftAssertions();
+    final Type t = Type.named(Type.Name.BOTTOM);
+    final SoftAssertions softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isFalse();
     softly.assertAll();
   }
   @Test public void test10() {
-    Type t = Type.named(Type.Name.TOP).accepting();
-    SoftAssertions softly = new SoftAssertions();
+    final Type t = Type.named(Type.Name.TOP).accepting();
+    final SoftAssertions softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isTrue();

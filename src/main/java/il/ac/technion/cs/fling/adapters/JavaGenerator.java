@@ -43,12 +43,12 @@ public class JavaGenerator extends CLikeGenerator {
     implementingClass(m);
     unindent().line("}");
   }
-  @Override void visit(Type t) {
+  @Override void visit(final Type t) {
     line(fullName(t) + " {").indent();
     t.methods().forEach(this::visit);
     unindent().line("}");
   }
-  @Override String fullName(Type t) {
+  @Override String fullName(final Type t) {
     String $ = String.format("interface %s", render(t.name));
     if (!t.parameters.isEmpty())
       $ += String.format(" <%s>", t.parameters().map(Named::name).collect(Collectors.joining(", ")));
@@ -56,7 +56,7 @@ public class JavaGenerator extends CLikeGenerator {
       $ += " extends " + topName();
     return $;
   }
-  @Override void visit(Method m) {
+  @Override void visit(final Method m) {
     linef("public %s;", fullMethodSignature(m));
   }
   private void implementingClass(final Model m) {
@@ -72,9 +72,6 @@ public class JavaGenerator extends CLikeGenerator {
   }
   private String printTopInterfaceBody() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName());
-  }
-  public String renderTypeBottom() {
-    return "interface ø {}";
   }
   public String renderTypeTop() {
     return String.format("interface ${%s}", printTopInterfaceBody());

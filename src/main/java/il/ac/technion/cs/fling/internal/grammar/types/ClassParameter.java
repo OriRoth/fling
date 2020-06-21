@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
 
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 // TODO allow primitive types.
 public class ClassParameter implements StringTypeParameter {
@@ -19,21 +19,21 @@ public class ClassParameter implements StringTypeParameter {
   }
 
   @Override public String baseParameterName() {
-    return unPrimitiveTypeSimple(NaiveNamer.lowerCamelCase(parameterClass.getSimpleName()));
+    return unPrimitiveTypeSimple(NaiveLinker.lowerCamelCase(parameterClass.getSimpleName()));
   }
 
   @Override public int hashCode() {
     return Objects.hash(parameterClass);
   }
 
-  @Override public boolean equals(Object o) {
+  @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
     if (o == null)
       return false;
     if (getClass() != o.getClass())
       return false;
-    ClassParameter other = (ClassParameter) o;
+    final ClassParameter other = (ClassParameter) o;
     return Objects.equals(parameterClass, other.parameterClass);
   }
 

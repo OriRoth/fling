@@ -79,10 +79,10 @@ public class SMLGenerator extends APIGenerator {
     firstDatatype = false;
     return "datatype";
   }
-  @Override protected String comment(String comment) {
+  @Override protected String comment(final String comment) {
     return String.format("(* %s *)", comment);
   }
-  @SuppressWarnings("static-method") String render(Stream<MethodParameter> ps) {
+  @SuppressWarnings("static-method") String render(final Stream<MethodParameter> ps) {
     return ps.map(p -> p.type + " " + p.name).collect(joining(", "));
   }
 }

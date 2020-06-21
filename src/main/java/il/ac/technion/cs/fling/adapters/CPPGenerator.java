@@ -20,31 +20,31 @@ public class CPPGenerator extends CLikeGenerator {
     lines(m.starts().map(this::declaration));
     ____();
     commentf("Full definition of %d types:", m.types.size());
-    m.types().forEach(t -> visit(t));
+    m.types().forEach(this::visit);
     ____();
     commentf("Full definition of %d start methods:", m.starts.size());
     m.starts().forEach(this::visit);
     ____();
   }
-  private String declaration(Method m) {
+  private String declaration(final Method m) {
     return fullMethodSignature(m) + ";";
   }
-  private String declaration(Type t) {
+  private String declaration(final Type t) {
     return fullName(t) + ";";
   }
-  @Override String fullName(Type t) {
-    String $ = String.format("struct %s", render(t.name));
+  @Override String fullName(final Type t) {
+    final String $ = String.format("struct %s", render(t.name));
     return t.parameters.isEmpty() ? $
         : String.format("template <%s> %s",
             t.parameters().map(q -> "typename " + q.name()).collect(Collectors.joining(", ")), //
             $);
   }
-  @Override void visit(Method m) {
+  @Override void visit(final Method m) {
     line(fullMethodSignature(m) + " {").indent();
     linef("return %s();", render(m.type));
     unindent().line("}");
   }
-  @Override void visit(Type t) {
+  @Override void visit(final Type t) {
     line(fullName(t) + " {").indent();
     t.methods().forEach(this::visit);
     unindent().line("};");

@@ -23,17 +23,17 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 
-public class NaiveNamer implements Linker {
+public class NaiveLinker implements Linker {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
   private final Map<Component, Integer> notationsChildrenCounter = new HashMap<>();
   private final String packageName;
   private final String apiName;
 
-  public NaiveNamer(final String apiName) {
+  public NaiveLinker(final String apiName) {
     this(null, apiName);
   }
 
-  public NaiveNamer(final String packageName, final String apiName) {
+  public NaiveLinker(final String packageName, final String apiName) {
     this.packageName = packageName;
     this.apiName = apiName;
   }

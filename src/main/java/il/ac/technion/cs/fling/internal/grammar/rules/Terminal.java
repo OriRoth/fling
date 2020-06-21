@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
  *
  * @see Token
  * @author Ori Roth */
-public interface Terminal extends TempSymbol, Named {
+public interface Terminal extends TempSymbol {
   @Override default Token normalize() {
     return new Token(this);
   }

@@ -7,7 +7,7 @@ import java.util.stream.Stream;
  *
  * @since 2020-06-18 */
 public class Indenter {
-  private int indent = 0;
+  private int indent;
   private final StringBuilder builder = new StringBuilder();
   /** @return The current contents of the builder */
   public String contents() {
@@ -18,7 +18,7 @@ public class Indenter {
    * @param line a line to add
    * 
    * @return <b><code>this</code></b> */
-  Indenter line(String line) {
+  Indenter line(final String line) {
     builder.append(line.indent(indent));
     return this;
   }
@@ -27,8 +27,8 @@ public class Indenter {
    * @param lines lines to add
    * 
    * @return <b><code>this</code></b> */
-  Indenter lines(String... lines) {
-    for (String line : lines)
+  Indenter lines(final String... lines) {
+    for (final String line : lines)
       line(line);
     return this;
   }
@@ -37,7 +37,7 @@ public class Indenter {
    * @param lines lines to add
    * 
    * @return <b><code>this</code></b> */
-  Indenter lines(Stream<String> lines) {
+  Indenter lines(final Stream<String> lines) {
     lines.forEach(this::line);
     return this;
   }
@@ -47,7 +47,7 @@ public class Indenter {
    * @param os     parameters to format
    * 
    * @return <b><code>this</code></b> */
-  Indenter linef(String format, Object... os) {
+  Indenter linef(final String format, final Object... os) {
     return line(String.format(format, os));
   }
   Indenter indent() {

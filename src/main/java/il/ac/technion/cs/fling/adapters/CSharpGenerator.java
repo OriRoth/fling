@@ -18,7 +18,7 @@ public class CSharpGenerator extends CLikeGenerator {
     super(namer);
   }
   public String printParametersList(final Method s) {
-    Stream<MethodParameter> parmeters = s.parameters();
+    final Stream<MethodParameter> parmeters = s.parameters();
     return render(parmeters);
   }
   @Override public String render(final Method s, final Type.Grounded returnType) {

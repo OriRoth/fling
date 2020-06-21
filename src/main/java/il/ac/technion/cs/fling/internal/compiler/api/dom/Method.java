@@ -10,15 +10,15 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @since 2020-06-15 */
 public class Method {
   public static class NamedMethod {
-    private Token name;
-    NamedMethod(Token name) {
+    private final Token name;
+    NamedMethod(final Token name) {
       this.name = name;
     }
-    public Method returning(Type.Grounded returnType) {
+    public Method returning(final Type.Grounded returnType) {
       return new Method(name, returnType);
     }
   }
-  public static NamedMethod named(Token name) {
+  public static NamedMethod named(final Token name) {
     return new NamedMethod(name);
   }
   /** Inducing token. */
@@ -29,7 +29,7 @@ public class Method {
   public final Type.Grounded type;
   /** @param name
    * @param type */
-  private Method(Token name, Type.Grounded type) {
+  private Method(final Token name, final Type.Grounded type) {
     this.name = name;
     this.type = type;
   }

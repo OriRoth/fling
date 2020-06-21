@@ -26,7 +26,7 @@ public class Type {
   }
   /** Names of formal parameters; empty if type is polymorphic */
   public final Word<Named> parameters;
-  Type(Name name, List<Method> methods, Word<Named> parameters, boolean isAccepting) {
+  Type(final Name name, final List<Method> methods, final Word<Named> parameters, final boolean isAccepting) {
     Objects.requireNonNull(name);
     Objects.requireNonNull(methods);
     Objects.requireNonNull(parameters);
@@ -38,14 +38,14 @@ public class Type {
   public Type accepting() {
     return new Type(name, methods, parameters, true);
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Type other = (Type) obj;
+    final Type other = (Type) obj;
     return isAccepting == other.isAccepting && Objects.equals(methods, other.methods)
         && Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters);
   }
@@ -58,12 +58,12 @@ public class Type {
   public Stream<Named> parameters() {
     return parameters.stream();
   }
-  private static List<Method> noMethods = Collections.emptyList();
-  private static Word<Named> noParameters = Word.empty();
-  public static Type named(Named n) {
+  private static final List<Method> noMethods = Collections.emptyList();
+  private static final Word<Named> noParameters = Word.empty();
+  public static Type named(final Named n) {
     return named(Type.Name.q(n));
   }
-  public static Type named(Type.Name n) {
+  public static Type named(final Type.Name n) {
     return new Type(n, noMethods, noParameters, false);
   }
   /** A representation of an instantiation of a polymorphic type
@@ -72,11 +72,11 @@ public class Type {
    *
    * @since 2020-06-19 */
   public interface Grounded {
-    default public String render(APIGenerator g) {
+    public default String render(final APIGenerator g) {
       throw new RuntimeException(this + ": " + g);
     }
-    static Grounded BOTTOM = Grounded.of(Type.Name.BOTTOM);
-    static Grounded TOP = Grounded.of(Type.Name.TOP);
+    Grounded BOTTOM = Grounded.of(Type.Name.BOTTOM);
+    Grounded TOP = Grounded.of(Type.Name.TOP);
     static Leaf of(final Type.Name n) {
       return new Leaf(n);
     }
@@ -84,17 +84,17 @@ public class Type {
       @Override public int hashCode() {
         return Objects.hash(name);
       }
-      @Override public boolean equals(Object obj) {
+      @Override public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (getClass() != obj.getClass())
           return false;
-        Leaf other = (Leaf) obj;
+        final Leaf other = (Leaf) obj;
         return Objects.equals(name, other.name);
       }
-      @Override public String render(APIGenerator g) {
+      @Override public String render(final APIGenerator g) {
         return g.toString(this);
       }
       public final Name name;
@@ -105,7 +105,7 @@ public class Type {
         return new InnerNode(arguments);
       }
       public class InnerNode implements Grounded {
-        @Override public String render(APIGenerator g) {
+        @Override public String render(final APIGenerator g) {
           return g.toString(this);
         }
         final List<Grounded> arguments;
@@ -118,7 +118,7 @@ public class Type {
         @Override public int hashCode() {
           return 31 * outer().hashCode() + Objects.hash(arguments);
         }
-        @Override public boolean equals(Object that) {
+        @Override public boolean equals(final Object that) {
           if (this == that)
             return true;
           if (that == null)
@@ -127,7 +127,7 @@ public class Type {
             return false;
           return equals((InnerNode) that);
         }
-        private boolean equals(InnerNode other) {
+        private boolean equals(final InnerNode other) {
           if (!outer().equals(other.outer()))
             return false;
           return Objects.equals(arguments, other.arguments);
@@ -139,64 +139,64 @@ public class Type {
     }
   }
   public interface Name {
-    default String render(APIGenerator g) {
+    default String render(final APIGenerator g) {
       throw new RuntimeException(this + ": " + g);
     }
     Name BOTTOM = new Name() {
-      @Override public String render(APIGenerator g) {
+      @Override public String render(final APIGenerator g) {
         return g.renderBottomTypeName();
       }
     };
     Name END = new Name() {
-      @Override public String render(APIGenerator g) {
+      @Override public String render(final APIGenerator g) {
         return g.renderEndTypeName();
       }
     };
     Name TOP = new Name() {
-      @Override public String render(APIGenerator g) {
+      @Override public String render(final APIGenerator g) {
         return g.renderTopTypeName();
       }
     };
-    static q q(Named q) {
+    static q q(final Named q) {
       return new q(q);
     }
-    static class q implements Name {
+    class q implements Name {
       public final Named q;
-      q(Named q) {
+      q(final Named q) {
         this.q = q;
       }
-      @Override public boolean equals(Object o) {
+      @Override public boolean equals(final Object o) {
         if (this == o)
           return true;
         if (o == null)
           return false;
         if (getClass() != o.getClass())
           return false;
-        q other = (q) o;
+        final q other = (q) o;
         return Objects.equals(q, other.q);
       }
       @Override public int hashCode() {
         return Objects.hash(q);
       }
-      @Override public String render(APIGenerator g) {
+      @Override public String render(final APIGenerator g) {
         return g.toString(this);
       }
-      α α(Word<Named> α) {
+      α α(final Word<Named> α) {
         return new α(α);
       }
       public class α implements Name {
         public final Word<Named> α;
-        public α(Word<Named> α) {
+        public α(final Word<Named> α) {
           this.α = α;
         }
-        @Override public boolean equals(Object obj) {
+        @Override public boolean equals(final Object obj) {
           if (this == obj)
             return true;
           if (obj == null)
             return false;
           if (getClass() != obj.getClass())
             return false;
-          α other = (α) obj;
+          final α other = (α) obj;
           if (!outer().equals(other.outer()))
             return false;
           return Objects.equals(α, other.α);
@@ -210,18 +210,18 @@ public class Type {
         public Named q() {
           return outer().q;
         }
-        @Override public String render(APIGenerator g) {
+        @Override public String render(final APIGenerator g) {
           return g.toString(this);
         }
-        β β(Set<Named> β) {
+        β β(final Set<Named> β) {
           return new β(β);
         }
         public class β implements Name {
           public final Set<Named> β;
-          β(Set<Named> β) {
+          β(final Set<Named> β) {
             this.β = β;
           }
-          @Override public boolean equals(Object o) {
+          @Override public boolean equals(final Object o) {
             if (this == o)
               return true;
             if (o == null)
@@ -230,7 +230,7 @@ public class Type {
               return false;
             return equals((β) o);
           }
-          private boolean equals(β other) {
+          private boolean equals(final β other) {
             if (!outer().equals(other.outer()))
               return false;
             return Objects.equals(β, other.β);
@@ -244,7 +244,7 @@ public class Type {
           public Named q() {
             return α.this.q();
           }
-          @Override public String render(APIGenerator g) {
+          @Override public String render(final APIGenerator g) {
             return g.toString(this);
           }
           public Word<Named> α() {

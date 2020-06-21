@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling.internal.grammar.types;
 
 import java.util.Objects;
 
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class VarargsClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
@@ -20,21 +20,21 @@ public class VarargsClassParameter implements StringTypeParameter {
   }
 
   @Override public String baseParameterName() {
-    return NaiveNamer.lowerCamelCase(parameterClass.getSimpleName() + "s");
+    return NaiveLinker.lowerCamelCase(parameterClass.getSimpleName() + "s");
   }
 
   @Override public int hashCode() {
     return Objects.hash(parameterClass);
   }
 
-  @Override public boolean equals(Object o) {
+  @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
     if (o == null)
       return false;
     if (getClass() != o.getClass())
       return false;
-    VarargsClassParameter other = (VarargsClassParameter) o;
+    final VarargsClassParameter other = (VarargsClassParameter) o;
     return Objects.equals(parameterClass, other.parameterClass);
   }
 

@@ -13,7 +13,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 
 public class TableMaker {
   public static final String name = "TableMaker";
@@ -26,7 +26,7 @@ public class TableMaker {
     final FancyEBNF bnf = FancyEBNF.from(new ANTLRImporter(grammar).getEbnf());
     final String packageName = "il.ac.technion.cs.fling.examples.generated";
     final String apiName = name;
-    final Linker namer = new NaiveNamer(packageName, apiName);
+    final Linker namer = new NaiveLinker(packageName, apiName);
     final LL1 ll1 = new LL1(bnf, namer);
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, namer);
     final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
