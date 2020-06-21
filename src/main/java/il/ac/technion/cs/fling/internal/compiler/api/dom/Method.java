@@ -33,21 +33,18 @@ public class Method {
     this.name = name;
     this.type = type;
   }
-  /** @return inferred parameters
-   * @throws IllegalStateException whether the parameters have not been set */
-  public List<MethodParameter> getInferredParameters() {
-    if (parameters == null)
-      throw new IllegalStateException("parameter types and names not decided");
-    return parameters;
-  }
   /** Set token's inferred parameters.
    *
    * @param parameters parameters */
-  public void populateParameters(final List<MethodParameter> parameters) {
+  public void populateParameters(@SuppressWarnings("hiding") final List<MethodParameter> parameters) {
     this.parameters = parameters;
   }
+  /** @return inferred parameters
+   * @throws IllegalStateException whether the parameters have not been set */
   public Stream<MethodParameter> parameters() {
-    return getInferredParameters().stream();
+    if (parameters == null)
+      throw new IllegalStateException("parameter types and names not decided");
+    return parameters.stream();
   }
   public static Method termination() {
     return named(Constants.$$).returning(Type.Grounded.TOP);

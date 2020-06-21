@@ -22,7 +22,7 @@ public abstract class APICompiler {
   }
   {
     add(Type.named(Type.Name.BOTTOM));
-    add(Type.named(Type.Name.TOP).accepting());
+    add(Type.named(Type.Name.TOP));
   }
   /** Mapping of terminals to type variable nodes. */
   protected final Map<Named, Type.Grounded> typeVariables = new LinkedHashMap<>();

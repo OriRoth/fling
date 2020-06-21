@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.adapters;
 import static java.util.stream.Collectors.joining;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
@@ -8,7 +7,6 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -52,39 +50,25 @@ public class JavaGenerator extends CLikeGenerator {
   }
   @Override String fullName(Type t) {
     String $ = String.format("interface %s", render(t.name));
+    if (!t.parameters.isEmpty())
+      $ += String.format(" <%s>", t.parameters().map(Named::name).collect(Collectors.joining(", ")));
     if (t.isAccepting)
       $ += " extends " + topName();
-    if (t.parameters.isEmpty())
-      return $;
-    return $ + String.format(" <%s>", t.parameters().map(Named::name).collect(Collectors.joining(", ")));
+    return $;
   }
-  String f(Type.Name x) {
-    return render(x);
+  @Override void visit(Method m) {
+    linef("public %s;", fullMethodSignature(m));
   }
-  private String implementingClass(final Model m) {
-    line("static class α implements ").indent();
-    Stream<Type> types = m.types();
-    Stream<Name> map = types.map(Type::name);
-    map.map(this::f)
-    
-    .collect(joining(",\n"));
-    
-    indent(); 
-    implementingClassClassBody(); 
-    m.methods() //
-            .map(s -> String.format("public α %s(%s){%sreturn this;}", //
-                s.name.name(), //
-                s.parameters() //
-                    .map(parameter -> String.format("%s %s", //
-                        parameter.type, //
-                        parameter.name)) //
-                    .collect(joining(",")), //
-                implementingClassMethodBody(s.name, s.getInferredParameters()))) //
-            .collect(joining()),
-        String.format("public %s %s(){%s}", //
-            printTerminationMethodReturnType(), //
-            endName(), //
-            printTerminationMethodConcreteBody()));
+  private void implementingClass(final Model m) {
+    linef("static class α implements %s {", m.types().map(Type::name).map(this::render).collect(joining(", ")))
+        .indent();
+    implementingClassClassBody();
+    lines(m.methods().map(mm -> //
+    String.format("public α %s {%s return this; }", //
+        fullMethodSignature(mm), //
+        implementingClassMethodBody(mm.name, mm.parameters()))));
+    linef("public %s %s(){%s}", printTerminationMethodReturnType(), endName(), printTerminationMethodConcreteBody());
+    unindent().line("}");
   }
   private String printTopInterfaceBody() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName());
@@ -102,7 +86,7 @@ public class JavaGenerator extends CLikeGenerator {
         m.parameters() //
             .map(parameter -> String.format("%s %s", parameter.type, parameter.name)) //
             .collect(joining(",")), //
-        printStartMethodBody(m.name, m.getInferredParameters()));
+        printStartMethodBody(m.name, m.parameters()));
   }
   public String renderTerminationMethod() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName());
@@ -126,7 +110,7 @@ public class JavaGenerator extends CLikeGenerator {
    * @param parameters method parameters
    * @return method body */
   @SuppressWarnings("unused") protected String implementingClassMethodBody(final Token σ,
-      final List<MethodParameter> parameters) {
+      final Stream<MethodParameter> parameters) {
     return "";
   }
   /** Start static method body.
@@ -135,7 +119,7 @@ public class JavaGenerator extends CLikeGenerator {
    * @param parameters method parameters
    * @return method body */
   @SuppressWarnings("unused") protected String printStartMethodBody(final Token σ,
-      final List<MethodParameter> parameters) {
+      final Stream<MethodParameter> parameters) {
     return "return new α();";
   }
   /** Concrete implementation's termination method body. Might be used to create
@@ -150,8 +134,5 @@ public class JavaGenerator extends CLikeGenerator {
    * @return return type */
   protected String printTerminationMethodReturnType() {
     return "void";
-  }
-  @Override void visit(Method m) {
-    // TODO Auto-generated method stub
   }
 }

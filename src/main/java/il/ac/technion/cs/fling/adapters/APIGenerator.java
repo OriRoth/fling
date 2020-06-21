@@ -55,7 +55,7 @@ public abstract class APIGenerator extends Indenter {
   public String render(Type.Name n) {
     return n.render(this);
   }
-  final String render(Type.Grounded i) {
+  protected final String render(Type.Grounded i) {
     return i.render(this);
   }
   public String topName() {
@@ -80,7 +80,7 @@ public abstract class APIGenerator extends Indenter {
   public abstract String toString(Type.Name.q.α.β β);
   public abstract String toString(Type.Grounded.Leaf.InnerNode i);
   public abstract String toString(Type.Grounded.Leaf i);
-  final String render(Token t) {
+  protected final String render(Token t) {
     return t.name();
   }
 }

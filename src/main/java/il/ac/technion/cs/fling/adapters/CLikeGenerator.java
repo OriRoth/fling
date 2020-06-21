@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded.Leaf;
@@ -50,5 +51,12 @@ public abstract class CLikeGenerator extends APIGenerator {
   }
   @Override public final String toString(Leaf i) {
     return render(i.name);
+  }
+  final String fullMethodSignature(Method m) {
+    return String.format("%s %s(%s)", //
+        render(m.type), //
+        render(m.name), //
+        render(m.parameters())//
+    );
   }
 }

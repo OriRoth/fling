@@ -50,28 +50,32 @@ public class JavaMediator {
     this.apiName = apiName;
     final APIGenerator apiAdapter = new JavaGenerator(namer, packageName, apiName) {
       @Override public String printConcreteImplementationClassBody() {
-        return JavaMediator.this.printConcreteImplementationClassBody();
+        return outer().printConcreteImplementationClassBody();
       }
 
       @Override public String printConcreteImplementationMethodBody(final Token σ,
           final List<MethodParameter> parameters) {
-        return JavaMediator.this.printConcreteImplementationMethodBody(σ, parameters);
+        return outer().printConcreteImplementationMethodBody(σ, parameters);
       }
 
       @Override public String printTerminationMethodConcreteBody() {
-        return JavaMediator.this.printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
+        return outer().printTerminationMethodConcreteBody(ll1.normalizedBNF.ε);
+      }
+
+      private JavaMediator outer() {
+        return JavaMediator.this;
       }
 
       @Override public String printTerminationMethodReturnType() {
-        return JavaMediator.this.printTerminationMethodReturnType(ll1.normalizedBNF.ε);
+        return outer().printTerminationMethodReturnType(ll1.normalizedBNF.ε);
       }
 
       @Override protected String printAdditionalDeclarations() {
-        return JavaMediator.this.printAdditionalDeclarations();
+        return outer().printAdditionalDeclarations();
       }
 
       @Override protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
-        return JavaMediator.this.printStartMethodBody(σ, parameters);
+        return outer().printStartMethodBody(σ, parameters);
       }
     };
     final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);

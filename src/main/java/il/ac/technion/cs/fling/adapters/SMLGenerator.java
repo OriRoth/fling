@@ -22,7 +22,7 @@ public class SMLGenerator extends APIGenerator {
     firstDatatype = true;
   }
   @Override public String render(final MethodSignature s, final Grounded returnType) {
-    if (!s.getInferredParameters().isEmpty())
+    if (!s.parameters().isEmpty())
       throw new RuntimeException("fluent API function parameters are not suported");
     return String.format("\t%s: %s", s.name.name(), render(returnType));
   }

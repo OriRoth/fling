@@ -32,13 +32,6 @@ public class CPPGenerator extends CLikeGenerator {
   private String declaration(Type t) {
     return fullName(t) + ";";
   }
-  private String fullMethodSignature(Method m) {
-    return String.format("%s %s(%s)", //
-        render(m.type), //
-        render(m.name), //
-        render(m.parameters())//
-    );
-  }
   @Override String fullName(Type t) {
     String $ = String.format("struct %s", render(t.name));
     return t.parameters.isEmpty() ? $
