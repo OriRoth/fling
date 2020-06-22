@@ -80,6 +80,23 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
           build();
     }
   }
+  static class Q3 implements FluentLanguageAPI<Σ, Γ> {
+    @Override public Class<Σ> Σ() {
+      return Σ.class;
+    }
+    @Override public Class<Γ> Γ() {
+      return Γ.class;
+    }
+    @Override public EBNF BNF() {
+      return bnf(). //
+          start(X). //
+          derive(X).to(a, b, c).//
+          derive(X).to(a, b).//
+          derive(Y).to(a).//
+          derive(Z).to(b, a).//
+          build();
+    }
+  }
   @Test void test() {
     EBNF x = new Q().BNF();
     final SoftAssertions softly = new SoftAssertions();
@@ -109,7 +126,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     EBNF x = new Q2().BNF();
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
-    System.out.println(BNFUtils.reduce(BNFUtils.reduce(FancyEBNF.from(x))));
+    System.out.println(r(FancyEBNF.from(x)));
+    System.out.println(r(r(FancyEBNF.from(x))));
   }
   EBNF r(EBNF b) {
     return BNFUtils.reduce(b);
@@ -124,6 +142,15 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
   @Test public void test4() {
     EBNF x = new Q2().BNF();
     EBNF y = FancyEBNF.from(x);
+    assertThat(r(r(y))).isEqualTo(r(y));
+  }
+  @Test public void test5() {
+    EBNF x = new Q3().BNF();
+    FancyEBNF y = FancyEBNF.from(x);
+    System.out.println(x);
+    System.out.println(y);
+    System.out.println(r(y));
+    System.out.println(r(r(y)));
     assertThat(r(r(y))).isEqualTo(r(y));
   }
 }
