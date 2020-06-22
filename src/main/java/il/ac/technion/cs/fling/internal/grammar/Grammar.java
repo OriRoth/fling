@@ -24,7 +24,7 @@ public abstract class Grammar {
     this.ebnf = ebnf;
     this.namer = namer;
     bnf = BNFUtils.getBNF(ebnf);
-    normalizedEBNF = BNFUtils.normalize(ebnf, namer);
+    normalizedEBNF = BNFUtils.normalize(ebnf);
     normalizedBNF = BNFUtils.getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
     for (final Variable head : bnf.headVariables)
