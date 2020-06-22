@@ -11,7 +11,6 @@ import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
@@ -26,8 +25,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class LL1 extends Grammar {
-  public LL1(final FancyEBNF bnf, final Linker namer) {
-    super(bnf, namer);
+  public LL1(final FancyEBNF bnf) {
+    super(bnf);
   }
   /** Translate LL(1) BNF to DPDA. */
   @SuppressWarnings("boxing") @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {

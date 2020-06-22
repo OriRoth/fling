@@ -47,7 +47,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
   public static void main(final String[] args) {
     final SubFigure language = new SubFigure();
     final Linker namer = new NaiveLinker("SubFigure");
-    final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()), namer);
+    final LL1 ll1 = new LL1(FancyEBNF.from(language.BNF()));
     final DPDA<Named, Token, Named> dpda = ll1.buildAutomaton(ll1.bnf.clean());
     final APICompiler compiler = new ReliableAPICompiler(dpda);
     final APIGenerator adapter = new ScalaGenerator(namer);

@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
@@ -15,14 +14,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public abstract class Grammar {
   public final FancyEBNF ebnf;
-  private final Linker namer;
   public final FancyEBNF bnf;
   public final FancyEBNF normalizedBNF;
   public final FancyEBNF normalizedEBNF;
   private final Map<Variable, FancyEBNF> subBNFs;
-  public Grammar(final FancyEBNF ebnf, final Linker namer) {
+  public Grammar(final FancyEBNF ebnf) {
     this.ebnf = ebnf;
-    this.namer = namer;
     bnf = BNFUtils.expandQuantifiers(ebnf);
     normalizedEBNF = BNFUtils.normalize(ebnf);
     normalizedBNF = BNFUtils.expandQuantifiers(normalizedEBNF);

@@ -42,7 +42,7 @@ public class JavaMediator {
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
     namer = new NaiveLinker(packageName, apiName);
-    ll1 = new LL1(FancyEBNF.from(bnf), namer);
+    ll1 = new LL1(FancyEBNF.from(bnf));
     this.packageName = packageName;
     this.apiName = apiName;
     final APIGenerator apiAdapter = new JavaGenerator(packageName, apiName) {

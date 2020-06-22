@@ -23,7 +23,7 @@ public class TableMaker {
     final String packageName = "il.ac.technion.cs.fling.examples.generated";
     final String apiName = name;
     final Linker namer = new NaiveLinker(packageName, apiName);
-    final LL1 ll1 = new LL1(bnf, namer);
+    final LL1 ll1 = new LL1(bnf);
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, namer);
     final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.clean());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
