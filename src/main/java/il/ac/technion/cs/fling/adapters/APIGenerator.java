@@ -52,7 +52,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
   abstract void visit(Type t);
   abstract String comment(String text);
   abstract String render(Stream<MethodParameter> ps);
-  public String render(final Type.Name n) {
+  public final String render(final Type.Name n) {
     return n.render(this);
   }
   protected final String render(final Type.Grounded i) {

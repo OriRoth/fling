@@ -92,9 +92,6 @@ public class JavaGenerator extends CLikeGenerator {
             .collect(joining(",")), //
         printStartMethodBody(m.name, m.parameters()));
   }
-  public String renderTerminationMethod() {
-    return String.format("%s %s();", printTerminationMethodReturnType(), endName());
-  }
   /** Additional declaration within the top class.
    *
    * @return additional declarations */
