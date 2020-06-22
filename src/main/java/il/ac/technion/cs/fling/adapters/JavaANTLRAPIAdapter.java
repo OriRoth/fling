@@ -1,12 +1,10 @@
 package il.ac.technion.cs.fling.adapters;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.antlr.v4.Tool;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -15,38 +13,31 @@ import org.antlr.v4.runtime.ParserInterpreter;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.tool.Grammar;
-
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-
 // TODO handle API function parameters
 public class JavaANTLRAPIAdapter extends JavaGenerator {
   protected final String grammarFileResourcePath;
-
   public JavaANTLRAPIAdapter(final String grammarFileResourcePath, final String packageName, final String className,
       final String endName, final Namer namer) {
     super(namer, packageName, className, endName);
     this.grammarFileResourcePath = grammarFileResourcePath;
   }
-
   @Override public String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w = new %s<>();", //
         List.class.getCanonicalName(), //
         String.class.getCanonicalName(), //
         LinkedList.class.getCanonicalName());
   }
-
   @Override protected String printConcreteImplementationMethodBody(final Token σ,
       @SuppressWarnings("unused") final List<MethodParameter> parameters) {
     return String.format("w.add(\"%s\");", σ.name());
   }
-
   @Override protected String printStartMethodBody(final Token σ,
       @SuppressWarnings("unused") final List<MethodParameter> parameters) {
     return String.format("return new α().%s();", σ.name());
   }
-
   @Override protected String printTerminationMethodConcreteBody() {
     return String.format("" //
         + "try{" //
@@ -75,7 +66,6 @@ public class JavaANTLRAPIAdapter extends JavaGenerator {
         IOException.class.getCanonicalName(), //
         RuntimeException.class.getCanonicalName());
   }
-
   @Override protected String printTerminationMethodReturnType() {
     return ParserRuleContext.class.getCanonicalName();
   }

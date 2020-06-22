@@ -1,11 +1,8 @@
 package il.ac.technion.cs.fling.adapters;
-
 import static java.util.stream.Collectors.joining;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
@@ -20,7 +17,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
-
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method
  * chains.
@@ -29,7 +25,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public class JavaGenerator extends CLikeGenerator {
   private final String className;
   private final String packageName;
-
   public JavaGenerator(final Namer namer, final String packageName, final String className, final String endName) {
     super(namer);
     this.bottomName("ø");
@@ -37,7 +32,6 @@ public class JavaGenerator extends CLikeGenerator {
     this.packageName = packageName;
     this.className = className;
   }
-
   public String printConcreteImplementation(final Model m) {
     return String.format("static class α implements %s{%s%s%s}", //
         m.types().map(this::printTypeName).collect(joining(",")), //
@@ -58,15 +52,12 @@ public class JavaGenerator extends CLikeGenerator {
             endName(), //
             printTerminationMethodConcreteBody()));
   }
-
   public String printTopInterfaceBody() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName());
   }
-
   public String printTypeName(final Type t) {
     return t.isTop() ? "$" : t.isBot() ? "ø" : printTypeName(t.signature);
   }
-
   public String render1(TypeSignature s) {
     return s.α == null ? s.q.name()
         : String.format("%s_%s%s", //
@@ -74,7 +65,6 @@ public class JavaGenerator extends CLikeGenerator {
             render(s.α), //
             s.legalJumps == null ? "" : "_" + s.legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-
   public String render2(final TypeSignature s) {
     return String.format("%s<%s>", s.α == null ? s.q.name()
         : String.format("%s_%s%s", //
@@ -83,20 +73,16 @@ public class JavaGenerator extends CLikeGenerator {
             s.legalJumps == null ? "" : "_" + s.legalJumps.stream().map(Named::name).collect(Collectors.joining())), //
         s.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
-
   private String render(Word<Named> α) {
     return α.stream().map(Named::name).collect(Collectors.joining());
   }
-
   @Override public String render(final TypeSignature s) {
     return String.format("%s<%s>", printTypeName(s), //
         s.parameters().map(Named::name).collect(Collectors.joining(",")));
   }
-
   String printTypeName(final TypeSignature s) {
     return render(s.q, s.α, s.legalJumps);
   }
-
   @Override public String render(final MethodSignature s, final SkeletonType returnType) {
     return String.format("%s %s(%s);", //
         render(returnType), //
@@ -105,7 +91,6 @@ public class JavaGenerator extends CLikeGenerator {
             .map(parameter -> String.format("%s %s", parameter.type, parameter.name)) //
             .collect(joining(",")));
   }
-
   @Override String render(final Model m) {
     return String.format("%s@SuppressWarnings(\"all\")public interface %s{%s%s%s%s}", //
         packageName == null ? "" : String.format("package %s;\nimport java.util.*;\n\n\n", packageName), //
@@ -115,7 +100,6 @@ public class JavaGenerator extends CLikeGenerator {
         printConcreteImplementation(m), //
         printAdditionalDeclarations());
   }
-
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     return α == null ? q.name()
         : String.format("%s_%s%s", //
@@ -123,17 +107,14 @@ public class JavaGenerator extends CLikeGenerator {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-
   @Override public String render(final TypeName name) {
     return render(name.q, name.α, name.legalJumps);
   }
-
   @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
     return String.format("%s<%s>", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
-
   @Override public String render(final TypeSignature s, final List<Method> methods) {
     return String.format("interface %s%s{%s}", //
         render(s), //
@@ -143,15 +124,12 @@ public class JavaGenerator extends CLikeGenerator {
             .map(this::render) //
             .collect(joining()));
   }
-
   @Override public String renderTypeBottom() {
     return "interface ø {}";
   }
-
   @Override public String renderTypeTop() {
     return String.format("interface ${%s}", printTopInterfaceBody());
   }
-
   @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
     return String.format("public static %s %s(%s) {%s}", //
         render(returnType), //
@@ -161,25 +139,21 @@ public class JavaGenerator extends CLikeGenerator {
             .collect(joining(",")), //
         printStartMethodBody(s.name, s.getInferredParameters()));
   }
-
   @Override public String renderTerminationMethod() {
     return String.format("%s %s();", printTerminationMethodReturnType(), endName());
   }
-
   /** Additional declaration within the top class.
    *
    * @return additional declarations */
   protected String printAdditionalDeclarations() {
     return "";
   }
-
   /** Prints additional definition in concrete implementation class's body.
    *
    * @return additional definition */
   protected String printConcreteImplementationClassBody() {
     return "";
   }
-
   /** Concrete implementation's method's body. Making the recording of terminals
    * and their parameters possible.
    *
@@ -190,7 +164,6 @@ public class JavaGenerator extends CLikeGenerator {
       final List<MethodParameter> parameters) {
     return "";
   }
-
   /** Start static method body.
    *
    * @param σ          inducing token
@@ -200,7 +173,6 @@ public class JavaGenerator extends CLikeGenerator {
       final List<MethodParameter> parameters) {
     return "return new α();";
   }
-
   /** Concrete implementation's termination method body. Might be used to create
    * and return the processed terminal.
    *
@@ -208,7 +180,6 @@ public class JavaGenerator extends CLikeGenerator {
   protected String printTerminationMethodConcreteBody() {
     return "";
   }
-
   /** Return type of the termination method.
    *
    * @return return type */

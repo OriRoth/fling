@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
-
 import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,17 +9,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 import il.ac.technion.cs.fling.internal.compiler.Namer;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
-
 @JavaCompatibleQuantifier public class Opt extends Quantifier.Sequence {
   public Opt(final List<Symbol> symbols) {
     super(symbols);
   }
-
   @Override public Variable expand(final Namer namer, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
     final List<Component> expandedSymbols = new ArrayList<>();
@@ -35,7 +30,6 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         new Body())));
     return head;
   }
-
   @Override protected String getVisitingStatement(final Symbol symbol,
       final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
       final Supplier<String> variableNamesGenerator) {
@@ -52,7 +46,6 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         streamingVariable, //
         action);
   }
-
   @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     final List<FieldNodeFragment> $ = new ArrayList<>();
@@ -70,15 +63,12 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
         });
     return $;
   }
-
   @Override public boolean isNullable(@SuppressWarnings("unused") final Predicate<Component> nullabilitySolver) {
     return true;
   }
-
   @Override public Set<Token> getFirsts(final Function<List<? extends Component>, Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbols);
   }
-
   public static List<Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
     final List<Optional<Object>> $ = new ArrayList<>();
     if (rawNode.isEmpty()) {
@@ -91,7 +81,6 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
       $.add(Optional.of(rawNode.get(i)));
     return $;
   }
-
   @Override public String marker() {
     return "?";
   }

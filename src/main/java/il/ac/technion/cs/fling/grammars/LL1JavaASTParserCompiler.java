@@ -1,9 +1,7 @@
 package il.ac.technion.cs.fling.grammars;
-
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Namer;
@@ -28,7 +25,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
-
 /** Compiles BNF to run-time LL(1) compiler, generating AST from sequence of
  * terminals.
  *
@@ -45,7 +41,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private final String packageName;
   private final String apiName;
   private final String astClassesContainerName;
-
   public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
       final String apiName, final String astClassesContainerName) {
     this.bnf = bnf;
@@ -55,7 +50,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     this.apiName = apiName;
     this.astClassesContainerName = astClassesContainerName;
   }
-
   @Override public String printParserClass() {
     return String.format("package %s;\n import java.util.*;\n @SuppressWarnings(\"all\")public interface %s{%s}", //
         packageName, //
@@ -65,14 +59,12 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             .map(this::printParserVariableCompilerMethod) //
             .collect(joining()));
   }
-
   @Override public String getParsingMethodName(final Variable variable) {
     return String.format("%s.%s.parse_%s", //
         packageName, //
         apiName, //
         variable.name());
   }
-
   private String printParserVariableCompilerMethod(final Variable v) {
     return String.format("public static %s parse_%s(%s<%s> w){%s}", //
         bnf.isOriginalVariable(v) ? getClassForVariable(v) : ListObject, //
@@ -85,7 +77,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
                 printConcreteChildMethodBody(v) : //
                 printAbstractParentMethodBody(v));
   }
-
   private String printAbstractParentMethodBody(final Variable v) {
     final List<Variable> children = bnf.bodies(v)//
         .map(sf -> sf.get(0)) //
@@ -114,9 +105,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.format("parse_%s(w)", optionalNullableChild.get().name())));
     return body.toString();
   }
-
   @SuppressWarnings("boxing") private String printConcreteChildMethodBody(final Variable v) {
-
     final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
     body.append(Invocation.class.getCanonicalName()).append(" _a;");
@@ -177,7 +166,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.join(",", argumentNames)));
     return body.toString();
   }
-
   private String printConcreteExtensionChildMethodBody(final Variable v) {
     final List<Component> children = bnf.bodiesList(v).get(0);
     final StringBuilder body = new StringBuilder();
@@ -237,7 +225,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         String.join(",", argumentNames)));
     return body.toString();
   }
-
   private String getTypeName(final Parameter parameter) {
     if (parameter.isStringTypeParameter())
       return parameter.asStringTypeParameter().typeName();
@@ -254,7 +241,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     else
       throw new RuntimeException("problem while creating real-time parser");
   }
-
   private List<FieldNodeFragment> getFieldsInClassContext(final Component symbol,
       final Map<String, Integer> usedNames) {
     if (symbol.isToken())
@@ -272,11 +258,9 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
           baseName -> NaiveNamer.getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-
   @SuppressWarnings("static-method") protected String getBaseParameterName(final Variable variable) {
     return NaiveNamer.lowerCamelCase(variable.name());
   }
-
   private String printTerminalInclusionCondition(final Set<Token> firsts) {
     return String.format("%s.included(_a.σ,%s)", //
         il.ac.technion.cs.fling.internal.util.Is.class.getCanonicalName(), //
@@ -286,7 +270,6 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
                 terminal.name())) //
             .collect(joining(",")));
   }
-
   private String getClassForVariable(final Variable v) {
     return String.format("%s.%s.%s", //
         packageName, //

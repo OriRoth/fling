@@ -1,29 +1,21 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
-
 import static java.util.Objects.requireNonNull;
-
 import il.ac.technion.cs.fling.namers.NaiveNamer;
-
 // TODO allow primitive types.
 public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
-
   public ClassParameter(final Class<?> parameterClass) {
     this.parameterClass = requireNonNull(parameterClass);
   }
-
   @Override public String typeName() {
     return parameterClass.getCanonicalName();
   }
-
   @Override public String baseParameterName() {
     return unPrimitiveTypeSimple(NaiveNamer.lowerCamelCase(parameterClass.getSimpleName()));
   }
-
   @Override public int hashCode() {
     return parameterClass.hashCode();
   }
-
   @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
@@ -32,11 +24,9 @@ public class ClassParameter implements StringTypeParameter {
     final ClassParameter other = (ClassParameter) obj;
     return parameterClass.equals(other.parameterClass);
   }
-
   @Override public String toString() {
     return parameterClass.getSimpleName();
   }
-
   public static String unPrimitiveType(final String typeName) {
     return byte.class.getName().equals(typeName) ? Byte.class.getCanonicalName() : //
         short.class.getName().equals(typeName) ? Short.class.getCanonicalName() : //
@@ -49,7 +39,6 @@ public class ClassParameter implements StringTypeParameter {
                                     void.class.getName().equals(typeName) ? Void.class.getCanonicalName() : //
                                         typeName;
   }
-
   public static String unPrimitiveTypeSimple(final String typeName) {
     return byte.class.getName().equals(typeName) ? "b" : //
         short.class.getName().equals(typeName) ? "s" : //

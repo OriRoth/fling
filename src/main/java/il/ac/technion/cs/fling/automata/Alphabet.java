@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.automata;
-
 /** Alphabet utilities.
  *
  * @author Ori Roth */
