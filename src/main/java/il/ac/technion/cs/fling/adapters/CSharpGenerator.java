@@ -1,10 +1,8 @@
 package il.ac.technion.cs.fling.adapters;
 import static java.util.stream.Collectors.joining;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -35,11 +33,6 @@ public class CSharpGenerator extends CLikeGenerator {
                 .map(n -> "where " + n + ":new()") //
                 .collect(Collectors.joining("")) //
         );
-  }
-  @Override public String render(final TypeSignature s, final List<Method> methods) {
-    return String.format("%s{%s}", //
-        render(s), //
-        methods.stream().map(this::render).collect(joining()));
   }
   @Override public String renderTypeBottom() {
     return "private class BOT{}";

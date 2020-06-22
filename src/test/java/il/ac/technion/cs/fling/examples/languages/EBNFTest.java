@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 class EBNFTest {
   @Test void test() {
-    final il.ac.technion.cs.fling.EBNF bnf = new EBNF().BNF();
+    final il.ac.technion.cs.fling.EBNF bnf = new TAPI().BNF();
     final JavaGenerator j = new JavaGenerator(getClass().getPackageName() + ".__", getClass().getSimpleName());
     final FancyEBNF from = FancyEBNF.from(bnf);
     final LL1 ll1 = new LL1(from, j.namer);

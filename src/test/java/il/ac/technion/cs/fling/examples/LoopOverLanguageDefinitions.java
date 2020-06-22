@@ -21,12 +21,12 @@ import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression;
 import il.ac.technion.cs.fling.examples.languages.BNF;
 import il.ac.technion.cs.fling.examples.languages.BalancedParentheses;
 import il.ac.technion.cs.fling.examples.languages.Datalog;
-import il.ac.technion.cs.fling.examples.languages.EBNF;
 import il.ac.technion.cs.fling.examples.languages.HTMLTable;
 import il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage;
 import il.ac.technion.cs.fling.examples.languages.RegularExpression;
 import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic;
 import il.ac.technion.cs.fling.examples.languages.SubFigure;
+import il.ac.technion.cs.fling.examples.languages.TAPI;
 import il.ac.technion.cs.fling.examples.languages.TableMaker;
 import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
 @SuppressWarnings("static-method") public class LoopOverLanguageDefinitions {
@@ -38,7 +38,7 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
       new SubFigure(), //
       new ArithmeticExpression(), //
       new BNF(), //
-      new EBNF(), //
+      new TAPI(), //
       new RegularExpression(), //
       new HTMLTable(), //
       new SimpleArithmetic(), //
