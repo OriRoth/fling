@@ -25,7 +25,7 @@ public class TableMaker {
     final Linker namer = new NaiveLinker(packageName, apiName);
     final LL1 ll1 = new LL1(bnf, namer);
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, namer);
-    final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.reduce());
+    final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.clean());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
     final Model compileFluentAPI = reliableAPICompiler.go();
     apiClass = adapter.go(compileFluentAPI);

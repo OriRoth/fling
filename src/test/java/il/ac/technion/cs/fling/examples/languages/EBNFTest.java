@@ -11,7 +11,7 @@ class EBNFTest {
     final JavaGenerator j = new JavaGenerator(getClass().getPackageName() + ".__", getClass().getSimpleName());
     final FancyEBNF from = FancyEBNF.from(bnf);
     final LL1 ll1 = new LL1(from, j.namer);
-    final var dpda = ll1.buildAutomaton(ll1.bnf.reduce());
+    final var dpda = ll1.buildAutomaton(ll1.bnf.clean());
     System.out.println(j.go(new PolynomialAPICompiler(dpda).go()));
     System.out.println(j.go(new ReliableAPICompiler(dpda).go()));
   }

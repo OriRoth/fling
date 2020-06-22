@@ -18,6 +18,23 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class BNFUtils {
+  static FancyEBNF reduce(FancyEBNF bnf, final Variable v) {
+    final Set<Token> Σ = new LinkedHashSet<>();
+    final Set<Variable> V = new LinkedHashSet<>();
+    V.add(v);
+    final Set<ERule> rs = new LinkedHashSet<>();
+    for (boolean more = true; more;) {
+      more = false;
+      for (final ERule r : bnf.R)
+        if (!rs.contains(r) && V.contains(r.variable)) {
+          more = true;
+          rs.add(r);
+          r.variables().forEachOrdered(V::add);
+          r.tokens().forEachOrdered(Σ::add);
+        }
+    }
+    return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
+  }
   /** Return a possibly smaller BNF including only rules reachable form start
    * symbol */
   public static FancyEBNF reduce(final EBNF b) {

@@ -2,21 +2,13 @@ package il.ac.technion.cs.fling.internal.grammar;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.grammar.rules.Body;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
@@ -31,64 +23,20 @@ public abstract class Grammar {
   public Grammar(final FancyEBNF ebnf, final Linker namer) {
     this.ebnf = ebnf;
     this.namer = namer;
-    bnf = getBNF(ebnf);
+    bnf = BNFUtils.getBNF(ebnf);
     normalizedEBNF = BNFUtils.normalize(ebnf, namer);
-    normalizedBNF = getBNF(normalizedEBNF);
+    normalizedBNF = BNFUtils.getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
     for (final Variable head : bnf.headVariables)
-      subBNFs.put(head, computeSubBNF(head));
+      subBNFs.put(head, BNFUtils.reduce(bnf, head));
   }
   public abstract DPDA<Named, Token, Named> buildAutomaton(FancyEBNF bnf);
   // TODO compute lazily.
   public DPDA<Named, Token, Named> toDPDA() {
     return buildAutomaton(bnf);
   }
-  private FancyEBNF getBNF(final FancyEBNF ebnf) {
-    final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
-    final Set<ERule> R = new LinkedHashSet<>();
-    final Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
-    final Set<Variable> extensionProducts = new LinkedHashSet<>();
-    for (final ERule r : ebnf.R) {
-      final List<Body> rhs = new ArrayList<>();
-      for (final Body b : r.bodiesList()) {
-        final List<Component> cs = new ArrayList<>();
-        for (final Component c : b) {
-          if (!c.isQuantifier()) {
-            cs.add(c);
-            continue;
-          }
-          final Quantifier q = c.asQuantifier();
-          final Variable head = q.expand(namer, extensionProducts::add, R::add);
-          extensionHeadsMapping.put(head, q);
-          cs.add(head);
-        }
-        rhs.add(new Body(cs));
-      }
-      R.add(new ERule(r.variable, rhs));
-    }
-    Γ.addAll(extensionProducts);
-    return new FancyEBNF(new EBNF(ebnf.Σ, Γ, ebnf.ε, R), ebnf.headVariables, extensionHeadsMapping, extensionProducts,
-        false);
-  }
   public FancyEBNF getSubBNF(final Variable variable) {
     return subBNFs.get(variable);
-  }
-  private FancyEBNF computeSubBNF(final Variable v) {
-    final Set<Token> Σ = new LinkedHashSet<>();
-    final Set<Variable> V = new LinkedHashSet<>();
-    V.add(v);
-    final Set<ERule> rs = new LinkedHashSet<>();
-    for (boolean more = true; more;) {
-      more = false;
-      for (final ERule r : bnf.R)
-        if (!rs.contains(r) && V.contains(r.variable)) {
-          more = true;
-          rs.add(r);
-          r.variables().forEachOrdered(V::add);
-          r.tokens().forEachOrdered(Σ::add);
-        }
-    }
-    return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
   }
   @SuppressWarnings("unused") public static DPDA<Named, Token, Named> cast(
       final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {

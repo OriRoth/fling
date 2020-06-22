@@ -3,7 +3,6 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +17,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
@@ -157,7 +155,8 @@ public class FancyEBNF extends EBNF.Decorator {
         .map(Parameter::declaredHeadVariables).forEach(heads::addAll));
     return new FancyEBNF(source, heads, null, null, true);
   }
-  public FancyEBNF reduce() {
+  /** @return clone, eliminating variables never used */
+  public FancyEBNF clean() {
     return BNFUtils.reduce(this);
   }
 }
