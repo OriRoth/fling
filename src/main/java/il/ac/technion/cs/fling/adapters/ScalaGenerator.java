@@ -38,7 +38,7 @@ public class ScalaGenerator extends CLikeGenerator {
     final String returnValue = printTypeInstantiation(m.type);
     return String.format("def %s(%s):%s=%s", //
         s.name.name(), //
-        printParametersList(s), //
+        printParametersList(m), //
         _returnType, //
         returnValue);
   }
