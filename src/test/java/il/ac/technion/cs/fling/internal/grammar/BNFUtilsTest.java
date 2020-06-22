@@ -11,6 +11,7 @@ import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.e;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.oneOrMore;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.optional;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.EBNF;
@@ -109,5 +110,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
     System.out.println(BNFUtils.reduce(BNFUtils.reduce(FancyEBNF.from(x))));
+  }
+  EBNF r(EBNF b) {
+    return BNFUtils.reduce(b);
+  }
+  @Test public void test3() {
+    EBNF x = new Q2().BNF();
+    System.out.println(x);
+    System.out.println(FancyEBNF.from(x));
+    System.out.println(r(FancyEBNF.from(x)));
+    System.out.println(r(r(FancyEBNF.from(x))));
+  }
+  @Test public void test4() {
+    EBNF x = new Q2().BNF();
+    EBNF y = FancyEBNF.from(x);
+    assertThat(r(r(y))).isEqualTo(r(y));
   }
 }
