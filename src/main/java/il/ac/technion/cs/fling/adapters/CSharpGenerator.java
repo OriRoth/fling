@@ -24,17 +24,8 @@ public class CSharpGenerator extends CLikeGenerator {
         printParametersList(s), //
         render(returnType));
   }
-  @Override public String render(final Type.Name name) {
-    super.render(name);
-    return render(name.q, name.α, name.legalJumps);
-  }
-  @Override public String render(final Type.Name name, final List<Type.Grounded> arguments) {
-    return String.format("%s<%s>", //
-        render(name), //
-        arguments.stream().map(this::render).collect(joining(",")));
-  }
-  @Override public String render(final TypeSignature s) {
-    final String printTypeName = render(s.q, s.α, s.legalJumps);
+  @Override void visit(final Type t) {
+    final String printTypeName = fullName(t);
     return s.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //
