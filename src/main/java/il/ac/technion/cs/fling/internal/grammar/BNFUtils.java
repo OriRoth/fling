@@ -14,9 +14,32 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class BNFUtils {
+  /** Return a possibly smaller BNF including only rules reachable form start
+   * symbol */
+  public static FancyEBNF reduce(final EBNF b) {
+    final Set<Variable> Γ = new LinkedHashSet<>();
+    final Set<ERule> R = new LinkedHashSet<>();
+    final Set<Token> Σ = new LinkedHashSet<>();
+    final Set<Variable> newVariables = new LinkedHashSet<>();
+    newVariables.add(b.ε);
+    while (!newVariables.isEmpty()) {
+      Γ.addAll(newVariables);
+      final Set<Variable> currentVariables = new LinkedHashSet<>();
+      currentVariables.addAll(newVariables);
+      newVariables.clear();
+      for (final Variable v : currentVariables) {
+        b.rules(v).forEachOrdered(R::add);
+        b.rules(v).flatMap(ERule::tokens).forEachOrdered(Σ::add);
+        b.rules(v).flatMap(ERule::variables) //
+            .filter(_v -> !Γ.contains(_v)).forEach(newVariables::add);
+      }
+    }
+    return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
+  }
   static FancyEBNF normalize(final FancyEBNF bnf, final Linker namer) {
     final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();

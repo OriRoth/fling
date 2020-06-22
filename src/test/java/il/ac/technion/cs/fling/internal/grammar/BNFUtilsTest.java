@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling.internal.grammar;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.X;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.Y;
+import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.Z;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.a;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.b;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.c;
@@ -18,12 +19,12 @@ import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-class BNFUtilsTest {
+@SuppressWarnings("static-method") class BNFUtilsTest {
   public enum Σ implements Terminal {
     a, b, c, d, e
   }
   public enum Γ implements Variable {
-    X, Y
+    X, Y, Z
   }
   static class Q implements FluentLanguageAPI<Σ, Γ> {
     @Override public Class<Σ> Σ() {
@@ -58,6 +59,26 @@ class BNFUtilsTest {
           derive(X).to(a, oneOrMore(b.with(byte.class)), c).derive(X).to(c, b, a).build();
     }
   }
+  static class Q2 implements FluentLanguageAPI<Σ, Γ> {
+    @Override public Class<Σ> Σ() {
+      return Σ.class;
+    }
+    @Override public Class<Γ> Γ() {
+      return Γ.class;
+    }
+    @Override public EBNF BNF() {
+      return bnf(). //
+          start(X). //
+          derive(X).to(a, b, c).//
+          derive(X).to(a, b, c).//
+          derive(Y).to(a, b, c).//
+          specialize(Y).into(Y, X).//
+          specialize(X).into(Y, X).//
+          specialize(Z).into(X, Y, Z, X).//
+          derive(Z).to(b, a).//
+          build();
+    }
+  }
   @Test void test() {
     EBNF x = new Q().BNF();
     final SoftAssertions softly = new SoftAssertions();
@@ -82,5 +103,11 @@ class BNFUtilsTest {
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(BNFUtils.getBNF(FancyEBNF.from(x))));
+  }
+  @Test public void test2() {
+    EBNF x = new Q2().BNF();
+    System.out.println(x);
+    System.out.println(FancyEBNF.from(x));
+    System.out.println(BNFUtils.reduce(BNFUtils.reduce(FancyEBNF.from(x))));
   }
 }
