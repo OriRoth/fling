@@ -86,7 +86,7 @@ public class BNFUtils {
     return new FancyEBNF(new EBNF(bnf.Σ, V, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping,
         bnf.extensionProducts, false);
   }
-  static FancyEBNF getBNF(final FancyEBNF ebnf) {
+  static FancyEBNF expandQuantifiers(final FancyEBNF ebnf) {
     Linker namer = new NaiveLinker(null);
     final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();

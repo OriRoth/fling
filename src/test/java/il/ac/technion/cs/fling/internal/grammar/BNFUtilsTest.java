@@ -112,7 +112,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     System.out.println(FancyEBNF.from(x));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
-    System.out.println(BNFUtils.normalize(BNFUtils.getBNF(FancyEBNF.from(x))));
+    System.out.println(BNFUtils.normalize(BNFUtils.expandQuantifiers(FancyEBNF.from(x))));
   }
   @Test public void test1() {
     EBNF x = new Q1().BNF();
@@ -120,7 +120,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     System.out.println(FancyEBNF.from(x));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
-    System.out.println(BNFUtils.normalize(BNFUtils.getBNF(FancyEBNF.from(x))));
+    System.out.println(BNFUtils.normalize(BNFUtils.expandQuantifiers(FancyEBNF.from(x))));
   }
   @Test public void test2() {
     EBNF x = new Q2().BNF();
