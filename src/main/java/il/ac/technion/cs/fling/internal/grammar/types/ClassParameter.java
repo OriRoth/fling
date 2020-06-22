@@ -1,6 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 import static java.util.Objects.requireNonNull;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import java.util.Objects;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 // TODO allow primitive types.
 public class ClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
@@ -11,18 +12,20 @@ public class ClassParameter implements StringTypeParameter {
     return parameterClass.getCanonicalName();
   }
   @Override public String baseParameterName() {
-    return unPrimitiveTypeSimple(NaiveNamer.lowerCamelCase(parameterClass.getSimpleName()));
+    return unPrimitiveTypeSimple(NaiveLinker.lowerCamelCase(parameterClass.getSimpleName()));
   }
   @Override public int hashCode() {
-    return parameterClass.hashCode();
+    return Objects.hash(parameterClass);
   }
-  @Override public boolean equals(final Object obj) {
-    if (this == obj)
+  @Override public boolean equals(final Object o) {
+    if (this == o)
       return true;
-    if (!(obj instanceof ClassParameter))
+    if (o == null)
       return false;
-    final ClassParameter other = (ClassParameter) obj;
-    return parameterClass.equals(other.parameterClass);
+    if (getClass() != o.getClass())
+      return false;
+    final ClassParameter other = (ClassParameter) o;
+    return Objects.equals(parameterClass, other.parameterClass);
   }
   @Override public String toString() {
     return parameterClass.getSimpleName();

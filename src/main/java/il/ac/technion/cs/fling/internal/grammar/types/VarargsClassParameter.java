@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 import java.util.Objects;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class VarargsClassParameter implements StringTypeParameter {
   public final Class<?> parameterClass;
   public VarargsClassParameter(final Class<?> parameterClass) {
@@ -13,18 +13,20 @@ public class VarargsClassParameter implements StringTypeParameter {
     return parameterClass.getCanonicalName() + "...";
   }
   @Override public String baseParameterName() {
-    return NaiveNamer.lowerCamelCase(parameterClass.getSimpleName() + "s");
+    return NaiveLinker.lowerCamelCase(parameterClass.getSimpleName() + "s");
   }
   @Override public int hashCode() {
-    return parameterClass.hashCode();
+    return Objects.hash(parameterClass);
   }
-  @Override public boolean equals(final Object obj) {
-    if (this == obj)
+  @Override public boolean equals(final Object o) {
+    if (this == o)
       return true;
-    if (!(obj instanceof VarargsClassParameter))
+    if (o == null)
       return false;
-    final VarargsClassParameter other = (VarargsClassParameter) obj;
-    return parameterClass.equals(other.parameterClass);
+    if (getClass() != o.getClass())
+      return false;
+    final VarargsClassParameter other = (VarargsClassParameter) o;
+    return Objects.equals(parameterClass, other.parameterClass);
   }
   @Override public String toString() {
     return parameterClass.getCanonicalName() + "...";

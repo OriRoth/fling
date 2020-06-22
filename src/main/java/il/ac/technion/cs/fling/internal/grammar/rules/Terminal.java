@@ -50,12 +50,12 @@ public interface Terminal extends TempSymbol {
       @Override public int hashCode() {
         return name.hashCode();
       }
-      @Override public boolean equals(final Object obj) {
-        if (this == obj)
+      @Override public boolean equals(final Object o) {
+        if (this == o)
           return true;
-        if (!(obj instanceof Terminal))
+        if (!(o instanceof Terminal))
           return false;
-        final Terminal other = (Terminal) obj;
+        final Terminal other = (Terminal) o;
         return name().equals(other.name());
       }
     };

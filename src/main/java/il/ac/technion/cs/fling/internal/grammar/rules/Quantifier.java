@@ -9,11 +9,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 public abstract class Quantifier implements Component {
   public abstract Stream<Symbol> symbols();
-  public abstract Variable expand(Namer namer, Consumer<Variable> variableDeclaration, Consumer<ERule> ruleDeclaration);
+  public abstract Variable expand(Linker namer, Consumer<Variable> variableDeclaration,
+      Consumer<ERule> ruleDeclaration);
   public abstract List<FieldNodeFragment> getFields(Function<Component, List<FieldNodeFragment>> fieldTypesSolver,
       Function<String, String> nameFromBaseSolver);
   public abstract boolean isNullable(Predicate<Component> nullabilitySolver);
@@ -43,7 +44,7 @@ public abstract class Quantifier implements Component {
       verify();
     }
     public abstract String marker();
-    @Override public final String name() {
+    public final String name() {
       return String.format("(%s)%s", symbols.size() == 1 ? symbols.get(0) : //
           symbols().map(Object::toString).collect(Collectors.joining(",")), //
           marker());

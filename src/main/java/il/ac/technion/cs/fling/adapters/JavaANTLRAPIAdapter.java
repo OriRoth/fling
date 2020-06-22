@@ -13,15 +13,15 @@ import org.antlr.v4.runtime.ParserInterpreter;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.tool.Grammar;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 // TODO handle API function parameters
 public class JavaANTLRAPIAdapter extends JavaGenerator {
   protected final String grammarFileResourcePath;
   public JavaANTLRAPIAdapter(final String grammarFileResourcePath, final String packageName, final String className,
-      final String endName, final Namer namer) {
-    super(namer, packageName, className, endName);
+      final Linker namer) {
+    super(packageName, className);
     this.grammarFileResourcePath = grammarFileResourcePath;
   }
   @Override public String printConcreteImplementationClassBody() {

@@ -11,12 +11,12 @@ import static il.ac.technion.cs.fling.examples.automata.AnBn.Σ.b;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
-import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class AnBn {
   enum Q implements Named {
     q0, q1, q2
@@ -37,10 +37,8 @@ public class AnBn {
       .δ(q1, b, X, q1) //
       .δ(q1, ε(), E, q2) //
       .go());
-  public static final String JavaFluentAPI = new JavaGenerator(
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "AnBn"),
-      "il.ac.technion.cs.fling.examples.generated", "AnBn", "$") //
-          .go(new ReliableAPICompiler(dpda).compileFluentAPI());
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveNamer("AnBn")) //
-      .go(new ReliableAPICompiler(dpda).compileFluentAPI());
+  public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AnBn") //
+      .go(new ReliableAPICompiler(dpda).go());
+  public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AnBn")) //
+      .go(new ReliableAPICompiler(dpda).go());
 }

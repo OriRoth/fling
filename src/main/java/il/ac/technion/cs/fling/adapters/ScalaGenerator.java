@@ -4,13 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.SkeletonType;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeName;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.TypeSignature;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -18,16 +15,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  *
  * @author Ori Roth */
 public class ScalaGenerator extends CLikeGenerator {
-  public ScalaGenerator(final Namer namer) {
+  public ScalaGenerator(final Linker namer) {
     super(namer);
   }
-  public String printParametersList(final MethodSignature s) {
-    return s.parameters()
-        //
-        .map(p -> String.format("%s %s", p.type, p.name)) //
-        .collect(joining(","));
+  private String printParametersList(final MethodSignature s) {
+    return render(s.parameters());
   }
-  public String printTypeInstantiation(final SkeletonType returnType) {
+  public String printTypeInstantiation(final Grounded returnType) {
     final String _returnType = render(returnType);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
@@ -38,7 +32,7 @@ public class ScalaGenerator extends CLikeGenerator {
                     .map(this::printTypeInstantiation) //
                     .collect(joining(",")));
   }
-  @Override public String render(final MethodSignature s, final SkeletonType returnType) {
+  @Override public String render(final MethodSignature s, final Grounded returnType) {
     final String _returnType = render(returnType);
     final String returnValue = printTypeInstantiation(returnType);
     return String.format("def %s(%s):%s=%s", //
@@ -47,10 +41,10 @@ public class ScalaGenerator extends CLikeGenerator {
         _returnType, //
         returnValue);
   }
-  @Override String render(final Model m) {
+  @Override String visit(final Model m) {
     return String.format("%s\n%s", //
-        m.types().map(this::render).collect(joining("\n")), //
-        m.starts().map(this::render).collect(joining("\n")));
+        m.types().map(this::renderInstnatiation).collect(joining("\n")), //
+        m.starts().map(this::renderInstnatiation).collect(joining("\n")));
   }
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     final String qn = q.name();
@@ -60,27 +54,24 @@ public class ScalaGenerator extends CLikeGenerator {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  @Override public String render(final TypeName name) {
-    return render(name.q, name.α, name.legalJumps);
-  }
-  @Override public String render(final TypeName name, final List<SkeletonType> typeArguments) {
+  @Override public String renderInstnatiation(final QAlphaTypeName name, final List<Grounded> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
-  @Override public String render(final TypeSignature s) {
+  @Override public String render(final QAlphaTypeName s) {
     final String typeName = render(s.q, s.α, s.legalJumps);
     final String typeParameters = s.parameters().map(Named::name).collect(Collectors.joining(","));
-    return String.format("class %s", //
+    return String.linef("class %s", //
         s.parameters.isEmpty() ? //
             typeName //
             : String.format("%s[%s]", typeName, typeParameters));
   }
-  @Override public String render(final TypeSignature s, final List<Method> methods) {
+  @Override public String renderInstnatiation(final QAlphaTypeName s, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
         render(s), //
         printClassParameters(s.parameters), //
-        methods.stream().map(this::render).collect(joining("\n")));
+        methods.stream().map(this::renderInstnatiation).collect(joining("\n")));
   }
   @Override public String renderTypeBottom() {
     return "private class BOT{}";
@@ -88,7 +79,7 @@ public class ScalaGenerator extends CLikeGenerator {
   @Override public String renderTypeTop() {
     return String.format("class TOP{\ndef %s():Unit={}\n}", endName());
   }
-  @Override public String renderMethod(final MethodSignature s, final SkeletonType returnType) {
+  @Override public String renderMethod(final MethodSignature s, final Grounded returnType) {
     return String.format("def %s():%s=%s", //
         Constants.$$.equals(s.name) ? "__" : s.name.name(), //
         render(returnType), //

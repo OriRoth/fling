@@ -1,62 +1,67 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
-import il.ac.technion.cs.fling.adapters.APIGenerator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 /** Models methods in the fluent API model
  * 
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
-public interface Method {
-  class Start implements Method {
-    public final MethodSignature signature;
-    public final SkeletonType type;
-    public Start(final MethodSignature declaration, final SkeletonType type) {
-      this.signature = declaration;
-      this.type = type;
+public class Method {
+  @Override public int hashCode() {
+    return Objects.hash(name, parameters, type);
+  }
+  @Override public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Method other = (Method) obj;
+    return Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters)
+        && Objects.equals(type, other.type);
+  }
+  public static class NamedMethod {
+    private final Token name;
+    NamedMethod(final Token name) {
+      this.name = name;
     }
-    public MethodSignature declaration() {
-      return signature;
-    }
-    @Override public String render(final APIGenerator g) {
-      return g.renderMethod(signature, type);
+    public Method returning(final Type.Grounded returnType) {
+      return new Method(name, returnType);
     }
   }
-  class Termination implements Method {
-    @Override public String render(final APIGenerator g) {
-      return g.renderTerminationMethod();
-    }
+  public static NamedMethod named(final Token name) {
+    return new NamedMethod(name);
   }
-  class Intermediate implements Method {
-    public final MethodSignature declaration;
-    public final SkeletonType type;
-    public Intermediate(final Token σ, final SkeletonType type) {
-      declaration = new MethodSignature(σ);
-      this.type = type;
-    }
-    public MethodSignature declaration() {
-      return declaration;
-    }
-    @Override public String render(final APIGenerator g) {
-      return g.render(declaration, type);
-    }
+  /** Inducing token. */
+  public final Token name;
+  /** Inferred token parameters. Pending computation. */
+  private List<MethodParameter> parameters;
+  /** Return type of this method */
+  public final Type.Grounded type;
+  /** @param name
+   * @param type */
+  private Method(final Token name, final Type.Grounded type) {
+    this.name = name;
+    this.type = type;
   }
-  class Chained implements Method {
-    public final MethodSignature signature;
-    public Chained(final MethodSignature signature) {
-      this.signature = signature;
-    }
-    public MethodSignature signature() {
-      return signature;
-    }
-    @Override public String render(final APIGenerator g) {
-      return signature + "";
-    }
+  /** Set token's inferred parameters.
+   *
+   * @param parameters parameters */
+  public void populateParameters(@SuppressWarnings("hiding") final List<MethodParameter> parameters) {
+    this.parameters = parameters;
   }
-  default boolean isTerminationMethod() {
-    return this instanceof Termination;
+  /** @return inferred parameters
+   * @throws IllegalStateException whether the parameters have not been set */
+  public Stream<MethodParameter> parameters() {
+    if (parameters == null)
+      throw new IllegalStateException("parameter types and names not decided");
+    return parameters.stream();
   }
-  default Chained asChainedMethod() {
-    return (Chained) this;
+  public static Method termination() {
+    return named(Constants.$$).returning(Type.Grounded.TOP);
   }
-  String render(APIGenerator g);
 }

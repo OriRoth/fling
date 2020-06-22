@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.compiler.Invocation;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
@@ -24,7 +24,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
+import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Compiles BNF to run-time LL(1) compiler, generating AST from sequence of
  * terminals.
  *
@@ -37,11 +37,11 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   private static final String ListWild = String.format("%s<?>", List.class.getCanonicalName());
   private final FancyEBNF bnf;
   private final Class<Σ> Σ;
-  private final Namer namer;
+  private final Linker namer;
   private final String packageName;
   private final String apiName;
   private final String astClassesContainerName;
-  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
+  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Linker namer, final String packageName,
       final String apiName, final String astClassesContainerName) {
     this.bnf = bnf;
     this.Σ = Σ;
@@ -94,13 +94,13 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     body.append(Invocation.class.getCanonicalName()).append(" _a = w.get(0);");
     // Diverge by firsts sets:
     children.stream() //
-        .filter(child -> !optionalNullableChild.isPresent() || !child.equals(optionalNullableChild.get())) //
+        .filter(child -> optionalNullableChild.isEmpty() || !child.equals(optionalNullableChild.get())) //
         .map(child -> String.format("if(%s)return parse_%s(w);", //
             printTerminalInclusionCondition(bnf.firsts(child)), //
             child.name())) //
         .forEach(body::append);
     // Default to nullable child or unreachable null value:
-    body.append(String.format("return %s;", !optionalNullableChild.isPresent() ? //
+    body.append(String.format("return %s;", optionalNullableChild.isEmpty() ? //
         "null" : //
         String.format("parse_%s(w)", optionalNullableChild.get().name())));
     return body.toString();
@@ -118,7 +118,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
-        final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
+        final String variableName = NaiveLinker.getNameFromBase(NaiveLinker.lowerCamelCase(child.name()), usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             getClassForVariable(child.asVariable()), //
             variableName, //
@@ -128,7 +128,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         body.append("_a=w.remove(0);");
         int index = 0;
         for (final Parameter parameter : child.asToken().parameters) {
-          final String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
+          final String variableName = NaiveLinker.getNameFromBase(parameter.baseParameterName(), usedNames);
           final String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
@@ -189,7 +189,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
-        final String variableName = NaiveNamer.getNameFromBase(NaiveNamer.lowerCamelCase(child.name()), usedNames);
+        final String variableName = NaiveLinker.getNameFromBase(NaiveLinker.lowerCamelCase(child.name()), usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             getClassForVariable(child.asVariable()), //
             variableName, //
@@ -199,7 +199,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         body.append("_a=w.remove(0);");
         int index = 0;
         for (final Parameter parameter : child.asToken().parameters) {
-          final String variableName = NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames);
+          final String variableName = NaiveLinker.getNameFromBase(parameter.baseParameterName(), usedNames);
           final String typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
@@ -210,7 +210,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         }
       } else if (child.isVariable()) {
         assert bnf.extensionProducts.contains(child);
-        final String variableName = NaiveNamer.getNameFromBase("_c", usedNames);
+        final String variableName = NaiveLinker.getNameFromBase("_c", usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             ListObject, //
             variableName, //
@@ -247,19 +247,19 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       return symbol.asToken().parameters() //
           .map(parameter -> FieldNodeFragment.of( //
               getTypeName(parameter), //
-              NaiveNamer.getNameFromBase(parameter.baseParameterName(), usedNames))) //
+              NaiveLinker.getNameFromBase(parameter.baseParameterName(), usedNames))) //
           .collect(toList());
     if (symbol.isVariable())
       return singletonList(FieldNodeFragment.of( //
           getClassForVariable(symbol.asVariable()), //
-          NaiveNamer.getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
+          NaiveLinker.getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)));
     if (symbol.isQuantifier())
       return symbol.asQuantifier().getFields(s -> getFieldsInClassContext(s, usedNames),
-          baseName -> NaiveNamer.getNameFromBase(baseName, usedNames));
+          baseName -> NaiveLinker.getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
   @SuppressWarnings("static-method") protected String getBaseParameterName(final Variable variable) {
-    return NaiveNamer.lowerCamelCase(variable.name());
+    return NaiveLinker.lowerCamelCase(variable.name());
   }
   private String printTerminalInclusionCondition(final Set<Token> firsts) {
     return String.format("%s.included(_a.σ,%s)", //

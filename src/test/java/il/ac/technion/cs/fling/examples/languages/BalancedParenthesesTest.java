@@ -33,7 +33,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
   }
   @Test void test4() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b + "", is("<Σ=[c, ↄ, $], Γ=[P, S], ε=P, R=[P->cPↄP, P->ε, S->P]>"));
+    assertThat(b + "", is("EBNF[Σ=[c, ↄ, $], Γ=[P, S], ε=P, R=[P->cPↄP, P->ε, S->P]]"));
   }
   @Test void test5() {
     final EBNF b = new BalancedParentheses().BNF();

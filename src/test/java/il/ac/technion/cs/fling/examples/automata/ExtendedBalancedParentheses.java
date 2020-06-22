@@ -11,12 +11,11 @@ import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParenthe
 import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses.Σ.ↄ;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
-import il.ac.technion.cs.fling.compilers.api.ReliableAPICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveNamer;
 public class ExtendedBalancedParentheses {
   enum Q implements Named {
     q0, q1, q2
@@ -39,8 +38,7 @@ public class ExtendedBalancedParentheses {
       .δ(q2, ε(), γ1, q2) //
       .δ(q2, ε(), γ0, q0, γ0) //
       .go());
-  public static final String m = new JavaGenerator(
-      new NaiveNamer("il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses"),
-      "il.ac.technion.cs.fling.examples.generated", "ExtendedBalancedParentheses", "$") //
-          .go(new ReliableAPICompiler(dpda).compileFluentAPI());
+  public static final String m = new JavaGenerator("il.ac.technion.cs.fling.examples.generated",
+      "ExtendedBalancedParentheses") //
+          .go(new ReliableAPICompiler(dpda).go());
 }

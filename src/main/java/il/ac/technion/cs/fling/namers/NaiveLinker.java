@@ -6,13 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import il.ac.technion.cs.fling.internal.compiler.Namer;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Chained;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Intermediate;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method.Start;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodSignature;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
@@ -23,15 +19,15 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-public class NaiveNamer implements Namer {
+public class NaiveLinker implements Linker {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
   private final Map<Component, Integer> notationsChildrenCounter = new HashMap<>();
   private final String packageName;
   private final String apiName;
-  public NaiveNamer(final String apiName) {
+  public NaiveLinker(final String apiName) {
     this(null, apiName);
   }
-  public NaiveNamer(final String packageName, final String apiName) {
+  public NaiveLinker(final String packageName, final String apiName) {
     this.packageName = packageName;
     this.apiName = apiName;
   }
@@ -61,25 +57,15 @@ public class NaiveNamer implements Namer {
         .map(ConcreteClassNode::getFields) //
         .forEach(this::setInferredFieldsInClass);
   }
-  @Override public void name(final Model m) {
+  @Override public void link(final Model m) {
     // Set intermediate methods parameter names:
     m.types() //
-        .filter(i -> !i.isBot() && !i.isTop()) //
-        .map(Type::methods) //
-        .flatMap(List::stream) //
-        .filter(mm -> mm instanceof Method.Intermediate) //
-        .map(mm -> (Method.Intermediate) mm) //
-        .map(Intermediate::declaration) //
+        .flatMap(Type::methods) //
         .forEach(this::setInferredParametersIntermediateInMethod);
     // Set start methods parameter names:
-    m.starts() //
-        .map(Start::declaration) //
-        .forEach(this::setInferredParametersIntermediateInMethod);
+    m.starts().forEach(this::setInferredParametersIntermediateInMethod);
     // Set concrete class methods parameter names:
-    m.methods() //
-        .map(Method::asChainedMethod) //
-        .map(Chained::signature) //
-        .forEach(this::setInferredParametersIntermediateInMethod);
+    m.methods().forEach(this::setInferredParametersIntermediateInMethod);
   }
   @Override public String getASTClassName(final Variable v) {
     return v.name();
@@ -94,14 +80,14 @@ public class NaiveNamer implements Namer {
   private List<FieldNodeFragment> getFields(final Component symbol, final Map<String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
-          .map(parameter -> {
+          .map(p -> {
             final String typeName;
-            if (parameter.isStringTypeParameter())
-              typeName = parameter.asStringTypeParameter().typeName();
-            else if (parameter.isVariableTypeParameter())
-              typeName = getASTClassName(parameter.asVariableTypeParameter().variable);
-            else if (parameter.isVarargsTypeParameter())
-              typeName = getASTClassName(parameter.asVarargsVariableTypeParameter().variable) + "[]";
+            if (p.isStringTypeParameter())
+              typeName = p.asStringTypeParameter().typeName();
+            else if (p.isVariableTypeParameter())
+              typeName = getASTClassName(p.asVariableTypeParameter().variable);
+            else if (p.isVarargsTypeParameter())
+              typeName = getASTClassName(p.asVarargsVariableTypeParameter().variable) + "[]";
             else
               throw new RuntimeException("problem while naming AST types");
             return FieldNodeFragment.of( //
@@ -124,30 +110,30 @@ public class NaiveNamer implements Namer {
           baseName -> getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-  protected void setInferredParametersIntermediateInMethod(final MethodSignature declaration) {
+  protected void setInferredParametersIntermediateInMethod(final Method m) {
     final Map<String, Integer> usedNames = new HashMap<>();
-    declaration.setInferredParameters(declaration.name.parameters() //
-        .map(parameter -> {
+    m.populateParameters(m.name.parameters() //
+        .map(p -> {
           final String typeName;
-          if (parameter.isStringTypeParameter())
-            typeName = parameter.asStringTypeParameter().parameterTypeName();
-          else if (parameter.isVariableTypeParameter())
+          if (p.isStringTypeParameter())
+            typeName = p.asStringTypeParameter().parameterTypeName();
+          else if (p.isVariableTypeParameter())
             typeName = String.format("%s.%s.%s.%s", //
                 packageName, //
                 apiName, //
-                headVariableClassName(parameter.asVariableTypeParameter().variable), //
+                headVariableClassName(p.asVariableTypeParameter().variable), //
                 headVariableConclusionTypeName());
-          else if (parameter.isVarargsTypeParameter())
+          else if (p.isVarargsTypeParameter())
             typeName = String.format("%s.%s.%s.%s...", //
                 packageName, //
                 apiName, //
-                headVariableClassName(parameter.asVarargsVariableTypeParameter().variable), //
+                headVariableClassName(p.asVarargsVariableTypeParameter().variable), //
                 headVariableConclusionTypeName());
           else
             throw new RuntimeException("problem while naming API types");
           return MethodParameter.of( //
               typeName, //
-              getNameFromBase(parameter.baseParameterName(), usedNames));
+              getNameFromBase(p.baseParameterName(), usedNames));
         }).collect(toList()));
   }
   public static String lowerCamelCase(final String string) {

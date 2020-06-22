@@ -37,12 +37,10 @@ public class TaggedBalancedParentheses {
   }
   private static String traverse(final P1 p, final int depth) {
     final StringBuilder $ = new StringBuilder();
-    for (int i = 0; i < depth; ++i)
-      $.append('\t');
+    $.append("\t".repeat(Math.max(0, depth)));
     $.append(p.c).append('\n');
     $.append(traverse(p.p, depth + 1));
-    for (int i = 0; i < depth; ++i)
-      $.append('\t');
+    $.append("\t".repeat(Math.max(0, depth)));
     if (p.ↄ instanceof AB1)
       $.append("@a").append('\n');
     else
