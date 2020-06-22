@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.PlainBNF;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.Rule;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.RuleBody;
@@ -15,33 +14,26 @@ import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.to;
 import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.toEpsilon;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
-
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-
 public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.Γ> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone
   }
-
   public enum Γ implements Variable {
     PlainBNF, Rule, RuleBody, RuleTail
   }
-
   @Override public String name() {
     return "BNFAPI";
   }
-
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
-
   @Override public Class<Γ> Γ() {
     return Γ.class;
   }
-
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
     // @formatter:off
     return bnf(). //

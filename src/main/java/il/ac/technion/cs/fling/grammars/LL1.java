@@ -1,8 +1,6 @@
 package il.ac.technion.cs.fling.grammars;
-
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.util.As.reversed;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -10,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.FancyEBNF;
@@ -24,7 +21,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
-
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
  *
@@ -33,7 +29,6 @@ public class LL1 extends Grammar {
   public LL1(final FancyEBNF bnf, final Linker namer) {
     super(bnf, namer);
   }
-
   /** Translate LL(1) BNF to DPDA. */
   @SuppressWarnings("boxing") @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
@@ -111,7 +106,6 @@ public class LL1 extends Grammar {
     // Moving from q0$ to qσ with σ + appropriate variable.
     for (final ERule r : bnf.R)
       if (bnf.isNullable(r.variable))
-
         for (final Body sf : r.bodiesList())
           for (final Token σ : bnf.firsts(sf))
             if (!Constants.$$.equals(σ))
@@ -173,11 +167,9 @@ public class LL1 extends Grammar {
     // Automaton gets stuck after reaching qT.
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
-
   @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-
   private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF e, final Map<Token, Named> typeNameMapping,
       final Body sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();

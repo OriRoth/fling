@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.AdditionalClause;
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Bodyless;
 import static il.ac.technion.cs.fling.examples.languages.Datalog.Γ.Fact;
@@ -24,7 +23,6 @@ import static il.ac.technion.cs.fling.examples.languages.Datalog.Σ.when;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.oneOrMore;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,16 +32,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-
 /** Fling input specifying the formal Datalog language.
  *
  * @author Yossi Gil */
@@ -52,7 +47,6 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
   public enum Σ implements Terminal {
     infer, fact, query, of, and, when, always, v, l
   }
-
   /** Set of non-terminals, i.e., abstract concepts of fluent API; these names
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
@@ -61,15 +55,12 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
     Program, Statement, Rule, Query, Fact, Bodyless, WithBody, //
     RuleHead, RuleBody, FirstClause, AdditionalClause, Term
   }
-
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
-
   @Override public Class<Γ> Γ() {
     return Γ.class;
   }
-
   /** Short name of {@link String}.class, used to specify the type of parameters
    * to fluent API methods in grammar specification. */
   private static final Class<String> S = String.class;
@@ -94,11 +85,9 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
       derive(AdditionalClause).to(and.with(S), of.many(Term)). //
       derive(Term).to(l.with(S)).or(v.with(S)). //
       build();
-
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
     return bnf;
   }
-
   /** Prints the Datalog API/AST types/AST run-time compiler to corresponding
    * files. */
   public static void main(final String[] args) throws IOException, FormatterException {

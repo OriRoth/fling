@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,12 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-
 import org.junit.Test;
-
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.automata.AeqB;
 import il.ac.technion.cs.fling.examples.automata.AnBn;
@@ -33,9 +29,7 @@ import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic;
 import il.ac.technion.cs.fling.examples.languages.SubFigure;
 import il.ac.technion.cs.fling.examples.languages.TableMaker;
 import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
-
 @SuppressWarnings("static-method") public class LoopOverLanguageDefinitions {
-
   private static final boolean FORMAT_OUTPUT = true;
   @SuppressWarnings("rawtypes") private static final FluentLanguageAPI[] BNFAPIs = { //
       new BalancedParentheses(), //
@@ -50,7 +44,6 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
       new SimpleArithmetic(), //
       new QuantifiersTestLanguage(), //
   };
-
   private static final Map<String, String> files = ((Supplier<Map<String, String>>) () -> {
     final Map<String, String> $ = new LinkedHashMap<>();
     $.put("ExtendedBalancedParentheses", ExtendedBalancedParentheses.m);
@@ -68,7 +61,6 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
     return $;
   }).get();
   private static final String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
-
   @Test public void compile() throws IOException {
     System.out.println("project path: " + PATH);
     final Path outputFolder = Paths.get(PATH);
@@ -83,7 +75,6 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
       System.out.println("file " + fileName + ".java written successfully.");
     }
   }
-
   private void compile(final String fileName, final String content) throws IOException {
     final Path filePath = Paths.get(PATH + fileName + ".java");
     if (Files.exists(filePath))
@@ -93,7 +84,6 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
         content //
     ), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
   }
-
   private String format(final String content) {
     try {
       return new Formatter().formatSource(content);
@@ -102,7 +92,6 @@ import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
       return content;
     }
   }
-
   public static void main(final String[] args) throws IOException {
     new LoopOverLanguageDefinitions().compile();
   }

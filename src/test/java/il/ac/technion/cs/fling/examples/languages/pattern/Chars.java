@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages.pattern;
-
 interface Pattern {
   /*
    * X? X, once or not at all X* X, zero or more times X+ X, one or more times
@@ -10,17 +9,14 @@ interface Pattern {
   static Pattern maybe(@SuppressWarnings("unused") final Pattern p) {
     return null;
   }
-
   class x implements Pattern {
     static {
       new x();
     }
   }
 }
-
 public interface Chars {
   boolean includes(char c);
-
   default int size() {
     int $ = 0;
     for (int c = Character.MIN_VALUE; c <= Character.MAX_VALUE; ++c)
@@ -28,39 +24,30 @@ public interface Chars {
         ++$;
     return $;
   }
-
   interface To {
     Chars to(char c);
   }
-
   static To from(final char from) {
     return to -> (Chars) c -> c >= from && c <= to;
   }
-
   default Chars not() {
     return c -> !includes(c);
   }
-
   default Chars or(final Chars other) {
     return c -> includes(c) || other.includes(c);
   }
-
   default Chars and(final Chars other) {
     return c -> includes(c) && other.includes(c);
   }
-
   default Chars xor(final Chars other) {
     return c -> includes(c) ^ other.includes(c);
   }
-
   default Chars except(final Chars other) {
     return c -> includes(c) && !other.includes(c);
   }
-
   default Chars or(final char singleton) {
     return c -> includes(c) || c == singleton;
   }
-
   /** No character */
   Chars EMPTY = c -> false;
   /** . Any character */
@@ -101,14 +88,12 @@ public interface Chars {
   Chars CNTRL = from('\u0000').to('\u001F').or('\u007F');
   /** \p{XDigit} A hexadecimal digit: [0-9a-fA-F] */
   Chars XDIGIT = DIGIT.or(from('a').to('f')).or(from('A').to('F'));
-
   static Chars of(final char... cs) {
     Chars $ = EMPTY;
     for (final char c : cs)
       $ = $.or(c);
     return $;
   }
-
   static Chars of(final String... ss) {
     Chars $ = EMPTY;
     for (final String s : ss)

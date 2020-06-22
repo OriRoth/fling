@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.E;
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.E_;
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ.F;
@@ -12,42 +11,34 @@ import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.mul
 import static il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ.plus;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static java.util.Collections.singleton;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Γ;
 import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-
 public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
   // Terminal symbols:
   public enum Σ implements Terminal {
     plus, mult, begin, end, i
   }
-
   // Non-terminal symbols:
   public enum Γ implements Variable {
     E, E_, T, T_, F
   }
-
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
-
   @Override public Class<Γ> Γ() {
     return Γ.class;
   }
-
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
     // @formatter:off
     return bnf(). // Start defining BNF
@@ -60,7 +51,6 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
         build(); // Yield BNF;
     // @formatter:on
   }
-
   public static void main(final String[] args) //
       throws IOException, FormatterException {
     // @formatter:off
@@ -74,7 +64,6 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
     writeToFile("SimpleArithmeticAST", jm.astClass);
     writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
   }
-
   private static void writeToFile(final String fileName, final String fileContent) //
       throws IOException, FormatterException {
     final String path = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";

@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 import org.eclipse.jdt.annotation.NonNull;
-
 import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.Arrays;

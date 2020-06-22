@@ -13,7 +13,8 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 public abstract class Quantifier implements Component {
   public abstract Stream<Symbol> symbols();
-  public abstract Variable expand(Linker namer, Consumer<Variable> variableDeclaration, Consumer<ERule> ruleDeclaration);
+  public abstract Variable expand(Linker namer, Consumer<Variable> variableDeclaration,
+      Consumer<ERule> ruleDeclaration);
   public abstract List<FieldNodeFragment> getFields(Function<Component, List<FieldNodeFragment>> fieldTypesSolver,
       Function<String, String> nameFromBaseSolver);
   public abstract boolean isNullable(Predicate<Component> nullabilitySolver);

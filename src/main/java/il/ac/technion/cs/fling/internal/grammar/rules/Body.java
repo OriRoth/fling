@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
-
 import java.util.List;
-
 /** A body of {@link ERule}
  *
  * @author Yossi Gil
@@ -10,7 +8,6 @@ public class Body extends Word<Component> {
   public Body(final Component... cs) {
     super(cs);
   }
-
   public Body(final List<Component> cs) {
     super(cs);
   }

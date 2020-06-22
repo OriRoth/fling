@@ -1,11 +1,8 @@
 package il.ac.technion.cs.fling;
-
 import static il.ac.technion.cs.fling.internal.grammar.rules.Constants.intermediateVariableName;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.antlr.runtime.tree.Tree;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.AltAST;
@@ -14,13 +11,11 @@ import org.antlr.v4.tool.ast.PlusBlockAST;
 import org.antlr.v4.tool.ast.RuleRefAST;
 import org.antlr.v4.tool.ast.StarBlockAST;
 import org.antlr.v4.tool.ast.TerminalAST;
-
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.util.Counter;
-
 /** Class to convert an ANTLR grammar into {@link EBNF}
  *
  * @author Yossi Gil
@@ -29,24 +24,20 @@ public class ANTLRImporter extends EBNF.Builder {
   private final Grammar grammar;
   private final EBNF ebnf;
   private final Counter nameCounter = new Counter();
-
   /** @return the ANTLR grammar */
   public Grammar getGrammar() {
     return grammar;
   }
-
   /** @return the ebnf */
   public EBNF getEbnf() {
     return ebnf;
   }
-
   public ANTLRImporter(final Grammar grammar) {
     this.grammar = grammar;
     if (grammar.ast.getChildCount() != 2)
       throw new RuntimeException("ANTLR grammar is not simplified");
     ebnf = go();
   }
-
   private EBNF go() {
     boolean initialized = false;
     final Tree rules = grammar.ast.getChild(1);
@@ -68,7 +59,6 @@ public class ANTLRImporter extends EBNF.Builder {
     }
     return build();
   }
-
   private Optional<Component> convertBody(final Object element) {
     if (element instanceof List)
       return convertList((List<?>) element);
@@ -94,7 +84,6 @@ public class ANTLRImporter extends EBNF.Builder {
     }
     throw new RuntimeException(String.format("Grammar element %s unsupported", element.getClass().getSimpleName()));
   }
-
   private Optional<Component> convertBlock(final BlockAST block) {
     if (block.getChildCount() <= 1)
       return convertBody(block.getChildren());
@@ -105,11 +94,9 @@ public class ANTLRImporter extends EBNF.Builder {
     items.forEach(symbol -> derive(top).to(symbol));
     return Optional.of(top);
   }
-
   private Variable newVariable() {
     return Variable.byName(intermediateVariableName + nameCounter.getAndInc());
   }
-
   private Optional<Component> convertList(final List<?> elements) {
     if (elements.isEmpty())
       return Optional.empty();
@@ -122,5 +109,4 @@ public class ANTLRImporter extends EBNF.Builder {
     derive(top).to(items.toArray(new Component[items.size()]));
     return Optional.of(top);
   }
-
 }

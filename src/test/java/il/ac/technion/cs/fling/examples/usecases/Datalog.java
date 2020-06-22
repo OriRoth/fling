@@ -1,18 +1,15 @@
 package il.ac.technion.cs.fling.examples.usecases;
-
 import static il.ac.technion.cs.fling.examples.generated.Datalog.fact;
 import static il.ac.technion.cs.fling.examples.generated.Datalog.Term.l;
 import static il.ac.technion.cs.fling.examples.generated.Datalog.Term.v;
 import static il.ac.technion.cs.fling.examples.usecases.Datalog.DatalogPrinter.print;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.AdditionalClause;
@@ -29,7 +26,6 @@ import il.ac.technion.cs.fling.examples.generated.DatalogAST.WithBody;
 import za.co.wstoop.jatalog.DatalogException;
 import za.co.wstoop.jatalog.Expr;
 import za.co.wstoop.jatalog.Jatalog;
-
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
@@ -51,7 +47,6 @@ public class Datalog {
         $();
     new DatalogRunner().visit(program);
   }
-
   /** Prints Datalog program.
    *
    * @author Ori Roth */
@@ -59,19 +54,15 @@ public class Datalog {
     @Override public void whileVisiting(final Fact fact) {
       print(fact);
     }
-
     @Override public void whileVisiting(final Query query) {
       print(query);
     }
-
     @Override public void whileVisiting(final Bodyless bodyless) {
       print(bodyless);
     }
-
     @Override public void whileVisiting(final RuleHead ruleHead) {
       System.out.print(format("%s(%s) :- ", ruleHead.infer, printTerms(ruleHead.of)));
     }
-
     @Override public void whileVisiting(final RuleBody ruleBody) {
       System.out.print(format("%s(%s)", ruleBody.firstClause.when, printTerms(ruleBody.firstClause.of)));
       ruleBody.additionalClause.stream() //
@@ -81,27 +72,21 @@ public class Datalog {
           .forEach(System.out::print);
       System.out.println(".");
     }
-
     private static String printTerms(final Term[] terms) {
       return Arrays.stream(terms).map(DatalogPrinter::printTerm).collect(joining(","));
     }
-
     private static String printTerm(final Term term) {
       return term instanceof Term1 ? ((Term1) term).l : ((Term2) term).v;
     }
-
     public static void print(final Fact fact) {
       System.out.println(format("%s(%s).", fact.fact, String.join(",", fact.of)));
     }
-
     public static void print(final Query query) {
       System.out.println(format("%s(%s)?", query.query, printTerms(query.of)));
     }
-
     public static void print(final Bodyless bodyless) {
       System.out.println(format("%s(%s).", bodyless.always, printTerms(bodyless.of)));
     }
-
     public static void print(final WithBody withBody) {
       System.out.println(format("%s(%s) :- %s(%s)%s%s.", //
           withBody.ruleHead.infer, //
@@ -114,34 +99,28 @@ public class Datalog {
               .collect(joining(", "))));
     }
   }
-
   /** Runs Datalog program using {@link Jatalog}.
    *
    * @author Ori Roth */
   public static class DatalogRunner extends DatalogAST.Visitor {
     final Jatalog j = new Jatalog();
-
     @Override public void whileVisiting(final Fact fact) throws DatalogException {
       j.fact(fact.fact, fact.of);
       print(fact);
     }
-
     @SuppressWarnings("unused") @Override public void whileVisiting(final Bodyless bodyless) throws DatalogException {
       // j.fact(Expr.expr(bodyless.always, toStrings(bodyless.of)));
       // print(bodyless);
     }
-
     @Override public void whileVisiting(final WithBody withBody) throws Exception {
       j.rule(Expr.expr(withBody.ruleHead.infer, toStrings(withBody.ruleHead.of)), //
           getExprRightHandSide(withBody));
       print(withBody);
     }
-
     @Override public void whileVisiting(final Query query) throws DatalogException {
       print(query);
       printResult(j.query(Expr.expr(query.query, toStrings(query.of))));
     }
-
     private static String[] toStrings(final Term[] terms) {
       return Arrays.stream(terms) //
           .map(term -> term instanceof Term1 ? //
@@ -149,7 +128,6 @@ public class Datalog {
               ((Term2) term).v) //
           .toArray(String[]::new);
     }
-
     private static Expr[] getExprRightHandSide(final WithBody withBody) {
       final List<Expr> $ = new ArrayList<>();
       $.add(Expr.expr(withBody.ruleBody.firstClause.when, toStrings(withBody.ruleBody.firstClause.of)));
@@ -157,7 +135,6 @@ public class Datalog {
         $.add(Expr.expr(a.and, toStrings(a.of)));
       return $.toArray(new Expr[$.size()]);
     }
-
     private static void printResult(final Collection<Map<String, String>> result) {
       System.out.println("[" + result.stream() //
           .map(m -> m.entrySet().stream() //

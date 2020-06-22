@@ -52,10 +52,8 @@ public class AeqB {
       .δ(q1, b, B, q1, B, B) //
       .go());
   public static final NaiveLinker namer = new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AeqB");
-  public static final String JavaFluentAPI = new JavaGenerator(
-      "il.ac.technion.cs.fling.examples.generated",
-      "AeqB") //
-          .go(new ReliableAPICompiler(dpda).go());
+  public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB") //
+      .go(new ReliableAPICompiler(dpda).go());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
   public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AeqB")) //

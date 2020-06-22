@@ -13,8 +13,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
-@SuppressWarnings("ALL")
-public abstract class APIGenerator extends Indenter {
+@SuppressWarnings("ALL") public abstract class APIGenerator extends Indenter {
   private String bottomName = "BOTTOM";
   private String endName = "$";
   public final Linker namer;
