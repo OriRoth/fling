@@ -1,14 +1,11 @@
 package il.ac.technion.cs.fling.examples.usecases;
-
 import static il.ac.technion.cs.fling.examples.generated.SubFigure.row;
-
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure1;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure2;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Orientation;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Orientation1;
-
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
@@ -52,7 +49,6 @@ public class SubFigure {
     }
     return $.toString().trim();
   }
-
   private static void fillTable(final Figure fig, final char[][] table, final int i, final int j, final int h,
       final int w) {
     if (fig instanceof Figure1)
@@ -60,7 +56,6 @@ public class SubFigure {
     else
       fillTable((Figure2) fig, table, i, j, h, w);
   }
-
   private static void fillTable(final Figure1 fig, final char[][] table, int i, int j, int h, int w) {
     i *= 5;
     h *= 5;
@@ -79,7 +74,6 @@ public class SubFigure {
     table[i + h / 2][j + w / 2 - 1] = n1;
     table[i + h / 2][j + w / 2] = n2;
   }
-
   private static void fillTable(final Figure2 composite, final char[][] table, final int i, final int j, final int h,
       final int w) {
     if (isRow(composite.orientation)) {
@@ -106,7 +100,6 @@ public class SubFigure {
       }
     }
   }
-
   public static int getHeight(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
@@ -119,7 +112,6 @@ public class SubFigure {
             .map(SubFigure::getHeight) //
             .reduce(Integer::sum).get();
   }
-
   public static int getWidth(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
@@ -132,7 +124,6 @@ public class SubFigure {
             .map(SubFigure::getWidth) //
             .reduce(Integer::sum).get();
   }
-
   public static boolean isRow(final Orientation orientation) {
     return orientation instanceof Orientation1;
   }

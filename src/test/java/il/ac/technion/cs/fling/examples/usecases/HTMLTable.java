@@ -1,14 +1,11 @@
 package il.ac.technion.cs.fling.examples.usecases;
-
 import static il.ac.technion.cs.fling.examples.generated.HTMLTable.html;
 import static java.util.stream.Collectors.joining;
-
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Cell1;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.HTML;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Header;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Row;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.Table;
-
 public class HTMLTable {
   // @formatter:off
   public static void main(final String[] args) {
@@ -69,7 +66,6 @@ public class HTMLTable {
         + "</html>\n", //
         page.html, toString(page.table, 0));
   }
-
   public static String toString(final Table table, final int depth) {
     return String.format("" //
         + "%s<table%s>\n" //
@@ -82,7 +78,6 @@ public class HTMLTable {
         table.row.stream().map(line -> toString(line, depth + 1)).collect(joining("\n")), //
         printTabs(depth));
   }
-
   public static String toString(final Header header, final int depth) {
     return String.format("" //
         + "%s<tr%s>\n" //
@@ -97,7 +92,6 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
-
   public static String toString(final Row r, final int depth) {
     return String.format("" //
         + "%s<tr%s>\n" //
@@ -113,11 +107,9 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
-
   private static String printOptions(final String[] options) {
     return options.length == 0 ? "" : " " + String.join(" ", options);
   }
-
   private static String printTabs(final int depth) {
     final StringBuilder $ = new StringBuilder();
     for (int i = 0; i < depth; ++i)

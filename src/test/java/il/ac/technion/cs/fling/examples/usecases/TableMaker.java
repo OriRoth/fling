@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.examples.usecases;
-
 import static il.ac.technion.cs.fling.examples.generated.TableMaker.row;
-
 public class TableMaker {
   public static void main(final String[] args) {
     // @formatter:off

@@ -1,9 +1,6 @@
 package il.ac.technion.cs.fling.examples.usecases;
-
 import static il.ac.technion.cs.fling.examples.generated.BalancedParentheses.c;
-
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
-
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run

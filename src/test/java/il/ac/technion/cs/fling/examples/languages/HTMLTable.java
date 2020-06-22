@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Cell;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.HTML;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ.Header;
@@ -16,31 +15,25 @@ import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.th;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.tr;
 import static il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ.¢;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.HTMLTable.Γ;
 import il.ac.technion.cs.fling.examples.languages.HTMLTable.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-
 public class HTMLTable implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     html, table, tr, th, td, end, ¢
   }
-
   public enum Γ implements Variable {
     HTML, Table, Header, Row, Tr, Th, Td, Cell
   }
-
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
-
   @Override public Class<Γ> Γ() {
     return Γ.class;
   }
-
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
     return bnf(). //
         start(HTML). //

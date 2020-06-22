@@ -1,8 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
-
 import il.ac.technion.cs.fling.ANTLRImporter;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
@@ -14,11 +12,9 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.namers.NaiveNamer;
-
 public class TableMaker {
   public static final String name = "TableMaker";
   public final String apiClass;
-
   public TableMaker() {
     final String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();
     final Tool tool = new Tool();

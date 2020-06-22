@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.examples.languages;
-
 import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Constructor;
 import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Declaration;
 import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Field;
@@ -9,7 +8,6 @@ import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Member;
 import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Method;
 import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Program;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,10 +17,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
@@ -31,7 +27,6 @@ import il.ac.technion.cs.fling.examples.languages.Java.Σ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-
 /** Fling input specifying the formal Datalog language.
  *
  * @author Yossi Gil */
@@ -40,7 +35,6 @@ public class Java implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {
     name, number, variable, method
   }
-
   /** Set of non-terminals, i.e., abstract concepts of fluent API; these names
    * will be translated into names of classes of abstract syntax tree that Fling
    * generates, i.e., this AST will have class {@link Program} which will have a
@@ -49,15 +43,12 @@ public class Java implements FluentLanguageAPI<Σ, Γ> {
     Program, Statement, Expression, InfixExpression, PrefixExpression, Declaration, Header, Member, Field, Constructor,
     Method, Initializer
   }
-
   @Override public Class<Σ> Σ() {
     return Σ.class;
   }
-
   @Override public Class<Γ> Γ() {
     return Γ.class;
   }
-
   /** Datalog's grammar in Backus-Naur form. */
   public static final il.ac.technion.cs.fling.EBNF bnf = bnf(). //
       start(Program). // This is the start symbol
@@ -65,11 +56,9 @@ public class Java implements FluentLanguageAPI<Σ, Γ> {
       derive(Declaration).to(Header, Quantifiers.oneOrMore(Member)). //
       specialize(Member).into(Field, Constructor, Method, Initializer).//
       build();
-
   @Override public il.ac.technion.cs.fling.EBNF BNF() {
     return bnf;
   }
-
   /** Prints the Datalog API/AST types/AST run-time compiler to corresponding
    * files. */
   public static void main(final String[] args) throws IOException, FormatterException {
