@@ -15,7 +15,7 @@ import il.ac.technion.cs.fling.internal.compiler.Invocation;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar.rules.Body;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
@@ -73,7 +73,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         Invocation.class.getCanonicalName(), //
         !bnf.isOriginalVariable(v) ? //
             printConcreteExtensionChildMethodBody(v) : //
-            Grammar.isSequenceRHS(bnf, v) ? //
+            LL1JavaASTParserCompiler.isSequenceRHS(bnf, v) ? //
                 printConcreteChildMethodBody(v) : //
                 printAbstractParentMethodBody(v));
   }
@@ -275,5 +275,9 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         packageName, //
         astClassesContainerName, //
         v.name());
+  }
+  public static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
+    final List<Body> rhs = bnf.bodiesList(v);
+    return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
 }

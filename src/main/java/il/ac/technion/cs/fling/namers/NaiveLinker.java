@@ -31,7 +31,7 @@ public class NaiveLinker implements Linker {
     this.packageName = packageName;
     this.apiName = apiName;
   }
-  @Override public Variable createASTChild(final Variable variable) {
+  @Override public Variable fresh(final Variable variable) {
     if (!astChildrenCounter.containsKey(variable))
       astChildrenCounter.put(variable, 1);
     final String name = variable.name() + astChildrenCounter.put(variable, astChildrenCounter.get(variable) + 1);

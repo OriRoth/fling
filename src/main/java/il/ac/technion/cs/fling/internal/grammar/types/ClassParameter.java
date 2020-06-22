@@ -3,7 +3,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 // TODO allow primitive types.
-public class ClassParameter implements StringTypeParameter {
+public class ClassParameter implements ClassTypeParameter {
   public final Class<?> parameterClass;
   public ClassParameter(final Class<?> parameterClass) {
     this.parameterClass = requireNonNull(parameterClass);

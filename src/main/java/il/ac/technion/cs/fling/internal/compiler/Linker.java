@@ -13,7 +13,7 @@ public interface Linker {
    * @param variable parent variable
    * @return child variable */
   // TODO add context to variable creation.
-  Variable createASTChild(Variable variable);
+  Variable fresh(Variable variable);
   /** Create new variable subject to given symbol in notation's context.
    *
    * @param inner parent symbol

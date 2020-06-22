@@ -8,7 +8,7 @@ public interface Parameter {
     return Collections.emptySet();
   }
   default boolean isStringTypeParameter() {
-    return this instanceof StringTypeParameter;
+    return this instanceof ClassTypeParameter;
   }
   default boolean isVariableTypeParameter() {
     return this instanceof VariableTypeParameter;
@@ -16,13 +16,16 @@ public interface Parameter {
   default boolean isVarargsTypeParameter() {
     return this instanceof VarargsVariableTypeParameter;
   }
-  default StringTypeParameter asStringTypeParameter() {
-    return (StringTypeParameter) this;
+  default ClassTypeParameter asStringTypeParameter() {
+    return (ClassTypeParameter) this;
   }
   default VariableTypeParameter asVariableTypeParameter() {
     return (VariableTypeParameter) this;
   }
   default VarargsVariableTypeParameter asVarargsVariableTypeParameter() {
     return (VarargsVariableTypeParameter) this;
+  }
+  static Parameter of(Class<?> c) {
+    return new ClassParameter(c);
   }
 }

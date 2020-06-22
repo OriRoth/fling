@@ -3,7 +3,6 @@ import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,7 +32,7 @@ public abstract class Grammar {
     this.ebnf = ebnf;
     this.namer = namer;
     bnf = getBNF(ebnf);
-    normalizedEBNF = normalize(ebnf, namer);
+    normalizedEBNF = BNFUtils.normalize(ebnf, namer);
     normalizedBNF = getBNF(normalizedEBNF);
     subBNFs = new LinkedHashMap<>();
     for (final Variable head : bnf.headVariables)
@@ -90,38 +89,6 @@ public abstract class Grammar {
         }
     }
     return new FancyEBNF(new EBNF(Σ, V, v, rs), null, null, null, true);
-  }
-  private static FancyEBNF normalize(final FancyEBNF bnf, final Linker namer) {
-    final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
-    final Set<ERule> R = new LinkedHashSet<>();
-    for (final Variable v : bnf.Γ) {
-      final List<Body> rhs = bnf.bodiesList(v);
-      assert rhs.size() > 0 : v + " in: " + bnf;
-      if (rhs.size() == 1) {
-        // Sequence (or redundant alteration).
-        R.add(new ERule(v, rhs));
-        continue;
-      }
-      final List<Variable> alteration = new ArrayList<>();
-      for (final Body sf : rhs)
-        if (sf.size() == 1 && sf.stream().allMatch(bnf::isOriginalVariable))
-          // Ready alteration variable.
-          alteration.add(sf.get(0).asVariable());
-        else {
-          // Create a suitable child variable.
-          final Variable a = namer.createASTChild(v);
-          V.add(a);
-          R.add(new ERule(a, Collections.singletonList(sf)));
-          alteration.add(a);
-        }
-      R.add(new ERule(v, alteration.stream().map(Body::new).collect(toList())));
-    }
-    return new FancyEBNF(new EBNF(bnf.Σ, V, bnf.ε, R), bnf.headVariables, bnf.extensionHeadsMapping,
-        bnf.extensionProducts, false);
-  }
-  public static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
-    final List<Body> rhs = bnf.bodiesList(v);
-    return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
   @SuppressWarnings("unused") public static DPDA<Named, Token, Named> cast(
       final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {

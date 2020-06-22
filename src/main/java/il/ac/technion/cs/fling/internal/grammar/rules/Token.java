@@ -15,6 +15,9 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 public final class Token implements Symbol {
   public final Terminal terminal;
   public final Parameter[] parameters;
+  public static Token of(Terminal t) {
+    return new Token(t);
+  }
   /** POJO instantiation of this class */
   public Token(final Terminal terminal, final Parameter... parameters) {
     this.terminal = requireNonNull(terminal);
@@ -48,5 +51,8 @@ public final class Token implements Symbol {
   }
   @Override public boolean isToken() {
     return true;
+  }
+  public Token with(Class<?> c) {
+    return new Token(terminal, Parameter.of(c));
   }
 }

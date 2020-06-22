@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 import java.util.Objects;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
-public class VarargsClassParameter implements StringTypeParameter {
+public class VarargsClassParameter implements ClassTypeParameter {
   public final Class<?> parameterClass;
   public VarargsClassParameter(final Class<?> parameterClass) {
     this.parameterClass = Objects.requireNonNull(parameterClass);
