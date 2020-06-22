@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
@@ -18,23 +19,23 @@ public class ScalaGenerator extends CLikeGenerator {
   public ScalaGenerator(final Linker namer) {
     super(namer);
   }
-  private String printParametersList(final MethodSignature s) {
+  private String printParametersList(final Method s) {
     return render(s.parameters());
   }
-  public String printTypeInstantiation(final Grounded returnType) {
-    final String _returnType = render(returnType);
+  public String printTypeInstantiation(final Grounded type) {
+    final String _returnType = render(type);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
         && !_returnType.contains("_") ? //
             "__" + _returnType
             : String.format("new %s(%s)", _returnType, //
-                returnType.arguments() //
+                m.type.arguments() //
                     .map(this::printTypeInstantiation) //
                     .collect(joining(",")));
   }
-  @Override public String render(final MethodSignature s, final Grounded returnType) {
-    final String _returnType = render(returnType);
-    final String returnValue = printTypeInstantiation(returnType);
+  @Override public String render(final Method m) {
+    final String _returnType = render(m.type);
+    final String returnValue = printTypeInstantiation(m.type);
     return String.format("def %s(%s):%s=%s", //
         s.name.name(), //
         printParametersList(s), //
@@ -54,20 +55,20 @@ public class ScalaGenerator extends CLikeGenerator {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  @Override public String renderInstnatiation(final QAlphaTypeName name, final List<Grounded> typeArguments) {
+  @Override public String renderInstnatiation(final Type.Name name, final List<Grounded> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
         typeArguments.stream().map(this::render).collect(joining(",")));
   }
-  @Override public String render(final QAlphaTypeName s) {
-    final String typeName = render(s.q, s.α, s.legalJumps);
+  @Override public String render(final Type s) {
+    final String typeName = render(t.name);
     final String typeParameters = s.parameters().map(Named::name).collect(Collectors.joining(","));
     return String.linef("class %s", //
         s.parameters.isEmpty() ? //
             typeName //
             : String.format("%s[%s]", typeName, typeParameters));
   }
-  @Override public String renderInstnatiation(final QAlphaTypeName s, final List<Method> methods) {
+  @Override public String renderInstnatiation(final Type.Name s, final List<Method> methods) {
     return String.format("%s(%s){\n%s\n}", //
         render(s), //
         printClassParameters(s.parameters), //
@@ -79,11 +80,11 @@ public class ScalaGenerator extends CLikeGenerator {
   @Override public String renderTypeTop() {
     return String.format("class TOP{\ndef %s():Unit={}\n}", endName());
   }
-  @Override public String renderMethod(final MethodSignature s, final Grounded returnType) {
+  @Override public String renderMethod(final Method m) {
     return String.format("def %s():%s=%s", //
-        Constants.$$.equals(s.name) ? "__" : s.name.name(), //
-        render(returnType), //
-        printTypeInstantiation(returnType));
+        Constants.$$.equals(m.type) ? "__" : m.name.name(), //
+        render(m.type), //
+        printTypeInstantiation(m.type));
   }
   @Override public String renderTerminationMethod() {
     return String.format("def %s():Unit={}", endName());
