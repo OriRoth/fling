@@ -17,10 +17,11 @@ public interface Variable extends Symbol {
       @Override public boolean equals(final Object o) {
         if (this == o)
           return true;
-        if (!(o instanceof Variable))
+        if (o == null)
           return false;
-        final Variable other = (Variable) o;
-        return name().equals(other.name());
+        if (o instanceof Variable v)
+          return name().equals(v.name());
+        return false;
       }
     };
   }

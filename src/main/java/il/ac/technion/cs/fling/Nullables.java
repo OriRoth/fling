@@ -18,7 +18,7 @@ public class Nullables extends BNF.Decorator {
   public final Set<Variable> nullables = new LinkedHashSet<>();
   public Nullables(BNF inner) {
     super(inner);
-    workset(() -> variables(), v -> forms(v).anyMatch(this::nullable));
+    worklist(() -> variables(), v -> forms(v).anyMatch(this::nullable) && nullables.add(v));
   }
   boolean nullable(SF ss) {
     return nullable(ss.symbols());
@@ -41,8 +41,11 @@ public class Nullables extends BNF.Decorator {
   boolean nullable(final Symbol... ss) {
     return nullable(Arrays.asList(ss));
   }
-  protected static <T> void workset(Supplier<Stream<T>> source, Predicate<T> u) {
-    while (!source.get().filter(u).collect(toList()).isEmpty())
+  protected static <T> void worklist(Supplier<Stream<T>> source, Predicate<T> u) {
+    while (exists(source.get().filter(u)))
       continue;
+  }
+  protected static <T> boolean exists(Stream<T> ss) {
+    return !ss.collect(toList()).isEmpty();
   }
 }

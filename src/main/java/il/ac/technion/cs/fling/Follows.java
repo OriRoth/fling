@@ -21,7 +21,7 @@ public class Follows extends Firsts {
     super(inner);
     variables().forEach(v -> follows.put(v, new LinkedHashSet<>()));
     follows.get(Constants.S).add(Constants.$$);
-    workset(() -> variables(), v -> {
+    worklist(() -> variables(), v -> {
       return forms(v).filter(sf -> {
         boolean $ = false;
         for (int i = 0; i < sf.size(); ++i) {

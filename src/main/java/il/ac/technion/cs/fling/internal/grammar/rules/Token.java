@@ -18,6 +18,9 @@ public final class Token implements Symbol {
   public static Token of(Terminal t) {
     return new Token(t);
   }
+  public static Token of(String s) {
+    return of(Terminal.byName(s));
+  }
   /** POJO instantiation of this class */
   public Token(final Terminal terminal, final Parameter... parameters) {
     this.terminal = requireNonNull(terminal);
