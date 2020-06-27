@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+/** Extended EBNF Rule, allowing quantifiers
+ * 
+ * @author Yossi Gil
+ *
+ * @since 2020-06-23 */
 public class ERule {
   public final Variable variable;
   private final List<Body> bodies = new ArrayList<>();
@@ -43,10 +48,7 @@ public class ERule {
     return variable.equals(other.variable) && bodies.equals(other.bodies);
   }
   @Override public int hashCode() {
-    int $ = 1;
-    $ = $ * 31 + variable.hashCode();
-    $ = $ * 31 + bodies.hashCode();
-    return $;
+    return variable.hashCode() + 31 * bodies.hashCode();
   }
   private Stream<Component> quantifiedSymbols() {
     return quantifiers().flatMap(Quantifier::symbols);
