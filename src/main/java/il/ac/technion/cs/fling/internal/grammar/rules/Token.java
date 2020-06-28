@@ -13,13 +13,14 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
  * @author Yossi Gil
  * @since 2020-06-07 */
 public final class Token implements Symbol {
+  public static Token $ = Token.of(Terminal.$);
   public final Terminal terminal;
   public final Parameter[] parameters;
   public static Token of(Terminal t) {
     return new Token(t);
   }
   public static Token of(String s) {
-    return of(Terminal.byName(s));
+    return of(Terminal.of(s));
   }
   /** POJO instantiation of this class */
   public Token(final Terminal terminal, final Parameter... parameters) {

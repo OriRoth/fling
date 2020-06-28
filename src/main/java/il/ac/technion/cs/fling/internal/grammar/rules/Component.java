@@ -8,7 +8,7 @@ public interface Component extends TempComponent {
     return this;
   }
   @Override default boolean isTerminal() {
-    return this instanceof Terminal || Constants.$.equals(this);
+    return this instanceof Terminal || Terminal.$.equals(this);
   }
   @Override default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);

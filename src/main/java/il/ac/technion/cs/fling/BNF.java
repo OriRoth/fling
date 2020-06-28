@@ -1,15 +1,7 @@
 package il.ac.technion.cs.fling;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
-import il.ac.technion.cs.fling.internal.grammar.rules.Symbol;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** A compact version of Backus-Naur Form grammar specification of a formal
  * language, represented as a map from the set of non-terminals, to
  * {@link Rule}.
@@ -66,14 +58,23 @@ public interface BNF {
     public Iterable<Symbol> isymbols() {
       return inner;
     }
+    public static SF empty() {
+      return new SF(Word.empty());
+    }
+    public List<Symbol> sublist(int i, int j) {
+      return inner.subList(i, j);
+    }
   }
-  record implementation(Variable start, Map<Variable, Set<SF>> rules) implements BNF {
-    public implementation(Variable start) {
+  record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {
+    public Inner(Variable start) {
       this(start, new LinkedHashMap<>());
+    }
+    public Inner {
+      rules.putIfAbsent(start, new LinkedHashSet<>());
     }
     /** @return all rules defining a variable */
     @Override public Stream<SF> forms(final Variable v) {
-      return rules.computeIfAbsent(v, x -> new LinkedHashSet<>()).stream();
+      return rules.get(v).stream();
     }
     public static Builder from(Variable start) {
       return new Builder(start);
@@ -90,10 +91,10 @@ public interface BNF {
     }
   }
   class Builder {
-    private final implementation inner;
+    private final Inner inner;
     private Builder(Variable start) {
       Objects.requireNonNull(start);
-      this.inner = new implementation(start);
+      this.inner = new Inner(start);
     }
     public Derive derive(final Variable v) {
       return new Derive(add(v));
@@ -108,10 +109,20 @@ public interface BNF {
     public BNF build() {
       return inner;
     }
+    public Builder epsilon(Variable v) {
+      inner.rules.get(add(v)).add(SF.empty());
+      return this;
+    }
     public class Derive {
       private final Variable variable;
       public Derive(final Variable variable) {
         this.variable = variable;
+      }
+      public Builder ε_or(final Symbol... cs) {
+        return to(cs).epsilon(variable);
+      }
+      public Builder toNothingOr(final TempSymbol... cs) {
+        return to(cs).epsilon(variable);
       }
       public Builder to(final Symbol... cs) {
         for (final Symbol s : cs)
@@ -119,6 +130,13 @@ public interface BNF {
             add(v);
         inner.rules.get(variable).add(SF.of(cs));
         return Builder.this;
+      }
+      public Builder to(final TempSymbol... cs) {
+        Symbol[] $ = new Symbol[cs.length];
+        int i = 0;
+        for (final TempSymbol t : cs)
+          $[i++] = t.normalize();
+        return to($);
       }
       public Builder toEpsilon() {
         inner.rules.get(variable).add(SF.of());

@@ -80,7 +80,7 @@ public class ANTLRImporter extends EBNF.Builder {
       String name = ((TerminalAST) element).getText();
       name = name.substring(1, name.length() - 1);
       // Assume simple terminal.
-      return Optional.of(Terminal.byName(name).normalize());
+      return Optional.of(Terminal.of(name).normalize());
     }
     throw new RuntimeException(String.format("Grammar element %s unsupported", element.getClass().getSimpleName()));
   }

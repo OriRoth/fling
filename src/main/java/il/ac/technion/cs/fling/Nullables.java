@@ -41,8 +41,8 @@ public class Nullables extends BNF.Decorator {
   boolean nullable(final Symbol... ss) {
     return nullable(Arrays.asList(ss));
   }
-  protected static <T> void worklist(Supplier<Stream<T>> source, Predicate<T> u) {
-    while (exists(source.get().filter(u)))
+  protected static <T> void worklist(Supplier<Stream<T>> s, Predicate<T> u) {
+    while (exists(s.get().filter(u)))
       continue;
   }
   protected static <T> boolean exists(Stream<T> ss) {

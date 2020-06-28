@@ -8,6 +8,14 @@ import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
  * @see Token
  * @author Ori Roth */
 public interface Terminal extends TempSymbol {
+  Terminal $ = new Terminal() {
+    @Override public String name() {
+      return "$";
+    }
+    @Override public String toString() {
+      return "$";
+    }
+  };
   @Override default Token normalize() {
     return new Token(this);
   }
@@ -39,7 +47,7 @@ public interface Terminal extends TempSymbol {
   default Token many(final Variable variable) {
     return new Token(this, new VarargsVariableTypeParameter(variable));
   }
-  static Terminal byName(final String name) {
+  static Terminal of(final String name) {
     return new Terminal() {
       @Override public String name() {
         return name;

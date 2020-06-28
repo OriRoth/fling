@@ -5,7 +5,7 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
  * @since 2020-06-07 */
 public interface TempComponent extends Named {
   default boolean isTerminal() {
-    return this instanceof Terminal || Constants.$.equals(this);
+    return this instanceof Terminal || Terminal.$.equals(this);
   }
   default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);
