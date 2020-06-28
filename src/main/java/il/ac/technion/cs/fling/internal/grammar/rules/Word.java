@@ -41,7 +41,7 @@ public class Word<T> implements List<T> {
   @SuppressWarnings("unused") @Override public void add(final int index, final T element) {
     throw new UnsupportedOperationException();
   }
-  @Override public boolean addAll(@NonNull final Collection<? extends T> c) {
+  @Override public boolean addAll(final Collection<? extends T> c) {
     throw new UnsupportedOperationException(c + "");
   }
   @SuppressWarnings("unused") @Override public boolean addAll(final int index, final Collection<? extends T> c) {
@@ -83,10 +83,10 @@ public class Word<T> implements List<T> {
   @SuppressWarnings("unused") @Override public T remove(final int index) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean removeAll(final @NonNull Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean removeAll(final Collection<?> c) {
     throw new UnsupportedOperationException();
   }
-  @SuppressWarnings("unused") @Override public boolean retainAll(final @NonNull Collection<?> c) {
+  @SuppressWarnings("unused") @Override public boolean retainAll(final Collection<?> c) {
     throw new UnsupportedOperationException();
   }
   @SuppressWarnings("unused") @Override public T set(final int index, final T element) {
