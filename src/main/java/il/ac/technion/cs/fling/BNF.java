@@ -173,9 +173,6 @@ public interface BNF {
     public static SF empty() {
       return new SF(Word.empty());
     }
-    public List<Symbol> sublist(int i, int j) {
-      return inner.subList(i, j);
-    }
     public SF replace(int i, SF f) {
       List<Symbol> $ = new ArrayList<>(prefix(i));
       $.addAll(f.inner);
