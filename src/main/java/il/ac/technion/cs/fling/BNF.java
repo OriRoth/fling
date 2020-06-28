@@ -34,6 +34,12 @@ public interface BNF {
       inner.rules.get(add(v)).add(SF.empty());
       return this;
     }
+    public Builder epsilon(Variable v, Variable... vs) {
+      epsilon(v);
+      for (Variable vv : vs)
+        epsilon(vv);
+      return this;
+    }
     public Specialize specialize(final Variable v) {
       return new Specialize(add(v));
     }
@@ -44,16 +50,47 @@ public interface BNF {
     public class Derive {
       private final Variable variable;
       public Derive(final Variable variable) {
-        this.variable = variable;
+        this.variable = add(variable);
       }
-      public Builder to(final Symbol... cs) {
+      public class Alternative {
+        public Alternative or(final Symbol... cs) {
+          for (final Symbol s : cs)
+            if (s instanceof Variable v)
+              add(v);
+          inner.rules.get(variable).add(SF.of(cs));
+          return new Alternative();
+        }
+        public Alternative or(final TempSymbol... cs) {
+          Symbol[] $ = new Symbol[cs.length];
+          int i = 0;
+          for (final TempSymbol t : cs)
+            $[i++] = t.normalize();
+          return or($);
+        }
+        public Derive derive(Variable v) {
+          return new Derive(v);
+        }
+        public Specialize specialize(Variable v) {
+          return new Specialize(v);
+        }
+        public Builder epsilon(Variable v, Variable... vs) {
+          return Builder.this.epsilon(v, vs);
+        }
+        public BNF build() {
+          return Builder.this.build();
+        }
+      }
+      public Alternative to(final Symbol... cs) {
         for (final Symbol s : cs)
           if (s instanceof Variable v)
             add(v);
+        assert inner != null;
+        assert inner.rules != null;
+        assert variable != null;
         inner.rules.get(variable).add(SF.of(cs));
-        return Builder.this;
+        return new Alternative();
       }
-      public Builder to(final TempSymbol... cs) {
+      public Alternative to(final TempSymbol... cs) {
         Symbol[] $ = new Symbol[cs.length];
         int i = 0;
         for (final TempSymbol t : cs)
@@ -61,7 +98,7 @@ public interface BNF {
         return to($);
       }
       public Builder toEpsilon() {
-        inner.rules.get(variable).add(SF.of());
+        epsilon(variable);
         return Builder.this;
       }
       public Builder toNothingOr(final TempSymbol... cs) {
@@ -112,6 +149,12 @@ public interface BNF {
     public int size() {
       return inner.size();
     }
+    public boolean isGrounded() {
+      return symbols().allMatch(Token.class::isInstance);
+    }
+    public Word<Token> tokens() {
+      return Word.of(symbols().filter(Token.class::isInstance).map(Token.class::cast));
+    }
     static SF of(Symbol... ss) {
       return new SF(Word.of(ss));
     }
@@ -132,6 +175,15 @@ public interface BNF {
     }
     public List<Symbol> sublist(int i, int j) {
       return inner.subList(i, j);
+    }
+    public SF replace(int i, SF f) {
+      List<Symbol> $ = new ArrayList<>(prefix(i));
+      $.addAll(f.inner);
+      $.addAll(suffix(i + 1));
+      return new SF(new Word<>($));
+    }
+    private List<Symbol> prefix(int i) {
+      return inner.subList(0, i);
     }
   }
   record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {

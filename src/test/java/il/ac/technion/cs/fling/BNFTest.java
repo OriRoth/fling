@@ -1,7 +1,9 @@
 package il.ac.technion.cs.fling;
 import static il.ac.technion.cs.fling.BNFTest.Γ.*;
 import static il.ac.technion.cs.fling.BNFTest.Σ.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import static java.util.stream.Collectors.toList;
 import il.ac.technion.cs.fling.BNF.Builder;
 import il.ac.technion.cs.fling.BNF.SF;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -24,9 +26,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
    * </pre>
    */
   @Test public void example2geeks() {
-    Follows grammar = new Follows(BNF.of(v("S")).//
-        derive(S).to(A). //
-        derive(S).to(a). //
+    Follows grammar = new Follows(BNF.of(S).//
+        derive(S).to(A).or(a). //
         derive(A).to(a). //
         build());
     try (azzert azzert = new azzert()) {
@@ -34,28 +35,18 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(grammar.firsts(A)).containsExactly(Token.of(a));
       azzert.that(grammar.follows(S)).containsExactly(Token.$);
       azzert.that(grammar.follows(A)).containsExactly(Token.$);
+      azzert.that(grammar.recursive()).isFalse();
     }
   }
-  /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-   * 
-   * <pre>
-   * 
-  S → aBDh
-  B → cC
-  C → bC / ∈
-  D → EF
-  E → g / ∈
-  F → f / ∈
-   * </pre>
-   */
-  BNF problem1 = BNF.of(S). //
-      derive(S).to(a, B, D, h).//
-      derive(B).to(c, C).//
-      derive(C).toNothingOr(b, C).//
-      derive(D).to(E, F).//
-      derive(E).toNothingOr(g).//
-      derive(F).toNothingOr(f).//
-      build();
+  @Test public void example2geeksA() {
+    Follows grammar = new Follows(BNF.of(S).//
+        derive(S).to(A). //
+        derive(S).to(a). //
+        derive(A).to(a). //
+        build());
+    assertThat(grammar.follows(S)).containsExactly(Token.$);
+    assertThat(grammar.recursive()).isFalse();
+  }
   @Test public void arithmeticalExpression1Structure() {
     try (azzert azzert = new azzert()) {
       azzert.that(arithemeticalExpression).isNotNull();
@@ -79,6 +70,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(n.nullable(v("E"))).isFalse();
       azzert.that(n.nullable(v("T"))).isFalse();
       azzert.that(n.nullable(v("F"))).isFalse();
+      azzert.that(n.recursive()).isTrue();
     }
   }
   @Test public void arithmeticalExpression3Firsts() {
@@ -104,6 +96,26 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void problem1() {
+    /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
+     * 
+     * <pre>
+     * 
+    S → aBDh
+    B → cC
+    C → bC / ∈
+    D → EF
+    E → g / ∈
+    F → f / ∈
+     * </pre>
+     */
+    BNF problem1 = BNF.of(S). //
+        derive(S).to(a, B, D, h).//
+        derive(B).to(c, C).//
+        derive(C).toNothingOr(b, C).//
+        derive(D).to(E, F).//
+        derive(E).toNothingOr(g).//
+        derive(F).toNothingOr(f).//
+        build();
     Follows grammar = new Follows(problem1);
     try (azzert azzert = new azzert()) {
       /**
@@ -167,6 +179,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
         build();
     Follows grammar = new Follows(problem2);
     try (azzert azzert = new azzert()) {
+      azzert.that(grammar.uses(S)).containsExactly(A, B, A1);
+      azzert.that(grammar.uses(A)).containsExactly(B, A1);
+      azzert.that(grammar.uses(B)).isEmpty();
+      azzert.that(grammar.uses(A1)).containsExactly(A1);
+      azzert.that(grammar.uses(C)).isEmpty();
       /**
        * <pre>
       First(S) = First(A) = { a }
@@ -204,11 +221,145 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(grammar.follows(C)).isEmpty();
     }
   }
+  @Test public void problem3() {
+    /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
+     * 
+     * <pre>
+    S → (L) / a
+    L → SL’
+    L’ → ,SL’ / ∈
+     * </pre>
+     */
+    Follows grammar = new Follows(BNF.of(S).//
+        derive(S).to(t("("), L, t(")")). //
+        derive(S).to(a). //
+        derive(L).to(S, L1). //
+        derive(L1).toNothingOr(t(","), S, L1). //
+        build());
+    try (azzert azzert = new azzert()) {
+      /**
+       * <pre>
+      First(S) = { ( , a }
+      First(L) = First(S) = { ( , a }
+      First(L’) = { , , ∈ }
+       * </pre>
+       */
+      azzert.that(grammar.variables()).containsExactly(S, L, L1);
+      azzert.that(grammar.nullable(S)).isFalse();
+      azzert.that(grammar.nullable(L)).isFalse();
+      azzert.that(grammar.nullable(L1)).isTrue();
+      azzert.that(grammar.firsts(S)).containsExactly(t("("), t(a));
+      azzert.that(grammar.firsts(L)).containsExactly(t("("), t(a));
+      azzert.that(grammar.firsts(L1)).containsExactly(t(","));
+      /**
+       * <pre>
+      Follow(S) = { $ } ∪ { First(L’) – ∈ } ∪ Follow(L) ∪ Follow(L’) = { $ , , , ) }
+      Follow(L) = { ) }
+      Follow(L’) = Follow(L) = { ) }
+       * </pre>
+       */
+      azzert.that(grammar.follows(S)).containsExactly(Token.$, t(","), t(")"));
+      azzert.that(grammar.follows(L)).containsExactly(t(")"));
+      azzert.that(grammar.follows(L1)).containsExactly(t(")"));
+    }
+  }
+  @Test public void problem4() {
+    /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
+     * 
+     * <pre>
+    S → AaAb / BbBa
+    A → ∈
+    B → ∈
+     * </pre>
+     */
+    Follows grammar = new Follows(BNF.of(S).//
+        derive(S).to(A, a, A, b).or(B, b, B, a). //
+        epsilon(A, B). //
+        build());
+    try (azzert azzert = new azzert()) {
+      /**
+       * <pre>
+      First(S) = { First(A) – ∈ } ∪ First(a) ∪ { First(B) – ∈ } ∪ First(b) = { a , b }
+      First(A) = { ∈ }
+      First(B) = { ∈ }
+       * </pre>
+       */
+      azzert.that(grammar.variables()).containsExactly(S, A, B);
+      azzert.that(grammar.tokens()).containsExactly(t(a), t(b));
+      azzert.that(grammar.nullable(S)).isFalse();
+      azzert.that(grammar.nullable(A)).isTrue();
+      azzert.that(grammar.nullable(B)).isTrue();
+      azzert.that(grammar.firsts(S)).containsExactly(t(a), t(b));
+      /**
+       * <pre>
+      Follow(S) = { $ }
+      Follow(A) = First(a) ∪ First(b) = { a , b }
+      Follow(B) = First(b) ∪ First(a) = { a , b }
+       * </pre>
+       */
+      azzert.that(grammar.follows(S)).containsExactly(Token.$);
+      azzert.that(grammar.follows(A)).containsExactly(t(a), t(b));
+      azzert.that(grammar.follows(B)).containsExactly(t(b), t(a));
+    }
+  }
+  @Test public void problem6() {
+    /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
+     * 
+     * <pre>
+    S → ACB / CbB / Ba
+    A → da / BC
+    B → g / ∈
+    C → h / ∈
+     * </pre>
+     */
+    Follows grammar = new Follows(BNF.of(S).//
+        derive(S).to(A, C, B).or(C, b, B).or(B, a). //
+        derive(A).to(d, a).or(B, C). //
+        derive(B).to(g). //
+        derive(C).to(h). //
+        epsilon(B, C). //
+        build());
+    System.out.println(grammar.expand(S).collect(toList()));
+    try (azzert azzert = new azzert()) {
+      azzert.that(grammar.recursive()).isFalse();
+      azzert.that(grammar.variables()).containsExactly(S, A, C, B);
+      azzert.that(grammar.tokens()).containsExactly(t(b), t(a), t(d), t(h), t(g));
+      /**
+       * <pre>
+      First(S) = { First(A) – ∈ }  ∪ { First(C) – ∈ } ∪ First(B) ∪ First(b) ∪ { First(B) – ∈ } ∪ First(a) = { d , g , h , ∈ , b , a }
+      First(A) = First(d) ∪ { First(B) – ∈ } ∪ First(C) = { d , g , h , ∈ }
+      First(B) = { g , ∈ }
+      First(C) = { h , ∈ }
+       * </pre>
+       */
+      azzert.that(grammar.nullable(S)).isTrue();
+      azzert.that(grammar.nullable(A)).isTrue();
+      azzert.that(grammar.nullable(B)).isTrue();
+      azzert.that(grammar.nullable(C)).isTrue();
+      azzert.that(grammar.firsts(S)).containsExactly(t(b), t(a), t(d), t(h), t(g));
+      azzert.that(grammar.firsts(A)).containsExactly(t(d), t(g), t(h));
+      azzert.that(grammar.firsts(B)).containsExactly(t(g));
+      azzert.that(grammar.firsts(C)).containsExactly(t(h));
+      /**
+       * <pre>
+      Follow(S) = { $ }
+      Follow(A) = { First(C) – ∈ } ∪ { First(B) – ∈ } ∪ Follow(S) = { h , g , $ }
+      Follow(B) = Follow(S) ∪ First(a) ∪ { First(C) – ∈ } ∪ Follow(A) = { $ , a , h , g }
+      Follow(C) = { First(B) – ∈ } ∪ Follow(S) ∪ First(b) ∪ Follow(A) = { g , $ , b , h }
+       * </pre>
+       */
+      azzert.that(grammar.follows(S)).containsExactly(Token.$);
+      azzert.that(grammar.follows(A)).containsExactly(t(h), t(g), Token.$);
+      azzert.that(grammar.follows(B)).containsExactly(Token.$, t(a), t(h), t(g));
+      azzert.that(grammar.follows(C)).containsExactly(t(g), Token.$, t(b), t(h));
+    }
+  }
   @Test public void start0() {
     BNF bnf = BNF.of(S).derive(A).to(a, b, c).build();
     try (azzert azzert = new azzert()) {
       azzert.that(bnf.start()).isEqualTo(S);
       azzert.that(bnf.variables()).contains(S);
+      azzert.that(new Nullables(bnf).recursive()).isFalse();
     }
   }
   @Test public void start1() {
@@ -222,6 +373,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(grammar.variables()).contains(X);
       azzert.that(grammar.variables()).containsExactly(X);
       azzert.that(grammar.start()).isEqualTo(X);
+      azzert.that(new Nullables(grammar).recursive()).isFalse();
     }
   }
   @Test public void start2() {
@@ -231,6 +383,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(grammar.tokens()).isEmpty();
       azzert.that(grammar.variables()).containsExactly(X, Y, Z);
       azzert.that(grammar.start()).isEqualTo(X);
+      azzert.that(new Nullables(grammar).recursive()).isFalse();
     }
   }
   @Test public void variables1() {
@@ -238,6 +391,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     try (azzert azzert = new azzert()) {
       azzert.that(bnf.start()).isEqualTo(S);
       azzert.that(bnf.variables()).contains(S);
+      azzert.that(new Nullables(bnf).recursive()).isFalse();
     }
   }
   @Test public void variables2() {
@@ -248,10 +402,14 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       azzert.that(bnf.forms(bnf.start())).isEmpty();
       azzert.that(bnf.forms(bnf.start())).isNotNull();
       azzert.that(bnf.variables()).contains(S);
+      azzert.that(new Nullables(bnf).recursive()).isFalse();
     }
   }
   static Token t(String s) {
     return Token.of(s);
+  }
+  static Token t(Terminal t) {
+    return Token.of(t);
   }
   /*
    * | e T --> FT' T' --> *FT' | e F --> id | (E)
@@ -260,7 +418,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     return Variable.byName(s);
   }
   public enum Γ implements Variable {
-    A, A1, B, C, D, E, F, S, X, Y, Z
+    A, A1, B, C, D, E, F, S, L, L1, X, Y, Z
   }
   public enum Σ implements Terminal {
     a, b, c, d, e, f, g, h
