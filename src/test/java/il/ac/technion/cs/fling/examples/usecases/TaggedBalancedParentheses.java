@@ -1,14 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
-import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.__;
-import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.c;
-import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.AB.a;
-import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.AB.b;
+import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.*;
+import static il.ac.technion.cs.fling.examples.generated.TaggedBalancedParentheses.AB.*;
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
-import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.AB1;
-import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.AB2;
-import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.P;
-import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.P1;
-import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.P2;
+import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.*;
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run

@@ -1,24 +1,9 @@
 package il.ac.technion.cs.fling;
-import static java.util.Collections.singleton;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
+import java.util.*;
 import static java.util.stream.Collectors.toSet;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static java.util.Collections.*;
 import il.ac.technion.cs.fling.internal.grammar.BNFUtils;
-import il.ac.technion.cs.fling.internal.grammar.rules.Body;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** An extended Backus-Naur form specification of formal Language, collection of
  * derivation rules of the form <code>v ::= w X | Y z.</code>, augmented with

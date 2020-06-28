@@ -1,16 +1,10 @@
 package il.ac.technion.cs.fling.examples.automata;
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Q.q0;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Q.q1;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.A;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.B;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.E;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.a;
-import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.b;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Q.*;
+import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Γ.*;
+import static il.ac.technion.cs.fling.examples.automata.AeqBTest.Σ.*;
+import org.eclipse.jdt.core.dom.*;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
@@ -18,9 +12,7 @@ import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *

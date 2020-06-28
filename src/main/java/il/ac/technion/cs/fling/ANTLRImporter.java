@@ -1,20 +1,10 @@
 package il.ac.technion.cs.fling;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Constants.intermediateVariableName;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import org.antlr.runtime.tree.Tree;
 import org.antlr.v4.tool.Grammar;
-import org.antlr.v4.tool.ast.AltAST;
-import org.antlr.v4.tool.ast.BlockAST;
-import org.antlr.v4.tool.ast.PlusBlockAST;
-import org.antlr.v4.tool.ast.RuleRefAST;
-import org.antlr.v4.tool.ast.StarBlockAST;
-import org.antlr.v4.tool.ast.TerminalAST;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import org.antlr.v4.tool.ast.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.util.Counter;
 /** Class to convert an ANTLR grammar into {@link EBNF}
  *

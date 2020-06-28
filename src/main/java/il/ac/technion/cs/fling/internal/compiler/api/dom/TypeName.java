@@ -1,7 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Type name node declaration.

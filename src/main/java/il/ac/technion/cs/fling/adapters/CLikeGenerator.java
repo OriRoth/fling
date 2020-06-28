@@ -1,12 +1,10 @@
 package il.ac.technion.cs.fling.adapters;
-import static java.util.stream.Collectors.joining;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded.Leaf;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded.Leaf.InnerNode;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name.q.α.β;

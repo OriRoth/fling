@@ -1,11 +1,7 @@
 package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.SubFigure.row;
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
-import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure;
-import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure1;
-import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Figure2;
-import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Orientation;
-import il.ac.technion.cs.fling.examples.generated.SubFigureAST.Orientation1;
+import il.ac.technion.cs.fling.examples.generated.SubFigureAST.*;
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run

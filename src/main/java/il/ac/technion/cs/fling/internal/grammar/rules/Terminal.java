@@ -1,8 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
-import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
-import il.ac.technion.cs.fling.internal.grammar.types.VarargsClassParameter;
-import il.ac.technion.cs.fling.internal.grammar.types.VarargsVariableTypeParameter;
-import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
+import il.ac.technion.cs.fling.internal.grammar.types.*;
 /** Language terminal symbol, never occurs in grammar;
  *
  * @see Token

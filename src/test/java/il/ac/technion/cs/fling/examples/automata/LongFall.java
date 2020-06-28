@@ -1,20 +1,15 @@
 package il.ac.technion.cs.fling.examples.automata;
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.q0;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.q1;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.g0;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.g1;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.a;
-import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.b;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Q.*;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Γ.*;
+import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class LongFall {
   enum Q implements Named {

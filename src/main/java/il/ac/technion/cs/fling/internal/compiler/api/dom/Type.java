@@ -1,8 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.adapters.APIGenerator;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;

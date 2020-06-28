@@ -1,13 +1,7 @@
 package il.ac.technion.cs.fling;
+import java.util.*;
 import static java.util.Collections.singleton;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import il.ac.technion.cs.fling.internal.grammar.rules.Symbol;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public class Firsts extends Nullables {
   /** Maps variables and notations to their firsts set */
   public final Map<Symbol, Set<Token>> firsts = new LinkedHashMap<>();

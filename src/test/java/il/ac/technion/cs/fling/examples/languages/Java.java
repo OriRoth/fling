@@ -1,31 +1,18 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Constructor;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Declaration;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Field;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Header;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Initializer;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Member;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Method;
-import static il.ac.technion.cs.fling.examples.languages.Java.Γ.Program;
+import static il.ac.technion.cs.fling.examples.languages.Java.Γ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.nio.file.*;
+import java.util.*;
 import java.util.Map.Entry;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
+import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.examples.languages.Java.Γ;
 import il.ac.technion.cs.fling.examples.languages.Java.Σ;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** Fling input specifying the formal Datalog language.
  *
  * @author Yossi Gil */

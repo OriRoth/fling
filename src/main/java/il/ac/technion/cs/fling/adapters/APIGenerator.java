@@ -3,10 +3,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 /** Abstract base of all code generators.
  * 

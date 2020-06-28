@@ -1,10 +1,8 @@
 package il.ac.technion.cs.fling.adapters;
-import static java.util.stream.Collectors.joining;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 /** C# API adapter.

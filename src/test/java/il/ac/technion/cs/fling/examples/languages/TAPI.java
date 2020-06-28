@@ -1,31 +1,10 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.MySymbol;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.Rule;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.RuleBody;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.RuleItem;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.RuleTail;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.TAPI;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.__;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.bnf;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.derive;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.into;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.noneOrMore;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.oneOrMore;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.optional;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.or;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.orNone;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.specialize;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.start;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.to;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.toEpsilon;
-import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.twoOrMore;
+import static il.ac.technion.cs.fling.examples.languages.TAPI.Γ.*;
+import static il.ac.technion.cs.fling.examples.languages.TAPI.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public class TAPI implements FluentLanguageAPI<TAPI.Σ, TAPI.Γ> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone, oneOrMore, twoOrMore, noneOrMore, optional, __

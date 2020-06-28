@@ -1,14 +1,9 @@
 package il.ac.technion.cs.fling.adapters;
-import static java.util.stream.Collectors.joining;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import static java.util.stream.Collectors.joining;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method

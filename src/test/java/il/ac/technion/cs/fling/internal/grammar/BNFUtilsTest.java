@@ -1,25 +1,15 @@
 package il.ac.technion.cs.fling.internal.grammar;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.X;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.Y;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.Z;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.a;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.b;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.c;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.d;
-import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.e;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.oneOrMore;
-import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.optional;
+import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.*;
+import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.*;
+import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 @SuppressWarnings("static-method") class BNFUtilsTest {
   public enum Σ implements Terminal {
     a, b, c, d, e

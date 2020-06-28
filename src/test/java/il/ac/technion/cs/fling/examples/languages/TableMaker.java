@@ -1,9 +1,7 @@
 package il.ac.technion.cs.fling.examples.languages;
 import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
-import il.ac.technion.cs.fling.ANTLRImporter;
-import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.FancyEBNF;
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.JavaANTLRAPIAdapter;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;

@@ -1,25 +1,12 @@
 package il.ac.technion.cs.fling.grammars;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.util.As.reversed;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.rules.Body;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
  *

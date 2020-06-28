@@ -1,8 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;

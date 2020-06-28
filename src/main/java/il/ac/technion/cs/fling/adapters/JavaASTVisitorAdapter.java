@@ -1,15 +1,8 @@
 package il.ac.technion.cs.fling.adapters;
+import java.util.*;
 import static java.util.stream.Collectors.joining;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.namers.NaiveLinker;

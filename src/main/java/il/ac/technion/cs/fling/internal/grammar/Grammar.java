@@ -1,17 +1,10 @@
 package il.ac.technion.cs.fling.internal.grammar;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
+import static java.util.stream.Collectors.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public abstract class Grammar {
   public final FancyEBNF ebnf;
   public final FancyEBNF bnf;

@@ -1,7 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages;
 import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Γ.P;
-import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.c;
-import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.ↄ;
+import static il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.BalancedParentheses.Γ;

@@ -1,34 +1,15 @@
 package il.ac.technion.cs.fling.examples;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.nio.file.*;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 import org.junit.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
-import il.ac.technion.cs.fling.examples.automata.AeqB;
-import il.ac.technion.cs.fling.examples.automata.AnBn;
-import il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParentheses;
-import il.ac.technion.cs.fling.examples.automata.LongFall;
-import il.ac.technion.cs.fling.examples.languages.ArithmeticExpression;
-import il.ac.technion.cs.fling.examples.languages.BNF;
-import il.ac.technion.cs.fling.examples.languages.BalancedParentheses;
-import il.ac.technion.cs.fling.examples.languages.Datalog;
-import il.ac.technion.cs.fling.examples.languages.HTMLTable;
-import il.ac.technion.cs.fling.examples.languages.QuantifiersTestLanguage;
-import il.ac.technion.cs.fling.examples.languages.RegularExpression;
-import il.ac.technion.cs.fling.examples.languages.SimpleArithmetic;
-import il.ac.technion.cs.fling.examples.languages.SubFigure;
-import il.ac.technion.cs.fling.examples.languages.TAPI;
-import il.ac.technion.cs.fling.examples.languages.TableMaker;
-import il.ac.technion.cs.fling.examples.languages.TaggedBalancedParentheses;
+import il.ac.technion.cs.fling.examples.automata.*;
+import il.ac.technion.cs.fling.examples.languages.*;
 @SuppressWarnings("static-method") public class LoopOverLanguageDefinitions {
   private static final boolean FORMAT_OUTPUT = true;
   @SuppressWarnings("rawtypes") private static final FluentLanguageAPI[] BNFAPIs = { //

@@ -1,17 +1,14 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.util.As.list;
-import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import static java.util.stream.Collectors.toList;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.util.As;
 /** {@link APICompiler} generating polynomial number of API types. Supported
  * method chains may terminated only when legal, yet illegal method calls do not

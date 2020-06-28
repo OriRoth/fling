@@ -1,11 +1,5 @@
 package il.ac.technion.cs.fling;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.ConcreteDerivation;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.ConcreteDerivationTail;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.Derivation;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.PlainBNF;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.Rule;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.RuleTail;
-import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.Specialization;
+import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Convert a {@link PlainBNF} into a {@link EBNF}
  *

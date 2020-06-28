@@ -1,8 +1,5 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.EBNF;

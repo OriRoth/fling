@@ -1,8 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 /** Extended EBNF Rule, allowing quantifiers

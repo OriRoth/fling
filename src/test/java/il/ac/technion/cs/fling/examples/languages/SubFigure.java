@@ -1,10 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Γ.Figure;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Γ.Orientation;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.column;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.load;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.row;
-import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.seal;
+import static il.ac.technion.cs.fling.examples.languages.SubFigure.Γ.*;
+import static il.ac.technion.cs.fling.examples.languages.SubFigure.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
@@ -17,11 +13,7 @@ import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.APICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
   public enum Σ implements Terminal {

@@ -1,18 +1,11 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
+import java.util.*;
 import static java.util.stream.Collectors.toList;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.util.As;
 /** {@link APICompiler} generating (possibly) exponential number of API types.
  * Supported method chains compiles only when prefix of legal word.

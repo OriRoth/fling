@@ -1,9 +1,7 @@
 package il.ac.technion.cs.fling.adapters;
 import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Type;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 /** C++ API adapter.
  *
  * @author Ori Roth */

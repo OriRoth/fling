@@ -2,11 +2,7 @@ package il.ac.technion.cs.fling.adapters;
 import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.PolymorphicLanguageASTAdapterBase;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 /** Java AST adapter. Abstract types translate to interfaces, while Concrete
  * types translate to classes implementing them.
  *

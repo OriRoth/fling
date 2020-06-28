@@ -1,23 +1,10 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.PlainBNF;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.Rule;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.RuleBody;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.RuleTail;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.bnf;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.derive;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.into;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.or;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.orNone;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.specialize;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.start;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.to;
-import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.toEpsilon;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Γ.*;
+import static il.ac.technion.cs.fling.examples.languages.BNF.Σ.*;
 import static il.ac.technion.cs.fling.grammars.api.BNFAPI.bnf;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.noneOrMore;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public class BNF implements FluentLanguageAPI<BNF.Σ, BNF.Γ> {
   public enum Σ implements Terminal {
     bnf, start, derive, specialize, to, into, toEpsilon, or, orNone

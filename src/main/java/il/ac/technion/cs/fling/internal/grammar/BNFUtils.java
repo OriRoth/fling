@@ -1,21 +1,10 @@
 package il.ac.technion.cs.fling.internal.grammar;
+import java.util.*;
 import static java.util.stream.Collectors.toList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.grammar.rules.Body;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
-import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class BNFUtils {
   static FancyEBNF reduce(FancyEBNF bnf, final Variable v) {

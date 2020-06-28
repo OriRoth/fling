@@ -1,11 +1,5 @@
 package il.ac.technion.cs.fling.internal.util;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public class As {
   @SafeVarargs public static <T> Set<T> set(final T... items) {

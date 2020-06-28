@@ -1,20 +1,10 @@
 package il.ac.technion.cs.fling.compilers.ast;
-import static java.util.Collections.emptyList;
+import java.util.*;
 import static java.util.stream.Collectors.toList;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import static java.util.Collections.emptyList;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.AbstractClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ConcreteClassNode;
-import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode;
-import il.ac.technion.cs.fling.internal.grammar.rules.Body;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** Abstract syntax tree compiler. Generates types corresponding to AST nodes.
  *
  * @author Ori Roth */

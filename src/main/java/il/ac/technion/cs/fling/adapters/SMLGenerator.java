@@ -1,17 +1,13 @@
 package il.ac.technion.cs.fling.adapters;
-import static java.util.stream.Collectors.joining;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Method;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Word;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** Prototypical SML API adapter.
  *
  * @author Ori Roth */

@@ -1,26 +1,15 @@
 package il.ac.technion.cs.fling.examples.automata;
 import static il.ac.technion.cs.fling.DPDA.dpda;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Q.q0;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Q.q1;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Γ.A;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Γ.B;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Γ.E;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.a;
-import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.b;
+import static il.ac.technion.cs.fling.examples.automata.AeqB.Q.*;
+import static il.ac.technion.cs.fling.examples.automata.AeqB.Γ.*;
+import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.*;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.adapters.CPPGenerator;
-import il.ac.technion.cs.fling.adapters.CSharpGenerator;
-import il.ac.technion.cs.fling.adapters.JavaGenerator;
-import il.ac.technion.cs.fling.adapters.SMLGenerator;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
+import il.ac.technion.cs.fling.adapters.*;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
-import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *

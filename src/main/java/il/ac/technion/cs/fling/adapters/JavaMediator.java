@@ -1,9 +1,6 @@
 package il.ac.technion.cs.fling.adapters;
+import java.util.*;
 import static java.util.stream.Collectors.joining;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.compilers.ast.ASTCompiler;
@@ -15,10 +12,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
-import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java adapters mediator. Connects fluent API, AST types and AST run-time
