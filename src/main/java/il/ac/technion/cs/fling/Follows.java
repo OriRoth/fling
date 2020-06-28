@@ -11,8 +11,7 @@ public class Follows extends Firsts {
   public final Map<Symbol, Set<Token>> follows = new LinkedHashMap<>();
   public Follows(BNF inner) {
     super(inner);
-    variables().forEach(v -> follows.put(v, new LinkedHashSet<>()));
-    tokens().forEach(v -> follows.put(v, new LinkedHashSet<>()));
+    symbols().forEach(v -> follows.put(v, new LinkedHashSet<>()));
     follows(start()).add(Token.$);
     worklist(() -> variables(), v -> exists(forms(v).filter(sf -> follows(v, sf))));
   }
