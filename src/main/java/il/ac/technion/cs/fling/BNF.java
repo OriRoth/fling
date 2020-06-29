@@ -1,6 +1,9 @@
 package il.ac.technion.cs.fling;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
+import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** A compact version of Backus-Naur Form grammar specification of a formal
  * language, represented as a map from the set of non-terminals, to
@@ -9,7 +12,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
  * @author Yossi Gil */
 public interface BNF {
   Stream<SF> forms(Variable v);
-  Iterable<SF> iforms(Variable v);
+  Set<SF> iforms(Variable v);
   /** @return The start variable of this BNF */
   Variable start();
   Stream<Symbol> symbols();
@@ -128,7 +131,7 @@ public interface BNF {
     @Override public Stream<SF> forms(Variable v) {
       return inner.forms(v);
     }
-    @Override public Iterable<SF> iforms(Variable v) {
+    @Override public Set<SF> iforms(Variable v) {
       return inner.iforms(v);
     }
     @Override public Variable start() {
@@ -142,6 +145,56 @@ public interface BNF {
     }
     @Override public Stream<Variable> variables() {
       return inner.variables();
+    }
+    protected boolean recursive() {
+      return uses(start()).contains(start());
+    }
+    BNF reduce(Variable v) {
+      Set<Variable> s = uses(v);
+      s.add(v);
+      Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
+      s.stream().forEach(u -> rules.put(u, iforms(v)));
+      return new BNF.Inner(start(), rules);
+    }
+    private Stream<SF> expand(SF sf) {
+      Stream<SF> $ = Stream.empty();
+      for (int i = 0; i < sf.size(); ++i)
+        if (sf.get(i) instanceof Variable v) {
+          final int j = i;
+          $ = Stream.concat($, forms(v).map(f -> sf.replace(j, f)));
+        }
+      return $;
+    }
+    protected Set<Variable> uses(Variable v) {
+      return closure(v, u -> variables(symbols(u)));
+    }
+    private Stream<Symbol> symbols(Variable v) {
+      return Stream.of(v).flatMap(this::forms).flatMap(SF::symbols);
+    }
+    protected Stream<Word<Token>> expand(Variable v) {
+      return closure(SF.of(v), (Function<SF, Stream<SF>>) sf -> expand(sf)).stream().filter(SF::isGrounded)
+          .map(SF::tokens);
+    }
+    static Stream<Variable> variables(Stream<Symbol> ss) {
+      return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
+    }
+    static <T> Set<T> closure(Set<T> ts, Function<T, Stream<T>> expand) {
+      Set<T> $ = new LinkedHashSet<>();
+      Set<T> current = ts;
+      do
+        current = current.stream().flatMap(expand::apply).collect(toSet());
+      while ($.addAll(current));
+      return $;
+    }
+    protected static <T> Set<T> closure(T t, Function<T, Stream<T>> expand) {
+      return closure(singleton(t), expand);
+    }
+    protected static <T> void worklist(Supplier<Stream<T>> s, Predicate<T> u) {
+      while (exists(s.get().filter(u)))
+        continue;
+    }
+    protected static <T> boolean exists(Stream<T> ss) {
+      return !ss.collect(toList()).isEmpty();
     }
   }
   record SF(Word<Symbol> inner) {
@@ -207,7 +260,7 @@ public interface BNF {
     @Override public Stream<Symbol> symbols() {
       return Stream.concat(variables(), rules.values().stream().flatMap(Set::stream).flatMap(SF::symbols)).distinct();
     }
-    @Override public Iterable<SF> iforms(Variable v) {
+    @Override public Set<SF> iforms(Variable v) {
       return rules.get(v);
     }
   }
