@@ -25,7 +25,7 @@ public class ScalaGenerator extends CLikeGenerator {
             : String.format("new %s(%s)", _returnType, //
                 m.type.arguments() //
                     .map(this::printTypeInstantiation) //
-                    .collect(joining(",")));
+                    .collect(commas()));
   }
   @Override public String render(final Method m) {
     final String _returnType = render(m.type);
@@ -52,11 +52,11 @@ public class ScalaGenerator extends CLikeGenerator {
   @Override public String renderInstnatiation(final Type.Name name, final List<Grounded> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
-        typeArguments.stream().map(this::render).collect(joining(",")));
+        typeArguments.stream().map(this::render).collect(commas()));
   }
   @Override public String render(final Type s) {
     final String typeName = render(t.name);
-    final String typeParameters = s.parameters().map(Named::name).collect(Collectors.joining(","));
+    final String typeParameters = s.parameters().map(Named::name).collect(commas());
     return String.linef("class %s", //
         s.parameters.isEmpty() ? //
             typeName //
@@ -86,6 +86,6 @@ public class ScalaGenerator extends CLikeGenerator {
   @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
     return typeVariables.stream().map(Named::name) //
         .map(var -> String.format("val __%s:%s", var, var)) //
-        .collect(joining(","));
+        .collect(commas());
   }
 }

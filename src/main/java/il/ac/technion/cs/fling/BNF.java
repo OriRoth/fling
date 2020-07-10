@@ -39,8 +39,7 @@ public interface BNF {
     }
     public Builder epsilon(Variable v, Variable... vs) {
       epsilon(v);
-      for (Variable vv : vs)
-        epsilon(vv);
+      Stream.of(vs).forEach(this::epsilon);
       return this;
     }
     public Specialize specialize(final Variable v) {
@@ -55,60 +54,42 @@ public interface BNF {
       public Derive(final Variable variable) {
         this.variable = add(variable);
       }
-      public class Alternative {
-        public Alternative or(final Symbol... cs) {
-          for (final Symbol s : cs)
-            if (s instanceof Variable v)
-              add(v);
-          inner.rules.get(variable).add(SF.of(cs));
-          return new Alternative();
-        }
-        public Alternative or(final TempSymbol... cs) {
-          Symbol[] $ = new Symbol[cs.length];
-          int i = 0;
-          for (final TempSymbol t : cs)
-            $[i++] = t.normalize();
-          return or($);
-        }
-        public Derive derive(Variable v) {
-          return new Derive(v);
-        }
-        public Specialize specialize(Variable v) {
-          return new Specialize(v);
-        }
-        public Builder epsilon(Variable v, Variable... vs) {
-          return Builder.this.epsilon(v, vs);
-        }
-        public BNF build() {
-          return Builder.this.build();
-        }
+      public Alternative to(final Symbol... ss) {
+        return new Alternative().or(ss);
       }
-      public Alternative to(final Symbol... cs) {
-        for (final Symbol s : cs)
-          if (s instanceof Variable v)
-            add(v);
-        assert inner != null;
-        assert inner.rules != null;
-        assert variable != null;
-        inner.rules.get(variable).add(SF.of(cs));
-        return new Alternative();
-      }
-      public Alternative to(final TempSymbol... cs) {
-        Symbol[] $ = new Symbol[cs.length];
-        int i = 0;
-        for (final TempSymbol t : cs)
-          $[i++] = t.normalize();
-        return to($);
+      public Alternative to(final TempSymbol... ss) {
+        return new Alternative().or(ss);
       }
       public Builder toEpsilon() {
-        epsilon(variable);
-        return Builder.this;
+        return epsilon(variable);
       }
       public Builder toNothingOr(final TempSymbol... cs) {
         return to(cs).epsilon(variable);
       }
       public Builder ε_or(final Symbol... cs) {
         return to(cs).epsilon(variable);
+      }
+      public class Alternative {
+        public BNF build() {
+          return Builder.this.build();
+        }
+        public Derive derive(Variable v) {
+          return new Derive(v);
+        }
+        public Builder epsilon(Variable v, Variable... vs) {
+          return Builder.this.epsilon(v, vs);
+        }
+        public Alternative or(final Symbol... ss) {
+          Decorator.variables(Stream.of(ss)).forEach(Builder.this::add);
+          inner.rules.get(variable).add(SF.of(ss));
+          return new Alternative();
+        }
+        public Alternative or(final TempSymbol... cs) {
+          return or(Stream.of(cs).map(TempSymbol::normalize).toArray(Symbol[]::new));
+        }
+        public Specialize specialize(Variable v) {
+          return new Specialize(v);
+        }
       }
     }
     public class Specialize {
@@ -117,8 +98,7 @@ public interface BNF {
         this.variable = variable;
       }
       public Builder into(final Variable... vs) {
-        for (final Variable v : vs)
-          inner.rules.get(variable).add(SF.of(add(v)));
+        Stream.of(vs).forEach(v -> inner.rules.get(variable).add(SF.of(add(v))));
         return Builder.this;
       }
     }
@@ -146,16 +126,6 @@ public interface BNF {
     @Override public Stream<Variable> variables() {
       return inner.variables();
     }
-    protected boolean recursive() {
-      return uses(start()).contains(start());
-    }
-    BNF reduce(Variable v) {
-      Set<Variable> s = uses(v);
-      s.add(v);
-      Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
-      s.stream().forEach(u -> rules.put(u, iforms(v)));
-      return new BNF.Inner(start(), rules);
-    }
     private Stream<SF> expand(SF sf) {
       Stream<SF> $ = Stream.empty();
       for (int i = 0; i < sf.size(); ++i)
@@ -165,18 +135,35 @@ public interface BNF {
         }
       return $;
     }
-    protected Set<Variable> uses(Variable v) {
-      return closure(v, u -> variables(symbols(u)));
-    }
     private Stream<Symbol> symbols(Variable v) {
-      return Stream.of(v).flatMap(this::forms).flatMap(SF::symbols);
+      return Stream.of(v).flatMap(this::forms).flatMap(SF::symbols).distinct();
     }
     protected Stream<Word<Token>> expand(Variable v) {
       return closure(SF.of(v), (Function<SF, Stream<SF>>) sf -> expand(sf)).stream().filter(SF::isGrounded)
           .map(SF::tokens);
     }
-    static Stream<Variable> variables(Stream<Symbol> ss) {
-      return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
+    protected boolean recursive() {
+      return uses(start()).contains(start());
+    }
+    protected Set<Variable> uses(Variable v) {
+      return closure(v, u -> variables(symbols(u)));
+    }
+    BNF reduce(Variable v) {
+      Set<Variable> s = uses(v);
+      s.add(v);
+      Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
+      s.stream().forEach(u -> rules.put(u, iforms(v)));
+      return new BNF.Inner(start(), rules);
+    }
+    protected static <T> Set<T> closure(T t, Function<T, Stream<T>> expand) {
+      return closure(singleton(t), expand);
+    }
+    protected static <T> boolean exists(Stream<T> ss) {
+      return !ss.collect(toList()).isEmpty();
+    }
+    protected static <T> void worklist(Supplier<Stream<T>> s, Predicate<T> u) {
+      while (exists(s.get().filter(u)))
+        continue;
     }
     static <T> Set<T> closure(Set<T> ts, Function<T, Stream<T>> expand) {
       Set<T> $ = new LinkedHashSet<>();
@@ -186,15 +173,8 @@ public interface BNF {
       while ($.addAll(current));
       return $;
     }
-    protected static <T> Set<T> closure(T t, Function<T, Stream<T>> expand) {
-      return closure(singleton(t), expand);
-    }
-    protected static <T> void worklist(Supplier<Stream<T>> s, Predicate<T> u) {
-      while (exists(s.get().filter(u)))
-        continue;
-    }
-    protected static <T> boolean exists(Stream<T> ss) {
-      return !ss.collect(toList()).isEmpty();
+    static Stream<Variable> variables(Stream<Symbol> ss) {
+      return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
     }
   }
   record SF(Word<Symbol> inner) {

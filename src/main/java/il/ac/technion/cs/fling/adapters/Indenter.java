@@ -1,5 +1,7 @@
 package il.ac.technion.cs.fling.adapters;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
+import static java.util.stream.Collectors.joining;
 /** A fluent APi class for generating indented text; text is accumulated in an
  * internal {@link StringBuilder} and can be retrieved at any time.
  * 
@@ -64,5 +66,8 @@ public class Indenter {
   }
   protected void ____() {
     line("\n");
+  }
+  protected Collector<CharSequence, ?, String> commas() {
+    return joining(", ");
   }
 }

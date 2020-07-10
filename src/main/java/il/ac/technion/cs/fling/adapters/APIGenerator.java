@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
-@SuppressWarnings("ALL") public abstract class APIGenerator extends Indenter {
+public abstract class APIGenerator extends Indenter {
   private String bottomName = "BOTTOM";
   private String endName = "$";
   public final Linker namer;
@@ -79,5 +79,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
   public abstract String toString(Type.Grounded.Leaf i);
   protected final String render(final Token t) {
     return t.name();
+  }
+  public String printConcreteImplementationClassBody() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

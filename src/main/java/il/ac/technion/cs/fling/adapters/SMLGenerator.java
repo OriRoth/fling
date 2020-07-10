@@ -42,13 +42,13 @@ public class SMLGenerator extends APIGenerator {
   @Override public String renderInstnatiation(final Name name, final List<Grounded> typeArguments) {
     return typeArguments.isEmpty() ? render(name)
         : String.format("(%s) %s", //
-            typeArguments.stream().map(this::render).collect(joining(",")), //
+            typeArguments.stream().map(this::render).collect(commas()), //
             render(name));
   }
   @Override public String render(final QAlphaTypeName s) {
     final String name = render(s.q, s.α, s.legalJumps);
     final String variables = s.parameters.isEmpty() ? ""
-        : String.format("(%s) ", s.parameters().map(Named::name).map(n -> "'" + n).collect(joining(", ")), name);
+        : String.format("(%s) ", s.parameters().map(Named::name).map(n -> "'" + n).collect(commas()), name);
     return String.format("%s %s%s = %s", getDatatypeKeyword(), variables, name, name);
   }
   @Override public String render(final QAlphaTypeName s, final List<Method> methods) {

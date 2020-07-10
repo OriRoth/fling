@@ -4,10 +4,8 @@ import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Γ.*;
 import static il.ac.technion.cs.fling.internal.grammar.BNFUtilsTest.Σ.*;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Quantifiers.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import il.ac.technion.cs.fling.EBNF;
-import il.ac.technion.cs.fling.FancyEBNF;
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 @SuppressWarnings("static-method") class BNFUtilsTest {
@@ -89,18 +87,17 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test void test() {
     EBNF x = new Q().BNF();
-    final SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(x).isNotNull();
-    softly.assertThat(x.Γ).contains(Γ.X);
-    softly.assertThat(x.Γ).contains(Γ.Y);
-    softly.assertThat(x.Σ).contains(Token.of(Σ.a).with(int.class));
-    softly.assertThat(x.Σ).contains(Token.of(Σ.b).with(int.class));
-    softly.assertThat(x.Σ).doesNotContain(Token.of(Σ.d).with(byte.class));
-    softly.assertThat(x.Σ).doesNotContain(Token.of(Σ.d));
-    softly.assertAll();
+    try (azzert azzert = new azzert()) {
+      azzert.that(x).isNotNull();
+      azzert.that(x.Γ).contains(Γ.X);
+      azzert.that(x.Γ).contains(Γ.Y);
+      azzert.that(x.Σ).contains(Token.of(Σ.a).with(int.class));
+      azzert.that(x.Σ).contains(Token.of(Σ.b).with(int.class));
+      azzert.that(x.Σ).doesNotContain(Token.of(Σ.d).with(byte.class));
+      azzert.that(x.Σ).doesNotContain(Token.of(Σ.d));
+    }
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
-    System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
     System.out.println(BNFUtils.normalize(BNFUtils.expandQuantifiers(FancyEBNF.from(x))));
   }

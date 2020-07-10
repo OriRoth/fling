@@ -31,7 +31,7 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
         abstractClass.parents.isEmpty() ? "" : //
             "extends " + abstractClass.parents.stream() //
                 .map(ClassNode::getClassName) //
-                .collect(joining(",")));
+                .collect(commas()));
   }
   @Override public String printASTClass(final ASTCompilationUnitNode compilationUnit) {
     namer.name(compilationUnit);
@@ -47,7 +47,7 @@ public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBa
     return String.format("public class %s %s%s{%s%s}", //
         concreteClass.getClassName(), //
         concreteClass.parents.isEmpty() ? "" : "implements ", //
-        concreteClass.parents.stream().map(ClassNode::getClassName).collect(joining(",")), //
+        concreteClass.parents.stream().map(ClassNode::getClassName).collect(commas()), //
         concreteClass.fields.stream() //
             .filter(this::nonEmptyField) //
             .map(field -> printField("public final %s %s;", "", field)) //

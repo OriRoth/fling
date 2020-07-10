@@ -4,8 +4,9 @@ import java.util.*;
 import static java.util.stream.Collectors.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
+import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-public abstract class Grammar {
+public class Grammar {
   public final FancyEBNF ebnf;
   public final FancyEBNF bnf;
   public final FancyEBNF normalizedBNF;
@@ -20,16 +21,13 @@ public abstract class Grammar {
     for (final Variable head : bnf.headVariables)
       subBNFs.put(head, BNFUtils.reduce(bnf, head));
   }
-  public abstract DPDA<Named, Token, Named> buildAutomaton(FancyEBNF bnf);
-  // TODO compute lazily.
   public DPDA<Named, Token, Named> toDPDA() {
-    return buildAutomaton(bnf);
+    return LL1.buildAutomaton(bnf);
   }
   public FancyEBNF getSubBNF(final Variable variable) {
     return subBNFs.get(variable);
   }
-  @SuppressWarnings("unused") public static DPDA<Named, Token, Named> cast(
-      final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
+  public static DPDA<Named, Token, Named> cast(final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
     return new DPDA<>(new LinkedHashSet<>(dpda.Q), //
         dpda.Σ().map(Token::new).collect(toSet()), //
         new LinkedHashSet<>(dpda.Γ), //

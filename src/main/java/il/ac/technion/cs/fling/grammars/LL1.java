@@ -5,18 +5,14 @@ import java.util.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
  * 't', only a single derivation may inferred.
  *
  * @author Ori Roth */
-public class LL1 extends Grammar {
-  public LL1(final FancyEBNF bnf) {
-    super(bnf);
-  }
+public class LL1 {
   /** Translate LL(1) BNF to DPDA. */
-  @SuppressWarnings("boxing") @Override public DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
+  public static DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     final Named q0;
@@ -153,10 +149,10 @@ public class LL1 extends Grammar {
     // Automaton gets stuck after reaching qT.
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
   }
-  @SuppressWarnings("static-method") private Named getAcceptingVariable(final Variable v) {
+  private static Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-  private Word<Named> getPossiblyAcceptingVariables(final FancyEBNF e, final Map<Token, Named> typeNameMapping,
+  private static Word<Named> getPossiblyAcceptingVariables(final FancyEBNF e, final Map<Token, Named> typeNameMapping,
       final Body sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;

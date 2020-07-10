@@ -14,7 +14,7 @@ import java.util.function.*;
 import java.util.stream.*;
 import org.assertj.core.api.*;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-class azzert extends AutoCloseableSoftAssertions {
+public class azzert extends AutoCloseableSoftAssertions {
   public void all() {
     super.assertAll();
   }

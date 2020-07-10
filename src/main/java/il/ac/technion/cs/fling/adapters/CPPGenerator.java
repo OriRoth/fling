@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.adapters;
-import java.util.stream.Collectors;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 /** C++ API adapter.
@@ -33,8 +32,7 @@ public class CPPGenerator extends CLikeGenerator {
   @Override String fullName(final Type t) {
     final String $ = String.format("struct %s", render(t.name));
     return t.parameters.isEmpty() ? $
-        : String.format("template <%s> %s",
-            t.parameters().map(q -> "typename " + q.name()).collect(Collectors.joining(", ")), //
+        : String.format("template <%s> %s", t.parameters().map(q -> "typename " + q.name()).collect(commas()), //
             $);
   }
   @Override void visit(final Method m) {

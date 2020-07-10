@@ -179,8 +179,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
         build();
     Follows grammar = new Follows(problem2);
     try (azzert azzert = new azzert()) {
-      azzert.that(grammar.uses(S)).containsExactly(A, B, A1);
-      azzert.that(grammar.uses(A)).containsExactly(B, A1);
+      azzert.that(grammar.uses(S)).containsExactly(A, A1, B);
+      azzert.that(grammar.uses(A)).containsExactly(A1, B);
       azzert.that(grammar.uses(B)).isEmpty();
       azzert.that(grammar.uses(A1)).containsExactly(A1);
       azzert.that(grammar.uses(C)).isEmpty();

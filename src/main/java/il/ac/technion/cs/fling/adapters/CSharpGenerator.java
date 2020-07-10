@@ -1,5 +1,4 @@
 package il.ac.technion.cs.fling.adapters;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
@@ -25,10 +24,10 @@ public class CSharpGenerator extends CLikeGenerator {
         : String.format("public class %s<%s>%s", //
             printTypeName, //
             t.parameters().map(this::typeVariableName) //
-                .collect(Collectors.joining(",")),
+                .collect(commas()),
             t.parameters().map(this::typeVariableName) //
                 .map(n -> "where " + n + ":new()") //
-                .collect(Collectors.joining("")) //
+                .collect(commas()) //
         );
   }
   @Override public String renderTypeBottom() {

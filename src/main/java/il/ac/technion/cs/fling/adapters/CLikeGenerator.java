@@ -2,7 +2,6 @@ package il.ac.technion.cs.fling.adapters;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Grounded.Leaf;
@@ -26,10 +25,10 @@ public abstract class CLikeGenerator extends APIGenerator {
     return String.format("/* %s */", text);
   }
   @Override final String render(final Stream<MethodParameter> ps) {
-    return ps.map(p -> p.type + " " + p.name).collect(joining(", "));
+    return ps.map(p -> p.type + " " + p.name).collect(commas());
   }
   @Override public String renderInstnatiation(final Type.Name name, final List<Type.Grounded> arguments) {
-    return String.format("%s <%s>", render(name), arguments.stream().map(this::render).collect(joining(", ")));
+    return String.format("%s <%s>", render(name), arguments.stream().map(this::render).collect(commas()));
   }
   @Override String fullName(final Type t) {
     // TODO Auto-generated method stub
@@ -45,19 +44,15 @@ public abstract class CLikeGenerator extends APIGenerator {
     return topName();
   }
   @Override public final String toString(final InnerNode i) {
-    return toString(i.outer()) + String.format("<%s>", i.arguments().map(this::render).collect(joining(", ")));
+    return toString(i.outer()) + String.format("<%s>", i.arguments().map(this::render).collect(commas()));
   }
   @Override public final String toString(final Leaf i) {
     return render(i.name);
   }
   final String fullMethodSignature(final Method m) {
-    return String.format("%s %s(%s)", //
-        render(m.type), //
-        render(m.name), //
-        render(m.parameters())//
-    );
+    return String.format("%s %s(%s)", render(m.type), render(m.name), render(m.parameters()));
   }
   final String methodInvocation(final Method m) {
-    return String.format("%s(%s)", render(m.name), m.parameters().map(p -> p.name).collect(joining(", ")));
+    return String.format("%s(%s)", render(m.name), m.parameters().map(p -> p.name).collect(commas()));
   }
 }
