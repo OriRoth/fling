@@ -20,14 +20,8 @@ public interface Component extends TempComponent {
   @Override default boolean isQuantifier() {
     return this instanceof Quantifier;
   }
-  @Override default Terminal asTerminal() {
-    return (Terminal) this;
-  }
   @Override default Variable asVariable() {
     return (Variable) this;
-  }
-  @Override default Quantifier asQuantifier() {
-    return (Quantifier) this;
   }
   @Override default boolean isParameterized() {
     return false;

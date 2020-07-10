@@ -86,14 +86,12 @@ public class BNFUtils {
       for (final Body b : r.bodiesList()) {
         final List<Component> cs = new ArrayList<>();
         for (final Component c : b) {
-          if (!c.isQuantifier()) {
+          if (c instanceof Quantifier q) {
+            final Variable head = q.expand(namer, extensionProducts::add, R::add);
+            extensionHeadsMapping.put(head, q);
+            cs.add(head);
+          } else
             cs.add(c);
-            continue;
-          }
-          final Quantifier q = c.asQuantifier();
-          final Variable head = q.expand(namer, extensionProducts::add, R::add);
-          extensionHeadsMapping.put(head, q);
-          cs.add(head);
         }
         rhs.add(new Body(cs));
       }
