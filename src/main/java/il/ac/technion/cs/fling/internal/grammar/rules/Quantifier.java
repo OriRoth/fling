@@ -3,11 +3,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
+import il.ac.technion.cs.fling.namers.VariableGenerator;
 public abstract class Quantifier implements Component {
   public abstract Stream<Symbol> symbols();
-  public abstract Variable expand(Linker namer, Consumer<Variable> variableDeclaration,
+  public abstract Variable expand(VariableGenerator g, Consumer<Variable> variableDeclaration,
       Consumer<ERule> ruleDeclaration);
   public abstract List<FieldNodeFragment> getFields(Function<Component, List<FieldNodeFragment>> fieldTypesSolver,
       Function<String, String> nameFromBaseSolver);

@@ -8,7 +8,8 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Component;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 public class NaiveLinker implements Linker {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
   private final Map<Component, Integer> notationsChildrenCounter = new HashMap<>();
@@ -20,21 +21,6 @@ public class NaiveLinker implements Linker {
   public NaiveLinker(final String packageName, final String apiName) {
     this.packageName = packageName;
     this.apiName = apiName;
-  }
-  @Override public Variable fresh(final Variable variable) {
-    if (!astChildrenCounter.containsKey(variable))
-      astChildrenCounter.put(variable, 1);
-    final String name = variable.name() + astChildrenCounter.put(variable, astChildrenCounter.get(variable) + 1);
-    return Variable.byName(name);
-  }
-  @Override public Variable createQuantificationChild(final List<? extends Component> symbols) {
-    final Component symbol = symbols.isEmpty() || !symbols.get(0).isToken() && !symbols.get(0).isVariable() ? //
-        Constants.$$ : symbols.get(0);
-    if (!notationsChildrenCounter.containsKey(symbol))
-      notationsChildrenCounter.put(symbol, 1);
-    final String name = "_" + symbol.name()
-        + notationsChildrenCounter.put(symbol, notationsChildrenCounter.get(symbol) + 1);
-    return Variable.byName(name);
   }
   @Override public void name(final ASTCompilationUnitNode compilationUnit) {
     // Set class names:

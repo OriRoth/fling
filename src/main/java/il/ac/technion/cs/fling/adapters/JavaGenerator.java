@@ -125,7 +125,7 @@ public class JavaGenerator extends CLikeGenerator {
   protected String printTerminationMethodReturnType() {
     return "void";
   }
-  public String printConcreteImplementationMethodBody(Token σ, List<MethodParameter> parameters) {
+  protected String printConcreteImplementationMethodBody(Token σ, List<MethodParameter> parameters) {
     // TODO Auto-generated method stub
     return null;
   }

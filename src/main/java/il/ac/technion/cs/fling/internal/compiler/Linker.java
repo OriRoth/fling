@@ -1,24 +1,11 @@
 package il.ac.technion.cs.fling.internal.compiler;
-import java.util.List;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
-import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Names elements in the generated code.
  *
  * @author Ori Roth */
 public interface Linker {
-  /** Create new variable subject to the given.
-   *
-   * @param variable parent variable
-   * @return child variable */
-  // TODO add context to variable creation.
-  Variable fresh(Variable variable);
-  /** Create new variable subject to given symbol in notation's context.
-   *
-   * @param inner parent symbol
-   * @return child variable */
-  Variable createQuantificationChild(List<? extends Component> inner);
   /** Inner API type name.
    *
    * @param variable inducing head variable

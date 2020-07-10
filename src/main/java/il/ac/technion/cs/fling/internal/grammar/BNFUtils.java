@@ -3,9 +3,8 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
+import il.ac.technion.cs.fling.namers.VariableGenerator;
 public class BNFUtils {
   static FancyEBNF reduce(FancyEBNF bnf, final Variable v) {
     final Set<Token> Σ = new LinkedHashSet<>();
@@ -47,7 +46,7 @@ public class BNFUtils {
     return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
   }
   static FancyEBNF normalize(final FancyEBNF bnf) {
-    Linker namer = new NaiveLinker(null);
+    VariableGenerator g = new VariableGenerator();
     final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
@@ -65,7 +64,7 @@ public class BNFUtils {
           alteration.add(sf.get(0).asVariable());
         else {
           // Create a suitable child variable.
-          final Variable a = namer.fresh(v);
+          final Variable a = g.fresh(v);
           V.add(a);
           R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
@@ -76,7 +75,7 @@ public class BNFUtils {
         bnf.extensionProducts, false);
   }
   static FancyEBNF expandQuantifiers(final FancyEBNF ebnf) {
-    Linker namer = new NaiveLinker(null);
+    VariableGenerator g = new VariableGenerator();
     final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     final Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
@@ -87,9 +86,9 @@ public class BNFUtils {
         final List<Component> cs = new ArrayList<>();
         for (final Component c : b) {
           if (c instanceof Quantifier q) {
-            final Variable head = q.expand(namer, extensionProducts::add, R::add);
-            extensionHeadsMapping.put(head, q);
-            cs.add(head);
+            final Variable v = q.expand(g, extensionProducts::add, R::add);
+            extensionHeadsMapping.put(v, q);
+            cs.add(v);
           } else
             cs.add(c);
         }

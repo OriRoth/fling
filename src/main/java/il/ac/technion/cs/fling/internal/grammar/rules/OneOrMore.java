@@ -2,31 +2,28 @@ package il.ac.technion.cs.fling.internal.grammar.rules;
 import static java.util.Arrays.asList;
 import java.util.*;
 import java.util.function.*;
-import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
 import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
+import il.ac.technion.cs.fling.namers.VariableGenerator;
 @JavaCompatibleQuantifier public class OneOrMore extends Quantifier.Sequence {
   public OneOrMore(final List<Symbol> symbols) {
     super(symbols);
   }
-  @Override public Variable expand(final Linker namer, final Consumer<Variable> variableDeclaration,
+  @Override public Variable expand(final VariableGenerator g, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
     final List<Component> expandedSymbols = new ArrayList<>();
     for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
-          s.asQuantifier().expand(namer, variableDeclaration, ruleDeclaration));
-    final Variable head = namer.createQuantificationChild(symbols);
-    final Variable tail = namer.createQuantificationChild(symbols);
+          s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration));
+    final Variable head = g.createQuantificationChild(symbols);
+    final Variable tail = g.createQuantificationChild(symbols);
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
     final List<Component> rhs = new ArrayList<>(expandedSymbols);
     rhs.add(tail);
-    ruleDeclaration.accept(new ERule(head, asList( //
-        new Body(rhs))));
-    ruleDeclaration.accept(new ERule(tail, asList(//
-        new Body(rhs), //
-        new Body())));
+    ruleDeclaration.accept(new ERule(head, asList(new Body(rhs))));
+    ruleDeclaration.accept(new ERule(tail, asList(new Body(rhs), new Body())));
     return head;
   }
   @Override protected String getVisitingStatement(final Symbol symbol,
