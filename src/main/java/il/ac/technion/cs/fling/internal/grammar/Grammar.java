@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import java.util.*;
+import java.util.LinkedHashSet;
 import static java.util.stream.Collectors.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.FancyEBNF;
@@ -11,21 +11,17 @@ public class Grammar {
   public final FancyEBNF bnf;
   public final FancyEBNF normalizedBNF;
   public final FancyEBNF normalizedEBNF;
-  private final Map<Variable, FancyEBNF> subBNFs;
   public Grammar(final FancyEBNF ebnf) {
     this.ebnf = ebnf;
     bnf = BNFUtils.expandQuantifiers(ebnf);
     normalizedEBNF = BNFUtils.normalize(ebnf);
     normalizedBNF = BNFUtils.expandQuantifiers(normalizedEBNF);
-    subBNFs = new LinkedHashMap<>();
-    for (final Variable head : bnf.headVariables)
-      subBNFs.put(head, BNFUtils.reduce(bnf, head));
   }
   public DPDA<Named, Token, Named> toDPDA() {
     return LL1.buildAutomaton(bnf);
   }
-  public FancyEBNF getSubBNF(final Variable variable) {
-    return subBNFs.get(variable);
+  public FancyEBNF getSubBNF(final Variable v) {
+    return BNFUtils.reduce(bnf, v);
   }
   public static DPDA<Named, Token, Named> cast(final DPDA<? extends Named, ? extends Terminal, ? extends Named> dpda) {
     return new DPDA<>(new LinkedHashSet<>(dpda.Q), //

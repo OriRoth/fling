@@ -74,7 +74,7 @@ public class JavaMediator {
     parserCompiler = new LL1JavaASTParserCompiler<>(grammar.normalizedBNF, Σ, namer, packageName, apiName + "Compiler",
         apiName + "AST");
     astClass = astAdapter.printASTClass(new ASTCompiler(grammar.normalizedEBNF).compileAST());
-    apiClass = apiAdapter.go(new ReliableAPICompiler(grammar.buildAutomaton(grammar.bnf.clean())).go());
+    apiClass = apiAdapter.go(new ReliableAPICompiler(LL1.buildAutomaton(grammar.bnf.clean())).go());
     astCompilerClass = parserCompiler.printParserClass();
   }
   private List<String> processParameters(final Token σ, final List<MethodParameter> parameters) {
