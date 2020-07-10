@@ -7,10 +7,10 @@ import static il.ac.technion.cs.fling.examples.automata.AeqB.Σ.*;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.*;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *
  * @author Ori Roth */
@@ -40,17 +40,17 @@ public class AeqB {
       .δ(q1, b, A, q1) //
       .δ(q1, b, B, q1, B, B) //
       .go());
-  public static final NaiveLinker namer = new NaiveLinker("il.ac.technion.cs.fling.examples.generated", "AeqB");
+  public static final Linker namer = new Linker("il.ac.technion.cs.fling.examples.generated", "AeqB");
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB") //
       .go(new ReliableAPICompiler(dpda).go());
   /** C++ fluent API supporting method chains of the form
    * <code>a()->b().a().b()...$();</code> */
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AeqB")) //
+  public static final String CppFluentAPI = new CPPGenerator(new Linker("AeqB")) //
       .go(new ReliableAPICompiler(dpda).go());
   /** SML fluent API */
-  public static final String SMLFluentAPI = new SMLGenerator(new NaiveLinker("AeqB"), "zzz") //
+  public static final String SMLFluentAPI = new SMLGenerator(new Linker("AeqB"), "zzz") //
       .go(new ReliableAPICompiler(dpda).go());
-  private final NaiveLinker namer2 = new NaiveLinker("AeqB");
+  private final Linker namer2 = new Linker("AeqB");
   @Test public void test1() {
     final Model m = new ReliableAPICompiler(dpda).go();
     new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);

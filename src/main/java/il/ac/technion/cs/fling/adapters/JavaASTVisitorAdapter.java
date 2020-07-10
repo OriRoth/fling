@@ -5,7 +5,6 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaCompatibleQuantifier;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java adapter printing AST visitor class given AST type definitions.
  *
  * @author Ori Roth */
@@ -43,16 +42,16 @@ import il.ac.technion.cs.fling.namers.NaiveLinker;
         printVisitMethod(clazz.asAbstract()) : //
         printVisitMethod(clazz.asConcrete());
   }
-  public String printVisitMethod(final ConcreteClassNode clazz) {
-    final Variable source = clazz.source;
+  public String printVisitMethod(final ConcreteClassNode c) {
+    final Variable source = c.source;
     final String parameterName = getNodeParameterName(source);
     return String.format("public final void visit(%s %s){%s}", //
         getASTVariableClassName(source), //
         parameterName, //
-        printVisitMethodBody(clazz, parameterName));
+        printVisitMethodBody(c, parameterName));
   }
-  public String printWhileVisitingMethod(final ConcreteClassNode clazz) {
-    final Variable source = clazz.source;
+  public String printWhileVisitingMethod(final ConcreteClassNode n) {
+    final Variable source = n.source;
     final String parameterName = getNodeParameterName(source);
     return String.format("public void whileVisiting(%s %s)throws %s{}", //
         getASTVariableClassName(source), //
@@ -66,7 +65,7 @@ import il.ac.technion.cs.fling.namers.NaiveLinker;
         namer.getASTClassName(variable));
   }
   private String getNodeParameterName(final Variable variable) {
-    return NaiveLinker.lowerCamelCase(variable.name());
+    return Linker.lowerCamelCase(variable.name());
   }
   private String printVisitMethodBody(final AbstractClassNode clazz, final String parameterName) {
     return clazz.children.stream() //
@@ -96,7 +95,7 @@ import il.ac.technion.cs.fling.namers.NaiveLinker;
             String.format("%s.%s", //
                 parameterName, //
                 field.parameterName), //
-            () -> NaiveLinker.getNameFromBase("_x_", usedNames)))
+            () -> Linker.getNameFromBase("_x_", usedNames)))
         .filter(Objects::nonNull) //
         .forEach($::append);
     return $.toString();

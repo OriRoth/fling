@@ -1,9 +1,9 @@
 package il.ac.technion.cs.fling.adapters;
 import java.util.List;
 import java.util.stream.Stream;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java API adapter. Output contains the API types and a single concrete
  * implementation to be returned from the static method initiation method
  * chains.
@@ -13,7 +13,7 @@ public class JavaGenerator extends CLikeGenerator {
   private final String className;
   private final String packageName;
   public JavaGenerator(final String packageName, final String className) {
-    super(new NaiveLinker(packageName, className));
+    super(new Linker(packageName, className));
     this.packageName = packageName;
     this.className = className;
     bottomName("ø");

@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 import java.util.Objects;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 public class VarargsClassParameter implements ClassTypeParameter {
   public final Class<?> parameterClass;
   public VarargsClassParameter(final Class<?> parameterClass) {
@@ -13,7 +13,7 @@ public class VarargsClassParameter implements ClassTypeParameter {
     return parameterClass.getCanonicalName() + "...";
   }
   @Override public String baseParameterName() {
-    return NaiveLinker.lowerCamelCase(parameterClass.getSimpleName() + "s");
+    return Linker.lowerCamelCase(parameterClass.getSimpleName() + "s");
   }
   @Override public int hashCode() {
     return Objects.hash(parameterClass);

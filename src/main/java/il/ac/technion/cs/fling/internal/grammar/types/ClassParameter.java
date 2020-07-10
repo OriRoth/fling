@@ -1,7 +1,7 @@
 package il.ac.technion.cs.fling.internal.grammar.types;
 import static java.util.Objects.requireNonNull;
 import java.util.Objects;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 // TODO allow primitive types.
 public class ClassParameter implements ClassTypeParameter {
   public final Class<?> parameterClass;
@@ -12,7 +12,7 @@ public class ClassParameter implements ClassTypeParameter {
     return parameterClass.getCanonicalName();
   }
   @Override public String baseParameterName() {
-    return unPrimitiveTypeSimple(NaiveLinker.lowerCamelCase(parameterClass.getSimpleName()));
+    return unPrimitiveTypeSimple(Linker.lowerCamelCase(parameterClass.getSimpleName()));
   }
   @Override public int hashCode() {
     return Objects.hash(parameterClass);

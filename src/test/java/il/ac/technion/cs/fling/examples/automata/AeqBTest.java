@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *
  * @author Ori Roth */
@@ -66,5 +66,5 @@ public class AeqBTest {
     final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
     return cu;
   }
-  private final NaiveLinker namer = new NaiveLinker("AeqB");
+  private final Linker namer = new Linker("AeqB");
 }

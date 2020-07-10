@@ -16,7 +16,7 @@ public class VariableGenerator {
    *
    * @param inner parent symbol
    * @return child variable */
-  public Variable createQuantificationChild(final List<? extends Component> symbols) {
+  public Variable fresh(final List<? extends Component> symbols) {
     return Variable.byName(freshName(firstVariable(symbols)));
   }
   private static Variable firstVariable(final List<? extends Component> cs) {

@@ -16,7 +16,7 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
           s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration));
-    final Variable head = g.createQuantificationChild(symbols);
+    final Variable head = g.fresh(symbols);
     variableDeclaration.accept(head);
     ruleDeclaration.accept(new ERule(head, asList(new Body(expandedSymbols), new Body())));
     return head;

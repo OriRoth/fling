@@ -15,7 +15,6 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNod
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 /** Java adapters mediator. Connects fluent API, AST types and AST run-time
  * compiler generation given LL(1) grammars. AST visitor class definition is
  * also produced.
@@ -37,7 +36,7 @@ public class JavaMediator {
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
     grammar = new Grammar(new FancyEBNF(bnf, null, null, null, false));
-    namer = new NaiveLinker(packageName, apiName);
+    namer = new Linker(packageName, apiName);
     this.packageName = packageName;
     this.apiName = apiName;
     final APIGenerator apiAdapter = new JavaGenerator(packageName, apiName) {

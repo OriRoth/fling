@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
  * types translate to classes implementing them.
  *
  * @author Ori Roth */
-public class JavaInterfacesASTAdapter implements PolymorphicLanguageASTAdapterBase {
+public class JavaInterfacesASTAdapter extends Indenter implements PolymorphicLanguageASTAdapterBase {
   private final String className;
   private final Linker namer;
   private final String packageName;

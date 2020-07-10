@@ -10,7 +10,6 @@ import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class AnBn {
   enum Q implements Named {
     q0, q1, q2
@@ -33,6 +32,7 @@ public class AnBn {
       .go());
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AnBn") //
       .go(new ReliableAPICompiler(dpda).go());
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("AnBn")) //
-      .go(new ReliableAPICompiler(dpda).go());
+  public static final String CppFluentAPI = new CPPGenerator(
+      new il.ac.technion.cs.fling.internal.compiler.Linker("AnBn")) //
+          .go(new ReliableAPICompiler(dpda).go());
 }

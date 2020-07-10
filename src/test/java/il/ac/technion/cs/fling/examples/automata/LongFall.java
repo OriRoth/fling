@@ -7,10 +7,10 @@ import static il.ac.technion.cs.fling.examples.automata.LongFall.Σ.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
+import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class LongFall {
   enum Q implements Named {
     q0, q1
@@ -32,6 +32,6 @@ public class LongFall {
       .go());
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "LongFall") //
       .go(new ReliableAPICompiler(dpda).go());
-  public static final String CppFluentAPI = new CPPGenerator(new NaiveLinker("LongFall")) //
+  public static final String CppFluentAPI = new CPPGenerator(new Linker("LongFall")) //
       .go(new ReliableAPICompiler(dpda).go());
 }

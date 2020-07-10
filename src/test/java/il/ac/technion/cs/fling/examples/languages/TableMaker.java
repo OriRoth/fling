@@ -1,15 +1,14 @@
 package il.ac.technion.cs.fling.examples.languages;
 import org.antlr.v4.Tool;
-import org.antlr.v4.tool.Grammar;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.JavaANTLRAPIAdapter;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
+import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
-import il.ac.technion.cs.fling.namers.NaiveLinker;
 public class TableMaker {
   public static final String name = "TableMaker";
   public final String apiClass;
@@ -20,10 +19,10 @@ public class TableMaker {
     final FancyEBNF bnf = FancyEBNF.from(new ANTLRImporter(grammar).getEbnf());
     final String packageName = "il.ac.technion.cs.fling.examples.generated";
     final String apiName = name;
-    final Linker namer = new NaiveLinker(packageName, apiName);
-    final LL1 ll1 = new LL1(bnf);
+    final Linker namer = new Linker(packageName, apiName);
+    final Grammar g = new Grammar(bnf);
     final JavaANTLRAPIAdapter adapter = new JavaANTLRAPIAdapter(grammarFilePath, packageName, apiName, namer);
-    final DPDA<Named, Token, Named> buildAutomaton = ll1.buildAutomaton(ll1.bnf.clean());
+    final DPDA<Named, Token, Named> buildAutomaton = LL1.buildAutomaton(g.bnf.clean());
     final ReliableAPICompiler reliableAPICompiler = new ReliableAPICompiler(buildAutomaton);
     final Model compileFluentAPI = reliableAPICompiler.go();
     apiClass = adapter.go(compileFluentAPI);

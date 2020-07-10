@@ -16,8 +16,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     for (final Symbol s : symbols)
       expandedSymbols.add(!s.isQuantifier() ? s : //
           s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration));
-    final Variable head = g.createQuantificationChild(symbols);
-    final Variable tail = g.createQuantificationChild(symbols);
+    final Variable head = g.fresh(symbols);
+    final Variable tail = g.fresh(symbols);
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
     final List<Component> rhs = new ArrayList<>(expandedSymbols);
