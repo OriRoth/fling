@@ -25,7 +25,6 @@ public abstract class Quantifier implements Component {
       return 1;
     if (s.isQuantifier())
       return s.asQuantifier().fieldCount();
-    assert false : "unrecognized symbol " + s;
     return 0;
   }
   public abstract static class Sequence extends Quantifier {
@@ -33,7 +32,7 @@ public abstract class Quantifier implements Component {
     @Override public Stream<Symbol> symbols() {
       return symbols.stream();
     }
-    public Sequence(final List<Symbol> symbols) {
+    Sequence(final List<Symbol> symbols) {
       this.symbols = Collections.unmodifiableList(symbols);
       verify();
     }
