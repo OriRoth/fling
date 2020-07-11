@@ -38,8 +38,9 @@ public abstract class Quantifier implements Component {
     }
     public abstract String marker();
     public final String name() {
-      return String.format("(%s)%s", symbols.size() == 1 ? symbols.get(0) : //
-          symbols().map(Object::toString).collect(Collectors.joining(",")), //
+      if (symbols.size() == 1)
+        return symbols.get(0) + marker();
+      return String.format("(%s)%s", symbols().map(Object::toString).collect(Collectors.joining(",")), //
           marker());
     }
     @Override public final String toString() {
