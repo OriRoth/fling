@@ -134,11 +134,11 @@ public class FancyEBNF extends EBNF.Decorator {
     Γ.forEach(s -> $.put(s, unmodifiableSet($.get(s))));
     return unmodifiableMap($);
   }
-  public static FancyEBNF from(final EBNF source) {
+  public static FancyEBNF from(final EBNF b) {
     final Set<Variable> heads = new LinkedHashSet<>();
-    source.Σ.forEach(t -> t.parameters() //
+    b.Σ.forEach(t -> t.parameters() //
         .map(Parameter::declaredHeadVariables).forEach(heads::addAll));
-    return new FancyEBNF(source, heads, null, null, true);
+    return new FancyEBNF(b, heads, null, null, true);
   }
   /** @return clone, eliminating variables never used */
   public FancyEBNF clean() {
