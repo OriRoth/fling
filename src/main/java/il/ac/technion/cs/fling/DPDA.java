@@ -66,12 +66,12 @@ public class DPDA<Q, Σ, Γ> {
    * @param γ current stack symbol
    * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
-    Q q$ = q;
+
     Word<Γ> s = new Word<>(γ);
     final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
     if (δ == null)
       return null;
-    q$ = δ.q$;
+    Q q$ = δ.q$;
     s = s.pop().push(δ.getΑ());
     // process subsequent ε transitions.
     for (;;) {
@@ -93,12 +93,12 @@ public class DPDA<Q, Σ, Γ> {
    * @param α current stack
    * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
-    Q q$ = q;
+
     Word<Γ> s = new Word<>(α);
     final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
     if (δ == null)
       return null;
-    q$ = δ.q$;
+    Q q$ = δ.q$;
     s = s.pop().push(δ.getΑ());
     // process subsequent ε transitions.
     for (;;) {
@@ -126,14 +126,21 @@ public class DPDA<Q, Σ, Γ> {
         }
   }
   @Override public String toString() {
-    return String.format("" //
-        + "Q=%s\n" //
-        + "Σ=%s\n" //
-        + "Γ=%s\n" //
-        + "F=%s\n" //
-        + "q0=%s\n" //
-        + "γ0=%s\n" //
-        + "δs=\t%s", Q, Σ, Γ, F, q0, γ0, δs.stream().map(Object::toString).collect(Collectors.joining("\n\t")));
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    return String.format("""
+        Q=%s
+        Σ=%s
+        Γ=%s
+        F=%s
+        q0=%s
+        γ0=%s
+        δs=\t%s""", Q, Σ, Γ, F, q0, γ0, δs.stream().map(Object::toString).collect(Collectors.joining("\n\t")));
   }
   /** {@link DPDA} builder. Does not check the correctness of the automaton, i.e.,
    * it assumes it is deterministic and cannot loop infinitely. */
@@ -145,7 +152,7 @@ public class DPDA<Q, Σ, Γ> {
     private final Set<Q> F = new LinkedHashSet<>();
     private Q q0;
     private Word<Γ> γ0;
-    public Builder(final Class<Q> Q, final Class<Σ> Σ, final Class<Γ> Γ) {
+    Builder(final Class<Q> Q, final Class<Σ> Σ, final Class<Γ> Γ) {
       this.Q = Q;
       this.Σ = Σ;
       this.Γ = Γ;
@@ -190,7 +197,7 @@ public class DPDA<Q, Σ, Γ> {
      * @param currentσ current input letter
      * @param currentγ current stack symbol
      * @return whether this edge describes the next transition */
-    public boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
+    boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
       return q.equals(currentq) && Objects.equals(σ, currentσ) && γ.equals(currentγ);
     }
     @Override public int hashCode() {
@@ -206,7 +213,7 @@ public class DPDA<Q, Σ, Γ> {
           && q$.equals(other.q$) && getΑ().equals(other.getΑ());
     }
     @Override public String toString() {
-      return String.format("<%s,%s,%s,%s,%s>", q, σ != ε() ? σ : "ε", γ, q$, getΑ());
+      return String.format("<%s,%s,%s,%s,%s>", q, σ == ε() ? "ε" : σ, γ, q$, getΑ());
     }
     public Word<Γ> getΑ() {
       return α;

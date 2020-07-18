@@ -4,20 +4,20 @@ import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.rules.Symbol;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form <code>v ::= w X | Y z.</code>, augmented with
+ * derivation rules of the form {@code v ::= w X | Y z.}, augmented with
  * lots of services which found shelter in this class.
  *
  * @author Ori Roth */
-public class Nullables extends BNF.Decorator {
-  public final Set<Variable> nullables = new LinkedHashSet<>();
-  public Nullables(BNF inner) {
+class Nullables extends BNF.Decorator {
+  private final Set<Variable> nullables = new LinkedHashSet<>();
+  public Nullables(final BNF inner) {
     super(inner);
-    worklist(() -> variables(), v -> forms(v).anyMatch(this::nullable) && nullables.add(v));
+    worklist(this::variables, v -> forms(v).anyMatch(this::nullable) && nullables.add(v));
   }
-  boolean nullable(SF ss) {
+  private boolean nullable(final SF ss) {
     return nullable(ss.symbols());
   }
-  boolean nullable(Stream<Symbol> ss) {
+  private boolean nullable(final Stream<Symbol> ss) {
     return ss.allMatch(this::nullable);
   }
   boolean nullable(final Symbol s) {
@@ -25,13 +25,13 @@ public class Nullables extends BNF.Decorator {
       return nullables.contains(v);
     return false;
   }
-  /** @param symbols sequence of grammar symbols
-   * @return whether the sequence is nullable */
+  /** @param ss sequence of grammar symbols
+   * @return whether the sequence, as a whole is nullable */
   boolean nullable(final List<Symbol> ss) {
     return ss.stream().allMatch(this::nullable);
   }
-  /** @param symbols sequence of grammar symbols
-   * @return whether the sequence is nullable */
+  /** @param ss sequence of grammar symbols
+   * @return whether the sequence as a whole is nullable */
   boolean nullable(final Symbol... ss) {
     return nullable(Arrays.asList(ss));
   }

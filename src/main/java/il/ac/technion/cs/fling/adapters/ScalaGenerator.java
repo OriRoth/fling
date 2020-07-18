@@ -16,7 +16,7 @@ public class ScalaGenerator extends CLikeGenerator {
   private String printParametersList(final Method s) {
     return render(s.parameters());
   }
-  public String printTypeInstantiation(final Grounded type) {
+  private String printTypeInstantiation(final Grounded type) {
     final String _returnType = render(type);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //

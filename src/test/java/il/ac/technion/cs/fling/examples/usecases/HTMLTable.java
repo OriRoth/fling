@@ -2,7 +2,9 @@ package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.HTMLTable.html;
 import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.*;
-public class HTMLTable {
+enum HTMLTable {
+  ;
+
   // @formatter:off
   public static void main(final String[] args) {
     final HTML page =
@@ -51,34 +53,49 @@ public class HTMLTable {
     System.out.println(toString(page));
   }
   // @formatter:on
-  public static String toString(final HTML page) {
-    return String.format("" //
-        + "<!DOCTYPE html>\n" //
-        + "<html>\n" //
-        + "<body>\n" //
-        + "<h2>%s</h2>\n" //
-        + "%s\n" //
-        + "</body>" //
-        + "</html>\n", //
+  private static String toString(final HTML page) {
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    return String.format("""
+            <!DOCTYPE html>
+            <html>
+              <body>
+                <h2>%s</h2>
+                %s
+              </body>
+            </html>
+            """, //
         page.html, toString(page.table, 0));
   }
-  public static String toString(final Table table, final int depth) {
-    return String.format("" //
-        + "%s<table%s>\n" //
-        + "%s\n" //
-        + "%s\n" //
-        + "%s</table>", //
+  private static String toString(final Table table, final int depth) {
+    //
+    //
+    //
+    //
+    return String.format("""
+            %s<table%s>
+            %s
+            %s
+            %s</table>""", //
         printTabs(depth), //
         printOptions(table.table), //
         toString(table.header, depth + 1), //
         table.row.stream().map(line -> toString(line, depth + 1)).collect(joining("\n")), //
         printTabs(depth));
   }
-  public static String toString(final Header header, final int depth) {
-    return String.format("" //
-        + "%s<tr%s>\n" //
-        + "%s\n" //
-        + "%s</tr>", //
+  private static String toString(final Header header, final int depth) {
+    //
+    //
+    //
+    return String.format("""
+            %s<tr%s>
+            %s
+            %s</tr>""", //
         printTabs(depth), //
         printOptions(header.tr.tr), //
         header.th.stream().map(th -> String.format("%s<th%s>%s</th>", //
@@ -88,11 +105,14 @@ public class HTMLTable {
         )).collect(joining("\n")), //
         printTabs(depth));
   }
-  public static String toString(final Row r, final int depth) {
-    return String.format("" //
-        + "%s<tr%s>\n" //
-        + "%s\n" //
-        + "%s</tr>", //
+  private static String toString(final Row r, final int depth) {
+    //
+    //
+    //
+    return String.format("""
+            %s<tr%s>
+            %s
+            %s</tr>""", //
         printTabs(depth), //
         printOptions(r.tr.tr), //
         r.td.stream().map(td -> String.format("%s<td%s>%s</td>", //
@@ -107,8 +127,6 @@ public class HTMLTable {
     return options.length == 0 ? "" : " " + String.join(" ", options);
   }
   private static String printTabs(final int depth) {
-    final StringBuilder $ = new StringBuilder();
-    $.append("\t".repeat(Math.max(0, depth)));
-    return $.toString();
+    return "\t".repeat(Math.max(0, depth));
   }
 }

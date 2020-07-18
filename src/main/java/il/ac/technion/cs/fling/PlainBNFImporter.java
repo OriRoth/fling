@@ -6,7 +6,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * @author Yossi Gil
  * @since 2020-05-08 */
 public class PlainBNFImporter {
-  final EBNF.Builder builder = new EBNF.Builder();
+  private final EBNF.Builder builder = new EBNF.Builder();
   public PlainBNFImporter(final PlainBNF bnf) {
     this.bnf = bnf;
     ebnf = go();
@@ -22,7 +22,6 @@ public class PlainBNFImporter {
       }
       if (rule instanceof Specialization) {
         convert((Specialization) rule);
-        continue;
       }
     }
     try {
@@ -35,11 +34,10 @@ public class PlainBNFImporter {
   private void convert(final Specialization specializationRule) {
     builder.specialize(specializationRule.specialize).into(specializationRule.into);
   }
-  void convert(final Derivation derivation) {
+  private void convert(final Derivation derivation) {
     final Variable variable = derivation.variable;
-    if (derivation.ruleBody instanceof ConcreteDerivation) {
+    if (derivation.ruleBody instanceof ConcreteDerivation concrete) {
       // Concrete derivation rule.
-      final ConcreteDerivation concrete = (ConcreteDerivation) derivation.ruleBody;
       builder.derive(variable).to(concrete.to);
       for (final RuleTail tail : concrete.ruleTail)
         if (tail instanceof ConcreteDerivationTail)

@@ -16,13 +16,13 @@ public class JavaInterfacesASTAdapter extends Indenter implements PolymorphicLan
     this.className = className;
     this.namer = namer;
   }
-  public String constructorAssignment(final FieldNode field) {
+  private String constructorAssignment(final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format("this.%s = %s;", //
             fragment.parameterName, fragment.parameterName)) //
         .collect(joining());
   }
-  public boolean nonEmptyField(final FieldNode field) {
+  private boolean nonEmptyField(final FieldNode field) {
     return !field.source.isToken() || field.source.isParameterized();
   }
   @Override public String printAbstractClass(final AbstractClassNode abstractClass) {
@@ -54,7 +54,7 @@ public class JavaInterfacesASTAdapter extends Indenter implements PolymorphicLan
             .collect(joining()), //
         printConstructor(concreteClass));
   }
-  public String printConstructor(final ConcreteClassNode concreteClass) {
+  private String printConstructor(final ConcreteClassNode concreteClass) {
     return String.format("public %s(%s){%s}", //
         concreteClass.getClassName(), //
         concreteClass.fields.stream() //
@@ -66,7 +66,7 @@ public class JavaInterfacesASTAdapter extends Indenter implements PolymorphicLan
             .map(this::constructorAssignment) //
             .collect(joining()));
   }
-  public String printField(final String format, final String separator, final FieldNode field) {
+  private String printField(final String format, final String separator, final FieldNode field) {
     return field.getInferredFieldFragments().stream() //
         .map(fragment -> String.format(format, //
             fragment.parameterType, fragment.parameterName)) //

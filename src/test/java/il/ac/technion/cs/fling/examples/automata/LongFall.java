@@ -11,7 +11,9 @@ import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-public class LongFall {
+public enum LongFall {
+  ;
+
   enum Q implements Named {
     q0, q1
   }
@@ -21,7 +23,7 @@ public class LongFall {
   enum Γ implements Named {
     g0, g1
   }
-  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  private static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(g0, g1) //

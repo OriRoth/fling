@@ -28,7 +28,7 @@ public class AeqB {
     E, A, B
   }
   /** DPDA accepting AeqB. */
-  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  private static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(E) //
@@ -44,8 +44,8 @@ public class AeqB {
   public static final String JavaFluentAPI = new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB") //
       .go(new ReliableAPICompiler(dpda).go());
   /** C++ fluent API supporting method chains of the form
-   * <code>a()->b().a().b()...$();</code> */
-  public static final String CppFluentAPI = new CPPGenerator(new Linker("AeqB")) //
+   * {@code a()->b().a().b()...$();} */
+  private static final String CppFluentAPI = new CPPGenerator(new Linker("AeqB")) //
       .go(new ReliableAPICompiler(dpda).go());
   /** SML fluent API */
   public static final String SMLFluentAPI = new SMLGenerator(new Linker("AeqB"), "zzz") //

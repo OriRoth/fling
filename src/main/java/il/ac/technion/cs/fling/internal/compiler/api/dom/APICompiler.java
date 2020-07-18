@@ -11,9 +11,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @author Ori Roth */
 public abstract class APICompiler {
   /** Inducing automaton. */
-  public final DPDA<Named, Token, Named> dpda;
+  final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
-  protected final Map<Type.Name, Type> types = new LinkedHashMap<>();
+  final Map<Type.Name, Type> types = new LinkedHashMap<>();
   void add(final Type t) {
     types.put(t.name, t);
   }
@@ -22,8 +22,8 @@ public abstract class APICompiler {
     add(Type.named(Type.Name.TOP));
   }
   /** Mapping of terminals to type variable nodes. */
-  protected final Map<Named, Type.Grounded> typeVariables = new LinkedHashMap<>();
-  public APICompiler(final DPDA<Named, Token, Named> dpda) {
+  final Map<Named, Type.Grounded> typeVariables = new LinkedHashMap<>();
+  protected APICompiler(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
     dpda.Q().forEach(q -> typeVariables.put(q, Type.Grounded.of(Type.Name.q(q))));
   }
@@ -41,7 +41,7 @@ public abstract class APICompiler {
   /** Compile API types.
    *
    * @return compiled types */
-  final List<Type> types() {
+  private List<Type> types() {
     return new ArrayList<>(types.values());
   }
 }

@@ -24,14 +24,14 @@ public class Linker {
   }
   /** AST type name of given variable
    *
-   * @param variable inducing variable
+   * @param v inducing variable
    * @return AST type name */
   public String getASTClassName(final Variable v) {
     return v.name();
   }
   /** Inner API type name.
    *
-   * @param variable inducing head variable
+   * @param v inducing head variable
    * @return API type name */
   public String headVariableClassName(final Variable v) {
     return v.name();
@@ -39,7 +39,7 @@ public class Linker {
   /** Inner API acceptance type name.
    *
    * @return API type name */
-  public String headVariableConclusionTypeName() {
+  private String headVariableConclusionTypeName() {
     return "$";
   }
   /** Name elements within given API. Declarations pending naming are method
@@ -65,8 +65,8 @@ public class Linker {
     n.classes.forEach(c -> c.setClassName(getASTClassName(c.source)));
     // Set field names:
     n.classes.stream() //
-        .filter(ClassNode::isConcrete) //
-        .map(ClassNode::asConcrete) //
+        .filter(ConcreteClassNode.class::isInstance) //
+        .map(ConcreteClassNode.class::cast) //
         .map(ConcreteClassNode::getFields) //
         .forEach(this::setInferredFieldsInClass);
   }
@@ -103,14 +103,15 @@ public class Linker {
           baseName -> getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-  @SuppressWarnings("static-method") protected String getBaseParameterName(final Variable v) {
+  @SuppressWarnings("static-method")
+  private String getBaseParameterName(final Variable v) {
     return lowerCamelCase(v.name());
   }
-  protected void setInferredFieldsInClass(final List<FieldNode> fields) {
+  private void setInferredFieldsInClass(final List<FieldNode> fields) {
     final Map<String, Integer> usedNames = new HashMap<>();
     fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
   }
-  protected void setInferredParametersIntermediateInMethod(final Method m) {
+  private void setInferredParametersIntermediateInMethod(final Method m) {
     final Map<String, Integer> usedNames = new HashMap<>();
     m.populateParameters(m.name.parameters() //
         .map(p -> {

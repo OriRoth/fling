@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
  * @author Ori Roth */
 public class ASTCompiler {
   /** Input BNF. */
-  public final FancyEBNF bnf;
+  private final FancyEBNF bnf;
   public ASTCompiler(final FancyEBNF bnf) {
     this.bnf = bnf;
   }
@@ -64,7 +64,7 @@ public class ASTCompiler {
       if (Constants.S == v)
         continue;
       final ClassNode classNode = classes.get(v);
-      if (classNode.isConcrete())
+      if (classNode instanceof ConcreteClassNode)
         // Concrete class.
         classNode.asConcrete().parents.addAll(parents.getOrDefault(v, emptyList()).stream() //
             .map(classes::get).map(ClassNode::asAbstract).collect(toList()));

@@ -51,16 +51,16 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         variable.name());
   }
   private String printParserVariableCompilerMethod(final Variable v) {
+    //
+    //
     return String.format("public static %s parse_%s(%s<%s> w){%s}", //
         bnf.isOriginalVariable(v) ? getClassForVariable(v) : ListObject, //
         v.name(), //
         inputClass.getCanonicalName(), //
         Invocation.class.getCanonicalName(), //
-        !bnf.isOriginalVariable(v) ? //
-            printConcreteExtensionChildMethodBody(v) : //
-            LL1JavaASTParserCompiler.isSequenceRHS(bnf, v) ? //
-                printConcreteChildMethodBody(v) : //
-                printAbstractParentMethodBody(v));
+        bnf.isOriginalVariable(v) ? isSequenceRHS(bnf, v) ? //
+            printConcreteChildMethodBody(v) : //
+            printAbstractParentMethodBody(v) : printConcreteExtensionChildMethodBody(v));
   }
   private String printAbstractParentMethodBody(final Variable v) {
     final List<Variable> children = bnf.bodies(v)//
@@ -243,7 +243,8 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
           baseName -> Linker.getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-  @SuppressWarnings("static-method") protected String getBaseParameterName(final Variable variable) {
+  @SuppressWarnings("static-method")
+  private String getBaseParameterName(final Variable variable) {
     return Linker.lowerCamelCase(variable.name());
   }
   private String printTerminalInclusionCondition(final Set<Token> firsts) {
@@ -261,7 +262,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         astClassesContainerName, //
         v.name());
   }
-  public static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
+  private static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
     final List<Body> rhs = bnf.bodiesList(v);
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }

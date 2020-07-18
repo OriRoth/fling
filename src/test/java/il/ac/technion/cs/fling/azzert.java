@@ -14,278 +14,281 @@ import java.util.function.*;
 import java.util.stream.*;
 import org.assertj.core.api.*;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class azzert extends AutoCloseableSoftAssertions {
   public void all() {
-    super.assertAll();
+    assertAll();
   }
-  public void also(AssertionErrorCollector collector) {
-    super.assertAlso(collector);
+  public void also(final AssertionErrorCollector collector) {
+    assertAlso(collector);
   }
-  public void collect(AssertionError error) {
-    super.collectAssertionError(error);
+  public void collect(final AssertionError error) {
+    collectAssertionError(error);
   }
   public boolean success() {
-    return super.wasSuccess();
+    return wasSuccess();
   }
-  public AtomicBooleanAssert that(AtomicBoolean actual) {
-    return super.assertThat(actual);
+  public AtomicBooleanAssert that(final AtomicBoolean actual) {
+    return assertThat(actual);
   }
-  public AtomicIntegerAssert that(AtomicInteger actual) {
-    return super.assertThat(actual);
+  public AtomicIntegerAssert that(final AtomicInteger actual) {
+    return assertThat(actual);
   }
-  public AtomicIntegerArrayAssert that(AtomicIntegerArray actual) {
-    return super.assertThat(actual);
+  public AtomicIntegerArrayAssert that(final AtomicIntegerArray actual) {
+    return assertThat(actual);
   }
-  public <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> that(AtomicIntegerFieldUpdater<OBJECT> actual) {
-    return super.assertThat(actual);
+  public <OBJECT> AtomicIntegerFieldUpdaterAssert<OBJECT> that(final AtomicIntegerFieldUpdater<OBJECT> actual) {
+    return assertThat(actual);
   }
-  public AtomicLongAssert that(AtomicLong actual) {
-    return super.assertThat(actual);
+  public AtomicLongAssert that(final AtomicLong actual) {
+    return assertThat(actual);
   }
-  public AtomicLongArrayAssert that(AtomicLongArray actual) {
-    return super.assertThat(actual);
+  public AtomicLongArrayAssert that(final AtomicLongArray actual) {
+    return assertThat(actual);
   }
-  public <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> that(AtomicLongFieldUpdater<OBJECT> actual) {
-    return super.assertThat(actual);
+  public <OBJECT> AtomicLongFieldUpdaterAssert<OBJECT> that(final AtomicLongFieldUpdater<OBJECT> actual) {
+    return assertThat(actual);
   }
-  public <VALUE> AtomicMarkableReferenceAssert<VALUE> that(AtomicMarkableReference<VALUE> actual) {
-    return super.assertThat(actual);
+  public <VALUE> AtomicMarkableReferenceAssert<VALUE> that(final AtomicMarkableReference<VALUE> actual) {
+    return assertThat(actual);
   }
-  public <VALUE> AtomicReferenceAssert<VALUE> that(AtomicReference<VALUE> actual) {
-    return super.assertThat(actual);
+  public <VALUE> AtomicReferenceAssert<VALUE> that(final AtomicReference<VALUE> actual) {
+    return assertThat(actual);
   }
-  public <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> that(AtomicReferenceArray<ELEMENT> actual) {
-    return super.assertThat(actual);
+  public <ELEMENT> AtomicReferenceArrayAssert<ELEMENT> that(final AtomicReferenceArray<ELEMENT> actual) {
+    return assertThat(actual);
   }
   public <FIELD, OBJECT> AtomicReferenceFieldUpdaterAssert<FIELD, OBJECT> that(
-      AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
-    return super.assertThat(actual);
+      final AtomicReferenceFieldUpdater<OBJECT, FIELD> actual) {
+    return assertThat(actual);
   }
-  public <VALUE> AtomicStampedReferenceAssert<VALUE> that(AtomicStampedReference<VALUE> actual) {
-    return super.assertThat(actual);
+  public <VALUE> AtomicStampedReferenceAssert<VALUE> that(final AtomicStampedReference<VALUE> actual) {
+    return assertThat(actual);
   }
-  public BigDecimalAssert that(BigDecimal actual) {
-    return super.assertThat(actual);
+  public BigDecimalAssert that(final BigDecimal actual) {
+    return assertThat(actual);
   }
-  public BigIntegerAssert that(BigInteger actual) {
-    return super.assertThat(actual);
+  public BigIntegerAssert that(final BigInteger actual) {
+    return assertThat(actual);
   }
-  public BooleanAssert that(boolean actual) {
-    return super.assertThat(actual);
+  @SuppressWarnings("BooleanParameter")
+  public BooleanAssert that(final boolean actual) {
+    return assertThat(actual);
   }
-  public BooleanAssert that(Boolean actual) {
-    return super.assertThat(actual);
+  public BooleanAssert that(final Boolean actual) {
+    return assertThat(actual);
   }
-  public BooleanArrayAssert that(boolean[] actual) {
-    return super.assertThat(actual);
+  public BooleanArrayAssert that(final boolean[] actual) {
+    return assertThat(actual);
   }
-  public ByteAssert that(byte actual) {
-    return super.assertThat(actual);
+  public ByteAssert that(final byte actual) {
+    return assertThat(actual);
   }
-  public ByteAssert that(Byte actual) {
-    return super.assertThat(actual);
+  public ByteAssert that(final Byte actual) {
+    return assertThat(actual);
   }
-  public ByteArrayAssert that(byte[] actual) {
-    return super.assertThat(actual);
+  public ByteArrayAssert that(final byte[] actual) {
+    return assertThat(actual);
   }
-  public CharacterAssert that(char actual) {
-    return super.assertThat(actual);
+  public CharacterAssert that(final char actual) {
+    return assertThat(actual);
   }
-  public CharArrayAssert that(char[] actual) {
-    return super.assertThat(actual);
+  public CharArrayAssert that(final char[] actual) {
+    return assertThat(actual);
   }
-  public CharacterAssert that(Character actual) {
-    return super.assertThat(actual);
+  public CharacterAssert that(final Character actual) {
+    return assertThat(actual);
   }
-  public CharSequenceAssert that(CharSequence actual) {
-    return super.assertThat(actual);
+  public CharSequenceAssert that(final CharSequence actual) {
+    return assertThat(actual);
   }
-  public ProxyableClassAssert that(Class<?> actual) {
-    return super.assertThat(actual);
+  public ProxyableClassAssert that(final Class<?> actual) {
+    return assertThat(actual);
   }
-  public <RESULT> CompletableFutureAssert<RESULT> that(CompletableFuture<RESULT> actual) {
-    return super.assertThat(actual);
+  public <RESULT> CompletableFutureAssert<RESULT> that(final CompletableFuture<RESULT> actual) {
+    return assertThat(actual);
   }
-  public <RESULT> CompletableFutureAssert<RESULT> that(CompletionStage<RESULT> actual) {
-    return super.assertThat(actual);
+  public <RESULT> CompletableFutureAssert<RESULT> that(final CompletionStage<RESULT> actual) {
+    return assertThat(actual);
   }
-  public DateAssert that(Date actual) {
-    return super.assertThat(actual);
+  @SuppressWarnings("UseOfObsoleteDateTimeApi")
+  public DateAssert that(final Date actual) {
+    return assertThat(actual);
   }
-  public DoubleAssert that(double actual) {
-    return super.assertThat(actual);
+  public DoubleAssert that(final double actual) {
+    return assertThat(actual);
   }
-  public DoubleAssert that(Double actual) {
-    return super.assertThat(actual);
+  public DoubleAssert that(final Double actual) {
+    return assertThat(actual);
   }
-  public DoubleArrayAssert that(double[] actual) {
-    return super.assertThat(actual);
+  public DoubleArrayAssert that(final double[] actual) {
+    return assertThat(actual);
   }
-  public DoublePredicateAssert that(DoublePredicate actual) {
-    return super.assertThat(actual);
+  public DoublePredicateAssert that(final DoublePredicate actual) {
+    return assertThat(actual);
   }
-  public AbstractListAssert<?, List<? extends Double>, Double, ObjectAssert<Double>> that(DoubleStream actual) {
-    return super.assertThat(actual);
+  public AbstractListAssert<?, List<? extends Double>, Double, ObjectAssert<Double>> that(final DoubleStream actual) {
+    return assertThat(actual);
   }
-  public DurationAssert that(Duration actual) {
-    return super.assertThat(actual);
+  public DurationAssert that(final Duration actual) {
+    return assertThat(actual);
   }
-  public FileAssert that(File actual) {
-    return super.assertThat(actual);
+  public FileAssert that(final File actual) {
+    return assertThat(actual);
   }
-  public FloatAssert that(float actual) {
-    return super.assertThat(actual);
+  public FloatAssert that(final float actual) {
+    return assertThat(actual);
   }
-  public FloatAssert that(Float actual) {
-    return super.assertThat(actual);
+  public FloatAssert that(final Float actual) {
+    return assertThat(actual);
   }
-  public FloatArrayAssert that(float[] actual) {
-    return super.assertThat(actual);
+  public FloatArrayAssert that(final float[] actual) {
+    return assertThat(actual);
   }
-  public <RESULT> FutureAssert<RESULT> that(Future<RESULT> actual) {
-    return super.assertThat(actual);
+  public <RESULT> FutureAssert<RESULT> that(final Future<RESULT> actual) {
+    return assertThat(actual);
   }
-  public InputStreamAssert that(InputStream actual) {
-    return super.assertThat(actual);
+  public InputStreamAssert that(final InputStream actual) {
+    return assertThat(actual);
   }
-  public InstantAssert that(Instant actual) {
-    return super.assertThat(actual);
+  public InstantAssert that(final Instant actual) {
+    return assertThat(actual);
   }
-  public IntegerAssert that(int actual) {
-    return super.assertThat(actual);
+  public IntegerAssert that(final int actual) {
+    return assertThat(actual);
   }
-  public IntArrayAssert that(int[] actual) {
-    return super.assertThat(actual);
+  public IntArrayAssert that(final int[] actual) {
+    return assertThat(actual);
   }
-  public IntegerAssert that(Integer actual) {
-    return super.assertThat(actual);
+  public IntegerAssert that(final Integer actual) {
+    return assertThat(actual);
   }
-  public IntPredicateAssert that(IntPredicate actual) {
-    return super.assertThat(actual);
+  public IntPredicateAssert that(final IntPredicate actual) {
+    return assertThat(actual);
   }
-  public AbstractListAssert<?, List<? extends Integer>, Integer, ObjectAssert<Integer>> that(IntStream actual) {
-    return super.assertThat(actual);
+  public AbstractListAssert<?, List<? extends Integer>, Integer, ObjectAssert<Integer>> that(final IntStream actual) {
+    return assertThat(actual);
   }
-  public <T> ProxyableIterableAssert<T> that(Iterable<? extends T> actual) {
-    return super.assertThat(actual);
+  public <T> ProxyableIterableAssert<T> that(final Iterable<? extends T> actual) {
+    return assertThat(actual);
   }
-  public <T> IteratorAssert<T> that(Iterator<? extends T> actual) {
-    return super.assertThat(actual);
+  public <T> IteratorAssert<T> that(final Iterator<? extends T> actual) {
+    return assertThat(actual);
   }
-  public <T> ProxyableListAssert<T> that(List<? extends T> actual) {
-    return super.assertThat(actual);
+  public <T> ProxyableListAssert<T> that(final List<? extends T> actual) {
+    return assertThat(actual);
   }
-  public LocalDateAssert that(LocalDate actual) {
-    return super.assertThat(actual);
+  public LocalDateAssert that(final LocalDate actual) {
+    return assertThat(actual);
   }
-  public LocalDateTimeAssert that(LocalDateTime actual) {
-    return super.assertThat(actual);
+  public LocalDateTimeAssert that(final LocalDateTime actual) {
+    return assertThat(actual);
   }
-  public LocalTimeAssert that(LocalTime actual) {
-    return super.assertThat(actual);
+  public LocalTimeAssert that(final LocalTime actual) {
+    return assertThat(actual);
   }
-  public LongAssert that(long actual) {
-    return super.assertThat(actual);
+  public LongAssert that(final long actual) {
+    return assertThat(actual);
   }
-  public LongAssert that(Long actual) {
-    return super.assertThat(actual);
+  public LongAssert that(final Long actual) {
+    return assertThat(actual);
   }
-  public LongArrayAssert that(long[] actual) {
-    return super.assertThat(actual);
+  public LongArrayAssert that(final long[] actual) {
+    return assertThat(actual);
   }
-  public LongAdderAssert that(LongAdder actual) {
-    return super.assertThat(actual);
+  public LongAdderAssert that(final LongAdder actual) {
+    return assertThat(actual);
   }
-  public LongPredicateAssert that(LongPredicate actual) {
-    return super.assertThat(actual);
+  public LongPredicateAssert that(final LongPredicate actual) {
+    return assertThat(actual);
   }
-  public AbstractListAssert<?, List<? extends Long>, Long, ObjectAssert<Long>> that(LongStream actual) {
-    return super.assertThat(actual);
+  public AbstractListAssert<?, List<? extends Long>, Long, ObjectAssert<Long>> that(final LongStream actual) {
+    return assertThat(actual);
   }
-  public <K, V> ProxyableMapAssert<K, V> that(Map<K, V> actual) {
-    return super.assertThat(actual);
+  public <K, V> ProxyableMapAssert<K, V> that(final Map<K, V> actual) {
+    return assertThat(actual);
   }
-  public OffsetDateTimeAssert that(OffsetDateTime actual) {
-    return super.assertThat(actual);
+  public OffsetDateTimeAssert that(final OffsetDateTime actual) {
+    return assertThat(actual);
   }
-  public OffsetTimeAssert that(OffsetTime actual) {
-    return super.assertThat(actual);
+  public OffsetTimeAssert that(final OffsetTime actual) {
+    return assertThat(actual);
   }
-  public <VALUE> OptionalAssert<VALUE> that(Optional<VALUE> actual) {
-    return super.assertThat(actual);
+  public <VALUE> OptionalAssert<VALUE> that(final Optional<VALUE> actual) {
+    return assertThat(actual);
   }
-  public OptionalDoubleAssert that(OptionalDouble actual) {
-    return super.assertThat(actual);
+  public OptionalDoubleAssert that(final OptionalDouble actual) {
+    return assertThat(actual);
   }
-  public OptionalIntAssert that(OptionalInt actual) {
-    return super.assertThat(actual);
+  public OptionalIntAssert that(final OptionalInt actual) {
+    return assertThat(actual);
   }
-  public OptionalLongAssert that(OptionalLong actual) {
-    return super.assertThat(actual);
+  public OptionalLongAssert that(final OptionalLong actual) {
+    return assertThat(actual);
   }
-  public PathAssert that(Path actual) {
-    return super.assertThat(actual);
+  public PathAssert that(final Path actual) {
+    return assertThat(actual);
   }
-  public <T> ProxyablePredicateAssert<T> that(Predicate<T> actual) {
-    return super.assertThat(actual);
+  public <T> ProxyablePredicateAssert<T> that(final Predicate<T> actual) {
+    return assertThat(actual);
   }
-  public ShortAssert that(short actual) {
-    return super.assertThat(actual);
+  public ShortAssert that(final short actual) {
+    return assertThat(actual);
   }
-  public ShortAssert that(Short actual) {
-    return super.assertThat(actual);
+  public ShortAssert that(final Short actual) {
+    return assertThat(actual);
   }
-  public ShortArrayAssert that(short[] actual) {
-    return super.assertThat(actual);
+  public ShortArrayAssert that(final short[] actual) {
+    return assertThat(actual);
   }
-  public <ELEMENT> SpliteratorAssert<ELEMENT> that(Spliterator<ELEMENT> actual) {
-    return super.assertThat(actual);
+  public <ELEMENT> SpliteratorAssert<ELEMENT> that(final Spliterator<ELEMENT> actual) {
+    return assertThat(actual);
   }
   public <ELEMENT> AbstractListAssert<?, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> that(
-      Stream<? extends ELEMENT> actual) {
-    return super.assertThat(actual);
+      final Stream<? extends ELEMENT> actual) {
+    return assertThat(actual);
   }
-  public StringAssert that(String actual) {
-    return super.assertThat(actual);
+  public StringAssert that(final String actual) {
+    return assertThat(actual);
   }
-  public CharSequenceAssert that(StringBuffer actual) {
-    return super.assertThat(actual);
+  public CharSequenceAssert that(final StringBuffer actual) {
+    return assertThat(actual);
   }
-  public CharSequenceAssert that(StringBuilder actual) {
-    return super.assertThat(actual);
+  public CharSequenceAssert that(final StringBuilder actual) {
+    return assertThat(actual);
   }
-  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> that(T actual) {
-    return super.assertThat(actual);
+  public <T extends Comparable<? super T>> AbstractComparableAssert<?, T> that(final T actual) {
+    return assertThat(actual);
   }
-  public <T> ProxyableObjectAssert<T> that(T actual) {
-    return super.assertThat(actual);
+  public <T> ProxyableObjectAssert<T> that(final T actual) {
+    return assertThat(actual);
   }
-  public <T> ProxyableObjectArrayAssert<T> that(T[] actual) {
-    return super.assertThat(actual);
+  public <T> ProxyableObjectArrayAssert<T> that(final T[] actual) {
+    return assertThat(actual);
   }
-  public ThrowableAssert that(Throwable actual) {
-    return super.assertThat(actual);
+  public ThrowableAssert that(final Throwable actual) {
+    return assertThat(actual);
   }
-  public UriAssert that(URI actual) {
-    return super.assertThat(actual);
+  public UriAssert that(final URI actual) {
+    return assertThat(actual);
   }
-  public AbstractUrlAssert<?> that(URL actual) {
-    return super.assertThat(actual);
+  public AbstractUrlAssert<?> that(final URL actual) {
+    return assertThat(actual);
   }
-  public ZonedDateTimeAssert that(ZonedDateTime actual) {
-    return super.assertThat(actual);
+  public ZonedDateTimeAssert that(final ZonedDateTime actual) {
+    return assertThat(actual);
   }
-  public AbstractThrowableAssert<?, ? extends Throwable> thatCode(ThrowingCallable shouldRaiseOrNotThrowable) {
-    return super.assertThatCode(shouldRaiseOrNotThrowable);
+  public AbstractThrowableAssert<?, ? extends Throwable> thatCode(final ThrowingCallable shouldRaiseOrNotThrowable) {
+    return assertThatCode(shouldRaiseOrNotThrowable);
   }
-  public <T> ProxyableObjectAssert<T> thatObject(T actual) {
-    return super.assertThatObject(actual);
+  public <T> ProxyableObjectAssert<T> thatObject(final T actual) {
+    return assertThatObject(actual);
   }
-  public AbstractThrowableAssert<?, ? extends Throwable> thatThrownBy(ThrowingCallable shouldRaiseThrowable) {
-    return super.assertThatThrownBy(shouldRaiseThrowable);
+  public AbstractThrowableAssert<?, ? extends Throwable> thatThrownBy(final ThrowingCallable shouldRaiseThrowable) {
+    return assertThatThrownBy(shouldRaiseThrowable);
   }
-  public AbstractThrowableAssert<?, ? extends Throwable> thatThrownBy(ThrowingCallable shouldRaiseThrowable,
-      String description, Object... args) {
-    return super.assertThatThrownBy(shouldRaiseThrowable, description, args);
+  public AbstractThrowableAssert<?, ? extends Throwable> thatThrownBy(final ThrowingCallable shouldRaiseThrowable,
+                                                                      final String description, final Object... args) {
+    return assertThatThrownBy(shouldRaiseThrowable, description, args);
   }
 }

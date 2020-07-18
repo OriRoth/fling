@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
-public class TypeNameTest {
+class TypeNameTest {
   private final Named q = Named.by("Q");
   private final Named qa = Named.by("Q");
   private final Named qb = Named.by("Q");
@@ -18,24 +18,24 @@ public class TypeNameTest {
   private final Word<Named> α = Word.of(q, q1);
   private final Word<Named> αa = Word.of(q, Named.by("Q1"));
   private final Word<Named> αb = Word.of(q, q1);
-  final Type.Name.q.α nα = n.α(α);
-  final Type.Name.q.α nαa = n.α(Word.of(q, q1));
-  final Type.Name.q.α nαb = nb.α(Word.of(Named.by("Q"), Named.by("Q1")));
-  final Type.Name.q.α nαc = na.α(αa);
-  final Type.Name.q.α nαd = nb.α(αb);
+  private final Type.Name.q.α nα = n.α(α);
+  private final Type.Name.q.α nαa = n.α(Word.of(q, q1));
+  private final Type.Name.q.α nαb = nb.α(Word.of(Named.by("Q"), Named.by("Q1")));
+  private final Type.Name.q.α nαc = na.α(αa);
+  private final Type.Name.q.α nαd = nb.α(αb);
   private final Word<Named> α1 = Word.of(q1, q2);
   private final Set<Named> β = new LinkedHashSet<>(α1);
   private final Set<Named> βa = new LinkedHashSet<>(α1);
-  final List<Named> q1q2 = Arrays.asList(q1, q2);
+  private final List<Named> q1q2 = Arrays.asList(q1, q2);
   private final Set<Named> βb = new LinkedHashSet<>(q1q2);
-  final Type.Name.q.α.β nαβ = n.α(α).β(β);
-  final Type.Name.q.α.β nαβa = n.α(α).β(β);
-  final Type.Name.q.α.β nαβb = n.α(α).β(βa);
-  final Type.Name.q.α.β nαβc = n.α(α).β(βb);
-  final Name TOP = Type.Name.TOP;
-  final Type topType = Type.named(TOP);
-  final Name BOTTOM = Type.Name.BOTTOM;
-  final Type bottomType = Type.named(BOTTOM);
+  private final Type.Name.q.α.β nαβ = n.α(α).β(β);
+  private final Type.Name.q.α.β nαβa = n.α(α).β(β);
+  private final Type.Name.q.α.β nαβb = n.α(α).β(βa);
+  private final Type.Name.q.α.β nαβc = n.α(α).β(βb);
+  private final Name TOP = Type.Name.TOP;
+  private final Type topType = Type.named(TOP);
+  private final Name BOTTOM = Type.Name.BOTTOM;
+  private final Type bottomType = Type.named(BOTTOM);
   Type.Name[] names = { Type.Name.TOP, Type.Name.BOTTOM, Type.Name.END, n, nα, nαβ };
   @Test public void test00() {
     assertThat(Type.Name.q(q)).isNotNull();

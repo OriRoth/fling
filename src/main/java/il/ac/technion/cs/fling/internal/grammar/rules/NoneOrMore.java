@@ -13,9 +13,9 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
   @Override public Variable expand(final VariableGenerator g, final Consumer<Variable> variableDeclaration,
       final Consumer<ERule> ruleDeclaration) {
     final List<Component> expandedSymbols = new ArrayList<>();
+    //
     for (final Symbol s : symbols)
-      expandedSymbols.add(!s.isQuantifier() ? s : //
-          s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration));
+      expandedSymbols.add(s.isQuantifier() ? s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration) : s);
     final Variable $ = g.fresh(symbols);
     variableDeclaration.accept($);
     final List<Component> rhs = new ArrayList<>(expandedSymbols);

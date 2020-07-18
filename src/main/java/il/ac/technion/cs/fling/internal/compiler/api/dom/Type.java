@@ -15,7 +15,7 @@ public class Type {
   /** True, if an only if, type is an accepting type */
   public final boolean isAccepting;
   /** List of methods defined in this type; empty if no methods */
-  public final List<Method> methods;
+  private final List<Method> methods;
   /** Name of this type */
   public final Name name;
   public Name name() {
@@ -183,7 +183,7 @@ public class Type {
       }
       public class α implements Name {
         public final Word<Named> α;
-        public α(final Word<Named> α) {
+        α(final Word<Named> α) {
           this.α = α;
         }
         @Override public boolean equals(final Object obj) {
@@ -204,7 +204,7 @@ public class Type {
         public q outer() {
           return q.this;
         }
-        public Named q() {
+        Named q() {
           return outer().q;
         }
         @Override public String render(final APIGenerator g) {

@@ -8,18 +8,18 @@ import static java.util.stream.Collectors.joining;
  * @author Yossi Gil
  *
  * @since 2020-06-18 */
-public class Indenter {
+class Indenter {
   private int indent;
   private final StringBuilder builder = new StringBuilder();
   /** @return The current contents of the builder */
-  public String contents() {
+  String contents() {
     return builder.toString();
   }
   /** Adds a line to the buffer, after indenting it
    * 
    * @param line a line to add
    * 
-   * @return <b><code>this</code></b> */
+   * @return <b>{@code this}</b> */
   Indenter line(final String line) {
     builder.append(line.indent(indent));
     return this;
@@ -28,7 +28,7 @@ public class Indenter {
    * 
    * @param lines lines to add
    * 
-   * @return <b><code>this</code></b> */
+   * @return <b>{@code this}</b> */
   Indenter lines(final String... lines) {
     for (final String line : lines)
       line(line);
@@ -38,7 +38,7 @@ public class Indenter {
    * 
    * @param lines lines to add
    * 
-   * @return <b><code>this</code></b> */
+   * @return <b>{@code this}</b> */
   Indenter lines(final Stream<String> lines) {
     lines.forEach(this::line);
     return this;
@@ -48,7 +48,7 @@ public class Indenter {
    * @param format the formatting string
    * @param os     parameters to format
    * 
-   * @return <b><code>this</code></b> */
+   * @return <b>{@code this}</b> */
   Indenter linef(final String format, final Object... os) {
     return line(String.format(format, os));
   }
@@ -64,10 +64,10 @@ public class Indenter {
   int level() {
     return indent / 2;
   }
-  protected void ____() {
+  void ____() {
     line("\n");
   }
-  protected Collector<CharSequence, ?, String> commas() {
+  Collector<CharSequence, ?, String> commas() {
     return joining(", ");
   }
 }

@@ -6,17 +6,17 @@ import il.ac.technion.cs.fling.internal.grammar.BNFUtils;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form <code>v ::= w X | Y z.</code>, augmented with
+ * derivation rules of the form {@code v ::= w X | Y z.}, augmented with
  * lots of services which found shelter in this class.
  *
  * @author Ori Roth */
 public class FancyEBNF extends EBNF.Decorator {
   /** Set of nullable variables and notations */
-  public final Set<Component> nullables;
+  private final Set<Component> nullables;
   /** Maps variables and notations to their firsts set */
-  public final Map<Component, Set<Token>> firsts;
+  private final Map<Component, Set<Token>> firsts;
   /** Maps variables and notations to their follows set */
-  public final Map<Variable, Set<Token>> follows;
+  private final Map<Variable, Set<Token>> follows;
   /** Head variables set, containing variables used as API parameters */
   public final Set<Variable> headVariables;
   /** Maps generated variables to the notation originated them. Optional */
@@ -45,14 +45,14 @@ public class FancyEBNF extends EBNF.Decorator {
   }
   /** @param symbols sequence of grammar symbols
    * @return whether the sequence is nullable */
-  public boolean isNullable(final List<Component> symbols) {
+  private boolean isNullable(final Collection<Component> symbols) {
     return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
         symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
   }
   public Set<Token> firsts(final Component... symbols) {
     return firsts(Arrays.asList(symbols));
   }
-  public Set<Token> firsts(final Collection<Component> symbols) {
+  public Set<Token> firsts(final Iterable<Component> symbols) {
     final Set<Token> $ = new LinkedHashSet<>();
     for (final Component s : symbols) {
       $.addAll(firsts.get(s));

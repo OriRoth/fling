@@ -4,7 +4,7 @@ import java.util.Objects;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 // TODO allow primitive types.
 public class ClassParameter implements ClassTypeParameter {
-  public final Class<?> parameterClass;
+  private final Class<?> parameterClass;
   public ClassParameter(final Class<?> parameterClass) {
     this.parameterClass = requireNonNull(parameterClass);
   }
@@ -42,7 +42,7 @@ public class ClassParameter implements ClassTypeParameter {
                                     void.class.getName().equals(typeName) ? Void.class.getCanonicalName() : //
                                         typeName;
   }
-  public static String unPrimitiveTypeSimple(final String typeName) {
+  private static String unPrimitiveTypeSimple(final String typeName) {
     return byte.class.getName().equals(typeName) ? "b" : //
         short.class.getName().equals(typeName) ? "s" : //
             int.class.getName().equals(typeName) ? "i" : //

@@ -16,7 +16,9 @@ import za.co.wstoop.jatalog.*;
  *
  * @author Ori Roth
  * @since April 2019 */
-public class Datalog {
+public enum Datalog {
+  ;
+
   public static void main(final String[] args) {
     final Program program = fact("parent").of("john", "bob"). //
         fact("parent").of("bob", "donald"). //
@@ -61,16 +63,16 @@ public class Datalog {
     private static String printTerm(final Term term) {
       return term instanceof Term1 ? ((Term1) term).l : ((Term2) term).v;
     }
-    public static void print(final Fact fact) {
+    static void print(final Fact fact) {
       System.out.println(format("%s(%s).", fact.fact, String.join(",", fact.of)));
     }
-    public static void print(final Query query) {
+    static void print(final Query query) {
       System.out.println(format("%s(%s)?", query.query, printTerms(query.of)));
     }
-    public static void print(final Bodyless bodyless) {
+    static void print(final Bodyless bodyless) {
       System.out.println(format("%s(%s).", bodyless.always, printTerms(bodyless.of)));
     }
-    public static void print(final WithBody withBody) {
+    static void print(final WithBody withBody) {
       System.out.println(format("%s(%s) :- %s(%s)%s%s.", //
           withBody.ruleHead.infer, //
           printTerms(withBody.ruleHead.of), //
@@ -116,7 +118,7 @@ public class Datalog {
       $.add(Expr.expr(withBody.ruleBody.firstClause.when, toStrings(withBody.ruleBody.firstClause.of)));
       for (final AdditionalClause a : withBody.ruleBody.additionalClause)
         $.add(Expr.expr(a.and, toStrings(a.of)));
-      return $.toArray(new Expr[$.size()]);
+      return $.toArray(new Expr[0]);
     }
     private static void printResult(final Collection<Map<String, String>> result) {
       System.out.println("[" + result.stream() //

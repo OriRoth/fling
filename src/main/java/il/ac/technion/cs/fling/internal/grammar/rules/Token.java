@@ -13,13 +13,13 @@ import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
  * @author Yossi Gil
  * @since 2020-06-07 */
 public final class Token implements Symbol {
-  public static Token $ = Token.of(Terminal.$);
-  public final Terminal terminal;
+  public static final Token $ = Token.of(Terminal.$);
+  private final Terminal terminal;
   public final Parameter[] parameters;
-  public static Token of(Terminal t) {
+  public static Token of(final Terminal t) {
     return new Token(t);
   }
-  public static Token of(String s) {
+  public static Token of(final String s) {
     return of(Terminal.of(s));
   }
   /** POJO instantiation of this class */
@@ -42,9 +42,8 @@ public final class Token implements Symbol {
   @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
-    if (!(o instanceof Token))
+    if (!(o instanceof Token other))
       return false;
-    final Token other = (Token) o;
     return Arrays.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
   }
   @Override public String toString() {
@@ -56,7 +55,7 @@ public final class Token implements Symbol {
   @Override public boolean isToken() {
     return true;
   }
-  public Token with(Class<?> c) {
+  public Token with(final Class<?> c) {
     return new Token(terminal, Parameter.of(c));
   }
 }

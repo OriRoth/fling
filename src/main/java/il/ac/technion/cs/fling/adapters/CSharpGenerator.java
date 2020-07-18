@@ -11,7 +11,7 @@ public class CSharpGenerator extends CLikeGenerator {
   public CSharpGenerator(final Linker namer) {
     super(namer);
   }
-  public String render(final Method m) {
+  private String render(final Method m) {
     return String.format("public %s %s(%s){return new %s();}", //
         render(m.type), //
         m.name.name(), //
@@ -45,7 +45,7 @@ public class CSharpGenerator extends CLikeGenerator {
   @Override public String renderTerminationMethod() {
     return String.format("public void %s(){}", endName());
   }
-  public String typeVariableName(final Named typeVariable) {
+  private String typeVariableName(final Named typeVariable) {
     return "_" + typeVariable.name();
   }
   @Override String render(final Model m) {

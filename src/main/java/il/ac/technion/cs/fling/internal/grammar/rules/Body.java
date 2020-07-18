@@ -1,4 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
+import java.util.Collection;
 import java.util.List;
 /** A body of {@link ERule}
  *
@@ -8,7 +9,7 @@ public class Body extends Word<Component> {
   public Body(final Component... cs) {
     super(cs);
   }
-  public Body(final List<Component> cs) {
+  public Body(final Collection<Component> cs) {
     super(cs);
   }
 }

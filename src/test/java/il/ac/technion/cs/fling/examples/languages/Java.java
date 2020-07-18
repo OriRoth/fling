@@ -36,7 +36,7 @@ public class Java implements FluentLanguageAPI<Σ, Γ> {
     return Γ.class;
   }
   /** Datalog's grammar in Backus-Naur form. */
-  public static final il.ac.technion.cs.fling.EBNF bnf = bnf(). //
+  private static final il.ac.technion.cs.fling.EBNF bnf = bnf(). //
       start(Program). // This is the start symbol
       derive(Program).to(Quantifiers.oneOrMore(Declaration)). //
       derive(Declaration).to(Header, Quantifiers.oneOrMore(Member)). //

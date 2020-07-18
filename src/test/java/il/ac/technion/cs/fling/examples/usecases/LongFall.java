@@ -9,7 +9,9 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class LongFall {
+enum LongFall {
+  ;
+
   public static void compilationTest() {
     a().a().a().a().a().a().a().$();
     a().a().a().a().a().a().a().b().$();

@@ -19,8 +19,8 @@ public class PolynomialAPICompiler extends APICompiler {
   public PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }
-  final Type.Grounded top = Type.Grounded.of(Type.Name.TOP);
-  final Type.Grounded bottom = Type.Grounded.of(Type.Name.BOTTOM);
+  private final Type.Grounded top = Type.Grounded.of(Type.Name.TOP);
+  private final Type.Grounded bottom = Type.Grounded.of(Type.Name.BOTTOM);
   @Override protected List<Method> startMethods() {
     final List<Method> $ = new ArrayList<>();
     if (dpda.F.contains(dpda.q0))
@@ -83,10 +83,9 @@ public class PolynomialAPICompiler extends APICompiler {
         .with(dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
   private Type.Grounded getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
-    return !isInitialType ? typeVariables.get(δ.q$) : dpda.isAccepting(δ.q$) ? top : bottom;
+    return isInitialType ? dpda.isAccepting(δ.q$) ? top : bottom : typeVariables.get(δ.q$);
   }
   private List<Type.Grounded> getTypeArguments(final boolean isInitialType) {
-    return !isInitialType ? list(typeVariables.values())
-        : dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList());
+    return isInitialType ? dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList()) : list(typeVariables.values());
   }
 }

@@ -9,7 +9,9 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class RegularExpression {
+enum RegularExpression {
+  ;
+
   public static void compilationTest() {
     re().noneOrMore(exactly("a").and().option(exactly("b"))).or().oneOrMore(anyDigit()).$();
   }

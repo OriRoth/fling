@@ -50,7 +50,7 @@ public class JavaGenerator extends CLikeGenerator {
       $ += " extends " + topName();
     return $;
   }
-  void visitStartMethod(final Method m) {
+  private void visitStartMethod(final Method m) {
     linef("public static %s { ", fullMethodSignature(m)).indent();
     linef("α $ = new α();");
     linef("$.%s;", methodInvocation(m));
@@ -70,7 +70,7 @@ public class JavaGenerator extends CLikeGenerator {
     linef("public %s %s(){%s}", printTerminationMethodReturnType(), endName(), printTerminationMethodConcreteBody());
     unindent().line("}");
   }
-  protected String implementingClassClassBody() {
+  private String implementingClassClassBody() {
     return "";
   }
   private String printTopInterfaceBody() {
@@ -100,7 +100,7 @@ public class JavaGenerator extends CLikeGenerator {
    * @param σ          current token
    * @param parameters method parameters
    * @return method body */
-  protected String implementingClassMethodBody(final Token σ, final Stream<MethodParameter> parameters) {
+  private String implementingClassMethodBody(final Token σ, final Stream<MethodParameter> parameters) {
     return "";
   }
   /** Start static method body.
@@ -116,20 +116,20 @@ public class JavaGenerator extends CLikeGenerator {
    * and return the processed terminal.
    *
    * @return method body */
-  protected String printTerminationMethodConcreteBody() {
+  String printTerminationMethodConcreteBody() {
     return "";
   }
   /** Return type of the termination method.
    *
    * @return return type */
-  protected String printTerminationMethodReturnType() {
+  String printTerminationMethodReturnType() {
     return "void";
   }
-  protected String printConcreteImplementationMethodBody(Token σ, List<MethodParameter> parameters) {
+  protected String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
     // TODO Auto-generated method stub
     return null;
   }
-  protected String printStartMethodBody(Token σ, List<MethodParameter> parameters) {
+  protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
     // TODO Auto-generated method stub
     return null;
   }

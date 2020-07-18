@@ -13,11 +13,11 @@ public abstract class Quantifier implements Component {
       Function<String, String> nameFromBaseSolver);
   public abstract boolean isNullable(Predicate<Component> nullabilitySolver);
   public abstract Set<Token> getFirsts(Function<List<? extends Component>, Set<Token>> firstsSolver);
-  public abstract int fieldCount();
+  protected abstract int fieldCount();
   protected abstract String getVisitingStatement(final Symbol symbol, final //
   BiFunction<Variable, String, String> variableVisitingSolver, //
       final String accessor, final Supplier<String> variableNamesGenerator);
-  protected int fieldCount(final Symbol s) {
+  int fieldCount(final Symbol s) {
     assert !s.isTerminal();
     if (s.isToken())
       return s.isParameterized() ? 1 : 0;
@@ -28,7 +28,7 @@ public abstract class Quantifier implements Component {
     return 0;
   }
   public abstract static class Sequence extends Quantifier {
-    public final List<Symbol> symbols;
+    final List<Symbol> symbols;
     @Override public Stream<Symbol> symbols() {
       return symbols.stream();
     }
@@ -36,7 +36,7 @@ public abstract class Quantifier implements Component {
       this.symbols = Collections.unmodifiableList(symbols);
       verify();
     }
-    public abstract String marker();
+    protected abstract String marker();
     public final String name() {
       if (symbols.size() == 1)
         return symbols.get(0) + marker();
@@ -49,7 +49,7 @@ public abstract class Quantifier implements Component {
     @Override public int fieldCount() {
       return symbols().mapToInt(this::fieldCount).sum();
     }
-    protected void verify() {
+    void verify() {
       for (final Symbol s : symbols)
         if (fieldCount(s) > 1)
           throw new RuntimeException("complex nested quantifiers are not supported");

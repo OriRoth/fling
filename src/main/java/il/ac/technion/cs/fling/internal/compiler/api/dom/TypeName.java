@@ -5,12 +5,12 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** Type name node declaration.
  *
  * @author Ori Roth */
-public class TypeName extends SimpleTypeName {
+class TypeName extends SimpleTypeName {
   /** Inducing stack symbols. */
-  public final Word<Named> α;
+  private final Word<Named> α;
   /** Referenced states (type variables). */
-  public final Set<Named> legalJumps;
-  public TypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  private final Set<Named> legalJumps;
+  private TypeName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
     super(q);
     this.α = α;
     this.legalJumps = legalJumps == null ? null : new LinkedHashSet<>(legalJumps);
@@ -31,9 +31,8 @@ public class TypeName extends SimpleTypeName {
   @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
-    if (!(o instanceof TypeName))
+    if (!(o instanceof TypeName other))
       return false;
-    final TypeName other = (TypeName) o;
     return Objects.equals(q, other.q) && //
         Objects.equals(α, other.α) && //
         Objects.equals(legalJumps, other.legalJumps);

@@ -31,7 +31,7 @@ public class AeqBTest {
     E, A, B
   }
   /** DPDA accepting AeqB. */
-  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  private static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(E) //
@@ -55,12 +55,12 @@ public class AeqBTest {
   }
   @Test public void test3() {
     final Model m = new PolynomialAPICompiler(dpda).go();
-    CompilationUnit cu = parse(
+    final CompilationUnit cu = parse(
         new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
     System.out.println(cu);
   }
-  static CompilationUnit parse(String javaSource) {
-    ASTParser parser = ASTParser.newParser(AST.JLS13);
+  private static CompilationUnit parse(final String javaSource) {
+    final ASTParser parser = ASTParser.newParser(AST.JLS13);
     parser.setSource(javaSource.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
     final CompilationUnit cu = (CompilationUnit) parser.createAST(null);

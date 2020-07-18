@@ -96,7 +96,7 @@ public class ANTLRImporter extends EBNF.Builder {
     final List<Component> items = new ArrayList<>();
     for (final Object item : elements)
       convertBody(item).ifPresent(items::add);
-    derive(top).to(items.toArray(new Component[items.size()]));
+    derive(top).to(items.toArray(new Component[0]));
     return Optional.of(top);
   }
 }

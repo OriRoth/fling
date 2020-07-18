@@ -1,6 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.ArithmeticExpression.v;
-public class ArithmeticExpression {
+enum ArithmeticExpression {
+  ;
+
   public static void compilationTest() {
     v("X"). // define variable X
         times().v("X").plus().v("Y"). // X * X + Y

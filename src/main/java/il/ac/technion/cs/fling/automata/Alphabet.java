@@ -2,7 +2,9 @@ package il.ac.technion.cs.fling.automata;
 /** Alphabet utilities.
  *
  * @author Ori Roth */
-public class Alphabet {
+public enum Alphabet {
+  ;
+
   /** The empty word, ε.
    *
    * @param <T> Terminal type

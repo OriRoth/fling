@@ -40,7 +40,7 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
    * to fluent API methods in grammar specification. */
   private static final Class<String> S = String.class;
   /** Datalog's grammar in Backus-Naur form. */
-  public static final il.ac.technion.cs.fling.EBNF bnf = bnf(). //
+  private static final il.ac.technion.cs.fling.EBNF bnf = bnf(). //
       start(Program). // This is the start symbol
       derive(Program).to(oneOrMore(Statement)). // Program ::= Statement*
       specialize(Statement).into(Fact, Rule, Query).

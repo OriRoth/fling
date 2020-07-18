@@ -125,18 +125,18 @@ public class ReliableAPICompiler extends APICompiler {
   }
   private Type.Grounded getTypeArgument(final δ<Named, Token, Named> δ, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    return !legalJumps.contains(δ.q$) ? Type.Grounded.BOTTOM : //
-        isInitialType ? Type.Grounded.TOP : //
-            typeVariables.get(δ.q$);
+    //
+    return legalJumps.contains(δ.q$) ? isInitialType ? Type.Grounded.TOP : //
+        typeVariables.get(δ.q$) : Type.Grounded.BOTTOM;
   }
   private List<Type.Grounded> getTypeArguments(final Set<Named> legalJumps, final boolean isInitialType) {
-    return !isInitialType ? //
-        dpda.Q() //
-            .filter(legalJumps::contains) //
-            .map(typeVariables::get) //
-            .collect(toList()) //
-        : legalJumps.stream() //
-            .map(q -> Type.Grounded.TOP) //
-            .collect(toList());
+    //
+    //
+    return isInitialType ? legalJumps.stream() //
+        .map(q -> Type.Grounded.TOP) //
+        .collect(toList()) : dpda.Q() //
+        .filter(legalJumps::contains) //
+        .map(typeVariables::get) //
+        .collect(toList());
   }
 }

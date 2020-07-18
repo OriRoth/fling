@@ -25,7 +25,7 @@ public interface Parameter {
   default VarargsVariableTypeParameter asVarargsVariableTypeParameter() {
     return (VarargsVariableTypeParameter) this;
   }
-  static Parameter of(Class<?> c) {
+  static Parameter of(final Class<?> c) {
     return new ClassParameter(c);
   }
 }

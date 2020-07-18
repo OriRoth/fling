@@ -30,9 +30,9 @@ public class JavaMediator {
   private final Linker namer;
   private final ASTParserCompiler parserCompiler;
   private final Class<? extends Terminal> Σ;
-  final String apiName;
-  final Grammar grammar;
-  final String packageName;
+  private final String apiName;
+  private final Grammar grammar;
+  private final String packageName;
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
     grammar = new Grammar(new FancyEBNF(bnf, null, null, null, false));
@@ -108,7 +108,7 @@ public class JavaMediator {
     }
     return processedParameters;
   }
-  protected String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
+  private String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
@@ -119,7 +119,7 @@ public class JavaMediator {
                 processedParameters.isEmpty() ? "" : ",", //
                 String.join(",", processedParameters)));
   }
-  String printAdditionalDeclarations() {
+  private String printAdditionalDeclarations() {
     return grammar.ebnf.headVariables.stream() //
         .map(grammar::getSubBNF) //
         .map(bnf -> new JavaGenerator(null, namer.headVariableClassName(bnf.ε)) {
@@ -143,18 +143,18 @@ public class JavaMediator {
             .go(new ReliableAPICompiler(LL1.buildAutomaton(bnf)).go())) //
         .collect(joining());
   }
-  String printConcreteImplementationClassBody() {
+  private String printConcreteImplementationClassBody() {
     return String.format("public %s<%s> w=new %s();", //
         typeName(List.class), //
         typeName(Invocation.class), //
         typeName(LinkedList.class));
   }
-  SortedSet<String> classes = new TreeSet<>();
-  private String typeName(Class<?> c) {
+  private final SortedSet<String> classes = new TreeSet<>();
+  private String typeName(final Class<?> c) {
     classes.add(c.getCanonicalName());
     return c.getSimpleName();
   }
-  String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
+  private String printConcreteImplementationMethodBody(final Token σ, final List<MethodParameter> parameters) {
     assert σ.parameters.length == parameters.size();
     return String.format("this.w.add(new %s(%s.%s,%s));", //
         typeName(Invocation.class), //
@@ -162,11 +162,11 @@ public class JavaMediator {
         σ.name(), //
         String.format("new Object[]{%s}", String.join(",", processParameters(σ, parameters))));
   }
-  String printTerminationMethodConcreteBody(final Variable head) {
+  private String printTerminationMethodConcreteBody(final Variable head) {
     return String.format("return %s(w);", //
         parserCompiler.getParsingMethodName(head));
   }
-  String printTerminationMethodReturnType(final Variable head) {
+  private String printTerminationMethodReturnType(final Variable head) {
     return String.format("%s.%s.%s", //
         packageName, //
         apiName + "AST", //

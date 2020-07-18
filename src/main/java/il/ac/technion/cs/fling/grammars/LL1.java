@@ -10,7 +10,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
  * 't', only a single derivation may inferred.
  *
  * @author Ori Roth */
-public class LL1 {
+public enum LL1 {
+  ;
+
   /** Translate LL(1) BNF to DPDA. */
   public static DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();

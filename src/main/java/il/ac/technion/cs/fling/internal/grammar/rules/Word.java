@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
  * @author Ori Roth */
 public class Word<T> implements List<T> {
   private final List<T> inner;
-  public Word() {
+  Word() {
     inner = Collections.emptyList();
     verify();
   }

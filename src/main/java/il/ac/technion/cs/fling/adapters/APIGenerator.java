@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 /** Abstract base of all code generators.
  * 
@@ -13,7 +14,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public abstract class APIGenerator extends Indenter {
   private String bottomName = "BOTTOM";
   private String endName = "$";
-  public final Linker namer;
+  private final Linker namer;
   private String topName = "TOP";
   APIGenerator(final Linker namer) {
     this.namer = namer;
@@ -29,7 +30,7 @@ public abstract class APIGenerator extends Indenter {
     assert level() == 0 : contents();
     return contents();
   }
-  void commentf(final String format, final Object... os) {
+  private void commentf(final String format, final Object... os) {
     line(comment(String.format(format, os)));
   }
   void commentf(final String format, final int i) {
@@ -42,7 +43,7 @@ public abstract class APIGenerator extends Indenter {
     commentf(format, (Object) Long.valueOf(l1), (Object) Long.valueOf(l2));
   }
   public abstract String renderEndTypeName();
-  public abstract void visit(Model m);
+  protected abstract void visit(Model m);
   public abstract String renderBottomTypeName();
   public abstract String renderTopTypeName();
   abstract void visit(Method m);
@@ -52,7 +53,7 @@ public abstract class APIGenerator extends Indenter {
   public final String render(final Type.Name n) {
     return n.render(this);
   }
-  protected final String render(final Type.Grounded i) {
+  final String render(final Type.Grounded i) {
     return i.render(this);
   }
   public String topName() {
@@ -77,7 +78,7 @@ public abstract class APIGenerator extends Indenter {
   public abstract String toString(Type.Name.q.α.β β);
   public abstract String toString(Type.Grounded.Leaf.InnerNode i);
   public abstract String toString(Type.Grounded.Leaf i);
-  protected final String render(final Token t) {
+  final String render(final Named t) {
     return t.name();
   }
   public String printConcreteImplementationClassBody() {

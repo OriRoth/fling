@@ -9,18 +9,18 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
-public class Method {
+public final class Method {
   @Override public int hashCode() {
     return Objects.hash(name, parameters, type);
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Method other = (Method) obj;
+    final Method other = (Method) obj;
     return Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters)
         && Objects.equals(type, other.type);
   }

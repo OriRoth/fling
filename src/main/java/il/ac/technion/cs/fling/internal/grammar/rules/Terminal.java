@@ -58,9 +58,8 @@ public interface Terminal extends TempSymbol {
       @Override public boolean equals(final Object o) {
         if (this == o)
           return true;
-        if (!(o instanceof Terminal))
+        if (!(o instanceof Terminal other))
           return false;
-        final Terminal other = (Terminal) o;
         return name().equals(other.name());
       }
     };

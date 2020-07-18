@@ -7,7 +7,7 @@ import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** A compact version of Backus-Naur Form grammar specification of a formal
  * language, represented as a map from the set of non-terminals, to
- * {@link Rule}.
+ * {@link SF}
  *
  * @author Yossi Gil */
 public interface BNF {
@@ -18,14 +18,14 @@ public interface BNF {
   Stream<Symbol> symbols();
   Stream<Token> tokens();
   Stream<Variable> variables();
-  static Builder of(Variable start) {
+  static Builder of(final Variable start) {
     return new Builder(start);
   }
-  class Builder {
+  final class Builder {
     private final Inner inner;
-    private Builder(Variable start) {
+    private Builder(final Variable start) {
       Objects.requireNonNull(start);
-      this.inner = new Inner(start);
+      inner = new Inner(start);
     }
     public BNF build() {
       return inner;
@@ -33,11 +33,11 @@ public interface BNF {
     public Derive derive(final Variable v) {
       return new Derive(add(v));
     }
-    public Builder epsilon(Variable v) {
+    Builder epsilon(final Variable v) {
       inner.rules.get(add(v)).add(SF.empty());
       return this;
     }
-    public Builder epsilon(Variable v, Variable... vs) {
+    Builder epsilon(final Variable v, final Variable... vs) {
       epsilon(v);
       Stream.of(vs).forEach(this::epsilon);
       return this;
@@ -51,7 +51,7 @@ public interface BNF {
     }
     public class Derive {
       private final Variable variable;
-      public Derive(final Variable variable) {
+      Derive(final Variable variable) {
         this.variable = add(variable);
       }
       public Alternative to(final Symbol... ss) {
@@ -73,10 +73,10 @@ public interface BNF {
         public BNF build() {
           return Builder.this.build();
         }
-        public Derive derive(Variable v) {
+        public Derive derive(final Variable v) {
           return new Derive(v);
         }
-        public Builder epsilon(Variable v, Variable... vs) {
+        public Builder epsilon(final Variable v, final Variable... vs) {
           return Builder.this.epsilon(v, vs);
         }
         public Alternative or(final Symbol... ss) {
@@ -87,14 +87,14 @@ public interface BNF {
         public Alternative or(final TempSymbol... cs) {
           return or(Stream.of(cs).map(TempSymbol::normalize).toArray(Symbol[]::new));
         }
-        public Specialize specialize(Variable v) {
+        public Specialize specialize(final Variable v) {
           return new Specialize(v);
         }
       }
     }
     public class Specialize {
       private final Variable variable;
-      public Specialize(final Variable variable) {
+      Specialize(final Variable variable) {
         this.variable = variable;
       }
       public Builder into(final Variable... vs) {
@@ -104,14 +104,14 @@ public interface BNF {
     }
   }
   abstract class Decorator implements BNF {
-    private BNF inner;
-    public Decorator(BNF inner) {
+    private final BNF inner;
+    protected Decorator(final BNF inner) {
       this.inner = inner;
     }
-    @Override public Stream<SF> forms(Variable v) {
+    @Override public Stream<SF> forms(final Variable v) {
       return inner.forms(v);
     }
-    @Override public Set<SF> iforms(Variable v) {
+    @Override public Set<SF> iforms(final Variable v) {
       return inner.iforms(v);
     }
     @Override public Variable start() {
@@ -126,7 +126,7 @@ public interface BNF {
     @Override public Stream<Variable> variables() {
       return inner.variables();
     }
-    private Stream<SF> expand(SF sf) {
+    private Stream<SF> expand(final SF sf) {
       Stream<SF> $ = Stream.empty();
       for (int i = 0; i < sf.size(); ++i)
         if (sf.get(i) instanceof Variable v) {
@@ -135,78 +135,78 @@ public interface BNF {
         }
       return $;
     }
-    private Stream<Symbol> symbols(Variable v) {
+    private Stream<Symbol> symbols(final Variable v) {
       return Stream.of(v).flatMap(this::forms).flatMap(SF::symbols).distinct();
     }
-    protected Stream<Word<Token>> expand(Variable v) {
-      return closure(SF.of(v), (Function<SF, Stream<SF>>) sf -> expand(sf)).stream().filter(SF::isGrounded)
+    Stream<Word<Token>> expand(final Variable v) {
+      return closure(SF.of(v), this::expand).stream().filter(SF::isGrounded)
           .map(SF::tokens);
     }
-    protected boolean recursive() {
+    boolean recursive() {
       return uses(start()).contains(start());
     }
-    protected Set<Variable> uses(Variable v) {
+    Set<Variable> uses(final Variable v) {
       return closure(v, u -> variables(symbols(u)));
     }
-    BNF reduce(Variable v) {
-      Set<Variable> s = uses(v);
+    BNF reduce(final Variable v) {
+      final Set<Variable> s = uses(v);
       s.add(v);
-      Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
+      final Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
       s.stream().forEach(u -> rules.put(u, iforms(v)));
       return new BNF.Inner(start(), rules);
     }
-    protected static <T> Set<T> closure(T t, Function<T, Stream<T>> expand) {
+    static <T> Set<T> closure(final T t, final Function<T, Stream<T>> expand) {
       return closure(singleton(t), expand);
     }
-    protected static <T> boolean exists(Stream<T> ss) {
+    static <T> boolean exists(final Stream<T> ss) {
       return !ss.collect(toList()).isEmpty();
     }
-    protected static <T> void worklist(Supplier<Stream<T>> s, Predicate<T> u) {
-      while (exists(s.get().filter(u)))
-        continue;
+    static <T> void worklist(final Supplier<Stream<T>> s, final Predicate<T> u) {
+      while (exists(s.get().filter(u))) {
+      }
     }
-    static <T> Set<T> closure(Set<T> ts, Function<T, Stream<T>> expand) {
-      Set<T> $ = new LinkedHashSet<>();
+    static <T> Set<T> closure(final Set<T> ts, final Function<T, Stream<T>> expand) {
+      final Set<T> $ = new LinkedHashSet<>();
       Set<T> current = ts;
       do
-        current = current.stream().flatMap(expand::apply).collect(toSet());
+        current = current.stream().flatMap(expand).collect(toSet());
       while ($.addAll(current));
       return $;
     }
-    static Stream<Variable> variables(Stream<Symbol> ss) {
+    static Stream<Variable> variables(final Stream<Symbol> ss) {
       return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
     }
   }
   record SF(Word<Symbol> inner) {
     /** @return delegation to {@link Word#size()} */
-    public int size() {
+    int size() {
       return inner.size();
     }
-    public boolean isGrounded() {
+    boolean isGrounded() {
       return symbols().allMatch(Token.class::isInstance);
     }
-    public Word<Token> tokens() {
+    Word<Token> tokens() {
       return Word.of(symbols().filter(Token.class::isInstance).map(Token.class::cast));
     }
     static SF of(Symbol... ss) {
       return new SF(Word.of(ss));
     }
-    public Stream<Symbol> symbols() {
+    Stream<Symbol> symbols() {
       return inner.stream();
     }
-    public Symbol get(int i) {
+    Symbol get(int i) {
       return inner.get(i);
     }
-    public List<Symbol> suffix(int i) {
+    List<Symbol> suffix(int i) {
       return inner.subList(i, inner.size());
     }
     public Iterable<Symbol> isymbols() {
       return inner;
     }
-    public static SF empty() {
+    static SF empty() {
       return new SF(Word.empty());
     }
-    public SF replace(int i, SF f) {
+    SF replace(int i, SF f) {
       List<Symbol> $ = new ArrayList<>(prefix(i));
       $.addAll(f.inner);
       $.addAll(suffix(i + 1));
@@ -217,10 +217,10 @@ public interface BNF {
     }
   }
   record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {
-    public Inner(Variable start) {
+    Inner(Variable start) {
       this(start, new LinkedHashMap<>());
     }
-    public Inner {
+    Inner {
       rules.putIfAbsent(start, new LinkedHashSet<>());
     }
     /** @return all rules defining a variable */

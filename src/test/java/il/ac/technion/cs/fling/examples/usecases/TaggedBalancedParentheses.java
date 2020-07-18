@@ -10,7 +10,9 @@ import il.ac.technion.cs.fling.examples.generated.TaggedBalancedParenthesesAST.*
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class TaggedBalancedParentheses {
+enum TaggedBalancedParentheses {
+  ;
+
   public static void compilationTest() {
     c('a', 'a').ↄ(a()).$();
     // c('a', 'a').ↄ(a()).ↄ(a());

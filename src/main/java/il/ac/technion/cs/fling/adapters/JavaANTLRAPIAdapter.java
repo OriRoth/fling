@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.MethodParameter;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 // TODO handle API function parameters
 public class JavaANTLRAPIAdapter extends JavaGenerator {
-  protected final String grammarFileResourcePath;
+  private final String grammarFileResourcePath;
   public JavaANTLRAPIAdapter(final String grammarFileResourcePath, final String packageName, final String className,
       final Linker namer) {
     super(packageName, className);

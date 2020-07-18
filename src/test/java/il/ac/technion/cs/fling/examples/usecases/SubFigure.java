@@ -2,6 +2,9 @@ package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.SubFigure.row;
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.*;
+
+import java.util.Arrays;
+
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
@@ -9,7 +12,9 @@ import il.ac.technion.cs.fling.examples.generated.SubFigureAST.*;
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class SubFigure {
+enum SubFigure {
+  ;
+
   // @formatter:off
   public static void main(final String[] args) {
     final Figure fig =
@@ -30,12 +35,11 @@ public class SubFigure {
     System.out.println(toString(fig));
   }
   // @formatter:on
-  public static String toString(final Figure fig) {
+  private static String toString(final Figure fig) {
     final int h = getHeight(fig), w = getWidth(fig);
     final char[][] table = new char[h * 5][w * 6];
     for (int i = 0; i < table.length; ++i)
-      for (int j = 0; j < table[i].length; ++j)
-        table[i][j] = ' ';
+      Arrays.fill(table[i], ' ');
     fillTable(fig, table, 0, 0, h, w);
     final StringBuilder $ = new StringBuilder();
     for (final char[] row : table) {
@@ -96,7 +100,7 @@ public class SubFigure {
       }
     }
   }
-  public static int getHeight(final Figure fig) {
+  private static int getHeight(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
     final Figure2 composite = (Figure2) fig;
@@ -108,19 +112,19 @@ public class SubFigure {
             .map(SubFigure::getHeight) //
             .reduce(Integer::sum).get();
   }
-  public static int getWidth(final Figure fig) {
+  private static int getWidth(final Figure fig) {
     if (fig instanceof Figure1)
       return 1;
     final Figure2 composite = (Figure2) fig;
-    return !isRow(composite.orientation) ? //
-        composite.figure.stream() //
-            .map(SubFigure::getWidth) //
-            .max(Integer::compareTo).get() //
-        : composite.figure.stream() //
-            .map(SubFigure::getWidth) //
-            .reduce(Integer::sum).get();
+    //
+    //
+    return isRow(composite.orientation) ? composite.figure.stream() //
+        .map(SubFigure::getWidth) //
+        .reduce(Integer::sum).get() : composite.figure.stream() //
+        .map(SubFigure::getWidth) //
+        .max(Integer::compareTo).get();
   }
-  public static boolean isRow(final Orientation orientation) {
+  private static boolean isRow(final Orientation orientation) {
     return orientation instanceof Orientation1;
   }
 }

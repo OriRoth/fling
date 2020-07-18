@@ -7,18 +7,18 @@ import il.ac.technion.cs.fling.adapters.CLikeGenerator;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
-public class TypeNameRendererTest {
+class TypeNameRendererTest {
   private final Named q = Named.by("Q");
   private final Named q1 = Named.by("Q1");
   private final Named q2 = Named.by("Q2");
   private final Named q3 = Named.by("Q3");
   private final Type.Name.q n = Type.Name.q(q);
   private final Word<Named> α = Word.of(q, q1);
-  final Type.Name.q.α nα = n.α(α);
+  private final Type.Name.q.α nα = n.α(α);
   private final Word<Named> α1 = Word.of(q3, q1, q2);
   private final Set<Named> β = new LinkedHashSet<>(α1);
-  final Type.Name.q.α.β nαβ = n.α(α).β(β);
-  final CLikeGenerator g = new CPPGenerator(null);
+  private final Type.Name.q.α.β nαβ = n.α(α).β(β);
+  private final CLikeGenerator g = new CPPGenerator(null);
   @Test public void test1() {
     assertEquals(g.render(n), "Q");
   }

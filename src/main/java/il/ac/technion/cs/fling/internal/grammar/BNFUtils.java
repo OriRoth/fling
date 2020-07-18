@@ -5,8 +5,10 @@ import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.VariableGenerator;
-public class BNFUtils {
-  static FancyEBNF reduce(FancyEBNF bnf, final Variable v) {
+public enum BNFUtils {
+  ;
+
+  static FancyEBNF reduce(final FancyEBNF bnf, final Variable v) {
     final Set<Token> Σ = new LinkedHashSet<>();
     final Set<Variable> V = new LinkedHashSet<>();
     V.add(v);
@@ -33,8 +35,7 @@ public class BNFUtils {
     newVariables.add(b.ε);
     while (!newVariables.isEmpty()) {
       Γ.addAll(newVariables);
-      final Set<Variable> currentVariables = new LinkedHashSet<>();
-      currentVariables.addAll(newVariables);
+      final Iterable<Variable> currentVariables = new LinkedHashSet<>(newVariables);
       newVariables.clear();
       for (final Variable v : currentVariables) {
         b.rules(v).forEachOrdered(R::add);
@@ -46,7 +47,7 @@ public class BNFUtils {
     return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
   }
   static FancyEBNF normalize(final FancyEBNF bnf) {
-    VariableGenerator g = new VariableGenerator();
+    final VariableGenerator g = new VariableGenerator();
     final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
@@ -57,7 +58,7 @@ public class BNFUtils {
         R.add(new ERule(v, rhs));
         continue;
       }
-      final List<Variable> alteration = new ArrayList<>();
+      final Collection<Variable> alteration = new ArrayList<>();
       for (final Body sf : rhs)
         if (sf.size() == 1 && sf.stream().allMatch(bnf::isOriginalVariable))
           // Ready alteration variable.
@@ -75,7 +76,7 @@ public class BNFUtils {
         bnf.extensionProducts, false);
   }
   static FancyEBNF expandQuantifiers(final FancyEBNF ebnf) {
-    VariableGenerator g = new VariableGenerator();
+    final VariableGenerator g = new VariableGenerator();
     final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     final Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();

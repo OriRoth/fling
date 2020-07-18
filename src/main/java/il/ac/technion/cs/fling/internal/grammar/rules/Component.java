@@ -13,17 +13,11 @@ public interface Component extends TempComponent {
   @Override default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);
   }
-  /** @return true iff receiver is {@Link Token} */
-  @Override default boolean isToken() {
-    return false;
-  }
+
   @Override default boolean isQuantifier() {
     return this instanceof Quantifier;
   }
   @Override default Variable asVariable() {
     return (Variable) this;
-  }
-  @Override default boolean isParameterized() {
-    return false;
   }
 }

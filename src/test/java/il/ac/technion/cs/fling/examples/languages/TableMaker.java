@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public class TableMaker {
-  public static final String name = "TableMaker";
+  private static final String name = "TableMaker";
   public final String apiClass;
   public TableMaker() {
     final String grammarFilePath = TableMaker.class.getClassLoader().getResource("grammars/TableMaker.g").getPath();

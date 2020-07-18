@@ -9,7 +9,9 @@ import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-public class ExtendedBalancedParentheses {
+public enum ExtendedBalancedParentheses {
+  ;
+
   enum Q implements Named {
     q0, q1, q2
   }
@@ -19,7 +21,7 @@ public class ExtendedBalancedParentheses {
   enum Γ implements Named {
     γ0, γ1
   }
-  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  private static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q0) //
       .γ0(γ0) //

@@ -11,16 +11,16 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
-public class TypeSignature {
+class TypeSignature {
   /** Inducing state. */
-  public final Named q;
+  private final Named q;
   /** Inducing stack symbols. */
-  public final @NonNull Word<Named> α;
+  private final @NonNull Word<Named> α;
   /** Referenced states (type variables). */
-  public final Set<Named> legalJumps;
+  private final Set<Named> legalJumps;
   /** Referenced states (type variables). */
-  public final Word<Named> parameters;
-  public final boolean isAccepting;
+  private final Word<Named> parameters;
+  private final boolean isAccepting;
   public TypeSignature(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Word<Named> parameters,
       final boolean isAccepting) {
     Objects.requireNonNull(q);

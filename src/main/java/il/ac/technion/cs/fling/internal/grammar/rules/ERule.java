@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  * @since 2020-06-23 */
 public class ERule {
   public final Variable variable;
-  private final List<Body> bodies = new ArrayList<>();
+  private final Collection<Body> bodies = new ArrayList<>();
   public boolean of(final Variable v) {
     return v.equals(variable);
   }
@@ -39,9 +39,8 @@ public class ERule {
   @Override public boolean equals(final Object o) {
     if (this == o)
       return true;
-    if (!(o instanceof ERule))
+    if (!(o instanceof ERule other))
       return false;
-    final ERule other = (ERule) o;
     return variable.equals(other.variable) && bodies.equals(other.bodies);
   }
   @Override public int hashCode() {

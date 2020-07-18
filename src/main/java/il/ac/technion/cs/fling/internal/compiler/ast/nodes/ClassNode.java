@@ -3,11 +3,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 public abstract class ClassNode {
   public final Variable source;
   private String className;
-  public ClassNode(final Variable source) {
+  protected ClassNode(final Variable source) {
     this.source = source;
-  }
-  public boolean isConcrete() {
-    return this instanceof ConcreteClassNode;
   }
   public boolean isAbstract() {
     return this instanceof AbstractClassNode;

@@ -20,7 +20,7 @@ public class DPDATest {
   enum Γ {
     γ0, γ1
   }
-  final DPDA<Q, Σ, Γ> dpda = //
+  private final DPDA<Q, Σ, Γ> dpda = //
       dpda(Q.class, Σ.class, Γ.class) //
           .q0(q0) //
           .F(q0) //

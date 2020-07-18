@@ -10,7 +10,9 @@ import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-public class AnBn {
+public enum AnBn {
+  ;
+
   enum Q implements Named {
     q0, q1, q2
   }
@@ -20,7 +22,7 @@ public class AnBn {
   enum Γ implements Named {
     E, X
   }
-  public static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
+  private static final DPDA<Named, Token, Named> dpda = Grammar.cast(dpda(Q.class, Σ.class, Γ.class) //
       .q0(q0) //
       .F(q2) //
       .γ0(E) //

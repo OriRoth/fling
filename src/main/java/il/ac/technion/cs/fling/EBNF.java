@@ -27,12 +27,12 @@ public class EBNF {
     Σ.add(Constants.$$);
     verify();
   }
-  public abstract static class Decorator extends EBNF {
-    public Decorator(final EBNF ebnf) {
+  abstract static class Decorator extends EBNF {
+    protected Decorator(final EBNF ebnf) {
       super(ebnf.Σ, ebnf.Γ, ebnf.ε, ebnf.R);
     }
   }
-  void verify() {
+  private void verify() {
     assert R.size() > 0;
     assert Γ.contains(ε);
   }
@@ -105,7 +105,7 @@ public class EBNF {
     }
     public class Derive {
       private final Variable variable;
-      public Derive(final Variable variable) {
+      Derive(final Variable variable) {
         this.variable = variable;
       }
       public Builder to(final TempComponent... cs) {
@@ -131,7 +131,7 @@ public class EBNF {
     }
     public class Specialize {
       private final Variable variable;
-      public Specialize(final Variable variable) {
+      Specialize(final Variable variable) {
         this.variable = variable;
       }
       public Builder into(final Variable... vs) {

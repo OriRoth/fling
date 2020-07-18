@@ -3,7 +3,7 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
  * parameters.
  *
  * @author Ori Roth */
-public class MethodParameter {
+public final class MethodParameter {
   /** Parameter type name. */
   public final String type;
   /** Parameter variable name. */

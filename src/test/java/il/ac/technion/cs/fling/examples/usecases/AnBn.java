@@ -9,7 +9,9 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class AnBn {
+enum AnBn {
+  ;
+
   public static void compilationTest() {
     a().a().a().b().b().b().$();
     // a().a().a().b().b().a();

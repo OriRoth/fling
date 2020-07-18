@@ -8,7 +8,8 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
 /** Java adapter printing AST visitor class given AST type definitions.
  *
  * @author Ori Roth */
-@SuppressWarnings("static-method") public class JavaASTVisitorAdapter {
+@SuppressWarnings("static-method")
+class JavaASTVisitorAdapter {
   private final String astClassName;
   private final Linker namer;
   private final String packageName;
@@ -24,12 +25,12 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
             .map(this::printVisitMethod) //
             .collect(joining()), //
         compilationUnit.classes.stream() //
-            .filter(ClassNode::isConcrete) //
-            .map(ClassNode::asConcrete) //
+            .filter(ConcreteClassNode.class::isInstance) //
+            .map(ConcreteClassNode.class::cast) //
             .map(this::printWhileVisitingMethod) //
             .collect(joining()));
   }
-  public String printVisitMethod(final AbstractClassNode clazz) {
+  private String printVisitMethod(final AbstractClassNode clazz) {
     final Variable source = clazz.source;
     final String parameterName = getNodeParameterName(source);
     return String.format("public final void visit(%s %s){%s}", //
@@ -37,12 +38,12 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
         parameterName, //
         printVisitMethodBody(clazz, parameterName));
   }
-  public String printVisitMethod(final ClassNode clazz) {
+  private String printVisitMethod(final ClassNode clazz) {
     return clazz.isAbstract() ? //
         printVisitMethod(clazz.asAbstract()) : //
         printVisitMethod(clazz.asConcrete());
   }
-  public String printVisitMethod(final ConcreteClassNode c) {
+  private String printVisitMethod(final ConcreteClassNode c) {
     final Variable source = c.source;
     final String parameterName = getNodeParameterName(source);
     return String.format("public final void visit(%s %s){%s}", //
@@ -50,7 +51,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
         parameterName, //
         printVisitMethodBody(c, parameterName));
   }
-  public String printWhileVisitingMethod(final ConcreteClassNode n) {
+  private String printWhileVisitingMethod(final ConcreteClassNode n) {
     final Variable source = n.source;
     final String parameterName = getNodeParameterName(source);
     return String.format("public void whileVisiting(%s %s)throws %s{}", //

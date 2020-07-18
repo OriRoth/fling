@@ -1,9 +1,10 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-@SuppressWarnings("static-method") public class NamedTest {
-  final Named n1 = Named.by("Hello");
-  final Named n2 = Named.by("World");
+@SuppressWarnings("static-method")
+class NamedTest {
+  private final Named n1 = Named.by("Hello");
+  private final Named n2 = Named.by("World");
   @Test void test0() {
     assertThat(n1).isInstanceOf(Named.class);
     assertThat(n2).isInstanceOf(Named.class);

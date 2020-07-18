@@ -8,7 +8,9 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  *
  * @author Yossi Gil
  * @since April 2019 */
-public class BalancedParentheses {
+enum BalancedParentheses {
+  ;
+
   public static void compilationTest() {
     c().ↄ().$();
     // c().ↄ().ↄ();
