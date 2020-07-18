@@ -29,12 +29,13 @@ public enum LL1 {
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
     for (final Token v : Σ) {
       final String name = v.name();
-      if (!usedNames.containsKey(name)) {
+      if (usedNames.containsKey(name))
+        typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
+      else {
         // Why do you use 2 here?
         usedNames.put(name, 2);
         typeNameMapping.put(v, Named.by(name));
-      } else
-        typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
+      }
     }
     final Set<Named> Q = new LinkedHashSet<>(typeNameMapping.values());
     final Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø"), qT = Named.by("qT");
