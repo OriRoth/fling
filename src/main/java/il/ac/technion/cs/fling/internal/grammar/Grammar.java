@@ -28,10 +28,9 @@ public class Grammar {
         dpda.Σ().map(Token::new).collect(toSet()), //
         new LinkedHashSet<>(dpda.Γ), //
         dpda.δs.stream() //
-            .map(δ -> new DPDA.δ<>(δ.q, δ.σ == ε() ? ε() : new Token(δ.σ), δ.γ, δ.q$,
-                new Word<>(δ.getΑ().stream() //
-                    .map(Named.class::cast) //
-                    .collect(toList())))) //
+            .map(δ -> new DPDA.δ<>(δ.q, δ.σ == ε() ? ε() : new Token(δ.σ), δ.γ, δ.q$, new Word<>(δ.getΑ().stream() //
+                .map(Named.class::cast) //
+                .collect(toList())))) //
             .collect(toSet()), //
         new LinkedHashSet<>(dpda.F), //
         dpda.q0, //
