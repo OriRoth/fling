@@ -63,8 +63,7 @@ public class AeqBTest {
     final ASTParser parser = ASTParser.newParser(AST.JLS13);
     parser.setSource(javaSource.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
-    final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-    return cu;
+    return (CompilationUnit) parser.createAST(null);
   }
   private final Linker namer = new Linker("AeqB");
 }
