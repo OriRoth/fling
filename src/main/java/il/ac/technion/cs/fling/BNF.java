@@ -147,14 +147,14 @@ public interface BNF {
       final Set<Variable> s = uses(v);
       s.add(v);
       final Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
-      s.stream().forEach(u -> rules.put(u, forms(v).collect(toSet())));
+      s.forEach(u -> rules.put(u, forms(v).collect(toSet())));
       return new BNF.Inner(start(), rules);
     }
     static <T> Set<T> closure(final T t, final Function<T, Stream<T>> expand) {
       return closure(singleton(t), expand);
     }
     static <T> boolean exists(final Stream<T> ss) {
-      return !ss.collect(toList()).isEmpty();
+      return !(ss.count() == 0);
     }
     static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
