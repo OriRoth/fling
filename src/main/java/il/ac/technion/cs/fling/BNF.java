@@ -102,7 +102,7 @@ public interface BNF {
       }
     }
   }
-  abstract class Decorator implements BNF {
+  public abstract class Decorator implements BNF {
     private final BNF inner;
     protected Decorator(final BNF inner) {
       this.inner = inner;
@@ -172,7 +172,7 @@ public interface BNF {
       return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
     }
   }
-  record SF(Word<Symbol> inner) {
+  public record SF(Word<Symbol> inner) {
     /** @return delegation to {@link Word#size()} */
     int size() {
       return inner.size();
