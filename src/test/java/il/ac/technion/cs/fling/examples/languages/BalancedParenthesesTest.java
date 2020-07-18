@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.examples.languages;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.EBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
@@ -10,42 +9,42 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
   }
   @Test void test1() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Γ.size(), equalTo(2));
+    assertThat(b.Γ.size()).isEqualTo(2);
   }
   @Test void test2() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.ε, equalTo(BalancedParentheses.Γ.P));
+    assertThat(b.ε).isEqualTo(BalancedParentheses.Γ.P);
   }
   @Test void test3() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ, hasItem(BalancedParentheses.Σ.c.normalize()));
+    assertThat(b.Σ).contains(BalancedParentheses.Σ.c.normalize());
   }
   @Test void test3a() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ, hasItem(BalancedParentheses.Σ.ↄ.normalize()));
+    assertThat(b.Σ).contains(BalancedParentheses.Σ.ↄ.normalize());
   }
   @Test void test3b() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ, hasItem(Constants.$$));
+    assertThat(b.Σ).contains(Constants.$$);
   }
   @Test void test4() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b + "", is("EBNF[Σ=[c, ↄ, $], Γ=[P, S], ε=P, R=[P->cPↄP, P->ε, S->P]]"));
+    assertThat(b + "").isEqualTo("EBNF[Σ=[c, ↄ, $], Γ=[P, S], ε=P, R=[P->cPↄP, P->ε, S->P]]");
   }
   @Test void test5() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ.size(), equalTo(3));
+    assertThat(b.Σ.size()).isEqualTo(3);
   }
   @Test void test6() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Γ, hasItems(BalancedParentheses.Γ.values()));
+    assertThat(b.Γ).contains(BalancedParentheses.Γ.values());
   }
   @Test void test7() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ, hasItem(Constants.$$));
+    assertThat(b.Σ).contains(Constants.$$);
   }
   @Test void test8() {
     final EBNF b = new BalancedParentheses().BNF();
-    assertThat(b.Σ.size(), is(BalancedParentheses.Σ.values().length + 1));
+    assertThat(b.Σ.size()).isEqualTo(BalancedParentheses.Σ.values().length + 1);
   }
 }

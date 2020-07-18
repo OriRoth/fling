@@ -19,7 +19,7 @@ class Indenter {
    * 
    * @param line a line to add
    * 
-   * @return <b>{@code this}</b> */
+   * @return {@code this} */
   Indenter line(final String line) {
     builder.append(line.indent(indent));
     return this;

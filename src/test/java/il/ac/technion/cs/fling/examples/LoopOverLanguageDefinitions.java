@@ -4,7 +4,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.adapters.JavaMediator;

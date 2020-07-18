@@ -6,8 +6,7 @@ import static java.util.stream.Collectors.*;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** A compact version of Backus-Naur Form grammar specification of a formal
- * language, represented as a map from the set of non-terminals, to
- * {@link SF}
+ * language, represented as a map from the set of non-terminals, to {@link SF}
  *
  * @author Yossi Gil */
 public interface BNF {
@@ -139,8 +138,7 @@ public interface BNF {
       return Stream.of(v).flatMap(this::forms).flatMap(SF::symbols).distinct();
     }
     Stream<Word<Token>> expand(final Variable v) {
-      return closure(SF.of(v), this::expand).stream().filter(SF::isGrounded)
-          .map(SF::tokens);
+      return closure(SF.of(v), this::expand).stream().filter(SF::isGrounded).map(SF::tokens);
     }
     boolean recursive() {
       return uses(start()).contains(start());
@@ -220,7 +218,7 @@ public interface BNF {
     Inner(Variable start) {
       this(start, new LinkedHashMap<>());
     }
-    Inner {
+    public Inner {
       rules.putIfAbsent(start, new LinkedHashSet<>());
     }
     /** @return all rules defining a variable */

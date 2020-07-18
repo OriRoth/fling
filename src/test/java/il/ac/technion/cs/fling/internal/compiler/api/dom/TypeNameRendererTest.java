@@ -1,5 +1,5 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -20,21 +20,21 @@ class TypeNameRendererTest {
   private final Type.Name.q.α.β nαβ = n.α(α).β(β);
   private final CLikeGenerator g = new CPPGenerator(null);
   @Test public void test1() {
-    assertEquals(g.render(n), "Q");
+    assertThat(g.render(n)).isEqualTo("Q");
   }
   @Test public void test2() {
-    assertEquals(g.render(nα), "Q_QQ1");
+    assertThat(g.render(nα)).isEqualTo("Q_QQ1");
   }
   @Test public void test3() {
-    assertEquals(g.render(nαβ), "Q_QQ1_Q3Q1Q2");
+    assertThat(g.render(nαβ)).isEqualTo("Q_QQ1_Q3Q1Q2");
   }
   @Test public void test4() {
-    assertEquals(g.render(Type.Name.TOP), g.topName());
+    assertThat(g.render(Type.Name.TOP)).isEqualTo(g.topName());
   }
   @Test public void test5() {
-    assertEquals(g.render(Type.Name.BOTTOM), g.bottomName());
+    assertThat(g.render(Type.Name.BOTTOM)).isEqualTo(g.bottomName());
   }
   @Test public void test6() {
-    assertEquals(g.render(Type.Name.END), "void");
+    assertThat(g.render(Type.Name.END)).isEqualTo("void");
   }
 }

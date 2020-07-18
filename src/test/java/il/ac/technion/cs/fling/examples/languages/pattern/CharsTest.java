@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.examples.languages.pattern;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 @SuppressWarnings("static-method") public class CharsTest {
   @Test public void test() {
     assertThat(Chars.EMPTY.size()).isEqualTo(0);

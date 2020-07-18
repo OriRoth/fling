@@ -1,5 +1,5 @@
 package il.ac.technion.cs.fling.examples.usecases;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 public class RuntimeTest {
   @SuppressWarnings("static-method") @Test public void testAll() {
     Datalog.main(null);

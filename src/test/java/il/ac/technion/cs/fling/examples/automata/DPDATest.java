@@ -5,8 +5,7 @@ import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -35,16 +34,16 @@ public class DPDATest {
           .go();
   @Test public void testTransitionMatching() {
     final δ<Q, Σ, Γ> δ = dpda.δ(q0, c, γ0);
-    assertEquals(q1, δ.q$);
-    assertEquals(2, δ.getΑ().size());
-    assertEquals(new Word<>(γ0, γ1), δ.getΑ());
-    assertNull(dpda.δ(q0, Ↄ, γ0));
+    assertThat(q1).isEqualTo(δ.q$);
+    assertThat(2).isEqualTo(δ.getΑ().size());
+    assertThat(new Word<>(γ0, γ1)).isEqualTo(δ.getΑ());
+    assertThat(dpda.δ(q0, Ↄ, γ0)).isNull();
   }
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
     final δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
-    assertEquals(q2, δ.q$);
-    assertTrue(δ.getΑ().isEmpty());
+    assertThat(q2).isEqualTo(δ.q$);
+    assertThat(δ.getΑ()).isEmpty();
     assertThat(δ.getΑ()).isEmpty();
     assertThat(q2).isEqualTo(δ.q$);
   }
