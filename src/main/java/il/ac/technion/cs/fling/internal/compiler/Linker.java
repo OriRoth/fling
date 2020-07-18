@@ -103,8 +103,7 @@ public class Linker {
           baseName -> getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-  @SuppressWarnings("static-method")
-  private String getBaseParameterName(final Variable v) {
+  @SuppressWarnings("static-method") private String getBaseParameterName(final Variable v) {
     return lowerCamelCase(v.name());
   }
   private void setInferredFieldsInClass(final List<? extends FieldNode> fields) {

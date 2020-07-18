@@ -134,9 +134,10 @@ public class ReliableAPICompiler extends APICompiler {
     //
     return isInitialType ? legalJumps.stream() //
         .map(q -> Type.Grounded.TOP) //
-        .collect(toList()) : dpda.Q() //
-        .filter(legalJumps::contains) //
-        .map(typeVariables::get) //
-        .collect(toList());
+        .collect(toList())
+        : dpda.Q() //
+            .filter(legalJumps::contains) //
+            .map(typeVariables::get) //
+            .collect(toList());
   }
 }

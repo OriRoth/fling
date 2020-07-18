@@ -45,8 +45,7 @@ public class ASTCompiler {
     final Map<Variable, ClassNode> classes = new LinkedHashMap<>();
     for (final Variable v : bnf.Γ)
       if (Constants.S == v) {
-      }
-      else if (fields.containsKey(v))
+      } else if (fields.containsKey(v))
         // Concrete class.
         classes.put(v, new ConcreteClassNode(v, //
             new ArrayList<>(), // To be set later.

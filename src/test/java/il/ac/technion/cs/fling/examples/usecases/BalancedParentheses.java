@@ -10,7 +10,6 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  * @since April 2019 */
 enum BalancedParentheses {
   ;
-
   public static void compilationTest() {
     c().ↄ().$();
     // c().ↄ().ↄ();

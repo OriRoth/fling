@@ -243,8 +243,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
           baseName -> Linker.getNameFromBase(baseName, usedNames));
     throw new RuntimeException("problem while building AST types");
   }
-  @SuppressWarnings("static-method")
-  private String getBaseParameterName(final Variable variable) {
+  @SuppressWarnings("static-method") private String getBaseParameterName(final Variable variable) {
     return Linker.lowerCamelCase(variable.name());
   }
   private String printTerminalInclusionCondition(final Set<Token> firsts) {

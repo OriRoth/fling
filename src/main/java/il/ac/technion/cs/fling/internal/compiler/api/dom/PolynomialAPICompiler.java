@@ -86,6 +86,7 @@ public class PolynomialAPICompiler extends APICompiler {
     return isInitialType ? dpda.isAccepting(δ.q$) ? top : bottom : typeVariables.get(δ.q$);
   }
   private List<Type.Grounded> getTypeArguments(final boolean isInitialType) {
-    return isInitialType ? dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList()) : list(typeVariables.values());
+    return isInitialType ? dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList())
+        : list(typeVariables.values());
   }
 }

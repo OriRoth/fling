@@ -14,8 +14,7 @@ import java.util.function.*;
 import java.util.stream.*;
 import org.assertj.core.api.*;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class azzert extends AutoCloseableSoftAssertions {
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType") public class azzert extends AutoCloseableSoftAssertions {
   public void all() {
     assertAll();
   }
@@ -71,8 +70,7 @@ public class azzert extends AutoCloseableSoftAssertions {
   public BigIntegerAssert that(final BigInteger actual) {
     return assertThat(actual);
   }
-  @SuppressWarnings("BooleanParameter")
-  public BooleanAssert that(final boolean actual) {
+  @SuppressWarnings("BooleanParameter") public BooleanAssert that(final boolean actual) {
     return assertThat(actual);
   }
   public BooleanAssert that(final Boolean actual) {
@@ -111,8 +109,7 @@ public class azzert extends AutoCloseableSoftAssertions {
   public <RESULT> CompletableFutureAssert<RESULT> that(final CompletionStage<RESULT> actual) {
     return assertThat(actual);
   }
-  @SuppressWarnings("UseOfObsoleteDateTimeApi")
-  public DateAssert that(final Date actual) {
+  @SuppressWarnings("UseOfObsoleteDateTimeApi") public DateAssert that(final Date actual) {
     return assertThat(actual);
   }
   public DoubleAssert that(final double actual) {
@@ -288,7 +285,7 @@ public class azzert extends AutoCloseableSoftAssertions {
     return assertThatThrownBy(shouldRaiseThrowable);
   }
   public AbstractThrowableAssert<?, ? extends Throwable> thatThrownBy(final ThrowingCallable shouldRaiseThrowable,
-                                                                      final String description, final Object... args) {
+      final String description, final Object... args) {
     return assertThatThrownBy(shouldRaiseThrowable, description, args);
   }
 }

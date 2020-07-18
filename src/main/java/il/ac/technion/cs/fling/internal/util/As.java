@@ -3,7 +3,6 @@ import java.util.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public enum As {
   ;
-
   @SafeVarargs public static <T> Set<T> set(final T... items) {
     final Set<T> $ = new LinkedHashSet<>();
     Collections.addAll($, items);

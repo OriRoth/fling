@@ -13,7 +13,6 @@ public interface Component extends TempComponent {
   @Override default boolean isVariable() {
     return this instanceof Variable || Constants.S.equals(this);
   }
-
   @Override default boolean isQuantifier() {
     return this instanceof Quantifier;
   }

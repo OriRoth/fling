@@ -12,7 +12,6 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public enum AnBn {
   ;
-
   enum Q implements Named {
     q0, q1, q2
   }

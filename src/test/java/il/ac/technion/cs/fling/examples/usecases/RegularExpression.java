@@ -11,7 +11,6 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  * @since April 2019 */
 enum RegularExpression {
   ;
-
   public static void compilationTest() {
     re().noneOrMore(exactly("a").and().option(exactly("b"))).or().oneOrMore(anyDigit()).$();
   }

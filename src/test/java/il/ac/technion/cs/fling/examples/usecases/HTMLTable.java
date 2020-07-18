@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.joining;
 import il.ac.technion.cs.fling.examples.generated.HTMLTableAST.*;
 enum HTMLTable {
   ;
-
   // @formatter:off
   public static void main(final String[] args) {
     final HTML page =
@@ -62,14 +61,14 @@ enum HTMLTable {
     //
     //
     return String.format("""
-            <!DOCTYPE html>
-            <html>
-              <body>
-                <h2>%s</h2>
-                %s
-              </body>
-            </html>
-            """, //
+        <!DOCTYPE html>
+        <html>
+          <body>
+            <h2>%s</h2>
+            %s
+          </body>
+        </html>
+        """, //
         page.html, toString(page.table, 0));
   }
   private static String toString(final Table table, final int depth) {
@@ -78,10 +77,10 @@ enum HTMLTable {
     //
     //
     return String.format("""
-            %s<table%s>
-            %s
-            %s
-            %s</table>""", //
+        %s<table%s>
+        %s
+        %s
+        %s</table>""", //
         printTabs(depth), //
         printOptions(table.table), //
         toString(table.header, depth + 1), //
@@ -93,9 +92,9 @@ enum HTMLTable {
     //
     //
     return String.format("""
-            %s<tr%s>
-            %s
-            %s</tr>""", //
+        %s<tr%s>
+        %s
+        %s</tr>""", //
         printTabs(depth), //
         printOptions(header.tr.tr), //
         header.th.stream().map(th -> String.format("%s<th%s>%s</th>", //
@@ -110,9 +109,9 @@ enum HTMLTable {
     //
     //
     return String.format("""
-            %s<tr%s>
-            %s
-            %s</tr>""", //
+        %s<tr%s>
+        %s
+        %s</tr>""", //
         printTabs(depth), //
         printOptions(r.tr.tr), //
         r.td.stream().map(td -> String.format("%s<td%s>%s</td>", //

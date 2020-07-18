@@ -4,7 +4,6 @@ import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.X;
 import il.ac.technion.cs.fling.examples.generated.QuantifiersTestLanguageAST.Y1;
 enum QuantifiersTestLanguage {
   ;
-
   public static void main(final String[] args) {
     final X x1 = a(1).$();
     assert x1.a.size() == 1;

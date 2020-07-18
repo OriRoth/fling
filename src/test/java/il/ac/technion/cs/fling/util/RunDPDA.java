@@ -1,12 +1,8 @@
 package il.ac.technion.cs.fling.util;
-
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-
 import java.util.*;
-
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
-
 public class RunDPDA {
   public static <Q, Σ, Γ> boolean run(DPDA<Q, Σ, Γ> dpda, @SuppressWarnings("unchecked") Σ... _w) {
     Queue<Σ> w = new LinkedList<>();

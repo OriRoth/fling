@@ -8,8 +8,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
 /** Java adapter printing AST visitor class given AST type definitions.
  *
  * @author Ori Roth */
-@SuppressWarnings("static-method")
-class JavaASTVisitorAdapter {
+@SuppressWarnings("static-method") class JavaASTVisitorAdapter {
   private final String astClassName;
   private final Linker namer;
   private final String packageName;

@@ -1,15 +1,10 @@
 package il.ac.technion.cs.fling.grammars;
-
 import static il.ac.technion.cs.fling.util.RunDPDA.run;
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
-
 import il.ac.technion.cs.fling.BNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-
 public class LL1Test {
   @Test public void testArithemeticalExpression() {
     var bnf = BNF.of(v("E")).//

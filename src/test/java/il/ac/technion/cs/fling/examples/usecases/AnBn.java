@@ -11,7 +11,6 @@ import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
  * @since April 2019 */
 enum AnBn {
   ;
-
   public static void compilationTest() {
     a().a().a().b().b().b().$();
     // a().a().a().b().b().a();

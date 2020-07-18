@@ -7,7 +7,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.namers.VariableGenerator;
 public enum BNFUtils {
   ;
-
   static FancyEBNF reduce(final FancyEBNF bnf, final Variable v) {
     final Set<Token> Σ = new LinkedHashSet<>();
     final Set<Variable> V = new LinkedHashSet<>();

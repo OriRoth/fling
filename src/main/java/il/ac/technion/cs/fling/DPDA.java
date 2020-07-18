@@ -66,7 +66,6 @@ public class DPDA<Q, Σ, Γ> {
    * @param γ current stack symbol
    * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
-
     Word<Γ> s = new Word<>(γ);
     final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
     if (δ == null)
@@ -93,7 +92,6 @@ public class DPDA<Q, Σ, Γ> {
    * @param α current stack
    * @return matching consolidated transition */
   public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
-
     Word<Γ> s = new Word<>(α);
     final δ<Q, Σ, Γ> δ = δ(q, σ, s.top());
     if (δ == null)

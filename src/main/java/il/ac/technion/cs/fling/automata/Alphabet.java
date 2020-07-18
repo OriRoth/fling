@@ -4,7 +4,6 @@ package il.ac.technion.cs.fling.automata;
  * @author Ori Roth */
 public enum Alphabet {
   ;
-
   /** The empty word, ε.
    *
    * @param <T> Terminal type

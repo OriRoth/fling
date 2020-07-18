@@ -13,7 +13,6 @@ import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public enum LongFall {
   ;
-
   enum Q implements Named {
     q0, q1
   }

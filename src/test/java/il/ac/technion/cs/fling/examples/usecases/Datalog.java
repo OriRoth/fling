@@ -18,7 +18,6 @@ import za.co.wstoop.jatalog.*;
  * @since April 2019 */
 public enum Datalog {
   ;
-
   public static void main(final String[] args) {
     final Program program = fact("parent").of("john", "bob"). //
         fact("parent").of("bob", "donald"). //
