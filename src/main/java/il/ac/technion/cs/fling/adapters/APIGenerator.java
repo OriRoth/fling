@@ -5,9 +5,8 @@ import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
-import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 /** Abstract base of all code generators.
- * 
+ *
  * @author Yossi Gil
  *
  * @since 2020-06-15 */

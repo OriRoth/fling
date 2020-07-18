@@ -97,9 +97,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test public void problem1() {
     /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-     * 
+     *
      * <pre>
-     * 
+     *
     S → aBDh
     B → cC
     C → bC / ∈
@@ -161,9 +161,9 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test public void problem2() {
     /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-     * 
+     *
      * <pre>
-     S → A 
+     S → A
      A → aBA’
      A’ → dA’ / ∈
      B → b
@@ -223,7 +223,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test public void problem3() {
     /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-     * 
+     *
      * <pre>
     S → (L) / a
     L → SL’
@@ -265,7 +265,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test public void problem4() {
     /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-     * 
+     *
      * <pre>
     S → AaAb / BbBa
     A → ∈
@@ -304,7 +304,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
   }
   @Test public void problem6() {
     /** https://www.gatevidyalay.com/first-and-follow-compiler-design/
-     * 
+     *
      * <pre>
     S → ACB / CbB / Ba
     A → da / BC

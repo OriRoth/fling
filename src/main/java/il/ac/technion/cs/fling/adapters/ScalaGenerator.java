@@ -83,9 +83,4 @@ public class ScalaGenerator extends CLikeGenerator {
   @Override public String renderTerminationMethod() {
     return String.format("def %s():Unit={}", endName());
   }
-  @SuppressWarnings("static-method") private String printClassParameters(final Word<Named> typeVariables) {
-    return typeVariables.stream().map(Named::name) //
-        .map(var -> String.format("val __%s:%s", var, var)) //
-        .collect(commas());
-  }
 }

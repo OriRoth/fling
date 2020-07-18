@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 /** Extended EBNF Rule, allowing quantifiers
- * 
+ *
  * @author Yossi Gil
  *
  * @since 2020-06-23 */

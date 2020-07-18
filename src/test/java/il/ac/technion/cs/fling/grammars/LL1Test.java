@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.BNF;
-import il.ac.technion.cs.fling.internal.grammar.rules.*;
+import il.ac.technion.cs.fling.internal.grammar.rules.Token;
+import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 public class LL1Test {
   @Test public void testArithemeticalExpression() {
-    var bnf = BNF.of(v("E")).//
+    final var bnf = BNF.of(v("E")).//
         derive(v("E")).to(v("T"), v("E'")). // E --> TE'
         derive(v("E'")).to(t("+"), v("T"), v("E'")). // E' --> +TE'
         derive(v("E'")).to(). // E'--> e
@@ -17,7 +18,7 @@ public class LL1Test {
         derive(v("F")).to(t("id")). //
         derive(v("F")).to(t("("), v("E"), t(")")). //
         build();
-    var dpda = LL1.buildAutomaton(bnf);
+    final var dpda = LL1.buildAutomaton(bnf);
     assertThat(run(dpda)).isFalse();
     assertThat(run(dpda, w("id"))).isTrue();
     assertThat(run(dpda, w("+"))).isFalse();
@@ -32,7 +33,7 @@ public class LL1Test {
   private static Token t(final String s) {
     return Token.of(s);
   }
-  private static Token[] w(String w) {
+  private static Token[] w(final String w) {
     return Arrays.stream(w.split(" ")).map(LL1Test::t).toArray(Token[]::new);
   }
 }

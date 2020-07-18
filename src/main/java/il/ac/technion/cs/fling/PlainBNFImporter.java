@@ -20,9 +20,8 @@ public class PlainBNFImporter {
         convert((Derivation) rule);
         continue;
       }
-      if (rule instanceof Specialization) {
+      if (rule instanceof Specialization)
         convert((Specialization) rule);
-      }
     }
     try {
       return builder.build();

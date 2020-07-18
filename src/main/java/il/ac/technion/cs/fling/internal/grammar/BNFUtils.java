@@ -84,14 +84,13 @@ public enum BNFUtils {
       final List<Body> rhs = new ArrayList<>();
       for (final Body b : r.bodiesList()) {
         final List<Component> cs = new ArrayList<>();
-        for (final Component c : b) {
+        for (final Component c : b)
           if (c instanceof Quantifier q) {
             final Variable v = q.expand(g, extensionProducts::add, R::add);
             extensionHeadsMapping.put(v, q);
             cs.add(v);
           } else
             cs.add(c);
-        }
         rhs.add(new Body(cs));
       }
       R.add(new ERule(r.variable, rhs));

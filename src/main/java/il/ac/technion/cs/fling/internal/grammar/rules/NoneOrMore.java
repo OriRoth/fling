@@ -49,8 +49,9 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
                 List.class.getCanonicalName(), //
                 ClassParameter.unPrimitiveType(rawField.parameterType)), //
             rawField.parameterName) {
-          @Override public String visitingStatement(BiFunction<? super Variable, String, String> variableVisitingSolver,
-              String accessor, Supplier<String> variableNamesGenerator) {
+          @Override public String visitingStatement(
+              final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
+              final Supplier<String> variableNamesGenerator) {
             return getVisitingStatement(symbol, variableVisitingSolver, accessor, variableNamesGenerator);
           }
         });

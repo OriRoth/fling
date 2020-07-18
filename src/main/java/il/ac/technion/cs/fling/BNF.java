@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** A compact version of Backus-Naur Form grammar specification of a formal
@@ -172,7 +172,7 @@ public interface BNF {
       return ss.filter(Variable.class::isInstance).map(Variable.class::cast);
     }
   }
-  public record SF(Word<Symbol> inner) {
+  public record SF(final Word<Symbol> inner) {
     /** @return delegation to {@link Word#size()} */
     int size() {
       return inner.size();
@@ -183,16 +183,16 @@ public interface BNF {
     Word<Token> tokens() {
       return Word.of(symbols().filter(Token.class::isInstance).map(Token.class::cast));
     }
-    static SF of(Symbol... ss) {
+    static SF of(final Symbol... ss) {
       return new SF(Word.of(ss));
     }
     Stream<Symbol> symbols() {
       return inner.stream();
     }
-    Symbol get(int i) {
+    Symbol get(final int i) {
       return inner.get(i);
     }
-    @NonNull List<Symbol> suffix(int i) {
+    @NonNull List<Symbol> suffix(final int i) {
       return inner.subList(i, inner.size());
     }
     public Iterable<Symbol> isymbols() {
@@ -201,33 +201,29 @@ public interface BNF {
     static SF empty() {
       return new SF(Word.empty());
     }
-    SF replace(int i, SF f) {
-      List<Symbol> $ = new ArrayList<>(prefix(i));
+    SF replace(final int i, final SF f) {
+      final List<Symbol> $ = new ArrayList<>(prefix(i));
       $.addAll(f.inner);
       $.addAll(suffix(i + 1));
       return new SF(new Word<>($));
     }
-    private List<Symbol> prefix(int i) {
+    private List<Symbol> prefix(final int i) {
       return inner.subList(0, i);
     }
     public Iterable<List<Symbol>> suffixes() {
-      return new Iterable<>() {
-        @Override public Iterator<List<Symbol>> iterator() {
-          return new Iterator<>() {
-            int i = 0;
-            @Override public boolean hasNext() {
-              return i < size();
-            }
-            @Override public List<Symbol> next() {
-              return suffix(i++);
-            }
-          };
+      return () -> new Iterator<>() {
+        int i = 0;
+        @Override public boolean hasNext() {
+          return i < size();
+        }
+        @Override public List<Symbol> next() {
+          return suffix(i++);
         }
       };
     }
   }
-  record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {
-    Inner(Variable start) {
+  record Inner(final Variable start, final Map<Variable, Set<SF>> rules) implements BNF {
+    Inner(final Variable start) {
       this(start, new LinkedHashMap<>());
     }
     public Inner {
@@ -237,7 +233,7 @@ public interface BNF {
     @Override public Stream<SF> forms(final Variable v) {
       return rules.get(v).stream();
     }
-    public static Builder from(Variable start) {
+    public static Builder from(final Variable start) {
       return new Builder(start);
     }
     @Override public Stream<Variable> variables() {

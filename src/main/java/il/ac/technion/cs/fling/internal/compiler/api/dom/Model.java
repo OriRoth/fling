@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.stream.Stream;
 /** A model of the set of the definitions used for a a fluent API, including
  * types, start methods, and additional data
- * 
+ *
  * @author Yossi Gil
  *
  * @since 2020-06-15 */

@@ -7,7 +7,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 /** A full blown type in the model, including the type name, name of formal type
  * parameters, a list of methods, and a Boolean indication on whether the type
  * is accepting or not.
- * 
+ *
  * @author Yossi Gil
  *
  * @since 2020-06-18 */
@@ -64,7 +64,7 @@ public class Type {
     return new Type(n, noMethods, noParameters, false);
   }
   /** A representation of an instantiation of a polymorphic type
-   * 
+   *
    * @author Yossi Gil
    *
    * @since 2020-06-19 */

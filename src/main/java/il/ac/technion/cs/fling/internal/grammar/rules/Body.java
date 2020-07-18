@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling.internal.grammar.rules;
 import java.util.Collection;
-import java.util.List;
 /** A body of {@link ERule}
  *
  * @author Yossi Gil

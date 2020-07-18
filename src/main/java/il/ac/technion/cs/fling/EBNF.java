@@ -11,14 +11,14 @@ public class EBNF {
   @Override public int hashCode() {
     return Objects.hash(R, Γ, Σ, ε);
   }
-  @Override public boolean equals(Object obj) {
+  @Override public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
     if (getClass() != obj.getClass())
       return false;
-    EBNF other = (EBNF) obj;
+    final EBNF other = (EBNF) obj;
     return Objects.equals(R, other.R) && Objects.equals(Γ, other.Γ) && Objects.equals(Σ, other.Σ)
         && Objects.equals(ε, other.ε);
   }

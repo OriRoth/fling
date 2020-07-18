@@ -4,8 +4,8 @@ import java.util.*;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public class RunDPDA {
-  public static <Q, Σ, Γ> boolean run(DPDA<Q, Σ, Γ> dpda, @SuppressWarnings("unchecked") Σ... _w) {
-    Queue<Σ> w = new LinkedList<>();
+  public static <Q, Σ, Γ> boolean run(final DPDA<Q, Σ, Γ> dpda, @SuppressWarnings("unchecked") final Σ... _w) {
+    final Queue<Σ> w = new LinkedList<>();
     Collections.addAll(w, _w);
     Word<Γ> stack = dpda.γ0;
     Q q = dpda.q0;

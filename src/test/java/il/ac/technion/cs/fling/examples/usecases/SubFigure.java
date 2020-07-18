@@ -1,8 +1,8 @@
 package il.ac.technion.cs.fling.examples.usecases;
 import static il.ac.technion.cs.fling.examples.generated.SubFigure.row;
+import java.util.Arrays;
 import il.ac.technion.cs.fling.examples.LoopOverLanguageDefinitions;
 import il.ac.technion.cs.fling.examples.generated.SubFigureAST.*;
-import java.util.Arrays;
 /** This class demonstrates the use of automatically generated fluent API.
  * Needless to say, it cannot be compiled before this fluent API was generated.
  * To generate the respective fluent APIs, run
@@ -35,7 +35,7 @@ enum SubFigure {
   private static String toString(final Figure fig) {
     final int h = getHeight(fig), w = getWidth(fig);
     final char[][] table = new char[h * 5][w * 6];
-    for (char[] chars : table)
+    for (final char[] chars : table)
       Arrays.fill(chars, ' ');
     fillTable(fig, table, 0, 0, h, w);
     final StringBuilder $ = new StringBuilder();

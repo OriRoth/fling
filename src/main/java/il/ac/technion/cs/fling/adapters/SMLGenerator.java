@@ -79,7 +79,7 @@ public class SMLGenerator extends APIGenerator {
   @Override protected String comment(final String comment) {
     return String.format("(* %s *)", comment);
   }
-  @SuppressWarnings("static-method") String render(final Stream<MethodParameter> ps) {
+  @Override @SuppressWarnings("static-method") String render(final Stream<MethodParameter> ps) {
     return ps.map(p -> p.type + " " + p.name).collect(joining(", "));
   }
 }

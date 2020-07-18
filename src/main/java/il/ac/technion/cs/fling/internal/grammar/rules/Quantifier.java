@@ -37,7 +37,7 @@ public abstract class Quantifier implements Component {
       verify();
     }
     protected abstract String marker();
-    public final String name() {
+    @Override public final String name() {
       if (symbols.size() == 1)
         return symbols.get(0) + marker();
       return String.format("(%s)%s", symbols().map(Object::toString).collect(Collectors.joining(",")), //

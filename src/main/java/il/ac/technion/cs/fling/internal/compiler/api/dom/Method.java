@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 /** Models methods in the fluent API model
- * 
+ *
  * @author Yossi Gil
  *
  * @since 2020-06-15 */
