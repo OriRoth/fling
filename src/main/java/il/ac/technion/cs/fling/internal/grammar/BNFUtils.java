@@ -52,7 +52,7 @@ public enum BNFUtils {
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
       final List<Body> rhs = bnf.bodiesList(v);
-      assert rhs.size() > 0 : v + " in: " + bnf;
+      assert !rhs.isEmpty() : v + " in: " + bnf;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
         R.add(new ERule(v, rhs));
