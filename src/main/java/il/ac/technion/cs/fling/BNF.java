@@ -156,11 +156,11 @@ public interface BNF {
     static <T> boolean exists(final Stream<T> ss) {
       return !ss.collect(toList()).isEmpty();
     }
-    static <T> void worklist(final Supplier<Stream<T>> s, final Predicate<T> u) {
+    static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
       }
     }
-    static <T> Set<T> closure(final Set<T> ts, final Function<T, Stream<T>> expand) {
+    static <T> Set<T> closure(final Set<T> ts, final Function<? super T, ? extends Stream<T>> expand) {
       final Set<T> $ = new LinkedHashSet<>();
       Set<T> current = ts;
       do

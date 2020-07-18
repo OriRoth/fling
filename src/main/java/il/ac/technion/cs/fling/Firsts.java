@@ -11,7 +11,7 @@ class Firsts extends Nullables {
     variables().forEach(v -> firsts.put(v, new LinkedHashSet<>()));
     worklist(this::variables, v -> exists(forms(v).filter(sf -> firsts(v).addAll(firsts(sf.inner())))));
   }
-  Set<Token> firsts(final Iterable<Symbol> symbols) {
+  Set<Token> firsts(final Iterable<? extends Symbol> symbols) {
     final Set<Token> $ = new LinkedHashSet<>();
     for (final Symbol s : symbols) {
       $.addAll(firsts(s));
