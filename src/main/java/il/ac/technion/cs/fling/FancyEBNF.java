@@ -6,8 +6,8 @@ import il.ac.technion.cs.fling.internal.grammar.BNFUtils;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form {@code v ::= w X | Y z.}, augmented with
- * lots of services which found shelter in this class.
+ * derivation rules of the form {@code v ::= w X | Y z.}, augmented with lots of
+ * services which found shelter in this class.
  *
  * @author Ori Roth */
 public class FancyEBNF extends EBNF.Decorator {
@@ -23,6 +23,14 @@ public class FancyEBNF extends EBNF.Decorator {
   public final Map<Variable, Quantifier> extensionHeadsMapping;
   /** Set of generated variables */
   public final Set<Variable> extensionProducts;
+  /*
+   * It's almost always a mistake to add a boolean parameter to a public method
+   * (part of an API) if that method is not a setter. When reading code using such
+   * a method, it can be difficult to decipher what the boolean stands for without
+   * looking at the source or documentation. This problem is also known as the
+   * boolean trap. The boolean parameter can often be profitably replaced with an
+   * enum
+   */
   public FancyEBNF(final EBNF ebnf, final Set<Variable> headVariables,
       final Map<Variable, Quantifier> extensionHeadsMapping, final Set<Variable> extensionProducts,
       final boolean addStartSymbolDerivationRules) {

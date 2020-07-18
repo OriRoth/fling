@@ -15,7 +15,7 @@ public abstract class Quantifier implements Component {
   public abstract Set<Token> getFirsts(Function<List<? extends Component>, Set<Token>> firstsSolver);
   protected abstract int fieldCount();
   protected abstract String getVisitingStatement(final Symbol symbol, final //
-  BiFunction<Variable, String, String> variableVisitingSolver, //
+  BiFunction<? super Variable, String, String> variableVisitingSolver, //
       final String accessor, final Supplier<String> variableNamesGenerator);
   int fieldCount(final Symbol s) {
     assert !s.isTerminal();

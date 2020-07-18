@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import static java.util.stream.Collectors.*;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -155,11 +156,11 @@ public interface BNF {
     static <T> boolean exists(final Stream<T> ss) {
       return !ss.collect(toList()).isEmpty();
     }
-    static <T> void worklist(final Supplier<Stream<T>> s, final Predicate<T> u) {
+    static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
       }
     }
-    static <T> Set<T> closure(final Set<T> ts, final Function<T, Stream<T>> expand) {
+    static <T> Set<T> closure(final Set<T> ts, final Function<? super T, ? extends Stream<T>> expand) {
       final Set<T> $ = new LinkedHashSet<>();
       Set<T> current = ts;
       do
@@ -191,7 +192,7 @@ public interface BNF {
     Symbol get(int i) {
       return inner.get(i);
     }
-    List<Symbol> suffix(int i) {
+    @NonNull List<Symbol> suffix(int i) {
       return inner.subList(i, inner.size());
     }
     public Iterable<Symbol> isymbols() {
@@ -208,6 +209,21 @@ public interface BNF {
     }
     private List<Symbol> prefix(int i) {
       return inner.subList(0, i);
+    }
+    public Iterable<List<Symbol>> suffixes() {
+      return new Iterable<>() {
+        @Override public Iterator<List<Symbol>> iterator() {
+          return new Iterator<>() {
+            int i = 0;
+            @Override public boolean hasNext() {
+              return i < size();
+            }
+            @Override public List<Symbol> next() {
+              return suffix(i++);
+            }
+          };
+        }
+      };
     }
   }
   record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {

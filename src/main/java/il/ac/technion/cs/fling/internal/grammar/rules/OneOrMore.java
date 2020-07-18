@@ -27,7 +27,7 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     return head;
   }
   @Override protected String getVisitingStatement(final Symbol symbol,
-      final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
+      final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
       final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
@@ -52,8 +52,9 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
                 List.class.getCanonicalName(), //
                 ClassParameter.unPrimitiveType(rawField.parameterType)), //
             rawField.parameterName) {
-          @Override public String visitingStatement(final BiFunction<Variable, String, String> variableVisitingSolver,
-              final String accessor, final Supplier<String> variableNamesGenerator) {
+          @Override public String visitingStatement(
+              final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
+              final Supplier<String> variableNamesGenerator) {
             return getVisitingStatement(symbol, variableVisitingSolver, accessor, variableNamesGenerator);
           }
         });

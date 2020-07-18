@@ -93,7 +93,7 @@ public class Linker {
           getASTClassName(symbol.asVariable()), //
           getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)) {
         @SuppressWarnings("unused") @Override public String visitingStatement(
-            final BiFunction<Variable, String, String> variableVisitingSolver, final String accessor,
+            final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
             final Supplier<String> variableNamesGenerator) {
           return variableVisitingSolver.apply(symbol.asVariable(), accessor);
         }
@@ -107,7 +107,7 @@ public class Linker {
   private String getBaseParameterName(final Variable v) {
     return lowerCamelCase(v.name());
   }
-  private void setInferredFieldsInClass(final List<FieldNode> fields) {
+  private void setInferredFieldsInClass(final List<? extends FieldNode> fields) {
     final Map<String, Integer> usedNames = new HashMap<>();
     fields.forEach(field -> field.setInferredFieldFragments(getFields(field.source, usedNames)));
   }
@@ -137,7 +137,7 @@ public class Linker {
               getNameFromBase(p.baseParameterName(), usedNames));
         }).collect(toList()));
   }
-  public static String getNameFromBase(final String baseName, final Map<String, Integer> usedNames) {
+  public static String getNameFromBase(final String baseName, final Map<? super String, Integer> usedNames) {
     if (!usedNames.containsKey(baseName)) {
       usedNames.put(baseName, 2);
       return baseName;

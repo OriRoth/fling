@@ -2,8 +2,8 @@ package il.ac.technion.cs.fling;
 import java.util.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** An extended Backus-Naur form specification of formal Language, collection of
- * derivation rules of the form {@code v ::= w X | Y z.}, augmented with
- * lots of services which found shelter in this class.
+ * derivation rules of the form {@code v ::= w X | Y z.}, augmented with lots of
+ * services which found shelter in this class.
  *
  * @author Ori Roth */
 public class Follows extends Firsts {

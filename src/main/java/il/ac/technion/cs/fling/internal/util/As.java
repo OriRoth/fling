@@ -21,12 +21,12 @@ public enum As {
   public static <T> List<T> reversed(final T[] ts) {
     return reversed(Arrays.asList(ts));
   }
-  public static <T> List<T> reversed(final List<T> ts) {
+  public static <T> List<T> reversed(final List<? extends T> ts) {
     final List<T> $ = new ArrayList<>(ts);
     Collections.reverse($);
     return $;
   }
-  public static <T> Word<T> reversed(final Word<T> w) {
+  public static <T> Word<T> reversed(final Word<? extends T> w) {
     final List<T> $ = new ArrayList<>(w);
     Collections.reverse($);
     return new Word<>($);

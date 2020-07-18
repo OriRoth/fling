@@ -2,9 +2,8 @@ package il.ac.technion.cs.fling.grammars;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.util.As.reversed;
 import java.util.*;
-import il.ac.technion.cs.fling.BNF.SF;
-
 import il.ac.technion.cs.fling.*;
+import il.ac.technion.cs.fling.BNF.SF;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
@@ -22,17 +21,21 @@ public enum LL1 {
     final Word<Named> γ0;
     final Set<Token> Σ = new LinkedHashSet<>();
     bnf.tokens().forEach(Σ::add);
+    // Is this really essential? We make no assumptions on the BNF. Try to remove
+    // this statement.
     Σ.remove(Constants.$$);
     // TODO use namer to determine type names.
     final Map<Token, Named> typeNameMapping = new LinkedHashMap<>();
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
     for (final Token v : Σ) {
       final String name = v.name();
-      if (!usedNames.containsKey(name)) {
+      if (usedNames.containsKey(name))
+        typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
+      else {
+        // Why do you use 2 here?
         usedNames.put(name, 2);
         typeNameMapping.put(v, Named.by(name));
-      } else
-        typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
+      }
     }
     final Set<Named> Q = new LinkedHashSet<>(typeNameMapping.values());
     final Named q0$ = Named.by("q0$"), q0ø = Named.by("q0ø"), qT = Named.by("qT");
@@ -61,8 +64,8 @@ public enum LL1 {
     bnf.firsts(sf.inner()).stream() //
         .filter(σ -> !Constants.$$.equals(σ)) //
         .forEach(σ -> { //
-          δs.add(
-              new δ<>(q0ø, σ, v, typeNameMapping.get(σ), reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+          δs.add(new δ<>(q0ø, σ, v, typeNameMapping.get(σ),
+              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
           if (!bnf.nullable(v))
             δs.add(new δ<>(q0ø, σ, A.get(v), typeNameMapping.get(σ),
                 reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
@@ -114,8 +117,10 @@ public enum LL1 {
     bnf.firsts(sf.inner()).stream().filter(σ -> !Constants.$$.equals(σ)) //
         .forEach(σ -> {
           final Named σState = typeNameMapping.get(σ);
-          δs.add(new δ<>(σState, ε(), A.get(v), σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
-          δs.add(new δ<>(σState, ε(), v, σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+          δs.add(new δ<>(σState, ε(), A.get(v), σState,
+              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+          δs.add(new δ<>(σState, ε(), v, σState,
+              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
         })));
     // Moving from qσ to qσ with ε + nullable variable.
     bnf.tokens().filter(σ -> !Constants.$$.equals(σ)).forEach(σ -> //
@@ -174,6 +179,7 @@ public enum LL1 {
   private static Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
+  // Can you remove the flag here?
   private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, Named> typeNameMapping,
       final SF sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
