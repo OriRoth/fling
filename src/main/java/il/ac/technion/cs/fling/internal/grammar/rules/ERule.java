@@ -31,7 +31,7 @@ public class ERule {
     Objects.requireNonNull(forms);
     this.variable = variable;
     bodies.addAll(forms);
-    assert bodies.size() > 0;
+    assert !bodies.isEmpty();
   }
   public Stream<Body> bodies() {
     return bodies.stream();
