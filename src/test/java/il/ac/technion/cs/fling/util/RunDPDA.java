@@ -14,14 +14,20 @@ public class RunDPDA {
     Word<Γ> stack = dpda.γ0;
     Q q = dpda.q0;
     for (var σ = w.poll(); σ != null; σ = w.poll()) {
+      if (stack.isEmpty())
+        return false;
       var δ = dpda.δ(q, σ, stack.top());
       if (δ == null)
         return false;
       q = δ.q$;
       stack = stack.pop().push(δ.getΑ());
+      if (stack.isEmpty())
+        break;
       for (δ = dpda.δ(q, ε(), stack.top()); δ != null; δ = dpda.δ(q, ε(), stack.top())) {
         q = δ.q$;
         stack = stack.pop().push(δ.getΑ());
+        if (stack.isEmpty())
+          break;
       }
     }
     return dpda.F.contains(q);
