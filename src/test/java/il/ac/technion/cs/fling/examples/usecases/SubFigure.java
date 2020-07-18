@@ -38,8 +38,7 @@ enum SubFigure {
   private static String toString(final Figure fig) {
     final int h = getHeight(fig), w = getWidth(fig);
     final char[][] table = new char[h * 5][w * 6];
-    for (int i = 0; i < table.length; ++i)
-      Arrays.fill(table[i], ' ');
+    for (char[] chars : table) Arrays.fill(chars, ' ');
     fillTable(fig, table, 0, 0, h, w);
     final StringBuilder $ = new StringBuilder();
     for (final char[] row : table) {
