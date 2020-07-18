@@ -115,7 +115,7 @@ public class ReliableAPICompiler extends APICompiler {
     final Map<Named, Type.Grounded> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
       final Type.Grounded argument = consolidate(q, α, legalJumps, isInitialType);
-      if (!(argument == Type.Grounded.BOTTOM))
+      if (argument != Type.Grounded.BOTTOM)
         typeArguments.put(q, argument);
     }
     final Type.Name name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
