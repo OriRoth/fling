@@ -11,7 +11,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
  * @author Yossi Gil */
 public interface BNF {
   Stream<SF> forms(Variable v);
-  Set<SF> iforms(Variable v);
   /** @return The start variable of this BNF */
   Variable start();
   Stream<Symbol> symbols();
@@ -110,9 +109,6 @@ public interface BNF {
     @Override public Stream<SF> forms(final Variable v) {
       return inner.forms(v);
     }
-    @Override public Set<SF> iforms(final Variable v) {
-      return inner.iforms(v);
-    }
     @Override public Variable start() {
       return inner.start();
     }
@@ -150,7 +146,7 @@ public interface BNF {
       final Set<Variable> s = uses(v);
       s.add(v);
       final Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
-      s.stream().forEach(u -> rules.put(u, iforms(v)));
+      s.stream().forEach(u -> rules.put(u, forms(v).collect(toSet())));
       return new BNF.Inner(start(), rules);
     }
     static <T> Set<T> closure(final T t, final Function<T, Stream<T>> expand) {
@@ -237,9 +233,6 @@ public interface BNF {
     }
     @Override public Stream<Symbol> symbols() {
       return Stream.concat(variables(), rules.values().stream().flatMap(Set::stream).flatMap(SF::symbols)).distinct();
-    }
-    @Override public Set<SF> iforms(Variable v) {
-      return rules.get(v);
     }
   }
 }
