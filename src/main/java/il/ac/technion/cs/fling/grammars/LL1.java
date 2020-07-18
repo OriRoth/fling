@@ -2,24 +2,26 @@ package il.ac.technion.cs.fling.grammars;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.internal.util.As.reversed;
 import java.util.*;
-import il.ac.technion.cs.fling.DPDA;
+import il.ac.technion.cs.fling.BNF.SF;
+
+import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.DPDA.δ;
-import il.ac.technion.cs.fling.FancyEBNF;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** LL grammar, supporting 1 lookahead symbol. Given variable 'v' and terminal
- * 't', only a single derivation may inferred.
+ * 't', only a single derivation may be inferred.
  *
  * @author Ori Roth */
 public enum LL1 {
   ;
-
   /** Translate LL(1) BNF to DPDA. */
-  public static DPDA<Named, Token, Named> buildAutomaton(final FancyEBNF bnf) {
+  public static DPDA<Named, Token, Named> buildAutomaton(final BNF _bnf) {
+    final Firsts bnf = new Firsts(_bnf);
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     final Named q0;
     final Word<Named> γ0;
-    final Set<Token> Σ = new LinkedHashSet<>(bnf.Σ);
+    final Set<Token> Σ = new LinkedHashSet<>();
+    bnf.tokens().forEach(Σ::add);
     Σ.remove(Constants.$$);
     // TODO use namer to determine type names.
     final Map<Token, Named> typeNameMapping = new LinkedHashMap<>();
@@ -39,114 +41,132 @@ public enum LL1 {
     Q.add(qT);
     final Set<Named> Γ = new LinkedHashSet<>(typeNameMapping.values());
     Γ.add(Constants.$$);
-    Γ.addAll(bnf.Γ);
-    assert Γ.contains(Constants.S);
+    bnf.variables().forEach(Γ::add);
     final Map<Variable, Named> A = new LinkedHashMap<>();
-    for (final Variable v : bnf.Γ)
-      A.put(v, getAcceptingVariable(v));
+    bnf.variables().forEach(v -> A.put(v, getAcceptingVariable(v)));
     Γ.addAll(A.values());
     F.add(q0$);
-    q0 = bnf.isNullable(Constants.S) ? q0$ : q0ø;
-    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new Body(Constants.$$, Constants.S), true);
+    q0 = bnf.nullable(bnf.start()) ? q0$ : q0ø;
+    γ0 = getPossiblyAcceptingVariables(bnf, typeNameMapping, new SF(new Word<>(Constants.$$, bnf.start())), true);
     /* Computing automaton transitions for q0ø */
     // Moving from q0ø to q0$ with ε + $.
     δs.add(new δ<>(q0ø, ε(), Constants.$$, q0$, Word.empty()));
     // Moving from q0ø to q0$ with ε + accepting nullable variable.
     for (final Variable v : A.keySet())
-      if (bnf.isNullable(v))
+      if (bnf.nullable(v))
         δs.add(new δ<>(q0ø, ε(), A.get(v), q0$, new Word<>(A.get(v))));
     // Moving from q0ø to qσ with σ + appropriate variable.
-    for (final ERule r : bnf.R)
-      for (final Body b : r.bodiesList())
-        for (final Token σ : bnf.firsts(b))
-          if (!Constants.$$.equals(σ)) {
-            δs.add(new δ<>(q0ø, σ, r.variable, typeNameMapping.get(σ),
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, false))));
-            if (!bnf.isNullable(r.variable))
-              δs.add(new δ<>(q0ø, σ, A.get(r.variable), typeNameMapping.get(σ),
-                  reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, true))));
-          }
-    for (final Variable v : bnf.Γ)
-      for (final Token σ : bnf.Σ)
-        if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ) && bnf.isNullable(v))
-          δs.add(new δ<>(q0ø, σ, v, typeNameMapping.get(σ), Word.empty()));
+    bnf.variables().forEach(v -> //
+    bnf.forms(v).forEach(sf -> //
+    bnf.firsts(sf.inner()).stream() //
+        .filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> { //
+          δs.add(
+              new δ<>(q0ø, σ, v, typeNameMapping.get(σ), reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+          if (!bnf.nullable(v))
+            δs.add(new δ<>(q0ø, σ, A.get(v), typeNameMapping.get(σ),
+                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+        })));
+    bnf.variables().forEach(v -> //
+    bnf.tokens().forEach(σ -> { //
+      if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ) && bnf.nullable(v))
+        δs.add(new δ<>(q0ø, σ, v, typeNameMapping.get(σ), Word.empty()));
+    }));
     // Moving from q0ø to q0ø with σ + σ.
-    for (final Token σ : bnf.Σ)
+    bnf.tokens().forEach(σ -> {
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(q0ø, σ, typeNameMapping.get(σ), q0ø, Word.empty()));
+    });
     // Get stuck in q0ø with σ + inappropriate variable.
     /* Computing automaton transitions for q0$ */
     // Moving from q0$ to q0ø with ε + terminal.
-    for (final Token σ : bnf.Σ)
+    bnf.tokens().forEach(σ -> {
       if (!Constants.$$.equals(σ))
         δs.add(new δ<>(q0$, ε(), typeNameMapping.get(σ), q0ø, new Word<>(typeNameMapping.get(σ))));
+    });
     // Moving from q0$ to q0ø with ε + non-accepting variable.
-    for (final Named v : bnf.Γ)
-      δs.add(new δ<>(q0$, ε(), v, q0ø, new Word<>(v)));
+    bnf.variables().forEach(v -> δs.add(new δ<>(q0$, ε(), v, q0ø, new Word<>(v))));
     // Moving from q0$ to q0ø with ε + non-nullable accepting variable.
-    for (final Variable v : bnf.Γ)
-      if (!bnf.isNullable(v))
-        δs.add(new δ<>(q0$, ε(), A.get(v), q0ø, new Word<>(A.get(v))));
+    bnf.variables().filter(v -> !bnf.nullable(v)) //
+        .forEach(v -> δs.add(new δ<>(q0$, ε(), A.get(v), q0ø, new Word<>(A.get(v)))));
     // Moving from q0$ to qσ with σ + appropriate variable.
-    for (final ERule r : bnf.R)
-      if (bnf.isNullable(r.variable))
-        for (final Body sf : r.bodiesList())
-          for (final Token σ : bnf.firsts(sf))
-            if (!Constants.$$.equals(σ))
-              δs.add(new δ<>(q0$, σ, A.get(r.variable), typeNameMapping.get(σ),
-                  reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
-    for (final Variable v : bnf.Γ)
-      if (bnf.isNullable(v))
-        for (final Token σ : bnf.Σ)
-          if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
-            δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ), Word.empty()));
+    bnf.variables().filter(bnf::nullable).forEach(v -> //
+    bnf.forms(v).forEach(sf -> //
+    bnf.firsts(sf.inner()).stream() //
+        .filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> {
+          δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ),
+              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+        })));
+    bnf.variables().filter(bnf::nullable).forEach(v -> //
+    bnf.tokens().forEach(σ -> {
+      if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
+        δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ), Word.empty()));
+    }));
     // Get stuck in q0$ with σ + inappropriate variable.
     /* Computing automaton transitions for qσ */
     // Moving from qσ to q0$ with ε + σ.
-    for (final Token σ : bnf.Σ)
-      if (!Constants.$$.equals(σ))
-        δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty()));
+    bnf.tokens().filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> δs.add(new δ<>(typeNameMapping.get(σ), ε(), typeNameMapping.get(σ), q0$, Word.empty())));
     // Moving from qσ to qσ with ε + appropriate variable.
-    for (final ERule r : bnf.R)
-      for (final Body b : r.bodiesList())
-        for (final Token σ : bnf.firsts(b))
-          if (!Constants.$$.equals(σ)) {
-            final Named σState = typeNameMapping.get(σ);
-            δs.add(new δ<>(σState, ε(), A.get(r.variable), σState,
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, true))));
-            δs.add(new δ<>(σState, ε(), r.variable, σState,
-                reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, b, false))));
-          }
+    bnf.variables().forEach(v -> //
+    bnf.forms(v).forEach(sf -> //
+    bnf.firsts(sf.inner()).stream().filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> {
+          final Named σState = typeNameMapping.get(σ);
+          δs.add(new δ<>(σState, ε(), A.get(v), σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
+          δs.add(new δ<>(σState, ε(), v, σState, reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, false))));
+        })));
     // Moving from qσ to qσ with ε + nullable variable.
-    for (final Token σ : bnf.Σ)
-      if (!Constants.$$.equals(σ))
-        for (final Variable v : bnf.Γ)
-          if (bnf.isNullable(v) && !bnf.firsts(v).contains(σ)) {
-            final Named σState = typeNameMapping.get(σ);
-            δs.add(new δ<>(σState, ε(), v, σState, Word.empty()));
-            δs.add(new δ<>(σState, ε(), A.get(v), σState, Word.empty()));
-          }
+    bnf.tokens().filter(σ -> !Constants.$$.equals(σ)).forEach(σ -> //
+    bnf.variables().filter(bnf::nullable).filter(v -> !bnf.firsts(v).contains(σ)) //
+        .forEach(v -> {
+          final Named σState = typeNameMapping.get(σ);
+          δs.add(new δ<>(σState, ε(), v, σState, Word.empty()));
+          δs.add(new δ<>(σState, ε(), A.get(v), σState, Word.empty()));
+        }));
     // Moving from qσ to qT with ε + inappropriate, non-nullable symbol.
-    for (final Token σ : bnf.Σ)
-      if (!Constants.$$.equals(σ)) {
-        final Set<Named> legalTops = new HashSet<>();
-        legalTops.add(typeNameMapping.get(σ));
-        for (final ERule r : bnf.R)
-          for (final Body sf : r.bodiesList())
-            if (bnf.firsts(sf).contains(σ)) {
-              legalTops.add(r.variable);
-              legalTops.add(getAcceptingVariable(r.variable));
-            }
-        bnf.Γ.stream() //
-            .filter(bnf::isNullable) //
-            .forEach(v -> {
+    bnf.tokens().filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> {
+          final Set<Named> legalTops = new HashSet<>();
+          legalTops.add(typeNameMapping.get(σ));
+          bnf.variables().forEach(v -> bnf.forms(v).forEach(sf -> { //
+            if (bnf.firsts(sf.inner()).contains(σ)) {
               legalTops.add(v);
-              legalTops.add(A.get(v));
-            });
-        for (final Named γ : Γ)
-          if (!legalTops.contains(γ))
-            δs.add(new δ<>(typeNameMapping.get(σ), ε(), γ, qT, Word.empty()));
-      }
+              legalTops.add(getAcceptingVariable(v));
+            }
+          }));
+          bnf.variables() //
+              .filter(bnf::nullable) //
+              .forEach(v -> {
+                legalTops.add(v);
+                legalTops.add(A.get(v));
+              });
+          for (final Named γ : Γ)
+            if (!legalTops.contains(γ))
+              δs.add(new δ<>(typeNameMapping.get(σ), ε(), γ, qT, Word.empty()));
+        });
+    bnf.tokens().filter(σ -> !Constants.$$.equals(σ)) //
+        .forEach(σ -> {
+          final Set<Named> legalTops = new HashSet<>();
+          legalTops.add(typeNameMapping.get(σ));
+          bnf.variables().forEach(v -> //
+          bnf.forms(v).forEach(sf -> { //
+            if (bnf.firsts(sf.inner()).contains(σ)) {
+              legalTops.add(v);
+              legalTops.add(getAcceptingVariable(v));
+            }
+          }));
+          bnf.variables() //
+              .filter(bnf::nullable) //
+              .forEach(v -> {
+                legalTops.add(v);
+                legalTops.add(A.get(v));
+              });
+          for (final Named γ : Γ)
+            if (!legalTops.contains(γ))
+              δs.add(new δ<>(typeNameMapping.get(σ), ε(), γ, qT, Word.empty()));
+        });
     // Automaton should not stop in qσ.
     // Automaton gets stuck after reaching qT.
     return new DPDA<>(Q, Σ, Γ, δs, F, q0, γ0);
@@ -154,16 +174,16 @@ public enum LL1 {
   private static Named getAcceptingVariable(final Variable v) {
     return Named.by(v.name() + "$");
   }
-  private static Word<Named> getPossiblyAcceptingVariables(final FancyEBNF e, final Map<Token, Named> typeNameMapping,
-      final Body sf, final boolean isFromQ0$) {
+  private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, Named> typeNameMapping,
+      final SF sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     boolean isAccepting = isFromQ0$;
-    for (final Component s : reversed(sf)) {
+    for (final Symbol s : reversed(sf.inner())) {
       $.add(s.isVariable() && isAccepting ? //
           getAcceptingVariable(s.asVariable()) : //
           s.isToken() && !Constants.$$.equals(s) ? typeNameMapping.get(s) : //
               s);
-      isAccepting &= e.isNullable(s);
+      isAccepting &= e.nullable(s);
     }
     return new Word<>(reversed($));
   }

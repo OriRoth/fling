@@ -8,7 +8,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
  * lots of services which found shelter in this class.
  *
  * @author Ori Roth */
-class Nullables extends BNF.Decorator {
+public class Nullables extends BNF.Decorator {
   private final Set<Variable> nullables = new LinkedHashSet<>();
   public Nullables(final BNF inner) {
     super(inner);
@@ -20,19 +20,19 @@ class Nullables extends BNF.Decorator {
   private boolean nullable(final Stream<Symbol> ss) {
     return ss.allMatch(this::nullable);
   }
-  boolean nullable(final Symbol s) {
+  public boolean nullable(final Symbol s) {
     if (s instanceof Variable v)
       return nullables.contains(v);
     return false;
   }
   /** @param ss sequence of grammar symbols
    * @return whether the sequence, as a whole is nullable */
-  boolean nullable(final List<Symbol> ss) {
+  public boolean nullable(final List<Symbol> ss) {
     return ss.stream().allMatch(this::nullable);
   }
   /** @param ss sequence of grammar symbols
    * @return whether the sequence as a whole is nullable */
-  boolean nullable(final Symbol... ss) {
+  public boolean nullable(final Symbol... ss) {
     return nullable(Arrays.asList(ss));
   }
 }

@@ -6,7 +6,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
  * lots of services which found shelter in this class.
  *
  * @author Ori Roth */
-class Follows extends Firsts {
+public class Follows extends Firsts {
   /** Maps variables and notations to their follows set */
   private final Map<Symbol, Set<Token>> follows = new LinkedHashMap<>();
   public Follows(final BNF inner) {

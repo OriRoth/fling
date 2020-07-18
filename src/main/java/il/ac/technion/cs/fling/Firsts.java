@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling;
 import java.util.*;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-class Firsts extends Nullables {
+public class Firsts extends Nullables {
   /** Maps variables and notations to their firsts set */
   private final Map<Symbol, Set<Token>> firsts = new LinkedHashMap<>();
   public Firsts(final BNF inner) {
@@ -11,7 +11,7 @@ class Firsts extends Nullables {
     variables().forEach(v -> firsts.put(v, new LinkedHashSet<>()));
     worklist(this::variables, v -> exists(forms(v).filter(sf -> firsts(v).addAll(firsts(sf.inner())))));
   }
-  Set<Token> firsts(final Iterable<Symbol> symbols) {
+  public Set<Token> firsts(final Iterable<Symbol> symbols) {
     final Set<Token> $ = new LinkedHashSet<>();
     for (final Symbol s : symbols) {
       $.addAll(firsts(s));

@@ -5,6 +5,7 @@ import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static il.ac.technion.cs.fling.util.RunDPDA.run;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
@@ -46,5 +47,14 @@ public class DPDATest {
     assertThat(δ.getΑ()).isEmpty();
     assertThat(δ.getΑ()).isEmpty();
     assertThat(q2).isEqualTo(δ.q$);
+  }
+  @Test public void testRun() {
+    assertThat(run(dpda)).isTrue();
+    assertThat(run(dpda, c, c, ↄ, ↄ)).isTrue();
+    assertThat(run(dpda, c, c, c, ↄ, ↄ)).isFalse();
+    assertThat(run(dpda, c, c, ↄ, ↄ, ↄ)).isFalse();
+    assertThat(run(dpda, c, c, Ↄ)).isTrue();
+    assertThat(run(dpda, c, c, Ↄ, Ↄ)).isFalse();
+    assertThat(run(dpda, c, c, c, ↄ, Ↄ, c, Ↄ)).isTrue();
   }
 }
