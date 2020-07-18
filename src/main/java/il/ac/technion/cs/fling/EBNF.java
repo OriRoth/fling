@@ -47,7 +47,7 @@ public class EBNF {
     }
   }
   private void verify() {
-    assert R.size() > 0;
+    assert !R.isEmpty();
     assert Γ.contains(ε);
   }
   /** @return all rules in this instance */
