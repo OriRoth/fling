@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.examples.languages.SubFigure.Γ;
 import il.ac.technion.cs.fling.examples.languages.SubFigure.Σ;
 import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.APICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.DPDAToModel;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -41,7 +41,7 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
     final Linker namer = new Linker("SubFigure");
     final Grammar g = new Grammar(FancyEBNF.from(language.BNF()));
     final DPDA<Named, Token, Named> dpda = LL1.buildAutomaton(g.bnf.clean());
-    final APICompiler compiler = new ReliableAPICompiler(dpda);
+    final DPDAToModel compiler = new ReliableAPICompiler(dpda);
     final APIGenerator adapter = new ScalaGenerator(namer);
     final String output = adapter.go(compiler.go());
     System.out.println(output);

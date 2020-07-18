@@ -9,7 +9,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Token;
  * language.
  *
  * @author Ori Roth */
-public abstract class APICompiler {
+public abstract class DPDAToModel {
   /** Inducing automaton. */
   final DPDA<Named, Token, Named> dpda;
   /** Compiled types. */
@@ -23,7 +23,7 @@ public abstract class APICompiler {
   }
   /** Mapping of terminals to type variable nodes. */
   final Map<Named, Type.Grounded> typeVariables = new LinkedHashMap<>();
-  protected APICompiler(final DPDA<Named, Token, Named> dpda) {
+  protected DPDAToModel(final DPDA<Named, Token, Named> dpda) {
     this.dpda = dpda;
     dpda.Q().forEach(q -> typeVariables.put(q, Type.Grounded.of(Type.Name.q(q))));
   }

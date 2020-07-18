@@ -10,12 +10,12 @@ import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.util.As;
-/** {@link APICompiler} generating polynomial number of API types. Supported
+/** {@link DPDAToModel} generating polynomial number of API types. Supported
  * method chains may terminated only when legal, yet illegal method calls do not
  * raise compilation errors, but return bottom type.
  *
  * @author Ori Roth */
-public class PolynomialAPICompiler extends APICompiler {
+public class PolynomialAPICompiler extends DPDAToModel {
   public PolynomialAPICompiler(final DPDA<Named, Token, Named> dpda) {
     super(dpda);
   }

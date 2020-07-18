@@ -7,11 +7,11 @@ import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.Type.Name;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.util.As;
-/** {@link APICompiler} generating (possibly) exponential number of API types.
+/** {@link DPDAToModel} generating (possibly) exponential number of API types.
  * Supported method chains compiles only when prefix of legal word.
  *
  * @author Ori Roth */
-public class ReliableAPICompiler extends APICompiler {
+public class ReliableAPICompiler extends DPDAToModel {
   private static final Name TOP = Type.Name.TOP;
   private static final Type topType = Type.named(TOP);
   private static final Name BOTTOM = Type.Name.BOTTOM;
