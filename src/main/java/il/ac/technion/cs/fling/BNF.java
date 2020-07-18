@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import static java.util.stream.Collectors.*;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -191,7 +192,7 @@ public interface BNF {
     Symbol get(int i) {
       return inner.get(i);
     }
-    List<Symbol> suffix(int i) {
+    @NonNull List<Symbol> suffix(int i) {
       return inner.subList(i, inner.size());
     }
     public Iterable<Symbol> isymbols() {
@@ -208,6 +209,21 @@ public interface BNF {
     }
     private List<Symbol> prefix(int i) {
       return inner.subList(0, i);
+    }
+    public Iterable<List<Symbol>> suffixes() {
+      return new Iterable<>() {
+        @Override public Iterator<List<Symbol>> iterator() {
+          return new Iterator<>() {
+            int i = 0;
+            @Override public boolean hasNext() {
+              return i < size();
+            }
+            @Override public List<Symbol> next() {
+              return suffix(i++);
+            }
+          };
+        }
+      };
     }
   }
   record Inner(Variable start, Map<Variable, Set<SF>> rules) implements BNF {

@@ -28,17 +28,17 @@ public class Word<T> implements List<T> {
   public static <T> Word<T> empty() {
     return new Word<>();
   }
-  @SuppressWarnings("unused") @Override public boolean add(final T t) {
-    throw new UnsupportedOperationException();
+  @Override public boolean add(final T t) {
+    throw new UnsupportedOperationException(t + "");
   }
-  @SuppressWarnings("unused") @Override public void add(final int index, final T element) {
-    throw new UnsupportedOperationException();
+  @Override public void add(final int i, final T t) {
+    throw new UnsupportedOperationException(i + ": " + t);
   }
-  @Override public boolean addAll(final Collection<? extends T> c) {
-    throw new UnsupportedOperationException(c + "");
+  @Override public boolean addAll(final Collection<? extends T> ts) {
+    throw new UnsupportedOperationException(ts + "");
   }
-  @SuppressWarnings("unused") @Override public boolean addAll(final int index, final Collection<? extends T> c) {
-    throw new UnsupportedOperationException();
+  @Override public boolean addAll(final int i, final Collection<? extends T> ts) {
+    throw new UnsupportedOperationException(i + ": " + ts);
   }
   @Override public void clear() {
     throw new UnsupportedOperationException();
