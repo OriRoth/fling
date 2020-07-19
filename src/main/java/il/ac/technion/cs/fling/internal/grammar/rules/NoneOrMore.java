@@ -24,8 +24,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     return $;
   }
   @Override protected String getVisitingStatement(final Symbol symbol,
-                                                  final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
-                                                  final Supplier<String> variableNamesGenerator) {
+      final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+      final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
     final var streamingVariable = variableNamesGenerator.get();
@@ -39,7 +39,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
         streamingVariable, //
         action);
   }
-  @Override public List<FieldNodeFragment> getFields(final Function<Component, ? extends List<FieldNodeFragment>> fieldsSolver,
+  @Override public List<FieldNodeFragment> getFields(
+      final Function<Component, ? extends List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     final List<FieldNodeFragment> $ = new ArrayList<>();
     for (final Symbol symbol : symbols)
@@ -50,14 +51,15 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
                 ClassParameter.unPrimitiveType(rawField.parameterType)), //
             rawField.parameterName) {
           @Override public String visitingStatement(
-                  final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
-                  final Supplier<String> variableNamesGenerator) {
+              final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+              final Supplier<String> variableNamesGenerator) {
             return getVisitingStatement(symbol, variableVisitingSolver, accessor, variableNamesGenerator);
           }
         });
     return $;
   }
-  @SuppressWarnings("unused") @Override public boolean isNullable(final Predicate<? super Component> nullabilitySolver) {
+  @SuppressWarnings("unused") @Override public boolean isNullable(
+      final Predicate<? super Component> nullabilitySolver) {
     return true;
   }
   @Override public Set<Token> getFirsts(final Function<List<? extends Component>, ? extends Set<Token>> firstsSolver) {

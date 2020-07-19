@@ -8,14 +8,15 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
 public abstract class Quantifier implements Component {
   public abstract Stream<Symbol> symbols();
   public abstract Variable expand(VariableGenerator g, Consumer<? super Variable> variableDeclaration,
-                                  Consumer<? super ERule> ruleDeclaration);
-  public abstract List<FieldNodeFragment> getFields(Function<Component, ? extends List<FieldNodeFragment>> fieldTypesSolver,
-                                                    Function<String, String> nameFromBaseSolver);
+      Consumer<? super ERule> ruleDeclaration);
+  public abstract List<FieldNodeFragment> getFields(
+      Function<Component, ? extends List<FieldNodeFragment>> fieldTypesSolver,
+      Function<String, String> nameFromBaseSolver);
   public abstract boolean isNullable(Predicate<? super Component> nullabilitySolver);
   public abstract Set<Token> getFirsts(Function<List<? extends Component>, ? extends Set<Token>> firstsSolver);
   protected abstract int fieldCount();
   protected abstract String getVisitingStatement(final Symbol symbol, final //
-          BiFunction<? super Variable, ? super String, String> variableVisitingSolver, //
+  BiFunction<? super Variable, ? super String, String> variableVisitingSolver, //
       final String accessor, final Supplier<String> variableNamesGenerator);
   int fieldCount(final Symbol s) {
     assert !s.isTerminal();

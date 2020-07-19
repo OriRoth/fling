@@ -93,8 +93,8 @@ public class Linker {
           getASTClassName(symbol.asVariable()), //
           getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)) {
         @SuppressWarnings("unused") @Override public String visitingStatement(
-                final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
-                final Supplier<String> variableNamesGenerator) {
+            final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+            final Supplier<String> variableNamesGenerator) {
           return variableVisitingSolver.apply(symbol.asVariable(), accessor);
         }
       });

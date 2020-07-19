@@ -97,10 +97,8 @@ public enum LL1 {
     bnf.forms(v).forEach(sf -> //
     bnf.firsts(sf.inner()).stream() //
         .filter(σ -> !Constants.$$.equals(σ)) //
-        .forEach(σ ->
-          δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ),
-              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))))
-        )));
+        .forEach(σ -> δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ),
+            reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true)))))));
     bnf.variables().filter(bnf::nullable).forEach(v -> //
     bnf.tokens().forEach(σ -> {
       if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
@@ -180,8 +178,8 @@ public enum LL1 {
     return Named.by(v.name() + "$");
   }
   // Can you remove the flag here?
-  private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, ? extends Named> typeNameMapping,
-      final SF sf, final boolean isFromQ0$) {
+  private static Word<Named> getPossiblyAcceptingVariables(final Nullables e,
+      final Map<Token, ? extends Named> typeNameMapping, final SF sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     var isAccepting = isFromQ0$;
     for (final Symbol s : reversed(sf.inner())) {
