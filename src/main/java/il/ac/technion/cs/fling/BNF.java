@@ -102,7 +102,7 @@ public interface BNF {
       }
     }
   }
-  public abstract class Decorator implements BNF {
+  abstract class Decorator implements BNF {
     private final BNF inner;
     protected Decorator(final BNF inner) {
       this.inner = inner;
@@ -212,7 +212,7 @@ public interface BNF {
     }
     public Iterable<List<Symbol>> suffixes() {
       return () -> new Iterator<>() {
-        int i = 0;
+        int i;
         @Override public boolean hasNext() {
           return i < size();
         }
