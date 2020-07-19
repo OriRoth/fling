@@ -27,7 +27,7 @@ public class ReliableAPICompiler extends DPDAToModel {
     if (dpda.F.contains(dpda.q0))
       $.add(Method.termination());
     for (final Token σ : dpda.Σ) {
-      final var δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+      final var δ = dpda.δ(dpda.q0, dpda.γ0.top(), σ);
       if (δ == null)
         continue;
       final var m = Method.named(σ).returning(consolidate(δ.q$, //
@@ -58,7 +58,7 @@ public class ReliableAPICompiler extends DPDAToModel {
     if (dpda.isAccepting(n.q()))
       return false;
     for (final Token σ : dpda.Σ) {
-      final var δ = dpda.δδ(n.q(), σ, n.α());
+      final var δ = dpda.δδ(n.q(), n.α(), σ);
       if (δ == null)
         continue;
       if (!δ.getΑ().isEmpty())
@@ -88,12 +88,12 @@ public class ReliableAPICompiler extends DPDAToModel {
    * @param σ          current input letter
    * @return next state type */
   private Type.Grounded next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
-    final var δ = dpda.δδ(q, σ, α.top());
+    final var δ = dpda.δδ(q, α.top(), σ);
     return δ == null ? Type.Grounded.BOTTOM : common(δ, α.pop(), legalJumps, false);
   }
   private Type.Grounded consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    final var δ = dpda.δδ(q, ε(), α.top());
+    final var δ = dpda.δδ(q, α.top(), ε());
     if (δ == null) {
       final var name = encodedName(q, α, legalJumps);
       return name == null ? Type.Grounded.BOTTOM

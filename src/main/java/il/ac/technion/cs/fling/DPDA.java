@@ -53,12 +53,12 @@ public class DPDA<Q, Σ, Γ> {
     return Γ.stream();
   }
   /** @param q current state
-   * @param σ current input letter
    * @param γ current stack symbol
+   * @param σ current input letter
    * @return matching transition */
-  public δ<Q, Σ, Γ> δ(final Q q, final Σ σ, final Γ γ) {
+  public δ<Q, Σ, Γ> δ(final Q q, final Γ γ, final Σ σ) {
     for (final δ<Q, Σ, Γ> δ : δs)
-      if (δ.match(q, σ, γ))
+      if (δ.match(q, γ, σ))
         return δ;
     return null;
   }
@@ -67,12 +67,12 @@ public class DPDA<Q, Σ, Γ> {
    * does not contain stack symbol.
    *
    * @param q current state
-   * @param σ current input letter
    * @param α current stack
+   * @param σ current input letter
    * @return matching consolidated transition */
-  public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Word<Γ> α) {
+  public δ<Q, Σ, Γ> δδ(final Q q, final Word<Γ> α, final Σ σ) {
     var s = new Word<>(α);
-    final var δ = δ(q, σ, s.top());
+    final var δ = δ(q, s.top(), σ);
     if (δ == null)
       return null;
     var q$ = δ.q$;
@@ -81,7 +81,7 @@ public class DPDA<Q, Σ, Γ> {
     for (;;) {
       if (s.isEmpty())
         return new δ<>(q, σ, null, q$, s);
-      final var δ$ = δ(q$, ε(), s.top());
+      final var δ$ = δ(q$, s.top(), ε());
       if (δ$ == null)
         return new δ<>(q, σ, null, q$, s);
       s = s.pop().push(δ$.getΑ());
@@ -92,12 +92,12 @@ public class DPDA<Q, Σ, Γ> {
    * transitions initiated by the received configuration.
    *
    * @param q current state
-   * @param σ current input letter
    * @param γ current stack symbol
+   * @param σ current input letter
    * @return matching consolidated transition */
-  public δ<Q, Σ, Γ> δδ(final Q q, final Σ σ, final Γ γ) {
+  public δ<Q, Σ, Γ> δδ(final Q q, final Γ γ, final Σ σ) {
     var s = new Word<>(γ);
-    final var δ = δ(q, σ, s.top());
+    final var δ = δ(q, s.top(), σ);
     if (δ == null)
       return null;
     var q$ = δ.q$;
@@ -106,7 +106,7 @@ public class DPDA<Q, Σ, Γ> {
     for (;;) {
       if (s.isEmpty())
         return new δ<>(q, σ, γ, q$, s);
-      final var δ$ = δ(q$, ε(), s.top());
+      final var δ$ = δ(q$, s.top(), ε());
       if (δ$ == null)
         return new δ<>(q, σ, γ, q$, s);
       s = s.pop().push(δ$.getΑ());
@@ -143,14 +143,14 @@ public class DPDA<Q, Σ, Γ> {
     for (var σ : w) {
       if (stack.isEmpty())
         return false;
-      var δ = δ(q, σ, stack.top());
+      var δ = δ(q, stack.top(), σ);
       if (δ == null)
         return false;
       q = δ.q$;
       stack = stack.pop().push(δ.getΑ());
       if (stack.isEmpty())
         break;
-      for (δ = δ(q, ε(), stack.top()); δ != null; δ = δ(q, ε(), stack.top())) {
+      for (δ = δ(q, stack.top(), ε()); δ != null; δ = δ(q, stack.top(), ε())) {
         q = δ.q$;
         stack = stack.pop().push(δ.getΑ());
         if (stack.isEmpty())
@@ -229,10 +229,10 @@ public class DPDA<Q, Σ, Γ> {
           && q$.equals(other.q$) && getΑ().equals(other.getΑ());
     }
     /** @param currentq current state
-     * @param currentσ current input letter
      * @param currentγ current stack symbol
+     * @param currentσ current input letter
      * @return whether this edge describes the next transition */
-    boolean match(final Q currentq, final Σ currentσ, final Γ currentγ) {
+    boolean match(final Q currentq, final Γ currentγ, final Σ currentσ) {
       return q.equals(currentq) && Objects.equals(σ, currentσ) && γ.equals(currentγ);
     }
   }
