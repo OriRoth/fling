@@ -27,7 +27,7 @@ public abstract class CLikeGenerator extends APIGenerator {
   @Override final String render(final Stream<MethodParameter> ps) {
     return ps.map(p -> p.type + " " + p.name).collect(commas());
   }
-  @Override public String renderInstnatiation(final Type.Name name, final List<Type.Grounded> arguments) {
+  @Override public String renderInstnatiation(final Type.Name name, final List<? extends Type.Grounded> arguments) {
     return String.format("%s <%s>", render(name), arguments.stream().map(this::render).collect(commas()));
   }
   @Override String fullName(final Type t) {

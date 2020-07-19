@@ -68,10 +68,10 @@ public class ERule {
   private Stream<Component> components() {
     return bodies().flatMap(Collection::stream);
   }
-  private static Stream<Token> tokens(final Stream<Component> symbols) {
+  private static Stream<Token> tokens(final Stream<? extends Component> symbols) {
     return symbols.filter(Component::isToken).map(Component::asToken);
   }
-  private static Stream<Variable> variables(final Stream<Component> symbols) {
+  private static Stream<Variable> variables(final Stream<? extends Component> symbols) {
     return symbols.filter(Component::isVariable).map(Component::asVariable);
   }
 }

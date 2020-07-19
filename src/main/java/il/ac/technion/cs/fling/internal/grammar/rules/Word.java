@@ -21,7 +21,7 @@ public class Word<T> implements List<T> {
     inner = Arrays.asList(ts);
     verify();
   }
-  public Word(final Collection<T> ts) {
+  public Word(final Collection<? extends T> ts) {
     inner = new ArrayList<>(ts);
     verify();
   }
@@ -106,7 +106,7 @@ public class Word<T> implements List<T> {
     $.add(t);
     return new Word<>($);
   }
-  public Word<T> push(final List<T> list) {
+  public Word<T> push(final List<? extends T> list) {
     final List<T> $ = new ArrayList<>(inner.size() + list.size());
     $.addAll(inner);
     $.addAll(list);
@@ -132,7 +132,7 @@ public class Word<T> implements List<T> {
   private void verify() {
     inner.forEach(Objects::requireNonNull);
   }
-  public static <T> Word<T> of(final Stream<T> s) {
+  public static <T> Word<T> of(final Stream<? extends T> s) {
     return new Word<>(s.collect(toList()));
   }
   @SafeVarargs public static <T> Word<T> of(final T... ts) {

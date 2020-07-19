@@ -227,7 +227,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       throw new RuntimeException("problem while creating real-time parser");
   }
   private List<FieldNodeFragment> getFieldsInClassContext(final Component symbol,
-      final Map<String, Integer> usedNames) {
+      final Map<? super String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
           .map(parameter -> FieldNodeFragment.of( //

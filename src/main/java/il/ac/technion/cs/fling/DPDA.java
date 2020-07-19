@@ -137,7 +137,7 @@ public class DPDA<Q, Σ, Γ> {
   @SafeVarargs public final boolean run(final Σ... w) {
     return run(As.iterable(w));
   }
-  public boolean run(final Iterable<Σ> w) {
+  public boolean run(final Iterable<? extends Σ> w) {
     var stack = γ0;
     var q = q0;
     for (var σ : w) {

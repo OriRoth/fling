@@ -53,14 +53,14 @@ public class FancyEBNF extends EBNF.Decorator {
   }
   /** @param symbols sequence of grammar symbols
    * @return whether the sequence is nullable */
-  private boolean isNullable(final Collection<Component> symbols) {
+  private boolean isNullable(final Collection<? extends Component> symbols) {
     return symbols.stream().allMatch(symbol -> nullables.contains(symbol) || //
         symbol.isQuantifier() && symbol.asQuantifier().isNullable(this::isNullable));
   }
   public Set<Token> firsts(final Component... symbols) {
     return firsts(Arrays.asList(symbols));
   }
-  public Set<Token> firsts(final Iterable<Component> symbols) {
+  public Set<Token> firsts(final Iterable<? extends Component> symbols) {
     final Set<Token> $ = new LinkedHashSet<>();
     for (final Component s : symbols) {
       $.addAll(firsts.get(s));

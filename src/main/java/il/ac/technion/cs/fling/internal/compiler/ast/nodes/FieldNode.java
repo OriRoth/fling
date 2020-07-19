@@ -32,8 +32,8 @@ public class FieldNode {
       return new FieldNodeFragment(parameterType, parameterName);
     }
     @SuppressWarnings({ "static-method", "unused" }) public String visitingStatement(
-        final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
-        final Supplier<String> variableNamesGenerator) {
+            final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+            final Supplier<String> variableNamesGenerator) {
       return null;
     }
   }

@@ -27,7 +27,7 @@ public class SMLGenerator extends APIGenerator {
     return String.format("%s\n\n%s", m.types().map(this::renderInstnatiation).collect(joining(" ")),
         m.starts().map(this::renderInstnatiation).collect(joining("\n")));
   }
-  @Override private String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  @Override private String render(final Named q, final Word<? extends Named> α, final Set<? extends Named> legalJumps) {
     assert q.name() != null && !q.name().isEmpty();
     return α == null ? q.name()
         : String.format("%s_%s%s", //
@@ -40,7 +40,7 @@ public class SMLGenerator extends APIGenerator {
     final String prefix = name.α == null && name.legalJumps == null ? "'" : "";
     return prefix + render(name.q, name.α, name.legalJumps);
   }
-  @Override public String renderInstnatiation(final Name name, final List<Grounded> typeArguments) {
+  @Override public String renderInstnatiation(final Name name, final List<? extends Grounded> typeArguments) {
     return typeArguments.isEmpty() ? render(name)
         : String.format("(%s) %s", //
             typeArguments.stream().map(this::render).collect(commas()), //

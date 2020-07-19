@@ -10,8 +10,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
   public OneOrMore(final List<Symbol> symbols) {
     super(symbols);
   }
-  @Override public Variable expand(final VariableGenerator g, final Consumer<Variable> variableDeclaration,
-      final Consumer<ERule> ruleDeclaration) {
+  @Override public Variable expand(final VariableGenerator g, final Consumer<? super Variable> variableDeclaration,
+      final Consumer<? super ERule> ruleDeclaration) {
     final List<Component> expandedSymbols = new ArrayList<>();
     //
     for (final Symbol s : symbols)
@@ -27,8 +27,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     return head;
   }
   @Override protected String getVisitingStatement(final Symbol symbol,
-      final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
-      final Supplier<String> variableNamesGenerator) {
+                                                  final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+                                                  final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
     final var streamingVariable = variableNamesGenerator.get();
@@ -42,7 +42,7 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
         streamingVariable, //
         action);
   }
-  @Override public List<FieldNodeFragment> getFields(final Function<Component, List<FieldNodeFragment>> fieldsSolver,
+  @Override public List<FieldNodeFragment> getFields(final Function<Component, ? extends List<FieldNodeFragment>> fieldsSolver,
       @SuppressWarnings("unused") final Function<String, String> nameFromBaseSolver) {
     final List<FieldNodeFragment> $ = new ArrayList<>();
     for (final Symbol symbol : symbols)
@@ -53,17 +53,17 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
                 ClassParameter.unPrimitiveType(rawField.parameterType)), //
             rawField.parameterName) {
           @Override public String visitingStatement(
-              final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
-              final Supplier<String> variableNamesGenerator) {
+                  final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+                  final Supplier<String> variableNamesGenerator) {
             return getVisitingStatement(symbol, variableVisitingSolver, accessor, variableNamesGenerator);
           }
         });
     return $;
   }
-  @Override public boolean isNullable(final Predicate<Component> nullabilitySolver) {
+  @Override public boolean isNullable(final Predicate<? super Component> nullabilitySolver) {
     return symbols().allMatch(nullabilitySolver);
   }
-  @Override public Set<Token> getFirsts(final Function<List<? extends Component>, Set<Token>> firstsSolver) {
+  @Override public Set<Token> getFirsts(final Function<List<? extends Component>, ? extends Set<Token>> firstsSolver) {
     return firstsSolver.apply(symbols);
   }
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode,

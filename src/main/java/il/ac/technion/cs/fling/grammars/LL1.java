@@ -180,7 +180,7 @@ public enum LL1 {
     return Named.by(v.name() + "$");
   }
   // Can you remove the flag here?
-  private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, Named> typeNameMapping,
+  private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, ? extends Named> typeNameMapping,
       final SF sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
     var isAccepting = isFromQ0$;

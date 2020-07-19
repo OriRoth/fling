@@ -17,7 +17,7 @@ public class Nullables extends BNF.Decorator {
   private boolean nullable(final SF ss) {
     return nullable(ss.symbols());
   }
-  private boolean nullable(final Stream<Symbol> ss) {
+  private boolean nullable(final Stream<? extends Symbol> ss) {
     return ss.allMatch(this::nullable);
   }
   public boolean nullable(final Symbol s) {
@@ -27,7 +27,7 @@ public class Nullables extends BNF.Decorator {
   }
   /** @param ss sequence of grammar symbols
    * @return whether the sequence, as a whole is nullable */
-  public boolean nullable(final List<Symbol> ss) {
+  public boolean nullable(final List<? extends Symbol> ss) {
     return ss.stream().allMatch(this::nullable);
   }
   /** @param ss sequence of grammar symbols

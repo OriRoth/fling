@@ -82,7 +82,7 @@ public class PolynomialAPICompiler extends DPDAToModel {
     return Type.Grounded.of(encodedName(δ.q$, δ.getΑ()))
         .with(dpda.Q().map(q -> consolidate(q, α, isInitialType)).collect(toList()));
   }
-  private Type.Grounded getTypeArgument(final δ<Named, Token, Named> δ, final boolean isInitialType) {
+  private Type.Grounded getTypeArgument(final δ<? extends Named, Token, Named> δ, final boolean isInitialType) {
     return isInitialType ? dpda.isAccepting(δ.q$) ? top : bottom : typeVariables.get(δ.q$);
   }
   private List<Type.Grounded> getTypeArguments(final boolean isInitialType) {

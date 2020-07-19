@@ -70,7 +70,7 @@ public abstract class APIGenerator extends Indenter {
   void topName(@SuppressWarnings("hiding") final String topName) {
     this.topName = topName;
   }
-  public abstract String renderInstnatiation(Type.Name name, List<Type.Grounded> arguments);
+  public abstract String renderInstnatiation(Type.Name name, List<? extends Type.Grounded> arguments);
   abstract String fullName(Type t);
   public abstract String toString(Type.Name.q q);
   public abstract String toString(Type.Name.q.α α);

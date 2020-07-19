@@ -150,7 +150,7 @@ public interface BNF {
       s.forEach(u -> rules.put(u, forms(v).collect(toSet())));
       return new BNF.Inner(start(), rules);
     }
-    static <T> Set<T> closure(final T t, final Function<T, Stream<T>> expand) {
+    static <T> Set<T> closure(final T t, final Function<T, ? extends Stream<T>> expand) {
       return closure(singleton(t), expand);
     }
     static <T> boolean exists(final Stream<T> ss) {
@@ -160,7 +160,7 @@ public interface BNF {
       while (exists(s.get().filter(u))) {
       }
     }
-    static <T> Set<T> closure(final Set<T> ts, final Function<? super T, ? extends Stream<T>> expand) {
+    static <T> Set<T> closure(final Set<? extends T> ts, final Function<? super T, ? extends Stream<T>> expand) {
       final Set<T> $ = new LinkedHashSet<>();
       var current = ts;
       do

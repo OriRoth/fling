@@ -41,7 +41,7 @@ public class ScalaGenerator extends CLikeGenerator {
         m.types().map(this::renderInstnatiation).collect(joining("\n")), //
         m.starts().map(this::renderInstnatiation).collect(joining("\n")));
   }
-  @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
+  @Override public String render(final Named q, final Word<? extends Named> α, final Set<? extends Named> legalJumps) {
     final var qn = q.name();
     return α == null ? qn
         : String.format("%s_%s%s", //
@@ -49,7 +49,7 @@ public class ScalaGenerator extends CLikeGenerator {
             α.stream().map(Named::name).collect(Collectors.joining()), //
             legalJumps == null ? "" : "_" + legalJumps.stream().map(Named::name).collect(Collectors.joining()));
   }
-  @Override public String renderInstnatiation(final Type.Name name, final List<Grounded> typeArguments) {
+  @Override public String renderInstnatiation(final Type.Name name, final List<? extends Grounded> typeArguments) {
     return String.format("%s[%s]", //
         render(name), //
         typeArguments.stream().map(this::render).collect(commas()));

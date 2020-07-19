@@ -70,7 +70,7 @@ public class Linker {
         .map(ConcreteClassNode::getFields) //
         .forEach(this::setInferredFieldsInClass);
   }
-  private List<FieldNodeFragment> getFields(final Component symbol, final Map<String, Integer> usedNames) {
+  private List<FieldNodeFragment> getFields(final Component symbol, final Map<? super String, Integer> usedNames) {
     if (symbol.isToken())
       return symbol.asToken().parameters() //
           .map(p -> {
@@ -93,8 +93,8 @@ public class Linker {
           getASTClassName(symbol.asVariable()), //
           getNameFromBase(getBaseParameterName(symbol.asVariable()), usedNames)) {
         @SuppressWarnings("unused") @Override public String visitingStatement(
-            final BiFunction<? super Variable, String, String> variableVisitingSolver, final String accessor,
-            final Supplier<String> variableNamesGenerator) {
+                final BiFunction<? super Variable, ? super String, String> variableVisitingSolver, final String accessor,
+                final Supplier<String> variableNamesGenerator) {
           return variableVisitingSolver.apply(symbol.asVariable(), accessor);
         }
       });
