@@ -6,7 +6,7 @@ enum HTMLTable {
   ;
   // @formatter:off
   public static void main(final String[] args) {
-    final HTML page =
+    final var page =
       html("My Table").
       table("style=\"width:100%\"").
         tr().

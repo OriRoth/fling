@@ -31,24 +31,24 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Named;
     assertThat(Type.named(n1).hashCode()).isNotEqualTo(Type.named(n2).hashCode());
   }
   @Test public void test8() {
-    final Type t = Type.named(n1);
-    final SoftAssertions softly = new SoftAssertions();
+    final var t = Type.named(n1);
+    final var softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isFalse();
     softly.assertAll();
   }
   @Test public void test9() {
-    final Type t = Type.named(Type.Name.BOTTOM);
-    final SoftAssertions softly = new SoftAssertions();
+    final var t = Type.named(Type.Name.BOTTOM);
+    final var softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isFalse();
     softly.assertAll();
   }
   @Test public void test10() {
-    final Type t = Type.named(Type.Name.TOP).accepting();
-    final SoftAssertions softly = new SoftAssertions();
+    final var t = Type.named(Type.Name.TOP).accepting();
+    final var softly = new SoftAssertions();
     softly.assertThat(t.parameters()).isEmpty();
     softly.assertThat(t.methods()).isEmpty();
     softly.assertThat(t.isAccepting).isTrue();

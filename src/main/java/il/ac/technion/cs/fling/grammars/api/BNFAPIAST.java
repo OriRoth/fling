@@ -32,7 +32,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     public final Variable variable;
     public final RuleBody ruleBody;
     public Derivation(final Variable derive, final RuleBody ruleBody) {
-      this.variable = derive;
+      variable = derive;
       this.ruleBody = ruleBody;
     }
   }
@@ -77,7 +77,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
       } catch (final java.lang.Exception __) {
         __.printStackTrace();
       }
-      plainBNF.rules.stream().forEach(_x_ -> visit(_x_));
+      plainBNF.rules.stream().forEach(this::visit);
     }
     public final void visit(final Rule rule) {
       if (rule instanceof Derivation)
@@ -118,7 +118,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
       } catch (final java.lang.Exception __) {
         __.printStackTrace();
       }
-      ruleBody1.ruleTail.stream().forEach(_x_ -> visit(_x_));
+      ruleBody1.ruleTail.stream().forEach(this::visit);
     }
     public final void visit(final EpsilonDerivation ruleBody2) {
       try {

@@ -8,10 +8,10 @@ import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 class EBNFTest {
   @Test void test() {
-    final il.ac.technion.cs.fling.EBNF bnf = new TAPI().BNF();
-    final JavaGenerator j = new JavaGenerator(getClass().getPackageName() + ".__", getClass().getSimpleName());
-    final FancyEBNF from = FancyEBNF.from(bnf);
-    final Grammar g = new Grammar(from);
+    final var bnf = new TAPI().BNF();
+    final var j = new JavaGenerator(getClass().getPackageName() + ".__", getClass().getSimpleName());
+    final var from = FancyEBNF.from(bnf);
+    final var g = new Grammar(from);
     final var dpda = LL1.buildAutomaton(g.bnf.clean());
     System.out.println(j.go(new PolynomialAPICompiler(dpda).go()));
     System.out.println(j.go(new ReliableAPICompiler(dpda).go()));

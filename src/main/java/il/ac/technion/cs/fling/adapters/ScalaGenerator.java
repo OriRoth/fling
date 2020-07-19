@@ -17,7 +17,7 @@ public class ScalaGenerator extends CLikeGenerator {
     return render(s.parameters());
   }
   private String printTypeInstantiation(final Grounded type) {
-    final String _returnType = render(type);
+    final var _returnType = render(type);
     // TODO manage this HACK
     return !Arrays.asList("TOP", "BOT").contains(_returnType) //
         && !_returnType.contains("_") ? //
@@ -28,8 +28,8 @@ public class ScalaGenerator extends CLikeGenerator {
                     .collect(commas()));
   }
   @Override public String render(final Method m) {
-    final String _returnType = render(m.type);
-    final String returnValue = printTypeInstantiation(m.type);
+    final var _returnType = render(m.type);
+    final var returnValue = printTypeInstantiation(m.type);
     return String.format("def %s(%s):%s=%s", //
         s.name.name(), //
         printParametersList(m), //
@@ -42,7 +42,7 @@ public class ScalaGenerator extends CLikeGenerator {
         m.starts().map(this::renderInstnatiation).collect(joining("\n")));
   }
   @Override public String render(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final String qn = q.name();
+    final var qn = q.name();
     return α == null ? qn
         : String.format("%s_%s%s", //
             q.name(), //
@@ -56,7 +56,7 @@ public class ScalaGenerator extends CLikeGenerator {
   }
   @Override public String render(final Type s) {
     final String typeName = render(t.name);
-    final String typeParameters = s.parameters().map(Named::name).collect(commas());
+    final var typeParameters = s.parameters().map(Named::name).collect(commas());
     return String.linef("class %s", //
         s.parameters.isEmpty() ? //
             typeName //

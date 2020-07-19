@@ -124,9 +124,9 @@ public interface BNF {
     }
     private Stream<SF> expand(final SF sf) {
       Stream<SF> $ = Stream.empty();
-      for (int i = 0; i < sf.size(); ++i)
+      for (var i = 0; i < sf.size(); ++i)
         if (sf.get(i) instanceof Variable v) {
-          final int j = i;
+          final var j = i;
           $ = Stream.concat($, forms(v).map(f -> sf.replace(j, f)));
         }
       return $;
@@ -144,7 +144,7 @@ public interface BNF {
       return closure(v, u -> variables(symbols(u)));
     }
     BNF reduce(final Variable v) {
-      final Set<Variable> s = uses(v);
+      final var s = uses(v);
       s.add(v);
       final Map<Variable, Set<SF>> rules = new LinkedHashMap<>();
       s.forEach(u -> rules.put(u, forms(v).collect(toSet())));
@@ -154,7 +154,7 @@ public interface BNF {
       return closure(singleton(t), expand);
     }
     static <T> boolean exists(final Stream<T> ss) {
-      return !(ss.count() == 0);
+      return (ss.count() != 0);
     }
     static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
@@ -162,7 +162,7 @@ public interface BNF {
     }
     static <T> Set<T> closure(final Set<T> ts, final Function<? super T, ? extends Stream<T>> expand) {
       final Set<T> $ = new LinkedHashSet<>();
-      Set<T> current = ts;
+      var current = ts;
       do
         current = current.stream().flatMap(expand).collect(toSet());
       while ($.addAll(current));

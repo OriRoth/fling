@@ -25,7 +25,7 @@ public class VarargsClassParameter implements ClassTypeParameter {
       return false;
     if (getClass() != o.getClass())
       return false;
-    final VarargsClassParameter other = (VarargsClassParameter) o;
+    final var other = (VarargsClassParameter) o;
     return Objects.equals(parameterClass, other.parameterClass);
   }
   @Override public String toString() {

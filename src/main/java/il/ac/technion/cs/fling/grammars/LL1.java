@@ -14,7 +14,7 @@ public enum LL1 {
   ;
   /** Translate LL(1) BNF to DPDA. */
   public static DPDA<Named, Token, Named> buildAutomaton(final BNF _bnf) {
-    final Firsts bnf = new Firsts(_bnf);
+    final var bnf = new Firsts(_bnf);
     final Set<δ<Named, Token, Named>> δs = new LinkedHashSet<>();
     final Set<Named> F = new LinkedHashSet<>();
     final Named q0;
@@ -28,7 +28,7 @@ public enum LL1 {
     final Map<Token, Named> typeNameMapping = new LinkedHashMap<>();
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
     for (final Token v : Σ) {
-      final String name = v.name();
+      final var name = v.name();
       if (usedNames.containsKey(name))
         typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
       else {
@@ -116,7 +116,7 @@ public enum LL1 {
     bnf.forms(v).forEach(sf -> //
     bnf.firsts(sf.inner()).stream().filter(σ -> !Constants.$$.equals(σ)) //
         .forEach(σ -> {
-          final Named σState = typeNameMapping.get(σ);
+          final var σState = typeNameMapping.get(σ);
           δs.add(new δ<>(σState, ε(), A.get(v), σState,
               reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
           δs.add(new δ<>(σState, ε(), v, σState,
@@ -126,7 +126,7 @@ public enum LL1 {
     bnf.tokens().filter(σ -> !Constants.$$.equals(σ)).forEach(σ -> //
     bnf.variables().filter(bnf::nullable).filter(v -> !bnf.firsts(v).contains(σ)) //
         .forEach(v -> {
-          final Named σState = typeNameMapping.get(σ);
+          final var σState = typeNameMapping.get(σ);
           δs.add(new δ<>(σState, ε(), v, σState, Word.empty()));
           δs.add(new δ<>(σState, ε(), A.get(v), σState, Word.empty()));
         }));
@@ -183,7 +183,7 @@ public enum LL1 {
   private static Word<Named> getPossiblyAcceptingVariables(final Nullables e, final Map<Token, Named> typeNameMapping,
       final SF sf, final boolean isFromQ0$) {
     final List<Named> $ = new ArrayList<>();
-    boolean isAccepting = isFromQ0$;
+    var isAccepting = isFromQ0$;
     for (final Symbol s : reversed(sf.inner())) {
       $.add(s.isVariable() && isAccepting ? //
           getAcceptingVariable(s.asVariable()) : //

@@ -70,7 +70,7 @@ class TypeNameTest {
     assertThat(nα).isEqualTo(nαa);
   }
   @Test public void test06() {
-    final SoftAssertions softly = new SoftAssertions();
+    final var softly = new SoftAssertions();
     softly.assertThat(nα).isEqualTo(nα);
     softly.assertThat(nα).isEqualTo(nαa);
     softly.assertThat(nα.hashCode()).isEqualTo(nαa.hashCode());

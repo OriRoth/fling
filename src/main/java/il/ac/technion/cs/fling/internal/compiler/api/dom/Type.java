@@ -42,7 +42,7 @@ public class Type {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    final Type other = (Type) obj;
+    final var other = (Type) obj;
     return isAccepting == other.isAccepting && Objects.equals(methods, other.methods)
         && Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters);
   }
@@ -88,7 +88,7 @@ public class Type {
           return false;
         if (getClass() != obj.getClass())
           return false;
-        final Leaf other = (Leaf) obj;
+        final var other = (Leaf) obj;
         return Objects.equals(name, other.name);
       }
       @Override public String render(final APIGenerator g) {
@@ -169,7 +169,7 @@ public class Type {
           return false;
         if (getClass() != o.getClass())
           return false;
-        final q other = (q) o;
+        final var other = (q) o;
         return Objects.equals(q, other.q);
       }
       @Override public int hashCode() {
@@ -193,7 +193,7 @@ public class Type {
             return false;
           if (getClass() != obj.getClass())
             return false;
-          final α other = (α) obj;
+          final var other = (α) obj;
           if (!outer().equals(other.outer()))
             return false;
           return Objects.equals(α, other.α);
@@ -245,7 +245,7 @@ public class Type {
             return g.toString(this);
           }
           public Word<Named> α() {
-            return α.this.α;
+            return α;
           }
         }
       }

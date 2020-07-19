@@ -1,6 +1,4 @@
 package il.ac.technion.cs.fling.grammars;
-
-import static il.ac.technion.cs.fling.util.RunDPDA.run;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -22,29 +20,29 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
         derive(v("F")).to(t("("), v("E"), t(")")). //
         build();
     final var dpda = LL1.buildAutomaton(bnf);
-    assertThat(run(dpda)).isFalse();
-    assertThat(run(dpda, w("id"))).isTrue();
-    assertThat(run(dpda, w("+"))).isFalse();
-    assertThat(run(dpda, w("id +"))).isFalse();
-    assertThat(run(dpda, w("id + id"))).isTrue();
-    assertThat(run(dpda, w("id + id * ( id + ( id ) )"))).isTrue();
-    assertThat(run(dpda, w("id + id * ( id + ( id )"))).isFalse();
+    assertThat(dpda.run()).isFalse();
+    assertThat(dpda.run(w("id"))).isTrue();
+    assertThat(dpda.run(w("+"))).isFalse();
+    assertThat(dpda.run(w("id +"))).isFalse();
+    assertThat(dpda.run(w("id + id"))).isTrue();
+    assertThat(dpda.run(w("id + id * ( id + ( id ) )"))).isTrue();
+    assertThat(dpda.run(w("id + id * ( id + ( id )"))).isFalse();
   }
   @Test public void testJump() {
-    var bnf = BNF.of(v("S")). //
+    final var bnf = BNF.of(v("S")). //
         derive(v("S")).to(v("A"), t("x")).derive(v("A")).to(t("a"), v("A"), v("B")). //
         derive(v("A")).to(). //
         derive(v("B")).to(t("b")). //
         derive(v("B")).to(). //
         build();
-    var dpda = LL1.buildAutomaton(bnf);
-    assertThat(run(dpda)).isFalse();
-    assertThat(run(dpda, w("x"))).isTrue();
-    assertThat(run(dpda, w("a x"))).isTrue();
-    assertThat(run(dpda, w("a a b b x"))).isTrue();
-    assertThat(run(dpda, w("a a a a x"))).isTrue();
-    assertThat(run(dpda, w("a a a a b x"))).isTrue();
-    assertThat(run(dpda, w("a a b b b x"))).isFalse();
+    final var dpda = LL1.buildAutomaton(bnf);
+    assertThat(dpda.run()).isFalse();
+    assertThat(dpda.run(w("x"))).isTrue();
+    assertThat(dpda.run(w("a x"))).isTrue();
+    assertThat(dpda.run(w("a a b b x"))).isTrue();
+    assertThat(dpda.run(w("a a a a x"))).isTrue();
+    assertThat(dpda.run(w("a a a a b x"))).isTrue();
+    assertThat(dpda.run(w("a a b b b x"))).isFalse();
   }
   private static Variable v(final String s) {
     return Variable.byName(s);

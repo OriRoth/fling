@@ -1,6 +1,5 @@
 package il.ac.technion.cs.fling;
 import il.ac.technion.cs.fling.grammars.api.BNFAPIAST.*;
-import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Convert a {@link PlainBNF} into a {@link EBNF}
  *
  * @author Yossi Gil
@@ -34,7 +33,7 @@ public class PlainBNFImporter {
     builder.specialize(specializationRule.specialize).into(specializationRule.into);
   }
   private void convert(final Derivation derivation) {
-    final Variable variable = derivation.variable;
+    final var variable = derivation.variable;
     if (derivation.ruleBody instanceof ConcreteDerivation concrete) {
       // Concrete derivation rule.
       builder.derive(variable).to(concrete.to);

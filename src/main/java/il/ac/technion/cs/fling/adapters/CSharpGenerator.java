@@ -19,7 +19,7 @@ public class CSharpGenerator extends CLikeGenerator {
         render(m.type));
   }
   @Override void visit(final Type t) {
-    final String printTypeName = fullName(t);
+    final var printTypeName = fullName(t);
     return t.parameters.isEmpty() ? String.format("public class %s", printTypeName)
         : String.format("public class %s<%s>%s", //
             printTypeName, //

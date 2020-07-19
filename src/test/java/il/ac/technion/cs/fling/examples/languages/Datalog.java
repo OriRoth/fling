@@ -70,7 +70,7 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
      * The {@link JavaMediator} responsible for compiling the Java Datalog API/AST
      * types/AST run-time compiler.
      */
-    final JavaMediator jm = new JavaMediator(//
+    final var jm = new JavaMediator(//
         bnf, // use this BNF as language specification
         // Name of package in which output will reside
         "il.ac.technion.cs.fling.examples.generated",
@@ -81,16 +81,16 @@ public class Datalog implements FluentLanguageAPI<Datalog.Σ, Datalog.Γ> {
     $.put("Datalog", jm.apiClass);
     $.put("DatalogAST", jm.astClass);
     $.put("DatalogCompiler", jm.astCompilerClass);
-    final String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
+    final var PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
     System.out.println("project path: " + PATH);
-    final Path outputFolder = Paths.get(PATH);
+    final var outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {
       Files.createDirectory(outputFolder);
       System.out.println("directory " + PATH + " created successfully");
     }
-    final Formatter formatter = new Formatter();
+    final var formatter = new Formatter();
     for (final Entry<String, String> file : $.entrySet()) {
-      final Path filePath = Paths.get(PATH + file.getKey() + ".java");
+      final var filePath = Paths.get(PATH + file.getKey() + ".java");
       if (Files.exists(filePath))
         Files.delete(filePath);
       Files.write(filePath, Collections.singleton(formatter.formatSource(file.getValue())), StandardOpenOption.CREATE,

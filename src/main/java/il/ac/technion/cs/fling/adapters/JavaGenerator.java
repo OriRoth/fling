@@ -43,7 +43,7 @@ public class JavaGenerator extends CLikeGenerator {
     unindent().line("}");
   }
   @Override String fullName(final Type t) {
-    String $ = String.format("interface %s", render(t.name));
+    var $ = String.format("interface %s", render(t.name));
     if (!t.parameters.isEmpty())
       $ += String.format(" <%s>", t.parameters().map(Named::name).collect(commas()));
     if (t.isAccepting)

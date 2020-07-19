@@ -16,9 +16,9 @@ public class Follows extends Firsts {
     worklist(this::variables, v -> exists(forms(v).filter(sf -> follows(v, sf))));
   }
   private boolean follows(final Variable v, final SF sf) {
-    boolean $ = false;
-    for (int i = 0; i < sf.size(); ++i) {
-      final Symbol u = sf.get(i);
+    var $ = false;
+    for (var i = 0; i < sf.size(); ++i) {
+      final var u = sf.get(i);
       final List<Symbol> rest = sf.suffix(i + 1);
       $ |= follows(u).addAll(firsts(rest));
       if (nullable(rest))

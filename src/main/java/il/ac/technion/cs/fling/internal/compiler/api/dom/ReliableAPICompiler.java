@@ -27,10 +27,10 @@ public class ReliableAPICompiler extends DPDAToModel {
     if (dpda.F.contains(dpda.q0))
       $.add(Method.termination());
     for (final Token σ : dpda.Σ) {
-      final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+      final var δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      final Method m = Method.named(σ).returning(consolidate(δ.q$, //
+      final var m = Method.named(σ).returning(consolidate(δ.q$, //
           dpda.γ0.pop().push(δ.getΑ()), //
           new LinkedHashSet<>(dpda.Q().filter(dpda::isAccepting).collect(toList())), //
           true));
@@ -46,11 +46,11 @@ public class ReliableAPICompiler extends DPDAToModel {
    * @param α current stack symbols to be pushed
    * @return type name */
   private Type.Name encodedName(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final Type.Name.q.α.β $ = Type.Name.q(q).α(α).β(legalJumps);
+    final var $ = Type.Name.q(q).α(α).β(legalJumps);
     if (types.containsKey($))
       return BOTTOM.equals(types.get($).name) ? null : $;
     types.put($, shallowIsBot($) ? bottomType : topType); // Pending computation.
-    final Type i = encodeType(q, α, legalJumps);
+    final var i = encodeType(q, α, legalJumps);
     types.put($, i == null ? bottomType : i);
     return BOTTOM.equals(types.get($).name) ? null : $;
   }
@@ -58,7 +58,7 @@ public class ReliableAPICompiler extends DPDAToModel {
     if (dpda.isAccepting(n.q()))
       return false;
     for (final Token σ : dpda.Σ) {
-      final δ<Named, Token, Named> δ = dpda.δδ(n.q(), σ, n.α());
+      final var δ = dpda.δδ(n.q(), σ, n.α());
       if (δ == null)
         continue;
       if (!δ.getΑ().isEmpty())
@@ -71,7 +71,7 @@ public class ReliableAPICompiler extends DPDAToModel {
     return true;
   }
   private Type encodeType(final Named q, final Word<Named> α, final Set<Named> legalJumps) {
-    final List<Method> $ = dpda.Σ().map(σ -> Method.named(σ).returning(next(q, α, legalJumps, σ))) //
+    final var $ = dpda.Σ().map(σ -> Method.named(σ).returning(next(q, α, legalJumps, σ))) //
         .filter(m -> m.type != Type.Grounded.BOTTOM) //
         .collect(toList());
     if (dpda.isAccepting(q))
@@ -88,14 +88,14 @@ public class ReliableAPICompiler extends DPDAToModel {
    * @param σ          current input letter
    * @return next state type */
   private Type.Grounded next(final Named q, final Word<Named> α, final Set<Named> legalJumps, final Token σ) {
-    final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
+    final var δ = dpda.δδ(q, σ, α.top());
     return δ == null ? Type.Grounded.BOTTOM : common(δ, α.pop(), legalJumps, false);
   }
   private Type.Grounded consolidate(final Named q, final Word<Named> α, final Set<Named> legalJumps,
       final boolean isInitialType) {
-    final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
+    final var δ = dpda.δδ(q, ε(), α.top());
     if (δ == null) {
-      final Type.Name name = encodedName(q, α, legalJumps);
+      final var name = encodedName(q, α, legalJumps);
       return name == null ? Type.Grounded.BOTTOM
           : Type.Grounded.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
@@ -106,7 +106,7 @@ public class ReliableAPICompiler extends DPDAToModel {
     if (α.isEmpty()) {
       if (δ.getΑ().isEmpty())
         return getTypeArgument(δ, legalJumps, isInitialType);
-      final Type.Name name = encodedName(δ.q$, δ.getΑ(), legalJumps);
+      final var name = encodedName(δ.q$, δ.getΑ(), legalJumps);
       return name == null ? Type.Grounded.BOTTOM
           : Type.Grounded.of(name).with(getTypeArguments(legalJumps, isInitialType));
     }
@@ -114,11 +114,11 @@ public class ReliableAPICompiler extends DPDAToModel {
       return consolidate(δ.q$, α, legalJumps, isInitialType);
     final Map<Named, Type.Grounded> typeArguments = new LinkedHashMap<>();
     for (final Named q : dpda.Q) {
-      final Type.Grounded argument = consolidate(q, α, legalJumps, isInitialType);
+      final var argument = consolidate(q, α, legalJumps, isInitialType);
       if (argument != Type.Grounded.BOTTOM)
         typeArguments.put(q, argument);
     }
-    final Type.Name name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
+    final var name = encodedName(δ.q$, δ.getΑ(), typeArguments.keySet());
     return name == null ? Type.Grounded.BOTTOM : //
         Type.Grounded.of(encodedName(δ.q$, δ.getΑ(), typeArguments.keySet()))
             .with(new ArrayList<>(typeArguments.values()));

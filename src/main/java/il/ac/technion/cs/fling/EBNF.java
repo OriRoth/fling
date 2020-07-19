@@ -18,7 +18,7 @@ public class EBNF {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    final EBNF other = (EBNF) obj;
+    final var other = (EBNF) obj;
     return Objects.equals(R, other.R) && Objects.equals(Γ, other.Γ) && Objects.equals(Σ, other.Σ)
         && Objects.equals(ε, other.ε);
   }
@@ -123,7 +123,7 @@ public class EBNF {
         this.variable = variable;
       }
       public Builder to(final TempComponent... cs) {
-        final List<Component> normalize = normalize(cs);
+        final var normalize = normalize(cs);
         return to(normalize);
       }
       private Builder to(final List<Component> cs) {

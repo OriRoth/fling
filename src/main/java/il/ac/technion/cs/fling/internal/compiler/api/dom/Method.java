@@ -20,7 +20,7 @@ public final class Method {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    final Method other = (Method) obj;
+    final var other = (Method) obj;
     return Objects.equals(name, other.name) && Objects.equals(parameters, other.parameters)
         && Objects.equals(type, other.type);
   }

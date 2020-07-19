@@ -16,7 +16,7 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     //
     for (final Symbol s : symbols)
       expandedSymbols.add(s.isQuantifier() ? s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration) : s);
-    final Variable head = g.fresh(symbols);
+    final var head = g.fresh(symbols);
     variableDeclaration.accept(head);
     ruleDeclaration.accept(new ERule(head, asList(new Body(expandedSymbols), new Body())));
     return head;
@@ -26,8 +26,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
       final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
-    final String streamingVariable = variableNamesGenerator.get();
-    final String action = symbol.isVariable() ? //
+    final var streamingVariable = variableNamesGenerator.get();
+    final var action = symbol.isVariable() ? //
         variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
         String.format("{%s}", symbol.asQuantifier().symbols() //
             .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable,
@@ -64,12 +64,12 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
   public static List<Optional<Object>> abbreviate(final List<Object> rawNode, final int fieldCount) {
     final List<Optional<Object>> $ = new ArrayList<>();
     if (rawNode.isEmpty()) {
-      for (int i = 0; i < fieldCount; ++i)
+      for (var i = 0; i < fieldCount; ++i)
         $.add(Optional.empty());
       return $;
     }
     assert rawNode.size() == fieldCount;
-    for (int i = 0; i < fieldCount; ++i)
+    for (var i = 0; i < fieldCount; ++i)
       $.add(Optional.of(rawNode.get(i)));
     return $;
   }

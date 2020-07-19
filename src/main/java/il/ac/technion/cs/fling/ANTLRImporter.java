@@ -1,7 +1,6 @@
 package il.ac.technion.cs.fling;
 import static il.ac.technion.cs.fling.internal.grammar.rules.Constants.intermediateVariableName;
 import java.util.*;
-import org.antlr.runtime.tree.Tree;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -29,19 +28,19 @@ public class ANTLRImporter extends EBNF.Builder {
     ebnf = go();
   }
   private EBNF go() {
-    boolean initialized = false;
-    final Tree rules = grammar.ast.getChild(1);
-    for (int i = 0; i < rules.getChildCount(); ++i) {
-      final Tree rule = rules.getChild(i);
+    var initialized = false;
+    final var rules = grammar.ast.getChild(1);
+    for (var i = 0; i < rules.getChildCount(); ++i) {
+      final var rule = rules.getChild(i);
       assert rule.getChildCount() == 2;
-      final String variableName = rule.getChild(0).getText();
-      final Variable variable = Variable.byName(variableName);
+      final var variableName = rule.getChild(0).getText();
+      final var variable = Variable.byName(variableName);
       if (!initialized) {
         // Assume first ANTLR variable is start variable.
         start(variable);
         initialized = true;
       }
-      final Optional<Component> rhs = convertBody(rule.getChild(1));
+      final var rhs = convertBody(rule.getChild(1));
       if (rhs.isPresent())
         derive(variable).to(rhs.get());
       else
@@ -59,15 +58,15 @@ public class ANTLRImporter extends EBNF.Builder {
     if (element instanceof RuleRefAST)
       return Optional.of(Variable.byName(element.toString()));
     if (element instanceof StarBlockAST) {
-      final Optional<Component> inner = convertList(((StarBlockAST) element).getChildren());
+      final var inner = convertList(((StarBlockAST) element).getChildren());
       return inner.map(Quantifiers::noneOrMore);
     }
     if (element instanceof PlusBlockAST) {
-      final Optional<Component> inner = convertList(((PlusBlockAST) element).getChildren());
+      final var inner = convertList(((PlusBlockAST) element).getChildren());
       return inner.map(Quantifiers::oneOrMore);
     }
     if (element instanceof TerminalAST) {
-      String name = ((TerminalAST) element).getText();
+      var name = ((TerminalAST) element).getText();
       name = name.substring(1, name.length() - 1);
       // Assume simple terminal.
       return Optional.of(Terminal.of(name).normalize());
@@ -77,7 +76,7 @@ public class ANTLRImporter extends EBNF.Builder {
   private Optional<Component> convertBlock(final BlockAST block) {
     if (block.getChildCount() <= 1)
       return convertBody(block.getChildren());
-    final Variable top = newVariable();
+    final var top = newVariable();
     final List<Component> items = new ArrayList<>();
     for (final Object item : block.getChildren())
       convertBody(item).ifPresent(items::add);
@@ -92,7 +91,7 @@ public class ANTLRImporter extends EBNF.Builder {
       return Optional.empty();
     if (elements.size() == 1)
       return convertBody(elements.get(0));
-    final Variable top = newVariable();
+    final var top = newVariable();
     final List<Component> items = new ArrayList<>();
     for (final Object item : elements)
       convertBody(item).ifPresent(items::add);

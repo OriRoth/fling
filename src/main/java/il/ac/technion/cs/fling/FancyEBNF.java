@@ -93,12 +93,12 @@ public class FancyEBNF extends EBNF.Decorator {
     final Map<Component, Set<Token>> $ = new LinkedHashMap<>();
     Σ.forEach(σ -> $.put(σ, singleton(σ)));
     Γ.forEach(v -> $.put(v, new LinkedHashSet<>()));
-    for (boolean changed = true; changed;) {
+    for (var changed = true; changed;) {
       changed = false;
       for (final Variable v : Γ)
         for (final Body sf : bodiesList(v))
           for (final Component symbol : sf) {
-            final Set<Token> set = $.get(v);
+            final var set = $.get(v);
             if (symbol.isQuantifier())
               changed |= set.addAll(symbol.asQuantifier().getFirsts(ss -> { //
                 final Set<Token> firsts = new LinkedHashSet<>();
@@ -110,7 +110,7 @@ public class FancyEBNF extends EBNF.Decorator {
                 return firsts;
               }));
             else {
-              final Set<Token> c = $.get(symbol);
+              final var c = $.get(symbol);
               assert c != null : this + ":\n" + symbol;
               changed |= set.addAll(c);
             }
@@ -125,14 +125,14 @@ public class FancyEBNF extends EBNF.Decorator {
     final Map<Variable, Set<Token>> $ = new LinkedHashMap<>();
     Γ.forEach(v -> $.put(v, new LinkedHashSet<>()));
     $.get(Constants.S).add(Constants.$$);
-    for (boolean changed = true; changed;) {
+    for (var changed = true; changed;) {
       changed = false;
       for (final Variable v : Γ)
         for (final Body sf : bodiesList(v))
-          for (int i = 0; i < sf.size(); ++i) {
+          for (var i = 0; i < sf.size(); ++i) {
             if (!sf.get(i).isVariable())
               continue;
-            final Variable current = sf.get(i).asVariable();
+            final var current = sf.get(i).asVariable();
             final List<Component> rest = sf.subList(i, sf.size());
             changed |= $.get(current).addAll(firsts(rest));
             if (isNullable(rest))

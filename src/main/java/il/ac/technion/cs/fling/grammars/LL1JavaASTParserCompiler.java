@@ -63,14 +63,14 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
             printAbstractParentMethodBody(v) : printConcreteExtensionChildMethodBody(v));
   }
   private String printAbstractParentMethodBody(final Variable v) {
-    final List<Variable> children = bnf.bodies(v)//
+    final var children = bnf.bodies(v)//
         .map(sf -> sf.get(0)) //
         .map(Component::asVariable) //
         .collect(toList());
-    final Optional<Variable> optionalNullableChild = children.stream() //
+    final var optionalNullableChild = children.stream() //
         .filter(bnf::isNullable) //
         .findAny();
-    final StringBuilder body = new StringBuilder();
+    final var body = new StringBuilder();
     if (bnf.isNullable(v))
       // Nullable child.
       body.append(String.format("if(w.isEmpty())return parse_%s(w);", //
@@ -92,7 +92,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
   @SuppressWarnings("boxing") private String printConcreteChildMethodBody(final Variable v) {
     final List<Component> children = bnf.bodiesList(v).get(0);
-    final StringBuilder body = new StringBuilder();
+    final var body = new StringBuilder();
     body.append(Invocation.class.getCanonicalName()).append(" _a;");
     body.append(ListWild).append(" _b;");
     final Map<String, Integer> usedNames = new HashMap<>();
@@ -103,7 +103,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
-        final String variableName = Linker.getNameFromBase(Linker.lowerCamelCase(child.name()), usedNames);
+        final var variableName = Linker.getNameFromBase(Linker.lowerCamelCase(child.name()), usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             getClassForVariable(child.asVariable()), //
             variableName, //
@@ -111,10 +111,10 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         argumentNames.add(variableName);
       } else if (child.isToken()) {
         body.append("_a=w.remove(0);");
-        int index = 0;
+        var index = 0;
         for (final Parameter parameter : child.asToken().parameters) {
-          final String variableName = Linker.getNameFromBase(parameter.baseParameterName(), usedNames);
-          final String typeName = getTypeName(parameter);
+          final var variableName = Linker.getNameFromBase(parameter.baseParameterName(), usedNames);
+          final var typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
               variableName, //
@@ -124,18 +124,18 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         }
       } else if (child.isVariable()) {
         assert bnf.extensionHeadsMapping.containsKey(child);
-        final Quantifier notation = bnf.extensionHeadsMapping.get(child);
+        final var notation = bnf.extensionHeadsMapping.get(child);
         assert notation.getClass().isAnnotationPresent(JavaCompatibleQuantifier.class) : //
         "notation is not Java compatible";
-        final List<FieldNodeFragment> fields = getFieldsInClassContext(notation, usedNames);
+        final var fields = getFieldsInClassContext(notation, usedNames);
         body.append(String.format("_b=%s.%s(parse_%s(w), %s);", //
             notation.getClass().getCanonicalName(), //
             JavaCompatibleQuantifier.abbreviationMethodName, //
             child.name(), //
             fields.size()));
-        int index = 0;
+        var index = 0;
         for (final FieldNodeFragment field : fields) {
-          final String variableName = field.parameterName;
+          final var variableName = field.parameterName;
           body.append(String.format("%s %s=(%s)_b.get(%s);", //
               field.parameterType, //
               variableName, //
@@ -153,7 +153,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
   }
   private String printConcreteExtensionChildMethodBody(final Variable v) {
     final List<Component> children = bnf.bodiesList(v).get(0);
-    final StringBuilder body = new StringBuilder();
+    final var body = new StringBuilder();
     body.append(Invocation.class.getCanonicalName()).append(" _a;");
     body.append(ListObject).append(" _b;");
     final Map<String, Integer> usedNames = new HashMap<>();
@@ -174,7 +174,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
     for (final Component child : children)
       // TODO support more complex structures.
       if (child.isVariable() && bnf.isOriginalVariable(child)) {
-        final String variableName = Linker.getNameFromBase(Linker.lowerCamelCase(child.name()), usedNames);
+        final var variableName = Linker.getNameFromBase(Linker.lowerCamelCase(child.name()), usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             getClassForVariable(child.asVariable()), //
             variableName, //
@@ -182,10 +182,10 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         argumentNames.add(variableName);
       } else if (child.isToken()) {
         body.append("_a=w.remove(0);");
-        int index = 0;
+        var index = 0;
         for (final Parameter parameter : child.asToken().parameters) {
-          final String variableName = Linker.getNameFromBase(parameter.baseParameterName(), usedNames);
-          final String typeName = getTypeName(parameter);
+          final var variableName = Linker.getNameFromBase(parameter.baseParameterName(), usedNames);
+          final var typeName = getTypeName(parameter);
           body.append(String.format("%s %s=(%s)_a.arguments.get(%s);", //
               typeName, //
               variableName, //
@@ -195,7 +195,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         }
       } else if (child.isVariable()) {
         assert bnf.extensionProducts.contains(child);
-        final String variableName = Linker.getNameFromBase("_c", usedNames);
+        final var variableName = Linker.getNameFromBase("_c", usedNames);
         body.append(String.format("%s %s=parse_%s(w);", //
             ListObject, //
             variableName, //
@@ -262,7 +262,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         v.name());
   }
   private static boolean isSequenceRHS(final FancyEBNF bnf, final Variable v) {
-    final List<Body> rhs = bnf.bodiesList(v);
+    final var rhs = bnf.bodiesList(v);
     return rhs.size() == 1 && (rhs.get(0).size() != 1 || !bnf.isOriginalVariable(rhs.get(0).get(0)));
   }
 }

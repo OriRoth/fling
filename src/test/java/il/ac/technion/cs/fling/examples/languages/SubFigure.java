@@ -37,13 +37,13 @@ public class SubFigure implements FluentLanguageAPI<Σ, Γ> {
         build();
   }
   public static void main(final String[] args) {
-    final SubFigure language = new SubFigure();
-    final Linker namer = new Linker("SubFigure");
-    final Grammar g = new Grammar(FancyEBNF.from(language.BNF()));
+    final var language = new SubFigure();
+    final var namer = new Linker("SubFigure");
+    final var g = new Grammar(FancyEBNF.from(language.BNF()));
     final DPDA<Named, Token, Named> dpda = LL1.buildAutomaton(g.bnf.clean());
     final DPDAToModel compiler = new ReliableAPICompiler(dpda);
     final APIGenerator adapter = new ScalaGenerator(namer);
-    final String output = adapter.go(compiler.go());
+    final var output = adapter.go(compiler.go());
     System.out.println(output);
   }
 }

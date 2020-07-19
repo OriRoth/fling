@@ -30,8 +30,8 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
             .collect(joining()));
   }
   private String printVisitMethod(final AbstractClassNode clazz) {
-    final Variable source = clazz.source;
-    final String parameterName = getNodeParameterName(source);
+    final var source = clazz.source;
+    final var parameterName = getNodeParameterName(source);
     return String.format("public final void visit(%s %s){%s}", //
         getASTVariableClassName(source), //
         parameterName, //
@@ -43,16 +43,16 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
         printVisitMethod(clazz.asConcrete());
   }
   private String printVisitMethod(final ConcreteClassNode c) {
-    final Variable source = c.source;
-    final String parameterName = getNodeParameterName(source);
+    final var source = c.source;
+    final var parameterName = getNodeParameterName(source);
     return String.format("public final void visit(%s %s){%s}", //
         getASTVariableClassName(source), //
         parameterName, //
         printVisitMethodBody(c, parameterName));
   }
   private String printWhileVisitingMethod(final ConcreteClassNode n) {
-    final Variable source = n.source;
-    final String parameterName = getNodeParameterName(source);
+    final var source = n.source;
+    final var parameterName = getNodeParameterName(source);
     return String.format("public void whileVisiting(%s %s)throws %s{}", //
         getASTVariableClassName(source), //
         parameterName, //
@@ -76,7 +76,7 @@ import il.ac.technion.cs.fling.internal.grammar.sententials.quantifiers.JavaComp
         .collect(joining("else "));
   }
   private String printVisitMethodBody(final ConcreteClassNode clazz, final String parameterName) {
-    final StringBuilder $ = new StringBuilder();
+    final var $ = new StringBuilder();
     final Map<String, Integer> usedNames = new LinkedHashMap<>();
     $.append(String.format("try{this.whileVisiting(%s);}catch(%s __){__.printStackTrace();}", //
         parameterName, //

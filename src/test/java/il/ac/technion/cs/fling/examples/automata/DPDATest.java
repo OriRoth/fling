@@ -4,11 +4,9 @@ import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Q.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Γ.*;
 import static il.ac.technion.cs.fling.examples.automata.DPDATest.Σ.*;
-import static il.ac.technion.cs.fling.util.RunDPDA.run;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
-import il.ac.technion.cs.fling.DPDA.δ;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 public class DPDATest {
   enum Q {
@@ -34,7 +32,7 @@ public class DPDATest {
           .δ(q2, ε(), γ0, q0, γ0) //
           .go();
   @Test public void testTransitionMatching() {
-    final δ<Q, Σ, Γ> δ = dpda.δ(q0, c, γ0);
+    final var δ = dpda.δ(q0, c, γ0);
     assertThat(q1).isEqualTo(δ.q$);
     assertThat(2).isEqualTo(δ.getΑ().size());
     assertThat(new Word<>(γ0, γ1)).isEqualTo(δ.getΑ());
@@ -42,19 +40,19 @@ public class DPDATest {
   }
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
-    final δ<Q, Σ, Γ> δ = dpda.δδ(q1, Ↄ, γ1);
+    final var δ = dpda.δδ(q1, Ↄ, γ1);
     assertThat(q2).isEqualTo(δ.q$);
     assertThat(δ.getΑ()).isEmpty();
     assertThat(δ.getΑ()).isEmpty();
     assertThat(q2).isEqualTo(δ.q$);
   }
   @Test public void testRun() {
-    assertThat(run(dpda)).isTrue();
-    assertThat(run(dpda, c, c, ↄ, ↄ)).isTrue();
-    assertThat(run(dpda, c, c, c, ↄ, ↄ)).isFalse();
-    assertThat(run(dpda, c, c, ↄ, ↄ, ↄ)).isFalse();
-    assertThat(run(dpda, c, c, Ↄ)).isTrue();
-    assertThat(run(dpda, c, c, Ↄ, Ↄ)).isFalse();
-    assertThat(run(dpda, c, c, c, ↄ, Ↄ, c, Ↄ)).isTrue();
+    assertThat(dpda.run()).isTrue();
+    assertThat(dpda.run(c, c, ↄ, ↄ)).isTrue();
+    assertThat(dpda.run(c, c, c, ↄ, ↄ)).isFalse();
+    assertThat(dpda.run(c, c, ↄ, ↄ, ↄ)).isFalse();
+    assertThat(dpda.run(c, c, Ↄ)).isTrue();
+    assertThat(dpda.run(c, c, Ↄ, Ↄ)).isFalse();
+    assertThat(dpda.run(c, c, c, ↄ, Ↄ, c, Ↄ)).isTrue();
   }
 }

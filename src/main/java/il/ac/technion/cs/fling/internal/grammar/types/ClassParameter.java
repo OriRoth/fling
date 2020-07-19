@@ -24,7 +24,7 @@ public class ClassParameter implements ClassTypeParameter {
       return false;
     if (getClass() != o.getClass())
       return false;
-    final ClassParameter other = (ClassParameter) o;
+    final var other = (ClassParameter) o;
     return Objects.equals(parameterClass, other.parameterClass);
   }
   @Override public String toString() {

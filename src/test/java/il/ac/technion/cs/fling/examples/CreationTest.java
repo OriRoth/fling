@@ -4,15 +4,15 @@ import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.languages.*;
 @SuppressWarnings("static-method") class CreationTest {
   @Test public void checkDatalog() {
-    final Datalog x = new Datalog();
+    final var x = new Datalog();
     new JavaMediator(x.BNF(), "", x.name(), x.Σ());
   }
   @Test public void checkBNF() {
-    final BNF x = new BNF();
+    final var x = new BNF();
     new JavaMediator(x.BNF(), "", x.name(), x.Σ());
   }
   @Test public void checkBalancedParentheses() {
-    final BalancedParentheses x = new BalancedParentheses();
+    final var x = new BalancedParentheses();
     new JavaMediator(x.BNF(), "", x.name(), x.Σ());
   }
 }

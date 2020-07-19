@@ -10,7 +10,6 @@ import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.Model;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
@@ -44,23 +43,23 @@ public class AeqBTest {
       .δ(q1, b, B, q1, B, B) //
       .go());
   @Test public void test1() {
-    final Model m = new PolynomialAPICompiler(dpda).go();
+    final var m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
     System.out.println(new CPPGenerator(namer).go(m));
   }
   @Test public void test2() {
-    final Model m = new PolynomialAPICompiler(dpda).go();
+    final var m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer).go(m);
     System.out.println(new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
   }
   @Test public void test3() {
-    final Model m = new PolynomialAPICompiler(dpda).go();
-    final CompilationUnit cu = parse(
+    final var m = new PolynomialAPICompiler(dpda).go();
+    final var cu = parse(
         new JavaGenerator(getClass().getPackageName() + ".generated", getClass().getSimpleName()).go(m));
     System.out.println(cu);
   }
   private static CompilationUnit parse(final String javaSource) {
-    final ASTParser parser = ASTParser.newParser(AST.JLS13);
+    final var parser = ASTParser.newParser(AST.JLS13);
     parser.setSource(javaSource.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
     return (CompilationUnit) parser.createAST(null);

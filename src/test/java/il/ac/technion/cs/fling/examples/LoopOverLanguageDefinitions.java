@@ -32,7 +32,7 @@ import il.ac.technion.cs.fling.examples.languages.*;
     $.put("AnBn", AnBn.JavaFluentAPI);
     $.put("AeqB", AeqB.JavaFluentAPI);
     for (final FluentLanguageAPI<?, ?> api : BNFAPIs) {
-      final JavaMediator mediator = new JavaMediator(api.BNF(), //
+      final var mediator = new JavaMediator(api.BNF(), //
           "il.ac.technion.cs.fling.examples.generated", api.name(), api.Σ());
       $.put(api.name(), mediator.apiClass);
       $.put(api.name() + "AST", mediator.astClass);
@@ -44,20 +44,20 @@ import il.ac.technion.cs.fling.examples.languages.*;
   private static final String PATH = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
   @Test public void compile() throws IOException {
     System.out.println("project path: " + PATH);
-    final Path outputFolder = Paths.get(PATH);
+    final var outputFolder = Paths.get(PATH);
     if (!Files.exists(outputFolder)) {
       Files.createDirectory(outputFolder);
       System.out.println("directory " + PATH + " created successfully");
     }
     for (final Entry<String, String> file : files.entrySet()) {
-      final String fileName = file.getKey();
-      final String content = file.getValue();
+      final var fileName = file.getKey();
+      final var content = file.getValue();
       compile(fileName, content);
       System.out.println("file " + fileName + ".java written successfully.");
     }
   }
   private void compile(final String fileName, final String content) throws IOException {
-    final Path filePath = Paths.get(PATH + fileName + ".java");
+    final var filePath = Paths.get(PATH + fileName + ".java");
     if (Files.exists(filePath))
       Files.delete(filePath);
     Files.write(filePath, Collections.singleton(FORMAT_OUTPUT ? //

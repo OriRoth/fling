@@ -19,7 +19,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
    *
    * @return BNF builder API */
   static q0ø__Rule1$start_q0$q0ø<q0$_$_q0$<$>, $> bnf() {
-    final α α = new α();
+    final var α = new α();
     α.w.add(new Invocation(Σ.bnf));
     return α;
   }
@@ -53,42 +53,42 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
       q0ø__Rule1$into_q0$q0ø, q0$__RuleTail1$_derivespecializeq0$q0ø {
     public List<il.ac.technion.cs.fling.internal.compiler.Invocation> w = new ArrayList<>();
     public α bnf() {
-      this.w.add(new Invocation(Σ.bnf, new Object[] {}));
+      w.add(new Invocation(Σ.bnf, new Object[] {}));
       return self();
     }
     @Override public α start(final Variable variable) {
-      this.w.add(new Invocation(Σ.start, new Object[] { variable }));
+      w.add(new Invocation(Σ.start, new Object[] { variable }));
       return self();
     }
     @Override public α derive(final Variable variable) {
-      this.w.add(new Invocation(Σ.derive, new Object[] { variable }));
+      w.add(new Invocation(Σ.derive, new Object[] { variable }));
       return self();
     }
     @Override public α specialize(final Variable variable) {
-      this.w.add(new Invocation(Σ.specialize, new Object[] { variable }));
+      w.add(new Invocation(Σ.specialize, new Object[] { variable }));
       return self();
     }
     @Override public α into(final Variable... variables) {
-      this.w.add(new Invocation(Σ.into, new Object[] { variables }));
+      w.add(new Invocation(Σ.into, new Object[] { variables }));
       return self();
     }
     @Override public α to(final TempComponent... symbols) {
-      this.w.add(new Invocation(Σ.to, new Object[] { symbols }));
+      w.add(new Invocation(Σ.to, new Object[] { symbols }));
       return self();
     }
     @Override public α toEpsilon() {
-      this.w.add(new Invocation(Σ.toEpsilon, new Object[] {}));
+      w.add(new Invocation(Σ.toEpsilon, new Object[] {}));
       return self();
     }
     public α self() {
       return this;
     }
     @Override public α or(final TempComponent... symbols) {
-      this.w.add(new Invocation(Σ.or, new Object[] { symbols }));
+      w.add(new Invocation(Σ.or, new Object[] { symbols }));
       return self();
     }
     @Override public α orNone() {
-      this.w.add(new Invocation(Σ.orNone, new Object[] {}));
+      w.add(new Invocation(Σ.orNone, new Object[] {}));
       return self();
     }
     @Override public EBNF build() {

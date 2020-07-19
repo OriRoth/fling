@@ -43,7 +43,7 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
   public static void main(final String[] args) //
       throws IOException, FormatterException {
     // @formatter:off
-    final JavaMediator jm = new JavaMediator(new SimpleArithmetic().BNF(), // Grammar definition
+    final var jm = new JavaMediator(new SimpleArithmetic().BNF(), // Grammar definition
         "il.ac.technion.cs.fling.examples.generated", // Output package name
         "SimpleArithmetic", // Output base class name
         Σ.class // Class of terminal symbols
@@ -55,9 +55,9 @@ public class SimpleArithmetic implements FluentLanguageAPI<Σ, Γ> {
   }
   private static void writeToFile(final String fileName, final String fileContent) //
       throws IOException, FormatterException {
-    final String path = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
-    final Formatter formatter = new Formatter();
-    final Path filePath = Paths.get(path + fileName + ".java");
+    final var path = "./src/test/java/il/ac/technion/cs/fling/examples/generated/";
+    final var formatter = new Formatter();
+    final var filePath = Paths.get(path + fileName + ".java");
     Files.write(filePath, singleton(formatter.formatSource(fileContent)), //
         StandardOpenOption.CREATE, StandardOpenOption.WRITE);
   }

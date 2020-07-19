@@ -4,7 +4,6 @@ import static il.ac.technion.cs.fling.BNFTest.Σ.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import static java.util.stream.Collectors.toList;
-import il.ac.technion.cs.fling.BNF.Builder;
 import il.ac.technion.cs.fling.BNF.SF;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 @SuppressWarnings("static-method") public class BNFTest {
@@ -26,11 +25,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
    * </pre>
    */
   @Test public void example2geeks() {
-    final Follows grammar = new Follows(BNF.of(S).//
+    final var grammar = new Follows(BNF.of(S).//
         derive(S).to(A).or(a). //
         derive(A).to(a). //
         build());
-    try (final azzert azzert = new azzert()) {
+    try (final var azzert = new azzert()) {
       azzert.that(grammar.firsts(S)).containsExactly(Token.of(a));
       azzert.that(grammar.firsts(A)).containsExactly(Token.of(a));
       azzert.that(grammar.follows(S)).containsExactly(Token.$);
@@ -39,7 +38,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void example2geeksA() {
-    final Follows grammar = new Follows(BNF.of(S).//
+    final var grammar = new Follows(BNF.of(S).//
         derive(S).to(A). //
         derive(S).to(a). //
         derive(A).to(a). //
@@ -48,7 +47,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     assertThat(grammar.recursive()).isFalse();
   }
   @Test public void arithmeticalExpression1Structure() {
-    try (final azzert azzert = new azzert()) {
+    try (final var azzert = new azzert()) {
       azzert.that(arithemeticalExpression).isNotNull();
       azzert.that(arithemeticalExpression.tokens()).containsExactly(t("+"), t("id"), t("("), t(")"), t("*"));
       azzert.that(arithemeticalExpression.variables()).containsExactly(v("E"), v("T"), v("E'"), v("F"), v("T'"));
@@ -58,8 +57,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void arithmeticalExpression2Nullables() {
-    final Nullables n = new Nullables(arithemeticalExpression);
-    try (final azzert azzert = new azzert()) {
+    final var n = new Nullables(arithemeticalExpression);
+    try (final var azzert = new azzert()) {
       azzert.that(n.tokens()).containsExactly(t("+"), t("id"), t("("), t(")"), t("*"));
       azzert.that(n.variables()).containsExactly(v("E"), v("T"), v("E'"), v("F"), v("T'"));
       azzert.that(n.start()).isEqualTo(v("E"));
@@ -74,8 +73,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void arithmeticalExpression3Firsts() {
-    final Firsts grammar = new Firsts(arithemeticalExpression);
-    try (final azzert azzert = new azzert()) {
+    final var grammar = new Firsts(arithemeticalExpression);
+    try (final var azzert = new azzert()) {
       azzert.that(grammar.firsts(v("E"))).containsExactly(t("id"), t("("));
       azzert.that(grammar.firsts(v("E'"))).containsExactly(t("+"));
       azzert.that(grammar.nullable(v("E'"))).isTrue();
@@ -86,8 +85,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void arithmeticalExpression3Follows() {
-    final Follows grammar = new Follows(arithemeticalExpression);
-    try (final azzert azzert = new azzert()) {
+    final var grammar = new Follows(arithemeticalExpression);
+    try (final var azzert = new azzert()) {
       azzert.that(grammar.follows(v("E"))).containsExactly(Token.$, t(")"));
       azzert.that(grammar.follows(v("E'"))).containsExactly(Token.$, t(")"));
       azzert.that(grammar.follows(v("T"))).containsExactly(t("+"), Token.$, t(")"));
@@ -108,7 +107,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     F → f / ∈
      * </pre>
      */
-    final BNF problem1 = BNF.of(S). //
+    final var problem1 = BNF.of(S). //
         derive(S).to(a, B, D, h).//
         derive(B).to(c, C).//
         derive(C).toNothingOr(b, C).//
@@ -116,8 +115,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
         derive(E).toNothingOr(g).//
         derive(F).toNothingOr(f).//
         build();
-    final Follows grammar = new Follows(problem1);
-    try (final azzert azzert = new azzert()) {
+    final var grammar = new Follows(problem1);
+    try (final var azzert = new azzert()) {
       /**
        * <pre>
       First(S) = { a }
@@ -170,15 +169,15 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
      C → g
      * </pre>
      */
-    final BNF problem2 = BNF.of(S).//
+    final var problem2 = BNF.of(S).//
         derive(S).to(A). //
         derive(A).to(a, B, A1). //
         derive(A1).toNothingOr(d, A1). //
         derive(B).to(b). //
         derive(C).to(g). //
         build();
-    final Follows grammar = new Follows(problem2);
-    try (final azzert azzert = new azzert()) {
+    final var grammar = new Follows(problem2);
+    try (final var azzert = new azzert()) {
       azzert.that(grammar.uses(S)).containsExactly(A, B, A1);
       azzert.that(grammar.uses(A)).containsExactly(B, A1);
       azzert.that(grammar.uses(B)).isEmpty();
@@ -230,13 +229,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     L’ → ,SL’ / ∈
      * </pre>
      */
-    final Follows grammar = new Follows(BNF.of(S).//
+    final var grammar = new Follows(BNF.of(S).//
         derive(S).to(t("("), L, t(")")). //
         derive(S).to(a). //
         derive(L).to(S, L1). //
         derive(L1).toNothingOr(t(","), S, L1). //
         build());
-    try (final azzert azzert = new azzert()) {
+    try (final var azzert = new azzert()) {
       /**
        * <pre>
       First(S) = { ( , a }
@@ -272,11 +271,11 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     B → ∈
      * </pre>
      */
-    final Follows grammar = new Follows(BNF.of(S).//
+    final var grammar = new Follows(BNF.of(S).//
         derive(S).to(A, a, A, b).or(B, b, B, a). //
         epsilon(A, B). //
         build());
-    try (final azzert azzert = new azzert()) {
+    try (final var azzert = new azzert()) {
       /**
        * <pre>
       First(S) = { First(A) – ∈ } ∪ First(a) ∪ { First(B) – ∈ } ∪ First(b) = { a , b }
@@ -312,7 +311,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     C → h / ∈
      * </pre>
      */
-    final Follows grammar = new Follows(BNF.of(S).//
+    final var grammar = new Follows(BNF.of(S).//
         derive(S).to(A, C, B).or(C, b, B).or(B, a). //
         derive(A).to(d, a).or(B, C). //
         derive(B).to(g). //
@@ -320,7 +319,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
         epsilon(B, C). //
         build());
     System.out.println(grammar.expand(S).collect(toList()));
-    try (final azzert azzert = new azzert()) {
+    try (final var azzert = new azzert()) {
       azzert.that(grammar.recursive()).isFalse();
       azzert.that(grammar.variables()).containsExactly(S, A, C, B);
       azzert.that(grammar.tokens()).containsExactly(t(b), t(a), t(d), t(h), t(g));
@@ -355,18 +354,18 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void start0() {
-    final BNF bnf = BNF.of(S).derive(A).to(a, b, c).build();
-    try (final azzert azzert = new azzert()) {
+    final var bnf = BNF.of(S).derive(A).to(a, b, c).build();
+    try (final var azzert = new azzert()) {
       azzert.that(bnf.start()).isEqualTo(S);
       azzert.that(bnf.variables()).contains(S);
       azzert.that(new Nullables(bnf).recursive()).isFalse();
     }
   }
   @Test public void start1() {
-    try (final azzert azzert = new azzert()) {
-      final Builder builder = BNF.of(X);
+    try (final var azzert = new azzert()) {
+      final var builder = BNF.of(X);
       azzert.that(builder).isNotNull();
-      final BNF grammar = builder.build();
+      final var grammar = builder.build();
       azzert.that(grammar).isNotNull();
       azzert.that(grammar.tokens()).isEmpty();
       azzert.that(grammar.forms(X)).isEmpty();
@@ -377,8 +376,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void start2() {
-    try (final azzert azzert = new azzert()) {
-      final BNF grammar = BNF.of(X).derive(X).to(Y, Z).build();
+    try (final var azzert = new azzert()) {
+      final var grammar = BNF.of(X).derive(X).to(Y, Z).build();
       azzert.that(grammar).isNotNull();
       azzert.that(grammar.tokens()).isEmpty();
       azzert.that(grammar.variables()).containsExactly(X, Y, Z);
@@ -387,16 +386,16 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test public void variables1() {
-    final BNF bnf = BNF.of(S).build();
-    try (final azzert azzert = new azzert()) {
+    final var bnf = BNF.of(S).build();
+    try (final var azzert = new azzert()) {
       azzert.that(bnf.start()).isEqualTo(S);
       azzert.that(bnf.variables()).contains(S);
       azzert.that(new Nullables(bnf).recursive()).isFalse();
     }
   }
   @Test public void variables2() {
-    final BNF bnf = BNF.of(S).build();
-    try (final azzert azzert = new azzert()) {
+    final var bnf = BNF.of(S).build();
+    try (final var azzert = new azzert()) {
       azzert.that(bnf.variables()).contains(S);
       azzert.that(bnf.forms(S)).isEmpty();
       azzert.that(bnf.forms(bnf.start())).isEmpty();

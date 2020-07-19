@@ -15,13 +15,13 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     List<?> _b;
     _a = w.remove(0);
     _a = w.remove(0);
-    final Variable variable = (Variable) _a.arguments.get(0);
+    final var variable = (Variable) _a.arguments.get(0);
     _b = il.ac.technion.cs.fling.internal.grammar.rules.NoneOrMore.abbreviate(parse__Rule2(w), 1);
-    final List<Rule> rule = (List<Rule>) _b.get(0);
+    final var rule = (List<Rule>) _b.get(0);
     return new PlainBNF(variable, rule);
   }
   static Rule parse_Rule(final List<Invocation> w) {
-    final Invocation _a = w.get(0);
+    final var _a = w.get(0);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, derive))
       return parse_Rule1(w);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, specialize))
@@ -29,7 +29,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     return null;
   }
   static RuleBody parse_RuleBody(final List<Invocation> w) {
-    final Invocation _a = w.get(0);
+    final var _a = w.get(0);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, to))
       return parse_RuleBody1(w);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, toEpsilon))
@@ -37,7 +37,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     return null;
   }
   static RuleTail parse_RuleTail(final List<Invocation> w) {
-    final Invocation _a = w.get(0);
+    final var _a = w.get(0);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, or))
       return parse_RuleTail1(w);
     if (il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, orNone))
@@ -47,27 +47,27 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
   static Derivation parse_Rule1(final List<Invocation> w) {
     Invocation _a;
     _a = w.remove(0);
-    final Variable variable = (Variable) _a.arguments.get(0);
-    final RuleBody ruleBody = parse_RuleBody(w);
+    final var variable = (Variable) _a.arguments.get(0);
+    final var ruleBody = parse_RuleBody(w);
     return new Derivation(variable, ruleBody);
   }
   static Specialization parse_Rule2(final List<Invocation> w) {
     Invocation _a;
     _a = w.remove(0);
-    final Variable variable = (Variable) _a.arguments.get(0);
+    final var variable = (Variable) _a.arguments.get(0);
     _a = w.remove(0);
-    final Variable[] variables = (Variable[]) _a.arguments.get(0);
+    final var variables = (Variable[]) _a.arguments.get(0);
     return new Specialization(variable, variables);
   }
   static ConcreteDerivation parse_RuleBody1(final List<Invocation> w) {
     Invocation _a;
     List<?> _b;
     _a = w.remove(0);
-    final Object object = _a.arguments.get(0);
+    final var object = _a.arguments.get(0);
     assert object instanceof TempComponent[] : object;
-    final TempComponent[] symbols = (TempComponent[]) object;
+    final var symbols = (TempComponent[]) object;
     _b = il.ac.technion.cs.fling.internal.grammar.rules.NoneOrMore.abbreviate(parse__RuleTail2(w), 1);
-    final List<RuleTail> ruleTail = (List<RuleTail>) _b.get(0);
+    final var ruleTail = (List<RuleTail>) _b.get(0);
     return new ConcreteDerivation(symbols, ruleTail);
   }
   static EpsilonDerivation parse_RuleBody2(final List<Invocation> w) {
@@ -77,7 +77,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
   static ConcreteDerivationTail parse_RuleTail1(final List<Invocation> w) {
     Invocation _a;
     _a = w.remove(0);
-    final TempComponent[] cs = (TempComponent[]) _a.arguments.get(0);
+    final var cs = (TempComponent[]) _a.arguments.get(0);
     return new ConcreteDerivationTail(cs);
   }
   static EpsilonDerivationTail parse_RuleTail2(final List<Invocation> w) {
@@ -91,8 +91,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     _a = w.get(0);
     if (!il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, derive, specialize))
       return java.util.Collections.emptyList();
-    final Rule rule = parse_Rule(w);
-    final List<Object> _c = parse__Rule2(w);
+    final var rule = parse_Rule(w);
+    final var _c = parse__Rule2(w);
     return java.util.Arrays.asList(rule, _c);
   }
   static List<Object> parse__RuleTail2(final List<Invocation> w) {
@@ -102,8 +102,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
     _a = w.get(0);
     if (!il.ac.technion.cs.fling.internal.util.Is.included(_a.σ, or, orNone))
       return java.util.Collections.emptyList();
-    final RuleTail ruleTail = parse_RuleTail(w);
-    final List<Object> _c = parse__RuleTail2(w);
+    final var ruleTail = parse_RuleTail(w);
+    final var _c = parse__RuleTail2(w);
     return java.util.Arrays.asList(ruleTail, _c);
   }
 }

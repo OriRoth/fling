@@ -30,7 +30,7 @@ public class CPPGenerator extends CLikeGenerator {
     return fullName(t) + ";";
   }
   @Override String fullName(final Type t) {
-    final String $ = String.format("struct %s", render(t.name));
+    final var $ = String.format("struct %s", render(t.name));
     return t.parameters.isEmpty() ? $
         : String.format("template <%s> %s", t.parameters().map(q -> "typename " + q.name()).collect(commas()), //
             $);

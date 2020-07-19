@@ -47,7 +47,7 @@ public final class Token implements Symbol {
     return Arrays.equals(parameters, other.parameters) && Objects.equals(terminal, other.terminal);
   }
   @Override public String toString() {
-    String $ = name();
+    var $ = name();
     if (parameters.length != 0)
       $ += String.format("<%s>", parameters().map(Object::toString).collect(Collectors.joining(", ")));
     return $;

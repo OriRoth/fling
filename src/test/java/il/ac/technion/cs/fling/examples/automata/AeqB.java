@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.*;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
+import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
@@ -52,21 +53,21 @@ public class AeqB {
       .go(new ReliableAPICompiler(dpda).go());
   private final Linker namer2 = new Linker("AeqB");
   @Test public void test1() {
-    final Model m = new ReliableAPICompiler(dpda).go();
+    final var m = new ReliableAPICompiler(dpda).go();
     new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new CSharpGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
   }
   @Test public void test2() {
-    final Model m = new PolynomialAPICompiler(dpda).go();
+    final var m = new PolynomialAPICompiler(dpda).go();
     new JavaGenerator("il.ac.technion.cs.fling.examples.generated", "AeqB").go(m);
     new CPPGenerator(namer2).go(m);
     new SMLGenerator(namer2, "zzz").go(m);
     new CSharpGenerator(namer2).go(m);
   }
   @Test public void test3() {
-    final Model m = new PolynomialAPICompiler(dpda).go();
+    final var m = new PolynomialAPICompiler(dpda).go();
     new CPPGenerator(namer2).go(m);
   }
   /** Print C++ program to standard output. */

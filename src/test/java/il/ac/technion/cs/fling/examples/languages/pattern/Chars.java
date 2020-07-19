@@ -9,16 +9,11 @@ interface Pattern {
   static Pattern maybe(@SuppressWarnings("unused") final Pattern p) {
     return null;
   }
-  class x implements Pattern {
-    static {
-      new x();
-    }
-  }
 }
 public interface Chars {
   boolean includes(char c);
   default int size() {
-    int $ = 0;
+    var $ = 0;
     for (int c = Character.MIN_VALUE; c <= Character.MAX_VALUE; ++c)
       if (includes((char) c))
         ++$;
@@ -89,13 +84,13 @@ public interface Chars {
   /** \p{XDigit} A hexadecimal digit: [0-9a-fA-F] */
   Chars XDIGIT = DIGIT.or(from('a').to('f')).or(from('A').to('F'));
   static Chars of(final char... cs) {
-    Chars $ = EMPTY;
+    var $ = EMPTY;
     for (final char c : cs)
       $ = $.or(c);
     return $;
   }
   static Chars of(final String... ss) {
-    Chars $ = EMPTY;
+    var $ = EMPTY;
     for (final String s : ss)
       for (final char c : s.toCharArray())
         $ = $.or(c);

@@ -24,7 +24,7 @@ public class ASTCompiler {
     for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
-      final List<Body> rhs = bnf.bodiesList(v);
+      final var rhs = bnf.bodiesList(v);
       if (rhs.size() == 1 && (rhs.get(0).size() != 1 || !rhs.get(0).get(0).isVariable()))
         // Sequence rule.
         fields.put(v, rhs.get(0));
@@ -34,7 +34,7 @@ public class ASTCompiler {
         for (final Body sf : rhs)
           for (final Component symbol : sf) {
             assert symbol.isVariable();
-            final Variable child = symbol.asVariable();
+            final var child = symbol.asVariable();
             children.get(v).add(child);
             if (!parents.containsKey(child))
               parents.put(child, new ArrayList<>());
@@ -62,7 +62,7 @@ public class ASTCompiler {
     for (final Variable v : bnf.Γ) {
       if (Constants.S == v)
         continue;
-      final ClassNode classNode = classes.get(v);
+      final var classNode = classes.get(v);
       if (classNode instanceof ConcreteClassNode)
         // Concrete class.
         classNode.asConcrete().parents.addAll(parents.getOrDefault(v, emptyList()).stream() //

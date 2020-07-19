@@ -23,7 +23,7 @@ public class VarargsVariableTypeParameter implements Parameter {
       return false;
     if (getClass() != o.getClass())
       return false;
-    final VarargsVariableTypeParameter other = (VarargsVariableTypeParameter) o;
+    final var other = (VarargsVariableTypeParameter) o;
     return Objects.equals(variable, other.variable);
   }
   @Override public String toString() {

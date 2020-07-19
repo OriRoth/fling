@@ -12,7 +12,7 @@ public enum BNFUtils {
     final Set<Variable> V = new LinkedHashSet<>();
     V.add(v);
     final Set<ERule> rs = new LinkedHashSet<>();
-    for (boolean more = true; more;) {
+    for (var more = true; more;) {
       more = false;
       for (final ERule r : bnf.R)
         if (!rs.contains(r) && V.contains(r.variable)) {
@@ -46,11 +46,11 @@ public enum BNFUtils {
     return new FancyEBNF(new EBNF(Σ, Γ, b.ε, R), null, null, null, true);
   }
   static FancyEBNF normalize(final FancyEBNF bnf) {
-    final VariableGenerator g = new VariableGenerator();
+    final var g = new VariableGenerator();
     final Set<Variable> V = new LinkedHashSet<>(bnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     for (final Variable v : bnf.Γ) {
-      final List<Body> rhs = bnf.bodiesList(v);
+      final var rhs = bnf.bodiesList(v);
       assert !rhs.isEmpty() : v + " in: " + bnf;
       if (rhs.size() == 1) {
         // Sequence (or redundant alteration).
@@ -64,7 +64,7 @@ public enum BNFUtils {
           alteration.add(sf.get(0).asVariable());
         else {
           // Create a suitable child variable.
-          final Variable a = g.fresh(v);
+          final var a = g.fresh(v);
           V.add(a);
           R.add(new ERule(a, Collections.singletonList(sf)));
           alteration.add(a);
@@ -75,7 +75,7 @@ public enum BNFUtils {
         bnf.extensionProducts, false);
   }
   static FancyEBNF expandQuantifiers(final FancyEBNF ebnf) {
-    final VariableGenerator g = new VariableGenerator();
+    final var g = new VariableGenerator();
     final Set<Variable> Γ = new LinkedHashSet<>(ebnf.Γ);
     final Set<ERule> R = new LinkedHashSet<>();
     final Map<Variable, Quantifier> extensionHeadsMapping = new LinkedHashMap<>();
@@ -86,7 +86,7 @@ public enum BNFUtils {
         final List<Component> cs = new ArrayList<>();
         for (final Component c : b)
           if (c instanceof Quantifier q) {
-            final Variable v = q.expand(g, extensionProducts::add, R::add);
+            final var v = q.expand(g, extensionProducts::add, R::add);
             extensionHeadsMapping.put(v, q);
             cs.add(v);
           } else

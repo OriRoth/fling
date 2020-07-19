@@ -1,6 +1,6 @@
 package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import static il.ac.technion.cs.fling.internal.util.As.list;
+import static il.ac.technion.cs.fling.internal.util.As.coaelesce;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +26,10 @@ public class PolynomialAPICompiler extends DPDAToModel {
     if (dpda.F.contains(dpda.q0))
       $.add(Method.named(Constants.$$).returning(top));
     for (final Token σ : dpda.Σ) {
-      final δ<Named, Token, Named> δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
+      final var δ = dpda.δ(dpda.q0, σ, dpda.γ0.top());
       if (δ == null)
         continue;
-      final Method m = Method.named(σ).returning(consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
+      final var m = Method.named(σ).returning(consolidate(δ.q$, dpda.γ0.pop().push(δ.getΑ()), true));
       if (m.type != bottom)
         $.add(m);
     }
@@ -50,7 +50,7 @@ public class PolynomialAPICompiler extends DPDAToModel {
     return $;
   }
   private Type encodeInterface(final Named q, final Word<Named> α) {
-    final List<Method> $ = dpda.Σ().map(σ -> Method.named(σ).returning(next(q, α, σ))).collect(Collectors.toList());
+    final var $ = dpda.Σ().map(σ -> Method.named(σ).returning(next(q, α, σ))).collect(Collectors.toList());
     if (dpda.isAccepting(q))
       $.add(Method.termination());
     return new Type(Type.Name.q(q).α(α), $, As.word(dpda.Q), dpda.isAccepting(q));
@@ -63,11 +63,11 @@ public class PolynomialAPICompiler extends DPDAToModel {
    * @param σ current input letter
    * @return next state type */
   private Type.Grounded next(final Named q, final Word<Named> α, final Token σ) {
-    final δ<Named, Token, Named> δ = dpda.δδ(q, σ, α.top());
+    final var δ = dpda.δδ(q, σ, α.top());
     return δ == null ? bottom : common(δ, α.pop(), false);
   }
   private Type.Grounded consolidate(final Named q, final Word<Named> α, final boolean isInitialType) {
-    final δ<Named, Token, Named> δ = dpda.δδ(q, ε(), α.top());
+    final var δ = dpda.δδ(q, ε(), α.top());
     return δ == null ? Type.Grounded.of(encodedName(q, α)).with(getTypeArguments(isInitialType))
         : common(δ, α.pop(), isInitialType);
   }
@@ -87,6 +87,6 @@ public class PolynomialAPICompiler extends DPDAToModel {
   }
   private List<Type.Grounded> getTypeArguments(final boolean isInitialType) {
     return isInitialType ? dpda.Q().map(q$ -> dpda.isAccepting(q$) ? top : bottom).collect(toList())
-        : list(typeVariables.values());
+        : coaelesce(typeVariables.values());
   }
 }

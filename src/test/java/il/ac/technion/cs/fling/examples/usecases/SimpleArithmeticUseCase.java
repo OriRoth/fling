@@ -4,7 +4,7 @@ import il.ac.technion.cs.fling.examples.generated.SimpleArithmeticAST.*;
 @SuppressWarnings("unused") enum SimpleArithmeticUseCase {
   ;
   public static void main(final String[] args) {
-    final E e = i(2).mult().begin().i(3).plus().i(4).end().$();
+    final var e = i(2).mult().begin().i(3).plus().i(4).end().$();
     System.out.println("2 * (3 + 4) = " + evaluate(e));
   }
   private static int evaluate(final E e) {

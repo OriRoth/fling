@@ -16,8 +16,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
     //
     for (final Symbol s : symbols)
       expandedSymbols.add(s.isQuantifier() ? s.asQuantifier().expand(g, variableDeclaration, ruleDeclaration) : s);
-    final Variable head = g.fresh(symbols);
-    final Variable tail = g.fresh(symbols);
+    final var head = g.fresh(symbols);
+    final var tail = g.fresh(symbols);
     variableDeclaration.accept(head);
     variableDeclaration.accept(tail);
     final List<Component> rhs = new ArrayList<>(expandedSymbols);
@@ -31,8 +31,8 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
       final Supplier<String> variableNamesGenerator) {
     if (!symbol.isVariable() && !symbol.isQuantifier())
       return null;
-    final String streamingVariable = variableNamesGenerator.get();
-    final String action = symbol.isVariable() ? //
+    final var streamingVariable = variableNamesGenerator.get();
+    final var action = symbol.isVariable() ? //
         variableVisitingSolver.apply(symbol.asVariable(), streamingVariable) : //
         String.format("{%s}", symbol.asQuantifier().symbols() //
             .map(s -> s.asQuantifier().getVisitingStatement(s, variableVisitingSolver, streamingVariable,
@@ -69,13 +69,13 @@ import il.ac.technion.cs.fling.namers.VariableGenerator;
   @SuppressWarnings("unchecked") public static List<List<Object>> abbreviate(final List<Object> rawNode,
       final int fieldCount) {
     final List<List<Object>> $ = new ArrayList<>();
-    for (int i = 0; i < fieldCount; ++i)
+    for (var i = 0; i < fieldCount; ++i)
       $.add(new ArrayList<>());
-    List<Object> currentRawNode = rawNode;
+    var currentRawNode = rawNode;
     while (!currentRawNode.isEmpty()) {
       assert currentRawNode.size() == fieldCount + 1;
-      final List<Object> rawArguments = currentRawNode.subList(0, fieldCount);
-      for (int i = 0; i < fieldCount; ++i)
+      final var rawArguments = currentRawNode.subList(0, fieldCount);
+      for (var i = 0; i < fieldCount; ++i)
         $.get(i).add(rawArguments.get(i));
       currentRawNode = (List<Object>) currentRawNode.get(fieldCount);
     }

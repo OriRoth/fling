@@ -23,7 +23,7 @@ enum TaggedBalancedParentheses {
     // ↄ(a());
   }
   public static void main(final String[] args) {
-    final P parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b(1).b(2)).ↄ(a()).$();
+    final var parseTree = c('a', 'a').c('b', 'b').ↄ(a()).c('d').ↄ(b(1).b(2)).ↄ(a()).$();
     System.out.println(traverse(parseTree, 0));
     System.out.println(traverse(__().$(), 0));
   }
@@ -31,7 +31,7 @@ enum TaggedBalancedParentheses {
     return p instanceof P1 ? traverse((P1) p, depth) : traverse((P2) p, depth);
   }
   private static String traverse(final P1 p, final int depth) {
-    final StringBuilder $ = new StringBuilder();
+    final var $ = new StringBuilder();
     $.append("\t".repeat(Math.max(0, depth)));
     $.append(p.c).append('\n');
     $.append(traverse(p.p, depth + 1));

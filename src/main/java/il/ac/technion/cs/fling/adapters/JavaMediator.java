@@ -14,7 +14,6 @@ import il.ac.technion.cs.fling.internal.compiler.ast.ASTParserCompiler;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.ASTCompilationUnitNode;
 import il.ac.technion.cs.fling.internal.grammar.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
-import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** Java adapters mediator. Connects fluent API, AST types and AST run-time
  * compiler generation given LL(1) grammars. AST visitor class definition is
  * also produced.
@@ -63,7 +62,7 @@ public class JavaMediator {
         return outer().printStartMethodBody(σ, parameters);
       }
     };
-    final JavaASTVisitorAdapter astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
+    final var astVisitorAdapter = new JavaASTVisitorAdapter(packageName, apiName + "AST", namer);
     final JavaInterfacesASTAdapter astAdapter = new JavaInterfacesASTAdapter(packageName, apiName + "AST", namer) {
       @Override protected String printAdditionalDeclarations(final ASTCompilationUnitNode compilationUnit) {
         return astVisitorAdapter.printASTVisitorClass(compilationUnit);
@@ -79,9 +78,9 @@ public class JavaMediator {
   private List<String> processParameters(final Token σ, final List<MethodParameter> parameters) {
     Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     final List<String> processedParameters = new ArrayList<>();
-    for (int i = 0; i < parameters.size(); ++i) {
-      final Parameter parameter = σ.parameters[i];
-      final MethodParameter declaration = parameters.get(i);
+    for (var i = 0; i < parameters.size(); ++i) {
+      final var parameter = σ.parameters[i];
+      final var declaration = parameters.get(i);
       if (parameter.isVariableTypeParameter())
         processedParameters.add(String.format("((%s.%s.%s.α)%s).$()", //
             packageName, //
@@ -89,7 +88,7 @@ public class JavaMediator {
             namer.headVariableClassName(parameter.asVariableTypeParameter().variable), //
             declaration.name));
       else if (parameter.isVarargsTypeParameter()) {
-        final String αClass = String.format("%s.%s.%s.α", //
+        final var αClass = String.format("%s.%s.%s.α", //
             packageName, //
             apiName, //
             namer.headVariableClassName(parameter.asVarargsVariableTypeParameter().variable));
@@ -109,7 +108,7 @@ public class JavaMediator {
     return processedParameters;
   }
   private String printStartMethodBody(final Token σ, final List<MethodParameter> parameters) {
-    final List<String> processedParameters = processParameters(σ, parameters);
+    final var processedParameters = processParameters(σ, parameters);
     return String.format("α α=new α();%sreturn α;", //
         Constants.$$.equals(σ) ? "" //
             : String.format("α.w.add(new %s(%s.%s%s%s));", //

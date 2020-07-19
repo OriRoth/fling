@@ -19,7 +19,7 @@ class TypeName extends SimpleTypeName {
     this(q, null, null);
   }
   @Override public int hashCode() {
-    int $ = 1;
+    var $ = 1;
     if (q != null)
       $ = $ * 31 + q.hashCode();
     if (α != null)

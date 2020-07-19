@@ -86,8 +86,8 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     }
   }
   @Test void test() {
-    final EBNF x = new Q().BNF();
-    try (final azzert azzert = new azzert()) {
+    final var x = new Q().BNF();
+    try (final var azzert = new azzert()) {
       azzert.that(x).isNotNull();
       azzert.that(x.Γ).contains(Γ.X);
       azzert.that(x.Γ).contains(Γ.Y);
@@ -102,7 +102,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     System.out.println(BNFUtils.normalize(BNFUtils.expandQuantifiers(FancyEBNF.from(x))));
   }
   @Test public void test1() {
-    final EBNF x = new Q1().BNF();
+    final var x = new Q1().BNF();
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
     System.out.println(BNFUtils.normalize(FancyEBNF.from(x)));
@@ -110,7 +110,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     System.out.println(BNFUtils.normalize(BNFUtils.expandQuantifiers(FancyEBNF.from(x))));
   }
   @Test public void test2() {
-    final EBNF x = new Q2().BNF();
+    final var x = new Q2().BNF();
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
     System.out.println(r(FancyEBNF.from(x)));
@@ -120,20 +120,20 @@ import il.ac.technion.cs.fling.internal.grammar.rules.*;
     return BNFUtils.reduce(b);
   }
   @Test public void test3() {
-    final EBNF x = new Q2().BNF();
+    final var x = new Q2().BNF();
     System.out.println(x);
     System.out.println(FancyEBNF.from(x));
     System.out.println(r(FancyEBNF.from(x)));
     System.out.println(r(r(FancyEBNF.from(x))));
   }
   @Test public void test4() {
-    final EBNF x = new Q2().BNF();
+    final var x = new Q2().BNF();
     final EBNF y = FancyEBNF.from(x);
     assertThat(r(r(y))).isEqualTo(r(y));
   }
   @Test public void test5() {
-    final EBNF x = new Q3().BNF();
-    final FancyEBNF y = FancyEBNF.from(x);
+    final var x = new Q3().BNF();
+    final var y = FancyEBNF.from(x);
     System.out.println(x);
     System.out.println(y);
     System.out.println(r(y));
