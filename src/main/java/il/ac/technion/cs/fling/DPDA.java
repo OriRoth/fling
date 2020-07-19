@@ -3,6 +3,7 @@ import static il.ac.technion.cs.fling.automata.Alphabet.ε;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 import il.ac.technion.cs.fling.internal.util.As;
 /** Deterministic pushdown automaton (DPDA) supporting acceptance by final state
@@ -140,7 +141,7 @@ public class DPDA<Q, Σ, Γ> {
   public boolean run(final Iterable<? extends Σ> w) {
     var stack = γ0;
     var q = q0;
-    for (var σ : w) {
+    for (final var σ : w) {
       if (stack.isEmpty())
         return false;
       var δ = δ(q, stack.top(), σ);
@@ -203,7 +204,11 @@ public class DPDA<Q, Σ, Γ> {
     public final Γ γ;
     public final Σ σ;
     private final Word<Γ> α;
-    public δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Word<Γ> α) {
+    public δ(final @NonNull Q q, final Σ σ, final @NonNull Γ γ, final @NonNull Q q$, final @NonNull Word<Γ> α) {
+      Objects.requireNonNull(q);
+      Objects.requireNonNull(σ);
+      Objects.requireNonNull(γ);
+      Objects.requireNonNull(q$);
       this.q = q;
       this.σ = σ;
       this.γ = γ;
