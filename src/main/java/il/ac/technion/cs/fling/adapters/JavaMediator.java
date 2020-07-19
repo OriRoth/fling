@@ -76,7 +76,6 @@ public class JavaMediator {
     astCompilerClass = parserCompiler.printParserClass();
   }
   private List<String> processParameters(final Token σ, final List<MethodParameter> parameters) {
-    Arrays.stream(new Object[] {}).map(Object::toString).toArray(String[]::new);
     final List<String> processedParameters = new ArrayList<>();
     for (var i = 0; i < parameters.size(); ++i) {
       final var parameter = σ.parameters[i];
