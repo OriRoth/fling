@@ -32,7 +32,7 @@ public enum LL1 {
       if (usedNames.containsKey(name))
         typeNameMapping.put(v, Named.by(name + usedNames.put(name, usedNames.get(name) + 1)));
       else {
-        // Why do you use 2 here?
+        // Why do you use 2 here? Why not 1?
         usedNames.put(name, 2);
         typeNameMapping.put(v, Named.by(name));
       }
