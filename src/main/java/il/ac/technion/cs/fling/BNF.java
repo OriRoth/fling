@@ -154,7 +154,7 @@ public interface BNF {
       return closure(singleton(t), expand);
     }
     static <T> boolean exists(final Stream<T> ss) {
-      return (ss.count() != 0);
+      return (ss.count() != 0L);
     }
     static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
