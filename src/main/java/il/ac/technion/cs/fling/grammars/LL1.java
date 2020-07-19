@@ -97,10 +97,10 @@ public enum LL1 {
     bnf.forms(v).forEach(sf -> //
     bnf.firsts(sf.inner()).stream() //
         .filter(σ -> !Constants.$$.equals(σ)) //
-        .forEach(σ -> {
+        .forEach(σ ->
           δs.add(new δ<>(q0$, σ, A.get(v), typeNameMapping.get(σ),
-              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))));
-        })));
+              reversed(getPossiblyAcceptingVariables(bnf, typeNameMapping, sf, true))))
+        )));
     bnf.variables().filter(bnf::nullable).forEach(v -> //
     bnf.tokens().forEach(σ -> {
       if (!Constants.$$.equals(σ) && !bnf.firsts(v).contains(σ))
