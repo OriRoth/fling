@@ -1,14 +1,6 @@
 package il.ac.technion.cs.fling;
 import static il.ac.technion.cs.fling.automata.Alphabet.ε;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
@@ -188,11 +180,14 @@ public class DPDA<Q, Σ, Γ> {
     public final Q q$;
     private final Word<Γ> α;
     public δ(final Q q, final Σ σ, final Γ γ, final Q q$, final Word<Γ> α) {
+      Objects.requireNonNull(q);
+      Objects.requireNonNull(q$);
+      Objects.requireNonNull(α);
       this.q = q;
       this.σ = σ;
       this.γ = γ;
       this.q$ = q$;
-      this.α = α == null ? null : new Word<>(α);
+      this.α = α;
     }
     /** @param currentq current state
      * @param currentσ current input letter
