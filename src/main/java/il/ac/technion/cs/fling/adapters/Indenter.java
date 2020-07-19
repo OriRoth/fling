@@ -67,7 +67,7 @@ class Indenter {
   void ____() {
     line("\n");
   }
-  Collector<CharSequence, ?, String> commas() {
+  static Collector<CharSequence, ?, String> commas() {
     return joining(", ");
   }
 }
