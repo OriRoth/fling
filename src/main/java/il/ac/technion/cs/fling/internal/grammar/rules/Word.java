@@ -120,7 +120,7 @@ public class Word<T> implements List<T> {
     return inner.hashCode();
   }
   @Override public boolean equals(final Object o) {
-    if (this == o)
+    if (o == this)
       return true;
     if (!(o instanceof Word))
       return false;

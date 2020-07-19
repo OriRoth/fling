@@ -12,7 +12,7 @@ public class EBNF {
     return Objects.hash(R, Γ, Σ, ε);
   }
   @Override public boolean equals(final Object obj) {
-    if (this == obj)
+    if (obj == this)
       return true;
     if (obj == null)
       return false;

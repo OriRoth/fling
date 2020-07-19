@@ -36,7 +36,7 @@ public class Type {
     return new Type(name, methods, parameters, true);
   }
   @Override public boolean equals(final Object obj) {
-    if (this == obj)
+    if (obj == this)
       return true;
     if (obj == null)
       return false;
@@ -82,7 +82,7 @@ public class Type {
         return Objects.hash(name);
       }
       @Override public boolean equals(final Object obj) {
-        if (this == obj)
+        if (obj == this)
           return true;
         if (obj == null)
           return false;
@@ -116,7 +116,7 @@ public class Type {
           return 31 * outer().hashCode() + Objects.hash(arguments);
         }
         @Override public boolean equals(final Object that) {
-          if (this == that)
+          if (that == this)
             return true;
           if (that == null)
             return false;
@@ -163,7 +163,7 @@ public class Type {
         this.q = q;
       }
       @Override public boolean equals(final Object o) {
-        if (this == o)
+        if (o == this)
           return true;
         if (o == null)
           return false;
@@ -187,7 +187,7 @@ public class Type {
           this.α = α;
         }
         @Override public boolean equals(final Object obj) {
-          if (this == obj)
+          if (obj == this)
             return true;
           if (obj == null)
             return false;
@@ -219,7 +219,7 @@ public class Type {
             this.β = β;
           }
           @Override public boolean equals(final Object o) {
-            if (this == o)
+            if (o == this)
               return true;
             if (o == null)
               return false;

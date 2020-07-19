@@ -18,7 +18,7 @@ public class ClassParameter implements ClassTypeParameter {
     return Objects.hash(parameterClass);
   }
   @Override public boolean equals(final Object o) {
-    if (this == o)
+    if (o == this)
       return true;
     if (o == null)
       return false;

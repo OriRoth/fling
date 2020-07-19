@@ -17,7 +17,7 @@ public interface Named {
         return name.hashCode();
       }
       @Override public boolean equals(final Object o) {
-        if (this == o)
+        if (o == this)
           return true;
         if (!(o instanceof Named))
           return false;

@@ -14,7 +14,7 @@ public final class Method {
     return Objects.hash(name, parameters, type);
   }
   @Override public boolean equals(final Object obj) {
-    if (this == obj)
+    if (obj == this)
       return true;
     if (obj == null)
       return false;

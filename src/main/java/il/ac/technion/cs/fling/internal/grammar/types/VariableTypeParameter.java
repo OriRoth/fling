@@ -17,7 +17,7 @@ public class VariableTypeParameter implements Parameter {
     return Objects.hash(variable);
   }
   @Override public boolean equals(final Object that) {
-    if (this == that)
+    if (that == this)
       return true;
     if (that == null)
       return false;
