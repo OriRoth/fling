@@ -15,8 +15,7 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
     assertThat(b.ε).isEqualTo(BalancedParentheses.Γ.P);
   }
   @Test void test3() {
-    final var b = new BalancedParentheses().BNF();
-    assertThat(b.Σ).contains(BalancedParentheses.Σ.c.normalize());
+    assertThat(new BalancedParentheses().BNF().Σ).contains(BalancedParentheses.Σ.c.normalize());
   }
   @Test void test3a() {
     final var b = new BalancedParentheses().BNF();
