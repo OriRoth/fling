@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling._;
+package il.ac.technion.cs.fling;
 import java.util.*;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** An extended Backus-Naur form specification of formal Language, collection of

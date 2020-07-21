@@ -1,4 +1,4 @@
-package il.ac.technion.cs.fling._;
+package il.ac.technion.cs.fling;
 import java.util.*;
 import static java.util.Collections.singleton;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
