@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import static java.util.stream.Collectors.toList;
 import static java.util.Collections.singletonList;
-import il.ac.technion.cs.fling.internal.compiler.api.dom.*;
+import il.ac.technion.cs.fling.internal.compiler.api._.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.*;
 import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFragment;
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;

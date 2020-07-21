@@ -153,10 +153,10 @@ public interface BNF {
     static <T> Set<T> closure(final T t, final Function<T, ? extends Stream<T>> expand) {
       return closure(singleton(t), expand);
     }
-    static <T> boolean exists(final Stream<T> ss) {
-      return (ss.count() != 0L);
+    static <T> boolean exists(final Stream<T> ts) {
+      return ts.count() != 0L;
     }
-    static <T> void worklist(final Supplier<? extends Stream<T>> s, final Predicate<? super T> u) {
+    static <T> void worklist(final Supplier<Stream<T>> s, final Predicate<? super T> u) {
       while (exists(s.get().filter(u))) {
       }
     }

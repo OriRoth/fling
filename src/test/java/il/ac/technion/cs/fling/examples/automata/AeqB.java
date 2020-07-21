@@ -10,7 +10,7 @@ import il.ac.technion.cs.fling.adapters.*;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar._.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *

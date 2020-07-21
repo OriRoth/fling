@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
+import il.ac.technion.cs.fling.internal.grammar._.BNFUtils;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 @SuppressWarnings("static-method") class BNFUtilsTest {
   public enum Σ implements Terminal {

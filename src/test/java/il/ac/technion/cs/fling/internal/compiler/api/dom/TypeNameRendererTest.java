@@ -5,6 +5,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.adapters.CLikeGenerator;
 import il.ac.technion.cs.fling.adapters.CPPGenerator;
+import il.ac.technion.cs.fling.internal.compiler.api._.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Word;
 class TypeNameRendererTest {

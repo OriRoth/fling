@@ -2,6 +2,7 @@ package il.ac.technion.cs.fling.internal.compiler.api.dom;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import il.ac.technion.cs.fling.internal.compiler.api._.Type;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 @SuppressWarnings("static-method") class TypeBuilderTest {
   private final Named n1 = Named.by("TypeNameT1");

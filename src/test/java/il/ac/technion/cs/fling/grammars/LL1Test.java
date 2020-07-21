@@ -3,6 +3,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import il.ac.technion.cs.fling.BNF;
+import il.ac.technion.cs.fling.grammars._.LL1;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 @SuppressWarnings("static-method") public class LL1Test {

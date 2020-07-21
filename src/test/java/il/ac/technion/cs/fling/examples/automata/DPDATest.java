@@ -34,16 +34,16 @@ public class DPDATest {
   @Test public void testTransitionMatching() {
     final var δ = dpda.δ(q0, γ0, c);
     assertThat(q1).isEqualTo(δ.q$);
-    assertThat(2).isEqualTo(δ.getΑ().size());
-    assertThat(new Word<>(γ0, γ1)).isEqualTo(δ.getΑ());
+    assertThat(2).isEqualTo(δ.α.size());
+    assertThat(new Word<>(γ0, γ1)).isEqualTo(δ.α);
     assertThat(dpda.δ(q0, γ0, Ↄ)).isNull();
   }
   // TODO Roth: add better consolidation testing
   @Test public void testTransitionConsolidation() {
     final var δ = dpda.δδ(q1, γ1, Ↄ);
     assertThat(q2).isEqualTo(δ.q$);
-    assertThat(δ.getΑ()).isEmpty();
-    assertThat(δ.getΑ()).isEmpty();
+    assertThat(δ.α).isEmpty();
+    assertThat(δ.α).isEmpty();
     assertThat(q2).isEqualTo(δ.q$);
   }
   @Test public void testRun() {

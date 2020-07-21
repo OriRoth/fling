@@ -2,7 +2,7 @@ package il.ac.technion.cs.fling;
 import java.util.*;
 import static java.util.stream.Collectors.toSet;
 import static java.util.Collections.*;
-import il.ac.technion.cs.fling.internal.grammar.BNFUtils;
+import il.ac.technion.cs.fling.internal.grammar._.BNFUtils;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
 /** An extended Backus-Naur form specification of formal Language, collection of

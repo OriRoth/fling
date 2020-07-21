@@ -9,7 +9,7 @@ import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar._.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public enum LongFall {
   ;

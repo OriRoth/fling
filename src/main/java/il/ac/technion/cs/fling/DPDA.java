@@ -77,7 +77,7 @@ public class DPDA<Q, Σ, Γ> {
     if (δ == null)
       return null;
     var q$ = δ.q$;
-    s = s.pop().push(δ.getΑ());
+    s = s.pop().push(δ.α);
     // process subsequent ε transitions.
     for (;;) {
       if (s.isEmpty())
@@ -85,7 +85,7 @@ public class DPDA<Q, Σ, Γ> {
       final var δ$ = δ(q$, s.top(), ε());
       if (δ$ == null)
         return new δ<>(q, σ, null, q$, s);
-      s = s.pop().push(δ$.getΑ());
+      s = s.pop().push(δ$.α);
       q$ = δ$.q$;
     }
   }
@@ -102,7 +102,7 @@ public class DPDA<Q, Σ, Γ> {
     if (δ == null)
       return null;
     var q$ = δ.q$;
-    s = s.pop().push(δ.getΑ());
+    s = s.pop().push(δ.α);
     // process subsequent ε transitions.
     for (;;) {
       if (s.isEmpty())
@@ -110,7 +110,7 @@ public class DPDA<Q, Σ, Γ> {
       final var δ$ = δ(q$, s.top(), ε());
       if (δ$ == null)
         return new δ<>(q, σ, γ, q$, s);
-      s = s.pop().push(δ$.getΑ());
+      s = s.pop().push(δ$.α);
       q$ = δ$.q$;
     }
   }
@@ -148,12 +148,12 @@ public class DPDA<Q, Σ, Γ> {
       if (δ == null)
         return false;
       q = δ.q$;
-      stack = stack.pop().push(δ.getΑ());
+      stack = stack.pop().push(δ.α);
       if (stack.isEmpty())
         break;
       for (δ = δ(q, stack.top(), ε()); δ != null; δ = δ(q, stack.top(), ε())) {
         q = δ.q$;
-        stack = stack.pop().push(δ.getΑ());
+        stack = stack.pop().push(δ.α);
         if (stack.isEmpty())
           break;
       }
@@ -206,32 +206,30 @@ public class DPDA<Q, Σ, Γ> {
     private final Word<Γ> α;
     public δ(final @NonNull Q q, final Σ σ, final @NonNull Γ γ, final @NonNull Q q$, final @NonNull Word<Γ> α) {
       Objects.requireNonNull(q);
-      Objects.requireNonNull(σ);
       Objects.requireNonNull(γ);
       Objects.requireNonNull(q$);
       this.q = q;
       this.σ = σ;
       this.γ = γ;
       this.q$ = q$;
-      this.α = α == null ? null : new Word<>(α);
-    }
-    @Override public boolean equals(final Object o) {
-      return o == this || o instanceof δ && equals((δ<?, ?, ?>) o);
-    }
-    public Word<Γ> getΑ() {
-      return α;
+      this.α = α;
     }
     @Override public int hashCode() {
-      return 31
-          * (q$.hashCode() + 31 * (γ.hashCode() + 31 * (31 * (q.hashCode() + 31) + (σ == null ? 1 : σ.hashCode()))))
-          + getΑ().hashCode();
+      return Objects.hash(q, q$, α, γ, σ);
+    }
+    @Override public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (o == null || getClass() != o.getClass())
+        return false;
+      return equals((δ) o);
+    }
+    private boolean equals(δ other) {
+      return Objects.equals(q, other.q) && Objects.equals(q$, other.q$) && Objects.equals(α, other.α)
+          && Objects.equals(γ, other.γ) && Objects.equals(σ, other.σ);
     }
     @Override public String toString() {
-      return String.format("<%s,%s,%s,%s,%s>", q, σ == ε() ? "ε" : σ, γ, q$, getΑ());
-    }
-    private boolean equals(final δ<?, ?, ?> other) {
-      return q.equals(other.q) && (σ == ε() ? other.σ == ε() : σ.equals(other.σ)) && γ.equals(other.γ)
-          && q$.equals(other.q$) && getΑ().equals(other.getΑ());
+      return String.format("<%s,%s,%s,%s,%s>", q, σ == ε() ? "ε" : σ, γ, q$, α);
     }
     /** @param currentq current state
      * @param currentγ current stack symbol

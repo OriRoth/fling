@@ -2,10 +2,10 @@ package il.ac.technion.cs.fling.examples.languages;
 import org.antlr.v4.Tool;
 import il.ac.technion.cs.fling.*;
 import il.ac.technion.cs.fling.adapters.JavaANTLRAPIAdapter;
-import il.ac.technion.cs.fling.grammars.LL1;
+import il.ac.technion.cs.fling.grammars._.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar._.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.Named;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 public class TableMaker {

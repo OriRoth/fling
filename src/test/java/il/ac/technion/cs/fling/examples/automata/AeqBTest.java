@@ -11,7 +11,7 @@ import il.ac.technion.cs.fling.adapters.CPPGenerator;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.PolynomialAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar._.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 /** AeqB = {w in {a, b}* | #a in w = #b in w}.
  *

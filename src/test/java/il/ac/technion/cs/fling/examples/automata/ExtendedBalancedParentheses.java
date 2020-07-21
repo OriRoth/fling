@@ -7,7 +7,7 @@ import static il.ac.technion.cs.fling.examples.automata.ExtendedBalancedParenthe
 import il.ac.technion.cs.fling.DPDA;
 import il.ac.technion.cs.fling.adapters.JavaGenerator;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
-import il.ac.technion.cs.fling.internal.grammar.Grammar;
+import il.ac.technion.cs.fling.internal.grammar._.Grammar;
 import il.ac.technion.cs.fling.internal.grammar.rules.*;
 public enum ExtendedBalancedParentheses {
   ;
