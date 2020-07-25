@@ -9,7 +9,7 @@ import il.ac.technion.cs.fling.adapters.ScalaGenerator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
 import il.ac.technion.cs.fling.examples.languages.SubFigure.Γ;
 import il.ac.technion.cs.fling.examples.languages.SubFigure.Σ;
-import il.ac.technion.cs.fling.grammars._.LL1;
+import il.ac.technion.cs.fling.grammars.LL1;
 import il.ac.technion.cs.fling.internal.compiler.Linker;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.DPDAToModel;
 import il.ac.technion.cs.fling.internal.compiler.api.dom.ReliableAPICompiler;
