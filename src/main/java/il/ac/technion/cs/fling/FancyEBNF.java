@@ -3,7 +3,6 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +16,6 @@ import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.ERule;
 import il.ac.technion.cs.fling.internal.grammar.rules.Quantifier;
-import il.ac.technion.cs.fling.internal.grammar.rules.TempComponent;
 import il.ac.technion.cs.fling.internal.grammar.rules.Token;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 import il.ac.technion.cs.fling.internal.grammar.types.Parameter;
@@ -68,10 +66,10 @@ public class FancyEBNF extends EBNF.Decorator {
   public Set<Token> firsts(final Component... symbols) {
     return firsts(Arrays.asList(symbols));
   }
-  public Set<Token> firsts(final Collection<Component> symbols) {
+  public <T extends Collection<? extends Component>> Set<Token> firsts(final T symbols) {
     final Set<Token> $ = new LinkedHashSet<>();
     for (final Component s : symbols) {
-      $.addAll(firsts.get(s));
+      $.addAll(!s.isQuantifier() ? firsts.get(s) : s.asQuantifier().getFirsts(this::firsts));
       if (!isNullable(s))
         break;
     }
@@ -134,7 +132,7 @@ public class FancyEBNF extends EBNF.Decorator {
                 final Set<Token> firsts = new LinkedHashSet<>();
                 for (final Component s : ss) {
                   firsts.addAll($.get(s));
-                  if (!symbol.asQuantifier().isNullable(this::isNullable))
+                  if (!isNullable(symbol))
                     break;
                 }
                 return firsts;
@@ -163,10 +161,10 @@ public class FancyEBNF extends EBNF.Decorator {
             if (!sf.get(i).isVariable())
               continue;
             final Variable current = sf.get(i).asVariable();
-            final List<Component> rest = sf.subList(i, sf.size());
+            final List<Component> rest = sf.subList(i + 1, sf.size());
             changed |= $.get(current).addAll(firsts(rest));
             if (isNullable(rest))
-              changed |= $.get(v).addAll($.get(current));
+              changed |= $.get(current).addAll($.get(v));
           }
     }
     Γ.forEach(s -> $.put(s, unmodifiableSet($.get(s))));

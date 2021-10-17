@@ -36,12 +36,16 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
       Object.class.getCanonicalName());
   private static final String ListWild = String.format("%s<?>", List.class.getCanonicalName());
   private final FancyEBNF bnf;
-  private final Class<Σ> Σ;
+  private final String Σ;
   private final Namer namer;
   private final String packageName;
   private final String apiName;
   private final String astClassesContainerName;
   public LL1JavaASTParserCompiler(final FancyEBNF bnf, final Class<Σ> Σ, final Namer namer, final String packageName,
+      final String apiName, final String astClassesContainerName) {
+    this(bnf, Σ.getCanonicalName(), namer, packageName, apiName, astClassesContainerName);
+  }
+  public LL1JavaASTParserCompiler(final FancyEBNF bnf, final String Σ, final Namer namer, final String packageName,
       final String apiName, final String astClassesContainerName) {
     this.bnf = bnf;
     this.Σ = Σ;
@@ -266,7 +270,7 @@ public class LL1JavaASTParserCompiler<Σ extends Enum<Σ> & Terminal> implements
         il.ac.technion.cs.fling.internal.util.Is.class.getCanonicalName(), //
         firsts.stream() //
             .map(terminal -> String.format("%s.%s", //
-                Σ.getCanonicalName(), //
+                Σ, //
                 terminal.name())) //
             .collect(joining(",")));
   }

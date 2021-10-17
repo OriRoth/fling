@@ -29,12 +29,16 @@ public class JavaMediator {
   public final String astCompilerClass;
   private final Namer namer;
   private final ASTParserCompiler parserCompiler;
-  private final Class<? extends Terminal> Σ;
-  final String apiName;
+  private final String Σ;
+  public final String apiName;
   final LL1 ll1;
-  final String packageName;
+  public final String packageName;
   public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
       final Class<Σ> Σ) {
+    this(bnf, packageName, apiName, Σ.getCanonicalName());
+  }
+  public <Σ extends Enum<Σ> & Terminal> JavaMediator(final EBNF bnf, final String packageName, final String apiName,
+      final String Σ) {
     namer = new NaiveNamer(packageName, apiName);
     ll1 = new LL1(FancyEBNF.from(bnf), namer);
     this.packageName = packageName;
@@ -110,7 +114,7 @@ public class JavaMediator {
         Constants.$$.equals(σ) ? "" //
             : String.format("α.w.add(new %s(%s.%s%s%s));", //
                 Invocation.class.getCanonicalName(), //
-                Σ.getCanonicalName(), //
+                Σ, //
                 σ.name(), //
                 processedParameters.isEmpty() ? "" : ",", //
                 String.join(",", processedParameters)));
@@ -153,7 +157,7 @@ public class JavaMediator {
     final List<String> processedParameters = processParameters(σ, parameters);
     return String.format("this.w.add(new %s(%s.%s,%s));", //
         Invocation.class.getCanonicalName(), //
-        Σ.getCanonicalName(), //
+        Σ, //
         σ.name(), //
         String.format("new Object[]{%s}", String.join(",", processedParameters)));
   }

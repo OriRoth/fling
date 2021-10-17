@@ -36,7 +36,6 @@ import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 import il.ac.technion.cs.fling.adapters.JavaMediator;
 import il.ac.technion.cs.fling.examples.FluentLanguageAPI;
-import il.ac.technion.cs.fling.examples.generated.DatalogAST.Program;
 import il.ac.technion.cs.fling.internal.grammar.rules.Terminal;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
 /** Fling input specifying the formal Datalog language.
