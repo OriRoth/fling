@@ -3,6 +3,9 @@ import il.ac.technion.cs.fling.internal.grammar.types.ClassParameter;
 import il.ac.technion.cs.fling.internal.grammar.types.VarargsClassParameter;
 import il.ac.technion.cs.fling.internal.grammar.types.VarargsVariableTypeParameter;
 import il.ac.technion.cs.fling.internal.grammar.types.VariableTypeParameter;
+
+import java.util.Arrays;
+
 /** Language terminal symbol, never occurs in grammar;
  *
  * @see Token
@@ -11,12 +14,12 @@ public interface Terminal extends TempSymbol {
   @Override default Token normalize() {
     return new Token(this);
   }
-  /** Associate parameter with this terminal
+  /** Associate parameters with this terminal
    *
-   * @param clazz parameter type
+   * @param types parameter types
    * @return newly created token */
-  default Token with(final Class<?> clazz) {
-    return new Token(this, new ClassParameter(clazz));
+  default Token with(final Class<?>... types) {
+    return new Token(this, Arrays.stream(types).map(ClassParameter::new).toArray(ClassParameter[]::new));
   }
   /** Assign parameter varargs to this terminal.
    *
@@ -25,12 +28,12 @@ public interface Terminal extends TempSymbol {
   default Token many(final Class<?> parameterClass) {
     return new Token(this, new VarargsClassParameter(parameterClass));
   }
-  /** Assign variable as parameter to this terminal.
+  /** Assign variables as parameter to this terminal.
    *
-   * @param variable parameter variable
+   * @param variables parameter variables
    * @return newly created token */
-  default Token with(final Variable variable) {
-    return new Token(this, new VariableTypeParameter(variable));
+  default Token with(final Variable... variables) {
+    return new Token(this, Arrays.stream(variables).map(VariableTypeParameter::new).toArray(VariableTypeParameter[]::new));
   }
   /** Assign variable as varargs parameter to this terminal.
    *

@@ -23,6 +23,9 @@ import il.ac.technion.cs.fling.internal.compiler.ast.nodes.FieldNode.FieldNodeFr
 import il.ac.technion.cs.fling.internal.grammar.rules.Component;
 import il.ac.technion.cs.fling.internal.grammar.rules.Constants;
 import il.ac.technion.cs.fling.internal.grammar.rules.Variable;
+
+import javax.lang.model.SourceVersion;
+
 public class NaiveNamer implements Namer {
   private final Map<Variable, Integer> astChildrenCounter = new HashMap<>();
   private final Map<Component, Integer> notationsChildrenCounter = new HashMap<>();
@@ -167,6 +170,11 @@ public class NaiveNamer implements Namer {
     }
     final int position = usedNames.put(baseName, usedNames.get(baseName) + 1);
     return baseName + position;
+  }
+  public static String unreservedName(final String name) {
+    if (!SourceVersion.isKeyword(name))
+      return name;
+    return unreservedName(name + "_");
   }
   @Override public String headVariableClassName(final Variable variable) {
     return variable.name();
